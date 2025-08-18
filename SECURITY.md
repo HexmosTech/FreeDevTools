@@ -16,7 +16,7 @@ We take the security of FreeDevTools seriously. If you believe you have found a 
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to [security@freedevtools.com](mailto:security@freedevtools.com).
+Instead, please report them via email to [security@hexmos.com/freedevtools/t/](mailto:security@hexmos.com/freedevtools/t/).
 
 You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
 
@@ -76,7 +76,7 @@ We would like to thank all security researchers who responsibly disclose vulnera
 
 ## Contact
 
-For security-related questions or concerns, please contact us at [security@freedevtools.com](mailto:security@freedevtools.com).
+For security-related questions or concerns, please contact us at [security@hexmos.com/freedevtools/t/](mailto:security@hexmos.com/freedevtools/t/).
 
 ---
 

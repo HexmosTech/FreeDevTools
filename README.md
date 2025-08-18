@@ -109,7 +109,7 @@ If you find these tools helpful, please consider giving us a ⭐ star on GitHub!
 ## 📞 Contact
 
 - **GitHub**: [@yourusername](https://github.com/yourusername)
-- **Website**: [freedevtools.com](https://freedevtools.com) (coming soon)
+- **Website**: [hexmos.com/freedevtools/t/](https://hexmos.com/freedevtools/t/) 
 
 ---
 
