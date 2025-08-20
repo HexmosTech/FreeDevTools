@@ -165,8 +165,8 @@ If you're tired of waiting for your peer to review your code or are not confiden
 ## Contact & Links
 
 - **GitHub**: [Repository](https://github.com/yourusername/freedevtools)
-- **Website**: [freedevtools.com](https://freedevtools.com) (coming soon)
-- **Documentation**: [docs.freedevtools.com](https://docs.freedevtools.com) (coming soon)
+- **Website**: [hexmos.com/freedevtools/t/](https://hexmos.com/freedevtools/t/) 
+- **Documentation**: [docs.hexmos.com/freedevtools/t/](https://docs.hexmos.com/freedevtools/t/) 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/freedevtools/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/freedevtools/discussions)
 
