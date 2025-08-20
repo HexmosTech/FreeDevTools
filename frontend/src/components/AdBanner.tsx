@@ -7,6 +7,66 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+// Custom CSS for Swiper navigation buttons
+const customSwiperStyles = `
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #8129D9 !important;
+    font-weight: bold;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+  
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    content: '';
+    display: none;
+  }
+  
+  .swiper-button-next::before {
+    content: '>';
+    font-size: 20px;
+    font-weight: bold;
+    color: #8129D9;
+  }
+  
+  .swiper-button-prev::before {
+    content: '<';
+    font-size: 20px;
+    font-weight: bold;
+    color: #8129D9;
+  }
+  
+  .dark .swiper-button-next,
+  .dark .swiper-button-prev {
+    background: rgba(15, 23, 42, 0.9);
+    color: #9d4edd;
+  }
+  
+  .dark .swiper-button-next::before,
+  .dark .swiper-button-prev::before {
+    color: #9d4edd;
+  }
+  
+  .dark .swiper-button-next:hover,
+  .dark .swiper-button-prev:hover {
+    background: rgba(15, 23, 42, 1);
+  }
+`;
+
 // Import ad images using Astro's image handling
 import ad1Image from "../assets/ad1.png";
 import ad2Image from "../assets/ad2.png";
@@ -208,6 +268,17 @@ const AdBanner: React.FC<AdBannerProps> = ({
   autoplay = true,
   autoplayDelay = 5000,
 }) => {
+  // Inject custom Swiper styles
+  React.useEffect(() => {
+    const styleElement = document.createElement("style");
+    styleElement.textContent = customSwiperStyles;
+    document.head.appendChild(styleElement);
+
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+
   try {
     // Validate ad data and filter out invalid entries
     const validAdData = validateAdData(adData);
@@ -271,15 +342,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={0}
               slidesPerView={1}
-              autoplay={
-                autoplay
-                  ? {
-                      delay: autoplayDelay,
-                      disableOnInteraction: false,
-                      pauseOnMouseEnter: true,
-                    }
-                  : false
-              }
+              autoplay={false}
               navigation={true}
               pagination={{
                 clickable: true,
@@ -358,15 +421,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={0}
               slidesPerView={1}
-              autoplay={
-                autoplay
-                  ? {
-                      delay: autoplayDelay,
-                      disableOnInteraction: false,
-                      pauseOnMouseEnter: true,
-                    }
-                  : false
-              }
+              autoplay={false}
               pagination={{
                 clickable: true,
                 dynamicBullets: true,
