@@ -90,7 +90,7 @@ const ${componentName}: React.FC = () => {
 
   return (
     <div className="${componentName.toLowerCase()}-tool max-w-4xl mx-auto p-6">
-      <div className="mb-8 text-center">
+      <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           ${toolName}
         </h1>

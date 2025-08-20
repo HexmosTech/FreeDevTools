@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isClient, setIsClient] = useState(false);
 
@@ -21,28 +21,28 @@ const JsonPrettifier: React.FC = () => {
 
     const initEditors = async () => {
       try {
-        const { default: JSONEditor } = await import('jsoneditor');
-        await import('../../assets/jsoneditor.min.css');
+        const { default: JSONEditor } = await import("jsoneditor");
+        await import("../../assets/jsoneditor.min.css");
 
         // Initialize input editor (code mode for user input)
         if (!inputEditorRef.current) return;
         inputEditorInstanceRef.current = new JSONEditor(
           inputEditorRef.current,
           {
-            mode: 'code',
+            mode: "code",
             onChangeText: (jsonString: string) => {
               handleInputChange(jsonString);
             },
             onError: (err: any) => {
-              setError(err.message || 'Invalid JSON');
+              setError(err.message || "Invalid JSON");
               setIsValid(false);
             },
             onValidationError: (errors: readonly any[]) => {
               if (errors.length > 0) {
-                setError(errors[0].message || 'Validation error');
+                setError(errors[0].message || "Validation error");
                 setIsValid(false);
               } else {
-                setError('');
+                setError("");
                 setIsValid(true);
               }
             },
@@ -54,7 +54,7 @@ const JsonPrettifier: React.FC = () => {
         outputEditorInstanceRef.current = new JSONEditor(
           outputEditorRef.current,
           {
-            mode: 'text',
+            mode: "text",
             enableSort: false,
             enableTransform: false,
           }
@@ -63,21 +63,21 @@ const JsonPrettifier: React.FC = () => {
         // Set initial sample JSON
         const sampleJson = {
           menu: {
-            id: 'file',
-            value: 'File',
+            id: "file",
+            value: "File",
             popup: {
               menuitem: [
                 {
-                  value: 'New',
-                  onclick: 'CreateNewDoc()',
+                  value: "New",
+                  onclick: "CreateNewDoc()",
                 },
                 {
-                  value: 'Open',
-                  onclick: 'OpenDoc()',
+                  value: "Open",
+                  onclick: "OpenDoc()",
                 },
                 {
-                  value: 'Close',
-                  onclick: 'CloseDoc()',
+                  value: "Close",
+                  onclick: "CloseDoc()",
                 },
               ],
             },
@@ -87,7 +87,7 @@ const JsonPrettifier: React.FC = () => {
         inputEditorInstanceRef.current.set(sampleJson);
         formatAndDisplayJson(sampleJson);
       } catch (err) {
-        console.error('Failed to initialize JSONEditor:', err);
+        console.error("Failed to initialize JSONEditor:", err);
       }
     };
 
@@ -113,10 +113,10 @@ const JsonPrettifier: React.FC = () => {
 
   const handleInputChange = (jsonString: string) => {
     if (!jsonString.trim()) {
-      setError('');
+      setError("");
       setIsValid(null);
       if (outputEditorInstanceRef.current) {
-        outputEditorInstanceRef.current.setText('');
+        outputEditorInstanceRef.current.setText("");
       }
       return;
     }
@@ -124,13 +124,13 @@ const JsonPrettifier: React.FC = () => {
     try {
       const parsed = JSON.parse(jsonString);
       setIsValid(true);
-      setError('');
+      setError("");
       formatAndDisplayJson(parsed);
     } catch (err: any) {
-      setError(err.message || 'Invalid JSON');
+      setError(err.message || "Invalid JSON");
       setIsValid(false);
       if (outputEditorInstanceRef.current) {
-        outputEditorInstanceRef.current.setText('');
+        outputEditorInstanceRef.current.setText("");
       }
     }
   };
@@ -167,9 +167,9 @@ const JsonPrettifier: React.FC = () => {
       inputEditorInstanceRef.current.set({});
     }
     if (outputEditorInstanceRef.current) {
-      outputEditorInstanceRef.current.setText('');
+      outputEditorInstanceRef.current.setText("");
     }
-    setError('');
+    setError("");
     setIsValid(null);
   };
 
@@ -190,7 +190,7 @@ const JsonPrettifier: React.FC = () => {
   if (!isClient) {
     return (
       <div className="json-prettifier max-w-7xl mx-auto py-6">
-        <div className="mb-8 text-center">
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             JSON Prettifier
           </h1>
@@ -204,7 +204,7 @@ const JsonPrettifier: React.FC = () => {
 
   return (
     <div className="json-prettifier max-w-7xl mx-auto py-6 bg-background">
-      <div className="mb-8 text-center">
+      <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4">
           JSON Prettifier
         </h1>
@@ -232,7 +232,7 @@ const JsonPrettifier: React.FC = () => {
             <div
               ref={inputEditorRef}
               className="h-screen border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
-              style={{ minHeight: '500px', maxHeight: '80vh' }}
+              style={{ minHeight: "500px", maxHeight: "80vh" }}
             />
             {isValid !== null && (
               <div className="mt-2 text-sm">
@@ -311,7 +311,7 @@ const JsonPrettifier: React.FC = () => {
             <div
               ref={outputEditorRef}
               className="h-screen border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
-              style={{ minHeight: '500px', maxHeight: '80vh' }}
+              style={{ minHeight: "500px", maxHeight: "80vh" }}
             />
           </div>
 
@@ -496,7 +496,7 @@ const JsonPrettifier: React.FC = () => {
               Code Editor
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-              The code editor is powered by{' '}
+              The code editor is powered by{" "}
               <a
                 href="http://ace.c9.io/"
                 target="_blank"
@@ -505,7 +505,7 @@ const JsonPrettifier: React.FC = () => {
               >
                 Ace Editor
               </a>
-              . This editor's shortcut keys are described{' '}
+              . This editor's shortcut keys are described{" "}
               <a
                 href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts"
                 target="_blank"
