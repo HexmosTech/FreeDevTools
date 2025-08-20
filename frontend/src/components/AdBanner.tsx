@@ -1,66 +1,80 @@
-import React, { Component, useState, type ErrorInfo } from 'react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import React, { Component, type ErrorInfo } from "react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-// Import ad images
-import ad1Image from '../assets/ad1.png';
-import ad2Image from '../assets/ad2.png';
-import ad3Image from '../assets/ad3.png';
-import ad4Image from '../assets/ad4.png';
+// Import ad images using Astro's image handling
+import ad1Image from "../assets/ad1.png";
+import ad2Image from "../assets/ad2.png";
+import ad3Image from "../assets/ad3.png";
+import ad4Image from "../assets/ad4.png";
 
 // TypeScript interfaces
 interface AdData {
   id: string;
   title: string;
   description: string;
-  image: string | ImageMetadata;
+  image: any; // Allow any type for imported images
   link?: string;
 }
 
-// Type for imported image metadata
-interface ImageMetadata {
-  src: string;
-  width: number;
-  height: number;
-  format: string;
-}
-
-// Utility function to extract image source
-const getImageSrc = (image: string | ImageMetadata): string => {
-  if (typeof image === 'string') {
+// Utility function to extract image source from imported images
+const getImageSrc = (image: any): string => {
+  if (typeof image === "string") {
     return image;
   }
-  return image.src || '';
+
+  if (!image) {
+    return "";
+  }
+
+  // Handle Astro ImageMetadata
+  if (image.src) {
+    return image.src;
+  }
+
+  // Handle imported image modules
+  if (image.default) {
+    return image.default;
+  }
+
+  // Try other possible properties
+  if (image.url) return image.url;
+
+  console.warn("getImageSrc: could not extract source from image:", image);
+  return "";
 };
 
 // Utility function to validate ad data
 const validateAdData = (ads: AdData[]): AdData[] => {
-  return ads.filter(ad => {
+  return ads.filter((ad) => {
     // Check required fields
     if (!ad.id || !ad.title || !ad.description || !ad.image) {
-      console.warn('AdBanner: Invalid ad data found - missing required fields:', ad);
+      console.warn(
+        "AdBanner: Invalid ad data found - missing required fields:",
+        ad
+      );
       return false;
     }
 
     // Validate image source
     const imageSrc = getImageSrc(ad.image);
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`AdBanner: Validating ad ${ad.id}, image source:`, imageSrc);
     }
 
     if (!imageSrc) {
-      console.warn('AdBanner: Invalid image source for ad:', ad.id, ad.image);
+      console.warn("AdBanner: Invalid image source for ad:", ad.id);
       return false;
     }
 
     // Validate link format if provided
-    if (ad.link && typeof ad.link !== 'string') {
-      console.warn('AdBanner: Invalid link format for ad:', ad.id);
+    if (ad.link && typeof ad.link !== "string") {
+      console.warn("AdBanner: Invalid link format for ad:", ad.id);
       return false;
     }
 
@@ -79,7 +93,10 @@ class SwiperErrorBoundary extends Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode; fallback?: React.ReactNode }) {
+  constructor(props: {
+    children: React.ReactNode;
+    fallback?: React.ReactNode;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -89,20 +106,32 @@ class SwiperErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.warn('Swiper Error Boundary caught an error:', error, errorInfo);
+    console.warn("Swiper Error Boundary caught an error:", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || (
-        <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-xl p-6 text-center">
-          <div className="text-slate-600 dark:text-slate-300">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            <p className="text-sm">Advertisement display temporarily unavailable</p>
+      return (
+        this.props.fallback || (
+          <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-xl p-6 text-center">
+            <div className="text-slate-600 dark:text-slate-300">
+              <svg
+                className="w-8 h-8 mx-auto mb-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <p className="text-sm">
+                Advertisement display temporarily unavailable
+              </p>
+            </div>
           </div>
-        </div>
+        )
       );
     }
 
@@ -110,162 +139,120 @@ class SwiperErrorBoundary extends Component<
   }
 }
 
-// Debug image imports (remove in production)
-if (process.env.NODE_ENV === 'development') {
-  console.log('Image imports:', {
-    ad1Image,
-    ad2Image,
-    ad3Image,
-    ad4Image
-  });
-}
+// Debug image imports
+console.log("Ad image imports:", {
+  ad1Image,
+  ad2Image,
+  ad3Image,
+  ad4Image,
+});
 
 // Advertisement data using existing ad images
 const adData: AdData[] = [
   {
-    id: 'livereview-1',
-    title: 'LiveReview',
-    description: 'The AI reviewer that transforms both code quality and team performance',
+    id: "livereview-1",
+    title: "LiveReview",
+    description:
+      "The AI reviewer that transforms both code quality and team performance",
     image: ad1Image,
-    link: 'https://hexmos.com/livereview/'
+    link: "https://hexmos.com/livereview/",
   },
   {
-    id: 'livereview-2',
-    title: 'LiveReview',
-    description: 'The AI reviewer that transforms both code quality and team performance',
+    id: "livereview-2",
+    title: "LiveReview",
+    description:
+      "The AI reviewer that transforms both code quality and team performance",
     image: ad2Image,
-    link: 'https://hexmos.com/livereview/'
+    link: "https://hexmos.com/livereview/",
   },
   {
-    id: 'livereview-3',
-    title: 'LiveReview',
-    description: 'The AI reviewer that transforms both code quality and team performance',
+    id: "livereview-3",
+    title: "LiveReview",
+    description:
+      "The AI reviewer that transforms both code quality and team performance",
     image: ad3Image,
-    link: 'https://hexmos.com/livereview/'
+    link: "https://hexmos.com/livereview/",
   },
   {
-    id: 'livereview-4',
-    title: 'LiveReview',
-    description: 'The AI reviewer that transforms both code quality and team performance',
+    id: "livereview-4",
+    title: "LiveReview",
+    description:
+      "The AI reviewer that transforms both code quality and team performance",
     image: ad4Image,
-    link: 'https://hexmos.com/livereview/'
-  }
+    link: "https://hexmos.com/livereview/",
+  },
 ];
 
 // Component for handling image loading with error handling
 interface AdImageProps {
-  src: string | ImageMetadata;
+  src: any; // Allow any type for imported images
   alt: string;
   className?: string;
-  loading?: 'lazy' | 'eager';
 }
 
-const AdImage: React.FC<AdImageProps> = ({ src, alt, className = '', loading = 'eager' }) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  // Handle both string URLs and ImageMetadata objects
+const AdImage: React.FC<AdImageProps> = ({ src, alt, className = "" }) => {
+  // Extract the actual image source
   const imageSrc = getImageSrc(src);
 
-  const handleImageLoad = () => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Image loaded successfully:', imageSrc);
-    }
-    setImageLoaded(true);
-    setImageError(false);
-  };
-
-  const handleImageError = () => {
-    console.warn('Image failed to load:', imageSrc);
-    setImageError(true);
-    setImageLoaded(false);
-  };
-
-  if (imageError) {
-    return (
-      <div className={`bg-slate-200 dark:bg-slate-600 flex items-center justify-center ${className}`}>
-        <div className="text-center p-4">
-          <div className="text-slate-400 dark:text-slate-500 text-sm">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-            </svg>
-            <span>Image unavailable</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={`relative ${className}`}>
-      {!imageLoaded && (
-        <div className="absolute inset-0 bg-slate-100 dark:bg-slate-700 animate-pulse flex items-center justify-center">
-          <div className="text-slate-400 dark:text-slate-500">
-            <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </div>
-        </div>
-      )}
-      <img
-        src={imageSrc}
-        alt={alt}
-        className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
-        loading={loading}
-        onLoad={handleImageLoad}
-        onError={handleImageError}
-        decoding="async"
-      />
-    </div>
+    <img
+      src={imageSrc}
+      alt={alt}
+      className={`w-full h-full object-cover ${className}`}
+    />
   );
 };
 
 const AdBanner: React.FC<AdBannerProps> = ({
-  className = '',
+  className = "",
   autoplay = true,
-  autoplayDelay = 5000
+  autoplayDelay = 5000,
 }) => {
-  // Preload the first few images
-  React.useEffect(() => {
-    const preloadImages = [ad1Image, ad2Image, ad3Image, ad4Image];
-    preloadImages.forEach((img, index) => {
-      const imageSrc = getImageSrc(img);
-      if (imageSrc) {
-        const preloadImg = new Image();
-        preloadImg.src = imageSrc;
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`Preloading image ${index + 1}:`, imageSrc);
-        }
-      }
-    });
-  }, []);
-
   try {
     // Validate ad data and filter out invalid entries
     const validAdData = validateAdData(adData);
 
     // If no valid ads, show fallback
     if (validAdData.length === 0) {
-      console.warn('AdBanner: No valid advertisement data available');
+      console.warn("AdBanner: No valid advertisement data available");
       return (
         <div className={`ad-banner ${className}`}>
           <div className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 w-80 z-40">
             <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-6 text-center border border-slate-200 dark:border-slate-700 shadow-xl">
               <div className="text-slate-400 dark:text-slate-500 mb-2">
-                <svg className="w-8 h-8 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                <svg
+                  className="w-8 h-8 mx-auto"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
-              <p className="text-slate-600 dark:text-slate-300 text-sm">No advertisements available</p>
+              <p className="text-slate-600 dark:text-slate-300 text-sm">
+                No advertisements available
+              </p>
             </div>
           </div>
-          <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-b-2 border-slate-200 dark:border-slate-700 h-16 flex items-center justify-center shadow-lg">
+          <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-b-2 border-slate-200 dark:border-slate-700 h-20 flex items-center justify-center shadow-lg">
             <div className="flex items-center space-x-2">
-              <svg className="w-4 h-4 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              <svg
+                className="w-4 h-4 text-slate-400 dark:text-slate-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
               </svg>
-              <p className="text-slate-600 dark:text-slate-300 text-sm">No advertisements available</p>
+              <p className="text-slate-600 dark:text-slate-300 text-sm">
+                No advertisements available
+              </p>
             </div>
           </div>
         </div>
@@ -275,51 +262,55 @@ const AdBanner: React.FC<AdBannerProps> = ({
     return (
       <div className={`ad-banner ${className}`}>
         {/* Desktop/Laptop Layout - Fixed Right */}
-        <div className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 w-80 z-40">
+        <div
+          className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 w-80 z-40"
+          style={{ height: "500px" }}
+        >
           <SwiperErrorBoundary>
             <Swiper
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={0}
               slidesPerView={1}
-              autoplay={autoplay ? {
-                delay: autoplayDelay,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              } : false}
+              autoplay={
+                autoplay
+                  ? {
+                      delay: autoplayDelay,
+                      disableOnInteraction: false,
+                      pauseOnMouseEnter: true,
+                    }
+                  : false
+              }
               navigation={true}
               pagination={{
                 clickable: true,
-                dynamicBullets: true
+                dynamicBullets: true,
               }}
-              loop={true}
+              loop={validAdData.length > 1}
               watchSlidesProgress={true}
               observer={true}
               observeParents={true}
-              preloadImages={true}
-              updateOnImagesReady={true}
-              className="rounded-xl shadow-2xl hover:shadow-neon transition-all duration-500 group"
+              className="rounded-xl shadow-2xl hover:shadow-purple-500 transition-all duration-500 group h-full"
               onSwiper={(swiper) => {
                 try {
                   swiper.update();
                 } catch (e) {
-                  console.warn('Desktop swiper update failed:', e);
+                  console.warn("Desktop swiper update failed:", e);
                 }
               }}
             >
               {validAdData.map((ad) => (
                 <SwiperSlide key={ad.id}>
-                  <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 hover:border-neon dark:hover:border-neon transition-all duration-300 group-hover:scale-105">
-                    <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 group-hover:scale-105">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
                       <AdImage
                         src={ad.image}
                         alt={ad.title}
                         className="w-full h-full hover:scale-110 transition-transform duration-500"
-                        loading="eager"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     <div className="p-5 bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900">
-                      <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 mb-2 hover:text-neon dark:hover:text-neon transition-colors duration-300">
+                      <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 mb-2 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300">
                         {ad.title}
                       </h3>
                       <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
@@ -330,11 +321,25 @@ const AdBanner: React.FC<AdBannerProps> = ({
                           href={ad.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-full bg-gradient-to-r from-neon-dark to-neon hover:from-neon hover:to-neon-light text-white text-sm font-semibold px-4 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-neon/25 group"
+                          className="inline-flex items-center justify-center w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white text-sm font-semibold px-4 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 group"
+                          style={{
+                            background:
+                              "linear-gradient(to right, #8129D9, #9333ea)",
+                          }}
                         >
                           <span>Learn More</span>
-                          <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          <svg
+                            className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
                           </svg>
                         </a>
                       )}
@@ -353,27 +358,29 @@ const AdBanner: React.FC<AdBannerProps> = ({
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={0}
               slidesPerView={1}
-              autoplay={autoplay ? {
-                delay: autoplayDelay,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              } : false}
+              autoplay={
+                autoplay
+                  ? {
+                      delay: autoplayDelay,
+                      disableOnInteraction: false,
+                      pauseOnMouseEnter: true,
+                    }
+                  : false
+              }
               pagination={{
                 clickable: true,
-                dynamicBullets: true
+                dynamicBullets: true,
               }}
-              loop={true}
+              loop={validAdData.length > 1}
               watchSlidesProgress={true}
               observer={true}
               observeParents={true}
-              preloadImages={true}
-              updateOnImagesReady={true}
-              className="h-36 md:h-44"
+              className="h-52 md:h-60"
               onSwiper={(swiper) => {
                 try {
                   swiper.update();
                 } catch (e) {
-                  console.warn('Mobile swiper update failed:', e);
+                  console.warn("Mobile swiper update failed:", e);
                 }
               }}
             >
@@ -385,12 +392,11 @@ const AdBanner: React.FC<AdBannerProps> = ({
                         src={ad.image}
                         alt={ad.title}
                         className="w-full h-full hover:scale-105 transition-transform duration-300"
-                        loading="eager"
                       />
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10 dark:to-black/10"></div>
                     </div>
                     <div className="flex-1 p-3 md:p-5 flex flex-col justify-center space-y-2">
-                      <h3 className="font-bold text-sm md:text-lg text-slate-900 dark:text-slate-100 hover:text-neon dark:hover:text-neon transition-colors duration-300 leading-tight">
+                      <h3 className="font-bold text-sm md:text-lg text-slate-900 dark:text-slate-100 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300 leading-tight">
                         {ad.title}
                       </h3>
                       <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 md:line-clamp-3">
@@ -401,11 +407,25 @@ const AdBanner: React.FC<AdBannerProps> = ({
                           href={ad.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center bg-gradient-to-r from-neon-dark to-neon hover:from-neon hover:to-neon-light text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-fit group"
+                          className="inline-flex items-center bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-fit group"
+                          style={{
+                            background:
+                              "linear-gradient(to right, #8129D9, #9333ea)",
+                          }}
                         >
                           <span>Learn More</span>
-                          <svg className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          <svg
+                            className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2 group-hover:translate-x-1 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
                           </svg>
                         </a>
                       )}
@@ -419,7 +439,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
       </div>
     );
   } catch (error) {
-    console.error('AdBanner: Error rendering component:', error);
+    console.error("AdBanner: Error rendering component:", error);
 
     // Return error fallback UI
     return (
@@ -427,19 +447,39 @@ const AdBanner: React.FC<AdBannerProps> = ({
         <div className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 w-80 z-40">
           <div className="bg-gradient-to-b from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center shadow-xl">
             <div className="text-red-400 mb-2">
-              <svg className="w-8 h-8 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg
+                className="w-8 h-8 mx-auto"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
-            <p className="text-red-600 dark:text-red-400 text-sm font-medium">Advertisement banner unavailable</p>
+            <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+              Advertisement banner unavailable
+            </p>
           </div>
         </div>
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border-b-2 border-red-200 dark:border-red-800 h-16 flex items-center justify-center shadow-lg">
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border-b-2 border-red-200 dark:border-red-800 h-20 flex items-center justify-center shadow-lg">
           <div className="flex items-center space-x-2">
-            <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <svg
+              className="w-4 h-4 text-red-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
             </svg>
-            <p className="text-red-600 dark:text-red-400 text-sm font-medium">Banner unavailable</p>
+            <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+              Banner unavailable
+            </p>
           </div>
         </div>
       </div>

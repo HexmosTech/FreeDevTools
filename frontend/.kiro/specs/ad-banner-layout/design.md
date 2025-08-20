@@ -179,3 +179,88 @@ The design follows a mobile-first responsive strategy:
 2. Progressive enhancement for tablets
 3. Desktop-specific positioning and sizing
 4. Touch-friendly controls on mobile devices
+
+
+
+┌───────────────────────────────-───────────────┐
+│                  Page Title                   │
+│                Page Description               │
+├───────────────────────────────-───────────────┤
+│          Main Content         │    Banner     │
+│                               │    (Fixed)    │
+└───────────────────────────────┴───────────────┘
+
+┌───────────────────────────────┐
+│           Page Title          │
+│        Page Description       │
+├───────────────────────────────┤
+│            Banner             │
+├───────────────────────────────┤
+│         Main Content          │
+└───────────────────────────────┘
+
+
+what is happening is
+
+The banner is coming on the right that is true, but the heading is also moving to left. 
+
+That ahoudlnt happen.
+
+
+
+The title & description of the page should always be in center. 
+
+
+
+The content can be on the left side and banner on right.
+
+
+
+See the image, the title has also moved to left. WHich is wrong. 
+
+The layouting has issue.
+
+
+
+it should be like
+
+┌───────────────────────────────-───────────────┐
+
+│                  Page Title                   │
+
+│                Page Description               │
+
+├───────────────────────────────-───────────────┤
+
+│          Main Content         │    Banner     │
+
+│                               │    (Fixed)    │
+
+└───────────────────────────────┴───────────────┘
+
+
+
+i think you may need to make changes in the baselayout file, and tools present in the tools directory to pass page title and page description as props or something not sure. But yeah
+
+
+
+then in phone view it should be like this
+
+┌───────────────────────────────┐
+
+│           Page Title          │
+
+│        Page Description       │
+
+├───────────────────────────────┤
+
+│            Banner             │
+
+├───────────────────────────────┤
+
+│         Main Content          │
+
+└───────────────────────────────┘
+
+
+
