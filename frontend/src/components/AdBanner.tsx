@@ -352,7 +352,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
               watchSlidesProgress={true}
               observer={true}
               observeParents={true}
-              className="rounded-xl shadow-2xl hover:shadow-purple-500 transition-all duration-500 group h-full"
+              className="rounded-xl shadow-md hover:shadow-purple-500 transition-all duration-500 group h-full"
               onSwiper={(swiper) => {
                 try {
                   swiper.update();
@@ -363,7 +363,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
             >
               {validAdData.map((ad) => (
                 <SwiperSlide key={ad.id}>
-                  <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 group-hover:scale-105">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 transition-all duration-300">
                     <div className="aspect-[4/4] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
                       <AdImage
                         src={ad.image}
