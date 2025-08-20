@@ -364,11 +364,11 @@ const AdBanner: React.FC<AdBannerProps> = ({
               {validAdData.map((ad) => (
                 <SwiperSlide key={ad.id}>
                   <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 group-hover:scale-105">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
+                    <div className="aspect-[4/4] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
                       <AdImage
                         src={ad.image}
                         alt={ad.title}
-                        className="w-full h-full hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
@@ -446,7 +446,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
                       <AdImage
                         src={ad.image}
                         alt={ad.title}
-                        className="w-full h-full hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10 dark:to-black/10"></div>
                     </div>
