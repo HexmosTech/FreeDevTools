@@ -330,7 +330,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
                           href={ad.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-neon hover:to-neon-dark text-white text-sm font-semibold px-4 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-neon/25 group"
+                          className="inline-flex items-center justify-center w-full bg-gradient-to-r from-neon-dark to-neon hover:from-neon hover:to-neon-light text-white text-sm font-semibold px-4 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-neon/25 group"
                         >
                           <span>Learn More</span>
                           <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,7 +401,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
                           href={ad.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-neon hover:to-neon-dark text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-fit group"
+                          className="inline-flex items-center bg-gradient-to-r from-neon-dark to-neon hover:from-neon hover:to-neon-light text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-fit group"
                         >
                           <span>Learn More</span>
                           <svg className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

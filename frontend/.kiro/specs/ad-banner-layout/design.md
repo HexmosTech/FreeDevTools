@@ -142,12 +142,12 @@ The design will use the existing site colors:
 - **Text:** Slate variants for contrast
 
 ### Neon Color Definitions
-Since neon colors are used but not defined, they need to be added to tailwind.config.js:
+The neon colors use the Kiro purple theme and are defined in tailwind.config.js:
 ```javascript
 neon: {
-  DEFAULT: '#00ff88',
-  light: '#4fffb0',
-  dark: '#00cc6a'
+  DEFAULT: '#8129D9',
+  light: '#9d4edd',
+  dark: '#6a1b9a'
 }
 ```
 
