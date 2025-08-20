@@ -200,7 +200,7 @@ const tool = getToolByKey('${toolKey}');
 ---
 
 <BaseLayout 
-  title={\`\${tool.name} - TODO: Add subtitle | Free Dev Tools\`}
+  title={\`\${tool.name} - TODO: Add subtitle | Free DevTools\`}
   description={tool.description}
   canonical={tool.canonical}
   themeColor={tool.themeColor}
