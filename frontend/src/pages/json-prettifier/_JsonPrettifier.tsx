@@ -21,7 +21,7 @@ const JsonPrettifier: React.FC = () => {
 
     const initEditors = async () => {
       try {
-        const { default: JSONEditor } = await import("jsoneditor");
+        const JSONEditor = (await import("jsoneditor")).default;
         await import("../../assets/jsoneditor.min.css");
 
         // Initialize input editor (code mode for user input)
