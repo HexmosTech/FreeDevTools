@@ -109,39 +109,6 @@ const getImageSrc = (image: any): string => {
   return "";
 };
 
-// Utility function to validate ad data
-const validateAdData = (ads: AdData[]): AdData[] => {
-  return ads.filter((ad) => {
-    // Check required fields
-    if (!ad.id || !ad.title || !ad.description || !ad.image) {
-      console.warn(
-        "AdBanner: Invalid ad data found - missing required fields:",
-        ad
-      );
-      return false;
-    }
-
-    // Validate image source
-    const imageSrc = getImageSrc(ad.image);
-    if (process.env.NODE_ENV === "development") {
-      console.log(`AdBanner: Validating ad ${ad.id}, image source:`, imageSrc);
-    }
-
-    if (!imageSrc) {
-      console.warn("AdBanner: Invalid image source for ad:", ad.id);
-      return false;
-    }
-
-    // Validate link format if provided
-    if (ad.link && typeof ad.link !== "string") {
-      console.warn("AdBanner: Invalid link format for ad:", ad.id);
-      return false;
-    }
-
-    return true;
-  });
-};
-
 interface AdBannerProps {
   className?: string;
   autoplay?: boolean;
@@ -281,7 +248,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
 
   try {
     // Validate ad data and filter out invalid entries
-    const validAdData = validateAdData(adData);
+    const validAdData = adData;
 
     // If no valid ads, show fallback
     if (validAdData.length === 0) {
