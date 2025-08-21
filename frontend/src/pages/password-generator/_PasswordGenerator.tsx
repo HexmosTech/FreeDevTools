@@ -15,6 +15,7 @@ interface PasswordOptions {
 
 const PasswordGenerator: React.FC = () => {
   const [password, setPassword] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [options, setOptions] = useState<PasswordOptions>({
     length: 12,
     includeUppercase: true,
@@ -37,7 +38,7 @@ const PasswordGenerator: React.FC = () => {
     symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
     // Easy to read excludes similar looking characters
     uppercaseEasy: "ABCDEFGHJKLMNPQRSTUVWXYZ",
-    lowercaseEasy: "abcdefghjkmnpqrstuvwxyz",
+    lowercaseEasy: "abcdefghjkmnpqrstvwxyz",
     numbersEasy: "23456789",
     symbolsEasy: "!@#$%&*+-=?",
     // Easy to say excludes hard to pronounce combinations
@@ -53,23 +54,30 @@ const PasswordGenerator: React.FC = () => {
     "image", "jewel", "knife", "light", "magic", "novel", "ocean", "peace",
     "quick", "river", "stone", "table", "unity", "voice", "water", "young",
     "zebra", "angel", "beach", "chair", "dream", "eagle", "frost", "giant",
-    "house", "ivory", "jewel", "lunar", "music", "night", "olive", "plant",
-    "quest", "royal", "solar", "tiger", "ultra", "video", "world", "youth",
-    "amber", "bloom", "coral", "delta", "ember", "focus", "grace", "honor",
-    "index", "juice", "karma", "laser", "moral", "ninja", "opera", "piano",
-    "quilt", "radix", "smile", "trend", "urban", "vital", "wheat", "xerus"
+    "house", "ivory", "lunar", "music", "night", "olive", "plant", "quest",
+    "royal", "solar", "tiger", "ultra", "video", "world", "youth", "amber",
+    "bloom", "coral", "delta", "ember", "focus", "grace", "honor", "index",
+    "juice", "karma", "laser", "moral", "ninja", "opera", "piano", "quilt",
+    "radix", "smile", "trend", "urban", "vital", "wheat", "crystal", "bridge",
+    "garden", "forest", "sunset", "winter", "summer", "spring", "copper",
+    "silver", "golden", "purple", "orange", "yellow", "violet", "fabric",
+    "castle", "rocket", "flower", "butter", "coffee", "cookie", "rainbow",
+    "wizard", "dragon", "unicorn", "planet", "galaxy", "cosmic", "meteor"
   ];
 
   const generatePassword = () => {
     if (options.useWords) {
       // Generate word-based password
-      let wordPassword = "";
       const selectedWords = [];
       
-      // Select random words
-      for (let i = 0; i < options.wordCount; i++) {
+      // Select random words (ensure no duplicates)
+      const usedWords = new Set<string>();
+      while (selectedWords.length < options.wordCount) {
         const randomWord = commonWords[Math.floor(Math.random() * commonWords.length)];
-        selectedWords.push(randomWord);
+        if (!usedWords.has(randomWord)) {
+          selectedWords.push(randomWord);
+          usedWords.add(randomWord);
+        }
       }
       
       // Apply case transformations
@@ -85,12 +93,12 @@ const PasswordGenerator: React.FC = () => {
       });
       
       // Join words with separator
-      wordPassword = transformedWords.join(options.separator);
+      let wordPassword = transformedWords.join(options.separator);
       
       // Add numbers if requested
       if (options.includeNumbers) {
         const numbers = Math.floor(Math.random() * 999) + 1;
-        wordPassword += options.separator + numbers;
+        wordPassword += (options.separator || "") + numbers;
       }
       
       // Add symbols if requested
@@ -194,8 +202,12 @@ const PasswordGenerator: React.FC = () => {
     }
   };
 
-  const updateOption = (key: keyof PasswordOptions, value: boolean | number) => {
+  const updateOption = (key: keyof PasswordOptions, value: boolean | number | string) => {
     setOptions(prev => ({ ...prev, [key]: value }));
+  };
+
+  const applyPreset = (preset: Partial<PasswordOptions>) => {
+    setOptions(prev => ({ ...prev, ...preset }));
   };
 
   // Generate password on component mount and when options change
@@ -212,7 +224,7 @@ const PasswordGenerator: React.FC = () => {
           Password Generator
         </h1>
         <p className="text-slate-600 dark:text-slate-400 text-lg">
-          Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and readability options.
+          Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options.
         </p>
       </div>
 
@@ -224,45 +236,32 @@ const PasswordGenerator: React.FC = () => {
           </label>
           <button
             onClick={generatePassword}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
-            🔄 Regenerate
+            Generate New
           </button>
         </div>
         
         <div className="relative mb-4">
           <div className="flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-            <code className="flex-1 text-lg font-mono text-slate-900 dark:text-slate-100 break-all">
+            <code className="flex-1 text-lg font-mono text-slate-900 dark:text-slate-100 break-all select-all">
               {password || "Click generate to create a password"}
             </code>
             <button
               onClick={handleCopy}
-              className="ml-3 p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+              className="ml-3 px-3 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
               title="Copy to clipboard"
             >
-              {copySuccess ? (
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              )}
+              {copySuccess ? "Copied!" : "Copy"}
             </button>
           </div>
-          {copySuccess && (
-            <div className="absolute top-full left-0 mt-2 px-3 py-1 bg-green-600 text-white text-sm rounded shadow-lg">
-              Copied to clipboard!
-            </div>
-          )}
         </div>
 
         {/* Password Strength Indicator */}
-        <div className="mb-2">
-          <div className="flex justify-between items-center mb-1">
+        <div>
+          <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Password Strength</span>
-            <span className={`text-sm font-medium ${strengthInfo.color.replace('bg-', 'text-')}`}>
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
               {strengthInfo.strength}
             </span>
           </div>
@@ -275,124 +274,224 @@ const PasswordGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* Password Options */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Options</h3>
+      {/* Quick Presets */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">Quick Presets</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button
+            onClick={() => applyPreset({ length: 16, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
+            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          >
+            <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Strong</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">16 chars, all types</div>
+          </button>
           
-          {/* Length Slider */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Password Length: {options.length}
-            </label>
-            <input
-              type="range"
-              min="4"
-              max="128"
-              value={options.length}
-              onChange={(e) => updateOption('length', parseInt(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>4</span>
-              <span>128</span>
-            </div>
-          </div>
-
-          {/* Character Types */}
-          <div className="space-y-3">
-            <h4 className="font-medium text-slate-700 dark:text-slate-300">Character Types</h4>
-            
-            {[
-              { key: 'includeUppercase' as keyof PasswordOptions, label: 'Uppercase Letters (A-Z)', example: 'ABC' },
-              { key: 'includeLowercase' as keyof PasswordOptions, label: 'Lowercase Letters (a-z)', example: 'abc' },
-              { key: 'includeNumbers' as keyof PasswordOptions, label: 'Numbers (0-9)', example: '123' },
-              { key: 'includeSymbols' as keyof PasswordOptions, label: 'Symbols (!@#$%)', example: '!@#' },
-            ].map(({ key, label, example }) => (
-              <label key={key} className="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={options[key] as boolean}
-                  onChange={(e) => updateOption(key, e.target.checked)}
-                  className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <span className="text-slate-700 dark:text-slate-300">{label}</span>
-                <code className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">
-                  {example}
-                </code>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Special Options</h3>
+          <button
+            onClick={() => applyPreset({ length: 12, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: false, useWords: false })}
+            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          >
+            <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Easy to Type</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">12 chars, readable</div>
+          </button>
           
-          {/* Special Options */}
-          <div className="space-y-3">
-            {[
-              { 
-                key: 'easyToRead' as keyof PasswordOptions, 
-                label: 'Easy to Read', 
-                description: 'Excludes similar looking characters (0, O, l, 1, I)' 
-              },
-              { 
-                key: 'easyToSay' as keyof PasswordOptions, 
-                label: 'Easy to Say', 
-                description: 'Excludes hard to pronounce character combinations' 
-              },
-            ].map(({ key, label, description }) => (
-              <div key={key} className="space-y-1">
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={options[key] as boolean}
-                    onChange={(e) => updateOption(key, e.target.checked)}
-                    className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span className="text-slate-700 dark:text-slate-300 font-medium">{label}</span>
-                </label>
-                <p className="text-sm text-slate-500 dark:text-slate-400 ml-7">{description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Quick Presets */}
-          <div className="space-y-3">
-            <h4 className="font-medium text-slate-700 dark:text-slate-300">Quick Presets</h4>
-            <div className="space-y-2">
-              {[
-                { name: 'Strong & Secure', opts: { length: 16, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false } },
-                { name: 'Easy to Type', opts: { length: 12, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: false } },
-                { name: 'Memorable', opts: { length: 10, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: true } },
-                { name: 'Ultra Secure', opts: { length: 32, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false } },
-              ].map(({ name, opts }) => (
-                <button
-                  key={name}
-                  onClick={() => setOptions(opts)}
-                  className="w-full text-left px-3 py-2 text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded transition-colors"
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
-          </div>
+          <button
+            onClick={() => applyPreset({ wordCount: 3, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, useWords: true, separator: "-" })}
+            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          >
+            <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Memorable</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">3 words + numbers</div>
+          </button>
+          
+          <button
+            onClick={() => applyPreset({ length: 32, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
+            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          >
+            <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Ultra Secure</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">32 chars, maximum</div>
+          </button>
         </div>
       </div>
 
+      {/* Password Type Selection */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">Password Type</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={() => updateOption('useWords', false)}
+            className={`p-4 rounded-lg border transition-colors text-left ${
+              !options.useWords 
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
+                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+            }`}
+          >
+            <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Random characters, numbers, and symbols</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Kj8$mP2@xR9!</p>
+          </button>
+          
+          <button
+            onClick={() => updateOption('useWords', true)}
+            className={`p-4 rounded-lg border transition-colors text-left ${
+              options.useWords 
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
+                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+            }`}
+          >
+            <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Memorable dictionary words with separators</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Apple-River-Magic-42!</p>
+          </button>
+        </div>
+      </div>
+
+      {/* Basic Options */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Options</h3>
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            {showAdvanced ? 'Hide Advanced' : 'Show Advanced Options'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            {options.useWords ? (
+              <>
+                {/* Word Count */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Number of Words: {options.wordCount}
+                  </label>
+                  <input
+                    type="range"
+                    min="2"
+                    max="6"
+                    value={options.wordCount}
+                    onChange={(e) => updateOption('wordCount', parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
+                  />
+                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                    <span>2</span>
+                    <span>6</span>
+                  </div>
+                </div>
+
+                {/* Separator */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Word Separator
+                  </label>
+                  <select
+                    value={options.separator}
+                    onChange={(e) => updateOption('separator', e.target.value)}
+                    className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+                  >
+                    <option value="-">Dash (-)</option>
+                    <option value="_">Underscore (_)</option>
+                    <option value=".">Dot (.)</option>
+                    <option value="">No separator</option>
+                  </select>
+                </div>
+              </>
+            ) : (
+              /* Length Slider for character-based */
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Password Length: {options.length}
+                </label>
+                <input
+                  type="range"
+                  min="4"
+                  max="128"
+                  value={options.length}
+                  onChange={(e) => updateOption('length', parseInt(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
+                />
+                <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <span>4</span>
+                  <span>128</span>
+                </div>
+              </div>
+            )}
+
+            {/* Character Types */}
+            <div>
+              <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-3">Include Characters</h4>
+              <div className="space-y-2">
+                {[
+                  { key: 'includeUppercase' as keyof PasswordOptions, label: 'Uppercase Letters (A-Z)' },
+                  { key: 'includeLowercase' as keyof PasswordOptions, label: 'Lowercase Letters (a-z)' },
+                  { key: 'includeNumbers' as keyof PasswordOptions, label: 'Numbers (0-9)' },
+                  { key: 'includeSymbols' as keyof PasswordOptions, label: 'Symbols (!@#$%)' },
+                ].map(({ key, label }) => (
+                  <label key={key} className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={options[key] as boolean}
+                      onChange={(e) => updateOption(key, e.target.checked)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <span className="text-slate-700 dark:text-slate-300">{label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Advanced Options */}
+          {showAdvanced && (
+            <div className="space-y-4">
+              <h4 className="font-medium text-slate-700 dark:text-slate-300">Advanced Options</h4>
+              
+              <div className="space-y-2">
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={options.easyToRead}
+                    onChange={(e) => updateOption('easyToRead', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <div>
+                    <span className="text-slate-700 dark:text-slate-300 font-medium">Easy to Read</span>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Excludes similar looking characters (0, O, l, 1, I)</p>
+                  </div>
+                </label>
+                
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={options.easyToSay}
+                    onChange={(e) => updateOption('easyToSay', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <div>
+                    <span className="text-slate-700 dark:text-slate-300 font-medium">Easy to Say</span>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Excludes hard to pronounce combinations</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* About Section */}
       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
           About Password Generator
         </h3>
-        <div className="text-slate-600 dark:text-slate-400 space-y-2">
+        <div className="text-slate-600 dark:text-slate-400 space-y-2 text-sm">
           <p>
-            Create secure, customizable passwords with our advanced password generator. Choose from multiple character sets, adjust length, and optimize for readability or pronunciation.
+            Create secure, customizable passwords with our advanced password generator. Choose between random character passwords or memorable word-based passwords for different use cases.
           </p>
           <p>
-            <strong>Security Tips:</strong> Use passwords with at least 12 characters, include multiple character types, avoid common words, and use a unique password for each account.
+            <strong>Security Tips:</strong> Use passwords with at least 12 characters, include multiple character types, avoid common words in important accounts, and use a unique password for each service.
           </p>
           <p>
-            <strong>Common uses:</strong> Account creation, password resets, securing applications, generating API keys, and improving overall cybersecurity.
+            <strong>Word-based passwords</strong> are easier to remember and type, while <strong>character-based passwords</strong> offer maximum entropy for high-security applications.
           </p>
         </div>
       </div>

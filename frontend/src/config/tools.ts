@@ -63,6 +63,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     features: [
       'Customizable password length',
       'Multiple character set options',
+      'Word-based memorable passwords',
       'Readable password generation',
       'Instant password creation',
       'Copy to clipboard',
