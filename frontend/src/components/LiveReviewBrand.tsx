@@ -41,7 +41,7 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
         <div className="text-center">
           <div className={`${currentSize.title} font-semibold `}>
             <span>Live</span>
-            <span className="text-blue-300">Review</span>
+            <span className="text-blue-800">Review</span>
           </div>
           <div className={`${currentSize.subtitle}  opacity-80 leading-tight`}>
             AI-Powered Code Review

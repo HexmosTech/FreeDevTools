@@ -84,24 +84,24 @@ const AdBanner: React.FC = () => {
           href={currentAd.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-64 h-64 bg-blue-200 rounded-xl shadow-lg border border-gray-200 hover:scale-105 hover:shadow-xl transition-all duration-300"
+          className="block w-72 h-72 bg-blue-200 rounded-xl shadow-lg border border-gray-200 hover:scale-105 hover:shadow-xl transition-all duration-300"
         >
           <div className="flex flex-col h-full">
             {/* Content Section */}
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-800 mb-1 leading-tight">
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-800">
+              <h2 className="text-2xl font-extrabold mb-2 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
               </h2>
-              <h3 className="text-base font-semibold text-gray-800 mb-2 leading-tight">
+              <h3 className="text-2xl font-extrabold mb-2 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.subtitle}
               </h3>
-              <p className="text-xs text-gray-800 opacity-90">
+              <p className="text-xl  font-eb-garamond font-medium leading-relaxed my-2">
                 {currentAd.description}
               </p>
             </div>
 
             {/* Branding Section */}
-            <div className="h-20 flex items-center justify-center">
+            <div className="h-30 flex mb-4 items-center justify-center">
               <LiveReviewBrand size="lg" />
             </div>
           </div>
@@ -119,13 +119,13 @@ const AdBanner: React.FC = () => {
           <div className="flex h-32">
             {/* Content Section */}
             <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-              <h2 className="text-xl font-bold text-gray-800 mb-1 leading-tight">
+              <h2 className="text-xl font-bold text-gray-800 mb-1 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
               </h2>
-              <h3 className="text-xl font-semibold text-gray-800 mb-1 leading-tight">
+              <h3 className="text-xl font-semibold text-gray-800 mb-1 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.subtitle}
               </h3>
-              <p className="text-xs text-gray-800 opacity-90">
+              <p className="text-sm text-gray-800 opacity-90 font-eb-garamond font-medium leading-relaxed">
                 {currentAd.description}
               </p>
             </div>

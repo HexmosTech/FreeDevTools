@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'eb-garamond': ['EB Garamond', 'serif'],
+      },
       colors: {
         sidebarContainer: 'rgb(16, 20, 31)',
         background: 'rgb(var(--background))',
@@ -61,7 +64,7 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        'neon': '0 0 10px #8129D9, 0 0 20px #8129D9, 0 0 30px #8129D9',
+        neon: '0 0 10px #8129D9, 0 0 20px #8129D9, 0 0 30px #8129D9',
       },
     },
   },
