@@ -66,7 +66,7 @@ const adVariations: AdVariation[] = [
   }
 ];
 
-const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
+const AdBanner: React.FC<AdBannerProps> = () => {
   const [currentVariation, setCurrentVariation] = useState(0); // Default to first variation (index 0)
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
   const currentAd = adVariations[currentVariation] || adVariations[0]; // Fallback to first if invalid
 
   return (
-    <div className={`ad-banner ${className}`}>
+    <div className="ad-banner">
       {/* Desktop/Laptop Layout - Fixed Right */}
       <div
         className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 z-40"
@@ -118,27 +118,6 @@ const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
                 textColor={currentAd.textColor}
                 showFullSubtitle={true}
               />
-            </div>
-
-            <div className="p-4 bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-full bg-purple-800 text-white text-xs font-semibold px-3 py-2 rounded-lg">
-                  <span>Check it out</span>
-                  <svg
-                    className="w-3 h-3 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </div>
-              </div>
             </div>
           </div>
         </a>
@@ -180,22 +159,6 @@ const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
                 <h3 className="font-bold text-xs md:text-sm text-slate-900 dark:text-slate-100 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300 leading-tight">
                   {currentAd.brandName}
                 </h3>
-                <div className="inline-flex items-center bg-purple-800 text-white text-xs font-semibold px-2 py-1.5 rounded-lg w-fit">
-                  <span>Check it out</span>
-                  <svg
-                    className="w-3 h-3 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </div>
               </div>
             </div>
           </div>
