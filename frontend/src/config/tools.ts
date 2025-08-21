@@ -39,6 +39,36 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       'Copy to clipboard',
     ],
   },
+
+  'password-generator': {
+    name: 'Password Generator',
+    path: '/freedevtools/t/password-generator/',
+    description: 'Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and readability options for maximum security.',
+    category: 'Security Tools',
+    icon: '�',
+    themeColor: '#6366f1',
+    canonical: 'https://hexmos.com/freedevtools/t/password-generator/',
+    keywords: [
+      'password generator',
+      'secure password',
+      'random password',
+      'strong password',
+      'password creator',
+      'cybersecurity',
+      'security tools',
+      'password maker',
+      'custom password',
+      'safe password'
+    ],
+    features: [
+      'Customizable password length',
+      'Multiple character set options',
+      'Readable password generation',
+      'Instant password creation',
+      'Copy to clipboard',
+      'Real-time password strength indicator'
+    ]
+  }
 };
 
 export function getToolByKey(key: string): Tool | undefined {
