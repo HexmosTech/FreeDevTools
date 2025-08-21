@@ -478,6 +478,28 @@ const PasswordGenerator: React.FC = () => {
         </div>
       </div>
 
+      {/* Educational Video */}
+      <div className="mb-8">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          Learn More: Password Security Explained
+        </h3>
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <p className="text-slate-600 dark:text-slate-400 mb-4">
+            Watch this educational video to understand the fundamentals of password security and why strong passwords matter for your digital safety.
+          </p>
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full rounded-lg"
+              src="https://www.youtube.com/embed/vKPGZHoHX8k"
+              title="Password Security Explained"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
       {/* Comprehensive Security Information */}
       <div className="space-y-8">
         {/* Understanding Password Security */}
