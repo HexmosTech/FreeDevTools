@@ -28,8 +28,8 @@ const adVariations: AdVariation[] = [
     brandName: "LiveReview",
     tagline: "The AI reviewer that transforms both code quality and team performance",
     link: "https://hexmos.com/livereview/",
-    backgroundColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-gray-800 dark:text-gray-200"
+    backgroundColor: "bg-blue-200",
+    textColor: "text-gray-800"
   },
   {
     id: "variation-2",
@@ -39,8 +39,8 @@ const adVariations: AdVariation[] = [
     brandName: "LiveReview",
     tagline: "The AI reviewer that transforms both code quality and team performance",
     link: "https://hexmos.com/livereview/",
-    backgroundColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-gray-800 dark:text-gray-200"
+    backgroundColor: "bg-blue-200",
+    textColor: "text-gray-800"
   },
   {
     id: "variation-3",
@@ -50,8 +50,8 @@ const adVariations: AdVariation[] = [
     brandName: "LiveReview",
     tagline: "The AI reviewer that transforms both code quality and team performance",
     link: "https://hexmos.com/livereview/",
-    backgroundColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-gray-800 dark:text-gray-200"
+    backgroundColor: "bg-blue-200",
+    textColor: "text-gray-800"
   },
   {
     id: "variation-4",
@@ -61,8 +61,8 @@ const adVariations: AdVariation[] = [
     brandName: "LiveReview",
     tagline: "The AI reviewer that transforms both code quality and team performance",
     link: "https://hexmos.com/livereview/",
-    backgroundColor: "bg-blue-100 dark:bg-blue-900/30",
-    textColor: "text-gray-800 dark:text-gray-200"
+    backgroundColor: "bg-blue-200",
+    textColor: "text-gray-800"
   }
 ];
 
@@ -97,7 +97,7 @@ const AdBanner: React.FC<AdBannerProps> = () => {
           rel="noopener noreferrer"
           className="block transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 transition-all duration-300">
+          <div className="rounded-xl overflow-hidden shadow-sm border transition-all duration-300">
             {/* Text Banner Section */}
             <div className={`h-[250px] aspect-square ${currentAd.backgroundColor} relative overflow-hidden flex flex-col items-center justify-center p-6 pt-0`}>
               <div className="text-center">
@@ -124,7 +124,7 @@ const AdBanner: React.FC<AdBannerProps> = () => {
       </div>
 
       {/* Tablet/Mobile Layout - Top Fixed */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm m-8">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm m-8">
         <a
           href={currentAd.link}
           target="_blank"
@@ -132,7 +132,7 @@ const AdBanner: React.FC<AdBannerProps> = () => {
           className="block transition-all duration-300 transform hover:scale-105"
         >
           <div className="h-40 md:h-44">
-            <div className="flex h-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300">
+            <div className="flex h-full bg-white hover:bg-slate-50 transition-all duration-300">
               {/* Text Banner Section */}
               <div className={`w-full md:w-1/3 ${currentAd.backgroundColor} flex flex-col items-center justify-center p-3 pt-0 pb-8 relative`}>
                 <div className="text-center">
