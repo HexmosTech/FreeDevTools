@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LiveReviewBrand from "./LiveReviewBrand";
 
-// TypeScript interfaces
 interface AdVariation {
   id: string;
   title: string;
@@ -14,11 +13,6 @@ interface AdVariation {
   textColor: string;
 }
 
-interface AdBannerProps {
-  className?: string;
-}
-
-// Advertisement variations with text content and styling
 const adVariations: AdVariation[] = [
   {
     id: "variation-1",
@@ -66,99 +60,84 @@ const adVariations: AdVariation[] = [
   }
 ];
 
-const AdBanner: React.FC<AdBannerProps> = () => {
-  const [currentVariation, setCurrentVariation] = useState(0); // Default to first variation (index 0)
+const AdBanner: React.FC = () => {
+  const [currentVariation, setCurrentVariation] = useState(0);
 
   useEffect(() => {
-    // Get variation from URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const variationParam = urlParams.get('variation');
-
     if (variationParam) {
       const variationNumber = parseInt(variationParam);
       if (variationNumber >= 1 && variationNumber <= 4) {
-        setCurrentVariation(variationNumber - 1); // Convert to 0-based index
+        setCurrentVariation(variationNumber - 1);
       }
     }
   }, []);
 
-  const currentAd = adVariations[currentVariation] || adVariations[0]; // Fallback to first if invalid
+  const currentAd = adVariations[currentVariation] || adVariations[0];
 
   return (
-    <div className="ad-banner">
-      {/* Desktop/Laptop Layout - Fixed Right */}
-      <div
-        className="hidden lg:block fixed right-10 top-48 z-40"
-        style={{ width: "250px", height: "250px" }}
-      >
+    <>
+      {/* Desktop Layout */}
+      <div className="hidden lg:block fixed right-10 top-48 z-40">
         <a
           href={currentAd.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="block transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          className="block w-64 h-64 bg-blue-200 rounded-xl shadow-lg border border-gray-200 hover:scale-105 hover:shadow-xl transition-all duration-300"
         >
-          <div className="rounded-xl overflow-hidden shadow-sm border transition-all duration-300">
-            {/* Text Banner Section */}
-            <div className={`h-[250px] aspect-square ${currentAd.backgroundColor} relative overflow-hidden flex flex-col items-center justify-center p-6 pt-0`}>
-              <div className="text-center">
-                <h2 className={`text-lg font-bold ${currentAd.textColor} mb-1 leading-tight`}>
-                  {currentAd.title}
-                </h2>
-                <h3 className={`text-base font-semibold ${currentAd.textColor} mb-2 leading-tight`}>
-                  {currentAd.subtitle}
-                </h3>
-                <p className={`text-xs ${currentAd.textColor} opacity-90`}>
-                  {currentAd.description}
-                </p>
-              </div>
+          <div className="flex flex-col h-full">
+            {/* Content Section */}
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+              <h2 className="text-lg font-bold text-gray-800 mb-1 leading-tight">
+                {currentAd.title}
+              </h2>
+              <h3 className="text-base font-semibold text-gray-800 mb-2 leading-tight">
+                {currentAd.subtitle}
+              </h3>
+              <p className="text-xs text-gray-800 opacity-90">
+                {currentAd.description}
+              </p>
+            </div>
 
-              {/* LiveReview Logo and Text - Bottom Right Corner */}
-              <LiveReviewBrand
-                size="lg"
-                textColor={currentAd.textColor}
-                showFullSubtitle={true}
-              />
+            {/* Branding Section */}
+            <div className="h-20 flex items-center justify-center">
+              <LiveReviewBrand size="lg" />
             </div>
           </div>
         </a>
       </div>
 
-      {/* Tablet/Mobile Layout - Top Fixed */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm m-8">
+      {/* Mobile Layout */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40">
         <a
           href={currentAd.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="block transition-all duration-300 transform hover:scale-105"
+          className="block bg-blue-200 border-b border-gray-200 shadow-sm hover:bg-blue-300 transition-colors duration-300"
         >
-          <div className="h-40 md:h-44">
-            <div className="flex h-full bg-white hover:bg-slate-50 transition-all duration-300">
-              {/* Text Banner Section */}
-              <div className={`w-full md:w-1/3 ${currentAd.backgroundColor} flex flex-col items-center justify-center p-3 pt-0 pb-8 relative`}>
-                <div className="text-center">
-                  <h2 className={`text-xl font-bold ${currentAd.textColor} mb-1 leading-tight`}>
-                    {currentAd.title}
-                  </h2>
-                  <h3 className={`text-xl font-semibold ${currentAd.textColor} mb-1 leading-tight`}>
-                    {currentAd.subtitle}
-                  </h3>
-                  <p className={`text-xs ${currentAd.textColor} opacity-90 leading-tight`}>
-                    {currentAd.description}
-                  </p>
-                </div>
+          <div className="flex h-32">
+            {/* Content Section */}
+            <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+              <h2 className="text-xl font-bold text-gray-800 mb-1 leading-tight">
+                {currentAd.title}
+              </h2>
+              <h3 className="text-xl font-semibold text-gray-800 mb-1 leading-tight">
+                {currentAd.subtitle}
+              </h3>
+              <p className="text-xs text-gray-800 opacity-90">
+                {currentAd.description}
+              </p>
+            </div>
 
-                {/* LiveReview Logo and Text - Bottom Right Corner (Mobile) */}
-                <LiveReviewBrand
-                  size="sm"
-                  textColor={currentAd.textColor}
-                  showFullSubtitle={false}
-                />
-              </div>
+            {/* Branding Section */}
+            <div className="w-24 bg-blue-900/30 flex items-center justify-center">
+              <LiveReviewBrand size="sm" />
             </div>
           </div>
         </a>
       </div>
-    </div>
+    </>
   );
 };
 
