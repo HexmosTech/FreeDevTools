@@ -88,7 +88,7 @@ const AdBanner: React.FC<AdBannerProps> = () => {
     <div className="ad-banner">
       {/* Desktop/Laptop Layout - Fixed Right */}
       <div
-        className="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 z-40"
+        className="hidden lg:block fixed right-10 top-48 z-40"
         style={{ width: "250px", height: "250px" }}
       >
         <a
@@ -124,7 +124,7 @@ const AdBanner: React.FC<AdBannerProps> = () => {
       </div>
 
       {/* Tablet/Mobile Layout - Top Fixed */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm m-8">
         <a
           href={currentAd.link}
           target="_blank"
@@ -134,12 +134,12 @@ const AdBanner: React.FC<AdBannerProps> = () => {
           <div className="h-40 md:h-44">
             <div className="flex h-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300">
               {/* Text Banner Section */}
-              <div className={`w-2/5 md:w-1/3 ${currentAd.backgroundColor} flex flex-col items-center justify-center p-3 relative`}>
+              <div className={`w-full md:w-1/3 ${currentAd.backgroundColor} flex flex-col items-center justify-center p-3 pt-0 pb-8 relative`}>
                 <div className="text-center">
-                  <h2 className={`text-sm md:text-base font-bold ${currentAd.textColor} mb-1 leading-tight`}>
+                  <h2 className={`text-xl font-bold ${currentAd.textColor} mb-1 leading-tight`}>
                     {currentAd.title}
                   </h2>
-                  <h3 className={`text-xs md:text-sm font-semibold ${currentAd.textColor} mb-1 leading-tight`}>
+                  <h3 className={`text-xl font-semibold ${currentAd.textColor} mb-1 leading-tight`}>
                     {currentAd.subtitle}
                   </h3>
                   <p className={`text-xs ${currentAd.textColor} opacity-90 leading-tight`}>
@@ -153,12 +153,6 @@ const AdBanner: React.FC<AdBannerProps> = () => {
                   textColor={currentAd.textColor}
                   showFullSubtitle={false}
                 />
-              </div>
-
-              <div className="flex-1 p-3 md:p-4 flex flex-col justify-center space-y-2">
-                <h3 className="font-bold text-xs md:text-sm text-slate-900 dark:text-slate-100 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300 leading-tight">
-                  {currentAd.brandName}
-                </h3>
               </div>
             </div>
           </div>

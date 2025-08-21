@@ -203,7 +203,7 @@ const JsonPrettifier: React.FC = () => {
   }
 
   return (
-    <div className="json-prettifier max-w-7xl mx-auto py-6 bg-background">
+    <div className="json-prettifier max-w-7xl mx-auto py-8 bg-background">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4">
           JSON Prettifier
