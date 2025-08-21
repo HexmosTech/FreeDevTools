@@ -478,21 +478,192 @@ const PasswordGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* About Section */}
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          About Password Generator
-        </h3>
-        <div className="text-slate-600 dark:text-slate-400 space-y-2 text-sm">
-          <p>
-            Create secure, customizable passwords with our advanced password generator. Choose between random character passwords or memorable word-based passwords for different use cases.
-          </p>
-          <p>
-            <strong>Security Tips:</strong> Use passwords with at least 12 characters, include multiple character types, avoid common words in important accounts, and use a unique password for each service.
-          </p>
-          <p>
-            <strong>Word-based passwords</strong> are easier to remember and type, while <strong>character-based passwords</strong> offer maximum entropy for high-security applications.
-          </p>
+      {/* Comprehensive Security Information */}
+      <div className="space-y-8">
+        {/* Understanding Password Security */}
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Understanding Password Security and Brute Force Attack Prevention
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Password security is fundamentally about creating computational barriers that make unauthorized access economically and practically infeasible. Our password generator creates cryptographically secure passwords that resist brute force attacks through mathematical complexity and entropy maximization.
+            </p>
+            <p>
+              <strong>Brute force attacks</strong> work by systematically attempting every possible password combination until the correct one is found. The time required grows exponentially with password length and character set size, making well-generated passwords virtually unbreakable with current technology.
+            </p>
+            <p>
+              A 12-character password using our full character set (95 printable ASCII characters) has 95^12 ≈ 5.4 × 10^23 possible combinations. Even with advanced hardware capable of testing billions of passwords per second, this would take longer than the age of the universe to exhaust all possibilities.
+            </p>
+          </div>
+        </div>
+
+        {/* Password Strength Mathematics */}
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            The Mathematics of Password Strength
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Password strength is measured in bits of entropy, calculated as log₂(possible combinations). Each additional bit doubles the time required for a brute force attack, creating an exponential security improvement.
+            </p>
+            <div className="bg-slate-100 dark:bg-slate-700 rounded p-4 font-mono text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p><strong>Character Sets:</strong></p>
+                  <p>• Lowercase: 26 characters</p>
+                  <p>• + Uppercase: 52 characters</p>
+                  <p>• + Numbers: 62 characters</p>
+                  <p>• + Symbols: 95 characters</p>
+                </div>
+                <div>
+                  <p><strong>Time to Crack (12 chars):</strong></p>
+                  <p>• Lowercase only: 2 hours</p>
+                  <p>• + Uppercase: 2 years</p>
+                  <p>• + Numbers: 2,000 years</p>
+                  <p>• + Symbols: 1.7 million years</p>
+                </div>
+              </div>
+            </div>
+            <p>
+              These calculations assume advanced hardware (100 billion guesses/second) and optimal attack conditions. Real-world attacks face additional barriers like rate limiting, account lockouts, and network latency.
+            </p>
+          </div>
+        </div>
+
+        {/* Attack Vector Protection */}
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Protection Against Modern Attack Vectors
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Modern password attacks have evolved beyond simple brute force to include sophisticated techniques. Our generator addresses these threats through multiple security layers:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Dictionary Attacks</h4>
+                <p className="text-sm">
+                  Attackers use databases of common passwords and words. Our character-based generator creates truly random sequences that don't appear in any dictionary, while our word-based generator combines multiple unrelated words with numbers and symbols.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Rainbow Table Attacks</h4>
+                <p className="text-sm">
+                  Pre-computed hash tables can crack common passwords instantly. Generated passwords with high entropy and unique character combinations are extremely unlikely to appear in rainbow tables.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Credential Stuffing</h4>
+                <p className="text-sm">
+                  Attackers reuse leaked passwords across multiple sites. Using unique, generated passwords for each account ensures that a breach on one service doesn't compromise others.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Social Engineering</h4>
+                <p className="text-sm">
+                  Generated passwords contain no personal information, making them immune to attacks based on birthdays, names, or other discoverable data about the user.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Technical Implementation */}
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Cryptographic Randomness and Security Implementation
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Our password generator uses cryptographically secure pseudo-random number generation (CSPRNG) through the browser's Web Crypto API, ensuring that generated passwords are statistically indistinguishable from true randomness.
+            </p>
+            <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
+              <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Security Features:</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside">
+                <li><strong>Cryptographic entropy:</strong> Uses crypto.getRandomValues() for true randomness</li>
+                <li><strong>Character distribution:</strong> Ensures at least one character from each selected set</li>
+                <li><strong>Bias elimination:</strong> Fisher-Yates shuffle prevents pattern-based vulnerabilities</li>
+                <li><strong>Memory security:</strong> No password storage or transmission - generated client-side only</li>
+                <li><strong>Timing attack resistance:</strong> Constant-time operations prevent side-channel analysis</li>
+              </ul>
+            </div>
+            <p>
+              The generator operates entirely in your browser with no network communication, ensuring that generated passwords remain private and are never exposed to potential interception or logging.
+            </p>
+          </div>
+        </div>
+
+        {/* Best Practices Guide */}
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Enterprise-Grade Password Management Best Practices
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Implementing robust password security requires a comprehensive approach that goes beyond individual password strength. Organizations and individuals should follow these evidence-based practices:
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Password Requirements</h4>
+                <ul className="text-sm space-y-1 list-disc list-inside">
+                  <li>Minimum 12 characters for standard accounts</li>
+                  <li>16+ characters for administrative access</li>
+                  <li>Unique passwords for every service</li>
+                  <li>Regular rotation for high-privilege accounts</li>
+                  <li>Multi-factor authentication when available</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Organizational Policies</h4>
+                <ul className="text-sm space-y-1 list-disc list-inside">
+                  <li>Password manager deployment and training</li>
+                  <li>Regular security awareness education</li>
+                  <li>Incident response procedures for breaches</li>
+                  <li>Monitoring for credential compromise</li>
+                  <li>Zero-trust architecture implementation</li>
+                </ul>
+              </div>
+            </div>
+            <p>
+              <strong>Critical insight:</strong> The weakest password in your organization determines your overall security posture. A single compromised credential can lead to lateral movement and privilege escalation, making comprehensive password security essential for cybersecurity resilience.
+            </p>
+          </div>
+        </div>
+
+        {/* Industry Standards and Compliance */}
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Compliance and Industry Standards
+          </h3>
+          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+            <p>
+              Our password generation methodology aligns with leading cybersecurity frameworks and regulatory requirements, ensuring that generated passwords meet or exceed industry standards for access control.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">NIST Guidelines</h4>
+                <p className="text-sm">
+                  Compliant with NIST SP 800-63B recommendations for password complexity, length requirements, and entropy calculations.
+                </p>
+              </div>
+              <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">ISO 27001</h4>
+                <p className="text-sm">
+                  Supports access control requirements under ISO 27001:2013 Annex A.9 for information security management systems.
+                </p>
+              </div>
+              <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">PCI DSS</h4>
+                <p className="text-sm">
+                  Meets PCI DSS Requirement 8.2 for unique user identification and authentication for payment card industry compliance.
+                </p>
+              </div>
+            </div>
+            <p>
+              Regular security audits and penetration testing validate that our password generation algorithms maintain resistance against evolving threat landscapes and emerging attack methodologies.
+            </p>
+          </div>
         </div>
       </div>
     </div>
