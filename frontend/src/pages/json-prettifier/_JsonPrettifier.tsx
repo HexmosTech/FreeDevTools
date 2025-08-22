@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import AdBanner from "../../components/AdBanner";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -203,7 +204,11 @@ const JsonPrettifier: React.FC = () => {
   }
 
   return (
-    <div className="json-prettifier max-w-7xl mx-auto py-8 bg-background">
+    <div className="json-prettifier max-w-7xl mx-auto py-8 pt-0 bg-background">
+      {/* Ad Banner */}
+      <div className="mb-6">
+        <AdBanner />
+      </div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4">
           JSON Prettifier

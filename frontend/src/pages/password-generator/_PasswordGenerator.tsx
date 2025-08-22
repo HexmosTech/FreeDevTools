@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AdBanner from "../../components/AdBanner";
 
 interface PasswordOptions {
   length: number;
@@ -218,7 +219,11 @@ const PasswordGenerator: React.FC = () => {
   const strengthInfo = calculateStrength(password);
 
   return (
-    <div className="passwordgenerator-tool max-w-4xl mx-auto p-6">
+    <div className="passwordgenerator-tool max-w-4xl mx-auto p-6 pt-0">
+      {/* Ad Banner */}
+      <div className="mb-6">
+        <AdBanner />
+      </div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           Password Generator
@@ -227,7 +232,6 @@ const PasswordGenerator: React.FC = () => {
           Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options.
         </p>
       </div>
-
       {/* Generated Password Display */}
       <div className="mb-6 p-6 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-800/50">
         <div className="flex items-center justify-between mb-4">
@@ -319,8 +323,8 @@ const PasswordGenerator: React.FC = () => {
           <button
             onClick={() => updateOption('useWords', false)}
             className={`p-4 rounded-lg border transition-colors text-left ${!options.useWords
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
+              : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
@@ -331,8 +335,8 @@ const PasswordGenerator: React.FC = () => {
           <button
             onClick={() => updateOption('useWords', true)}
             className={`p-4 rounded-lg border transition-colors text-left ${options.useWords
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
+              : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>

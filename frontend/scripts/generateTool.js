@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__dirname);
 
 function generateTool(toolKey) {
   const toolName = toolKey
-    .replace(/-/g, " ")
+    .replace(/-/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());
   const componentName = toolKey
-    .split("-")
+    .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("");
+    .join('');
 
   console.log(`🚀 Generating tool: ${toolName} (${toolKey})`);
 
   // Create tool directory
-  const toolDir = path.join(__dirname, "src/pages", toolKey);
+  const toolDir = path.join(__dirname, 'src/pages', toolKey);
   if (!fs.existsSync(toolDir)) {
     fs.mkdirSync(toolDir, { recursive: true });
     console.log(`✅ Created directory: ${toolDir}`);
@@ -33,7 +33,7 @@ function generateTool(toolKey) {
 
   // Generate Astro page
   const astroContent = generateAstroPage(toolKey, componentName);
-  const astroPath = path.join(toolDir, "index.astro");
+  const astroPath = path.join(toolDir, 'index.astro');
   fs.writeFileSync(astroPath, astroContent);
   console.log(`✅ Created Astro page: ${astroPath}`);
 
@@ -43,7 +43,7 @@ function generateTool(toolKey) {
 
   // Generate README for the tool
   const readmeContent = generateToolReadme(toolKey, toolName);
-  const readmePath = path.join(toolDir, "README.md");
+  const readmePath = path.join(toolDir, 'README.md');
   fs.writeFileSync(readmePath, readmeContent);
   console.log(`✅ Created tool README: ${readmePath}`);
 
@@ -59,6 +59,7 @@ function generateTool(toolKey) {
 
 function generateReactComponent(componentName, toolName) {
   return `import React, { useState } from "react";
+import AdBanner from "../../components/AdBanner";
 
 const ${componentName}: React.FC = () => {
   const [input, setInput] = useState("");
@@ -89,7 +90,12 @@ const ${componentName}: React.FC = () => {
   };
 
   return (
-    <div className="${componentName.toLowerCase()}-tool max-w-4xl mx-auto p-6">
+    <div className="${componentName.toLowerCase()}-tool max-w-4xl mx-auto p-6 pt-0">
+          {/* Ad Banner */}
+      <div className="mb-6">
+        <AdBanner />
+      </div>
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           ${toolName}
@@ -236,8 +242,8 @@ TODO: Add contribution guidelines if applicable.
 }
 
 function updateToolsConfig(toolKey, toolName) {
-  const configPath = path.join(__dirname, "src/config/tools.ts");
-  const configContent = fs.readFileSync(configPath, "utf-8");
+  const configPath = path.join(__dirname, 'src/config/tools.ts');
+  const configContent = fs.readFileSync(configPath, 'utf-8');
 
   // Add new tool to TOOLS_CONFIG
   const newToolEntry = `  '${toolKey}': {
@@ -253,12 +259,12 @@ function updateToolsConfig(toolKey, toolName) {
   },`;
 
   // Find the position to insert the new tool (before the closing brace of TOOLS_CONFIG)
-  const insertPosition = configContent.lastIndexOf("};");
+  const insertPosition = configContent.lastIndexOf('};');
   if (insertPosition !== -1) {
     const updatedContent =
       configContent.slice(0, insertPosition) +
       newToolEntry +
-      "\n" +
+      '\n' +
       configContent.slice(insertPosition);
     fs.writeFileSync(configPath, updatedContent);
   }
@@ -268,17 +274,17 @@ function updateToolsConfig(toolKey, toolName) {
 const toolKey = process.argv[2];
 
 if (!toolKey) {
-  console.error("❌ Error: Tool key is required");
-  console.log("Usage: node scripts/generateTool.js <tool-key>");
-  console.log("Example: node scripts/generateTool.js password-generator");
+  console.error('❌ Error: Tool key is required');
+  console.log('Usage: node scripts/generateTool.js <tool-key>');
+  console.log('Example: node scripts/generateTool.js password-generator');
   process.exit(1);
 }
 
 if (!/^[a-z0-9-]+$/.test(toolKey)) {
   console.error(
-    "❌ Error: Tool key must contain only lowercase letters, numbers, and hyphens"
+    '❌ Error: Tool key must contain only lowercase letters, numbers, and hyphens'
   );
-  console.log("Example: password-generator, json-formatter, base64-converter");
+  console.log('Example: password-generator, json-formatter, base64-converter');
   process.exit(1);
 }
 
