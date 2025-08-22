@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface PasswordOptions {
   length: number;
@@ -69,7 +69,7 @@ const PasswordGenerator: React.FC = () => {
     if (options.useWords) {
       // Generate word-based password
       const selectedWords = [];
-      
+
       // Select random words (ensure no duplicates)
       const usedWords = new Set<string>();
       while (selectedWords.length < options.wordCount) {
@@ -79,7 +79,7 @@ const PasswordGenerator: React.FC = () => {
           usedWords.add(randomWord);
         }
       }
-      
+
       // Apply case transformations
       const transformedWords = selectedWords.map(word => {
         if (options.includeUppercase && options.includeLowercase) {
@@ -91,23 +91,23 @@ const PasswordGenerator: React.FC = () => {
           return word;
         }
       });
-      
+
       // Join words with separator
       let wordPassword = transformedWords.join(options.separator);
-      
+
       // Add numbers if requested
       if (options.includeNumbers) {
         const numbers = Math.floor(Math.random() * 999) + 1;
         wordPassword += (options.separator || "") + numbers;
       }
-      
+
       // Add symbols if requested
       if (options.includeSymbols) {
         const symbols = "!@#$%";
         const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
         wordPassword += randomSymbol;
       }
-      
+
       setPassword(wordPassword);
       return;
     }
@@ -118,33 +118,33 @@ const PasswordGenerator: React.FC = () => {
 
     // Determine character set based on options
     if (options.includeUppercase) {
-      const set = options.easyToRead ? characterSets.uppercaseEasy : 
-                  options.easyToSay ? characterSets.uppercaseSay : 
-                  characterSets.uppercase;
+      const set = options.easyToRead ? characterSets.uppercaseEasy :
+        options.easyToSay ? characterSets.uppercaseSay :
+          characterSets.uppercase;
       charset += set;
       usedSets.push(set);
     }
-    
+
     if (options.includeLowercase) {
-      const set = options.easyToRead ? characterSets.lowercaseEasy : 
-                  options.easyToSay ? characterSets.lowercaseSay : 
-                  characterSets.lowercase;
+      const set = options.easyToRead ? characterSets.lowercaseEasy :
+        options.easyToSay ? characterSets.lowercaseSay :
+          characterSets.lowercase;
       charset += set;
       usedSets.push(set);
     }
-    
+
     if (options.includeNumbers) {
-      const set = options.easyToRead ? characterSets.numbersEasy : 
-                  options.easyToSay ? characterSets.numbersSay : 
-                  characterSets.numbers;
+      const set = options.easyToRead ? characterSets.numbersEasy :
+        options.easyToSay ? characterSets.numbersSay :
+          characterSets.numbers;
       charset += set;
       usedSets.push(set);
     }
-    
+
     if (options.includeSymbols) {
-      const set = options.easyToRead ? characterSets.symbolsEasy : 
-                  options.easyToSay ? characterSets.symbolsSay : 
-                  characterSets.symbols;
+      const set = options.easyToRead ? characterSets.symbolsEasy :
+        options.easyToSay ? characterSets.symbolsSay :
+          characterSets.symbols;
       charset += set;
       usedSets.push(set);
     }
@@ -155,7 +155,7 @@ const PasswordGenerator: React.FC = () => {
     }
 
     let newPassword = "";
-    
+
     // Ensure at least one character from each selected set
     usedSets.forEach(set => {
       newPassword += set.charAt(Math.floor(Math.random() * set.length));
@@ -174,7 +174,7 @@ const PasswordGenerator: React.FC = () => {
 
   const calculateStrength = (password: string): { strength: string; color: string; width: string } => {
     if (!password || password.length < 4) return { strength: "Very Weak", color: "bg-red-500", width: "20%" };
-    
+
     let score = 0;
     if (password.length >= 8) score += 1;
     if (password.length >= 12) score += 1;
@@ -241,7 +241,7 @@ const PasswordGenerator: React.FC = () => {
             Generate New
           </button>
         </div>
-        
+
         <div className="relative mb-4">
           <div className="flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
             <code className="flex-1 text-lg font-mono text-slate-900 dark:text-slate-100 break-all select-all">
@@ -285,7 +285,7 @@ const PasswordGenerator: React.FC = () => {
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Strong</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">16 chars, all types</div>
           </button>
-          
+
           <button
             onClick={() => applyPreset({ length: 12, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: false, useWords: false })}
             className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
@@ -293,7 +293,7 @@ const PasswordGenerator: React.FC = () => {
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Easy to Type</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">12 chars, readable</div>
           </button>
-          
+
           <button
             onClick={() => applyPreset({ wordCount: 3, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, useWords: true, separator: "-" })}
             className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
@@ -301,7 +301,7 @@ const PasswordGenerator: React.FC = () => {
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Memorable</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">3 words + numbers</div>
           </button>
-          
+
           <button
             onClick={() => applyPreset({ length: 32, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
             className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
@@ -318,24 +318,22 @@ const PasswordGenerator: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={() => updateOption('useWords', false)}
-            className={`p-4 rounded-lg border transition-colors text-left ${
-              !options.useWords 
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
+            className={`p-4 rounded-lg border transition-colors text-left ${!options.useWords
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                 : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
-            }`}
+              }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
             <p className="text-sm text-slate-600 dark:text-slate-400">Random characters, numbers, and symbols</p>
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Kj8$mP2@xR9!</p>
           </button>
-          
+
           <button
             onClick={() => updateOption('useWords', true)}
-            className={`p-4 rounded-lg border transition-colors text-left ${
-              options.useWords 
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
+            className={`p-4 rounded-lg border transition-colors text-left ${options.useWords
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                 : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
-            }`}
+              }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>
             <p className="text-sm text-slate-600 dark:text-slate-400">Memorable dictionary words with separators</p>
@@ -445,7 +443,7 @@ const PasswordGenerator: React.FC = () => {
           {showAdvanced && (
             <div className="space-y-4">
               <h4 className="font-medium text-slate-700 dark:text-slate-300">Advanced Options</h4>
-              
+
               <div className="space-y-2">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
@@ -459,7 +457,7 @@ const PasswordGenerator: React.FC = () => {
                     <p className="text-sm text-slate-500 dark:text-slate-400">Excludes similar looking characters (0, O, l, 1, I)</p>
                   </div>
                 </label>
-                
+
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
