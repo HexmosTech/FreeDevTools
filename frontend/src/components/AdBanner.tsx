@@ -130,8 +130,8 @@ const AdBanner: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40">
+      {/* Mobile Layout - Fixed overlay at top */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
         <div className="relative">
           {/* Close Button */}
           <button
