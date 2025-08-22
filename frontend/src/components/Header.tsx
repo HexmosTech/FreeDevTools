@@ -1,9 +1,10 @@
 import React from "react";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const Header: React.FC = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-neon/10 border-b border-slate-700 shadow-lg backdrop-blur-md">
-      <div className="container mx-8 py-1">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-neon/10 shadow-lg backdrop-blur-lg">
+      <div className="container mx-8 py-1 flex items-center justify-between">
         <a
           href="/freedevtools/t"
           className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
@@ -19,6 +20,9 @@ const Header: React.FC = () => {
             </p>
           </div>
         </a>
+
+        {/* Theme Switcher */}
+        <ThemeSwitcher />
       </div>
     </header>
   );
