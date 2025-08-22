@@ -1,4 +1,4 @@
-# FreeDevTools 🛠️
+# Free DevTools 🛠️
 
 A comprehensive collection of **free, open-source developer tools** designed to make your development workflow faster and more efficient.
 
