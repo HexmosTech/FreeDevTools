@@ -7,7 +7,7 @@ interface LiveReviewBrandProps {
 const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
   const sizeClasses = {
     sm: {
-      logo: "w-4 h-4",
+      logo: "w-6 h-6",
       title: "text-xs",
       subtitle: "text-[10px]",
       spacing: "space-x-1"
