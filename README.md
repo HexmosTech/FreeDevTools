@@ -1,6 +1,6 @@
-# FreeDevTools 🛠️
+![Free DevTools Banner](frontend/public/free_devtools_banner.png)
 
-A comprehensive collection of **free, open-source developer tools** designed to make your development workflow faster and more efficient.
+A curated collection of 100+ online utilities to make developers' lives easier. Completely free and open source.
 
 ## Available Tools
 
@@ -31,8 +31,6 @@ A comprehensive collection of **free, open-source developer tools** designed to 
 
 4. **Open your browser**
    Navigate to `http://localhost:4321`
-
-
 
 ## Development Commands
 
@@ -69,7 +67,6 @@ If you're tired of waiting for your peer to review your code or are not confiden
 ## ⭐ Star This Repository
 
 If you find these tools helpful, please consider giving us a ⭐ star on GitHub! It helps us reach more developers who could benefit from these utilities.
-
 
 ---
 
