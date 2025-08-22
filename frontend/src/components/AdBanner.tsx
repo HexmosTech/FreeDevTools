@@ -131,7 +131,7 @@ const AdBanner: React.FC = () => {
             </div>
 
             {/* Branding Section */}
-            <div className="w-24 bg-blue-900/30 flex items-center justify-center">
+            <div className="px-4 bg-blue-900/30 flex items-center justify-center">
               <LiveReviewBrand size="sm" />
             </div>
           </div>
