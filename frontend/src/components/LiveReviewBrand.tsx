@@ -31,10 +31,6 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
   return (
     <div className="flex flex-col items-center space-y-1 text-black">
       {/* Desktop/Laptop: original layout, Mobile/Tablet: vertical layout */}
-      {/* "Check it out" always on top */}
-      <p className="text-xs pl-6 lg:pl-6 pl-0">{/* pl-6 for laptop, pl-0 for mobile/tablet */}
-        Check it out
-      </p>
       {/* Desktop: row, Mobile/Tablet: column */}
       <div
         className={`
@@ -51,7 +47,7 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
           alt="LiveReview"
           className={`${currentSize.logo} mb-0 lg:mb-0`}
         />
-        <div className="text-center">
+        <div className="text-left">
           <div className={`${currentSize.title} font-semibold`}>
             <span>Live</span>
             <span className="text-blue-800">Review</span>

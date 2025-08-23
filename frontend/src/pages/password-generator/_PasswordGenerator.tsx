@@ -219,7 +219,7 @@ const PasswordGenerator: React.FC = () => {
   const strengthInfo = calculateStrength(password);
 
   return (
-    <div className="passwordgenerator-tool max-w-4xl mx-auto p-6 pt-0">
+    <div className="passwordgenerator-tool max-w-6xl mx-auto p-6 pt-0">
       {/* Ad Banner */}
       <div className="mb-6">
         <AdBanner />
