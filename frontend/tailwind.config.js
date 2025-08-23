@@ -54,8 +54,7 @@ module.exports = {
         },
         neon: {
           DEFAULT: '#19222d',
-          light: '#19222d',
-          dark: '#fff',
+          light: '#fff',
         },
       },
       borderRadius: {
