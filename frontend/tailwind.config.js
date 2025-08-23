@@ -53,9 +53,9 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
         neon: {
-          DEFAULT: '#8129D9',
-          light: '#9d4edd',
-          dark: '#6a1b9a',
+          DEFAULT: '#19222d',
+          light: '#19222d',
+          dark: '#fff',
         },
       },
       borderRadius: {

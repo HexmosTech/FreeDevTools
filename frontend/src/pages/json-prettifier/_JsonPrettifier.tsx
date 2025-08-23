@@ -291,7 +291,7 @@ const JsonPrettifier: React.FC = () => {
             <button
               onClick={handleCopy}
               disabled={!isValid}
-              className="px-4 py-2 bg-neon hover:bg-neon/90 disabled:bg-muted text-white font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed hover:shadow-lg"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-muted text-white font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed hover:shadow-lg"
             >
               Copy Formatted
             </button>

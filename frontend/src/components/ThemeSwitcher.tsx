@@ -16,33 +16,33 @@ interface ThemeConfig {
 
 const ThemeSwitcher: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<ThemeType>(ThemeType.SYSTEM);
+  const [theme, setTheme] = useState<ThemeType>(ThemeType.LIGHT);
 
   useEffect(() => {
     setMounted(true);
-    // Check for saved theme preference or default to system
+    // Check for saved theme preference or default to light
     const savedTheme = localStorage.getItem('theme') as ThemeType;
     if (savedTheme && Object.values(ThemeType).includes(savedTheme)) {
       setTheme(savedTheme);
       applyTheme(savedTheme);
     } else {
-      // On mobile, default to dark theme instead of system
-      const isMobile = window.innerWidth < 768; // md breakpoint
-      const defaultTheme = isMobile ? ThemeType.DARK : ThemeType.SYSTEM;
+      // Default to light theme
+      const defaultTheme = ThemeType.LIGHT;
       setTheme(defaultTheme);
       applyTheme(defaultTheme);
     }
   }, []);
 
   const applyTheme = (newTheme: ThemeType) => {
-    if (newTheme === ThemeType.SYSTEM) {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? ThemeType.DARK : ThemeType.LIGHT;
-      if (systemTheme === ThemeType.DARK) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } else if (newTheme === ThemeType.DARK) {
+    // if (newTheme === ThemeType.SYSTEM) {
+    //   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? ThemeType.DARK : ThemeType.LIGHT;
+    //   if (systemTheme === ThemeType.DARK) {
+    //     document.documentElement.classList.add('dark');
+    //   } else {
+    //     document.documentElement.classList.remove('dark');
+    //   }
+    // } else 
+    if (newTheme === ThemeType.DARK) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -57,17 +57,17 @@ const ThemeSwitcher: React.FC = () => {
 
   // Theme configurations
   const themeConfigs: ThemeConfig[] = [
-    {
-      type: ThemeType.SYSTEM,
-      icon: (
-        <svg viewBox="0 0 28 28" fill="none">
-          <path d="M7.5 8.5C7.5 7.94772 7.94772 7.5 8.5 7.5H19.5C20.0523 7.5 20.5 7.94772 20.5 8.5V16.5C20.5 17.0523 20.0523 17.5 19.5 17.5H8.5C7.94772 17.5 7.5 17.0523 7.5 16.5V8.5Z" stroke="currentColor"></path>
-          <path d="M7.5 8.5C7.5 7.94772 7.94772 7.5 8.5 7.5H19.5C20.5 7.5 20.5 8.5V14.5C20.5 15.0523 20.0523 15.5 19.5 15.5H8.5C7.94772 15.5 7.5 15.0523 7.5 14.5V8.5Z" stroke="currentColor"></path>
-          <path d="M16.5 20.5V17.5H11.5V20.5M16.5 20.5H11.5M16.5 20.5H17.5M11.5 20.5H10.5" stroke="currentColor" strokeLinecap="round"></path>
-        </svg>
-      ),
-      label: 'System theme'
-    },
+    // {
+    //   type: ThemeType.SYSTEM,
+    //   icon: (
+    //     <svg viewBox="0 0 28 28" fill="none">
+    //       <path d="M7.5 8.5C7.5 7.94772 7.94772 7.5 8.5 7.5H19.5C20.0523 7.5 20.5 7.94772 20.5 8.5V16.5C20.5 17.0523 20.0523 17.5 19.5 17.5H8.5C7.94772 17.5 7.5 17.0523 7.5 16.5V8.5Z" stroke="currentColor"></path>
+    //       <path d="M7.5 8.5C7.5 7.94772 7.94772 7.5 8.5 7.5H19.5C20.5 7.5 20.5 8.5V14.5C20.5 15.0523 20.0523 15.5 19.5 15.5H8.5C7.94772 15.5 7.5 15.0523 7.5 14.5V8.5Z" stroke="currentColor"></path>
+    //       <path d="M16.5 20.5V17.5H11.5V20.5M16.5 20.5H11.5M16.5 20.5H17.5M11.5 20.5H10.5" stroke="currentColor" strokeLinecap="round"></path>
+    //     </svg>
+    //   ),
+    //   label: 'System theme'
+    // },
     {
       type: ThemeType.LIGHT,
       icon: (
@@ -111,10 +111,10 @@ const ThemeSwitcher: React.FC = () => {
     );
   }
 
-  // Filter themes based on screen size - hide system theme on mobile
-  const visibleThemes = themeConfigs.filter(config =>
-    config.type !== ThemeType.SYSTEM || window.innerWidth >= 768
-  );
+  // Filter themes - system theme commented out for now
+  const visibleThemes = themeConfigs; // .filter(config =>
+  // config.type !== ThemeType.SYSTEM || window.innerWidth >= 768
+  // );
 
   return (
     <div className="grid grid-cols-1">
