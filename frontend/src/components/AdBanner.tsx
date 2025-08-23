@@ -79,15 +79,15 @@ const AdBanner: React.FC = () => {
           rel="noopener noreferrer"
           className="block h-full hover:bg-blue-400 transition-colors duration-300 rounded-lg flex justify-center"
         >
-          <div className="px-6 h-full w-auto flex flex-col">
+          <div className="px-2 h-full w-auto flex flex-col justify-center">
             {/* Content Section */}
-            <div className=" text-left">
-              <h2 className="text-6xl font-bold text-red-700   leading-tight font-eb-garamond tracking-wide">
+            <div className="text-left mb-2">
+              <h2 className="text-6xl font-bold text-red-700 leading-tight font-eb-garamond tracking-wide mb-2">
                 {currentAd.title}
               </h2>
             </div>
-            <div className="text-left flex flex-row justify-between">
-              <p className="text-3xl font-normal text-gray-600   font-eb-garamond   leading-relaxed">
+            <div className="text-left flex flex-row justify-between mt-0">
+              <p className="text-3xl font-normal text-gray-600 font-eb-garamond leading-relaxed m-0">
                 {currentAd.description}
               </p>
               {/* Branding Section */}
