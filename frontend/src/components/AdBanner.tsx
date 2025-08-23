@@ -82,8 +82,8 @@ const AdBanner: React.FC = () => {
           <div className="px-2 h-full w-auto flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-2">
-              <h2 className="text-6xl font-bold text-red-700 leading-tight font-eb-garamond tracking-wide mb-2">
-                {currentAd.title}
+              <h2 className="text-6xl font-bold leading-tight font-eb-garamond tracking-wide mb-2">
+                <span className="highlighter-alt text-red-700">{currentAd.title}</span>
               </h2>
             </div>
             <div className="text-left flex flex-row justify-between mt-0">
