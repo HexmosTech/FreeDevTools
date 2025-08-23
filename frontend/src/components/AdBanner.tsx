@@ -53,13 +53,13 @@ const adVariations: AdVariation[] = [
     backgroundColor: "bg-blue-200",
     textColor: "text-gray-800"
   },
-  {
-    id: "variation-7",
-    title: "Reduce context-switching for engineers",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800"
-  }
+  // {
+  //   id: "variation-7",
+  //   title: "Reduce context-switching for engineers",
+  //   description: "Self-Hosted AI Code Reviewer",
+  //   backgroundColor: "bg-blue-200",
+  //   textColor: "text-gray-800"
+  // }
 ];
 
 const AdBanner: React.FC = () => {
@@ -72,7 +72,7 @@ const AdBanner: React.FC = () => {
   return (
     <>
       {/* Desktop Layout - Auto-fit to parent width */}
-      <div className="hidden lg:block w-full bg-blue-200 border border-gray-200 shadow-sm h-40 rounded-md">
+      <div className="hidden lg:block w-full bg-blue-200 border border-gray-200 shadow-sm h-40 mb-10 rounded-md">
         <a
           href={link + "?variation=" + currentVariation}
           target="_blank"

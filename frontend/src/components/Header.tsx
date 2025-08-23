@@ -4,7 +4,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 const Header: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      <header className="bg-neon/10 shadow-lg backdrop-blur-lg">
+      <header className="dark:bg-neon/1 light:bg-white shadow-sm backdrop-blur-lg">
         <div className="px-4 sm:px-6 lg:px-8 py-1 flex items-center justify-between">
           <a
             href="/freedevtools/t"
@@ -13,7 +13,7 @@ const Header: React.FC = () => {
             <img src="https://hexmos.com/freedevtools/t/favicon.png" alt="Free DevTools Logo" className="w-8 h-8 flex-shrink-0" />
             {/* Text */}
             <div className="flex flex-col">
-              <h1 className="text-xl font-extrabold text-neon dark:text-neon-light leading-tight">
+              <h1 className="text-xl font-extrabold text-neon dark:text-neon-light leading-tight font-galindo">
                 Free DevTools
               </h1>
               <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight">
