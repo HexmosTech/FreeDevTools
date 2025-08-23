@@ -16,7 +16,7 @@ const Header: React.FC = () => {
               <h1 className="text-xl font-extrabold text-neon dark:text-neon-light leading-tight ">
                 Free DevTools
               </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight">
+              <p className="text-sm text-slate-800 dark:text-slate-400 leading-tight">
                 Essential tools for developers
               </p>
             </div>

@@ -100,7 +100,7 @@ const ${componentName}: React.FC = () => {
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           ${toolName}
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-lg">
+        <p className="text-slate-800 dark:text-slate-400 text-lg">
           TODO: Add your tool description here
         </p>
       </div>
@@ -183,7 +183,7 @@ const ${componentName}: React.FC = () => {
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
           About ${toolName}
         </h3>
-        <div className="text-slate-600 dark:text-slate-400 space-y-2">
+        <div className="text-slate-800 dark:text-slate-400 space-y-2">
           <p>
             TODO: Add information about what this tool does and how it works.
           </p>

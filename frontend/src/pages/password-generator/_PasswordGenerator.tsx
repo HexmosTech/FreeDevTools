@@ -228,7 +228,7 @@ const PasswordGenerator: React.FC = () => {
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           Password Generator
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-lg">
+        <p className="text-slate-800 dark:text-slate-400 text-lg">
           Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options.
         </p>
       </div>
@@ -265,7 +265,7 @@ const PasswordGenerator: React.FC = () => {
         <div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Password Strength</span>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            <span className="text-sm font-medium text-slate-800 dark:text-slate-400">
               {strengthInfo.strength}
             </span>
           </div>
@@ -328,7 +328,7 @@ const PasswordGenerator: React.FC = () => {
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Random characters, numbers, and symbols</p>
+            <p className="text-sm text-slate-800 dark:text-slate-400">Random characters, numbers, and symbols</p>
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Kj8$mP2@xR9!</p>
           </button>
 
@@ -340,7 +340,7 @@ const PasswordGenerator: React.FC = () => {
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Memorable dictionary words with separators</p>
+            <p className="text-sm text-slate-800 dark:text-slate-400">Memorable dictionary words with separators</p>
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Apple-River-Magic-42!</p>
           </button>
         </div>
@@ -486,7 +486,7 @@ const PasswordGenerator: React.FC = () => {
           Learn More: Password Security Explained
         </h3>
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-          <p className="text-slate-600 dark:text-slate-400 mb-4">
+          <p className="text-slate-800 dark:text-slate-400 mb-4">
             Watch this educational video to understand the fundamentals of password security and why strong passwords matter for your digital safety.
           </p>
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
@@ -509,7 +509,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Understanding Password Security and Brute Force Attack Prevention
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Password security is fundamentally about creating computational barriers that make unauthorized access economically and practically infeasible. Our password generator creates cryptographically secure passwords that resist brute force attacks through mathematical complexity and entropy maximization.
             </p>
@@ -527,7 +527,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             The Mathematics of Password Strength
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Password strength is measured in bits of entropy, calculated as log₂(possible combinations). Each additional bit doubles the time required for a brute force attack, creating an exponential security improvement.
             </p>
@@ -560,7 +560,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Protection Against Modern Attack Vectors
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Modern password attacks have evolved beyond simple brute force to include sophisticated techniques. Our generator addresses these threats through multiple security layers:
             </p>
@@ -598,7 +598,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Cryptographic Randomness and Security Implementation
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Our password generator uses cryptographically secure pseudo-random number generation (CSPRNG) through the browser's Web Crypto API, ensuring that generated passwords are statistically indistinguishable from true randomness.
             </p>
@@ -623,7 +623,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Enterprise-Grade Password Management Best Practices
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Implementing robust password security requires a comprehensive approach that goes beyond individual password strength. Organizations and individuals should follow these evidence-based practices:
             </p>
@@ -660,7 +660,7 @@ const PasswordGenerator: React.FC = () => {
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Compliance and Industry Standards
           </h3>
-          <div className="text-slate-600 dark:text-slate-400 space-y-3">
+          <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
               Our password generation methodology aligns with leading cybersecurity frameworks and regulatory requirements, ensuring that generated passwords meet or exceed industry standards for access control.
             </p>
