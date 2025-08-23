@@ -13,7 +13,7 @@ const Header: React.FC = () => {
             <img src="https://hexmos.com/freedevtools/t/favicon.png" alt="Free DevTools Logo" className="w-8 h-8 flex-shrink-0" />
             {/* Text */}
             <div className="flex flex-col">
-              <h1 className="text-xl font-extrabold text-neon dark:text-neon-light leading-tight font-galindo">
+              <h1 className="text-xl font-extrabold text-neon dark:text-neon-light leading-tight ">
                 Free DevTools
               </h1>
               <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight">

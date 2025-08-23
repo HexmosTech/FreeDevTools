@@ -9,7 +9,6 @@ module.exports = {
     extend: {
       fontFamily: {
         'eb-garamond': ['EB Garamond', 'serif'],
-        galindo: ['Galindo', 'cursive'],
       },
       colors: {
         sidebarContainer: 'rgb(16, 20, 31)',
