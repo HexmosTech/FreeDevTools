@@ -66,13 +66,33 @@ const AdBanner: React.FC = () => {
   const [currentVariation, setCurrentVariation] = useState(() =>
     Math.floor(Math.random() * adVariations.length)
   );
+  const [isVisible, setIsVisible] = useState(true);
 
   const currentAd = adVariations[currentVariation] || adVariations[0];
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <>
       {/* Desktop Layout - Auto-fit to parent width */}
-      <div className="hidden lg:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 mb-10 mt-5 rounded-md">
+      <div className="hidden lg:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 mb-10 mt-5 rounded-md relative">
+        {/* Close Button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10"
+          aria-label="Close banner"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <a
           href={link + "?variation=" + currentVariation}
           target="_blank"
@@ -100,7 +120,18 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-32 md:h-16 rounded-lg">
+      <div className="lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-32 md:h-16 rounded-lg relative">
+        {/* Close Button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10"
+          aria-label="Close banner"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <a
           href={link + "?variation=" + currentVariation}
           target="_blank"
