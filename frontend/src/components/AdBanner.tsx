@@ -72,26 +72,26 @@ const AdBanner: React.FC = () => {
   return (
     <>
       {/* Desktop Layout - Auto-fit to parent width */}
-      <div className="hidden lg:block w-full bg-blue-200 border border-gray-200 shadow-sm h-40 mb-10 rounded-md">
+      <div className="hidden lg:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 mb-10 mt-5 rounded-md">
         <a
           href={link + "?variation=" + currentVariation}
           target="_blank"
           rel="noopener noreferrer"
-          className="block h-full hover:bg-blue-400 transition-colors duration-300 rounded-lg flex justify-center"
+          className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg flex justify-center"
         >
           <div className="px-2 h-full w-auto flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-2">
-              <h2 className="text-6xl font-bold leading-tight font-eb-garamond tracking-wide mb-2">
+              <h2 className="text-6xl !font-semibold leading-tight font-eb-garamond tracking-wide mb-2">
                 <span className="text-red-700">{currentAd.title}</span>
               </h2>
             </div>
             <div className="text-left flex flex-row justify-between mt-0">
-              <p className="text-3xl font-normal text-gray-600 font-eb-garamond leading-relaxed m-0">
+              <p className="text-4xl font-normal text-gray-800 font-eb-garamond leading-relaxed m-0">
                 {currentAd.description}
               </p>
               {/* Branding Section */}
-              <div className="ml-6 flex items-left">
+              <div className="ml-6 flex items-left mt-1">
                 <LiveReviewBrand size="lg" />
               </div>
             </div>
@@ -100,12 +100,12 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="lg:hidden w-full bg-blue-200 border border-gray-200 shadow-sm h-32 md:h-16 rounded-lg">
+      <div className="lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-32 md:h-16 rounded-lg">
         <a
           href={link + "?variation=" + currentVariation}
           target="_blank"
           rel="noopener noreferrer"
-          className="block h-full hover:bg-blue-400 transition-colors duration-300 rounded-lg"
+          className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg"
         >
           <div className="px-4 h-full flex items-center justify-between">
             {/* Content Section */}

@@ -9,8 +9,15 @@ module.exports = {
     extend: {
       fontFamily: {
         'eb-garamond': ['EB Garamond', 'serif'],
+        'dm-serif': ['DM Serif Text', 'serif'],
+        lora: ['Lora', 'serif'],
+        'cal-sans': ['Cal Sans', 'sans-serif'],
       },
       colors: {
+        yellow: {
+          DEFAULT: '#d5cb22',
+        },
+        darkBlack: 'rgb(16, 20, 31)',
         sidebarContainer: 'rgb(16, 20, 31)',
         background: 'rgb(var(--background))',
         foreground: 'hsl(var(--foreground))',
