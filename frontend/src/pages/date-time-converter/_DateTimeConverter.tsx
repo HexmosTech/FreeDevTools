@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Calendar, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
@@ -172,13 +173,14 @@ const DateTimeConverter = () => {
                   </span>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => setShowDatePicker(!showDatePicker)}
-                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                variant="outline"
+                size="default"
                 title="Pick date and time"
               >
                 <Calendar className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -222,13 +224,15 @@ const DateTimeConverter = () => {
                       {format.value}
                     </div>
                   </div>
-                  <button
+                  <Button
                     onClick={() => copyToClipboard(format.value)}
-                    className="flex-shrink-0 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors group"
+                    variant="ghost"
+                    size="icon"
                     title="Copy to clipboard"
+                    className="group"
                   >
                     <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
