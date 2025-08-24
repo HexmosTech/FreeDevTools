@@ -11,54 +11,55 @@ export interface Tool {
 }
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
-  'json-prettifier': {
-    name: 'JSON Prettifier',
-    path: '/freedevtools/t/json-prettifier/',
+  "json-prettifier": {
+    name: "JSON Prettifier",
+    path: "/freedevtools/t/json-prettifier/",
     description:
-      'Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required.',
-    category: 'Developer Tools',
-    icon: '📄',
-    themeColor: '#10b981',
-    canonical: 'https://hexmos.com/freedevtools/t/json-prettifier/',
+      "Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required.",
+    category: "Developer Tools",
+    icon: "📄",
+    themeColor: "#10b981",
+    canonical: "https://hexmos.com/freedevtools/t/json-prettifier/",
     keywords: [
-      'json prettifier',
-      'json formatter',
-      'json minifier',
-      'json validator',
-      'json beautifier',
-      'json online',
-      'developer tools',
-      'api tools',
+      "json prettifier",
+      "json formatter",
+      "json minifier",
+      "json validator",
+      "json beautifier",
+      "json online",
+      "developer tools",
+      "api tools",
     ],
     features: [
-      'JSON formatting',
-      'JSON minification',
-      'JSON validation',
-      'Multiple indentation options',
-      'Real-time validation',
-      'Copy to clipboard',
+      "JSON formatting",
+      "JSON minification",
+      "JSON validation",
+      "Multiple indentation options",
+      "Real-time validation",
+      "Copy to clipboard",
     ],
   },
 
-  'password-generator': {
-    name: 'Password Generator',
-    path: '/freedevtools/t/password-generator/',
-    description: 'Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and readability options for maximum security.',
-    category: 'Security Tools',
-    icon: '�',
-    themeColor: '#6366f1',
-    canonical: 'https://hexmos.com/freedevtools/t/password-generator/',
+  "password-generator": {
+    name: "Password Generator",
+    path: "/freedevtools/t/password-generator/",
+    description:
+      "Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and readability options for maximum security.",
+    category: "Security Tools",
+    icon: "�",
+    themeColor: "#6366f1",
+    canonical: "https://hexmos.com/freedevtools/t/password-generator/",
     keywords: [
-      'password generator',
-      'secure password',
-      'random password',
-      'strong password',
-      'password creator',
-      'cybersecurity',
-      'security tools',
-      'password maker',
-      'custom password',
-      'safe password'
+      "password generator",
+      "secure password",
+      "random password",
+      "strong password",
+      "password creator",
+      "cybersecurity",
+      "security tools",
+      "password maker",
+      "custom password",
+      "safe password",
     ],
     features: [
       'Customizable password length',
@@ -81,7 +82,34 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     canonical: 'https://hexmos.com/freedevtools/t/dockerfile-linter/',
     keywords: ['dockerfile-linter', 'developer tools', 'TODO: add more keywords'],
     features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
-  }
+  },
+  "date-time-converter": {
+    name: "Date Time Converter",
+    path: "/freedevtools/t/date-time-converter/",
+    description:
+      "Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/date-time-converter/",
+    keywords: [
+      "date-time-converter",
+      "datetime converter",
+      "date converter",
+      "time converter",
+      "timestamp converter",
+      "unix timestamp",
+      "iso date",
+      "utc",
+      "online date converter",
+    ],
+    features: [
+      "Convert between UTC, ISO, Unix, and other date/time formats",
+      "Date and time picker integration",
+      "Handles timestamps, ISO strings, and custom formats",
+      "Shows all common formats at a glance"
+    ],
+  },
 };
 
 export function getToolByKey(key: string): Tool | undefined {
