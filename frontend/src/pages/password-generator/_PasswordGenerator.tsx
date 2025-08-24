@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
@@ -231,12 +232,12 @@ const PasswordGenerator: React.FC = () => {
           <label className="text-lg font-medium text-slate-700 dark:text-slate-300">
             Generated Password
           </label>
-          <button
+          <Button
             onClick={generatePassword}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700"
           >
             Generate New
-          </button>
+          </Button>
         </div>
 
         <div className="relative mb-4">
@@ -244,13 +245,13 @@ const PasswordGenerator: React.FC = () => {
             <code className="flex-1 text-lg font-mono text-slate-900 dark:text-slate-100 break-all select-all">
               {password || "Click generate to create a password"}
             </code>
-            <button
+            <Button
               onClick={handleCopy}
-              className="ml-3 px-3 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+              className="ml-3 bg-green-600 hover:bg-green-700"
               title="Copy to clipboard"
             >
               {copySuccess ? "Copied!" : "Copy"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -275,37 +276,45 @@ const PasswordGenerator: React.FC = () => {
       <div className="mb-6">
         <h3 className=" text-slate-900 dark:text-slate-100 mb-3">Quick Presets</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <button
+          <Button
             onClick={() => applyPreset({ length: 16, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
-            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+            variant="outline"
+            size="custom"
+            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Strong</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">16 chars, all types</div>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => applyPreset({ length: 12, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: false, useWords: false })}
-            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+            variant="outline"
+            size="custom"
+            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Easy to Type</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">12 chars, readable</div>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => applyPreset({ wordCount: 3, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, useWords: true, separator: "-" })}
-            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+            variant="outline"
+            size="custom"
+            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Memorable</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">3 words + numbers</div>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => applyPreset({ length: 32, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
-            className="p-3 text-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+            variant="outline"
+            size="custom"
+            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Ultra Secure</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">32 chars, maximum</div>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -313,29 +322,33 @@ const PasswordGenerator: React.FC = () => {
       <div className="mb-6">
         <h3 className=" text-slate-900 dark:text-slate-100 mb-3">Password Type</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
+          <Button
             onClick={() => updateOption('useWords', false)}
-            className={`p-4 rounded-lg border transition-colors text-left ${!options.useWords
-              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-              : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+            variant={!options.useWords ? "default" : "outline"}
+            size="custom"
+            className={`p-4 text-left whitespace-normal ${!options.useWords
+              ? 'bg-blue-50 dark:bg-blue-950 border-blue-500'
+              : 'hover:border-blue-300'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
             <p className="text-sm text-slate-800 dark:text-slate-400">Random characters, numbers, and symbols</p>
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Kj8$mP2@xR9!</p>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => updateOption('useWords', true)}
-            className={`p-4 rounded-lg border transition-colors text-left ${options.useWords
-              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-              : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300'
+            variant={options.useWords ? "default" : "outline"}
+            size="custom"
+            className={`p-4 text-left whitespace-normal ${options.useWords
+              ? 'bg-blue-50 dark:bg-blue-950 border-blue-500'
+              : 'hover:border-blue-300'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>
             <p className="text-sm text-slate-800 dark:text-slate-400">Memorable dictionary words with separators</p>
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">Example: Apple-River-Magic-42!</p>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -343,12 +356,14 @@ const PasswordGenerator: React.FC = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className=" text-slate-900 dark:text-slate-100">Options</h3>
-          <button
+          <Button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            variant="ghost"
+            size="sm"
+            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
             {showAdvanced ? 'Hide Advanced' : 'Show Advanced Options'}
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
