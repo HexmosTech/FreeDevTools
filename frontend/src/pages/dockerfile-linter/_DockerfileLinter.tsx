@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from 'react';
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
+import CopyButton from "../../components/ui/copy-button";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -727,14 +728,7 @@ const DockerfileLinter: React.FC = () => {
     setAnalysis(null);
   };
 
-  const handleCopy = () => {
-    if (analysis) {
-      const resultText = analysis.results.map(r =>
-        `Line ${r.line}: [${r.level.toUpperCase()}] ${r.message}${r.description ? ' - ' + r.description : ''} (${r.rule || 'unknown'})`
-      ).join('\n');
-      navigator.clipboard.writeText(resultText);
-    }
-  };
+
 
   const getLevelIcon = (level: string) => {
     switch (level) {
@@ -812,26 +806,13 @@ const DockerfileLinter: React.FC = () => {
               Analysis Results
             </label>
             {analysis && analysis.results.length > 0 && (
-              <Button
-                onClick={handleCopy}
-                variant="ghost"
+              <CopyButton
+                text={analysis.results.map(r =>
+                  `Line ${r.line}: [${r.level.toUpperCase()}] ${r.message}${r.description ? ' - ' + r.description : ''} (${r.rule || 'unknown'})`
+                ).join('\n')}
                 size="icon"
                 title="Copy results to clipboard"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </Button>
+              />
             )}
           </div>
 

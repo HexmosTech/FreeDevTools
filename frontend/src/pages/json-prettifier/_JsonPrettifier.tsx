@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
+import CopyButton from "../../components/ui/copy-button";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -176,19 +177,7 @@ const JsonPrettifier: React.FC = () => {
     setIsValid(null);
   };
 
-  const handleCopy = () => {
-    if (outputEditorInstanceRef.current && isValid) {
-      try {
-        const currentJson = inputEditorInstanceRef.current?.get();
-        if (currentJson) {
-          const formatted = JSON.stringify(currentJson, null, indentSize);
-          navigator.clipboard.writeText(formatted);
-        }
-      } catch (err) {
-        // Ignore copy errors
-      }
-    }
-  };
+
 
   if (!isClient) {
     return (
@@ -287,13 +276,22 @@ const JsonPrettifier: React.FC = () => {
           </div>
 
           <div className="text-center">
-            <Button
-              onClick={handleCopy}
+            <CopyButton
+              text={(() => {
+                try {
+                  if (inputEditorInstanceRef.current && isValid) {
+                    const currentJson = inputEditorInstanceRef.current.get();
+                    if (currentJson) {
+                      return JSON.stringify(currentJson, null, indentSize);
+                    }
+                  }
+                  return "";
+                } catch (err) {
+                  return "";
+                }
+              })()}
               disabled={!isValid}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Copy Formatted
-            </Button>
+            />
           </div>
         </div>
 

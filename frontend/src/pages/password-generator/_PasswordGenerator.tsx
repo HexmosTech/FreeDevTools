@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "../../components/ToastProvider";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
+import CopyButton from "../../components/ui/copy-button";
 
 interface PasswordOptions {
   length: number;
@@ -32,7 +33,7 @@ const PasswordGenerator: React.FC = () => {
     wordCount: 3,
     separator: "-",
   });
-  const [copySuccess, setCopySuccess] = useState(false);
+
 
   // Character sets
   const characterSets = {
@@ -194,19 +195,7 @@ const PasswordGenerator: React.FC = () => {
     return { strength: "Very Strong", color: "bg-green-600", width: "100%" };
   };
 
-  const handleCopy = async () => {
-    if (password && password !== "Please select at least one character type") {
-      try {
-        await navigator.clipboard.writeText(password);
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
-        toast.success("Password copied to clipboard!");
-      } catch (err) {
-        console.error('Failed to copy password:', err);
-        toast.error("Failed to copy password");
-      }
-    }
-  };
+
 
   const updateOption = (key: keyof PasswordOptions, value: boolean | number | string) => {
     setOptions(prev => ({ ...prev, [key]: value }));
@@ -252,13 +241,11 @@ const PasswordGenerator: React.FC = () => {
             <code className="flex-1 text-lg font-mono text-slate-900 dark:text-slate-100 break-all select-all">
               {password || "Click generate to create a password"}
             </code>
-            <Button
-              onClick={handleCopy}
-              className="ml-3 bg-green-600 hover:bg-green-700"
+            <CopyButton
+              text={password}
+              className="ml-3"
               title="Copy to clipboard"
-            >
-              {copySuccess ? "Copied!" : "Copy"}
-            </Button>
+            />
           </div>
         </div>
 

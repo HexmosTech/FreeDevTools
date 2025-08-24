@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
+import CopyButton from "../../components/ui/copy-button";
 
 const DateTimeConverter = () => {
   const [inputValue, setInputValue] = useState("");
@@ -87,11 +88,7 @@ const DateTimeConverter = () => {
     },
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      // Optional: Add toast notification here
-    });
-  };
+
 
   const formatOptions = [
     { value: "utc", label: "UTC format" },
@@ -187,13 +184,13 @@ const DateTimeConverter = () => {
           {/* Date Picker */}
           {showDatePicker && (
             <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
-              <label className="block text-sm text-gray-300 mb-2">
+              <label className="block text-sm  mb-2">
                 Pick date and time:
               </label>
               <input
                 type="datetime-local"
                 onChange={handleDatePickerChange}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500"
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500"
               />
             </div>
           )}
@@ -218,21 +215,17 @@ const DateTimeConverter = () => {
                 {format.label}
               </div>
               <div className="flex-1">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-2 flex flex-row items-center gap-3 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-2 flex flex-row items-center gap-3 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="text-gray-900 dark:text-white font-mono text-sm break-all text-left">
                       {format.value}
                     </div>
                   </div>
-                  <Button
-                    onClick={() => copyToClipboard(format.value)}
-                    variant="ghost"
+                  <CopyButton
+                    text={format.value}
                     size="icon"
                     title="Copy to clipboard"
-                    className="group"
-                  >
-                    <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                  </Button>
+                  />
                 </div>
               </div>
             </div>
