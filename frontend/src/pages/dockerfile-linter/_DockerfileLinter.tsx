@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React, { useState } from 'react';
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
@@ -789,19 +790,19 @@ const DockerfileLinter: React.FC = () => {
           </div>
 
           <div className="flex space-x-3">
-            <button
+            <Button
               onClick={handleProcess}
               disabled={isAnalyzing}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="flex-1"
             >
               {isAnalyzing ? 'Analyzing...' : 'Analyze Dockerfile'}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleClear}
-              className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+              variant="outline"
             >
               Clear
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -811,9 +812,10 @@ const DockerfileLinter: React.FC = () => {
               Analysis Results
             </label>
             {analysis && analysis.results.length > 0 && (
-              <button
+              <Button
                 onClick={handleCopy}
-                className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                variant="ghost"
+                size="icon"
                 title="Copy results to clipboard"
               >
                 <svg
@@ -829,7 +831,7 @@ const DockerfileLinter: React.FC = () => {
                     d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                   />
                 </svg>
-              </button>
+              </Button>
             )}
           </div>
 
