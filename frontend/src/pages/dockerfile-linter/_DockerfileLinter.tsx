@@ -102,7 +102,7 @@ const DockerfileLinter: React.FC = () => {
           level: "warn",
           message: "yum clean all is not used",
           description: "the yum cache will remain in this layer making the layer unnecessarily large",
-          reference_url: ["http://docs.projectatomic.io/container-best-practices/#", "_clear_packaging_caches_and_temporary_package_downloads"]
+          reference_url: ["https://github.com/projectatomic/container-best-practices", "_clear_packaging_caches_and_temporary_package_downloads"]
         },
         {
           label: "no_apt-get_clean",
@@ -110,7 +110,7 @@ const DockerfileLinter: React.FC = () => {
           level: "warn",
           message: "apt-get clean is not used",
           description: "the apt-get cache will remain in this layer making the layer unnecessarily large",
-          reference_url: ["http://docs.projectatomic.io/container-best-practices/#", "_clear_packaging_caches_and_temporary_package_downloads"]
+          reference_url: ["https://github.com/projectatomic/container-best-practices", "_clear_packaging_caches_and_temporary_package_downloads"]
         },
         {
           label: "no_ampersand_usage",
@@ -118,7 +118,7 @@ const DockerfileLinter: React.FC = () => {
           level: "warn",
           message: "using ; instead of &&",
           description: "RUN do_1 && do_2: The ampersands change the resulting evaluation into do_1 and then do_2 only if do_1 was successful.",
-          reference_url: ["http://docs.projectatomic.io/container-best-practices/#", "#_using_semi_colons_vs_double_ampersands"]
+          reference_url: ["https://github.com/projectatomic/container-best-practices", "#_using_semi_colons_vs_double_ampersands"]
         },
         {
           label: "avoid_sudo",
@@ -139,14 +139,14 @@ const DockerfileLinter: React.FC = () => {
           message: "Label 'Name' is missing or has invalid format",
           level: "warn",
           required: true,
-          reference_url: ["http://docs.projectatomic.io/container-best-practices/#", "_recommended_labels_for_your_project"]
+          reference_url: ["https://github.com/projectatomic/container-best-practices", "_recommended_labels_for_your_project"]
         },
         Version: {
           valueRegex: /[\w.${}()"'\\\/~<>\-?\%:]+/,
           message: "Label 'Version' is missing or has invalid format",
           level: "warn",
           required: true,
-          reference_url: ["http://docs.projectatomic.io/container-best-practices/#", "_recommended_labels_for_your_project"]
+          reference_url: ["https://github.com/projectatomic/container-best-practices", "_recommended_labels_for_your_project"]
         }
       }
     },
