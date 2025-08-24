@@ -6,14 +6,14 @@ const LearnMoreButton: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => {
   const isSmall = size === 'sm';
 
   return (
-    <button className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] ml-2 md:ml-6 border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${isSmall ? 'px-1 py-0.5' : 'px-1 py-1'
-      } bg-yellow-200 hover:bg-yellow-300`}>
-      <div className={`relative flex justify-start items-center font-semibold ${isSmall ? 'text-[10px]' : 'text-xs'
+    <button className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${isSmall ? 'px-1 py-0.5' : 'px-1 py-1'
+      } bg-yellow-100 hover:bg-yellow-600`}>
+      <div className={`relative text-black flex justify-start items-center font-semibold ${isSmall ? 'text-[10px]' : 'text-xs'
         }`}>
         <span className="relative transition-all duration-250 mr-1">Learn</span>
         <span className="relative transition-all duration-250 mr-1">More</span>
       </div>
-      <div className={`border border-black rounded-full bg-red-300 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${isSmall ? 'p-0.5 mr-0.5' : 'p-1 mr-1'
+      <div className={`border border-black rounded-full bg-red-200 group-hover:bg-red-600 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${isSmall ? 'p-0.5 mr-0.5' : 'p-1 mr-1'
         }`}>
         <svg
           width={isSmall ? "8" : "12"}
@@ -128,7 +128,7 @@ const AdBanner: React.FC = () => {
   return (
     isVisible ? <>
       {/* Desktop Layout - Auto-fit to parent width */}
-      <div className="hidden lg:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 mb-10 mt-2 md:mt-5 rounded-md relative">
+      <div className="hidden lg:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 mb-10 mt-2 md:mt-5 rounded-md relative flex justify-center">
         {/* Close Button */}
         <CloseButton size="md" onClick={handleClose} />
 
@@ -136,31 +136,33 @@ const AdBanner: React.FC = () => {
           href={link + "?variation=" + currentVariation}
           target="_blank"
           rel="noopener noreferrer"
-          className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg flex justify-center"
+          className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg flex justify-start "
         >
-          <div className="px-2 h-full w-auto min-w-96 flex flex-col justify-center">
+          <div className="px-6 h-full w-full min-w-96 flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-2">
               <h2 className="text-6xl !font-semibold leading-tight font-eb-garamond tracking-wide mb-2">
                 <span className="text-red-700">{currentAd.title}</span>
               </h2>
             </div>
-            <div className="text-left flex flex-row justify-between mt-0">
-              <p className="text-4xl font-normal text-gray-800 font-eb-garamond leading-relaxed m-0">
-                {currentAd.description}
-              </p>
-              {/* Branding Section */}
-              <div className="ml-6 flex items-center gap-4 mt-1">
+            <div className="text-left flex flex-row justify-between items-center gap-24 mt-0">
+              <div className="flex flex-row justify-between items-center gap-12">
+                <p className="text-4xl font-semibold text-gray-800 font-eb-garamond leading-relaxed">
+                  {currentAd.description}
+                </p>
+                {/* Branding Section */}
+                <LearnMoreButton size="md" />
+              </div>
+              <div className="flex items-center gap-4 mt-1">
                 <LiveReviewBrand size="lg" />
               </div>
-              <LearnMoreButton size="md" />
             </div>
           </div>
         </a>
       </div>
 
-      {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="mt-8 lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 md:h-24 rounded-lg relative">
+      {/* Tablet Layout - Auto-fit to parent width */}
+      <div className="hidden md:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 rounded-lg relative mb-10 mt-6">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
@@ -172,18 +174,48 @@ const AdBanner: React.FC = () => {
           <div className="px-4 py-6 h-full flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-4">
-              <h2 className="text-xl md:text-2xl font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
+              <h2 className="text-5xl font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
               </h2>
-              <p className="text-sm text-gray-800 opacity-90 font-eb-garamond font-medium leading-relaxed">
+              <p className="text-3xl text-gray-800 opacity-90 font-eb-garamond font-medium leading-relaxed">
                 {currentAd.description}
               </p>
             </div>
 
             {/* Branding Section */}
             <div className="flex flex-row items-center justify-between gap-3">
-              <LiveReviewBrand size="sm" />
               <LearnMoreButton size="sm" />
+              <LiveReviewBrand size="sm" />
+            </div>
+          </div>
+        </a>
+      </div>
+
+      {/* Mobile Layout - Auto-fit to parent width */}
+      <div className="mt-11 mb-8 lg:hidden md:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-44  rounded-lg relative">
+        {/* Close Button */}
+        <CloseButton size="sm" onClick={handleClose} />
+        <a
+          href={link + "?variation=" + currentVariation}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg"
+        >
+          <div className="px-4 py-6 h-full flex flex-col justify-center">
+            {/* Content Section */}
+            <div className="text-left mb-4">
+              <h2 className="text-3xl font-bold text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
+                {currentAd.title}
+              </h2>
+              <p className="text-xl text-gray-800 opacity-90 font-eb-garamond font-semibold leading-relaxed">
+                {currentAd.description}
+              </p>
+            </div>
+
+            {/* Branding Section */}
+            <div className="flex flex-row items-center justify-between mb-2">
+              <LearnMoreButton size="sm" />
+              <LiveReviewBrand size="sm" />
             </div>
           </div>
         </a>

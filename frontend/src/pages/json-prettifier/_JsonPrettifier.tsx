@@ -204,30 +204,30 @@ const JsonPrettifier: React.FC = () => {
   }
 
   return (
-    <div className="json-prettifier max-w-6xl mx-auto  py-6 px-2 md:px-6 pt-0">
+    <div className="json-prettifier max-w-6xl mx-auto px-2 md:px-6">
       {/* Ad Banner */}
       <div className="mb-6">
         <AdBanner />
       </div>
-      <div className="mb-8">
-        <h1 className="text-3xl text-foreground mb-4">
+      <div className="mb-6">
+        <h1 className="text-xl md:text-3xl mb-2 text-black">
           JSON Prettifier
         </h1>
-        <p className="text-muted-foreground text-sm md:text-lg">
+        <p className="text-muted-foreground text-xs  md:text-md">
           Real-time JSON formatting, validation, and error detection
         </p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-4">
         {/* Left Panel - Input Editor */}
         <div className="xl:col-span-5">
-          <div className="flex items-center justify-between mb-4">
-            <label className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm md:text-lg font-semibold text-slate-700 dark:text-slate-300">
               Input JSON
             </label>
             <button
               onClick={handleClear}
-              className="px-3 py-1 text-sm border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+              className="px-2 md:px-3 py-0.5 md:py-1 text-sm border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
             >
               Clear
             </button>
