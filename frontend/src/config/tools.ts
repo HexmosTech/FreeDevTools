@@ -70,6 +70,18 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       'Real-time password strength indicator'
     ]
   }
+,
+  'dockerfile-linter': {
+    name: 'Dockerfile Linter',
+    path: '/freedevtools/t/dockerfile-linter/',
+    description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/dockerfile-linter/',
+    keywords: ['dockerfile-linter', 'developer tools', 'TODO: add more keywords'],
+    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
+  }
 };
 
 export function getToolByKey(key: string): Tool | undefined {
