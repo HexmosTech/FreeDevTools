@@ -1,4 +1,5 @@
 export interface Tool {
+  title: string;
   name: string;
   path: string;
   description: string;
@@ -8,10 +9,15 @@ export interface Tool {
   canonical: string;
   keywords: string[];
   features: string[];
+  ogImage: string;
+  twitterImage: string;
+  datePublished?: string;
+  softwareVersion?: string;
 }
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-prettifier": {
+    title: "",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
@@ -38,9 +44,12 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time validation",
       "Copy to clipboard",
     ],
+    ogImage: "",
+    twitterImage: "",
   },
 
   "password-generator": {
+    title: "",
     name: "Password Generator",
     path: "/freedevtools/t/password-generator/",
     description:
@@ -62,28 +71,52 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "safe password",
     ],
     features: [
-      'Customizable password length',
-      'Multiple character set options',
-      'Word-based memorable passwords',
-      'Readable password generation',
-      'Instant password creation',
-      'Copy to clipboard',
-      'Real-time password strength indicator'
-    ]
-  }
-,
-  'dockerfile-linter': {
-    name: 'Dockerfile Linter',
-    path: '/freedevtools/t/dockerfile-linter/',
-    description: 'Comprehensive Dockerfile analysis and linting tool. Detects syntax errors, security vulnerabilities, performance issues, and enforces Docker best practices with detailed explanations.',
-    category: 'Developer Tools',
-    icon: '�',
-    themeColor: '#2496ed',
-    canonical: 'https://hexmos.com/freedevtools/t/dockerfile-linter/',
-    keywords: ['dockerfile linter', 'docker linter', 'dockerfile validator', 'docker security', 'dockerfile analyzer', 'container security', 'docker best practices', 'dockerfile syntax', 'developer tools'],
-    features: ['Syntax validation and error detection', 'Security vulnerability analysis', 'Performance optimization suggestions', 'Docker best practices enforcement', 'Real-time feedback with explanations', 'Copy results to clipboard']
+      "Customizable password length",
+      "Multiple character set options",
+      "Word-based memorable passwords",
+      "Readable password generation",
+      "Instant password creation",
+      "Copy to clipboard",
+      "Real-time password strength indicator",
+    ],
+    ogImage: "",
+    twitterImage: "",
+  },
+
+  "dockerfile-linter": {
+    title: "",
+    name: "Dockerfile Linter",
+    path: "/freedevtools/t/dockerfile-linter/",
+    description:
+      "Comprehensive Dockerfile analysis and linting tool. Detects syntax errors, security vulnerabilities, performance issues, and enforces Docker best practices with detailed explanations.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#2496ed",
+    canonical: "https://hexmos.com/freedevtools/t/dockerfile-linter/",
+    keywords: [
+      "dockerfile linter",
+      "docker linter",
+      "dockerfile validator",
+      "docker security",
+      "dockerfile analyzer",
+      "container security",
+      "docker best practices",
+      "dockerfile syntax",
+      "developer tools",
+    ],
+    features: [
+      "Syntax validation and error detection",
+      "Security vulnerability analysis",
+      "Performance optimization suggestions",
+      "Docker best practices enforcement",
+      "Real-time feedback with explanations",
+      "Copy results to clipboard",
+    ],
+    ogImage: "",
+    twitterImage: "",
   },
   "date-time-converter": {
+    title: "Date Time Converter - Convert UTC, ISO, Unix Timestamps",
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
@@ -107,8 +140,12 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Convert between UTC, ISO, Unix, and other date/time formats",
       "Date and time picker integration",
       "Handles timestamps, ISO strings, and custom formats",
-      "Shows all common formats at a glance"
+      "Shows all common formats at a glance",
     ],
+    ogImage:
+      "https://hexmos.com/freedevtools/images/date-time-converter-og.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/images/date-time-converter-twitter.png",
   },
 };
 
