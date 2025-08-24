@@ -37,12 +37,6 @@ function generateTool(toolKey) {
   updateToolsConfig(toolKey, toolName);
   console.log(`✅ Updated tools configuration`);
 
-  // Generate README for the tool
-  const readmeContent = generateToolReadme(toolKey, toolName);
-  const readmePath = path.join(toolDir, 'README.md');
-  fs.writeFileSync(readmePath, readmeContent);
-  console.log(`✅ Created tool README: ${readmePath}`);
-
   console.log(`\n🎉 Tool "${toolName}" generated successfully!`);
   console.log(`📁 Location: ${toolDir}`);
   console.log(`🔗 URL: /freedevtools/t/${toolKey}/`);
@@ -207,27 +201,6 @@ const tool = getToolByKey('${toolKey}');
 >
   <${componentName} client:load />
 </BaseLayout>
-`;
-}
-
-function generateToolReadme(toolKey, toolName) {
-  return `# ${toolName}
-
-## Description
-TODO: Add a detailed description of what this tool does.
-
-## Features
-- TODO: List key features
-- TODO: Add more features
-
-## Usage
-TODO: Explain how to use this tool.
-
-## Technical Details
-TODO: Add any technical implementation details.
-
-## Contributing
-TODO: Add contribution guidelines if applicable.
 `;
 }
 
