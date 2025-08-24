@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
+import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -180,18 +181,7 @@ const JsonPrettifier: React.FC = () => {
 
 
   if (!isClient) {
-    return (
-      <div className="json-prettifier max-w-7xl mx-auto py-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            JSON Prettifier
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400 text-lg">
-            Loading...
-          </p>
-        </div>
-      </div>
-    );
+    return <JsonPrettifierSkeleton />;
   }
 
   return (
