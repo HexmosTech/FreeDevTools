@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import AdBanner from "../../components/AdBanner";
+import ToolHead from "../../components/tool/ToolHead";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -205,18 +205,10 @@ const JsonPrettifier: React.FC = () => {
 
   return (
     <div className="json-prettifier max-w-6xl mx-auto px-2 md:px-6">
-      {/* Ad Banner */}
-      <div className="mb-6">
-        <AdBanner />
-      </div>
-      <div className="mb-6">
-        <h1 className="text-lg md:text-3xl mb-2 text-black dark:text-slate-300">
-          JSON Prettifier
-        </h1>
-        <p className="text-muted-foreground text-xs  md:text-md">
-          Real-time JSON formatting, validation, and error detection
-        </p>
-      </div>
+      <ToolHead
+        name="JSON Prettifier"
+        description="Real-time JSON formatting, validation, and error detection"
+      />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-4">
         {/* Left Panel - Input Editor */}
