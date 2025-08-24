@@ -75,13 +75,13 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   'dockerfile-linter': {
     name: 'Dockerfile Linter',
     path: '/freedevtools/t/dockerfile-linter/',
-    description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
+    description: 'Comprehensive Dockerfile analysis and linting tool. Detects syntax errors, security vulnerabilities, performance issues, and enforces Docker best practices with detailed explanations.',
     category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
+    icon: '�',
+    themeColor: '#2496ed',
     canonical: 'https://hexmos.com/freedevtools/t/dockerfile-linter/',
-    keywords: ['dockerfile-linter', 'developer tools', 'TODO: add more keywords'],
-    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
+    keywords: ['dockerfile linter', 'docker linter', 'dockerfile validator', 'docker security', 'dockerfile analyzer', 'container security', 'docker best practices', 'dockerfile syntax', 'developer tools'],
+    features: ['Syntax validation and error detection', 'Security vulnerability analysis', 'Performance optimization suggestions', 'Docker best practices enforcement', 'Real-time feedback with explanations', 'Copy results to clipboard']
   },
   "date-time-converter": {
     name: "Date Time Converter",
