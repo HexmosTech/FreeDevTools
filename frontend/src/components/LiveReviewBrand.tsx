@@ -37,7 +37,7 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
           flex
           items-center
           ${currentSize.spacing}
-          lg:flex-row flex-col
+          flex-row 
           lg:space-x-2 space-x-0
           lg:space-y-0 space-y-1
         `}

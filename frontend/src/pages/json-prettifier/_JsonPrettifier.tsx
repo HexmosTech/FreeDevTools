@@ -204,16 +204,16 @@ const JsonPrettifier: React.FC = () => {
   }
 
   return (
-    <div className="json-prettifier max-w-7xl mx-auto py-8 pt-0 bg-background">
+    <div className="json-prettifier max-w-6xl mx-auto  py-6 px-2 md:px-6 pt-0">
       {/* Ad Banner */}
       <div className="mb-6">
         <AdBanner />
       </div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-4">
+        <h1 className="text-3xl text-foreground mb-4">
           JSON Prettifier
         </h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-muted-foreground text-sm md:text-lg">
           Real-time JSON formatting, validation, and error detection
         </p>
       </div>
@@ -329,7 +329,7 @@ const JsonPrettifier: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700">
+      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 px-2 md:px-6 mb-6 border border-slate-200 dark:border-slate-700">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
           <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
           Shortcut Keys
@@ -338,7 +338,7 @@ const JsonPrettifier: React.FC = () => {
         <div className="space-y-6">
           {/* Tree Editor Shortcuts */}
           <div>
-            <h4 className="text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
+            <h4 className="text-sm md:text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
               Tree Editor
             </h4>
             <div className="overflow-x-auto">
@@ -560,8 +560,8 @@ const JsonPrettifier: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
+      <div className="text-sm md:text-md bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 px-2 md:px-6 border border-slate-200 dark:border-slate-700">
+        <h3 className="text-md md:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
           <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
           About JSON Prettifier
         </h3>
