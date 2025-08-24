@@ -162,7 +162,7 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Tablet Layout - Auto-fit to parent width */}
-      <div className="hidden md:block w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 rounded-lg relative mb-10 mt-6">
+      <div className="hidden md:block lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 rounded-lg relative mb-10 mt-6">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
@@ -192,7 +192,7 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="mt-11 mb-8 lg:hidden md:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-44  rounded-lg relative">
+      <div className="md:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-44 rounded-lg relative mb-8 mt-6">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
