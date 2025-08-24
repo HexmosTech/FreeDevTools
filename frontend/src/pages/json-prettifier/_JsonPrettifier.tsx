@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ToolHead from "../../components/tool/ToolHead";
+import ToolContainer from "../../components/tool/ToolContainer";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -204,7 +205,7 @@ const JsonPrettifier: React.FC = () => {
   }
 
   return (
-    <div className="json-prettifier max-w-6xl mx-auto px-2 md:px-6">
+    <ToolContainer>
       <ToolHead
         name="JSON Prettifier"
         description="Real-time JSON formatting, validation, and error detection"
@@ -573,7 +574,7 @@ const JsonPrettifier: React.FC = () => {
           </ul>
         </div>
       </div>
-    </div>
+    </ToolContainer>
   );
 };
 
