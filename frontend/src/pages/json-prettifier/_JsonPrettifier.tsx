@@ -210,7 +210,7 @@ const JsonPrettifier: React.FC = () => {
         <AdBanner />
       </div>
       <div className="mb-6">
-        <h1 className="text-xl md:text-3xl mb-2 text-black dark:text-slate-300">
+        <h1 className="text-lg md:text-3xl mb-2 text-black dark:text-slate-300">
           JSON Prettifier
         </h1>
         <p className="text-muted-foreground text-xs  md:text-md">
@@ -222,12 +222,12 @@ const JsonPrettifier: React.FC = () => {
         {/* Left Panel - Input Editor */}
         <div className="xl:col-span-5">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm md:text-lg font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs md:text-lg font-semibold text-slate-700 dark:text-slate-300">
               Input JSON
             </label>
             <button
               onClick={handleClear}
-              className="px-2 md:px-3 py-0.5 md:py-1 text-sm border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+              className="px-2 md:px-3 py-0.5 md:py-1 text-xs md:text-sm border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
             >
               Clear
             </button>
