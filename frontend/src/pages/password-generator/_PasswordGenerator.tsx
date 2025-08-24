@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import AdBanner from "../../components/banner/AdBanner";
+import ToolContainer from "../../components/tool/ToolContainer";
+import ToolHead from "../../components/tool/ToolHead";
 
 interface PasswordOptions {
   length: number;
@@ -219,19 +220,11 @@ const PasswordGenerator: React.FC = () => {
   const strengthInfo = calculateStrength(password);
 
   return (
-    <div className="passwordgenerator-tool max-w-6xl mx-auto  py-6 px-2 md:px-6 pt-0">
-      {/* Ad Banner */}
-      <div className="mb-6">
-        <AdBanner />
-      </div>
-      <div className="mb-8">
-        <h1 className="text-3xl text-slate-900 dark:text-slate-100 mb-4">
-          Password Generator
-        </h1>
-        <p className="text-slate-800 dark:text-slate-400 text-sm md:text-md">
-          Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options.
-        </p>
-      </div>
+    <ToolContainer>
+      <ToolHead
+        name="Password Generator"
+        description="Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options."
+      />
       {/* Generated Password Display */}
       <div className="mb-6 p-6 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-800/50">
         <div className="flex items-center justify-between mb-4">
@@ -690,7 +683,7 @@ const PasswordGenerator: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ToolContainer>
   );
 };
 

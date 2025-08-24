@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ToolContainer from "../../components/tool/ToolContainer";
+import ToolHead from "../../components/tool/ToolHead";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -240,11 +242,11 @@ function parseLine(line: string, lineno: number, options?: { lineContinuationReg
   }
 
   const splitResult = splitCommand(line);
-  const command: DockerCommand = { 
-    name: splitResult.name, 
+  const command: DockerCommand = {
+    name: splitResult.name,
     rest: splitResult.rest,
     args: '',
-    lineno 
+    lineno
   };
 
   const commandParserFn = commandParsers[command.name];
@@ -513,7 +515,7 @@ const DockerfileLinter: React.FC = () => {
     const results: LintResult[] = [];
     const instructionCounts: Record<string, number> = {};
     const labelValues: Record<string, string> = {};
-    
+
     // First, parse the Dockerfile using the proper parser to catch syntax errors
     let parsedCommands: DockerCommand[] = [];
     try {
@@ -596,7 +598,7 @@ const DockerfileLinter: React.FC = () => {
       if (command.name === 'LABEL' && instructionRules.defined_namevals && typeof command.args === 'object') {
         Object.entries(command.args).forEach(([key, value]) => {
           labelValues[key] = value as string;
-          
+
           const namevalRule = instructionRules.defined_namevals?.[key];
           if (namevalRule && !namevalRule.valueRegex.test(value as string)) {
             results.push({
@@ -617,9 +619,9 @@ const DockerfileLinter: React.FC = () => {
     lines.forEach((line, index) => {
       const lineNumber = index + 1;
       const trimmedLine = line.trim();
-      
+
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
-      
+
       // Check for lines that don't start with a valid instruction but aren't empty/comments
       const instructionMatch = trimmedLine.match(/^([A-Za-z_][A-Za-z0-9_]*)/);
       if (instructionMatch) {
@@ -628,18 +630,18 @@ const DockerfileLinter: React.FC = () => {
         const validInstructions = Object.keys(commandParsers);
         if (!validInstructions.includes(instruction)) {
           // Check if it looks like it might be a typo (e.g., "blahFROM")
-          const possibleInstruction = validInstructions.find(valid => 
+          const possibleInstruction = validInstructions.find(valid =>
             instruction.includes(valid) || valid.includes(instruction)
           );
-          
+
           let message = `Unknown instruction: ${instruction}`;
           let description = 'This is not a valid Dockerfile instruction.';
-          
+
           if (possibleInstruction) {
             message = `Unknown instruction: ${instruction}. Did you mean ${possibleInstruction}?`;
             description = `'${instruction}' is not a valid Dockerfile instruction. You might have meant '${possibleInstruction}'.`;
           }
-          
+
           results.push({
             line: lineNumber,
             level: 'error',
@@ -659,7 +661,7 @@ const DockerfileLinter: React.FC = () => {
         });
       }
     });
-    
+
     // Check required instructions
     requiredInstructions.forEach(reqInst => {
       const count = instructionCounts[reqInst.instruction] || 0;
@@ -674,7 +676,7 @@ const DockerfileLinter: React.FC = () => {
         });
       }
     });
-    
+
     // Check required labels
     if (lineRules.LABEL?.defined_namevals) {
       Object.entries(lineRules.LABEL.defined_namevals).forEach(([labelName, rule]) => {
@@ -690,14 +692,14 @@ const DockerfileLinter: React.FC = () => {
         }
       });
     }
-    
+
     // Calculate summary
     const summary = {
       errors: results.filter(r => r.level === 'error').length,
       warnings: results.filter(r => r.level === 'warn').length,
       info: results.filter(r => r.level === 'info').length
     };
-    
+
     return { results, summary };
   };
 
@@ -708,7 +710,7 @@ const DockerfileLinter: React.FC = () => {
         setAnalysis({ results: [], summary: { errors: 0, warnings: 0, info: 0 } });
         return;
       }
-      
+
       const analysisResult = lintDockerfile(dockerfileContent);
       setAnalysis(analysisResult);
     } catch (err) {
@@ -726,7 +728,7 @@ const DockerfileLinter: React.FC = () => {
 
   const handleCopy = () => {
     if (analysis) {
-      const resultText = analysis.results.map(r => 
+      const resultText = analysis.results.map(r =>
         `Line ${r.line}: [${r.level.toUpperCase()}] ${r.message}${r.description ? ' - ' + r.description : ''} (${r.rule || 'unknown'})`
       ).join('\n');
       navigator.clipboard.writeText(resultText);
@@ -766,15 +768,11 @@ const DockerfileLinter: React.FC = () => {
   };
 
   return (
-    <div className="dockerfilelinter-tool max-w-6xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          Dockerfile Linter
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-lg">
-          Comprehensive Dockerfile analysis based on industry best practices and security guidelines
-        </p>
-      </div>
+    <ToolContainer>
+      <ToolHead
+        name="Dockerfile Linter"
+        description="Comprehensive Dockerfile analysis based on industry best practices and security guidelines"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="space-y-4">
@@ -929,12 +927,12 @@ const DockerfileLinter: React.FC = () => {
         </h3>
         <div className="text-slate-600 dark:text-slate-400 space-y-3">
           <p>
-            This comprehensive Dockerfile linter is based on industry-standard rules from the 
-            <strong> dockerfilelint</strong> project and Docker security best practices. It analyzes your 
-            Dockerfiles for syntax errors, security vulnerabilities, performance issues, and adherence 
+            This comprehensive Dockerfile linter is based on industry-standard rules from the
+            <strong> dockerfilelint</strong> project and Docker security best practices. It analyzes your
+            Dockerfiles for syntax errors, security vulnerabilities, performance issues, and adherence
             to Docker best practices.
           </p>
-          
+
           <div>
             <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Key Features:</h4>
             <ul className="text-sm space-y-1 ml-4">
@@ -967,10 +965,10 @@ const DockerfileLinter: React.FC = () => {
 
           <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
             <p className="text-sm">
-              <strong>Rule Sources:</strong> 
+              <strong>Rule Sources:</strong>
               <a href="https://github.com/replicatedhq/dockerfilelint" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1">
                 dockerfilelint
-              </a>, 
+              </a>,
               <a href="https://docs.docker.com/develop/dev-best-practices/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1">
                 Docker best practices
               </a>, and
@@ -981,7 +979,7 @@ const DockerfileLinter: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ToolContainer>
   );
 };
 

@@ -1,6 +1,7 @@
 import { Calendar, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
-import AdBanner from "../../components/banner/AdBanner";
+import ToolContainer from "../../components/tool/ToolContainer";
+import ToolHead from "../../components/tool/ToolHead";
 
 const DateTimeConverter = () => {
   const [inputValue, setInputValue] = useState("");
@@ -123,22 +124,12 @@ const DateTimeConverter = () => {
   };
 
   return (
-    <div className="rounded-lg p-6 max-w-6xl mx-auto p-6 pt-0 bg-white dark:bg-gray-900">
-      <div className="mb-6">
-        <AdBanner />
-      </div>
+    <ToolContainer>
+      <ToolHead
+        name="Date-time Converter"
+        description="Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once."
+      />
       <div className="max-w-6xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-light mb-2 flex items-center gap-2">
-            Date-time Converter
-          </h1>
-          <p className="text-slate-800 dark:text-slate-400 text-lg">
-            Instantly convert any date or time between UTC, ISO, Unix, and other
-            popular formats. Enter a date, pick from the calendar, or paste a
-            timestamp to see all formats at once.
-          </p>
-        </div>
 
         {/* Input Section */}
         <div className="mb-8">
@@ -410,7 +401,7 @@ const DateTimeConverter = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ToolContainer>
   );
 };
 
