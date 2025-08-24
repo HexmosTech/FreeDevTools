@@ -162,7 +162,7 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Tablet Layout - Auto-fit to parent width */}
-      <div className="hidden md:block lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 rounded-lg relative mb-10 mt-6">
+      <div className="hidden md:block lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm  rounded-lg relative mb-10 mt-6">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
@@ -171,7 +171,7 @@ const AdBanner: React.FC = () => {
           rel="noopener noreferrer"
           className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg"
         >
-          <div className="px-4 py-6 h-full flex flex-col justify-center">
+          <div className="px-2 py-2 h-full flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-4">
               <h2 className="text-5xl font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
@@ -192,7 +192,7 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="md:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-44 rounded-lg relative mb-8 mt-6">
+      <div className="md:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm rounded-lg relative mb-8 mt-6">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
@@ -201,7 +201,7 @@ const AdBanner: React.FC = () => {
           rel="noopener noreferrer"
           className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg"
         >
-          <div className="px-4 py-6 h-full flex flex-col justify-center">
+          <div className="px-4 py-2 h-full flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-4">
               <h2 className="text-3xl font-bold text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
