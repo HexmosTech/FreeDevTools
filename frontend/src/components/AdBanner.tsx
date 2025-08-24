@@ -160,7 +160,7 @@ const AdBanner: React.FC = () => {
       </div>
 
       {/* Mobile Layout - Auto-fit to parent width */}
-      <div className="mt-8 lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-32 md:h-16 rounded-lg relative">
+      <div className="mt-8 lg:hidden w-full bg-yellow-100 border border-gray-200 shadow-sm h-40 md:h-24 rounded-lg relative">
         {/* Close Button */}
         <CloseButton size="sm" onClick={handleClose} />
         <a
@@ -169,10 +169,10 @@ const AdBanner: React.FC = () => {
           rel="noopener noreferrer"
           className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg"
         >
-          <div className="px-4 h-full flex flex-col justify-center">
+          <div className="px-4 py-6 h-full flex flex-col justify-center">
             {/* Content Section */}
-            <div className="text-left mb-3">
-              <h2 className="text-xl md:text-2xl font-bold text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
+            <div className="text-left mb-4">
+              <h2 className="text-xl md:text-2xl font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
               </h2>
               <p className="text-sm text-gray-800 opacity-90 font-eb-garamond font-medium leading-relaxed">
