@@ -1,5 +1,323 @@
 import React, { useState } from 'react';
 
+// Docker parser functions adapted from dockerparser.js
+const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
+const TOKEN_LINE_CONTINUATION = /\\[ \t]*$/;
+const TOKEN_COMMENT = /^\s*#.*$/;
+const TOKEN_ESCAPE_DIRECTIVE = /^#[ \t]*escape[ \t]*=[ \t]*(.).*$/;
+
+function isSpace(s: string): boolean {
+  return /^\s$/.test(s);
+}
+
+function regexEscape(str: string): string {
+  return str.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+}
+
+function parseWords(rest: string): string[] {
+  const S_inSpaces = 1;
+  const S_inWord = 2;
+  const S_inQuote = 3;
+
+  const words: string[] = [];
+  let phase = S_inSpaces;
+  let word = '';
+  let quote = '';
+  let blankOK = false;
+  let ch: string = '';
+  let pos: number;
+
+  for (pos = 0; pos <= rest.length; pos++) {
+    if (pos != rest.length) {
+      ch = rest[pos];
+    }
+
+    if (phase == S_inSpaces) {
+      if (pos == rest.length) {
+        break;
+      }
+      if (isSpace(ch)) {
+        continue;
+      }
+      phase = S_inWord;
+    }
+    if ((phase == S_inWord || phase == S_inQuote) && (pos == rest.length)) {
+      if (blankOK || word.length > 0) {
+        words.push(word);
+      }
+      break;
+    }
+    if (phase == S_inWord) {
+      if (isSpace(ch)) {
+        phase = S_inSpaces;
+        if (blankOK || word.length > 0) {
+          words.push(word);
+        }
+        word = '';
+        blankOK = false;
+        continue;
+      }
+      if (ch == '\'' || ch == '"') {
+        quote = ch;
+        blankOK = true;
+        phase = S_inQuote;
+      }
+      if (ch == '\\') {
+        if (pos + 1 == rest.length) {
+          continue;
+        }
+        word += ch;
+        pos++;
+        ch = rest[pos];
+      }
+      word += ch;
+      continue;
+    }
+    if (phase == S_inQuote) {
+      if (ch == quote) {
+        phase = S_inWord;
+      }
+      if (ch == '\\' && quote != '\'') {
+        if (pos + 1 == rest.length) {
+          phase = S_inWord;
+          continue;
+        }
+        word += ch;
+        pos++;
+        ch = rest[pos];
+      }
+      word += ch;
+    }
+  }
+
+  return words;
+}
+
+interface DockerCommand {
+  name: string;
+  args: any;
+  lineno: number;
+  raw?: string;
+  error?: string;
+  rest?: string;
+}
+
+function isComment(line: string): boolean {
+  return TOKEN_COMMENT.test(line);
+}
+
+function splitCommand(line: string): { name: string; rest: string } {
+  const match = line.match(TOKEN_WHITESPACE);
+  if (!match || match.index === undefined) {
+    return { name: line.toUpperCase(), rest: '' };
+  }
+  const name = line.substr(0, match.index).toUpperCase();
+  const rest = line.substr(match.index + match[0].length);
+  return { name, rest };
+}
+
+function parseString(cmd: DockerCommand): boolean {
+  cmd.args = cmd.rest;
+  return true;
+}
+
+function parseJSON(cmd: DockerCommand): boolean {
+  try {
+    const json = JSON.parse(cmd.rest!);
+    if (!Array.isArray(json)) {
+      return false;
+    }
+    if (!json.every(entry => typeof entry === 'string')) {
+      return false;
+    }
+    cmd.args = json;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function parseJsonOrString(cmd: DockerCommand): boolean {
+  if (parseJSON(cmd)) {
+    return true;
+  }
+  return parseString(cmd);
+}
+
+function parseStringsWhitespaceDelimited(cmd: DockerCommand): boolean {
+  cmd.args = cmd.rest!.split(TOKEN_WHITESPACE);
+  return true;
+}
+
+function parseJsonOrList(cmd: DockerCommand): boolean {
+  if (parseJSON(cmd)) {
+    return true;
+  }
+  return parseStringsWhitespaceDelimited(cmd);
+}
+
+function parseNameVal(cmd: DockerCommand): boolean {
+  const words = parseWords(cmd.rest!);
+  cmd.args = {};
+
+  if (words.length === 0) {
+    cmd.error = 'No KEY name value, or KEY name=value arguments found';
+    return false;
+  }
+
+  if (words[0].indexOf('=') == -1) {
+    const strs = cmd.rest!.split(TOKEN_WHITESPACE);
+    if (strs.length < 2) {
+      cmd.error = cmd.name + ' must have two arguments, got ' + cmd.rest;
+      return false;
+    }
+    cmd.args[strs[0]] = strs.slice(1).join(' ');
+  } else {
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      if (word.indexOf('=') == -1) {
+        cmd.error = 'Syntax error - can\'t find = in ' + word + '. Must be of the form: name=value';
+        return false;
+      }
+      const parts = word.split('=');
+      cmd.args[parts[0]] = parts.slice(1).join('=');
+    }
+  }
+  return true;
+}
+
+function parseNameOrNameVal(cmd: DockerCommand): boolean {
+  cmd.args = parseWords(cmd.rest!);
+  return true;
+}
+
+function parseSubCommand(cmd: DockerCommand): boolean {
+  const parseDetails = parseLine(cmd.rest!, cmd.lineno);
+  if (parseDetails.command) {
+    cmd.args = parseDetails.command;
+    return true;
+  }
+  cmd.error = 'Unhandled onbuild command: ' + cmd.rest;
+  return false;
+}
+
+const commandParsers: Record<string, (cmd: DockerCommand) => boolean> = {
+  'ADD': parseJsonOrList,
+  'ARG': parseNameOrNameVal,
+  'CMD': parseJsonOrString,
+  'COPY': parseJsonOrList,
+  'ENTRYPOINT': parseJsonOrString,
+  'ENV': parseNameVal,
+  'EXPOSE': parseStringsWhitespaceDelimited,
+  'FROM': parseString,
+  'LABEL': parseNameVal,
+  'MAINTAINER': parseString,
+  'ONBUILD': parseSubCommand,
+  'RUN': parseJsonOrString,
+  'STOPSIGNAL': parseString,
+  'USER': parseString,
+  'VOLUME': parseJsonOrList,
+  'WORKDIR': parseString
+};
+
+function parseLine(line: string, lineno: number, options?: { lineContinuationRegex?: RegExp }): { command: DockerCommand | null; remainder: string } {
+  const lineContinuationRegex = options?.lineContinuationRegex || TOKEN_LINE_CONTINUATION;
+
+  line = line.trim();
+
+  if (!line) {
+    return { command: null, remainder: '' };
+  }
+
+  if (isComment(line)) {
+    const command: DockerCommand = { name: 'COMMENT', args: line, lineno };
+    return { command, remainder: '' };
+  }
+
+  if (line.match(lineContinuationRegex)) {
+    const remainder = line.replace(lineContinuationRegex, '');
+    return { command: null, remainder };
+  }
+
+  const splitResult = splitCommand(line);
+  const command: DockerCommand = { 
+    name: splitResult.name, 
+    rest: splitResult.rest,
+    args: '',
+    lineno 
+  };
+
+  const commandParserFn = commandParsers[command.name];
+  if (!commandParserFn) {
+    // Invalid Dockerfile instruction
+    command.error = `Unknown instruction: ${command.name}`;
+    command.args = command.rest;
+  } else if (commandParserFn(command)) {
+    command.raw = line;
+    delete command.rest;
+  }
+
+  return { command, remainder: '' };
+}
+
+function parseDockerfile(contents: string): DockerCommand[] {
+  const commands: DockerCommand[] = [];
+  const lines = contents.split(/\r?\n/);
+  let lookingForDirectives = true;
+  const parseOptions: { lineContinuationRegex?: RegExp } = {};
+  let remainder = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    const lineno = i + 1;
+    const nextLine = lines[i];
+    let line: string;
+
+    if (remainder && remainder.match(TOKEN_LINE_CONTINUATION) && isComment(nextLine)) {
+      line = remainder + "\\";
+    } else if (remainder) {
+      line = remainder + nextLine;
+    } else {
+      line = nextLine;
+    }
+
+    if (lookingForDirectives) {
+      const regexMatch = line.match(TOKEN_ESCAPE_DIRECTIVE);
+      if (regexMatch) {
+        if (regexMatch[1] != '`' && regexMatch[1] != '\\') {
+          commands.push({
+            name: 'INVALID_ESCAPE',
+            args: '',
+            lineno,
+            error: `invalid ESCAPE "${regexMatch[1]}". Must be \` or \\`
+          });
+          continue;
+        }
+        if (parseOptions.lineContinuationRegex) {
+          commands.push({
+            name: 'DUPLICATE_ESCAPE',
+            args: '',
+            lineno,
+            error: 'only one escape parser directive can be used'
+          });
+          continue;
+        }
+        parseOptions.lineContinuationRegex = new RegExp(regexEscape(regexMatch[1]) + '[ \t]*$');
+        continue;
+      }
+    }
+
+    lookingForDirectives = false;
+
+    const parseResult = parseLine(line, lineno, parseOptions);
+    if (parseResult.command) {
+      commands.push(parseResult.command);
+    }
+    remainder = parseResult.remainder;
+  }
+
+  return commands;
+}
+
 interface LintResult {
   line: number;
   level: 'error' | 'warn' | 'info';
@@ -192,55 +510,79 @@ const DockerfileLinter: React.FC = () => {
     }
   ];
   const lintDockerfile = (content: string): DockerfileAnalysis => {
-    const lines = content.split('\n');
     const results: LintResult[] = [];
     const instructionCounts: Record<string, number> = {};
     const labelValues: Record<string, string> = {};
     
-    lines.forEach((line, index) => {
-      const lineNumber = index + 1;
-      const trimmedLine = line.trim();
-      
-      if (!trimmedLine || trimmedLine.startsWith('#')) return;
-      
-      // Parse instruction
-      const instructionMatch = trimmedLine.match(/^(\w+)(?:\s+(.*))?$/);
-      if (!instructionMatch) {
+    // First, parse the Dockerfile using the proper parser to catch syntax errors
+    let parsedCommands: DockerCommand[] = [];
+    try {
+      parsedCommands = parseDockerfile(content);
+    } catch (error) {
+      results.push({
+        line: 1,
+        level: 'error',
+        message: 'Failed to parse Dockerfile: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        rule: 'parse_error'
+      });
+      return { results, summary: { errors: 1, warnings: 0, info: 0 } };
+    }
+
+    // Check for parsing errors in commands
+    parsedCommands.forEach((command) => {
+      if (command.error) {
         results.push({
-          line: lineNumber,
+          line: command.lineno,
           level: 'error',
-          message: 'Invalid Dockerfile syntax',
-          rule: 'syntax_error'
+          message: command.error,
+          rule: 'syntax_error',
+          description: 'This line contains invalid Dockerfile syntax that could not be parsed.'
         });
         return;
       }
-      
-      const [, instruction, params = ''] = instructionMatch;
-      const upperInstruction = instruction.toUpperCase();
-      
+
+      // Skip comment lines for further analysis
+      if (command.name === 'COMMENT' || command.name === 'INVALID_ESCAPE' || command.name === 'DUPLICATE_ESCAPE') {
+        return;
+      }
+
       // Count instructions for required instruction checks
-      instructionCounts[upperInstruction] = (instructionCounts[upperInstruction] || 0) + 1;
-      
+      instructionCounts[command.name] = (instructionCounts[command.name] || 0) + 1;
+
       // Check if instruction has rules defined
-      const instructionRules = lineRules[upperInstruction];
-      if (!instructionRules) return;
-      
+      const instructionRules = lineRules[command.name];
+      if (!instructionRules) {
+        // Unknown instruction (but parser would have caught this)
+        return;
+      }
+
+      // Get the parameters as a string for regex matching
+      let params = '';
+      if (typeof command.args === 'string') {
+        params = command.args;
+      } else if (Array.isArray(command.args)) {
+        params = command.args.join(' ');
+      } else if (typeof command.args === 'object' && command.args !== null) {
+        // For ENV/LABEL style commands
+        params = Object.entries(command.args).map(([k, v]) => `${k}=${v}`).join(' ');
+      }
+
       // Validate parameter syntax
       if (params && !instructionRules.paramSyntaxRegex.test(params)) {
         results.push({
-          line: lineNumber,
+          line: command.lineno,
           level: 'error',
-          message: `Invalid ${upperInstruction} syntax`,
+          message: `Invalid ${command.name} syntax`,
           rule: 'param_syntax_error',
-          description: `The parameters for ${upperInstruction} instruction do not match the expected format.`
+          description: `The parameters for ${command.name} instruction do not match the expected format.`
         });
       }
-      
+
       // Apply line rules
       instructionRules.rules.forEach(rule => {
         if (rule.regex.test(params)) {
           results.push({
-            line: lineNumber,
+            line: command.lineno,
             level: rule.level,
             message: rule.message,
             rule: rule.label,
@@ -249,18 +591,16 @@ const DockerfileLinter: React.FC = () => {
           });
         }
       });
-      
+
       // Handle LABEL defined_namevals
-      if (upperInstruction === 'LABEL' && instructionRules.defined_namevals) {
-        const labelMatch = params.match(/(\w+)=?"?([^"\s]+)"?/);
-        if (labelMatch) {
-          const [, key, value] = labelMatch;
-          labelValues[key] = value;
+      if (command.name === 'LABEL' && instructionRules.defined_namevals && typeof command.args === 'object') {
+        Object.entries(command.args).forEach(([key, value]) => {
+          labelValues[key] = value as string;
           
-          const namevalRule = instructionRules.defined_namevals[key];
-          if (namevalRule && !namevalRule.valueRegex.test(value)) {
+          const namevalRule = instructionRules.defined_namevals?.[key];
+          if (namevalRule && !namevalRule.valueRegex.test(value as string)) {
             results.push({
-              line: lineNumber,
+              line: command.lineno,
               level: namevalRule.level,
               message: namevalRule.message,
               rule: `label_${key.toLowerCase()}_format`,
@@ -268,7 +608,55 @@ const DockerfileLinter: React.FC = () => {
               reference_url: namevalRule.reference_url
             });
           }
+        });
+      }
+    });
+
+    // Check for basic syntax errors by also doing a line-by-line check for completely invalid lines
+    const lines = content.split('\n');
+    lines.forEach((line, index) => {
+      const lineNumber = index + 1;
+      const trimmedLine = line.trim();
+      
+      if (!trimmedLine || trimmedLine.startsWith('#')) return;
+      
+      // Check for lines that don't start with a valid instruction but aren't empty/comments
+      const instructionMatch = trimmedLine.match(/^([A-Za-z_][A-Za-z0-9_]*)/);
+      if (instructionMatch) {
+        const instruction = instructionMatch[1].toUpperCase();
+        // Check if this is a known instruction
+        const validInstructions = Object.keys(commandParsers);
+        if (!validInstructions.includes(instruction)) {
+          // Check if it looks like it might be a typo (e.g., "blahFROM")
+          const possibleInstruction = validInstructions.find(valid => 
+            instruction.includes(valid) || valid.includes(instruction)
+          );
+          
+          let message = `Unknown instruction: ${instruction}`;
+          let description = 'This is not a valid Dockerfile instruction.';
+          
+          if (possibleInstruction) {
+            message = `Unknown instruction: ${instruction}. Did you mean ${possibleInstruction}?`;
+            description = `'${instruction}' is not a valid Dockerfile instruction. You might have meant '${possibleInstruction}'.`;
+          }
+          
+          results.push({
+            line: lineNumber,
+            level: 'error',
+            message,
+            rule: 'invalid_instruction',
+            description
+          });
         }
+      } else {
+        // Line doesn't start with what looks like an instruction
+        results.push({
+          line: lineNumber,
+          level: 'error',
+          message: 'Invalid Dockerfile syntax',
+          rule: 'syntax_error',
+          description: 'This line does not follow valid Dockerfile syntax.'
+        });
       }
     });
     
