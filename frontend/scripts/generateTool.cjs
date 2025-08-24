@@ -27,6 +27,12 @@ function generateTool(toolKey) {
   fs.writeFileSync(componentPath, componentContent);
   console.log(`✅ Created React component: ${componentPath}`);
 
+  // Generate Skeleton component
+  const skeletonContent = generateSkeletonComponent(componentName, toolName);
+  const skeletonPath = path.join(toolDir, `_${componentName}Skeleton.tsx`);
+  fs.writeFileSync(skeletonPath, skeletonContent);
+  console.log(`✅ Created Skeleton component: ${skeletonPath}`);
+
   // Generate Astro page
   const astroContent = generateAstroPage(toolKey, componentName);
   const astroPath = path.join(toolDir, 'index.astro');
@@ -42,18 +48,34 @@ function generateTool(toolKey) {
   console.log(`🔗 URL: /freedevtools/t/${toolKey}/`);
   console.log(`\nNext steps:`);
   console.log(`1. Customize the React component in _${componentName}.tsx`);
-  console.log(`2. Update the tool configuration in src/config/tools.ts`);
-  console.log(`3. Test with: make run`);
-  console.log(`4. Deploy with: make deploy`);
+  console.log(`2. Adjust the skeleton component in _${componentName}Skeleton.tsx if needed`);
+  console.log(`3. Update the tool configuration in src/config/tools.ts`);
+  console.log(`4. Test with: make run`);
+  console.log(`5. Deploy with: make deploy`);
 }
 
 function generateReactComponent(componentName, toolName) {
-  return `import React, { useState } from "react";
+  return `import React, { useState, useEffect } from "react";
+import ToolContainer from "../../components/tool/ToolContainer";
+import ToolHead from "../../components/tool/ToolHead";
+import ${componentName}Skeleton from "./_${componentName}Skeleton";
+import CopyButton from "../../components/ui/copy-button";
+import { toast } from "../../components/ToastProvider";
+import { Button } from "@/components/ui/button";
 
 const ${componentName}: React.FC = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleProcess = () => {
     setError("");
@@ -79,104 +101,106 @@ const ${componentName}: React.FC = () => {
   };
 
   return (
-    <div className="${componentName.toLowerCase()}-tool max-w-4xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          ${toolName}
-        </h1>
-        <p className="text-slate-800 dark:text-slate-400 text-lg">
-          TODO: Add your tool description here
-        </p>
-      </div>
+    <ToolContainer>
+      <ToolHead
+        name="${toolName}"
+        description="TODO: Add your tool description here. Make it compelling and SEO-friendly."
+      />
+      
+      {!loaded ? (
+        <${componentName}Skeleton />
+      ) : (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Input
+                </label>
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Enter your input here..."
+                  className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+                />
+              </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Input
-            </label>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter your input here..."
-              className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
-            />
-          </div>
-
-          <div className="flex space-x-3">
-            <button
-              onClick={handleProcess}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-            >
-              Process
-            </button>
-            <button
-              onClick={handleClear}
-              className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Output
-            </label>
-            <div className="relative">
-              <textarea
-                value={output}
-                readOnly
-                placeholder="Result will appear here..."
-                className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
-              />
-              {output && (
+              <div className="flex space-x-3">
                 <button
-                  onClick={handleCopy}
-                  className="absolute top-2 right-2 p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
-                  title="Copy to clipboard"
+                  onClick={handleProcess}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
+                 Your Process
                 </button>
+                <button
+                  onClick={handleClear}
+                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Output
+                </label>
+                <div className="relative">
+                  <textarea
+                    value={output}
+                    readOnly
+                    placeholder="Result will appear here..."
+                    className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+                  />
+                  {output && (
+                    <button
+                      onClick={handleCopy}
+                      className="absolute top-2 right-2 p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+                  {error}
+                </div>
               )}
             </div>
           </div>
 
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-              {error}
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+            <h3 className="text-slate-900 dark:text-slate-100 mb-3">
+              About ${toolName}
+            </h3>
+            <div className="text-slate-800 dark:text-slate-400 space-y-2">
+              <p>
+                TODO: Add information about what this tool does and how it works.
+              </p>
+              <p>
+                <strong>Common uses:</strong> TODO: List common use cases for this tool.
+              </p>
             </div>
-          )}
+          </div>
         </div>
-      </div>
-
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          About ${toolName}
-        </h3>
-        <div className="text-slate-800 dark:text-slate-400 space-y-2">
-          <p>
-            TODO: Add information about what this tool does and how it works.
-          </p>
-          <p>
-            <strong>Common uses:</strong> TODO: List common use cases for this tool.
-          </p>
-        </div>
-      </div>
-    </div>
+      )}
+    </ToolContainer>
   );
 };
 
@@ -184,20 +208,73 @@ export default ${componentName};
 `;
 }
 
+function generateSkeletonComponent(componentName, toolName) {
+  return `import { Skeleton } from "@/components/ui/skeleton";
+import React from "react";
+import ToolContainer from "../../components/tool/ToolContainer";
+import ToolHead from "../../components/tool/ToolHead";
+
+const ${componentName}Skeleton: React.FC = () => {
+  return (
+    <ToolContainer>
+      <ToolHead
+        name="${toolName}"
+        description="TODO: Add your tool description here. Make it compelling and SEO-friendly."
+      />
+      
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <Skeleton className="h-5 w-16 mb-2" />
+              <Skeleton className="w-full h-32 rounded-lg" />
+            </div>
+
+            <div className="flex space-x-3">
+              <Skeleton className="flex-1 h-10 rounded-lg" />
+              <Skeleton className="w-20 h-10 rounded-lg" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <Skeleton className="h-5 w-20 mb-2" />
+              <Skeleton className="w-full h-32 rounded-lg" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <Skeleton className="h-6 w-32 mb-3" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+        </div>
+      </div>
+    </ToolContainer>
+  );
+};
+
+export default ${componentName}Skeleton;
+`;
+}
+
 function generateAstroPage(toolKey, componentName) {
   return `---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ${componentName} from './_${componentName}.tsx';
+import ${componentName} from './_${componentName}';
 import { getToolByKey } from '../../config/tools';
 
 const tool = getToolByKey('${toolKey}');
 ---
 
 <BaseLayout 
-  title={\`\${tool.name} - TODO: Add subtitle | Free DevTools\`}
-  description={tool.description}
-  canonical={tool.canonical}
-  themeColor={tool.themeColor}
+  title={\`\${tool?.name} - TODO: Add subtitle | Free DevTools\`}
+  description={tool?.description}
+  canonical={tool?.canonical}
+  themeColor={tool?.themeColor}
 >
   <${componentName} client:load />
 </BaseLayout>
