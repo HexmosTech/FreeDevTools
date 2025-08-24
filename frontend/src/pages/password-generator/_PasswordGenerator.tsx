@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
+import { toast } from "../../components/ToastProvider";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
 
@@ -199,8 +200,10 @@ const PasswordGenerator: React.FC = () => {
         await navigator.clipboard.writeText(password);
         setCopySuccess(true);
         setTimeout(() => setCopySuccess(false), 2000);
+        toast.success("Password copied to clipboard!");
       } catch (err) {
         console.error('Failed to copy password:', err);
+        toast.error("Failed to copy password");
       }
     }
   };
@@ -211,6 +214,7 @@ const PasswordGenerator: React.FC = () => {
 
   const applyPreset = (preset: Partial<PasswordOptions>) => {
     setOptions(prev => ({ ...prev, ...preset }));
+    toast.success("Preset applied successfully!");
   };
 
   // Generate password on component mount and when options change
@@ -233,7 +237,10 @@ const PasswordGenerator: React.FC = () => {
             Generated Password
           </label>
           <Button
-            onClick={generatePassword}
+            onClick={() => {
+              generatePassword();
+              toast.info("New password generated!");
+            }}
             className="bg-blue-600 hover:bg-blue-700"
           >
             Generate New
