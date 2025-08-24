@@ -1,5 +1,5 @@
 import React from "react";
-import AdBanner from "../AdBanner";
+import AdBanner from "../banner/AdBanner";
 
 interface ToolHeadProps {
   name: string;

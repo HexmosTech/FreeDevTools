@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { getAllTools } from '../config/tools';
-import ThemeSwitcher from './ThemeSwitcher';
+import ThemeSwitcher from './theme/ThemeSwitcher';
 
 interface SidebarProps {
   currentPath?: string;
@@ -94,8 +94,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <a
                     href={tool.path}
                     className={`flex items-center p-3 rounded-lg transition-all duration-200 ${isActive
-                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
                   >
                     <span className="text-xl mr-3">{tool.icon}</span>

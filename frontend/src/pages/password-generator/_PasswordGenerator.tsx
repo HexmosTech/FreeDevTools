@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AdBanner from "../../components/AdBanner";
+import AdBanner from "../../components/banner/AdBanner";
 
 interface PasswordOptions {
   length: number;
