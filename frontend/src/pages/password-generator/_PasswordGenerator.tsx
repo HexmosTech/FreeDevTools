@@ -22,7 +22,7 @@ const PasswordGenerator: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [options, setOptions] = useState<PasswordOptions>({
-    length: 12,
+    length: 16,
     includeUppercase: true,
     includeLowercase: true,
     includeNumbers: true,
@@ -198,12 +198,25 @@ const PasswordGenerator: React.FC = () => {
 
 
   const updateOption = (key: keyof PasswordOptions, value: boolean | number | string) => {
-    setOptions(prev => ({ ...prev, [key]: value }));
+    setOptions(prev => {
+      const newOptions = { ...prev, [key]: value };
+
+      // Auto-select Memorable preset when switching to word-based
+      if (key === 'useWords' && value === true) {
+        newOptions.wordCount = 3;
+        newOptions.includeUppercase = true;
+        newOptions.includeLowercase = true;
+        newOptions.includeNumbers = true;
+        newOptions.includeSymbols = false;
+        newOptions.separator = "-";
+      }
+
+      return newOptions;
+    });
   };
 
   const applyPreset = (preset: Partial<PasswordOptions>) => {
     setOptions(prev => ({ ...prev, ...preset }));
-    toast.success("Preset applied successfully!");
   };
 
   // Generate password on component mount and when options change
@@ -274,7 +287,17 @@ const PasswordGenerator: React.FC = () => {
             onClick={() => applyPreset({ length: 16, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
             variant="outline"
             size="custom"
-            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+            className={`p-3 text-center ${options.length === 16 &&
+              options.includeUppercase &&
+              options.includeLowercase &&
+              options.includeNumbers &&
+              options.includeSymbols &&
+              !options.easyToRead &&
+              !options.easyToSay &&
+              !options.useWords
+              ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+              : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
+              }`}
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Strong</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">16 chars, all types</div>
@@ -284,7 +307,17 @@ const PasswordGenerator: React.FC = () => {
             onClick={() => applyPreset({ length: 12, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, easyToRead: true, easyToSay: false, useWords: false })}
             variant="outline"
             size="custom"
-            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+            className={`p-3 text-center ${options.length === 12 &&
+              options.includeUppercase &&
+              options.includeLowercase &&
+              options.includeNumbers &&
+              !options.includeSymbols &&
+              options.easyToRead &&
+              !options.easyToSay &&
+              !options.useWords
+              ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+              : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
+              }`}
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Easy to Type</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">12 chars, readable</div>
@@ -294,7 +327,16 @@ const PasswordGenerator: React.FC = () => {
             onClick={() => applyPreset({ wordCount: 3, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: false, useWords: true, separator: "-" })}
             variant="outline"
             size="custom"
-            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+            className={`p-3 text-center ${options.wordCount === 3 &&
+              options.includeUppercase &&
+              options.includeLowercase &&
+              options.includeNumbers &&
+              !options.includeSymbols &&
+              options.useWords &&
+              options.separator === "-"
+              ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+              : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
+              }`}
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Memorable</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">3 words + numbers</div>
@@ -304,7 +346,17 @@ const PasswordGenerator: React.FC = () => {
             onClick={() => applyPreset({ length: 32, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
             variant="outline"
             size="custom"
-            className="p-3 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+            className={`p-3 text-center ${options.length === 32 &&
+              options.includeUppercase &&
+              options.includeLowercase &&
+              options.includeNumbers &&
+              options.includeSymbols &&
+              !options.easyToRead &&
+              !options.easyToSay &&
+              !options.useWords
+              ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+              : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
+              }`}
           >
             <div className="font-medium text-slate-900 dark:text-slate-100 text-sm">Ultra Secure</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">32 chars, maximum</div>
@@ -318,11 +370,11 @@ const PasswordGenerator: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
             onClick={() => updateOption('useWords', false)}
-            variant={!options.useWords ? "default" : "outline"}
+            variant="outline"
             size="custom"
             className={`p-4 text-left whitespace-normal ${!options.useWords
-              ? 'bg-blue-50 dark:bg-blue-950 border-blue-500'
-              : 'hover:border-blue-300'
+              ? 'bg-blue-50 dark:bg-blue-950'
+              : 'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Character-Based</h4>
@@ -332,11 +384,11 @@ const PasswordGenerator: React.FC = () => {
 
           <Button
             onClick={() => updateOption('useWords', true)}
-            variant={options.useWords ? "default" : "outline"}
+            variant="outline"
             size="custom"
             className={`p-4 text-left whitespace-normal ${options.useWords
-              ? 'bg-blue-50 dark:bg-blue-950 border-blue-500'
-              : 'hover:border-blue-300'
+              ? 'bg-blue-50 dark:bg-blue-950'
+              : 'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50'
               }`}
           >
             <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">Word-Based</h4>
