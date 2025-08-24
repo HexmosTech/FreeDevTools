@@ -61,7 +61,7 @@ import ToolHead from "../../components/tool/ToolHead";
 import ${componentName}Skeleton from "./_${componentName}Skeleton";
 import CopyButton from "../../components/ui/copy-button";
 import { toast } from "../../components/ToastProvider";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 
 const ${componentName}: React.FC = () => {
   const [input, setInput] = useState("");
@@ -79,12 +79,15 @@ const ${componentName}: React.FC = () => {
 
   const handleProcess = () => {
     setError("");
+    toast.info("Processing your input...");
     try {
       // TODO: Implement your tool logic here
       setOutput("Processed result will appear here...");
+      toast.success("Processing completed!");
     } catch (err) {
       setError("An error occurred while processing");
       setOutput("");
+      toast.error("Processing failed");
     }
   };
 
@@ -92,12 +95,6 @@ const ${componentName}: React.FC = () => {
     setInput("");
     setOutput("");
     setError("");
-  };
-
-  const handleCopy = () => {
-    if (output) {
-      navigator.clipboard.writeText(output);
-    }
   };
 
   return (
@@ -126,55 +123,42 @@ const ${componentName}: React.FC = () => {
               </div>
 
               <div className="flex space-x-3">
-                <button
+                <Button
                   onClick={handleProcess}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                  className="flex-1"
+                  disabled={!input.trim()}
                 >
-                 Your Process
-                </button>
-                <button
+                  Process
+                </Button>
+                <Button
                   onClick={handleClear}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                  variant="outline"
                 >
                   Clear
-                </button>
+                </Button>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Output
-                </label>
-                <div className="relative">
-                  <textarea
-                    value={output}
-                    readOnly
-                    placeholder="Result will appear here..."
-                    className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
-                  />
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Output
+                  </label>
                   {output && (
-                    <button
-                      onClick={handleCopy}
-                      className="absolute top-2 right-2 p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                    <CopyButton
+                      text={output}
+                      className="ml-3"
                       title="Copy to clipboard"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </button>
+                    />
                   )}
                 </div>
+                <textarea
+                  value={output}
+                  readOnly
+                  placeholder="Result will appear here..."
+                  className="w-full h-32 p-3 border border-slate-300 rounded-lg resize-none bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+                />
               </div>
 
               {error && (
@@ -186,7 +170,7 @@ const ${componentName}: React.FC = () => {
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-            <h3 className="text-slate-900 dark:text-slate-100 mb-3">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
               About ${toolName}
             </h3>
             <div className="text-slate-800 dark:text-slate-400 space-y-2">
