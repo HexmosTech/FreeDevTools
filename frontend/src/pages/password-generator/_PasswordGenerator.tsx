@@ -273,7 +273,7 @@ const PasswordGenerator: React.FC = () => {
 
       {/* Quick Presets */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">Quick Presets</h3>
+        <h3 className=" text-slate-900 dark:text-slate-100 mb-3">Quick Presets</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <button
             onClick={() => applyPreset({ length: 16, includeUppercase: true, includeLowercase: true, includeNumbers: true, includeSymbols: true, easyToRead: false, easyToSay: false, useWords: false })}
@@ -311,7 +311,7 @@ const PasswordGenerator: React.FC = () => {
 
       {/* Password Type Selection */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">Password Type</h3>
+        <h3 className=" text-slate-900 dark:text-slate-100 mb-3">Password Type</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={() => updateOption('useWords', false)}
@@ -342,7 +342,7 @@ const PasswordGenerator: React.FC = () => {
       {/* Basic Options */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Options</h3>
+          <h3 className=" text-slate-900 dark:text-slate-100">Options</h3>
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -475,7 +475,7 @@ const PasswordGenerator: React.FC = () => {
 
       {/* Educational Video */}
       <div className="mb-8">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
           Learn More: Password Security Explained
         </h3>
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
@@ -499,7 +499,7 @@ const PasswordGenerator: React.FC = () => {
       <div className="space-y-8">
         {/* Understanding Password Security */}
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             Understanding Password Security and Brute Force Attack Prevention
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -517,7 +517,7 @@ const PasswordGenerator: React.FC = () => {
 
         {/* Password Strength Mathematics */}
         <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             The Mathematics of Password Strength
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -550,7 +550,7 @@ const PasswordGenerator: React.FC = () => {
 
         {/* Attack Vector Protection */}
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             Protection Against Modern Attack Vectors
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -559,25 +559,25 @@ const PasswordGenerator: React.FC = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Dictionary Attacks</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Dictionary Attacks</h4>
                 <p className="text-sm">
                   Attackers use databases of common passwords and words. Our character-based generator creates truly random sequences that don't appear in any dictionary, while our word-based generator combines multiple unrelated words with numbers and symbols.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Rainbow Table Attacks</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Rainbow Table Attacks</h4>
                 <p className="text-sm">
                   Pre-computed hash tables can crack common passwords instantly. Generated passwords with high entropy and unique character combinations are extremely unlikely to appear in rainbow tables.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Credential Stuffing</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Credential Stuffing</h4>
                 <p className="text-sm">
                   Attackers reuse leaked passwords across multiple sites. Using unique, generated passwords for each account ensures that a breach on one service doesn't compromise others.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Social Engineering</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Social Engineering</h4>
                 <p className="text-sm">
                   Generated passwords contain no personal information, making them immune to attacks based on birthdays, names, or other discoverable data about the user.
                 </p>
@@ -588,7 +588,7 @@ const PasswordGenerator: React.FC = () => {
 
         {/* Technical Implementation */}
         <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             Cryptographic Randomness and Security Implementation
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -596,7 +596,7 @@ const PasswordGenerator: React.FC = () => {
               Our password generator uses cryptographically secure pseudo-random number generation (CSPRNG) through the browser's Web Crypto API, ensuring that generated passwords are statistically indistinguishable from true randomness.
             </p>
             <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-              <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Security Features:</h4>
+              <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Security Features:</h4>
               <ul className="text-sm space-y-1 list-disc list-inside">
                 <li><strong>Cryptographic entropy:</strong> Uses crypto.getRandomValues() for true randomness</li>
                 <li><strong>Character distribution:</strong> Ensures at least one character from each selected set</li>
@@ -613,7 +613,7 @@ const PasswordGenerator: React.FC = () => {
 
         {/* Best Practices Guide */}
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             Enterprise-Grade Password Management Best Practices
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -622,7 +622,7 @@ const PasswordGenerator: React.FC = () => {
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Password Requirements</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Password Requirements</h4>
                 <ul className="text-sm space-y-1 list-disc list-inside">
                   <li>Minimum 12 characters for standard accounts</li>
                   <li>16+ characters for administrative access</li>
@@ -632,7 +632,7 @@ const PasswordGenerator: React.FC = () => {
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Organizational Policies</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">Organizational Policies</h4>
                 <ul className="text-sm space-y-1 list-disc list-inside">
                   <li>Password manager deployment and training</li>
                   <li>Regular security awareness education</li>
@@ -650,7 +650,7 @@ const PasswordGenerator: React.FC = () => {
 
         {/* Industry Standards and Compliance */}
         <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
             Compliance and Industry Standards
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
@@ -659,19 +659,19 @@ const PasswordGenerator: React.FC = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">NIST Guidelines</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">NIST Guidelines</h4>
                 <p className="text-sm">
                   Compliant with NIST SP 800-63B recommendations for password complexity, length requirements, and entropy calculations.
                 </p>
               </div>
               <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">ISO 27001</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">ISO 27001</h4>
                 <p className="text-sm">
                   Supports access control requirements under ISO 27001:2013 Annex A.9 for information security management systems.
                 </p>
               </div>
               <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">PCI DSS</h4>
+                <h4 className=" text-slate-800 dark:text-slate-200 mb-2">PCI DSS</h4>
                 <p className="text-sm">
                   Meets PCI DSS Requirement 8.2 for unique user identification and authentication for payment card industry compliance.
                 </p>

@@ -141,15 +141,15 @@ const AdBanner: React.FC = () => {
           <div className="px-6 h-full w-full min-w-96 flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-2">
-              <h2 className="text-6xl !font-semibold leading-tight font-eb-garamond tracking-wide mb-2">
+              <h1 className="leading-tight font-eb-garamond tracking-wide mb-2">
                 <span className="text-red-700">{currentAd.title}</span>
-              </h2>
+              </h1>
             </div>
             <div className="text-left flex flex-row justify-between items-center gap-24 mt-0">
               <div className="flex flex-row justify-between items-center gap-12">
-                <p className="text-4xl font-semibold text-gray-800 font-eb-garamond leading-relaxed">
+                <h2 className="text-gray-800 font-eb-garamond leading-relaxed">
                   {currentAd.description}
-                </p>
+                </h2>
                 {/* Branding Section */}
                 <LearnMoreButton size="md" />
               </div>
@@ -174,12 +174,12 @@ const AdBanner: React.FC = () => {
           <div className="px-2 py-2 h-full flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-4">
-              <h2 className="text-5xl font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
+              <h1 className="font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
-              </h2>
-              <p className="text-3xl text-gray-800 opacity-90 font-eb-garamond font-medium leading-relaxed">
+              </h1>
+              <h2 className="text-gray-800  font-eb-garamond font-medium leading-relaxed">
                 {currentAd.description}
-              </p>
+              </h2>
             </div>
 
             {/* Branding Section */}
@@ -204,12 +204,12 @@ const AdBanner: React.FC = () => {
           <div className="px-4 py-2 h-full flex flex-col justify-center">
             {/* Content Section */}
             <div className="text-left mb-4">
-              <h2 className="text-3xl font-bold text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
+              <h1 className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
                 {currentAd.title}
-              </h2>
-              <p className="text-xl text-gray-800 opacity-90 font-eb-garamond font-semibold leading-relaxed">
+              </h1>
+              <h2 className="text-gray-800 lg:text-4xl font-eb-garamond leading-relaxed">
                 {currentAd.description}
-              </p>
+              </h2>
             </div>
 
             {/* Branding Section */}
