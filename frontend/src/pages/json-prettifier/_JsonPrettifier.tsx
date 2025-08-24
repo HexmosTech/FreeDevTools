@@ -210,7 +210,7 @@ const JsonPrettifier: React.FC = () => {
         <AdBanner />
       </div>
       <div className="mb-6">
-        <h1 className="text-xl md:text-3xl mb-2 text-black">
+        <h1 className="text-xl md:text-3xl mb-2 text-black dark:text-slate-300">
           JSON Prettifier
         </h1>
         <p className="text-muted-foreground text-xs  md:text-md">
