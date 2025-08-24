@@ -72,7 +72,7 @@ Each rule includes:
 The linter is based on rules from:
 - [dockerfilelint](https://github.com/replicatedhq/dockerfilelint) - Industry-standard Dockerfile linting
 - [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/) - Official Docker recommendations
-- [Container Best Practices](http://docs.projectatomic.io/container-best-practices/) - Community guidelines
+- [Container Best Practices](https://github.com/projectatomic/container-best-practices) - Community guidelines
 
 ### Security Rules
 Special focus on security-related issues:

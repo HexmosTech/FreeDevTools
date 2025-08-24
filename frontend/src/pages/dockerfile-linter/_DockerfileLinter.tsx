@@ -974,7 +974,7 @@ const DockerfileLinter: React.FC = () => {
               <a href="https://docs.docker.com/develop/dev-best-practices/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1">
                 Docker best practices
               </a>, and
-              <a href="http://docs.projectatomic.io/container-best-practices/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1">
+              <a href="https://github.com/projectatomic/container-best-practices" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1">
                 Container best practices
               </a>
             </p>
