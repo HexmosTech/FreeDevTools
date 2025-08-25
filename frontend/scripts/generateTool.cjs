@@ -43,6 +43,10 @@ function generateTool(toolKey) {
   updateToolsConfig(toolKey, toolName);
   console.log(`✅ Updated tools configuration`);
 
+  // Update sitemap.xml
+  updateSitemap(toolKey, toolName);
+  console.log(`✅ Updated sitemap.xml`);
+
   console.log(`\n🎉 Tool "${toolName}" generated successfully!`);
   console.log(`📁 Location: ${toolDir}`);
   console.log(`🔗 URL: /freedevtools/t/${toolKey}/`);
@@ -297,6 +301,28 @@ function updateToolsConfig(toolKey, toolName) {
       configContent.slice(insertPosition);
 
     fs.writeFileSync(configPath, updatedContent);
+  }
+}
+
+function updateSitemap(toolKey, toolName) {
+  const sitemapPath = path.join(__dirname, '..', 'public', 'sitemap.xml');
+  const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+
+  const newToolUrl = `https://hexmos.com/freedevtools/t/${toolKey}/`;
+  const newToolEntry = `  <url>
+    <loc>${newToolUrl}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>`;
+
+  const insertPosition = sitemapContent.lastIndexOf('</urlset>');
+  if (insertPosition !== -1) {
+    const updatedContent =
+      sitemapContent.slice(0, insertPosition) +
+      newToolEntry +
+      '\n' +
+      sitemapContent.slice(insertPosition);
+    fs.writeFileSync(sitemapPath, updatedContent);
   }
 }
 
