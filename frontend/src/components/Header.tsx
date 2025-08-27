@@ -11,12 +11,16 @@ const Header: React.FC = () => {
               href="/freedevtools/t"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
             >
-              <img src="https://hexmos.com/freedevtools/t/favicon.png" alt="Free DevTools Logo" className="w-8 h-8 flex-shrink-0" />
+              <img
+                src="https://hexmos.com/freedevtools/t/favicon.png"
+                alt="Free DevTools Logo"
+                className="w-8 h-8 flex-shrink-0"
+              />
               {/* Text */}
               <div className="flex flex-col">
-                <h3 className="text-neon dark:text-neon-light leading-tight font-semibold">
+                <p className="text-lg text-neon dark:text-neon-light leading-tight font-semibold">
                   Free DevTools
-                </h3>
+                </p>
                 <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-tight">
                   Essential tools for developers
                 </p>
