@@ -17,7 +17,7 @@ export interface Tool {
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-prettifier": {
-    title: "",
+    title: "JSON Prettifier - Format, Minify & Validate JSON Online",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
