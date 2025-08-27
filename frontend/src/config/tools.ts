@@ -120,7 +120,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
-      "Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once.",
+      "Instantly convert dates and times with Date Time Converter. Transform UTC, ISO, Unix, and more formats. Paste or pick a date to see all formats at once.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
