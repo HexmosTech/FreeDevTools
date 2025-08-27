@@ -787,7 +787,7 @@ const DockerfileLinter: React.FC = () => {
             <Button
               onClick={handleProcess}
               disabled={isAnalyzing}
-              className="flex-1"
+              size="fit"
             >
               {isAnalyzing ? 'Analyzing...' : 'Analyze Dockerfile'}
             </Button>

@@ -26,6 +26,7 @@ const buttonVariants = cva(
         lg: "h-11 rounded-md px-8 whitespace-nowrap",
         icon: "h-10 w-10",
         custom: "h-auto px-4 py-2 whitespace-normal flex-col items-start",
+        fit: "h-10 px-4 py-2 whitespace-nowrap w-fit",
       },
     },
     defaultVariants: {
