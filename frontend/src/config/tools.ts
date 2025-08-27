@@ -49,7 +49,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "password-generator": {
-    title: "",
+    title: "Password Generator - Create Secure & Random Passwords",
     name: "Password Generator",
     path: "/freedevtools/t/password-generator/",
     description:
