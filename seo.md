@@ -24,7 +24,7 @@ Give a list of 5 SEO friendly titles based on requirement
 ## Meta Description Validation
 
 - Meta description exists
-- Length is 150-160 characters
+- Length is 140-160 characters
 - Contains primary keyword
 - Contains 1 secondary keyword
 - Has clear call-to-action

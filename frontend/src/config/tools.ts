@@ -17,7 +17,7 @@ export interface Tool {
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-prettifier": {
-    title: "",
+    title: "JSON Prettifier - Format, Minify & Validate JSON Online",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
@@ -49,7 +49,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "password-generator": {
-    title: "",
+    title: "Password Generator - Create Secure & Random Passwords",
     name: "Password Generator",
     path: "/freedevtools/t/password-generator/",
     description:
@@ -84,11 +84,11 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "dockerfile-linter": {
-    title: "",
+    title: "Dockerfile Linter - Analyze & Linting Tool",
     name: "Dockerfile Linter",
     path: "/freedevtools/t/dockerfile-linter/",
     description:
-      "Comprehensive Dockerfile analysis and linting tool. Detects syntax errors, security vulnerabilities, performance issues, and enforces Docker best practices with detailed explanations.",
+      "Comprehensive Dockerfile linter. Detects syntax errors, security risks, performance issues, and enforces Docker best practices.",
     category: "Developer Tools",
     icon: "�",
     themeColor: "#2496ed",
@@ -102,6 +102,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "container security",
       "docker best practices",
       "dockerfile syntax",
+      "dockerfile checker",
       "developer tools",
     ],
     features: [
@@ -120,7 +121,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
-      "Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once.",
+      "Instantly convert dates and times with Date Time Converter. Transform UTC, ISO, Unix, and more formats. Paste or pick a date to see all formats at once.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",

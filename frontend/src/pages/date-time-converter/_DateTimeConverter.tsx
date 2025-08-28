@@ -88,8 +88,6 @@ const DateTimeConverter = () => {
     },
   };
 
-
-
   const formatOptions = [
     { value: "utc", label: "UTC format" },
     { value: "iso", label: "ISO format" },
@@ -124,11 +122,10 @@ const DateTimeConverter = () => {
   return (
     <ToolContainer>
       <ToolHead
-        name="Date-time Converter"
+        name="Date Time Converter"
         description="Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once."
       />
       <div className="max-w-6xl">
-
         {/* Input Section */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row gap-4">
@@ -184,9 +181,7 @@ const DateTimeConverter = () => {
           {/* Date Picker */}
           {showDatePicker && (
             <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
-              <label className="block text-sm  mb-2">
-                Pick date and time:
-              </label>
+              <label className="block text-sm  mb-2">Pick date and time:</label>
               <input
                 type="datetime-local"
                 onChange={handleDatePickerChange}
@@ -246,16 +241,30 @@ const DateTimeConverter = () => {
           </h3>
           <div className="text-slate-800 dark:text-slate-400 space-y-3">
             <p>
-              Whenever possible, use UTC or choose a consistent time zone when
-              creating time-based content or data values. This makes it much
-              easier to compare, debug, and work with dates from different
-              sources—no more mental math or timezone confusion!
+              Whenever possible, use{" "}
+              <a
+                className="text-blue-500 hover:underline"
+                href="https://www.timeanddate.com/worldclock/timezone/utc"
+              >
+                UTC
+              </a>{" "}
+              or choose a consistent time zone when creating time-based content
+              or data values. This makes it much easier to compare, debug, and
+              work with dates from different sources—no more mental math or
+              timezone confusion!
             </p>
             <p>
               <strong>Example:</strong> It's much easier to spot differences and
               similarities when all your timestamps are in the same time zone.
-              When values use different offsets or time zones, you have to
-              mentally translate each one, which can lead to mistakes.
+              When values use different{" "}
+              <a
+                className="text-blue-500 hover:underline"
+                href="https://en.wikipedia.org/wiki/UTC_offset"
+              >
+                offsets
+              </a>{" "}
+              or time zones, you have to mentally translate each one, which can
+              lead to mistakes.
             </p>
             <div className="overflow-x-auto">
               <table className="min-w-[340px] text-xs border border-slate-200 dark:border-slate-700 rounded">
@@ -265,7 +274,13 @@ const DateTimeConverter = () => {
                       Mixed Offsets
                     </th>
                     <th className="px-2 py-1 text-left font-semibold">
-                      Same value converted to UTC
+                      Same value converted to{" "}
+                      <a
+                        className="text-blue-500 hover:underline"
+                        href="https://www.timeanddate.com/worldclock/timezone/utc"
+                      >
+                        UTC
+                      </a>{" "}
                     </th>
                   </tr>
                 </thead>
@@ -303,8 +318,14 @@ const DateTimeConverter = () => {
             </div>
             <p>
               As you can see, when timestamps use different offsets, it's hard
-              to visually compare them. Converting everything to UTC (or a
-              single time zone) makes it much easier to spot duplicates or
+              to visually compare them. Converting everything to{" "}
+              <a
+                className="text-blue-500 hover:underline"
+                href="https://www.timeanddate.com/worldclock/timezone/utc"
+              >
+                UTC
+              </a>{" "}
+              (or a single time zone) makes it much easier to spot duplicates or
               differences at a glance.
             </p>
             <p>
@@ -337,17 +358,30 @@ const DateTimeConverter = () => {
               of events.
             </p>
             <p>
-              It's best to normalize all timestamps to UTC (or, less commonly, a
-              specific UTC offset) so you can easily compare and merge data from
-              different sources. Storing the local offset is only useful if you
-              ever need to recover the original wall time, but for most logs and
-              event streams, that's not necessary.
+              It's best to normalize all timestamps to{" "}
+              <a
+                className="text-blue-500 hover:underline"
+                href="https://www.timeanddate.com/worldclock/timezone/utc"
+              >
+                UTC
+              </a>{" "}
+              (or, less commonly, a specific UTC offset) so you can easily
+              compare and merge data from different sources. Storing the local
+              offset is only useful if you ever need to recover the original
+              wall time, but for most logs and event streams, that's not
+              necessary.
             </p>
             <p>
-              <strong>Tip:</strong> When in doubt, use UTC for serializing,
-              storing, and exchanging date and time values. Serializing
-              timestamps with an offset can make things more complicated,
-              especially if your system uses multiple offsets.
+              <strong>Tip:</strong> When in doubt, use{" "}
+              <a
+                className="text-blue-500 hover:underline"
+                href="https://www.timeanddate.com/worldclock/timezone/utc"
+              >
+                UTC
+              </a>{" "}
+              for serializing, storing, and exchanging date and time values.
+              Serializing timestamps with an offset can make things more
+              complicated, especially if your system uses multiple offsets.
             </p>
             <div className="bg-gray-100 dark:bg-slate-700 rounded p-4 text-sm">
               <strong>Note:</strong> For timestamp values, you never need to
@@ -370,9 +404,15 @@ const DateTimeConverter = () => {
               If your app schedules or displays events in the future (like
               meetings, reminders, or calendar entries), you should use a
               date-time type that includes the time zone—such as{" "}
-              <span className="font-mono">ZonedInstant</span>—not just a local
-              time or offset. This ensures your app always shows the correct
-              wall time, even if time zone rules (like daylight saving) change.
+              <a
+                className="font-mono text-blue-500 hover:underline"
+                href="https://javadoc.io/static/org.json4s/json4s-ext_3/4.1.0-M1/org/json4s/ext/DateParser$$ZonedInstant.html"
+              >
+                ZonedInstant
+              </a>
+              —not just a local time or offset. This ensures your app always
+              shows the correct wall time, even if time zone rules (like
+              daylight saving) change.
             </p>
             <p>
               For example, a meeting set for "2025-10-28 10:00 AM Europe/Berlin"
