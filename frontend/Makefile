@@ -26,3 +26,8 @@ gen:
 		exit 1; \
 	fi
 	node scripts/generateTool.cjs $(tool) 
+
+# Convert images to WebP format (usage: make convert-to-webp src=path/to/image.jpg out=path/to/image.webp)
+# Requires: sudo dnf install -y libwebp-tools (Fedora) or sudo apt install -y webp (Debian/Ubuntu)
+convert-to-webp:
+	./scripts/convert-to-webp.sh "$(src)" "$(out)"
