@@ -204,12 +204,6 @@ import ToolHead from "../../components/tool/ToolHead";
 
 const ${componentName}Skeleton: React.FC = () => {
   return (
-    <ToolContainer>
-      <ToolHead
-        name="${toolName}"
-        description="TODO: Add your tool description here. Make it compelling and SEO-friendly."
-      />
-      
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -241,7 +235,6 @@ const ${componentName}Skeleton: React.FC = () => {
           </div>
         </div>
       </div>
-    </ToolContainer>
   );
 };
 
