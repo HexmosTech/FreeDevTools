@@ -10,20 +10,20 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
       logo: "w-6 h-6",
       title: "text-xs",
       subtitle: "text-[10px]",
-      spacing: "space-x-1"
+      spacing: "space-x-1",
     },
     md: {
       logo: "w-5 h-5",
       title: "text-sm",
       subtitle: "text-[10px]",
-      spacing: "space-x-1.5"
+      spacing: "space-x-1.5",
     },
     lg: {
       logo: "w-8 h-8",
       title: "text-sm",
       subtitle: "text-[10px]",
-      spacing: "space-x-2"
-    }
+      spacing: "space-x-2",
+    },
   };
 
   const currentSize = sizeClasses[size];
@@ -43,7 +43,7 @@ const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
         `}
       >
         <img
-          src="https://hexmos.com/freedevtools/t/livereview_logo.png"
+          src="/public/livereview_logo.webp"
           alt="LiveReview"
           className={`${currentSize.logo} mb-0 lg:mb-0`}
         />

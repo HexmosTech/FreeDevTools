@@ -12,7 +12,7 @@ const Header: React.FC = () => {
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
             >
               <img
-                src="https://hexmos.com/freedevtools/t/favicon.png"
+                src="/public/freedevtool-logo.webp"
                 alt="Free DevTools Logo"
                 className="w-8 h-8 flex-shrink-0"
               />

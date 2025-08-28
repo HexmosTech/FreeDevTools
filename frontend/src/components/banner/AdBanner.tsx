@@ -52,6 +52,7 @@ const CloseButton: React.FC<{
   return (
     <button
       onClick={onClick}
+      aria-label="Close"
       className={`absolute top-2 right-2 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10 py-2 `}
     >
       <svg
@@ -146,13 +147,16 @@ const useWindowWidth = () => {
 
 const AdBanner: React.FC = () => {
   const width = useWindowWidth();
-  const [currentVariation, setCurrentVariation] = useState(() =>
-    Math.floor(Math.random() * adVariations.length)
-  );
+  // Always start with 0 for SSR
+  const [currentVariation, setCurrentVariation] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">(
     "desktop"
   );
+
+  useEffect(() => {
+    setCurrentVariation(Math.floor(Math.random() * adVariations.length));
+  }, []);
 
   const currentAd = adVariations[currentVariation] || adVariations[0];
 
