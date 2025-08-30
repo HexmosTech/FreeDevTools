@@ -100,3 +100,12 @@ Generate complete Open Graph and Twitter Card tags based on requirement
 
 ❌ if any fails: Add relevant high-quality external links
 Suggest 3-5 relevant external resources to link to based on tool requirement
+
+## Text-to-Code Ratio Validation
+
+- Ensure the page has a healthy text-to-code ratio (recommended: at least 10% text content).
+- Content should be at least 800 words for main tool pages.
+- Add explanatory paragraphs, usage instructions, and educational content to increase text.
+- Avoid pages that are mostly code or UI with minimal descriptive content.
+
+❌ if any fails: Add more user-facing content, explanations, and relevant text to improve the ratio and meet minimum word count.
