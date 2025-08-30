@@ -201,8 +201,6 @@ export default ${componentName};
 function generateSkeletonComponent(componentName, toolName) {
   return `import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
-import ToolContainer from "../../components/tool/ToolContainer";
-import ToolHead from "../../components/tool/ToolHead";
 
 const ${componentName}Skeleton: React.FC = () => {
   return (
