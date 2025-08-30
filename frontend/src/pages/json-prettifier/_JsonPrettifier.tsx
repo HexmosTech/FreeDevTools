@@ -186,7 +186,7 @@ const JsonPrettifier: React.FC = () => {
     <ToolContainer>
       <ToolHead
         name="JSON Prettifier"
-        description="Real-time JSON formatting, validation, and error detection"
+        description="Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required."
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-4">
@@ -311,17 +311,17 @@ const JsonPrettifier: React.FC = () => {
       </div>
 
       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 px-2 md:px-6 mb-6 border border-slate-200 dark:border-slate-700">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
+        <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
           <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
           Shortcut Keys
-        </h3>
+        </p>
 
         <div className="space-y-6">
           {/* Tree Editor Shortcuts */}
           <div>
-            <h4 className="text-sm md:text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
+            <p className="text-sm md:text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
               Tree Editor
-            </h4>
+            </p>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm border-collapse border border-slate-300 dark:border-slate-600">
                 <thead>
@@ -478,9 +478,9 @@ const JsonPrettifier: React.FC = () => {
 
           {/* Code Editor Shortcuts */}
           <div>
-            <h4 className="text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
+            <p className="text-md font-semibold text-slate-800 dark:text-slate-200 mb-2">
               Code Editor
-            </h4>
+            </p>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
               The code editor is powered by{" "}
               <a
@@ -542,10 +542,10 @@ const JsonPrettifier: React.FC = () => {
       </div>
 
       <div className="text-sm md:text-md bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 px-2 md:px-6 border border-slate-200 dark:border-slate-700">
-        <h3 className="text-md md:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
+        <p className="text-md md:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center">
           <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
           About JSON Prettifier
-        </h3>
+        </p>
         <div className="text-slate-600 dark:text-slate-400 space-y-2">
           <p>
             This enhanced JSON prettifier provides real-time formatting and

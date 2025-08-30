@@ -84,11 +84,11 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "dockerfile-linter": {
-    title: "Dockerfile Linter - Analyze & Linting Tool",
+    title: "Dockerfile Linter – Analyze, Validate and Lint Tool",
     name: "Dockerfile Linter",
     path: "/freedevtools/t/dockerfile-linter/",
     description:
-      "Comprehensive Dockerfile linter. Detects syntax errors, security risks, performance issues, and enforces Docker best practices.",
+      "Comprehensive Dockerfile linter. Analyze, validate, and optimize Dockerfiles for syntax errors, security risks, performance issues, and best practices.",
     category: "Developer Tools",
     icon: "�",
     themeColor: "#2496ed",
