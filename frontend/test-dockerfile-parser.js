@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 RUN echo "hello world"
 EXPOSE 8080
-CMD ["echo", "hello"]`
+CMD ["echo", "hello"]`,
   },
   {
     name: "Invalid - blahFROM",
@@ -16,7 +16,7 @@ WORKDIR /app
 COPY . .
 RUN echo "hello world"
 EXPOSE 8080
-CMD ["echo", "hello"]`
+CMD ["echo", "hello"]`,
   },
   {
     name: "Invalid - missing space",
@@ -25,7 +25,7 @@ WORKDIR /app
 COPY . .
 RUN echo "hello world"
 EXPOSE 8080
-CMD ["echo", "hello"]`
+CMD ["echo", "hello"]`,
   },
   {
     name: "Invalid - unknown instruction",
@@ -34,8 +34,8 @@ WORKDIR /app
 COPY . .
 UNKNOWN_INSTRUCTION some parameters
 EXPOSE 8080
-CMD ["echo", "hello"]`
-  }
+CMD ["echo", "hello"]`,
+  },
 ];
 
 // We can't directly import the React component, but we can test the core logic

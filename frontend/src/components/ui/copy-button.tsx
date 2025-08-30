@@ -16,7 +16,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   className = "",
   size = "icon",
   disabled = false,
-  title = "Copy to clipboard"
+  title = "Copy to clipboard",
 }) => {
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -34,7 +34,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       // Reset success state after 2 seconds
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text:', err);
+      console.error("Failed to copy text:", err);
       toast.error("Failed to copy to clipboard");
     }
   };

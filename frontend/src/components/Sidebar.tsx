@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { getAllTools } from '../config/tools';
-import ThemeSwitcher from './theme/ThemeSwitcher';
+import React, { useMemo, useState } from "react";
+import { getAllTools } from "../config/tools";
+import ThemeSwitcher from "./theme/ThemeSwitcher";
 
 interface SidebarProps {
   currentPath?: string;
@@ -8,10 +8,10 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  currentPath = '/',
-  basePath = '',
+  currentPath = "/",
+  basePath = "",
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
   const tools = getAllTools();
 
@@ -30,8 +30,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-white dark:bg-black border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ${isExpanded ? 'w-80' : 'w-16'
-        }`}
+      className={`bg-white dark:bg-black border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ${
+        isExpanded ? "w-80" : "w-16"
+      }`}
     >
       {/* Header */}
       <div className="p-4 border-b border-slate-200 dark:border-slate-700">
@@ -44,9 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            title={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+            title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
           >
-            {isExpanded ? '◀' : '▶'}
+            {isExpanded ? "◀" : "▶"}
           </button>
         </div>
       </div>
@@ -93,10 +94,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div key={tool.path} className="group relative">
                   <a
                     href={tool.path}
-                    className={`flex items-center p-3 rounded-lg transition-all duration-200 ${isActive
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                      }`}
+                    className={`flex items-center p-3 rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    }`}
                   >
                     <span className="text-xl mr-3">{tool.icon}</span>
                     {isExpanded && (
@@ -128,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {isExpanded && (
         <div className="p-4 border-t border-slate-200 dark:border-slate-700">
           <div className="text-xs text-slate-500 dark:text-slate-400 text-center mb-3">
-            {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}{' '}
+            {filteredTools.length} tool{filteredTools.length !== 1 ? "s" : ""}{" "}
             available
           </div>
 

@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function generateTool(toolKey) {
   const toolName = toolKey
-    .replace(/-/g, ' ')
+    .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
   const componentName = toolKey
-    .split('-')
+    .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('');
+    .join("");
 
   console.log(`🚀 Generating tool: ${toolName} (${toolKey})`);
 
   // Create tool directory
-  const toolDir = path.join(__dirname, '..', 'src/pages', toolKey);
+  const toolDir = path.join(__dirname, "..", "src/pages", toolKey);
   if (!fs.existsSync(toolDir)) {
     fs.mkdirSync(toolDir, { recursive: true });
     console.log(`✅ Created directory: ${toolDir}`);
@@ -35,7 +35,7 @@ function generateTool(toolKey) {
 
   // Generate Astro page
   const astroContent = generateAstroPage(toolKey, componentName);
-  const astroPath = path.join(toolDir, 'index.astro');
+  const astroPath = path.join(toolDir, "index.astro");
   fs.writeFileSync(astroPath, astroContent);
   console.log(`✅ Created Astro page: ${astroPath}`);
 
@@ -52,7 +52,9 @@ function generateTool(toolKey) {
   console.log(`🔗 URL: /freedevtools/t/${toolKey}/`);
   console.log(`\nNext steps:`);
   console.log(`1. Customize the React component in _${componentName}.tsx`);
-  console.log(`2. Adjust the skeleton component in _${componentName}Skeleton.tsx if needed`);
+  console.log(
+    `2. Adjust the skeleton component in _${componentName}Skeleton.tsx if needed`
+  );
   console.log(`3. Update the tool configuration in src/config/tools.ts`);
   console.log(`4. Test with: make run`);
   console.log(`5. Deploy with: make deploy`);
@@ -263,8 +265,8 @@ const tool = getToolByKey('${toolKey}');
 }
 
 function updateToolsConfig(toolKey, toolName) {
-  const configPath = path.join(__dirname, '..', 'src/config/tools.ts');
-  const configContent = fs.readFileSync(configPath, 'utf-8');
+  const configPath = path.join(__dirname, "..", "src/config/tools.ts");
+  const configContent = fs.readFileSync(configPath, "utf-8");
 
   // Add new tool to TOOLS_CONFIG
   const newToolEntry = `  '${toolKey}': {
@@ -280,17 +282,17 @@ function updateToolsConfig(toolKey, toolName) {
   }`;
 
   // Find the position to insert the new tool (before the closing brace of TOOLS_CONFIG)
-  const insertPosition = configContent.lastIndexOf('};');
+  const insertPosition = configContent.lastIndexOf("};");
   if (insertPosition !== -1) {
     // Check if we need to add a comma before the new entry
     const beforeInsert = configContent.slice(0, insertPosition);
-    const needsComma = !beforeInsert.trim().endsWith(',');
+    const needsComma = !beforeInsert.trim().endsWith(",");
 
     const updatedContent =
       beforeInsert +
-      (needsComma ? ',\n' : '\n') +
+      (needsComma ? ",\n" : "\n") +
       newToolEntry +
-      '\n' +
+      "\n" +
       configContent.slice(insertPosition);
 
     fs.writeFileSync(configPath, updatedContent);
@@ -298,8 +300,8 @@ function updateToolsConfig(toolKey, toolName) {
 }
 
 function updateSitemap(toolKey, toolName) {
-  const sitemapPath = path.join(__dirname, '..', 'public', 'sitemap.xml');
-  const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+  const sitemapPath = path.join(__dirname, "..", "public", "sitemap.xml");
+  const sitemapContent = fs.readFileSync(sitemapPath, "utf-8");
 
   const newToolUrl = `https://hexmos.com/freedevtools/t/${toolKey}/`;
   const newToolEntry = `  <url>
@@ -308,12 +310,12 @@ function updateSitemap(toolKey, toolName) {
     <priority>0.9</priority>
   </url>`;
 
-  const insertPosition = sitemapContent.lastIndexOf('</urlset>');
+  const insertPosition = sitemapContent.lastIndexOf("</urlset>");
   if (insertPosition !== -1) {
     const updatedContent =
       sitemapContent.slice(0, insertPosition) +
       newToolEntry +
-      '\n' +
+      "\n" +
       sitemapContent.slice(insertPosition);
     fs.writeFileSync(sitemapPath, updatedContent);
   }
@@ -323,17 +325,17 @@ function updateSitemap(toolKey, toolName) {
 const toolKey = process.argv[2];
 
 if (!toolKey) {
-  console.error('❌ Error: Tool key is required');
-  console.log('Usage: node scripts/generateTool.cjs <tool-key>');
-  console.log('Example: node scripts/generateTool.cjs password-generator');
+  console.error("❌ Error: Tool key is required");
+  console.log("Usage: node scripts/generateTool.cjs <tool-key>");
+  console.log("Example: node scripts/generateTool.cjs password-generator");
   process.exit(1);
 }
 
 if (!/^[a-z0-9-]+$/.test(toolKey)) {
   console.error(
-    '❌ Error: Tool key must contain only lowercase letters, numbers, and hyphens'
+    "❌ Error: Tool key must contain only lowercase letters, numbers, and hyphens"
   );
-  console.log('Example: password-generator, json-formatter, base64-converter');
+  console.log("Example: password-generator, json-formatter, base64-converter");
   process.exit(1);
 }
 

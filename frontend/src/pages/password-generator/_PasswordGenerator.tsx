@@ -214,8 +214,8 @@ const PasswordGenerator: React.FC = () => {
       const set = options.easyToRead
         ? characterSets.uppercaseEasy
         : options.easyToSay
-        ? characterSets.uppercaseSay
-        : characterSets.uppercase;
+          ? characterSets.uppercaseSay
+          : characterSets.uppercase;
       charset += set;
       usedSets.push(set);
     }
@@ -224,8 +224,8 @@ const PasswordGenerator: React.FC = () => {
       const set = options.easyToRead
         ? characterSets.lowercaseEasy
         : options.easyToSay
-        ? characterSets.lowercaseSay
-        : characterSets.lowercase;
+          ? characterSets.lowercaseSay
+          : characterSets.lowercase;
       charset += set;
       usedSets.push(set);
     }
@@ -234,8 +234,8 @@ const PasswordGenerator: React.FC = () => {
       const set = options.easyToRead
         ? characterSets.numbersEasy
         : options.easyToSay
-        ? characterSets.numbersSay
-        : characterSets.numbers;
+          ? characterSets.numbersSay
+          : characterSets.numbers;
       charset += set;
       usedSets.push(set);
     }
@@ -244,8 +244,8 @@ const PasswordGenerator: React.FC = () => {
       const set = options.easyToRead
         ? characterSets.symbolsEasy
         : options.easyToSay
-        ? characterSets.symbolsSay
-        : characterSets.symbols;
+          ? characterSets.symbolsSay
+          : characterSets.symbols;
       charset += set;
       usedSets.push(set);
     }

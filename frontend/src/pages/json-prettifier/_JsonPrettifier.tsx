@@ -178,8 +178,6 @@ const JsonPrettifier: React.FC = () => {
     setIsValid(null);
   };
 
-
-
   if (!isClient) {
     return <JsonPrettifierSkeleton />;
   }
@@ -198,11 +196,7 @@ const JsonPrettifier: React.FC = () => {
             <label className="text-xs md:text-lg font-semibold text-slate-700 dark:text-slate-300">
               Input JSON
             </label>
-            <Button
-              onClick={handleClear}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={handleClear} variant="outline" size="sm">
               Clear
             </Button>
           </div>
