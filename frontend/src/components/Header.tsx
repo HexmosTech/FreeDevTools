@@ -6,7 +6,7 @@ const Header: React.FC = () => {
     <div className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-6xl mx-auto px-2 md:px-6">
         <header className="bg-neon/1 shadow-sm backdrop-blur-lg rounded-b-lg">
-          <div className="px-2 md:px-6 lg:px-8 py-1 flex items-center justify-between">
+          <div className=" py-1 flex items-center justify-between">
             <a
               href="/freedevtools/t"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"

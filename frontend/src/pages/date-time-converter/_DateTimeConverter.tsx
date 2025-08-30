@@ -243,7 +243,7 @@ const DateTimeConverter = () => {
             <p>
               Whenever possible, use{" "}
               <a
-                className="text-blue-500 hover:underline"
+                className="text-blue hover:underline"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
               >
                 UTC
@@ -258,7 +258,7 @@ const DateTimeConverter = () => {
               similarities when all your timestamps are in the same time zone.
               When values use different{" "}
               <a
-                className="text-blue-500 hover:underline"
+                className="text-blue hover:underline"
                 href="https://en.wikipedia.org/wiki/UTC_offset"
               >
                 offsets
@@ -274,13 +274,7 @@ const DateTimeConverter = () => {
                       Mixed Offsets
                     </th>
                     <th className="px-2 py-1 text-left font-semibold">
-                      Same value converted to{" "}
-                      <a
-                        className="text-blue-500 hover:underline"
-                        href="https://www.timeanddate.com/worldclock/timezone/utc"
-                      >
-                        UTC
-                      </a>{" "}
+                      Same value converted to UTC
                     </th>
                   </tr>
                 </thead>
@@ -320,7 +314,7 @@ const DateTimeConverter = () => {
               As you can see, when timestamps use different offsets, it's hard
               to visually compare them. Converting everything to{" "}
               <a
-                className="text-blue-500 hover:underline"
+                className="text-blue hover:underline"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
               >
                 UTC
@@ -360,7 +354,7 @@ const DateTimeConverter = () => {
             <p>
               It's best to normalize all timestamps to{" "}
               <a
-                className="text-blue-500 hover:underline"
+                className="text-blue hover:underline"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
               >
                 UTC
@@ -374,7 +368,7 @@ const DateTimeConverter = () => {
             <p>
               <strong>Tip:</strong> When in doubt, use{" "}
               <a
-                className="text-blue-500 hover:underline"
+                className="text-blue hover:underline"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
               >
                 UTC
@@ -405,7 +399,7 @@ const DateTimeConverter = () => {
               meetings, reminders, or calendar entries), you should use a
               date-time type that includes the time zone—such as{" "}
               <a
-                className="font-mono text-blue-500 hover:underline"
+                className="font-mono text-blue hover:underline"
                 href="https://javadoc.io/static/org.json4s/json4s-ext_3/4.1.0-M1/org/json4s/ext/DateParser$$ZonedInstant.html"
               >
                 ZonedInstant
