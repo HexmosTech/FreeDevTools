@@ -22,6 +22,7 @@ import CopyButton from "../../components/ui/copy-button";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import { toast } from "../../components/ToastProvider";
 import { Label } from "@/components/ui/label";
+import ToolGridContainer from "@/components/tool/ToolGridContainer";
 
 const DateTimeConverter = () => {
   const [input, setInput] = useState("");
@@ -155,9 +156,10 @@ const DateTimeConverter = () => {
       {!loaded ? (
         <DateTimeConverterSkeleton />
       ) : (
-        <div className="space-y-8">
+        <div>
+        <ToolGridContainer>
           {/* Input Section */}
-          <Card>
+          <Card className="w-full break-inside-avoid mb-6">
             <CardHeader>
               <CardTitle>Convert Date & Time</CardTitle>
               <CardDescription>
@@ -165,65 +167,68 @@ const DateTimeConverter = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <Label htmlFor="date-input" className="sr-only">
-                    Date input
-                  </Label>
-                  <Input
-                    id="date-input"
-                    type="text"
-                    placeholder={getPlaceholder()}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Select value={inputFormat} onValueChange={setInputFormat}>
-                    <SelectTrigger className="min-w-[140px]">
-                      <SelectValue placeholder="Select format" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {formatOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    onClick={() => setShowDatePicker(!showDatePicker)}
-                    variant="outline"
-                    size="default"
-                    title="Pick date and time"
-                  >
-                    <Calendar className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Date Picker */}
-              {showDatePicker && (
-                <div className="p-4 bg-muted rounded-lg border">
-                  <div className="mb-2">
-                    <Label htmlFor="datetime">
-                      Pick date and time:
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 min-w-0">
+                    <Label htmlFor="date-input" className="sr-only">
+                      Date input
                     </Label>
+                    <Input
+                      id="date-input"
+                      type="text"
+                      placeholder={getPlaceholder()}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      className="w-full"
+                    />
                   </div>
-                  <Input
-                    id="datetime"
-                    type="datetime-local"
-                    onChange={handleDatePickerChange}
-                    className="w-full"
-                  />
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Select value={inputFormat} onValueChange={setInputFormat}>
+                      <SelectTrigger className="min-w-[140px] w-full sm:w-auto">
+                        <SelectValue placeholder="Select format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {formatOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      onClick={() => setShowDatePicker(!showDatePicker)}
+                      variant="outline"
+                      size="default"
+                      title="Pick date and time"
+                      className="flex-shrink-0"
+                    >
+                      <Calendar className="w-5 h-5" />
+                    </Button>
+                  </div>
                 </div>
-              )}
+
+                {/* Date Picker */}
+                {showDatePicker && (
+                  <div className="p-4 bg-muted rounded-lg border">
+                    <div className="mb-2">
+                      <Label htmlFor="datetime">
+                        Pick date and time:
+                      </Label>
+                    </div>
+                    <Input
+                      id="datetime"
+                      type="datetime-local"
+                      onChange={handleDatePickerChange}
+                      className="w-full"
+                    />
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* Conversion Results */}
-          <Card>
+          <Card className="w-fullbreak-inside-avoid mb-6">
             <CardHeader>
               <CardTitle>Conversion Results</CardTitle>
               <CardDescription>
@@ -231,7 +236,7 @@ const DateTimeConverter = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                 {[
                   { label: "JS locale date string", value: formatters.jsLocale() },
                   { label: "ISO 8601", value: formatters.iso8601() },
@@ -245,13 +250,13 @@ const DateTimeConverter = () => {
                   { label: "Excel date/time", value: formatters.excelDateTime() },
                 ].map((format, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div className="text-muted-foreground min-w-[160px] sm:text-right">
+                    <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
                       {format.label}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border hover:bg-muted/80 transition-colors">
                         <div className="flex-1 min-w-0">
-                          <div className="font-mono break-all text-left">
+                          <div className="font-mono break-all text-left text-sm">
                             {format.value}
                           </div>
                         </div>
@@ -259,6 +264,7 @@ const DateTimeConverter = () => {
                           text={format.value}
                           size="icon"
                           title="Copy to clipboard"
+                          className="flex-shrink-0"
                         />
                       </div>
                     </div>
@@ -268,18 +274,13 @@ const DateTimeConverter = () => {
             </CardContent>
           </Card>
 
-          {/* Footer */}
-          <div className="text-center text-muted-foreground">
-            Current time updates automatically • All conversions are live
-          </div>
-
           {/* Best Practices for Time Zones */}
-          <Card>
+          <Card className="w-full break-inside-avoid mb-6">
             <CardHeader>
               <CardTitle>Why Using UTC or a Consistent Time Zone Matters</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
+            <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <p className="text-sm leading-relaxed">
                 Whenever possible, use{" "}
                 <a
                   className="text-blue-600 hover:underline dark:text-blue-400"
@@ -294,7 +295,7 @@ const DateTimeConverter = () => {
                 work with dates from different sources—no more mental math or
                 timezone confusion!
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 <strong>Example:</strong> It's much easier to spot differences and
                 similarities when all your timestamps are in the same time zone.
                 When values use different{" "}
@@ -310,7 +311,7 @@ const DateTimeConverter = () => {
                 lead to mistakes.
               </p>
               <div className="overflow-x-auto">
-                <table className="min-w-[340px] border border-border rounded">
+                <table className="min-w-[300px] sm:min-w-[340px] border border-border rounded text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-muted">
                       <th className="px-2 py-1 text-left font-semibold">
@@ -353,7 +354,7 @@ const DateTimeConverter = () => {
                   </tbody>
                 </table>
               </div>
-              <p>
+              <p className="text-sm leading-relaxed">
                 As you can see, when timestamps use different offsets, it's hard
                 to visually compare them. Converting everything to{" "}
                 <a
@@ -367,7 +368,7 @@ const DateTimeConverter = () => {
                 (or a single time zone) makes it much easier to spot duplicates or
                 differences at a glance.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 <strong>Tip:</strong> Help your users by remembering their
                 preferred time zone and making it easy to select or change it.
                 Consistency saves time and reduces errors!
@@ -376,25 +377,25 @@ const DateTimeConverter = () => {
           </Card>
 
           {/* Timestamps Section */}
-          <Card>
+          <Card className="w-full break-inside-avoid mb-6">
             <CardHeader>
               <CardTitle>When a Simple Timestamp is Enough</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
+            <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <p className="text-sm leading-relaxed">
                 For most use cases, you can use an incremental time value like{" "}
                 <span className="font-mono">Instant</span> or{" "}
                 <span className="font-mono">Date</span> for your timestamp values.
                 If your app only cares about the order of events (not the local
                 wall time), a timestamp is all you need.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 <strong>Example:</strong> If you're merging log files from many
                 machines or recording events in a log, just store the timestamp.
                 You don't need to recover the original wall time—just the sequence
                 of events.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 It's best to normalize all timestamps to{" "}
                 <a
                   className="text-blue-600 hover:underline dark:text-blue-400"
@@ -410,7 +411,7 @@ const DateTimeConverter = () => {
                 wall time, but for most logs and event streams, that's not
                 necessary.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 <strong>Tip:</strong> When in doubt, use{" "}
                 <a
                   className="text-blue-600 hover:underline dark:text-blue-400"
@@ -434,12 +435,12 @@ const DateTimeConverter = () => {
           </Card>
 
           {/* Past and Future Events Section */}
-          <Card>
+          <Card className="w-full break-inside-avoid mb-6">
             <CardHeader>
               <CardTitle>Handling Past and Future Events: Why Time Zones Matter</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
+            <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <p className="text-sm leading-relaxed">
                 If your app schedules or displays events in the future (like
                 meetings, reminders, or calendar entries), you should use a
                 date-time type that includes the time zone—such as{" "}
@@ -455,14 +456,14 @@ const DateTimeConverter = () => {
                 shows the correct wall time, even if time zone rules (like
                 daylight saving) change.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 For example, a meeting set for "2025-10-28 10:00 AM Europe/Berlin"
                 will always be at 10:00 AM in Berlin, even if daylight saving
                 rules change between now and then. If you only store the offset or
                 a timestamp, you might show the wrong local time after a rule
                 change.
               </p>
-              <p>
+              <p className="text-sm leading-relaxed">
                 <strong>Why does this matter?</strong> Time zone rules can change!
                 Governments sometimes update daylight saving or standard time
                 rules. If your app pre-computes or stores incremental time values
@@ -478,6 +479,11 @@ const DateTimeConverter = () => {
               </div>
             </CardContent>
           </Card>
+        </ToolGridContainer>
+        {/* Footer */}
+        <div className="text-center text-muted-foreground mt-6">
+          Current time updates automatically • All conversions are live
+        </div>
         </div>
       )}
     </ToolContainer>

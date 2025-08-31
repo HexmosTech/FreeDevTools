@@ -7,6 +7,7 @@ import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
 import { toast } from "../../components/ToastProvider";
+import ToolGridContainer from "@/components/tool/ToolGridContainer";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -899,6 +900,7 @@ const DockerfileLinter: React.FC = () => {
         <DockerfileLinterSkeleton />
       ) : (
         <div className="space-y-6">
+          {/* <ToolGridContainer> */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Input Section */}
             <Card>
@@ -1150,6 +1152,7 @@ const DockerfileLinter: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+          {/* </ToolGridContainer> */}
         </div>
       )}
     </ToolContainer>
