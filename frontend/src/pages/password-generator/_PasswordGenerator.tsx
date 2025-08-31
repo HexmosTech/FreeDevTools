@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import React, { useEffect, useState } from "react";
 import { toast } from "../../components/ToastProvider";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
+import { Label } from "@/components/ui/label";
 
 interface PasswordOptions {
   length: number;
@@ -356,9 +360,9 @@ const PasswordGenerator: React.FC = () => {
       {!loaded ? (
         <PasswordGeneratorSkeleton />
       ) : (
-        <div>
+        <div className="space-y-6">
           {/* Generated Password Display */}
-          <Card className="mb-6">
+          <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="font-medium text-slate-700 dark:text-slate-300">
@@ -410,7 +414,7 @@ const PasswordGenerator: React.FC = () => {
           </Card>
 
           {/* Quick Presets */}
-          <div className="mb-6">
+          <div>
             <h3 className="text-slate-900 dark:text-slate-100 mb-3">
               Quick Presets
             </h3>
@@ -446,7 +450,7 @@ const PasswordGenerator: React.FC = () => {
                 <div className="font-medium text-slate-900 dark:text-slate-100">
                   Strong
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-slate-500 dark:text-slate-400">
                   16 chars, all types
                 </div>
               </Button>
@@ -482,7 +486,7 @@ const PasswordGenerator: React.FC = () => {
                 <div className="font-medium text-slate-900 dark:text-slate-100">
                   Easy to Type
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-slate-500 dark:text-slate-400">
                   12 chars, readable
                 </div>
               </Button>
@@ -516,7 +520,7 @@ const PasswordGenerator: React.FC = () => {
                 <div className="font-medium text-slate-900 dark:text-slate-100">
                   Memorable
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-slate-500 dark:text-slate-400">
                   3 words + numbers
                 </div>
               </Button>
@@ -552,7 +556,7 @@ const PasswordGenerator: React.FC = () => {
                 <div className="font-medium text-slate-900 dark:text-slate-100">
                   Ultra Secure
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-slate-500 dark:text-slate-400">
                   32 chars, maximum
                 </div>
               </Button>
@@ -560,7 +564,7 @@ const PasswordGenerator: React.FC = () => {
           </div>
 
           {/* Password Type Selection */}
-          <div className="mb-6">
+          <div>
             <h3 className="text-slate-900 dark:text-slate-100 mb-3">
               Password Type
             </h3>
@@ -581,7 +585,7 @@ const PasswordGenerator: React.FC = () => {
                 <p className="text-slate-800 dark:text-slate-400">
                   Random characters, numbers, and symbols
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">
+                <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
                   Example: Kj8$mP2@xR9!
                 </p>
               </Button>
@@ -602,7 +606,7 @@ const PasswordGenerator: React.FC = () => {
                 <p className="text-slate-800 dark:text-slate-400">
                   Memorable dictionary words with separators
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 font-mono">
+                <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
                   Example: Apple-River-Magic-42!
                 </p>
               </Button>
@@ -610,7 +614,7 @@ const PasswordGenerator: React.FC = () => {
           </div>
 
           {/* Basic Options */}
-          <div className="mb-6">
+          <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-slate-900 dark:text-slate-100">Options</h3>
               <Button
@@ -629,16 +633,16 @@ const PasswordGenerator: React.FC = () => {
                   <>
                     {/* Word Count */}
                     <div>
-                      <label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <Label htmlFor="word-count" className="mb-2">
                         Number of Words: {options.wordCount}
-                      </label>
-                      <input
-                        type="range"
-                        min="2"
-                        max="6"
-                        value={options.wordCount}
-                        onChange={(e) => updateOption("wordCount", parseInt(e.target.value))}
-                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
+                      </Label>
+                      <Slider
+                        value={[options.wordCount]}
+                        onValueChange={(value) => updateOption("wordCount", value[0])}
+                        min={2}
+                        max={6}
+                        step={1}
+                        className="w-full"
                       />
                       <div className="flex justify-between text-slate-500 mt-1">
                         <span>2</span>
@@ -648,34 +652,40 @@ const PasswordGenerator: React.FC = () => {
 
                     {/* Separator */}
                     <div>
-                      <label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <Label htmlFor="word-separator" className="mb-2">
                         Word Separator
-                      </label>
-                      <select
-                        value={options.separator}
-                        onChange={(e) => updateOption("separator", e.target.value)}
-                        className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+                      </Label>
+                      <Select
+                        value={options.separator === "" ? "none" : options.separator}
+                        onValueChange={(value) => updateOption("separator", value === "none" ? "" : value)}
                       >
-                        <option value="-">Dash (-)</option>
-                        <option value="_">Underscore (_)</option>
-                        <option value=".">Dot (.)</option>
-                        <option value="">No separator</option>
-                      </select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Choose separator" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="-">Dash (-)</SelectItem>
+                          <SelectItem value="_">Underscore (_)</SelectItem>
+                          <SelectItem value=".">Dot (.)</SelectItem>
+                          <SelectItem value="none">No separator</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </>
                 ) : (
                   /* Length Slider for character-based */
                   <div>
-                    <label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Password Length: {options.length}
-                    </label>
-                    <input
-                      type="range"
-                      min="4"
-                      max="128"
-                      value={options.length}
-                      onChange={(e) => updateOption("length", parseInt(e.target.value))}
-                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
+                    <div className="mb-2">
+                      <Label htmlFor="password-length">
+                        Password Length: {options.length}
+                      </Label>
+                    </div>
+                    <Slider
+                      value={[options.length]}
+                      onValueChange={(value) => updateOption("length", value[0])}
+                      min={4}
+                      max={128}
+                      step={1}
+                      className="w-full"
                     />
                     <div className="flex justify-between text-slate-500 mt-1">
                       <span>4</span>
@@ -708,20 +718,23 @@ const PasswordGenerator: React.FC = () => {
                         label: "Symbols (!@#$%)",
                       },
                     ].map(({ key, label }) => (
-                      <label
+                      <div
                         key={key}
-                        className="flex items-center space-x-3 cursor-pointer"
+                        className="flex items-center space-x-3"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={options[key] as boolean}
-                          onChange={(e) => updateOption(key, e.target.checked)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          onCheckedChange={(checked) => updateOption(key, checked as boolean)}
+                          id={key}
                         />
-                        <span className="text-slate-700 dark:text-slate-300">
+
+                        <Label
+                          htmlFor={key}
+                          className="cursor-pointer"
+                        >
                           {label}
-                        </span>
-                      </label>
+                        </Label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -735,39 +748,43 @@ const PasswordGenerator: React.FC = () => {
                   </h4>
 
                   <div className="space-y-2">
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
                         checked={options.easyToRead}
-                        onChange={(e) => updateOption("easyToRead", e.target.checked)}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        onCheckedChange={(checked) => updateOption("easyToRead", checked as boolean)}
+                        id="easyToRead"
                       />
                       <div>
-                        <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        <Label
+                          htmlFor="easyToRead"
+                          className="font-medium cursor-pointer"
+                        >
                           Easy to Read
-                        </span>
+                        </Label>
                         <p className="text-slate-500 dark:text-slate-400">
                           Excludes similar looking characters (0, O, l, 1, I)
                         </p>
                       </div>
-                    </label>
+                    </div>
 
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
                         checked={options.easyToSay}
-                        onChange={(e) => updateOption("easyToSay", e.target.checked)}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        onCheckedChange={(checked) => updateOption("easyToSay", checked as boolean)}
+                        id="easyToSay"
                       />
                       <div>
-                        <span className="text-slate-700 dark:text-slate-300 font-medium">
+                      <Label
+                          htmlFor="easyToSay"
+                          className="font-medium cursor-pointer"
+                        >
                           Easy to Say
-                        </span>
+                      </Label>
                         <p className="text-slate-500 dark:text-slate-400">
                           Excludes hard to pronounce combinations
                         </p>
                       </div>
-                    </label>
+                    </div>
                   </div>
                 </div>
               )}
@@ -775,7 +792,7 @@ const PasswordGenerator: React.FC = () => {
           </div>
 
           {/* Educational Video */}
-          <div className="mb-8">
+          <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
               Learn More: Password Security Explained
             </h3>

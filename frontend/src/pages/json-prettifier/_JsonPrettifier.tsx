@@ -6,6 +6,7 @@ import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import { toast } from "../../components/ToastProvider";
 import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
+import { Label } from "@/components/ui/label";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
@@ -199,9 +200,12 @@ const JsonPrettifier: React.FC = () => {
           {/* Left Panel - Input Editor */}
           <div className="xl:col-span-5">
             <div className="flex items-center justify-between mb-2">
-              <label className="font-semibold text-slate-700 dark:text-slate-300">
+              <Label
+                htmlFor="input-json"
+                className="font-semibold"
+              >
                 Input JSON
-              </label>
+              </Label>
               <Button onClick={handleClear} variant="outline" size="sm">
                 Clear
               </Button>
@@ -234,9 +238,12 @@ const JsonPrettifier: React.FC = () => {
           {/* Center Panel - Controls */}
           <div className="xl:col-span-2 flex flex-col items-center justify-center space-y-6">
             <div className="text-center">
-              <label className="block font-medium text-slate-700 dark:text-slate-300 mb-3">
+              <Label
+                htmlFor="indent"
+                className="mb-3 font-medium"
+              >
                 Indent
-              </label>
+              </Label>
               <div className="flex items-center space-x-3">
                 <Button
                   onClick={() => handleIndentChange(false)}
@@ -288,9 +295,12 @@ const JsonPrettifier: React.FC = () => {
           {/* Right Panel - Output Editor */}
           <div className="xl:col-span-5">
             <div className="flex items-center justify-between mb-4">
-              <label className="font-semibold text-slate-700 dark:text-slate-300">
+              <Label
+                htmlFor="formatted-output"
+                className="font-semibold"
+              >
                 Formatted Output
-              </label>
+              </Label>
               {error && (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                   <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>

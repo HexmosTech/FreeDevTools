@@ -3,3 +3,4 @@
 3. For copy button use @src/components/ui/copy-button.tsx component
 4. Use react-toastify for adding toast where ever applicable @src/components/ToastProvider.tsx
 5. There is skeleton present in the same direcotry of the tool, after creating the tool, update the skeleton for handling the loader ex name @src/pages/tool-name/\_ToolNameSkeleton.tsx
+6. Ensure the implementation is responsive across all screen sizes.

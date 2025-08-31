@@ -13,6 +13,7 @@ import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import { toast } from "../../components/ToastProvider";
+import { Label } from "@/components/ui/label";
 
 const DateTimeConverter = () => {
   const [input, setInput] = useState("");
@@ -193,7 +194,11 @@ const DateTimeConverter = () => {
               {/* Date Picker */}
               {showDatePicker && (
                 <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
-                  <label className="block mb-2">Pick date and time:</label>
+                  <div className="mb-2">
+                    <Label htmlFor="datetime">
+                      Pick date and time:
+                    </Label>
+                  </div>
                   <Input
                     type="datetime-local"
                     onChange={handleDatePickerChange}
