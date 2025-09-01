@@ -7,21 +7,71 @@ import CopyButton from "../../components/ui/copy-button";
 import { toast } from "../../components/ToastProvider";
 import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
 import { Label } from "@/components/ui/label";
+import { useTheme } from "../../components/theme/ThemeContext";
+
+const LIGHT_THEME = "ace/theme/textmate";
+const DARK_THEME = "ace/theme/vibrant_ink";
 
 const JsonPrettifier: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
   const [error, setError] = useState("");
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
+  
+  // Try to get theme from context, but handle hydration timing
+  let themeContext: any = null;
+  try {
+    themeContext = useTheme();
+  } catch (error) {
+    // Theme context not available yet (during SSR/hydration)
+  }
 
   const inputEditorRef = useRef<HTMLDivElement>(null);
   const outputEditorRef = useRef<HTMLDivElement>(null);
   const inputEditorInstanceRef = useRef<any>(null);
   const outputEditorInstanceRef = useRef<any>(null);
 
+  // Get current theme based on light/dark mode
+  const getCurrentTheme = () => {
+    return currentTheme === "dark" ? DARK_THEME : LIGHT_THEME;
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Update theme when context becomes available or when it changes
+  useEffect(() => {
+    if (themeContext?.theme) {
+      setCurrentTheme(themeContext.theme);
+    } else if (typeof document !== 'undefined') {
+      // Fallback: check document class
+      const isDark = document.documentElement.classList.contains('dark');
+      setCurrentTheme(isDark ? 'dark' : 'light');
+    }
+  }, [themeContext?.theme]);
+
+  // Listen for theme changes via document class changes
+  useEffect(() => {
+    if (!isClient) return;
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setCurrentTheme(isDark ? 'dark' : 'light');
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, [isClient]);
 
   useEffect(() => {
     if (!isClient || !inputEditorRef.current || !outputEditorRef.current)
@@ -29,7 +79,12 @@ const JsonPrettifier: React.FC = () => {
 
     const initEditors = async () => {
       try {
+        const ace = await import("ace-builds/src-noconflict/ace");
+        await import("ace-builds/src-noconflict/mode-json");
+        await import("ace-builds/src-noconflict/theme-textmate");
+        await import("ace-builds/src-noconflict/theme-vibrant_ink");
         const JSONEditor = (await import("jsoneditor")).default;
+
         await import("../../assets/jsoneditor.min.css");
 
         // Initialize input editor (code mode for user input)
@@ -38,6 +93,9 @@ const JsonPrettifier: React.FC = () => {
           inputEditorRef.current,
           {
             mode: "code",
+            statusBar: false,
+            mainMenuBar: false,
+            theme: getCurrentTheme(),
             onChangeText: (jsonString: string) => {
               handleInputChange(jsonString);
             },
@@ -59,14 +117,18 @@ const JsonPrettifier: React.FC = () => {
           }
         );
 
-        // Initialize output editor (text mode for formatted output)
+        // Initialize output editor (code mode for formatted output)
         if (!outputEditorRef.current) return;
         outputEditorInstanceRef.current = new JSONEditor(
           outputEditorRef.current,
           {
-            mode: "text",
+            mode: "code",
             enableSort: false,
             enableTransform: false,
+            mainMenuBar: false,
+            statusBar: false,
+            onEditable: () => false,
+            theme: getCurrentTheme()
           }
         );
 
@@ -120,7 +182,7 @@ const JsonPrettifier: React.FC = () => {
         }
       }
     };
-  }, [isClient]);
+  }, [isClient, currentTheme]); // Use currentTheme instead of theme
 
   const handleInputChange = (jsonString: string) => {
     if (!jsonString.trim()) {
@@ -185,6 +247,16 @@ const JsonPrettifier: React.FC = () => {
     toast.info("JSON editor cleared");
   };
 
+  // Update editor themes when theme changes
+  useEffect(() => {
+    if (inputEditorInstanceRef.current?.aceEditor) {
+      inputEditorInstanceRef.current.aceEditor.setTheme(getCurrentTheme());
+    }
+    if (outputEditorInstanceRef.current?.aceEditor) {
+      outputEditorInstanceRef.current.aceEditor.setTheme(getCurrentTheme());
+    }
+  }, [currentTheme]);
+
   return (
     <ToolContainer>
       <ToolHead
@@ -215,7 +287,7 @@ const JsonPrettifier: React.FC = () => {
               <div
                 ref={inputEditorRef}
                 className="h-screen border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
-                style={{ minHeight: "500px", maxHeight: "80vh" }}
+                style={{ minHeight: "500px", maxHeight: "80vh", outline: "none"}}
               />
                               {isValid !== null && (
                   <div className="mt-2">
