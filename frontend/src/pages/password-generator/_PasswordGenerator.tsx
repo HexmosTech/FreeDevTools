@@ -361,442 +361,462 @@ const PasswordGenerator: React.FC = () => {
         <PasswordGeneratorSkeleton />
       ) : (
         <div className="space-y-6">
-          {/* Generated Password Display */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="font-medium text-slate-700 dark:text-slate-300">
-                  Generated Password
-                </CardTitle>
-                <Button
-                  onClick={() => {
-                    generatePassword();
-                    toast.info("New password generated!");
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Generate New
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="relative mb-4">
-                <div className="flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-                  <code className="flex-1 font-mono text-slate-900 dark:text-slate-100 break-all select-all">
-                    {password || "Click generate to create a password"}
-                  </code>
-                  <CopyButton
-                    text={password}
-                    className="ml-3"
-                    title="Copy to clipboard"
-                  />
+          {/* TOOL CARDS SECTION */}
+          <div className="space-y-4">
+            
+            {/* Generated Password Display - Tool Card */}
+            <Card className="bg-gray-200 dark:bg-slate-900">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-slate-700 dark:text-slate-300">
+                    Generated Password
+                  </CardTitle>
+                  <Button
+                    onClick={() => {
+                      generatePassword();
+                      toast.info("New password generated!");
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Generate New
+                  </Button>
                 </div>
-              </div>
-
-              {/* Password Strength Indicator */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">
-                    Password Strength
-                  </span>
-                  <span className="font-medium text-slate-800 dark:text-slate-400">
-                    {strengthInfo.strength}
-                  </span>
-                </div>
-                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-300 ${strengthInfo.color}`}
-                    style={{ width: strengthInfo.width }}
-                  ></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Presets */}
-          <div>
-            <h3 className="text-slate-900 dark:text-slate-100 mb-3">
-              Quick Presets
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Button
-                onClick={() =>
-                  applyPreset({
-                    length: 16,
-                    includeUppercase: true,
-                    includeLowercase: true,
-                    includeNumbers: true,
-                    includeSymbols: true,
-                    easyToRead: false,
-                    easyToSay: false,
-                    useWords: false,
-                  })
-                }
-                variant="outline"
-                size="custom"
-                className={`p-3 text-center ${
-                  options.length === 16 &&
-                  options.includeUppercase &&
-                  options.includeLowercase &&
-                  options.includeNumbers &&
-                  options.includeSymbols &&
-                  !options.easyToRead &&
-                  !options.easyToSay &&
-                  !options.useWords
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                    : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                }`}
-              >
-                <div className="font-medium text-slate-900 dark:text-slate-100">
-                  Strong
-                </div>
-                <div className="text-slate-500 dark:text-slate-400">
-                  16 chars, all types
-                </div>
-              </Button>
-
-              <Button
-                onClick={() =>
-                  applyPreset({
-                    length: 12,
-                    includeUppercase: true,
-                    includeLowercase: true,
-                    includeNumbers: true,
-                    includeSymbols: false,
-                    easyToRead: true,
-                    easyToSay: false,
-                    useWords: false,
-                  })
-                }
-                variant="outline"
-                size="custom"
-                className={`p-3 text-center ${
-                  options.length === 12 &&
-                  options.includeUppercase &&
-                  options.includeLowercase &&
-                  options.includeNumbers &&
-                  !options.includeSymbols &&
-                  options.easyToRead &&
-                  !options.easyToSay &&
-                  !options.useWords
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                    : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                }`}
-              >
-                <div className="font-medium text-slate-900 dark:text-slate-100">
-                  Easy to Type
-                </div>
-                <div className="text-slate-500 dark:text-slate-400">
-                  12 chars, readable
-                </div>
-              </Button>
-
-              <Button
-                onClick={() =>
-                  applyPreset({
-                    wordCount: 3,
-                    includeUppercase: true,
-                    includeLowercase: true,
-                    includeNumbers: true,
-                    includeSymbols: false,
-                    useWords: true,
-                    separator: "-",
-                  })
-                }
-                variant="outline"
-                size="custom"
-                className={`p-3 text-center ${
-                  options.wordCount === 3 &&
-                  options.includeUppercase &&
-                  options.includeLowercase &&
-                  options.includeNumbers &&
-                  !options.includeSymbols &&
-                  options.useWords &&
-                  options.separator === "-"
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                    : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                }`}
-              >
-                <div className="font-medium text-slate-900 dark:text-slate-100">
-                  Memorable
-                </div>
-                <div className="text-slate-500 dark:text-slate-400">
-                  3 words + numbers
-                </div>
-              </Button>
-
-              <Button
-                onClick={() =>
-                  applyPreset({
-                    length: 32,
-                    includeUppercase: true,
-                    includeLowercase: true,
-                    includeNumbers: true,
-                    includeSymbols: true,
-                    easyToRead: false,
-                    easyToSay: false,
-                    useWords: false,
-                  })
-                }
-                variant="outline"
-                size="custom"
-                className={`p-3 text-center ${
-                  options.length === 32 &&
-                  options.includeUppercase &&
-                  options.includeLowercase &&
-                  options.includeNumbers &&
-                  options.includeSymbols &&
-                  !options.easyToRead &&
-                  !options.easyToSay &&
-                  !options.useWords
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                    : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                }`}
-              >
-                <div className="font-medium text-slate-900 dark:text-slate-100">
-                  Ultra Secure
-                </div>
-                <div className="text-slate-500 dark:text-slate-400">
-                  32 chars, maximum
-                </div>
-              </Button>
-            </div>
-          </div>
-
-          {/* Password Type Selection */}
-          <div>
-            <h3 className="text-slate-900 dark:text-slate-100 mb-3">
-              Password Type
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button
-                onClick={() => updateOption("useWords", false)}
-                variant="outline"
-                size="custom"
-                className={`p-4 text-left whitespace-normal ${
-                  !options.useWords
-                    ? "bg-blue-50 dark:bg-blue-950"
-                    : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                }`}
-              >
-                <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
-                  Character-Based
-                </h4>
-                <p className="text-slate-800 dark:text-slate-400">
-                  Random characters, numbers, and symbols
-                </p>
-                <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
-                  Example: Kj8$mP2@xR9!
-                </p>
-              </Button>
-
-              <Button
-                onClick={() => updateOption("useWords", true)}
-                variant="outline"
-                size="custom"
-                className={`p-4 text-left whitespace-normal ${
-                  options.useWords
-                    ? "bg-blue-50 dark:bg-blue-950"
-                    : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                }`}
-              >
-                <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
-                  Word-Based
-                </h4>
-                <p className="text-slate-800 dark:text-slate-400">
-                  Memorable dictionary words with separators
-                </p>
-                <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
-                  Example: Apple-River-Magic-42!
-                </p>
-              </Button>
-            </div>
-          </div>
-
-          {/* Basic Options */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-slate-900 dark:text-slate-100">Options</h3>
-              <Button
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                variant="ghost"
-                size="sm"
-                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                {showAdvanced ? "Hide Advanced" : "Show Advanced Options"}
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                {options.useWords ? (
-                  <>
-                    {/* Word Count */}
-                    <div>
-                      <Label htmlFor="word-count" className="mb-2">
-                        Number of Words: {options.wordCount}
-                      </Label>
-                      <Slider
-                        value={[options.wordCount]}
-                        onValueChange={(value) => updateOption("wordCount", value[0])}
-                        min={2}
-                        max={6}
-                        step={1}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-slate-500 mt-1">
-                        <span>2</span>
-                        <span>6</span>
-                      </div>
-                    </div>
-
-                    {/* Separator */}
-                    <div>
-                      <Label htmlFor="word-separator" className="mb-2">
-                        Word Separator
-                      </Label>
-                      <Select
-                        value={options.separator === "" ? "none" : options.separator}
-                        onValueChange={(value) => updateOption("separator", value === "none" ? "" : value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Choose separator" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="-">Dash (-)</SelectItem>
-                          <SelectItem value="_">Underscore (_)</SelectItem>
-                          <SelectItem value=".">Dot (.)</SelectItem>
-                          <SelectItem value="none">No separator</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                ) : (
-                  /* Length Slider for character-based */
-                  <div>
-                    <div className="mb-2">
-                      <Label htmlFor="password-length">
-                        Password Length: {options.length}
-                      </Label>
-                    </div>
-                    <Slider
-                      value={[options.length]}
-                      onValueChange={(value) => updateOption("length", value[0])}
-                      min={4}
-                      max={128}
-                      step={1}
-                      className="w-full"
+              </CardHeader>
+              <CardContent>
+                <div className="relative mb-4">
+                  <div className="flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                    <code className="flex-1 font-mono text-slate-900 dark:text-slate-100 break-all select-all">
+                      {password || "Click generate to create a password"}
+                    </code>
+                    <CopyButton
+                      text={password}
+                      className="ml-3"
+                      title="Copy to clipboard"
                     />
-                    <div className="flex justify-between text-slate-500 mt-1">
-                      <span>4</span>
-                      <span>128</span>
-                    </div>
                   </div>
-                )}
+                </div>
 
-                {/* Character Types */}
+                {/* Password Strength Indicator */}
                 <div>
-                  <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    Include Characters
-                  </h4>
-                  <div className="space-y-2">
-                    {[
-                      {
-                        key: "includeUppercase" as keyof PasswordOptions,
-                        label: "Uppercase Letters (A-Z)",
-                      },
-                      {
-                        key: "includeLowercase" as keyof PasswordOptions,
-                        label: "Lowercase Letters (a-z)",
-                      },
-                      {
-                        key: "includeNumbers" as keyof PasswordOptions,
-                        label: "Numbers (0-9)",
-                      },
-                      {
-                        key: "includeSymbols" as keyof PasswordOptions,
-                        label: "Symbols (!@#$%)",
-                      },
-                    ].map(({ key, label }) => (
-                      <div
-                        key={key}
-                        className="flex items-center space-x-3"
-                      >
-                        <Checkbox
-                          checked={options[key] as boolean}
-                          onCheckedChange={(checked) => updateOption(key, checked as boolean)}
-                          id={key}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">
+                      Password Strength
+                    </span>
+                    <span className="font-medium text-slate-800 dark:text-slate-400">
+                      {strengthInfo.strength}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${strengthInfo.color}`}
+                      style={{ width: strengthInfo.width }}
+                    ></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Presets - Tool Card */}
+            <Card className="bg-gray-200 dark:bg-slate-900">
+              <CardHeader>
+                <CardTitle className=" text-slate-700 dark:text-slate-300">
+                  Quick Presets
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Button
+                    onClick={() =>
+                      applyPreset({
+                        length: 16,
+                        includeUppercase: true,
+                        includeLowercase: true,
+                        includeNumbers: true,
+                        includeSymbols: true,
+                        easyToRead: false,
+                        easyToSay: false,
+                        useWords: false,
+                      })
+                    }
+                    variant="outline"
+                    size="custom"
+                    className={`p-3 text-center ${
+                      options.length === 16 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      options.includeSymbols &&
+                      !options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    }`}
+                  >
+                    <div className="font-medium text-slate-900 dark:text-slate-100">
+                      Strong
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400">
+                      16 chars, all types
+                    </div>
+                  </Button>
+
+                  <Button
+                    onClick={() =>
+                      applyPreset({
+                        length: 12,
+                        includeUppercase: true,
+                        includeLowercase: true,
+                        includeNumbers: true,
+                        includeSymbols: false,
+                        easyToRead: true,
+                        easyToSay: false,
+                        useWords: false,
+                      })
+                    }
+                    variant="outline"
+                    size="custom"
+                    className={`p-3 text-center ${
+                      options.length === 12 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      !options.includeSymbols &&
+                      options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    }`}
+                  >
+                    <div className="font-medium text-slate-900 dark:text-slate-100">
+                      Easy to Type
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400">
+                      12 chars, readable
+                    </div>
+                  </Button>
+
+                  <Button
+                    onClick={() =>
+                      applyPreset({
+                        wordCount: 3,
+                        includeUppercase: true,
+                        includeLowercase: true,
+                        includeNumbers: true,
+                        includeSymbols: false,
+                        useWords: true,
+                        separator: "-",
+                      })
+                    }
+                    variant="outline"
+                    size="custom"
+                    className={`p-3 text-center ${
+                      options.wordCount === 3 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      !options.includeSymbols &&
+                      options.useWords &&
+                      options.separator === "-"
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    }`}
+                  >
+                    <div className="font-medium text-slate-900 dark:text-slate-100">
+                      Memorable
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400">
+                      3 words + numbers
+                    </div>
+                  </Button>
+
+                  <Button
+                    onClick={() =>
+                      applyPreset({
+                        length: 32,
+                        includeUppercase: true,
+                        includeLowercase: true,
+                        includeNumbers: true,
+                        includeSymbols: true,
+                        easyToRead: false,
+                        easyToSay: false,
+                        useWords: false,
+                      })
+                    }
+                    variant="outline"
+                    size="custom"
+                    className={`p-3 text-center ${
+                      options.length === 32 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      options.includeSymbols &&
+                      !options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    }`}
+                  >
+                    <div className="font-medium text-slate-900 dark:text-slate-100">
+                      Ultra Secure
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400">
+                      32 chars, maximum
+                    </div>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Password Type Selection - Tool Card */}
+            <Card className="bg-gray-200 dark:bg-slate-900">
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Password Type
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Button
+                    onClick={() => updateOption("useWords", false)}
+                    variant="outline"
+                    size="custom"
+                    className={`p-4 text-left whitespace-normal ${
+                      !options.useWords
+                        ? "bg-blue-50 dark:bg-blue-950"
+                        : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
+                    }`}
+                  >
+                    <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
+                      Character-Based
+                    </h4>
+                    <p className="text-slate-800 dark:text-slate-400">
+                      Random characters, numbers, and symbols
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
+                      Example: Kj8$mP2@xR9!
+                    </p>
+                  </Button>
+
+                  <Button
+                    onClick={() => updateOption("useWords", true)}
+                    variant="outline"
+                    size="custom"
+                    className={`p-4 text-left whitespace-normal ${
+                      options.useWords
+                        ? "bg-blue-50 dark:bg-blue-950"
+                        : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
+                    }`}
+                  >
+                    <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
+                      Word-Based
+                    </h4>
+                    <p className="text-slate-800 dark:text-slate-400">
+                      Memorable dictionary words with separators
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-500 mt-1 font-mono">
+                      Example: Apple-River-Magic-42!
+                    </p>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Options Configuration - Tool Card */}
+            <Card className="bg-gray-200 dark:bg-slate-900">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-slate-700 dark:text-slate-300">
+                    Configuration Options
+                  </CardTitle>
+                  <Button
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
+                    {showAdvanced ? "Hide Advanced" : "Show Advanced Options"}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    {options.useWords ? (
+                      <>
+                        {/* Word Count */}
+                        <div>
+                          <Label htmlFor="word-count" className="mb-2">
+                            Number of Words: {options.wordCount}
+                          </Label>
+                          <Slider
+                            value={[options.wordCount]}
+                            onValueChange={(value) => updateOption("wordCount", value[0])}
+                            min={2}
+                            max={6}
+                            step={1}
+                            className="w-full"
+                          />
+                          <div className="flex justify-between text-slate-500 mt-1">
+                            <span>2</span>
+                            <span>6</span>
+                          </div>
+                        </div>
+
+                        {/* Separator */}
+                        <div>
+                          <Label htmlFor="word-separator" className="mb-2">
+                            Word Separator
+                          </Label>
+                          <Select
+                            value={options.separator === "" ? "none" : options.separator}
+                            onValueChange={(value) => updateOption("separator", value === "none" ? "" : value)}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Choose separator" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="-">Dash (-)</SelectItem>
+                              <SelectItem value="_">Underscore (_)</SelectItem>
+                              <SelectItem value=".">Dot (.)</SelectItem>
+                              <SelectItem value="none">No separator</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </>
+                    ) : (
+                      /* Length Slider for character-based */
+                      <div>
+                        <div className="mb-2">
+                          <Label htmlFor="password-length">
+                            Password Length: {options.length}
+                          </Label>
+                        </div>
+                        <Slider
+                          value={[options.length]}
+                          onValueChange={(value) => updateOption("length", value[0])}
+                          min={4}
+                          max={128}
+                          step={1}
+                          className="w-full"
                         />
-
-                        <Label
-                          htmlFor={key}
-                          className="cursor-pointer"
-                        >
-                          {label}
-                        </Label>
+                        <div className="flex justify-between text-slate-500 mt-1">
+                          <span>4</span>
+                          <span>128</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                    )}
 
-              {/* Advanced Options */}
-              {showAdvanced && (
-                <div className="space-y-4">
-                  <h4 className="font-medium text-slate-700 dark:text-slate-300">
-                    Advanced Options
-                  </h4>
+                    {/* Character Types */}
+                    <div>
+                      <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-3">
+                        Include Characters
+                      </h4>
+                      <div className="space-y-2">
+                        {[
+                          {
+                            key: "includeUppercase" as keyof PasswordOptions,
+                            label: "Uppercase Letters (A-Z)",
+                          },
+                          {
+                            key: "includeLowercase" as keyof PasswordOptions,
+                            label: "Lowercase Letters (a-z)",
+                          },
+                          {
+                            key: "includeNumbers" as keyof PasswordOptions,
+                            label: "Numbers (0-9)",
+                          },
+                          {
+                            key: "includeSymbols" as keyof PasswordOptions,
+                            label: "Symbols (!@#$%)",
+                          },
+                        ].map(({ key, label }) => (
+                          <div
+                            key={key}
+                            className="flex items-center space-x-3"
+                          >
+                            <Checkbox
+                              checked={options[key] as boolean}
+                              onCheckedChange={(checked) => updateOption(key, checked as boolean)}
+                              id={key}
+                            />
 
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-3">
-                      <Checkbox
-                        checked={options.easyToRead}
-                        onCheckedChange={(checked) => updateOption("easyToRead", checked as boolean)}
-                        id="easyToRead"
-                      />
-                      <div>
-                        <Label
-                          htmlFor="easyToRead"
-                          className="font-medium cursor-pointer"
-                        >
-                          Easy to Read
-                        </Label>
-                        <p className="text-slate-500 dark:text-slate-400">
-                          Excludes similar looking characters (0, O, l, 1, I)
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <Checkbox
-                        checked={options.easyToSay}
-                        onCheckedChange={(checked) => updateOption("easyToSay", checked as boolean)}
-                        id="easyToSay"
-                      />
-                      <div>
-                      <Label
-                          htmlFor="easyToSay"
-                          className="font-medium cursor-pointer"
-                        >
-                          Easy to Say
-                      </Label>
-                        <p className="text-slate-500 dark:text-slate-400">
-                          Excludes hard to pronounce combinations
-                        </p>
+                            <Label
+                              htmlFor={key}
+                              className="cursor-pointer"
+                            >
+                              {label}
+                            </Label>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
+
+                  {/* Advanced Options */}
+                  {showAdvanced && (
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-slate-700 dark:text-slate-300">
+                        Advanced Options
+                      </h4>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-3">
+                          <Checkbox
+                            checked={options.easyToRead}
+                            onCheckedChange={(checked) => updateOption("easyToRead", checked as boolean)}
+                            id="easyToRead"
+                          />
+                          <div>
+                            <Label
+                              htmlFor="easyToRead"
+                              className="font-medium cursor-pointer"
+                            >
+                              Easy to Read
+                            </Label>
+                            <p className="text-slate-500 dark:text-slate-400">
+                              Excludes similar looking characters (0, O, l, 1, I)
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+                          <Checkbox
+                            checked={options.easyToSay}
+                            onCheckedChange={(checked) => updateOption("easyToSay", checked as boolean)}
+                            id="easyToSay"
+                          />
+                          <div>
+                            <Label
+                              htmlFor="easyToSay"
+                              className="font-medium cursor-pointer"
+                            >
+                              Easy to Say
+                            </Label>
+                            <p className="text-slate-500 dark:text-slate-400">
+                              Excludes hard to pronounce combinations
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Educational Video */}
-          <div>
-            <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Learn More: Password Security Explained
-            </h3>
+          {/* CONTENT CARDS SECTION */}
+          <div className="space-y-6">
+            {/* Educational Video - Content Card */}
             <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Learn More: Password Security Explained
+                </CardTitle>
+              </CardHeader>
               <CardContent className="p-6">
                 <p className="text-slate-800 dark:text-slate-400 mb-4">
                   Watch this educational video to understand the fundamentals of
@@ -815,14 +835,11 @@ const PasswordGenerator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Comprehensive Security Information */}
-          <div className="space-y-8">
-            {/* Understanding Password Security */}
+            {/* Understanding Password Security - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   Understanding Password Security and Brute Force Attack Prevention
                 </CardTitle>
               </CardHeader>
@@ -863,10 +880,10 @@ const PasswordGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Password Strength Mathematics */}
+            {/* Password Strength Mathematics - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   The Mathematics of Password Strength
                 </CardTitle>
               </CardHeader>
@@ -910,10 +927,10 @@ const PasswordGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Attack Vector Protection */}
+            {/* Attack Vector Protection - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   Protection Against Modern Attack Vectors
                 </CardTitle>
               </CardHeader>
@@ -972,10 +989,10 @@ const PasswordGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Technical Implementation */}
+            {/* Technical Implementation - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   Cryptographic Randomness and Security Implementation
                 </CardTitle>
               </CardHeader>
@@ -1039,10 +1056,10 @@ const PasswordGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Best Practices Guide */}
+            {/* Best Practices Guide - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   Enterprise-Grade Password Management Best Practices
                 </CardTitle>
               </CardHeader>
@@ -1091,10 +1108,10 @@ const PasswordGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Industry Standards and Compliance */}
+            {/* Industry Standards and Compliance - Content Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-bold text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-slate-700 dark:text-slate-300">
                   Compliance and Industry Standards
                 </CardTitle>
               </CardHeader>

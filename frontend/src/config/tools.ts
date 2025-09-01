@@ -148,42 +148,6 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     twitterImage:
       "https://hexmos.com/freedevtools/images/date-time-converter-twitter.png",
   },
-
-  'date-time-converter-2': {
-    name: 'Date Time Converter 2',
-    path: '/freedevtools/t/date-time-converter-2/',
-    description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
-    category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/date-time-converter-2/',
-    keywords: ['date-time-converter-2', 'developer tools', 'TODO: add more keywords'],
-    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
-  }
-,
-  'dockerfile-linter-2': {
-    name: 'Dockerfile Linter 2',
-    path: '/freedevtools/t/dockerfile-linter-2/',
-    description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
-    category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/dockerfile-linter-2/',
-    keywords: ['dockerfile-linter-2', 'developer tools', 'TODO: add more keywords'],
-    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
-  }
-,
-  'password-generator-2': {
-    name: 'Password Generator 2',
-    path: '/freedevtools/t/password-generator-2/',
-    description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
-    category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/password-generator-2/',
-    keywords: ['password-generator-2', 'developer tools', 'TODO: add more keywords'],
-    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
-  }
 };
 
 export function getToolByKey(key: string): Tool | undefined {

@@ -903,7 +903,7 @@ const DockerfileLinter: React.FC = () => {
           {/* <ToolGridContainer> */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Input Section */}
-            <Card>
+            <Card className="bg-gray-200 dark:bg-slate-900">
               <CardHeader>
                 <CardTitle>Dockerfile Content</CardTitle>
               </CardHeader>
@@ -927,7 +927,7 @@ const DockerfileLinter: React.FC = () => {
             </Card>
 
             {/* Results Section */}
-            <Card>
+            <Card className="bg-gray-200 dark:bg-slate-900">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Analysis Results</CardTitle>
                 {analysis && analysis.results.length > 0 && (

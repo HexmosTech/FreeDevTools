@@ -4,7 +4,7 @@
 4. Use react-toastify for adding toast where ever applicable @src/components/ToastProvider.tsx.
 5. There is skeleton present in the same directory of the tool, after creating the tool, update the skeleton for handling the loader (example: @src/pages/tool-name/_ToolNameSkeleton.tsx).
 6. Ensure the implementation is responsive across all screen sizes.
-
+7. Ensure each component is in a card. Differentiate between Tool and Contents. Tool Cards should have className="bg-gray-200 dark:bg-slate-900" classname so it can be differentiated from the rest of the contents. Remaining contents should not have a color defined in classname. Also group the tool cards and the content cards separately without altering its structure. Card titles should have default font weight.
 
 
 ### If there is large amounts of unused spaces

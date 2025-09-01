@@ -159,7 +159,7 @@ const DateTimeConverter = () => {
         <div>
         <ToolGridContainer>
           {/* Input Section */}
-          <Card className="w-full break-inside-avoid mb-6">
+          <Card className="w-full break-inside-avoid mb-6 bg-gray-200 dark:bg-slate-900">
             <CardHeader>
               <CardTitle>Convert Date & Time</CardTitle>
               <CardDescription>
@@ -228,7 +228,7 @@ const DateTimeConverter = () => {
           </Card>
 
           {/* Conversion Results */}
-          <Card className="w-fullbreak-inside-avoid mb-6">
+          <Card className="w-fullbreak-inside-avoid mb-6 bg-gray-200 dark:bg-slate-900">
             <CardHeader>
               <CardTitle>Conversion Results</CardTitle>
               <CardDescription>

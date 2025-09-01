@@ -268,398 +268,408 @@ const JsonPrettifier: React.FC = () => {
         <JsonPrettifierSkeleton />
       ) : (
         <div>
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-4">
-          {/* Left Panel - Input Editor */}
-          <div className="xl:col-span-5">
-            <div className="flex items-center justify-between mb-2">
-              <Label
-                htmlFor="input-json"
-                className="font-semibold"
-              >
-                Input JSON
-              </Label>
-              <Button onClick={handleClear} variant="outline" size="sm">
-                Clear
-              </Button>
-            </div>
+        <div className="mb-4">
+          {/* Combined Tool Card */}
+          <Card className="bg-gray-200 dark:bg-slate-900">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+                {/* Left Panel - Input Editor */}
+                <div className="xl:col-span-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <Label
+                      htmlFor="input-json"
+                      className="text-lg font-medium"
+                    >
+                      Input JSON
+                    </Label>
+                    <Button onClick={handleClear} variant="outline" size="sm">
+                      Clear
+                    </Button>
+                  </div>
 
-            <div className="relative">
-              <div
-                ref={inputEditorRef}
-                className="h-screen border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
-                style={{ minHeight: "500px", maxHeight: "80vh", outline: "none"}}
-              />
-                              {isValid !== null && (
-                  <div className="mt-2">
-                    {isValid ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                        <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        Valid JSON
+                  <div className="relative">
+                    <div
+                      ref={inputEditorRef}
+                      className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
+                      style={{ height: "600px", minHeight: "600px", maxHeight: "80vh", outline: "none"}}
+                    />
+                    {isValid !== null && (
+                      <div className="mt-2">
+                        {isValid ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                            Valid JSON
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                            Invalid JSON
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Center Panel - Controls */}
+                <div className="xl:col-span-2 flex flex-col items-center justify-center space-y-6">
+                  <div className="text-center">
+                    <Label
+                      htmlFor="indent"
+                      className="mb-3 text-lg font-medium"
+                    >
+                      Indent
+                    </Label>
+                    <div className="flex items-center space-x-3">
+                      <Button
+                        onClick={() => handleIndentChange(false)}
+                        disabled={indentSize <= 1}
+                        variant="outline"
+                        size="icon"
+                        className="font-bold"
+                      >
+                        -
+                      </Button>
+                      <span className="font-mono text-slate-900 dark:text-slate-100 min-w-[2rem] text-center">
+                        {indentSize}
                       </span>
-                    ) : (
+                      <Button
+                        onClick={() => handleIndentChange(true)}
+                        disabled={indentSize >= 8}
+                        variant="outline"
+                        size="icon"
+                        className="font-bold"
+                      >
+                        +
+                      </Button>
+                    </div>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
+                      spaces
+                    </span>
+                  </div>
+
+                  <div className="text-center">
+                    <CopyButton
+                      text={(() => {
+                        try {
+                          if (inputEditorInstanceRef.current && isValid) {
+                            const currentJson = inputEditorInstanceRef.current.get();
+                            if (currentJson) {
+                              return JSON.stringify(currentJson, null, indentSize);
+                            }
+                          }
+                          return "";
+                        } catch (err) {
+                          return "";
+                        }
+                      })()}
+                      disabled={!isValid}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Panel - Output Editor */}
+                <div className="xl:col-span-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <Label
+                      htmlFor="formatted-output"
+                      className="text-lg font-medium"
+                    >
+                      Formatted Output
+                    </Label>
+                    {error && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                         <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                        Invalid JSON
+                        Error detected
                       </span>
                     )}
                   </div>
-                )}
-            </div>
-          </div>
 
-          {/* Center Panel - Controls */}
-          <div className="xl:col-span-2 flex flex-col items-center justify-center space-y-6">
-            <div className="text-center">
-              <Label
-                htmlFor="indent"
-                className="mb-3 font-medium"
-              >
-                Indent
-              </Label>
-              <div className="flex items-center space-x-3">
-                <Button
-                  onClick={() => handleIndentChange(false)}
-                  disabled={indentSize <= 1}
-                  variant="outline"
-                  size="icon"
-                  className="font-bold"
-                >
-                  -
-                </Button>
-                <span className="font-mono text-slate-900 dark:text-slate-100 min-w-[2rem] text-center">
-                  {indentSize}
-                </span>
-                <Button
-                  onClick={() => handleIndentChange(true)}
-                  disabled={indentSize >= 8}
-                  variant="outline"
-                  size="icon"
-                  className="font-bold"
-                >
-                  +
-                </Button>
+                  <div className="relative">
+                    <div
+                      ref={outputEditorRef}
+                      className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
+                      style={{ height: "600px", minHeight: "600px", maxHeight: "80vh" }}
+                    />
+                  </div>
+
+                  {error && (
+                    <Card className="mt-3 border-red-200 dark:border-red-800">
+                      <CardContent className="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
+                        <div className="font-medium mb-1">JSON Error:</div>
+                        <div>{error}</div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
-                spaces
-              </span>
-            </div>
-
-            <div className="text-center">
-              <CopyButton
-                text={(() => {
-                  try {
-                    if (inputEditorInstanceRef.current && isValid) {
-                      const currentJson = inputEditorInstanceRef.current.get();
-                      if (currentJson) {
-                        return JSON.stringify(currentJson, null, indentSize);
-                      }
-                    }
-                    return "";
-                  } catch (err) {
-                    return "";
-                  }
-                })()}
-                disabled={!isValid}
-              />
-            </div>
-          </div>
-
-          {/* Right Panel - Output Editor */}
-          <div className="xl:col-span-5">
-            <div className="flex items-center justify-between mb-4">
-              <Label
-                htmlFor="formatted-output"
-                className="font-semibold"
-              >
-                Formatted Output
-              </Label>
-              {error && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                  Error detected
-                </span>
-              )}
-            </div>
-
-            <div className="relative">
-              <div
-                ref={outputEditorRef}
-                className="h-screen border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden shadow-lg"
-                style={{ minHeight: "500px", maxHeight: "80vh" }}
-              />
-            </div>
-
-            {error && (
-              <Card className="mt-3 border-red-200 dark:border-red-800">
-                <CardContent className="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
-                  <div className="font-medium mb-1">JSON Error:</div>
-                  <div>{error}</div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <Card className="bg-slate-50 dark:bg-slate-800/50 mb-6 border border-slate-200 dark:border-slate-700">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-              Shortcut Keys
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-2 md:px-6">
-            <div className="space-y-6">
-              {/* Tree Editor Shortcuts */}
-              <div>
-                <p className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                  Tree Editor
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-600">
-                    <thead>
-                      <tr className="bg-slate-100 dark:bg-slate-700">
-                        <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
-                          Key
-                        </th>
-                        <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
-                          Description
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white dark:bg-slate-800">
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Alt+Arrows
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Move the caret up/down/left/right between fields
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Shift+Arrow Up/Down
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Select multiple fields
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Shift+Alt+Arrows
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Move current field or selected fields up/down/left/right
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+D
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Duplicate field
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Del
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Remove field
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Enter
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Open link when on a field containing an url
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Ins
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Insert a new field with type auto
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Shift+Ins
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Append a new field with type auto
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+E
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Expand or collapse field
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Alt+End
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Move the caret to the last field
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+F
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Find
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          F3, Ctrl+G
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Find next
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Shift+F3, Ctrl+Shift+G
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Find previous
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Alt+Home
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Move the caret to the first field
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+M
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Show actions menu
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Z
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Undo last action
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Shift+Z
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Redo
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        {/* Content Cards Section */}
+        <div className="space-y-4">
+          <Card className="mb-6 border border-slate-200 dark:border-slate-700">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                Shortcut Keys
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-2 md:px-6">
+              <div className="space-y-6">
+                {/* Tree Editor Shortcuts */}
+                <div>
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    Tree Editor
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-600">
+                      <thead>
+                        <tr className="bg-slate-100 dark:bg-slate-700">
+                          <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
+                            Key
+                          </th>
+                          <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
+                            Description
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white dark:bg-slate-800">
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Alt+Arrows
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Move the caret up/down/left/right between fields
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Shift+Arrow Up/Down
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Select multiple fields
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Shift+Alt+Arrows
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Move current field or selected fields up/down/left/right
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+D
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Duplicate field
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Del
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Remove field
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Enter
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Open link when on a field containing an url
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Ins
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Insert a new field with type auto
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Shift+Ins
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Append a new field with type auto
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+E
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Expand or collapse field
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Alt+End
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Move the caret to the last field
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+F
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Find
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            F3, Ctrl+G
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Find next
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Shift+F3, Ctrl+Shift+G
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Find previous
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Alt+Home
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Move the caret to the first field
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+M
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Show actions menu
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Z
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Undo last action
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Shift+Z
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Redo
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Code Editor Shortcuts */}
+                <div>
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    Code Editor
+                  </p>
+                  <p className="text-slate-600 dark:text-slate-400 mb-3">
+                    The code editor is powered by{" "}
+                    <a
+                      href="http://ace.c9.io/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                    >
+                      Ace Editor
+                    </a>
+                    . This editor's shortcut keys are described{" "}
+                    <a
+                      href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                    >
+                      here
+                    </a>
+                    .
+                  </p>
+                  <p className="text-slate-600 dark:text-slate-400 mb-2">
+                    Additionally, there are shortcut keys to format/compact the code:
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-600">
+                      <thead>
+                        <tr className="bg-slate-100 dark:bg-slate-700">
+                          <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
+                            Key
+                          </th>
+                          <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
+                            Description
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white dark:bg-slate-800">
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+I
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Format JSON data, set proper indentation
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
+                            Ctrl+Shift+I
+                          </td>
+                          <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
+                            Compact JSON data, remove all whitespace
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Code Editor Shortcuts */}
-              <div>
-                <p className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                  Code Editor
+          <Card className="border border-slate-200 dark:border-slate-700">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                About JSON Prettifier
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-2 md:px-6">
+              <div className="text-slate-600 dark:text-slate-400 space-y-2">
+                <p>
+                  This enhanced JSON prettifier provides real-time formatting and
+                  validation using the powerful JSONEditor library. Features include:
                 </p>
-                <p className="text-slate-600 dark:text-slate-400 mb-3">
-                  The code editor is powered by{" "}
-                  <a
-                    href="http://ace.c9.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                  >
-                    Ace Editor
-                  </a>
-                  . This editor's shortcut keys are described{" "}
-                  <a
-                    href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                  >
-                    here
-                  </a>
-                  .
-                </p>
-                <p className="text-slate-600 dark:text-slate-400 mb-2">
-                  Additionally, there are shortcut keys to format/compact the code:
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-600">
-                    <thead>
-                      <tr className="bg-slate-100 dark:bg-slate-700">
-                        <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
-                          Key
-                        </th>
-                        <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left font-medium text-slate-700 dark:text-slate-300">
-                          Description
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white dark:bg-slate-800">
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+I
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Format JSON data, set proper indentation
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 font-mono text-slate-600 dark:text-slate-400">
-                          Ctrl+Shift+I
-                        </td>
-                        <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                          Compact JSON data, remove all whitespace
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Real-time JSON validation as you type</li>
+                  <li>Instant formatting with customizable indentation</li>
+                  <li>Precise error location and detailed error messages</li>
+                  <li>Professional code editor with syntax highlighting</li>
+                  <li>Copy formatted JSON to clipboard</li>
+                  <li>Dynamic indent control (1-8 spaces)</li>
+                  <li>Resizable editors for better workflow</li>
+                </ul>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-              About JSON Prettifier
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-2 md:px-6">
-            <div className="text-slate-600 dark:text-slate-400 space-y-2">
-              <p>
-                This enhanced JSON prettifier provides real-time formatting and
-                validation using the powerful JSONEditor library. Features include:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Real-time JSON validation as you type</li>
-                <li>Instant formatting with customizable indentation</li>
-                <li>Precise error location and detailed error messages</li>
-                <li>Professional code editor with syntax highlighting</li>
-                <li>Copy formatted JSON to clipboard</li>
-                <li>Dynamic indent control (1-8 spaces)</li>
-                <li>Resizable editors for better workflow</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+        </div>
       )
       }
     </ToolContainer>
