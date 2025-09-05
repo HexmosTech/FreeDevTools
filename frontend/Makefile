@@ -6,7 +6,7 @@ build:
 
 # Deploy: build first, then rsync to server
 deploy: build 
-	rsync -avz --progress ./dist/ nats03-do:/tools/
+	rsync -avzv --progress ./dist/ nats03-do:/tools/
 
 # Run development server
 run:
