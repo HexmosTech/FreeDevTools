@@ -360,12 +360,12 @@ const PasswordGenerator: React.FC = () => {
       {!loaded ? (
         <PasswordGeneratorSkeleton />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-16">
           {/* TOOL CARDS SECTION */}
-          <div className="space-y-4">
+          <div className="space-y-6 py-2 md:py-4 lg:py-6">
             
             {/* Generated Password Display - Tool Card */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-slate-700 dark:text-slate-300">
@@ -417,7 +417,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Quick Presets - Tool Card */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
               <CardHeader>
                 <CardTitle className=" text-slate-700 dark:text-slate-300">
                   Quick Presets
@@ -571,7 +571,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Password Type Selection - Tool Card */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-slate-700 dark:text-slate-300">
                   Password Type
@@ -625,7 +625,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Options Configuration - Tool Card */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-slate-700 dark:text-slate-300">

@@ -9,6 +9,7 @@ const ToolGridContainer = ({ children }: { children: React.ReactNode }) => {
           [column-fill:_balance]
           max-w-[1600px]
           mx-auto
+           mt-16
         "
       >
         {children}

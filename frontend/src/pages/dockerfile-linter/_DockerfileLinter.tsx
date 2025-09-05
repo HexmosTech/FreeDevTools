@@ -884,9 +884,9 @@ const DockerfileLinter: React.FC = () => {
       case "warn":
         return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400`;
       case "info":
-        return `${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`;
+        return `${baseClasses} bg-slate-200 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`;
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400`;
+        return `${baseClasses} bg-slate-200 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400`;
     }
   };
 
@@ -899,11 +899,11 @@ const DockerfileLinter: React.FC = () => {
       {!loaded ? (
         <DockerfileLinterSkeleton />
       ) : (
-        <div className="space-y-6">
-          {/* <ToolGridContainer> */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="space-y-12">
+          {/* Tool Cards Group */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
             {/* Input Section */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
               <CardHeader>
                 <CardTitle>Dockerfile Content</CardTitle>
               </CardHeader>
@@ -927,7 +927,7 @@ const DockerfileLinter: React.FC = () => {
             </Card>
 
             {/* Results Section */}
-            <Card className="bg-gray-200 dark:bg-slate-900">
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Analysis Results</CardTitle>
                 {analysis && analysis.results.length > 0 && (
@@ -968,7 +968,7 @@ const DockerfileLinter: React.FC = () => {
                     </div>
 
                     {/* Results */}
-                    <div className="max-h-80 overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg">
+                    <div className="bg-slate-50 dark:bg-slate-800 max-h-80 overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg">
                       {analysis.results.length === 0 ? (
                         <div className="p-4 text-center text-green-600 dark:text-green-400">
                           <span>✅</span>
@@ -1043,6 +1043,7 @@ const DockerfileLinter: React.FC = () => {
             </Card>
           </div>
 
+          {/* Content Cards Group */}
           {/* About Section */}
           <Card>
             <CardHeader>
