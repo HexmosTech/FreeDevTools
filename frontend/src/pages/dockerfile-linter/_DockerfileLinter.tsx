@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
+import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
+import { toast } from "../../components/ToastProvider";
+import ToolGridContainer from "@/components/tool/ToolGridContainer";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -385,6 +390,17 @@ const DockerfileLinter: React.FC = () => {
   const [analysis, setAnalysis] = useState<DockerfileAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  
   // YAML-based rule definitions (converted to JavaScript objects)
   const lineRules: Record<
     string,
@@ -802,17 +818,27 @@ const DockerfileLinter: React.FC = () => {
           results: [],
           summary: { errors: 0, warnings: 0, info: 0 },
         });
+        toast.info("No Dockerfile content to analyze");
         return;
       }
 
+      toast.info("Analyzing Dockerfile...");
       const analysisResult = lintDockerfile(dockerfileContent);
       setAnalysis(analysisResult);
+      
+      if (analysisResult.results.length === 0) {
+        toast.success("Analysis complete! No issues found.");
+      } else {
+        const { errors, warnings, info } = analysisResult.summary;
+        toast.success(`Analysis complete! Found ${errors} errors, ${warnings} warnings, ${info} info items.`);
+      }
     } catch (err) {
       console.error("Analysis error:", err);
       setAnalysis({
         results: [],
         summary: { errors: 0, warnings: 0, info: 0 },
       });
+      toast.error("Analysis failed. Please check your Dockerfile content.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -821,6 +847,7 @@ const DockerfileLinter: React.FC = () => {
   const handleClear = () => {
     setDockerfileContent("");
     setAnalysis(null);
+    toast.info("Dockerfile content cleared");
   };
 
   const getLevelIcon = (level: string) => {
@@ -850,16 +877,16 @@ const DockerfileLinter: React.FC = () => {
   };
 
   const getLevelBadge = (level: string) => {
-    const baseClasses = "px-2 py-1 text-xs font-medium rounded-full";
+    const baseClasses = "px-2 py-1 font-medium rounded-full";
     switch (level) {
       case "error":
         return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400`;
       case "warn":
         return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400`;
       case "info":
-        return `${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`;
+        return `${baseClasses} bg-slate-200 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`;
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400`;
+        return `${baseClasses} bg-slate-200 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400`;
     }
   };
 
@@ -869,256 +896,266 @@ const DockerfileLinter: React.FC = () => {
         name="Dockerfile Linter"
         description="Comprehensive Dockerfile analysis based on industry best practices and security guidelines"
       />
+      {!loaded ? (
+        <DockerfileLinterSkeleton />
+      ) : (
+        <div className="space-y-12">
+          {/* Tool Cards Group */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
+            {/* Input Section */}
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+              <CardHeader>
+                <CardTitle>Dockerfile Content</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Textarea
+                  value={dockerfileContent}
+                  onChange={(e) => setDockerfileContent(e.target.value)}
+                  placeholder='FROM node:18-alpine&#10;WORKDIR /app&#10;COPY package*.json ./&#10;RUN npm ci --only=production && npm cache clean --force&#10;COPY . .&#10;USER node&#10;EXPOSE 3000&#10;CMD ["npm", "start"]'
+                  className="min-h-[320px] font-mono resize-none"
+                />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Dockerfile Content
-            </label>
-            <textarea
-              value={dockerfileContent}
-              onChange={(e) => setDockerfileContent(e.target.value)}
-              placeholder='FROM node:18-alpine&#10;WORKDIR /app&#10;COPY package*.json ./&#10;RUN npm ci --only=production && npm cache clean --force&#10;COPY . .&#10;USER node&#10;EXPOSE 3000&#10;CMD ["npm", "start"]'
-              className="w-full h-80 p-3 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 font-mono text-sm"
-            />
-          </div>
-
-          <div className="flex space-x-3">
-            <Button onClick={handleProcess} disabled={isAnalyzing} size="fit">
-              {isAnalyzing ? "Analyzing..." : "Analyze Dockerfile"}
-            </Button>
-            <Button onClick={handleClear} variant="outline">
-              Clear
-            </Button>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Analysis Results
-            </label>
-            {analysis && analysis.results.length > 0 && (
-              <CopyButton
-                text={analysis.results
-                  .map(
-                    (r) =>
-                      `Line ${r.line}: [${r.level.toUpperCase()}] ${r.message}${r.description ? " - " + r.description : ""} (${r.rule || "unknown"})`
-                  )
-                  .join("\n")}
-                size="icon"
-                title="Copy results to clipboard"
-              />
-            )}
-          </div>
-
-          {analysis && (
-            <div className="space-y-4">
-              {/* Summary */}
-              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
-                  Summary
-                </h3>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-red-600">❌</span>
-                    <span>{analysis.summary.errors} Errors</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-yellow-600">⚠️</span>
-                    <span>{analysis.summary.warnings} Warnings</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-blue-600">ℹ️</span>
-                    <span>{analysis.summary.info} Info</span>
-                  </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button onClick={handleProcess} disabled={isAnalyzing} className="flex-1 sm:flex-none">
+                    {isAnalyzing ? "Analyzing..." : "Analyze Dockerfile"}
+                  </Button>
+                  <Button onClick={handleClear} variant="outline" className="flex-1 sm:flex-none">
+                    Clear
+                  </Button>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Results */}
-              <div className="max-h-80 overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg">
-                {analysis.results.length === 0 ? (
-                  <div className="p-4 text-center text-green-600 dark:text-green-400">
-                    <span className="text-2xl">✅</span>
-                    <p className="mt-2">
-                      Excellent! No issues found in your Dockerfile.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-slate-200 dark:divide-slate-700">
-                    {analysis.results.map((result, index) => (
-                      <div
-                        key={index}
-                        className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                      >
-                        <div className="flex items-start space-x-3">
-                          <span className="text-lg">
-                            {getLevelIcon(result.level)}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              {result.line > 0 && (
-                                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                  Line {result.line}
-                                </span>
-                              )}
-                              <span className={getLevelBadge(result.level)}>
-                                {result.level.toUpperCase()}
-                              </span>
-                              {result.rule && (
-                                <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
-                                  {result.rule}
-                                </span>
-                              )}
-                            </div>
-                            <h4
-                              className={`text-sm font-medium ${getLevelColor(result.level)} mb-1`}
-                            >
-                              {result.message}
-                            </h4>
-                            {result.description && (
-                              <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
-                                {result.description}
-                              </p>
-                            )}
-                            {result.reference_url &&
-                              result.reference_url.length > 0 && (
-                                <div className="text-xs">
-                                  <a
-                                    href={result.reference_url[0]}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                                  >
-                                    📖 Learn more
-                                  </a>
-                                </div>
-                              )}
-                          </div>
+            {/* Results Section */}
+            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Analysis Results</CardTitle>
+                {analysis && analysis.results.length > 0 && (
+                  <CopyButton
+                    text={analysis.results
+                      .map(
+                        (r) =>
+                          `Line ${r.line}: [${r.level.toUpperCase()}] ${r.message}${r.description ? " - " + r.description : ""} (${r.rule || "unknown"})`
+                      )
+                      .join("\n")}
+                    size="icon"
+                    title="Copy results to clipboard"
+                  />
+                )}
+              </CardHeader>
+              <CardContent>
+                {analysis ? (
+                  <div className="space-y-4">
+                    {/* Summary */}
+                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                        Summary
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-red-600">❌</span>
+                          <span>{analysis.summary.errors} Errors</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-yellow-600">⚠️</span>
+                          <span>{analysis.summary.warnings} Warnings</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-blue-600">ℹ️</span>
+                          <span>{analysis.summary.info} Info</span>
                         </div>
                       </div>
-                    ))}
+                    </div>
+
+                    {/* Results */}
+                    <div className="bg-slate-50 dark:bg-slate-800 max-h-80 overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg">
+                      {analysis.results.length === 0 ? (
+                        <div className="p-4 text-center text-green-600 dark:text-green-400">
+                          <span>✅</span>
+                          <p className="mt-2">
+                            Excellent! No issues found in your Dockerfile.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-slate-200 dark:divide-slate-700">
+                          {analysis.results.map((result, index) => (
+                            <div
+                              key={index}
+                              className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                            >
+                                                          <div className="flex items-start space-x-3">
+                              <span>
+                                {getLevelIcon(result.level)}
+                              </span>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                                    {result.line > 0 && (
+                                      <span className="font-medium text-slate-500 dark:text-slate-400">
+                                        Line {result.line}
+                                      </span>
+                                    )}
+                                    <span className={getLevelBadge(result.level)}>
+                                      {result.level.toUpperCase()}
+                                    </span>
+                                    {result.rule && (
+                                      <span className="text-slate-400 dark:text-slate-500 font-mono">
+                                        {result.rule}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4
+                                    className={`font-medium ${getLevelColor(result.level)} mb-1`}
+                                  >
+                                    {result.message}
+                                  </h4>
+                                  {result.description && (
+                                    <p className="text-slate-600 dark:text-slate-400 mb-2">
+                                      {result.description}
+                                    </p>
+                                  )}
+                                  {result.reference_url &&
+                                    result.reference_url.length > 0 && (
+                                      <div>
+                                        <a
+                                          href={result.reference_url[0]}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                        >
+                                          📖 Learn more
+                                        </a>
+                                      </div>
+                                    )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-5 h-80 border border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400">
+                    Enter a Dockerfile above and click "Analyze" to see results
                   </div>
                 )}
-              </div>
-            </div>
-          )}
+              </CardContent>
+            </Card>
+          </div>
 
-          {!analysis && (
-            <div className="h-80 border border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400">
-              Enter a Dockerfile above and click "Analyze" to see results
-            </div>
-          )}
+          {/* Content Cards Group */}
+          {/* About Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>About This Dockerfile Linter</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-slate-600 dark:text-slate-400 space-y-3">
+                <p>
+                  This comprehensive Dockerfile linter is based on industry-standard
+                  rules from the
+                  <strong> dockerfilelint</strong> project and Docker security best
+                  practices. It analyzes your Dockerfiles for syntax errors, security
+                  vulnerabilities, performance issues, and adherence to Docker best
+                  practices.
+                </p>
+
+                <div>
+                  <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    Key Features:
+                  </h4>
+                  <ul className="space-y-1 ml-4">
+                    <li>
+                      • <strong>Syntax Validation:</strong> Checks parameter formats
+                      and instruction syntax
+                    </li>
+                    <li>
+                      • <strong>Security Analysis:</strong> Detects risky
+                      configurations and privilege escalation
+                    </li>
+                    <li>
+                      • <strong>Performance Optimization:</strong> Identifies layer
+                      bloat and caching issues
+                    </li>
+                    <li>
+                      • <strong>Best Practices:</strong> Enforces Docker community
+                      standards
+                    </li>
+                    <li>
+                      • <strong>Label Validation:</strong> Ensures proper metadata
+                      formatting
+                    </li>
+                    <li>
+                      • <strong>Required Instructions:</strong> Validates essential
+                      Dockerfile components
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    Issue Levels:
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-red-600">❌</span>
+                      <span>
+                        <strong>Error:</strong> Critical issues that may cause build
+                        failures
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-600">⚠️</span>
+                      <span>
+                        <strong>Warning:</strong> Potential problems or bad practices
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-600">ℹ️</span>
+                      <span>
+                        <strong>Info:</strong> Suggestions for improvement
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
+                  <p>
+                    <strong>Rule Sources:</strong>
+                    <a
+                      href="https://github.com/replicatedhq/dockerfilelint"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                    >
+                      dockerfilelint
+                    </a>
+                    ,
+                    <a
+                      href="https://docs.docker.com/develop/dev-best-practices/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                    >
+                      Docker best practices
+                    </a>
+                    , and
+                    <a
+                      href="https://github.com/projectatomic/container-best-practices"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                    >
+                      Container best practices
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          {/* </ToolGridContainer> */}
         </div>
-      </div>
-
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          About This Dockerfile Linter
-        </h3>
-        <div className="text-slate-600 dark:text-slate-400 space-y-3">
-          <p>
-            This comprehensive Dockerfile linter is based on industry-standard
-            rules from the
-            <strong> dockerfilelint</strong> project and Docker security best
-            practices. It analyzes your Dockerfiles for syntax errors, security
-            vulnerabilities, performance issues, and adherence to Docker best
-            practices.
-          </p>
-
-          <div>
-            <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-              Key Features:
-            </h4>
-            <ul className="text-sm space-y-1 ml-4">
-              <li>
-                • <strong>Syntax Validation:</strong> Checks parameter formats
-                and instruction syntax
-              </li>
-              <li>
-                • <strong>Security Analysis:</strong> Detects risky
-                configurations and privilege escalation
-              </li>
-              <li>
-                • <strong>Performance Optimization:</strong> Identifies layer
-                bloat and caching issues
-              </li>
-              <li>
-                • <strong>Best Practices:</strong> Enforces Docker community
-                standards
-              </li>
-              <li>
-                • <strong>Label Validation:</strong> Ensures proper metadata
-                formatting
-              </li>
-              <li>
-                • <strong>Required Instructions:</strong> Validates essential
-                Dockerfile components
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-              Issue Levels:
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-              <div className="flex items-center space-x-2">
-                <span className="text-red-600">❌</span>
-                <span>
-                  <strong>Error:</strong> Critical issues that may cause build
-                  failures
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-yellow-600">⚠️</span>
-                <span>
-                  <strong>Warning:</strong> Potential problems or bad practices
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-blue-600">ℹ️</span>
-                <span>
-                  <strong>Info:</strong> Suggestions for improvement
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
-            <p className="text-sm">
-              <strong>Rule Sources:</strong>
-              <a
-                href="https://github.com/replicatedhq/dockerfilelint"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-              >
-                dockerfilelint
-              </a>
-              ,
-              <a
-                href="https://docs.docker.com/develop/dev-best-practices/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-              >
-                Docker best practices
-              </a>
-              , and
-              <a
-                href="https://github.com/projectatomic/container-best-practices"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-              >
-                Container best practices
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </ToolContainer>
   );
 };
