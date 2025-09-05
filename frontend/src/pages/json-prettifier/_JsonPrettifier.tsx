@@ -18,7 +18,7 @@ const JsonPrettifier: React.FC = () => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
-  
+
   // Try to get theme from context, but handle hydration timing
   let themeContext: any = null;
   try {
@@ -45,10 +45,10 @@ const JsonPrettifier: React.FC = () => {
   useEffect(() => {
     if (themeContext?.theme) {
       setCurrentTheme(themeContext.theme);
-    } else if (typeof document !== 'undefined') {
+    } else if (typeof document !== "undefined") {
       // Fallback: check document class
-      const isDark = document.documentElement.classList.contains('dark');
-      setCurrentTheme(isDark ? 'dark' : 'light');
+      const isDark = document.documentElement.classList.contains("dark");
+      setCurrentTheme(isDark ? "dark" : "light");
     }
   }, [themeContext?.theme]);
 
@@ -58,16 +58,19 @@ const JsonPrettifier: React.FC = () => {
 
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          const isDark = document.documentElement.classList.contains('dark');
-          setCurrentTheme(isDark ? 'dark' : 'light');
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          const isDark = document.documentElement.classList.contains("dark");
+          setCurrentTheme(isDark ? "dark" : "light");
         }
       });
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ["class"],
     });
 
     return () => observer.disconnect();
@@ -128,7 +131,7 @@ const JsonPrettifier: React.FC = () => {
             mainMenuBar: false,
             statusBar: false,
             onEditable: () => false,
-            theme: getCurrentTheme()
+            theme: getCurrentTheme(),
           }
         );
 
@@ -263,8 +266,7 @@ const JsonPrettifier: React.FC = () => {
         name="JSON Prettifier"
         description="Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required."
       />
-      {
-      !isClient ? (
+      {!isClient ? (
         <JsonPrettifierSkeleton />
       ) : (
         <div className="space-y-12 mt-6">
@@ -272,7 +274,7 @@ const JsonPrettifier: React.FC = () => {
           <div className="space-y-6 py-2 md:py-4 lg:py-6">
             {/* Combined Tool Card */}
             <Card className="bg-slate-200 dark:bg-slate-900">
-              <CardContent className="p-6">
+              <CardContent className="p-2 md:p-6">
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
                   {/* Left Panel - Input Editor */}
                   <div className="xl:col-span-5">
@@ -292,7 +294,12 @@ const JsonPrettifier: React.FC = () => {
                       <div
                         ref={inputEditorRef}
                         className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden"
-                        style={{ height: "600px", minHeight: "600px", maxHeight: "80vh", outline: "none"}}
+                        style={{
+                          height: "600px",
+                          minHeight: "600px",
+                          maxHeight: "80vh",
+                          outline: "none",
+                        }}
                       />
                       {isValid !== null && (
                         <div className="mt-2">
@@ -348,25 +355,6 @@ const JsonPrettifier: React.FC = () => {
                         spaces
                       </span>
                     </div>
-
-                    <div className="text-center">
-                      <CopyButton
-                        text={(() => {
-                          try {
-                            if (inputEditorInstanceRef.current && isValid) {
-                              const currentJson = inputEditorInstanceRef.current.get();
-                              if (currentJson) {
-                                return JSON.stringify(currentJson, null, indentSize);
-                              }
-                            }
-                            return "";
-                          } catch (err) {
-                            return "";
-                          }
-                        })()}
-                        disabled={!isValid}
-                      />
-                    </div>
                   </div>
 
                   {/* Right Panel - Output Editor */}
@@ -378,19 +366,46 @@ const JsonPrettifier: React.FC = () => {
                       >
                         Formatted Output
                       </Label>
-                      {error && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                          <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                          Error detected
-                        </span>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        <CopyButton
+                          text={(() => {
+                            try {
+                              if (inputEditorInstanceRef.current && isValid) {
+                                const currentJson =
+                                  inputEditorInstanceRef.current.get();
+                                if (currentJson) {
+                                  return JSON.stringify(
+                                    currentJson,
+                                    null,
+                                    indentSize
+                                  );
+                                }
+                              }
+                              return "";
+                            } catch (err) {
+                              return "";
+                            }
+                          })()}
+                          disabled={!isValid}
+                        />
+                        {error && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                            Error detected
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <div className="relative">
                       <div
                         ref={outputEditorRef}
                         className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden"
-                        style={{ height: "600px", minHeight: "600px", maxHeight: "80vh" }}
+                        style={{
+                          height: "600px",
+                          minHeight: "600px",
+                          maxHeight: "80vh",
+                        }}
                       />
                     </div>
 
@@ -458,7 +473,8 @@ const JsonPrettifier: React.FC = () => {
                               Shift+Alt+Arrows
                             </td>
                             <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
-                              Move current field or selected fields up/down/left/right
+                              Move current field or selected fields
+                              up/down/left/right
                             </td>
                           </tr>
                           <tr>
@@ -605,7 +621,8 @@ const JsonPrettifier: React.FC = () => {
                       .
                     </p>
                     <p className="text-slate-600 dark:text-slate-400 mb-2">
-                      Additionally, there are shortcut keys to format/compact the code:
+                      Additionally, there are shortcut keys to format/compact
+                      the code:
                     </p>
                     <div className="overflow-x-auto">
                       <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-600">
@@ -654,8 +671,9 @@ const JsonPrettifier: React.FC = () => {
               <CardContent className="px-2 md:px-6">
                 <div className="text-slate-600 dark:text-slate-400 space-y-2">
                   <p>
-                    This enhanced JSON prettifier provides real-time formatting and
-                    validation using the powerful JSONEditor library. Features include:
+                    This enhanced JSON prettifier provides real-time formatting
+                    and validation using the powerful JSONEditor library.
+                    Features include:
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Real-time JSON validation as you type</li>
@@ -671,8 +689,7 @@ const JsonPrettifier: React.FC = () => {
             </Card>
           </div>
         </div>
-      )
-      }
+      )}
     </ToolContainer>
   );
 };
