@@ -147,6 +147,19 @@ Give optimized tool description based on requirement
 - twitter:image exists with valid image URL
 - twitter:card is set to "summary" or "summary_large_image"
 
+### Banner Generation for Social Media
+
+#### Creating Tool Banners
+
+Use the automated banner generation system to create high-quality social media images for each tool:
+
+**Setup:**
+```bash
+
+# Generate banner for a tool
+npm run banner:generate "JSON Prettifier" json-prettifier ./screenshot.png
+```
+
 #### Additional Requirements
 
 - All URLs are absolute (https://)
