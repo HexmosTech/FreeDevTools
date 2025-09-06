@@ -11,8 +11,8 @@ import CopyButton from "../../components/ui/copy-button";
 import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
 import { Label } from "@/components/ui/label";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ContentCardWrapper from "@/components/tool/ContentCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolBody from "@/components/tool/ToolBody";
 
 interface PasswordOptions {

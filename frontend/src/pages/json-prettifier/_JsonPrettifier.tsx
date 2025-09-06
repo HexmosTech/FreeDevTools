@@ -9,7 +9,7 @@ import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
 import { Label } from "@/components/ui/label";
 import { useTheme } from "../../components/theme/ThemeContext";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolBody from "@/components/tool/ToolBody";
 
 const LIGHT_THEME = "ace/theme/textmate";

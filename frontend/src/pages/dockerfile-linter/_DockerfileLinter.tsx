@@ -8,7 +8,7 @@ import CopyButton from "../../components/ui/copy-button";
 import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
 import { toast } from "../../components/ToastProvider";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolBody from "@/components/tool/ToolBody";
 
 // Docker parser functions adapted from dockerparser.js
