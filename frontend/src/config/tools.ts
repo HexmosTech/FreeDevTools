@@ -121,13 +121,12 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
-      "Instantly convert dates and times with Date Time Converter. Transform UTC, ISO, Unix, and more formats. Paste or pick a date to see all formats at once.",
+      "Free online Date Time Converter by Hexmos. Instantly transform UTC, ISO, Unix timestamps, and more formats with no registration required. Paste or pick a date to see all formats at once.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
     canonical: "https://hexmos.com/freedevtools/t/date-time-converter/",
     keywords: [
-      "date-time-converter",
       "datetime converter",
       "date converter",
       "time converter",
@@ -136,6 +135,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "iso date",
       "utc",
       "online date converter",
+      "free date converter",
+      "timestamp converter online",
     ],
     features: [
       "Convert between UTC, ISO, Unix, and other date/time formats",
