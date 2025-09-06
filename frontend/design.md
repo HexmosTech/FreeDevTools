@@ -23,7 +23,7 @@ Our goals are:
 1. Ensure each component is a card component from @src/components/ui/card.tsx. 
 2. Differentiate between Tool and Contents. Tool Cards should be wrapped under the ToolCardWrapper component. Other cards should be wrapped under ToolContentCardWrapper. These are available from src/components/tool/ToolCardWrapper.tsx and src/components/tool/ToolContentCardWrapper.tsx
 3. Cards inside ToolCardWrapper should have the tool-card-bg classname. No classname needed for the cards inside ToolContentCardWrapper.
-4. Card titles should have default font weight.
+4. Card titles should have default font weight, Do not apply additional font-weight classes.
 5. The ToolCardWrapper and the ToolContentCardsWrapper should be wrapped under ToolBody component (Located in src/components/tool/ToolBody.tsx )
 
 
@@ -37,3 +37,6 @@ Our goals are:
 2. For making the UI compatible with smaller screens, consider the following
     2.1 Use only the standard layout components (ToolBody, ToolCardWrapper, ToolContentCardWrapper, Card) instead of raw HTML containers. This ensures consistent structure, styling, and responsive behavior across all tools.
 
+## Heading Structure
+1. Use heading elements (h1, h2, h3, etc.) in sequential order (no skipped levels)
+2. Each page must have exactly ONE h1 tag

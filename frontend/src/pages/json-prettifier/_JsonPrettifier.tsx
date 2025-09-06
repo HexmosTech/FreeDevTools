@@ -667,7 +667,6 @@ const JsonPrettifier: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
                   About JSON Prettifier
                 </CardTitle>
               </CardHeader>

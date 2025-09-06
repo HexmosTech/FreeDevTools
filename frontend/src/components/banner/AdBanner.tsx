@@ -206,15 +206,15 @@ const AdBanner: React.FC = () => {
         >
           <div className="px-6 h-full w-full min-w-96 flex flex-col justify-center">
             <div className="text-left mb-2">
-              <h1 className="leading-tight font-eb-garamond tracking-wide mb-2">
+              <p className="leading-tight font-eb-garamond tracking-wide mb-2 text-2xl md:text-4xl lg:text-6xl font-bold !important;">
                 <span className="text-red-700">{currentAd.title}</span>
-              </h1>
+              </p>
             </div>
             <div className="text-left flex flex-row justify-between items-center gap-24 mt-0">
               <div className="flex flex-row justify-between items-center gap-12">
-                <h2 className="text-gray-800 font-eb-garamond leading-relaxed">
+                <p className="text-gray-800 font-eb-garamond leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium ">
                   {currentAd.description}
-                </h2>
+                </p>
                 <LearnMoreButton size="md" />
               </div>
               <div className="flex items-center gap-4 mt-1">
@@ -240,12 +240,12 @@ const AdBanner: React.FC = () => {
         >
           <div className="px-2 py-2 h-full flex flex-col justify-center">
             <div className="text-left mb-4">
-              <h1 className="font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide">
+              <p className="font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide text-2xl md:text-4xl lg:text-6xl font-bold !important;">
                 {currentAd.title}
-              </h1>
-              <h2 className="text-gray-800 font-eb-garamond font-medium leading-relaxed">
+              </p>
+              <p className="text-gray-800 font-eb-garamond font-medium leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium">
                 {currentAd.description}
-              </h2>
+              </p>
             </div>
             <div className="flex flex-row items-center justify-between gap-3">
               <LearnMoreButton size="sm" />
@@ -269,12 +269,12 @@ const AdBanner: React.FC = () => {
       >
         <div className="px-4 py-2 h-full flex flex-col justify-center">
           <div className="text-left mb-4">
-            <h1 className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide">
+            <p className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide text-2xl md:text-4xl lg:text-6xl font-bold !important;">
               {currentAd.title}
-            </h1>
-            <h2 className="text-gray-800 font-eb-garamond leading-relaxed">
+            </p>
+            <p className="text-gray-800 font-eb-garamond leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium">
               {currentAd.description}
-            </h2>
+            </p>
           </div>
           <div className="flex flex-row items-center justify-between mb-2">
             <LearnMoreButton size="sm" />

@@ -14,10 +14,10 @@ const ToolHead: React.FC<ToolHeadProps> = ({ name, description }) => {
         <AdBanner />
       </div>
       <div className="mb-2">
-        <h2 className="text-xl md:text-2xl lg:text-2xl font-medium mb-2 text-black dark:text-slate-300">
+        <h1 className="text-2xl font-medium mb-2 text-black dark:text-slate-300">
           {name}
-        </h2>
-        <h4 className="text-muted-foreground ">{description}</h4>
+        </h1>
+        <p className="text-muted-foreground text-base md:text-lg lg:text-xl font-normal ">{description}</p>
       </div>
     </>
   );
