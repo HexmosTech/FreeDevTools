@@ -157,7 +157,7 @@ const DateTimeConverter = () => {
       {!loaded ? (
         <DateTimeConverterSkeleton />
       ) : (
-        <ToolBody>  
+        <ToolBody>
           <ToolGridContainer>
             {/* Input Section */}
             <Card className="tool-card-bg-grid">
@@ -184,7 +184,10 @@ const DateTimeConverter = () => {
                       />
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
-                      <Select value={inputFormat} onValueChange={setInputFormat}>
+                      <Select
+                        value={inputFormat}
+                        onValueChange={setInputFormat}
+                      >
                         <SelectTrigger className="min-w-[140px] w-full sm:w-auto">
                           <SelectValue placeholder="Select format" />
                         </SelectTrigger>
@@ -212,9 +215,7 @@ const DateTimeConverter = () => {
                   {showDatePicker && (
                     <div className="p-4 bg-muted rounded-lg border">
                       <div className="mb-2">
-                        <Label htmlFor="datetime">
-                          Pick date and time:
-                        </Label>
+                        <Label htmlFor="datetime">Pick date and time:</Label>
                       </div>
                       <Input
                         id="datetime"
@@ -237,20 +238,35 @@ const DateTimeConverter = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                <div className="space-y-3">
                   {[
-                    { label: "JS locale date string", value: formatters.jsLocale() },
+                    {
+                      label: "JS locale date string",
+                      value: formatters.jsLocale(),
+                    },
                     { label: "ISO 8601", value: formatters.iso8601() },
                     { label: "ISO 9075", value: formatters.iso9075() },
                     { label: "RFC 3339", value: formatters.rfc3339() },
                     { label: "RFC 7231", value: formatters.rfc7231() },
-                    { label: "Unix timestamp", value: formatters.unixTimestamp() },
+                    {
+                      label: "Unix timestamp",
+                      value: formatters.unixTimestamp(),
+                    },
                     { label: "Timestamp", value: formatters.timestamp() },
                     { label: "UTC format", value: formatters.utcFormat() },
-                    { label: "Mongo ObjectID", value: formatters.mongoObjectId() },
-                    { label: "Excel date/time", value: formatters.excelDateTime() },
+                    {
+                      label: "Mongo ObjectID",
+                      value: formatters.mongoObjectId(),
+                    },
+                    {
+                      label: "Excel date/time",
+                      value: formatters.excelDateTime(),
+                    },
                   ].map((format, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div
+                      key={index}
+                      className="flex flex-col sm:flex-row sm:items-center gap-3"
+                    >
                       <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
                         {format.label}
                       </div>
@@ -278,9 +294,11 @@ const DateTimeConverter = () => {
             {/* Best Practices for Time Zones */}
             <Card className="tool-content-card-bg-grid">
               <CardHeader>
-                <CardTitle>Why Using UTC or a Consistent Time Zone Matters</CardTitle>
+                <CardTitle>
+                  Why Using UTC or a Consistent Time Zone Matters
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <CardContent className="space-y-4">
                 <p className="text-sm leading-relaxed">
                   Whenever possible, use{" "}
                   <a
@@ -291,15 +309,15 @@ const DateTimeConverter = () => {
                   >
                     UTC
                   </a>{" "}
-                  or choose a consistent time zone when creating time-based content
-                  or data values. This makes it much easier to compare, debug, and
-                  work with dates from different sources—no more mental math or
-                  timezone confusion!
+                  or choose a consistent time zone when creating time-based
+                  content or data values. This makes it much easier to compare,
+                  debug, and work with dates from different sources—no more
+                  mental math or timezone confusion!
                 </p>
                 <p className="text-sm leading-relaxed">
-                  <strong>Example:</strong> It's much easier to spot differences and
-                  similarities when all your timestamps are in the same time zone.
-                  When values use different{" "}
+                  <strong>Example:</strong> It's much easier to spot differences
+                  and similarities when all your timestamps are in the same time
+                  zone. When values use different{" "}
                   <a
                     className="text-blue-600 hover:underline dark:text-blue-400"
                     href="https://en.wikipedia.org/wiki/UTC_offset"
@@ -308,8 +326,8 @@ const DateTimeConverter = () => {
                   >
                     offsets
                   </a>{" "}
-                  or time zones, you have to mentally translate each one, which can
-                  lead to mistakes.
+                  or time zones, you have to mentally translate each one, which
+                  can lead to mistakes.
                 </p>
                 <div className="overflow-x-auto">
                   <table className="min-w-[300px] sm:min-w-[340px] border border-border rounded text-xs sm:text-sm">
@@ -325,7 +343,9 @@ const DateTimeConverter = () => {
                     </thead>
                     <tbody>
                       <tr>
-                        <td className="px-2 py-1">2007-01-01T01:00:00.000-01:00</td>
+                        <td className="px-2 py-1">
+                          2007-01-01T01:00:00.000-01:00
+                        </td>
                         <td className="px-2 py-1">2007-01-01T02:00:00.000Z</td>
                       </tr>
                       <tr>
@@ -333,11 +353,15 @@ const DateTimeConverter = () => {
                         <td className="px-2 py-1">2007-01-01T01:00:00.000Z</td>
                       </tr>
                       <tr>
-                        <td className="px-2 py-1">2007-01-01T01:00:00.000+01:00</td>
+                        <td className="px-2 py-1">
+                          2007-01-01T01:00:00.000+01:00
+                        </td>
                         <td className="px-2 py-1">2007-01-01T00:00:00.000Z</td>
                       </tr>
                       <tr>
-                        <td className="px-2 py-1">2006-12-31T23:00:00.000-01:00</td>
+                        <td className="px-2 py-1">
+                          2006-12-31T23:00:00.000-01:00
+                        </td>
                         <td className="px-2 py-1">2007-01-01T00:00:00.000Z</td>
                       </tr>
                       <tr>
@@ -356,8 +380,8 @@ const DateTimeConverter = () => {
                   </table>
                 </div>
                 <p className="text-sm leading-relaxed">
-                  As you can see, when timestamps use different offsets, it's hard
-                  to visually compare them. Converting everything to{" "}
+                  As you can see, when timestamps use different offsets, it's
+                  hard to visually compare them. Converting everything to{" "}
                   <a
                     className="text-blue-600 hover:underline dark:text-blue-400"
                     href="https://www.timeanddate.com/worldclock/timezone/utc"
@@ -366,8 +390,8 @@ const DateTimeConverter = () => {
                   >
                     UTC
                   </a>{" "}
-                  (or a single time zone) makes it much easier to spot duplicates or
-                  differences at a glance.
+                  (or a single time zone) makes it much easier to spot
+                  duplicates or differences at a glance.
                 </p>
                 <p className="text-sm leading-relaxed">
                   <strong>Tip:</strong> Help your users by remembering their
@@ -382,19 +406,19 @@ const DateTimeConverter = () => {
               <CardHeader>
                 <CardTitle>When a Simple Timestamp is Enough</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <CardContent className="space-y-4">
                 <p className="text-sm leading-relaxed">
                   For most use cases, you can use an incremental time value like{" "}
                   <span className="font-mono">Instant</span> or{" "}
-                  <span className="font-mono">Date</span> for your timestamp values.
-                  If your app only cares about the order of events (not the local
-                  wall time), a timestamp is all you need.
+                  <span className="font-mono">Date</span> for your timestamp
+                  values. If your app only cares about the order of events (not
+                  the local wall time), a timestamp is all you need.
                 </p>
                 <p className="text-sm leading-relaxed">
-                  <strong>Example:</strong> If you're merging log files from many
-                  machines or recording events in a log, just store the timestamp.
-                  You don't need to recover the original wall time—just the sequence
-                  of events.
+                  <strong>Example:</strong> If you're merging log files from
+                  many machines or recording events in a log, just store the
+                  timestamp. You don't need to recover the original wall
+                  time—just the sequence of events.
                 </p>
                 <p className="text-sm leading-relaxed">
                   It's best to normalize all timestamps to{" "}
@@ -407,10 +431,10 @@ const DateTimeConverter = () => {
                     UTC
                   </a>{" "}
                   (or, less commonly, a specific UTC offset) so you can easily
-                  compare and merge data from different sources. Storing the local
-                  offset is only useful if you ever need to recover the original
-                  wall time, but for most logs and event streams, that's not
-                  necessary.
+                  compare and merge data from different sources. Storing the
+                  local offset is only useful if you ever need to recover the
+                  original wall time, but for most logs and event streams,
+                  that's not necessary.
                 </p>
                 <p className="text-sm leading-relaxed">
                   <strong>Tip:</strong> When in doubt, use{" "}
@@ -429,8 +453,8 @@ const DateTimeConverter = () => {
                 <div className="bg-muted rounded p-4">
                   <strong>Note:</strong> For timestamp values, you never need to
                   store the time zone. The only thing it might provide is the
-                  originating wall time, which is rarely needed for logs or event
-                  ordering.
+                  originating wall time, which is rarely needed for logs or
+                  event ordering.
                 </div>
               </CardContent>
             </Card>
@@ -438,9 +462,11 @@ const DateTimeConverter = () => {
             {/* Past and Future Events Section */}
             <Card className="tool-content-card-bg-grid">
               <CardHeader>
-                <CardTitle>Handling Past and Future Events: Why Time Zones Matter</CardTitle>
+                <CardTitle>
+                  Handling Past and Future Events: Why Time Zones Matter
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
+              <CardContent className="space-y-4">
                 <p className="text-sm leading-relaxed">
                   If your app schedules or displays events in the future (like
                   meetings, reminders, or calendar entries), you should use a
@@ -458,25 +484,25 @@ const DateTimeConverter = () => {
                   daylight saving) change.
                 </p>
                 <p className="text-sm leading-relaxed">
-                  For example, a meeting set for "2025-10-28 10:00 AM Europe/Berlin"
-                  will always be at 10:00 AM in Berlin, even if daylight saving
-                  rules change between now and then. If you only store the offset or
-                  a timestamp, you might show the wrong local time after a rule
-                  change.
+                  For example, a meeting set for "2025-10-28 10:00 AM
+                  Europe/Berlin" will always be at 10:00 AM in Berlin, even if
+                  daylight saving rules change between now and then. If you only
+                  store the offset or a timestamp, you might show the wrong
+                  local time after a rule change.
                 </p>
                 <p className="text-sm leading-relaxed">
-                  <strong>Why does this matter?</strong> Time zone rules can change!
-                  Governments sometimes update daylight saving or standard time
-                  rules. If your app pre-computes or stores incremental time values
-                  (like timestamps) for future events, you may need to refresh those
-                  values after your system's time zone database updates, so users
-                  see the correct local time.
+                  <strong>Why does this matter?</strong> Time zone rules can
+                  change! Governments sometimes update daylight saving or
+                  standard time rules. If your app pre-computes or stores
+                  incremental time values (like timestamps) for future events,
+                  you may need to refresh those values after your system's time
+                  zone database updates, so users see the correct local time.
                 </p>
                 <div className="bg-muted rounded p-4">
-                  <strong>Note:</strong> If your application deals with both past
-                  and future events, always store the time zone along with the event
-                  time. This helps you handle changes in time zone rules and keeps
-                  your users' schedules accurate.
+                  <strong>Note:</strong> If your application deals with both
+                  past and future events, always store the time zone along with
+                  the event time. This helps you handle changes in time zone
+                  rules and keeps your users' schedules accurate.
                 </div>
               </CardContent>
             </Card>
@@ -506,7 +532,7 @@ const DateTimeConverter = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://tools.ietf.org/html/rfc3339"
                     target="_blank"
@@ -522,7 +548,7 @@ const DateTimeConverter = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://www.iana.org/time-zones"
                     target="_blank"
@@ -538,7 +564,7 @@ const DateTimeConverter = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"
                     target="_blank"
@@ -554,7 +580,7 @@ const DateTimeConverter = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://en.wikipedia.org/wiki/Unix_time"
                     target="_blank"
@@ -578,7 +604,7 @@ const DateTimeConverter = () => {
           <div className="text-center text-muted-foreground mt-6">
             Current time updates automatically • All conversions are live
           </div>
-        </ToolBody>  
+        </ToolBody>
       )}
     </ToolContainer>
   );
