@@ -44,8 +44,10 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time validation",
       "Copy to clipboard",
     ],
-    ogImage: "",
-    twitterImage: "",
+    ogImage:
+      "https://hexmos.com/freedevtools/t/og-images/json-prettier.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/og-images/json-prettier.png",
   },
 
   "password-generator": {
@@ -79,8 +81,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
       "Real-time password strength indicator",
     ],
-    ogImage: "",
-    twitterImage: "",
+    ogImage: "https://hexmos.com/freedevtools/t/og-images/password-generator.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/og-images/password-generator.png",
   },
 
   "dockerfile-linter": {
@@ -113,8 +115,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time feedback with explanations",
       "Copy results to clipboard",
     ],
-    ogImage: "",
-    twitterImage: "",
+    ogImage: "https://hexmos.com/freedevtools/t/og-images/dockerfile-linter.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/og-images/dockerfile-linter.png",
   },
   "date-time-converter": {
     title: "Date Time Converter - Convert UTC, ISO, Unix Timestamps",
@@ -145,9 +147,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/images/date-time-converter-og.png",
+      "https://hexmos.com/freedevtools/t/og-images/date-time-converter.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/images/date-time-converter-twitter.png",
+      "https://hexmos.com/freedevtools/t/og-images/date-time-converter.png",
   },
 };
 
