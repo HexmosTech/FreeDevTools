@@ -1005,11 +1005,11 @@ const DockerfileLinter: React.FC = () => {
                                       </span>
                                     )}
                                   </div>
-                                  <h4
+                                  <h3
                                     className={`font-medium ${getLevelColor(result.level)} mb-1`}
                                   >
                                     {result.message}
-                                  </h4>
+                                  </h3>
                                   {result.description && (
                                     <p className="text-slate-600 dark:text-slate-400 mb-2">
                                       {result.description}
@@ -1063,9 +1063,9 @@ const DockerfileLinter: React.FC = () => {
                   </p>
 
                   <div>
-                    <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
                       Key Features:
-                    </h4>
+                    </h3>
                     <ul className="space-y-1 ml-4">
                       <li>
                         • <strong>Syntax Validation:</strong> Checks parameter formats
@@ -1095,9 +1095,9 @@ const DockerfileLinter: React.FC = () => {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
                       Issue Levels:
-                    </h4>
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div className="flex items-center space-x-2">
                         <span className="text-red-600">❌</span>
