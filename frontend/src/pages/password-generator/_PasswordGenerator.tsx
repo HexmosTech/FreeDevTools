@@ -10,6 +10,10 @@ import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
 import { Label } from "@/components/ui/label";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolBody from "@/components/tool/ToolBody";
 
 interface PasswordOptions {
   length: number;
@@ -360,12 +364,11 @@ const PasswordGenerator: React.FC = () => {
       {!loaded ? (
         <PasswordGeneratorSkeleton />
       ) : (
-        <div className="space-y-16">
+        <ToolBody>
           {/* TOOL CARDS SECTION */}
-          <div className="space-y-6 py-2 md:py-4 lg:py-6">
-            
+          <ToolCardWrapper>
             {/* Generated Password Display - Tool Card */}
-            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+            <Card className="tool-card-bg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-slate-700 dark:text-slate-300">
@@ -417,7 +420,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Quick Presets - Tool Card */}
-            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+            <Card className="tool-card-bg">
               <CardHeader>
                 <CardTitle className=" text-slate-700 dark:text-slate-300">
                   Quick Presets
@@ -571,7 +574,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Password Type Selection - Tool Card */}
-            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+            <Card className="tool-card-bg">
               <CardHeader>
                 <CardTitle className="text-slate-700 dark:text-slate-300">
                   Password Type
@@ -625,7 +628,7 @@ const PasswordGenerator: React.FC = () => {
             </Card>
 
             {/* Options Configuration - Tool Card */}
-            <Card className="bg-slate-200 dark:bg-slate-900">
+            <Card className="tool-card-bg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-slate-700 dark:text-slate-300">
@@ -806,10 +809,10 @@ const PasswordGenerator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </ToolCardWrapper>
 
           {/* CONTENT CARDS SECTION */}
-          <div className="space-y-6">
+          <ToolContentCardWrapper>
             {/* Educational Video - Content Card */}
             <Card>
               <CardHeader>
@@ -1160,8 +1163,8 @@ const PasswordGenerator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </ToolContentCardWrapper>
+        </ToolBody>
       )}
     </ToolContainer>
   );

@@ -8,6 +8,9 @@ import { toast } from "../../components/ToastProvider";
 import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
 import { Label } from "@/components/ui/label";
 import { useTheme } from "../../components/theme/ThemeContext";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolBody from "@/components/tool/ToolBody";
 
 const LIGHT_THEME = "ace/theme/textmate";
 const DARK_THEME = "ace/theme/vibrant_ink";
@@ -269,11 +272,11 @@ const JsonPrettifier: React.FC = () => {
       {!isClient ? (
         <JsonPrettifierSkeleton />
       ) : (
-        <div className="space-y-12 mt-6">
+        <ToolBody>  
           {/* Tool Cards Group */}
-          <div className="space-y-6 py-2 md:py-4 lg:py-6">
+          <ToolCardWrapper>
             {/* Combined Tool Card */}
-            <Card className="bg-slate-200 dark:bg-slate-900">
+            <Card className="tool-card-bg">
               <CardContent className="p-2 md:p-6">
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
                   {/* Left Panel - Input Editor */}
@@ -421,11 +424,11 @@ const JsonPrettifier: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </ToolCardWrapper>
 
           {/* Content Cards Group */}
-          <div className="space-y-6">
-            <Card className="mb-6 border border-slate-200 dark:border-slate-700">
+          <ToolContentCardWrapper>
+            <Card >
               <CardHeader>
                 <CardTitle className="flex items-center">
                   {/* <span className="w-2 h-2 bg-primary rounded-full mr-3"></span> */}
@@ -661,7 +664,7 @@ const JsonPrettifier: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-200 dark:border-slate-700">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
@@ -687,8 +690,8 @@ const JsonPrettifier: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </ToolContentCardWrapper>
+        </ToolBody>
       )}
     </ToolContainer>
   );

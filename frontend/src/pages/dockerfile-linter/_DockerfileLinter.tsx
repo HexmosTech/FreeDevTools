@@ -7,7 +7,9 @@ import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
 import { toast } from "../../components/ToastProvider";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ContentCardWrapper";
+import ToolBody from "@/components/tool/ToolBody";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -899,11 +901,11 @@ const DockerfileLinter: React.FC = () => {
       {!loaded ? (
         <DockerfileLinterSkeleton />
       ) : (
-        <div className="space-y-12">
+        <ToolBody>  
           {/* Tool Cards Group */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
+          <ToolCardWrapper className="grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6 space-y-0">
             {/* Input Section */}
-            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+            <Card className="tool-card-bg">
               <CardHeader>
                 <CardTitle>Dockerfile Content</CardTitle>
               </CardHeader>
@@ -927,7 +929,7 @@ const DockerfileLinter: React.FC = () => {
             </Card>
 
             {/* Results Section */}
-            <Card className="bg-slate-200 dark:bg-slate-900 shadow-lg">
+            <Card className="tool-card-bg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Analysis Results</CardTitle>
                 {analysis && analysis.results.length > 0 && (
@@ -1041,120 +1043,120 @@ const DockerfileLinter: React.FC = () => {
                 )}
               </CardContent>
             </Card>
-          </div>
+          </ToolCardWrapper>
 
           {/* Content Cards Group */}
-          {/* About Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>About This Dockerfile Linter</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-slate-600 dark:text-slate-400 space-y-3">
-                <p>
-                  This comprehensive Dockerfile linter is based on industry-standard
-                  rules from the
-                  <strong> dockerfilelint</strong> project and Docker security best
-                  practices. It analyzes your Dockerfiles for syntax errors, security
-                  vulnerabilities, performance issues, and adherence to Docker best
-                  practices.
-                </p>
+          <ToolContentCardWrapper>
+            <Card>
+              <CardHeader>
+                <CardTitle>About This Dockerfile Linter</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-600 dark:text-slate-400 space-y-3">
+                  <p>
+                    This comprehensive Dockerfile linter is based on industry-standard
+                    rules from the
+                    <strong> dockerfilelint</strong> project and Docker security best
+                    practices. It analyzes your Dockerfiles for syntax errors, security
+                    vulnerabilities, performance issues, and adherence to Docker best
+                    practices.
+                  </p>
 
-                <div>
-                  <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                    Key Features:
-                  </h4>
-                  <ul className="space-y-1 ml-4">
-                    <li>
-                      • <strong>Syntax Validation:</strong> Checks parameter formats
-                      and instruction syntax
-                    </li>
-                    <li>
-                      • <strong>Security Analysis:</strong> Detects risky
-                      configurations and privilege escalation
-                    </li>
-                    <li>
-                      • <strong>Performance Optimization:</strong> Identifies layer
-                      bloat and caching issues
-                    </li>
-                    <li>
-                      • <strong>Best Practices:</strong> Enforces Docker community
-                      standards
-                    </li>
-                    <li>
-                      • <strong>Label Validation:</strong> Ensures proper metadata
-                      formatting
-                    </li>
-                    <li>
-                      • <strong>Required Instructions:</strong> Validates essential
-                      Dockerfile components
-                    </li>
-                  </ul>
-                </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                      Key Features:
+                    </h4>
+                    <ul className="space-y-1 ml-4">
+                      <li>
+                        • <strong>Syntax Validation:</strong> Checks parameter formats
+                        and instruction syntax
+                      </li>
+                      <li>
+                        • <strong>Security Analysis:</strong> Detects risky
+                        configurations and privilege escalation
+                      </li>
+                      <li>
+                        • <strong>Performance Optimization:</strong> Identifies layer
+                        bloat and caching issues
+                      </li>
+                      <li>
+                        • <strong>Best Practices:</strong> Enforces Docker community
+                        standards
+                      </li>
+                      <li>
+                        • <strong>Label Validation:</strong> Ensures proper metadata
+                        formatting
+                      </li>
+                      <li>
+                        • <strong>Required Instructions:</strong> Validates essential
+                        Dockerfile components
+                      </li>
+                    </ul>
+                  </div>
 
-                <div>
-                  <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                    Issue Levels:
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-red-600">❌</span>
-                      <span>
-                        <strong>Error:</strong> Critical issues that may cause build
-                        failures
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-yellow-600">⚠️</span>
-                      <span>
-                        <strong>Warning:</strong> Potential problems or bad practices
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-blue-600">ℹ️</span>
-                      <span>
-                        <strong>Info:</strong> Suggestions for improvement
-                      </span>
+                  <div>
+                    <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                      Issue Levels:
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-red-600">❌</span>
+                        <span>
+                          <strong>Error:</strong> Critical issues that may cause build
+                          failures
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-yellow-600">⚠️</span>
+                        <span>
+                          <strong>Warning:</strong> Potential problems or bad practices
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-blue-600">ℹ️</span>
+                        <span>
+                          <strong>Info:</strong> Suggestions for improvement
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
-                  <p>
-                    <strong>Rule Sources:</strong>
-                    <a
-                      href="https://github.com/replicatedhq/dockerfilelint"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-                    >
-                      dockerfilelint
-                    </a>
-                    ,
-                    <a
-                      href="https://docs.docker.com/develop/dev-best-practices/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-                    >
-                      Docker best practices
-                    </a>
-                    , and
-                    <a
-                      href="https://github.com/projectatomic/container-best-practices"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
-                    >
-                      Container best practices
-                    </a>
-                  </p>
+                  <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
+                    <p>
+                      <strong>Rule Sources:</strong>
+                      <a
+                        href="https://github.com/replicatedhq/dockerfilelint"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                      >
+                        dockerfilelint
+                      </a>
+                      ,
+                      <a
+                        href="https://docs.docker.com/develop/dev-best-practices/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                      >
+                        Docker best practices
+                      </a>
+                      , and
+                      <a
+                        href="https://github.com/projectatomic/container-best-practices"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ml-1"
+                      >
+                        Container best practices
+                      </a>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          {/* </ToolGridContainer> */}
-        </div>
+              </CardContent>
+            </Card>
+          </ToolContentCardWrapper>
+        </ToolBody>  
       )}
     </ToolContainer>
   );

@@ -23,6 +23,7 @@ import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import { toast } from "../../components/ToastProvider";
 import { Label } from "@/components/ui/label";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolBody from "@/components/tool/ToolBody";
 
 const DateTimeConverter = () => {
   const [input, setInput] = useState("");
@@ -156,10 +157,10 @@ const DateTimeConverter = () => {
       {!loaded ? (
         <DateTimeConverterSkeleton />
       ) : (
-        <div>
+        <ToolBody>  
           <ToolGridContainer>
             {/* Input Section */}
-            <Card className="w-full break-inside-avoid mb-6  dark:bg-slate-900 ">
+            <Card className="tool-card-bg-grid">
               <CardHeader>
                 <CardTitle>Convert Date & Time</CardTitle>
                 <CardDescription>
@@ -228,7 +229,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Conversion Results */}
-            <Card className="w-fullbreak-inside-avoid mb-6 dark:bg-slate-900">
+            <Card className="tool-card-bg-grid">
               <CardHeader>
                 <CardTitle>Conversion Results</CardTitle>
                 <CardDescription>
@@ -275,7 +276,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Best Practices for Time Zones */}
-            <Card className="w-full break-inside-avoid mb-6  bg-slate-200  dark:bg-slate-950">
+            <Card className="tool-content-card-bg-grid">
               <CardHeader>
                 <CardTitle>Why Using UTC or a Consistent Time Zone Matters</CardTitle>
               </CardHeader>
@@ -377,7 +378,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Timestamps Section */}
-            <Card className="w-full break-inside-avoid mb-6  bg-slate-200 dark:bg-slate-950">
+            <Card className="tool-content-card-bg-grid">
               <CardHeader>
                 <CardTitle>When a Simple Timestamp is Enough</CardTitle>
               </CardHeader>
@@ -435,7 +436,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Past and Future Events Section */}
-            <Card className="w-full break-inside-avoid mb-6  bg-slate-200 dark:bg-slate-950">
+            <Card className="tool-content-card-bg-grid">
               <CardHeader>
                 <CardTitle>Handling Past and Future Events: Why Time Zones Matter</CardTitle>
               </CardHeader>
@@ -484,7 +485,7 @@ const DateTimeConverter = () => {
           <div className="text-center text-muted-foreground mt-6">
             Current time updates automatically • All conversions are live
           </div>
-        </div>
+        </ToolBody>  
       )}
     </ToolContainer>
   );
