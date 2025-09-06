@@ -271,7 +271,7 @@ const DateTimeConverter = () => {
                         {format.label}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border hover:bg-muted/80 transition-colors">
+                        <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border border-border hover:bg-muted/80 transition-colors">
                           <div className="flex-1 min-w-0">
                             <div className="font-mono break-all text-left text-sm">
                               {format.value}
@@ -521,7 +521,7 @@ const DateTimeConverter = () => {
                     href="https://www.iso.org/iso-8601-date-and-time-format.html"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-1">
                       <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -537,7 +537,7 @@ const DateTimeConverter = () => {
                     href="https://tools.ietf.org/html/rfc3339"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-1">
                       <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -553,7 +553,7 @@ const DateTimeConverter = () => {
                     href="https://www.iana.org/time-zones"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-1">
                       <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -569,7 +569,7 @@ const DateTimeConverter = () => {
                     href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-1">
                       <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -585,7 +585,7 @@ const DateTimeConverter = () => {
                     href="https://en.wikipedia.org/wiki/Unix_time"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-1">
                       <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
