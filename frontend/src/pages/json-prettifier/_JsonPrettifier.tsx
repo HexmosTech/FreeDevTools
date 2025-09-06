@@ -673,9 +673,10 @@ const JsonPrettifier: React.FC = () => {
               <CardContent className="px-2 md:px-6">
                 <div className="text-slate-600 dark:text-slate-400 space-y-2">
                   <p>
-                    This enhanced JSON prettifier provides real-time formatting
-                    and validation using the powerful JSONEditor library.
-                    Features include:
+                    This enhanced <strong>JSON Prettifier</strong> provides real-time
+                    formatting and validation using the powerful JSONEditor library. It is
+                    designed for developers who want to easily format, validate, and debug
+                    JSON data with accuracy and efficiency. Features include:
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Real-time JSON validation as you type</li>
@@ -686,9 +687,105 @@ const JsonPrettifier: React.FC = () => {
                     <li>Dynamic indent control (1-8 spaces)</li>
                     <li>Resizable editors for better workflow</li>
                   </ul>
+                  <p className="pt-2">
+                    Learn more about JSON:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li>
+                      <a
+                        href="https://json.org"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 underline"
+                      >
+                        JSON.org
+                      </a>{" "}
+                     Official JSON specification
+                    </li>
+                    <li>
+                      <a
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 underline"
+                      >
+                        MDN JSON Documentation
+                      </a>
+                    </li>
+                  </ul>
                 </div>
               </CardContent>
             </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  Understanding JSON and the Importance of Formatting
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-2 md:px-6">
+                <div className="text-slate-600 dark:text-slate-400 space-y-3">
+                  <p>
+                    <strong>JSON (JavaScript Object Notation)</strong> is a lightweight data
+                    format used worldwide for data exchange between servers, web
+                    applications, and APIs. It is easy to read and write for humans and
+                    simple to parse for machines. However, raw JSON data can quickly become
+                    difficult to interpret without proper formatting.
+                  </p>
+
+                  <h3 className="text-lg font-semibold">Why Formatting Matters</h3>
+                  <p>
+                    Properly formatted JSON improves readability, reduces errors, and makes
+                    debugging much faster. For developers working with complex datasets,
+                    a <strong>JSON prettifier</strong> transforms compact or minified JSON
+                    into a structured, indented, and visually clear format.
+                  </p>
+
+                  <h3 className="text-lg font-semibold">Common Use Cases</h3>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li>Debugging API responses from web services</li>
+                    <li>Cleaning and validating JSON configurations</li>
+                    <li>Formatting JSON before sharing or storing data</li>
+                    <li>Analyzing nested objects and arrays for errors</li>
+                    <li>Improving collaboration by making JSON human-readable</li>
+                  </ul>
+
+                  <h3 className="text-lg font-semibold">Benefits of Proper JSON Formatting</h3>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li>Increases clarity and reduces mistakes</li>
+                    <li>Ensures consistency across projects and teams</li>
+                    <li>Simplifies troubleshooting when errors occur</li>
+                    <li>Makes large JSON files easier to maintain</li>
+                    <li>Improves data quality for long-term storage</li>
+                  </ul>
+
+                  <h3 className="text-lg font-semibold">JSON Best Practices and Standards</h3>
+                  <p>
+                    Following recognized standards such as{" "}
+                    <a
+                      href="https://tools.ietf.org/html/rfc7159"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 underline"
+                    >
+                      RFC 7159
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="https://json-schema.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 underline"
+                    >
+                      JSON Schema
+                    </a>{" "}
+                    helps maintain high-quality JSON data. Always use consistent indentation
+                    (2 or 4 spaces), validate against schemas when possible, and avoid
+                    unnecessary nesting to keep your JSON lightweight and efficient.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
           </ToolContentCardWrapper>
         </ToolBody>
       )}

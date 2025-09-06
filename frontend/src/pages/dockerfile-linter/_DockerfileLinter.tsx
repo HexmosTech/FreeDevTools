@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
@@ -1152,6 +1152,67 @@ const DockerfileLinter: React.FC = () => {
                       </a>
                     </p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Container & Docker Standards & References */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Container & Docker Standards & References</CardTitle>
+                <CardDescription>
+                  Official documentation and security standards for containerization
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid gap-3">
+                  <a
+                    href="https://docs.docker.com/engine/reference/builder/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        Docker Official Documentation
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Complete Dockerfile reference and builder guide
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://www.cisecurity.org/benchmark/docker"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        CIS Docker Benchmark
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Center for Internet Security container security standards
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://csrc.nist.gov/publications/detail/sp/800-190/final"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        NIST Container Security Guide
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        NIST SP 800-190 container security guidelines
+                      </div>
+                    </div>
+                  </a>
                 </div>
               </CardContent>
             </Card>

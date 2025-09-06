@@ -480,6 +480,99 @@ const DateTimeConverter = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Date/Time Standards Links */}
+            <Card className="tool-content-card-bg-grid">
+              <CardHeader>
+                <CardTitle>Date & Time Standards & References</CardTitle>
+                <CardDescription>
+                  Official documentation and standards for date/time formats
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid gap-3">
+                  <a
+                    href="https://www.iso.org/iso-8601-date-and-time-format.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        ISO 8601 Standard
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Official date/time format standard
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://tools.ietf.org/html/rfc3339"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        RFC 3339
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Date and Time on the Internet
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://www.iana.org/time-zones"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        IANA Time Zone Database
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Official time zone data
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        MDN Date Documentation
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        JavaScript Date object reference
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://en.wikipedia.org/wiki/Unix_time"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        Unix Timestamp Reference
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Wikipedia article on Unix time
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
           </ToolGridContainer>
           {/* Footer */}
           <div className="text-center text-muted-foreground mt-6">

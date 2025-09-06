@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
@@ -592,9 +592,9 @@ const PasswordGenerator: React.FC = () => {
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
                     }`}
                   >
-                    <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Character-Based
-                    </h4>
+                    </h3>
                     <p className="text-slate-800 dark:text-slate-400">
                       Random characters, numbers, and symbols
                     </p>
@@ -613,9 +613,9 @@ const PasswordGenerator: React.FC = () => {
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
                     }`}
                   >
-                    <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Word-Based
-                    </h4>
+                    </h3>
                     <p className="text-slate-800 dark:text-slate-400">
                       Memorable dictionary words with separators
                     </p>
@@ -714,9 +714,9 @@ const PasswordGenerator: React.FC = () => {
 
                     {/* Character Types */}
                     <div>
-                      <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-3">
                         Include Characters
-                      </h4>
+                      </h3>
                       <div className="space-y-2">
                         {[
                           {
@@ -761,9 +761,9 @@ const PasswordGenerator: React.FC = () => {
                   {/* Advanced Options */}
                   {showAdvanced && (
                     <div className="space-y-4">
-                      <h4 className="font-medium text-slate-700 dark:text-slate-300">
+                      <h3 className="font-medium text-slate-700 dark:text-slate-300">
                         Advanced Options
-                      </h4>
+                      </h3>
 
                       <div className="space-y-2">
                         <div className="flex items-center space-x-3">
@@ -946,9 +946,9 @@ const PasswordGenerator: React.FC = () => {
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Dictionary Attacks
-                      </h4>
+                      </h3>
                       <p>
                         Attackers use databases of common passwords and words. Our
                         character-based generator creates truly random sequences that
@@ -957,9 +957,9 @@ const PasswordGenerator: React.FC = () => {
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Rainbow Table Attacks
-                      </h4>
+                      </h3>
                       <p>
                         Pre-computed hash tables can crack common passwords instantly.
                         Generated passwords with high entropy and unique character
@@ -968,9 +968,9 @@ const PasswordGenerator: React.FC = () => {
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Credential Stuffing
-                      </h4>
+                      </h3>
                       <p>
                         Attackers reuse leaked passwords across multiple sites. Using
                         unique, generated passwords for each account ensures that a
@@ -978,9 +978,9 @@ const PasswordGenerator: React.FC = () => {
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Social Engineering
-                      </h4>
+                      </h3>
                       <p>
                         Generated passwords contain no personal information, making
                         them immune to attacks based on birthdays, names, or other
@@ -1024,9 +1024,9 @@ const PasswordGenerator: React.FC = () => {
                     indistinguishable from true randomness.
                   </p>
                   <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                    <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                    <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                       Security Features:
-                    </h4>
+                    </h3>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <strong>Cryptographic entropy:</strong> Uses
@@ -1076,9 +1076,9 @@ const PasswordGenerator: React.FC = () => {
                   </p>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Password Requirements
-                      </h4>
+                      </h3>
                       <ul className="space-y-1 list-disc list-inside">
                         <li>Minimum 12 characters for standard accounts</li>
                         <li>16+ characters for administrative access</li>
@@ -1088,9 +1088,9 @@ const PasswordGenerator: React.FC = () => {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         Organizational Policies
-                      </h4>
+                      </h3>
                       <ul className="space-y-1 list-disc list-inside">
                         <li>Password manager deployment and training</li>
                         <li>Regular security awareness education</li>
@@ -1128,27 +1128,27 @@ const PasswordGenerator: React.FC = () => {
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         NIST Guidelines
-                      </h4>
+                      </h3>
                       <p>
                         Compliant with NIST SP 800-63B recommendations for password
                         complexity, length requirements, and entropy calculations.
                       </p>
                     </div>
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         ISO 27001
-                      </h4>
+                      </h3>
                       <p>
                         Supports access control requirements under ISO 27001:2013
                         Annex A.9 for information security management systems.
                       </p>
                     </div>
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
-                      <h4 className="text-slate-800 dark:text-slate-200 mb-2">
+                      <h3 className="text-slate-800 dark:text-slate-200 mb-2">
                         PCI DSS
-                      </h4>
+                      </h3>
                       <p>
                         Meets PCI DSS Requirement 8.2 for unique user identification
                         and authentication for payment card industry compliance.
@@ -1160,6 +1160,85 @@ const PasswordGenerator: React.FC = () => {
                     password generation algorithms maintain resistance against
                     evolving threat landscapes and emerging attack methodologies.
                   </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Security Standards & References */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Security Standards & References
+                </CardTitle>
+                <CardDescription>
+                  Official security guidelines and compliance standards
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid gap-3">
+                  <a
+                    href="https://pages.nist.gov/800-63-3/sp800-63b.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        NIST SP 800-63B
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Password guidelines and authentication standards
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        OWASP Password Storage Cheat Sheet
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Secure password storage best practices
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://www.nist.gov/cyberframework"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        NIST Cybersecurity Framework
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Comprehensive cybersecurity risk management
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <a
+                    href="https://www.iso.org/standard/54534.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        ISO/IEC 27001:2013
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Information security management systems
+                      </div>
+                    </div>
+                  </a>
                 </div>
               </CardContent>
             </Card>
