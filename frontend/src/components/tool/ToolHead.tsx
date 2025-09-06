@@ -17,7 +17,7 @@ const ToolHead: React.FC<ToolHeadProps> = ({ name, description }) => {
         <h2 className="text-xl md:text-2xl lg:text-2xl font-medium mb-2 text-black dark:text-slate-300">
           {name}
         </h2>
-        <h3 className="text-muted-foreground ">{description}</h3>
+        <h4 className="text-muted-foreground ">{description}</h4>
       </div>
     </>
   );
