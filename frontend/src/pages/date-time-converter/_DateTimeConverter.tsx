@@ -225,6 +225,49 @@ const DateTimeConverter = () => {
                       />
                     </div>
                   )}
+
+                  {/* Additional Conversion Results */}
+                  <div className="space-y-3 pt-4 border-t">
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Additional Formats
+                    </h3>
+                    {[
+                      { label: "Timestamp", value: formatters.timestamp() },
+                      { label: "UTC format", value: formatters.utcFormat() },
+                      {
+                        label: "Mongo ObjectID",
+                        value: formatters.mongoObjectId(),
+                      },
+                      {
+                        label: "Excel date/time",
+                        value: formatters.excelDateTime(),
+                      },
+                    ].map((format, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col sm:flex-row sm:items-center gap-3"
+                      >
+                        <div className="text-muted-foreground min-w-[120px] sm:min-w-[140px] sm:text-right text-sm">
+                          {format.label}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border border-border hover:bg-muted/80 transition-colors">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-mono break-all text-left text-sm">
+                                {format.value}
+                              </div>
+                            </div>
+                            <CopyButton
+                              text={format.value}
+                              size="icon"
+                              title="Copy to clipboard"
+                              className="flex-shrink-0"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -252,24 +295,14 @@ const DateTimeConverter = () => {
                       label: "Unix timestamp",
                       value: formatters.unixTimestamp(),
                     },
-                    { label: "Timestamp", value: formatters.timestamp() },
-                    { label: "UTC format", value: formatters.utcFormat() },
-                    {
-                      label: "Mongo ObjectID",
-                      value: formatters.mongoObjectId(),
-                    },
-                    {
-                      label: "Excel date/time",
-                      value: formatters.excelDateTime(),
-                    },
                   ].map((format, index) => (
                     <div
                       key={index}
                       className="flex flex-col sm:flex-row sm:items-center gap-3"
                     >
-                      <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
+                      <p className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right">
                         {format.label}
-                      </div>
+                      </p>
                       <div className="flex-1 min-w-0">
                         <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border border-border hover:bg-muted/80 transition-colors">
                           <div className="flex-1 min-w-0">
