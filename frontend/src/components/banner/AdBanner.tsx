@@ -196,7 +196,7 @@ const AdBanner: React.FC = () => {
   // Desktop Layout
   if (screenSize === "desktop") {
     return (
-      <div className="w-full bg-yellow-100 hover:bg-yellow-200 border border-gray-200 shadow-sm h-40 mb-10 mt-2 md:mt-5 rounded-md relative flex justify-center transition-colors duration-300">
+      <div className="w-full bg-yellow-100 hover:bg-yellow-200 border border-gray-200 shadow-sm h-40 mb-10 mt-2 rounded-md relative flex justify-center transition-colors duration-300">
         <CloseButton size="md" onClick={handleClose} />
         <a
           href={link + "?variation=" + currentVariation}

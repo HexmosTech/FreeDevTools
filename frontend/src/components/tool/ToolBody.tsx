@@ -6,12 +6,7 @@ interface ToolBodyProps {
 }
 
 const ToolBody: React.FC<ToolBodyProps> = ({ children, className }) => {
-  return (
-    <div className={`space-y-12 mt-6 ${className ?? ""}`}>
-      {children}
-    </div>
-  );
+  return <div className={`space-y-12 ${className ?? ""}`}>{children}</div>;
 };
 
 export default ToolBody;
-
