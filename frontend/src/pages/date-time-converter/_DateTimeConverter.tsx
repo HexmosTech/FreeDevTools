@@ -160,7 +160,7 @@ const DateTimeConverter = () => {
         <ToolBody>
           <ToolGridContainer>
             {/* Input Section */}
-            <Card className="tool-card-bg-grid">
+            <Card className="tool-card-bg-grid self-start">
               <CardHeader>
                 <CardTitle>Convert Date & Time</CardTitle>
                 <CardDescription>
@@ -230,7 +230,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Conversion Results */}
-            <Card className="tool-card-bg-grid">
+            <Card className="tool-card-bg-grid self-start">
               <CardHeader>
                 <CardTitle>Conversion Results</CardTitle>
                 <CardDescription>
@@ -282,7 +282,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Additional Formats */}
-            <Card className="tool-card-bg-grid col-span-1 xl:col-span-2">
+            <Card className="tool-card-bg-grid self-start">
               <CardHeader>
                 <CardTitle>Additional Formats</CardTitle>
                 <CardDescription>
@@ -290,14 +290,10 @@ const DateTimeConverter = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
                   {[
                     { label: "Timestamp", value: formatters.timestamp() },
                     { label: "UTC format", value: formatters.utcFormat() },
-                    {
-                      label: "Mongo ObjectID",
-                      value: formatters.mongoObjectId(),
-                    },
                     {
                       label: "Excel date/time",
                       value: formatters.excelDateTime(),
@@ -307,7 +303,7 @@ const DateTimeConverter = () => {
                       key={index}
                       className="flex flex-col sm:flex-row sm:items-center gap-3"
                     >
-                      <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
+                      <div className="text-muted-foreground min-w-[120px] sm:min-w-[140px] sm:text-right text-sm">
                         {format.label}
                       </div>
                       <div className="flex-1 min-w-0">
