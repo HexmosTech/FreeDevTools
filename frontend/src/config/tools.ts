@@ -45,9 +45,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/og-images/json-prettier.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/og-images/json-prettier.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
   },
 
   "password-generator": {
@@ -81,8 +81,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
       "Real-time password strength indicator",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/og-images/password-generator.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/og-images/password-generator.png",
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/password-generator.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/password-generator.png",
   },
 
   "dockerfile-linter": {
@@ -115,8 +115,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time feedback with explanations",
       "Copy results to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/og-images/dockerfile-linter.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/og-images/dockerfile-linter.png",
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
   },
   "date-time-converter": {
     title: "Date Time Converter - Convert UTC, ISO, Unix Timestamps",
@@ -147,9 +147,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/og-images/date-time-converter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/og-images/date-time-converter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
   },
 };
 
