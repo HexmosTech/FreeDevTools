@@ -252,10 +252,23 @@ const DateTimeConverter = () => {
                       label: "Unix timestamp",
                       value: formatters.unixTimestamp(),
                     },
+                    // Additional formats - only show on smaller screens
+                    { label: "Timestamp", value: formatters.timestamp() },
+                    { label: "UTC format", value: formatters.utcFormat() },
+                    {
+                      label: "Mongo ObjectID",
+                      value: formatters.mongoObjectId(),
+                    },
+                    {
+                      label: "Excel date/time",
+                      value: formatters.excelDateTime(),
+                    },
                   ].map((format, index) => (
                     <div
                       key={index}
-                      className="flex flex-col sm:flex-row sm:items-center gap-3"
+                      className={`flex flex-col sm:flex-row sm:items-center gap-3 ${
+                        index >= 6 ? "xl:hidden" : ""
+                      }`}
                     >
                       <p className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right">
                         {format.label}
@@ -281,8 +294,8 @@ const DateTimeConverter = () => {
               </CardContent>
             </Card>
 
-            {/* Additional Formats */}
-            <Card className="tool-card-bg-grid self-start">
+            {/* Additional Formats - Only visible on large screens */}
+            <Card className="tool-card-bg-grid self-start hidden xl:block">
               <CardHeader>
                 <CardTitle>Additional Formats</CardTitle>
                 <CardDescription>
