@@ -12,6 +12,14 @@ import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolBody from "@/components/tool/ToolBody";
 
+// Ace editor
+import ace from "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/theme-textmate";
+import "ace-builds/src-noconflict/theme-vibrant_ink";
+import workerJsonUrl from "ace-builds/src-noconflict/worker-json?url";
+ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
+
 const LIGHT_THEME = "ace/theme/textmate";
 const DARK_THEME = "ace/theme/vibrant_ink";
 
@@ -85,10 +93,6 @@ const JsonPrettifier: React.FC = () => {
 
     const initEditors = async () => {
       try {
-        const ace = await import("ace-builds/src-noconflict/ace");
-        await import("ace-builds/src-noconflict/mode-json");
-        await import("ace-builds/src-noconflict/theme-textmate");
-        await import("ace-builds/src-noconflict/theme-vibrant_ink");
         const JSONEditor = (await import("jsoneditor")).default;
 
         await import("../../assets/jsoneditor.min.css");
@@ -122,7 +126,6 @@ const JsonPrettifier: React.FC = () => {
             },
           }
         );
-
         // Initialize output editor (code mode for formatted output)
         if (!outputEditorRef.current) return;
         outputEditorInstanceRef.current = new JSONEditor(
@@ -288,7 +291,7 @@ const JsonPrettifier: React.FC = () => {
                       >
                         Input JSON
                       </Label>
-                      <Button onClick={handleClear} variant="outline" size="sm">
+                      <Button onClick={handleClear} className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" variant="outline" size="sm">
                         Clear
                       </Button>
                     </div>
@@ -334,7 +337,7 @@ const JsonPrettifier: React.FC = () => {
                       <div className="flex items-center space-x-3">
                         <Button
                           onClick={() => handleIndentChange(false)}
-                          disabled={indentSize <= 1}
+                          disabled={indentSize <= 1 || !isValid}
                           variant="outline"
                           size="icon"
                           className="font-bold"
@@ -346,7 +349,7 @@ const JsonPrettifier: React.FC = () => {
                         </span>
                         <Button
                           onClick={() => handleIndentChange(true)}
-                          disabled={indentSize >= 8}
+                          disabled={indentSize >= 8 || !isValid}
                           variant="outline"
                           size="icon"
                           className="font-bold"
@@ -370,6 +373,12 @@ const JsonPrettifier: React.FC = () => {
                         Formatted Output
                       </Label>
                       <div className="flex items-center space-x-2">
+                      {error && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                            Error detected
+                          </span>
+                        )}
                         <CopyButton
                           text={(() => {
                             try {
@@ -391,12 +400,7 @@ const JsonPrettifier: React.FC = () => {
                           })()}
                           disabled={!isValid}
                         />
-                        {error && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                            Error detected
-                          </span>
-                        )}
+
                       </div>
                     </div>
 
