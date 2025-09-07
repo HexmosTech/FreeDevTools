@@ -2,13 +2,13 @@ const ToolGridContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className="
-          columns-1
-          xl:columns-2
-          gap-8
-          [column-fill:_balance]
+          grid
+          grid-cols-1
+          xl:grid-cols-2
+          gap-6
           max-w-[1600px]
           mx-auto
-           mt-8
+          mt-8
         "
     >
       {children}

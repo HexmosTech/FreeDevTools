@@ -299,7 +299,7 @@ const DateTimeConverter = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed">
+                <p>
                   Whenever possible, use{" "}
                   <a
                     className="text-blue-600 hover:underline dark:text-blue-400"
@@ -314,7 +314,7 @@ const DateTimeConverter = () => {
                   debug, and work with dates from different sources—no more
                   mental math or timezone confusion!
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   <strong>Example:</strong> It's much easier to spot differences
                   and similarities when all your timestamps are in the same time
                   zone. When values use different{" "}
@@ -379,7 +379,7 @@ const DateTimeConverter = () => {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-sm leading-relaxed">
+                <p>
                   As you can see, when timestamps use different offsets, it's
                   hard to visually compare them. Converting everything to{" "}
                   <a
@@ -393,7 +393,7 @@ const DateTimeConverter = () => {
                   (or a single time zone) makes it much easier to spot
                   duplicates or differences at a glance.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   <strong>Tip:</strong> Help your users by remembering their
                   preferred time zone and making it easy to select or change it.
                   Consistency saves time and reduces errors!
@@ -407,20 +407,20 @@ const DateTimeConverter = () => {
                 <CardTitle>When a Simple Timestamp is Enough</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed">
+                <p>
                   For most use cases, you can use an incremental time value like{" "}
                   <span className="font-mono">Instant</span> or{" "}
                   <span className="font-mono">Date</span> for your timestamp
                   values. If your app only cares about the order of events (not
                   the local wall time), a timestamp is all you need.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   <strong>Example:</strong> If you're merging log files from
                   many machines or recording events in a log, just store the
                   timestamp. You don't need to recover the original wall
                   time—just the sequence of events.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   It's best to normalize all timestamps to{" "}
                   <a
                     className="text-blue-600 hover:underline dark:text-blue-400"
@@ -436,7 +436,7 @@ const DateTimeConverter = () => {
                   original wall time, but for most logs and event streams,
                   that's not necessary.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   <strong>Tip:</strong> When in doubt, use{" "}
                   <a
                     className="text-blue-600 hover:underline dark:text-blue-400"
@@ -467,7 +467,7 @@ const DateTimeConverter = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed">
+                <p>
                   If your app schedules or displays events in the future (like
                   meetings, reminders, or calendar entries), you should use a
                   date-time type that includes the time zone—such as{" "}
@@ -483,14 +483,14 @@ const DateTimeConverter = () => {
                   shows the correct wall time, even if time zone rules (like
                   daylight saving) change.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   For example, a meeting set for "2025-10-28 10:00 AM
                   Europe/Berlin" will always be at 10:00 AM in Berlin, even if
                   daylight saving rules change between now and then. If you only
                   store the offset or a timestamp, you might show the wrong
                   local time after a rule change.
                 </p>
-                <p className="text-sm leading-relaxed">
+                <p>
                   <strong>Why does this matter?</strong> Time zone rules can
                   change! Governments sometimes update daylight saving or
                   standard time rules. If your app pre-computes or stores
