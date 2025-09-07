@@ -11,17 +11,54 @@ export interface Tool {
   features: string[];
   ogImage: string;
   twitterImage: string;
+  variationOf?: string,
   datePublished?: string;
   softwareVersion?: string;
 }
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
+  "json-utilities": {
+    "title": "JSON Utilities - Format, Validate & Fix JSON Online",
+    "name": "JSON Utilities",
+    "path": "/freedevtools/t/json-utilities/",
+    "description":
+      "All-in-one JSON toolkit. Format, validate, and auto-fix JSON instantly with real-time error detection and correction. No registration required.",
+    "category": "Developer Tools",
+    "icon": "🧰",
+    "themeColor": "#14b8a6",
+    "canonical": "https://hexmos.com/freedevtools/t/json-utilities/",
+    "keywords": [
+      "json utilities",
+      "json tools",
+      "json formatter",
+      "json prettifier",
+      "json beautifier",
+      "json minifier",
+      "json validator",
+      "json fixer",
+      "json corrector",
+      "developer tools",
+      "api tools",
+      "online json editor"
+    ],
+    "features": [
+      "Format and beautify JSON",
+      "Validate JSON structure",
+      "Auto-correct invalid JSON",
+      "Multiple indentation options",
+      "Real-time validation and feedback",
+      "Instant error detection",
+      "Copy to clipboard"
+    ],
+    "ogImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities.png",
+    "twitterImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities.png",
+  },
   "json-prettifier": {
-    title: "JSON Prettifier - Format, Minify & Validate JSON Online",
+    title: "JSON Prettifier - Format & Validate JSON Online",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
-      "Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required.",
+      "Format and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required.",
     category: "Developer Tools",
     icon: "📄",
     themeColor: "#10b981",
@@ -44,9 +81,10 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time validation",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+    "variationOf": "json-utilities"
   },
 
   "json-validator": {
@@ -68,6 +106,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     ],
     ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
     twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+    "variationOf": "json-utilities"
   },
 
   "json-fixer": {
@@ -89,6 +128,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     ],
     ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
     twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+    "variationOf": "json-utilities"
   },
   "password-generator": {
     title: "Password Generator - Create Secure & Random Passwords",
@@ -203,8 +243,11 @@ export function getToolByKey(key: string): Tool | undefined {
 
 export function getAllTools(): Tool[] {
   const keys = Object.keys(TOOLS_CONFIG);
-  console.log("STATIC PATH KEYS:", keys);
   return Object.values(TOOLS_CONFIG);
+}
+
+export function getAllUniqueTools(): Tool[] {
+  return getAllTools().filter((tool) => !tool.variationOf);
 }
 
 export function getToolsByCategory(category: string): Tool[] {

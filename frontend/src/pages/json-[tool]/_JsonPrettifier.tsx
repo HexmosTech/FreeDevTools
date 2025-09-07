@@ -314,9 +314,6 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       >
                         Input JSON
                       </Label>
-                      <Button onClick={handleClear} className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" variant="outline" size="sm">
-                        Clear
-                      </Button>
                     </div>
 
                     <div className="relative">
@@ -349,41 +346,73 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                   </div>
 
                   {/* Center Panel - Controls */}
-                  <div className="xl:col-span-2 flex flex-col items-center justify-center space-y-6">
-                    <div className="text-center">
-                      <Label
-                        htmlFor="indent"
-                        className="mb-3 text-lg font-medium"
-                      >
-                        Indent
-                      </Label>
-                      <div className="flex items-center space-x-3">
-                        <Button
-                          onClick={() => handleIndentChange(false)}
-                          disabled={indentSize <= 1 || !isValid}
-                          variant="outline"
-                          size="icon"
-                          className="font-bold"
-                        >
-                          -
-                        </Button>
-                        <span className="font-mono text-slate-900 dark:text-slate-100 min-w-[2rem] text-center">
-                          {indentSize}
-                        </span>
-                        <Button
-                          onClick={() => handleIndentChange(true)}
-                          disabled={indentSize >= 8 || !isValid}
-                          variant="outline"
-                          size="icon"
-                          className="font-bold"
-                        >
-                          +
-                        </Button>
-                      </div>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
-                        spaces
-                      </span>
-                    </div>
+                  <div className="xl:col-span-2 flex items-center justify-center">
+                    <Card className="mx-auto w-full max-w-sm sm:max-w-xs border-slate-200 dark:border-slate-700">
+                      <CardContent className="p-3">
+                        <div className="flex flex-col gap-3 text-center">
+                          {/* Row 1: Clear + Copy */}
+                          <div className="flex items-center justify-center gap-2">
+                            <Button onClick={handleClear} className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" variant="outline" size="sm">
+                              Clear
+                            </Button>
+                            <CopyButton
+                              text={(() => {
+                                try {
+                                  if (inputEditorInstanceRef.current && isValid) {
+                                    const currentJson = inputEditorInstanceRef.current.get();
+                                    if (currentJson) {
+                                      return JSON.stringify(currentJson, null, indentSize);
+                                    }
+                                  }
+                                  return "";
+                                } catch (err) {
+                                  return "";
+                                }
+                              })()}
+                              disabled={!isValid}
+                            />
+                          </div>
+
+                          {/* Row 2: Indent controls */}
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              onClick={() => handleIndentChange(false)}
+                              disabled={indentSize <= 1 || !isValid}
+                              variant="outline"
+                              size="icon"
+                              className="font-bold"
+                            >
+                              -
+                            </Button>
+                            <span className="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-200">
+                              Indent: <span className="font-mono text-slate-900 dark:text-slate-100">{indentSize}</span>
+                            </span>
+                            <Button
+                              onClick={() => handleIndentChange(true)}
+                              disabled={indentSize >= 8 || !isValid}
+                              variant="outline"
+                              size="icon"
+                              className="font-bold"
+                            >
+                              +
+                            </Button>
+                          </div>
+
+                          {/* Row 3: Repair JSON (visible always; enabled only when invalid) */}
+                          <div className="flex items-center justify-center">
+                            <Button
+                              onClick={handleRepair}
+                              size="sm"
+                              variant="outline"
+                              disabled={isValid !== false}
+                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                            >
+                              Repair JSON
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
 
                   {/* Right Panel - Output Editor */}
@@ -395,41 +424,12 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       >
                         Formatted Output
                       </Label>
-                      <div className="flex items-center space-x-2">
                       {error && (
-                          <div className="flex items-center space-x-2">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                              Error detected
-                            </span>
-                            <Button onClick={handleRepair} size="sm" variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
-                              Repair JSON
-                            </Button>
-                          </div>
-                        )}
-                        <CopyButton
-                          text={(() => {
-                            try {
-                              if (inputEditorInstanceRef.current && isValid) {
-                                const currentJson =
-                                  inputEditorInstanceRef.current.get();
-                                if (currentJson) {
-                                  return JSON.stringify(
-                                    currentJson,
-                                    null,
-                                    indentSize
-                                  );
-                                }
-                              }
-                              return "";
-                            } catch (err) {
-                              return "";
-                            }
-                          })()}
-                          disabled={!isValid}
-                        />
-
-                      </div>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                          <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                          Error detected
+                        </span>
+                      )}
                     </div>
 
                     <div className="relative">
