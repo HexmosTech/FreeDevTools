@@ -11,6 +11,7 @@ import { useTheme } from "../../components/theme/ThemeContext";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolBody from "@/components/tool/ToolBody";
+import { jsonrepair } from "jsonrepair";
 
 // Ace editor
 import ace from "ace-builds/src-noconflict/ace";
@@ -18,12 +19,19 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-textmate";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
 import workerJsonUrl from "ace-builds/src-noconflict/worker-json?url";
+import { getToolByKey, type Tool } from "@/config/tools";
 ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
 
 const LIGHT_THEME = "ace/theme/textmate";
 const DARK_THEME = "ace/theme/vibrant_ink";
 
-const JsonPrettifier: React.FC = () => {
+interface JsonPrettifierProps {
+  tool: string; // from Astro param
+}
+
+
+const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
+  const toolConfig: Tool = getToolByKey(tool) || getToolByKey('json-prettifier');
   const [indentSize, setIndentSize] = useState(2);
   const [error, setError] = useState("");
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -256,6 +264,21 @@ const JsonPrettifier: React.FC = () => {
     toast.info("JSON editor cleared");
   };
 
+  const handleRepair = () => {
+    try {
+      if (!inputEditorInstanceRef.current) return;
+      const currentText = inputEditorInstanceRef.current.getText();
+      if (!currentText || !currentText.trim()) return;
+      const repaired = jsonrepair(currentText);
+      inputEditorInstanceRef.current.setText(repaired);
+      // Trigger validation and formatting
+      handleInputChange(repaired);
+      toast.success("JSON repaired");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to repair JSON");
+    }
+  };
+
   // Update editor themes when theme changes
   useEffect(() => {
     if (inputEditorInstanceRef.current?.aceEditor) {
@@ -269,8 +292,8 @@ const JsonPrettifier: React.FC = () => {
   return (
     <ToolContainer>
       <ToolHead
-        name="JSON Prettifier"
-        description="Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required."
+        name={toolConfig.name}
+        description={toolConfig.title}
       />
       {!isClient ? (
         <JsonPrettifierSkeleton />
@@ -374,10 +397,15 @@ const JsonPrettifier: React.FC = () => {
                       </Label>
                       <div className="flex items-center space-x-2">
                       {error && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                            Error detected
-                          </span>
+                          <div className="flex items-center space-x-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                              <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                              Error detected
+                            </span>
+                            <Button onClick={handleRepair} size="sm" variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                              Repair JSON
+                            </Button>
+                          </div>
                         )}
                         <CopyButton
                           text={(() => {

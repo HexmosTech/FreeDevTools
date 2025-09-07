@@ -49,6 +49,47 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
   },
 
+  "json-validator": {
+    title: "JSON Validator - Check & Validate Your JSON Online",
+    name: "JSON Validator",
+    path: "/freedevtools/t/json-validator/",
+    description:
+      "Validate your JSON instantly. Detect errors, check formatting, and ensure your JSON is well-formed.",
+    category: "Developer Tools",
+    icon: "✅",
+    themeColor: "#f59e0b",
+    canonical: "https://hexmos.com/freedevtools/t/json-validator/",
+    keywords: ["json validator", "json check", "validate json", "developer tools"],
+    features: [
+      "Validate JSON structure",
+      "Detect formatting errors",
+      "Real-time error messages",
+      "Copy to clipboard",
+    ],
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+  },
+
+  "json-fixer": {
+    title: "JSON Fixer - Automatically Correct JSON Errors",
+    name: "JSON Fixer",
+    path: "/freedevtools/t/json-fixer/",
+    description:
+      "Automatically fix invalid JSON data. Correct errors, format it properly, and get clean JSON instantly.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/json-fixer/",
+    keywords: ["json fixer", "fix json", "correct json", "developer tools"],
+    features: [
+      "Auto-correct invalid JSON",
+      "Format JSON properly",
+      "Real-time feedback",
+      "Copy fixed JSON",
+    ],
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+  },
   "password-generator": {
     title: "Password Generator - Create Secure & Random Passwords",
     name: "Password Generator",
@@ -161,6 +202,8 @@ export function getToolByKey(key: string): Tool | undefined {
 }
 
 export function getAllTools(): Tool[] {
+  const keys = Object.keys(TOOLS_CONFIG);
+  console.log("STATIC PATH KEYS:", keys);
   return Object.values(TOOLS_CONFIG);
 }
 
