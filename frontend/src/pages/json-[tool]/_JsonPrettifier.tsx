@@ -699,13 +699,13 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  About JSON Prettifier
+                  About {toolConfig.name}
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-2 md:px-6">
                 <div className="text-slate-600 dark:text-slate-400 space-y-2">
                   <p>
-                    This enhanced <strong>JSON Prettifier</strong> provides real-time
+                    This enhanced <strong>{toolConfig.name}</strong> provides real-time
                     formatting and validation using the powerful JSONEditor library. It is
                     designed for developers who want to easily format, validate, and debug
                     JSON data with accuracy and efficiency. Features include:
@@ -718,6 +718,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                     <li>Copy formatted JSON to clipboard</li>
                     <li>Dynamic indent control (1-8 spaces)</li>
                     <li>Resizable editors for better workflow</li>
+                    <li>Repair JSON feature, to get the faulty JSONs repaired</li>
                   </ul>
                   <p className="pt-2">
                     Learn more about JSON:
