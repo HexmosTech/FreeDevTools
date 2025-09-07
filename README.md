@@ -4,7 +4,20 @@ A curated collection of 100+ online utilities to make developers' lives easier. 
 
 ## Available Tools
 
-- **JSON Prettifier** - Format and validate JSON data
+- [**JSON Utilities**](https://hexmos.com/freedevtools/t/json-utilities/)  
+  <sup>JSON Formatter, Validator and Linter | Online Free DevTools</sup>
+- [**JSON Prettifier**](https://hexmos.com/freedevtools/t/json-prettifier/)  
+  <sup>JSON Formatter, Validator and Linter | Online Free DevTools</sup>
+- [**JSON Validator**](https://hexmos.com/freedevtools/t/json-validator/)  
+  <sup>JSON Validator - Check & Validate Your JSON Online</sup>
+- [**JSON Fixer**](https://hexmos.com/freedevtools/t/json-fixer/)  
+  <sup>JSON Fixer - Automatically Correct JSON Errors</sup>
+- [**Password Generator**](https://hexmos.com/freedevtools/t/password-generator/)  
+  <sup>Secure, Strong & Random Password Generator | Online Free Devtools</sup>
+- [**Dockerfile Linter**](https://hexmos.com/freedevtools/t/dockerfile-linter/)  
+  <sup>Dockerfile Linter and Validator | Online Free DevTools</sup>
+- [**Date Time Converter**](https://hexmos.com/freedevtools/t/date-time-converter/)  
+  <sup>Date Time Converter | Online Free DevTools</sup>
 - **More tools coming soon...**
 
 ## Quick Start
@@ -29,22 +42,11 @@ A curated collection of 100+ online utilities to make developers' lives easier. 
    make run
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:4321`
+4. **Deploy**
 
-## Development Commands
-
-```bash
-# Install dependencies
-cd frontend
-npm install
-
-# Start development server
-make run
-
-# Deploy
-make deploy
-```
+   ```bash
+   make deploy
+   ```
 
 ## How to Test SEO for Your Project
 
