@@ -192,7 +192,7 @@ const DateTimeConverter = () => {
                     placeholder={getPlaceholder()}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="w-full h-16 text-sm md:text-base lg:text-xl px-6 pr-16 focus:ring-4 focus:ring-primary/10 backdrop-blur-sm transition-all duration-200 shadow-sm md:shadow-lg  hover:shadow-md md:hover:shadow-lg"
+                    className="w-full h-16 text-sm md:text-base lg:text-xl px-6 pr-16 backdrop-blur-sm transition-all duration-200 shadow-sm md:shadow-lg hover:shadow-md md:hover:shadow-lg border-gray-300 dark:border-gray-600 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-0 focus:outline-none"
                   />
                   {input && (
                     <button
