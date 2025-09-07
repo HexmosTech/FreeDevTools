@@ -11,7 +11,7 @@ import React from "react";
 function _DateTimeConverterWiki() {
   return (
     <div>
-      <ToolGridContainer>
+      <ToolGridContainer className="xl:grid-cols-2 mt-0">
         {/* Best Practices for Time Zones */}
         <Card className="tool-content-card-bg-grid">
           <CardHeader>

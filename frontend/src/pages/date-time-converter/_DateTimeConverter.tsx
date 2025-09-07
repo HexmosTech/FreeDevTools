@@ -161,7 +161,7 @@ const DateTimeConverter = () => {
         <ToolBody>
           <ToolGridContainer>
             {/* Input Section */}
-            <Card className="tool-card-bg-grid">
+            <Card className="tool-card-bg-grid !mb-6 mt-8">
               <CardHeader>
                 <CardTitle>Convert Date & Time</CardTitle>
                 <CardDescription>
@@ -169,63 +169,68 @@ const DateTimeConverter = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1 min-w-0">
-                      <Label htmlFor="date-input" className="sr-only">
-                        Date input
-                      </Label>
-                      <Input
-                        id="date-input"
-                        type="text"
-                        placeholder={getPlaceholder()}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <Select
-                        value={inputFormat}
-                        onValueChange={setInputFormat}
-                      >
-                        <SelectTrigger className="min-w-[140px] w-full sm:w-auto">
-                          <SelectValue placeholder="Select format" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {formatOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        onClick={() => setShowDatePicker(!showDatePicker)}
-                        variant="outline"
-                        size="default"
-                        title="Pick date and time"
-                        className="flex-shrink-0"
-                      >
-                        <Calendar className="w-5 h-5" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Date Picker */}
-                  {showDatePicker && (
-                    <div className="p-4 bg-muted rounded-lg border">
-                      <div className="mb-2">
-                        <Label htmlFor="datetime">Pick date and time:</Label>
+                <div className="lg:w-2/3 p-6 px-0">
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex-1 min-w-0">
+                        <Label htmlFor="date-input" className="sr-only">
+                          Date input
+                        </Label>
+                        <Input
+                          id="date-input"
+                          type="text"
+                          placeholder={getPlaceholder()}
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                          className="w-full"
+                        />
                       </div>
-                      <Input
-                        id="datetime"
-                        type="datetime-local"
-                        onChange={handleDatePickerChange}
-                        className="w-full"
-                      />
+                      <div className="flex gap-2 flex-shrink-0">
+                        <Select
+                          value={inputFormat}
+                          onValueChange={setInputFormat}
+                        >
+                          <SelectTrigger className="min-w-[140px] w-full sm:w-auto">
+                            <SelectValue placeholder="Select format" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {formatOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          onClick={() => setShowDatePicker(!showDatePicker)}
+                          variant="outline"
+                          size="default"
+                          title="Pick date and time"
+                          className="flex-shrink-0"
+                        >
+                          <Calendar className="w-5 h-5" />
+                        </Button>
+                      </div>
                     </div>
-                  )}
+
+                    {/* Date Picker */}
+                    {showDatePicker && (
+                      <div className="p-4 bg-muted rounded-lg border">
+                        <div className="mb-2">
+                          <Label htmlFor="datetime">Pick date and time:</Label>
+                        </div>
+                        <Input
+                          id="datetime"
+                          type="datetime-local"
+                          onChange={handleDatePickerChange}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -239,55 +244,86 @@ const DateTimeConverter = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {[
-                    {
-                      label: "JS locale date string",
-                      value: formatters.jsLocale(),
-                    },
-                    { label: "ISO 8601", value: formatters.iso8601() },
-                    { label: "ISO 9075", value: formatters.iso9075() },
-                    { label: "RFC 3339", value: formatters.rfc3339() },
-                    { label: "RFC 7231", value: formatters.rfc7231() },
-                    {
-                      label: "Unix timestamp",
-                      value: formatters.unixTimestamp(),
-                    },
-                    { label: "Timestamp", value: formatters.timestamp() },
-                    { label: "UTC format", value: formatters.utcFormat() },
-                    {
-                      label: "Mongo ObjectID",
-                      value: formatters.mongoObjectId(),
-                    },
-                    {
-                      label: "Excel date/time",
-                      value: formatters.excelDateTime(),
-                    },
-                  ].map((format, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col sm:flex-row sm:items-center gap-3"
-                    >
-                      <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
-                        {format.label}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border border-border hover:bg-muted/80 transition-colors">
-                          <div className="flex-1 min-w-0">
-                            <div className="font-mono break-all text-left text-sm">
-                              {format.value}
+                <div className="w-full p-6 px-0">
+                  <div className="date-container flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 w-full">
+                    {/* Left Column */}
+                    <div className="flex flex-col gap-4 flex-1">
+                      {[
+                        {
+                          label: "JS locale date string",
+                          value: formatters.jsLocale(),
+                        },
+                        { label: "ISO 8601", value: formatters.iso8601() },
+                        { label: "ISO 9075", value: formatters.iso9075() },
+                        { label: "RFC 3339", value: formatters.rfc3339() },
+                        { label: "RFC 7231", value: formatters.rfc7231() },
+                      ].map((format, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col gap-3 min-h-[80px]"
+                        >
+                          <p className="text-muted-foreground font-medium">
+                            {format.label}
+                          </p>
+                          <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-mono break-all text-left text-sm leading-relaxed">
+                                {format.value}
+                              </div>
                             </div>
+                            <CopyButton
+                              text={format.value}
+                              size="icon"
+                              title="Copy to clipboard"
+                              className="flex-shrink-0"
+                            />
                           </div>
-                          <CopyButton
-                            text={format.value}
-                            size="icon"
-                            title="Copy to clipboard"
-                            className="flex-shrink-0"
-                          />
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
+
+                    {/* Right Column */}
+                    <div className="flex flex-col gap-4 flex-1">
+                      {[
+                        {
+                          label: "Unix timestamp",
+                          value: formatters.unixTimestamp(),
+                        },
+                        { label: "Timestamp", value: formatters.timestamp() },
+                        { label: "UTC format", value: formatters.utcFormat() },
+                        {
+                          label: "Mongo ObjectID",
+                          value: formatters.mongoObjectId(),
+                        },
+                        {
+                          label: "Excel date/time",
+                          value: formatters.excelDateTime(),
+                        },
+                      ].map((format, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col gap-3 min-h-[80px]"
+                        >
+                          <div className="text-muted-foreground text-sm font-medium">
+                            {format.label}
+                          </div>
+                          <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-mono break-all text-left text-sm leading-relaxed">
+                                {format.value}
+                              </div>
+                            </div>
+                            <CopyButton
+                              text={format.value}
+                              size="icon"
+                              title="Copy to clipboard"
+                              className="flex-shrink-0"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

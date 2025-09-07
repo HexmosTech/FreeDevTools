@@ -1,15 +1,25 @@
-const ToolGridContainer = ({ children }: { children: React.ReactNode }) => {
+import React from "react";
+
+interface ToolGridContainerProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ToolGridContainer = ({
+  children,
+  className = "",
+}: ToolGridContainerProps) => {
   return (
     <div
-      className="
-          grid
-          grid-cols-1
-          xl:grid-cols-2
-          gap-6
-          max-w-[1600px]
-          mx-auto
-          mt-8
-        "
+      className={`
+        grid
+        grid-cols-1
+        gap-x-8
+        gap-y-2
+        max-w-[1600px]
+        mx-auto
+        ${className}
+      `}
     >
       {children}
     </div>
