@@ -161,7 +161,7 @@ const DateTimeConverter = () => {
         <ToolBody>
           <ToolGridContainer>
             {/* Input Section */}
-            <Card className="tool-card-bg-grid self-start">
+            <Card className="tool-card-bg-grid">
               <CardHeader>
                 <CardTitle>Convert Date & Time</CardTitle>
                 <CardDescription>
@@ -231,7 +231,7 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Conversion Results */}
-            <Card className="tool-card-bg-grid self-start">
+            <Card className="tool-card-bg-grid">
               <CardHeader>
                 <CardTitle>Conversion Results</CardTitle>
                 <CardDescription>
@@ -253,7 +253,6 @@ const DateTimeConverter = () => {
                       label: "Unix timestamp",
                       value: formatters.unixTimestamp(),
                     },
-                    // Additional formats - only show on smaller screens
                     { label: "Timestamp", value: formatters.timestamp() },
                     { label: "UTC format", value: formatters.utcFormat() },
                     {
@@ -267,57 +266,9 @@ const DateTimeConverter = () => {
                   ].map((format, index) => (
                     <div
                       key={index}
-                      className={`flex flex-col sm:flex-row sm:items-center gap-3 ${
-                        index >= 6 ? "xl:hidden" : ""
-                      }`}
-                    >
-                      <p className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right">
-                        {format.label}
-                      </p>
-                      <div className="flex-1 min-w-0">
-                        <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border border-border hover:bg-muted/80 transition-colors">
-                          <div className="flex-1 min-w-0">
-                            <div className="font-mono break-all text-left text-sm">
-                              {format.value}
-                            </div>
-                          </div>
-                          <CopyButton
-                            text={format.value}
-                            size="icon"
-                            title="Copy to clipboard"
-                            className="flex-shrink-0"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Formats - Only visible on large screens */}
-            <Card className="tool-card-bg-grid self-start hidden xl:block">
-              <CardHeader>
-                <CardTitle>Additional Formats</CardTitle>
-                <CardDescription>
-                  Specialized formats for specific use cases
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { label: "Timestamp", value: formatters.timestamp() },
-                    { label: "UTC format", value: formatters.utcFormat() },
-                    {
-                      label: "Excel date/time",
-                      value: formatters.excelDateTime(),
-                    },
-                  ].map((format, index) => (
-                    <div
-                      key={index}
                       className="flex flex-col sm:flex-row sm:items-center gap-3"
                     >
-                      <div className="text-muted-foreground min-w-[120px] sm:min-w-[140px] sm:text-right text-sm">
+                      <div className="text-muted-foreground min-w-[140px] sm:min-w-[160px] sm:text-right text-sm">
                         {format.label}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -341,7 +292,6 @@ const DateTimeConverter = () => {
               </CardContent>
             </Card>
           </ToolGridContainer>
-
           <_DateTimeConverterWiki />
 
           {/* Footer */}
