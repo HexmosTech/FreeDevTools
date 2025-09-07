@@ -1,7 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import React, { useEffect, useState } from "react";
 import { toast } from "../../components/ToastProvider";
@@ -359,7 +371,7 @@ const PasswordGenerator: React.FC = () => {
     <ToolContainer>
       <ToolHead
         name="Password Generator"
-        description="Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options."
+        description="Generate secure, customizable random passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options."
       />
       {!loaded ? (
         <PasswordGeneratorSkeleton />
@@ -656,7 +668,9 @@ const PasswordGenerator: React.FC = () => {
                           </Label>
                           <Slider
                             value={[options.wordCount]}
-                            onValueChange={(value) => updateOption("wordCount", value[0])}
+                            onValueChange={(value) =>
+                              updateOption("wordCount", value[0])
+                            }
                             min={2}
                             max={6}
                             step={1}
@@ -674,8 +688,17 @@ const PasswordGenerator: React.FC = () => {
                             Word Separator
                           </Label>
                           <Select
-                            value={options.separator === "" ? "none" : options.separator}
-                            onValueChange={(value) => updateOption("separator", value === "none" ? "" : value)}
+                            value={
+                              options.separator === ""
+                                ? "none"
+                                : options.separator
+                            }
+                            onValueChange={(value) =>
+                              updateOption(
+                                "separator",
+                                value === "none" ? "" : value
+                              )
+                            }
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Choose separator" />
@@ -699,7 +722,9 @@ const PasswordGenerator: React.FC = () => {
                         </div>
                         <Slider
                           value={[options.length]}
-                          onValueChange={(value) => updateOption("length", value[0])}
+                          onValueChange={(value) =>
+                            updateOption("length", value[0])
+                          }
                           min={4}
                           max={128}
                           step={1}
@@ -742,14 +767,13 @@ const PasswordGenerator: React.FC = () => {
                           >
                             <Checkbox
                               checked={options[key] as boolean}
-                              onCheckedChange={(checked) => updateOption(key, checked as boolean)}
+                              onCheckedChange={(checked) =>
+                                updateOption(key, checked as boolean)
+                              }
                               id={key}
                             />
 
-                            <Label
-                              htmlFor={key}
-                              className="cursor-pointer"
-                            >
+                            <Label htmlFor={key} className="cursor-pointer">
                               {label}
                             </Label>
                           </div>
@@ -769,7 +793,9 @@ const PasswordGenerator: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <Checkbox
                             checked={options.easyToRead}
-                            onCheckedChange={(checked) => updateOption("easyToRead", checked as boolean)}
+                            onCheckedChange={(checked) =>
+                              updateOption("easyToRead", checked as boolean)
+                            }
                             id="easyToRead"
                           />
                           <div>
@@ -780,7 +806,8 @@ const PasswordGenerator: React.FC = () => {
                               Easy to Read
                             </Label>
                             <p className="text-slate-500 dark:text-slate-400">
-                              Excludes similar looking characters (0, O, l, 1, I)
+                              Excludes similar looking characters (0, O, l, 1,
+                              I)
                             </p>
                           </div>
                         </div>
@@ -788,7 +815,9 @@ const PasswordGenerator: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <Checkbox
                             checked={options.easyToSay}
-                            onCheckedChange={(checked) => updateOption("easyToSay", checked as boolean)}
+                            onCheckedChange={(checked) =>
+                              updateOption("easyToSay", checked as boolean)
+                            }
                             id="easyToSay"
                           />
                           <div>
@@ -823,10 +852,13 @@ const PasswordGenerator: React.FC = () => {
               <CardContent className="p-6">
                 <p className="text-slate-800 dark:text-slate-400 mb-4">
                   Watch this educational video to understand the fundamentals of
-                  password security and why strong passwords matter for your digital
-                  safety.
+                  password security and why strong passwords matter for your
+                  digital safety.
                 </p>
-                <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                <div
+                  className="relative w-full"
+                  style={{ paddingBottom: "56.25%" }}
+                >
                   <iframe
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     src="https://www.youtube.com/embed/vKPGZHoHX8k"
@@ -843,17 +875,19 @@ const PasswordGenerator: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-slate-700 dark:text-slate-300">
-                  Understanding Password Security and Brute Force Attack Prevention
+                  Understanding Password Security and Brute Force Attack
+                  Prevention
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
-                    Password security is fundamentally about creating computational
-                    barriers that make unauthorized access economically and
-                    practically infeasible. Our password generator creates
-                    cryptographically secure passwords that resist brute force attacks
-                    through mathematical complexity and entropy maximization.
+                    Password security is fundamentally about creating
+                    computational barriers that make unauthorized access
+                    economically and practically infeasible. Our password
+                    generator creates cryptographically secure passwords that
+                    resist brute force attacks through mathematical complexity
+                    and entropy maximization.
                   </p>
                   <p>
                     <strong>
@@ -867,17 +901,17 @@ const PasswordGenerator: React.FC = () => {
                       </a>
                     </strong>{" "}
                     work by systematically attempting every possible password
-                    combination until the correct one is found. The time required
-                    grows exponentially with password length and character set size,
-                    making well-generated passwords virtually unbreakable with current
-                    technology.
+                    combination until the correct one is found. The time
+                    required grows exponentially with password length and
+                    character set size, making well-generated passwords
+                    virtually unbreakable with current technology.
                   </p>
                   <p>
-                    A 12-character password using our full character set (95 printable
-                    ASCII characters) has 95^12 ≈ 5.4 × 10^23 possible combinations.
-                    Even with advanced hardware capable of testing billions of
-                    passwords per second, this would take longer than the age of the
-                    universe to exhaust all possibilities.
+                    A 12-character password using our full character set (95
+                    printable ASCII characters) has 95^12 ≈ 5.4 × 10^23 possible
+                    combinations. Even with advanced hardware capable of testing
+                    billions of passwords per second, this would take longer
+                    than the age of the universe to exhaust all possibilities.
                   </p>
                 </div>
               </CardContent>
@@ -893,10 +927,10 @@ const PasswordGenerator: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
-                    Password strength is measured in bits of entropy, calculated as
-                    log₂(possible combinations). Each additional bit doubles the time
-                    required for a brute force attack, creating an exponential
-                    security improvement.
+                    Password strength is measured in bits of entropy, calculated
+                    as log₂(possible combinations). Each additional bit doubles
+                    the time required for a brute force attack, creating an
+                    exponential security improvement.
                   </p>
                   <div className="bg-slate-100 dark:bg-slate-700 rounded p-4 font-mono">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -922,9 +956,9 @@ const PasswordGenerator: React.FC = () => {
                   </div>
                   <p>
                     These calculations assume advanced hardware (100 billion
-                    guesses/second) and optimal attack conditions. Real-world attacks
-                    face additional barriers like rate limiting, account lockouts, and
-                    network latency.
+                    guesses/second) and optimal attack conditions. Real-world
+                    attacks face additional barriers like rate limiting, account
+                    lockouts, and network latency.
                   </p>
                 </div>
               </CardContent>
@@ -940,9 +974,9 @@ const PasswordGenerator: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
-                    Modern password attacks have evolved beyond simple brute force to
-                    include sophisticated techniques. Our generator addresses these
-                    threats through multiple security layers:
+                    Modern password attacks have evolved beyond simple brute
+                    force to include sophisticated techniques. Our generator
+                    addresses these threats through multiple security layers:
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -950,10 +984,11 @@ const PasswordGenerator: React.FC = () => {
                         Dictionary Attacks
                       </h3>
                       <p>
-                        Attackers use databases of common passwords and words. Our
-                        character-based generator creates truly random sequences that
-                        don't appear in any dictionary, while our word-based generator
-                        combines multiple unrelated words with numbers and symbols.
+                        Attackers use databases of common passwords and words.
+                        Our character-based generator creates truly random
+                        sequences that don't appear in any dictionary, while our
+                        word-based generator combines multiple unrelated words
+                        with numbers and symbols.
                       </p>
                     </div>
                     <div>
@@ -961,10 +996,10 @@ const PasswordGenerator: React.FC = () => {
                         Rainbow Table Attacks
                       </h3>
                       <p>
-                        Pre-computed hash tables can crack common passwords instantly.
-                        Generated passwords with high entropy and unique character
-                        combinations are extremely unlikely to appear in rainbow
-                        tables.
+                        Pre-computed hash tables can crack common passwords
+                        instantly. Generated passwords with high entropy and
+                        unique character combinations are extremely unlikely to
+                        appear in rainbow tables.
                       </p>
                     </div>
                     <div>
@@ -972,9 +1007,10 @@ const PasswordGenerator: React.FC = () => {
                         Credential Stuffing
                       </h3>
                       <p>
-                        Attackers reuse leaked passwords across multiple sites. Using
-                        unique, generated passwords for each account ensures that a
-                        breach on one service doesn't compromise others.
+                        Attackers reuse leaked passwords across multiple sites.
+                        Using unique, generated passwords for each account
+                        ensures that a breach on one service doesn't compromise
+                        others.
                       </p>
                     </div>
                     <div>
@@ -982,9 +1018,9 @@ const PasswordGenerator: React.FC = () => {
                         Social Engineering
                       </h3>
                       <p>
-                        Generated passwords contain no personal information, making
-                        them immune to attacks based on birthdays, names, or other
-                        discoverable data about the user.
+                        Generated passwords contain no personal information,
+                        making them immune to attacks based on birthdays, names,
+                        or other discoverable data about the user.
                       </p>
                     </div>
                   </div>
@@ -1033,8 +1069,8 @@ const PasswordGenerator: React.FC = () => {
                         crypto.getRandomValues() for true randomness
                       </li>
                       <li>
-                        <strong>Character distribution:</strong> Ensures at least one
-                        character from each selected set
+                        <strong>Character distribution:</strong> Ensures at
+                        least one character from each selected set
                       </li>
                       <li>
                         <strong>Bias elimination:</strong> Fisher-Yates shuffle
@@ -1051,9 +1087,10 @@ const PasswordGenerator: React.FC = () => {
                     </ul>
                   </div>
                   <p>
-                    The generator operates entirely in your browser with no network
-                    communication, ensuring that generated passwords remain private
-                    and are never exposed to potential interception or logging.
+                    The generator operates entirely in your browser with no
+                    network communication, ensuring that generated passwords
+                    remain private and are never exposed to potential
+                    interception or logging.
                   </p>
                 </div>
               </CardContent>
@@ -1069,10 +1106,10 @@ const PasswordGenerator: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
-                    Implementing robust password security requires a comprehensive
-                    approach that goes beyond individual password strength.
-                    Organizations and individuals should follow these evidence-based
-                    practices:
+                    Implementing robust password security requires a
+                    comprehensive approach that goes beyond individual password
+                    strength. Organizations and individuals should follow these
+                    evidence-based practices:
                   </p>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
@@ -1101,11 +1138,11 @@ const PasswordGenerator: React.FC = () => {
                     </div>
                   </div>
                   <p>
-                    <strong>Critical insight:</strong> The weakest password in your
-                    organization determines your overall security posture. A single
-                    compromised credential can lead to lateral movement and privilege
-                    escalation, making comprehensive password security essential for
-                    cybersecurity resilience.
+                    <strong>Critical insight:</strong> The weakest password in
+                    your organization determines your overall security posture.
+                    A single compromised credential can lead to lateral movement
+                    and privilege escalation, making comprehensive password
+                    security essential for cybersecurity resilience.
                   </p>
                 </div>
               </CardContent>
@@ -1122,9 +1159,9 @@ const PasswordGenerator: React.FC = () => {
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
                     Our password generation methodology aligns with leading
-                    cybersecurity frameworks and regulatory requirements, ensuring
-                    that generated passwords meet or exceed industry standards for
-                    access control.
+                    cybersecurity frameworks and regulatory requirements,
+                    ensuring that generated passwords meet or exceed industry
+                    standards for access control.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
@@ -1132,8 +1169,9 @@ const PasswordGenerator: React.FC = () => {
                         NIST Guidelines
                       </h3>
                       <p>
-                        Compliant with NIST SP 800-63B recommendations for password
-                        complexity, length requirements, and entropy calculations.
+                        Compliant with NIST SP 800-63B recommendations for
+                        password complexity, length requirements, and entropy
+                        calculations.
                       </p>
                     </div>
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
@@ -1141,8 +1179,9 @@ const PasswordGenerator: React.FC = () => {
                         ISO 27001
                       </h3>
                       <p>
-                        Supports access control requirements under ISO 27001:2013
-                        Annex A.9 for information security management systems.
+                        Supports access control requirements under ISO
+                        27001:2013 Annex A.9 for information security management
+                        systems.
                       </p>
                     </div>
                     <div className="bg-slate-100 dark:bg-slate-700 rounded p-4">
@@ -1150,15 +1189,17 @@ const PasswordGenerator: React.FC = () => {
                         PCI DSS
                       </h3>
                       <p>
-                        Meets PCI DSS Requirement 8.2 for unique user identification
-                        and authentication for payment card industry compliance.
+                        Meets PCI DSS Requirement 8.2 for unique user
+                        identification and authentication for payment card
+                        industry compliance.
                       </p>
                     </div>
                   </div>
                   <p>
-                    Regular security audits and penetration testing validate that our
-                    password generation algorithms maintain resistance against
-                    evolving threat landscapes and emerging attack methodologies.
+                    Regular security audits and penetration testing validate
+                    that our password generation algorithms maintain resistance
+                    against evolving threat landscapes and emerging attack
+                    methodologies.
                   </p>
                 </div>
               </CardContent>
@@ -1191,7 +1232,7 @@ const PasswordGenerator: React.FC = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
                     target="_blank"
@@ -1207,7 +1248,7 @@ const PasswordGenerator: React.FC = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://www.nist.gov/cyberframework"
                     target="_blank"
@@ -1223,7 +1264,7 @@ const PasswordGenerator: React.FC = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://www.iso.org/standard/54534.html"
                     target="_blank"
