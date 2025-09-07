@@ -14,14 +14,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Calendar } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import ToolContainer from "../../components/tool/ToolContainer";
 import ToolHead from "../../components/tool/ToolHead";
 import CopyButton from "../../components/ui/copy-button";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import { toast } from "../../components/ToastProvider";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
 import ToolBody from "@/components/tool/ToolBody";
 import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
@@ -30,7 +37,8 @@ const DateTimeConverter = () => {
   const [input, setInput] = useState("");
   const [inputFormat, setInputFormat] = useState("utc");
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedTime, setSelectedTime] = useState("12:00");
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -125,10 +133,23 @@ const DateTimeConverter = () => {
     { value: "custom", label: "Custom format" },
   ];
 
-  const handleDatePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const datetime = e.target.value;
-    setInput(datetime);
-    setInputFormat("iso");
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date) {
+      const dateTimeString = format(date, "yyyy-MM-dd") + "T" + selectedTime;
+      setInput(dateTimeString);
+      setInputFormat("iso");
+    }
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = e.target.value;
+    setSelectedTime(time);
+    if (selectedDate) {
+      const dateTimeString = format(selectedDate, "yyyy-MM-dd") + "T" + time;
+      setInput(dateTimeString);
+      setInputFormat("iso");
+    }
   };
 
   const getPlaceholder = () => {
@@ -171,7 +192,7 @@ const DateTimeConverter = () => {
                     placeholder={getPlaceholder()}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="w-full h-16 text-sm md:text-base lg:text-lg px-6 pr-16 focus:ring-4 focus:ring-primary/10 backdrop-blur-sm transition-all duration-200 shadow-sm md:shadow-lg  hover:shadow-md md:hover:shadow-lg"
+                    className="w-full h-16 text-sm md:text-base lg:text-xl px-6 pr-16 focus:ring-4 focus:ring-primary/10 backdrop-blur-sm transition-all duration-200 shadow-sm md:shadow-lg  hover:shadow-md md:hover:shadow-lg"
                   />
                   {input && (
                     <button
@@ -199,35 +220,49 @@ const DateTimeConverter = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button
-                      onClick={() => setShowDatePicker(!showDatePicker)}
-                      variant="outline"
-                      size="lg"
-                      title="Pick date and time"
-                      className="h-12 px-6 "
-                    >
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Calendar
-                    </Button>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="h-12 px-6"
+                        >
+                          <CalendarIcon className="w-5 h-5 mr-2" />
+                          {selectedDate
+                            ? format(selectedDate, "PPP")
+                            : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <div className="p-4 space-y-4">
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={handleDateSelect}
+                            initialFocus
+                          />
+                          {selectedDate && (
+                            <div className="border-t pt-4">
+                              <Label
+                                htmlFor="time-picker"
+                                className="text-sm font-medium mb-2 block"
+                              >
+                                Time:
+                              </Label>
+                              <Input
+                                id="time-picker"
+                                type="time"
+                                value={selectedTime}
+                                onChange={handleTimeChange}
+                                className="w-full"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
-
-                {/* Date Picker */}
-                {showDatePicker && (
-                  <div className="max-w-md mx-auto p-6 bg-muted/50 rounded-xl border-2 border-primary/20 backdrop-blur-sm">
-                    <div className="mb-4">
-                      <Label htmlFor="datetime" className="text-sm font-medium">
-                        Pick date and time:
-                      </Label>
-                    </div>
-                    <Input
-                      id="datetime"
-                      type="datetime-local"
-                      onChange={handleDatePickerChange}
-                      className="w-full h-12 text-center border-2 border-primary/20 focus:border-primary"
-                    />
-                  </div>
-                )}
               </div>
             </div>
 
