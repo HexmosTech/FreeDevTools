@@ -50,8 +50,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Instant error detection",
       "Copy to clipboard"
     ],
-    "ogImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities.png",
-    "twitterImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities.png",
+    "ogImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+    "twitterImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
   },
   "json-prettifier": {
     title: "JSON Formatter, Validator and Linter | Online Free DevTools",
@@ -101,8 +101,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time error messages",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
     "variationOf": "json-utilities"
   },
 
@@ -123,8 +123,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time feedback",
       "Copy fixed JSON",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
     "variationOf": "json-utilities"
   },
   "password-generator": {
@@ -160,9 +160,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time password strength indicator",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
   },
 
   "dockerfile-linter": {
