@@ -160,79 +160,68 @@ const DateTimeConverter = () => {
       ) : (
         <ToolBody>
           <ToolGridContainer>
-            {/* Input Section */}
-            <Card className="tool-card-bg-grid !mb-6 mt-8">
-              <CardHeader>
-                <CardDescription>
-                  Enter a date string, timestamp, or use the date picker below
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="lg:w-2/3 p-6 px-0">
-                  <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <div className="flex-1 min-w-0">
-                        <Label htmlFor="date-input" className="sr-only">
-                          Date input
-                        </Label>
-                        <Input
-                          id="date-input"
-                          type="text"
-                          placeholder={getPlaceholder()}
-                          value={input}
-                          onChange={(e) => setInput(e.target.value)}
-                          className="w-full"
-                        />
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <Select
-                          value={inputFormat}
-                          onValueChange={setInputFormat}
-                        >
-                          <SelectTrigger className="min-w-[140px] w-full sm:w-auto">
-                            <SelectValue placeholder="Select format" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {formatOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          onClick={() => setShowDatePicker(!showDatePicker)}
-                          variant="outline"
-                          size="default"
-                          title="Pick date and time"
-                          className="flex-shrink-0"
-                        >
-                          <Calendar className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    </div>
+            {/* Input Section - Priority #1 */}
+            <div className="w-full max-w-4xl mx-auto px-6 py-12">
+              <div className="space-y-6">
+                {/* Main Input Box - Priority */}
+                <div className="relative">
+                  <Input
+                    id="date-input"
+                    type="text"
+                    placeholder={getPlaceholder()}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    className="w-full h-16 text-lg px-6    focus:ring-4 focus:ring-primary/10   backdrop-blur-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+                  />
+                  <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary/5 to-blue-500/5 pointer-events-none" />
+                </div>
 
-                    {/* Date Picker */}
-                    {showDatePicker && (
-                      <div className="p-4 bg-muted rounded-lg border">
-                        <div className="mb-2">
-                          <Label htmlFor="datetime">Pick date and time:</Label>
-                        </div>
-                        <Input
-                          id="datetime"
-                          type="datetime-local"
-                          onChange={handleDatePickerChange}
-                          className="w-full"
-                        />
-                      </div>
-                    )}
+                {/* Controls Row */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <div className="flex gap-3">
+                    <Select value={inputFormat} onValueChange={setInputFormat}>
+                      <SelectTrigger className="min-w-[160px] h-12">
+                        <SelectValue placeholder="Select format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {formatOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      onClick={() => setShowDatePicker(!showDatePicker)}
+                      variant="outline"
+                      size="lg"
+                      title="Pick date and time"
+                      className="h-12 px-6 "
+                    >
+                      <Calendar className="w-5 h-5 mr-2" />
+                      Calendar
+                    </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Date Picker */}
+                {showDatePicker && (
+                  <div className="max-w-md mx-auto p-6 bg-muted/50 rounded-xl border-2 border-primary/20 backdrop-blur-sm">
+                    <div className="mb-4">
+                      <Label htmlFor="datetime" className="text-sm font-medium">
+                        Pick date and time:
+                      </Label>
+                    </div>
+                    <Input
+                      id="datetime"
+                      type="datetime-local"
+                      onChange={handleDatePickerChange}
+                      className="w-full h-12 text-center border-2 border-primary/20 focus:border-primary"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Conversion Results */}
             {input.trim() && (
