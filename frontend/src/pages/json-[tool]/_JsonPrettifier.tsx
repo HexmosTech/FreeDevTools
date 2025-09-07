@@ -293,7 +293,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
     <ToolContainer>
       <ToolHead
         name={toolConfig.name}
-        description={toolConfig.title}
+        description={toolConfig.description}
       />
       {!isClient ? (
         <JsonPrettifierSkeleton />
