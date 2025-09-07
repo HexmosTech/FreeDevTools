@@ -163,7 +163,6 @@ const DateTimeConverter = () => {
             {/* Input Section */}
             <Card className="tool-card-bg-grid !mb-6 mt-8">
               <CardHeader>
-                <CardTitle>Convert Date & Time</CardTitle>
                 <CardDescription>
                   Enter a date string, timestamp, or use the date picker below
                 </CardDescription>
@@ -236,97 +235,101 @@ const DateTimeConverter = () => {
             </Card>
 
             {/* Conversion Results */}
-            <Card className="tool-card-bg-grid">
-              <CardHeader>
-                <CardTitle>Conversion Results</CardTitle>
-                <CardDescription>
-                  All formats are calculated in real-time based on your input
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full p-6 px-0">
-                  <div className="date-container flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 w-full">
-                    {/* Left Column */}
-                    <div className="flex flex-col gap-4 flex-1">
-                      {[
-                        {
-                          label: "JS locale date string",
-                          value: formatters.jsLocale(),
-                        },
-                        { label: "ISO 8601", value: formatters.iso8601() },
-                        { label: "ISO 9075", value: formatters.iso9075() },
-                        { label: "RFC 3339", value: formatters.rfc3339() },
-                        { label: "RFC 7231", value: formatters.rfc7231() },
-                      ].map((format, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col gap-3 min-h-[80px]"
-                        >
-                          <p className="text-muted-foreground font-medium">
-                            {format.label}
-                          </p>
-                          <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
-                            <div className="flex-1 min-w-0">
-                              <div className="font-mono break-all text-left text-sm leading-relaxed">
-                                {format.value}
+            {input.trim() && (
+              <Card className="tool-card-bg-grid">
+                <CardHeader>
+                  <CardDescription>
+                    All formats are calculated in real-time based on your input
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full p-6 px-0">
+                    <div className="date-container flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 w-full">
+                      {/* Left Column */}
+                      <div className="flex flex-col gap-4 flex-1">
+                        {[
+                          {
+                            label: "JS locale date string",
+                            value: formatters.jsLocale(),
+                          },
+                          { label: "ISO 8601", value: formatters.iso8601() },
+                          { label: "ISO 9075", value: formatters.iso9075() },
+                          { label: "RFC 3339", value: formatters.rfc3339() },
+                          { label: "RFC 7231", value: formatters.rfc7231() },
+                        ].map((format, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-col gap-3 min-h-[80px]"
+                          >
+                            <p className="text-muted-foreground font-medium">
+                              {format.label}
+                            </p>
+                            <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
+                              <div className="flex-1 min-w-0">
+                                <div className="font-mono break-all text-left text-sm leading-relaxed">
+                                  {format.value}
+                                </div>
                               </div>
+                              <CopyButton
+                                text={format.value}
+                                size="icon"
+                                title="Copy to clipboard"
+                                className="flex-shrink-0"
+                              />
                             </div>
-                            <CopyButton
-                              text={format.value}
-                              size="icon"
-                              title="Copy to clipboard"
-                              className="flex-shrink-0"
-                            />
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
 
-                    {/* Right Column */}
-                    <div className="flex flex-col gap-4 flex-1">
-                      {[
-                        {
-                          label: "Unix timestamp",
-                          value: formatters.unixTimestamp(),
-                        },
-                        { label: "Timestamp", value: formatters.timestamp() },
-                        { label: "UTC format", value: formatters.utcFormat() },
-                        {
-                          label: "Mongo ObjectID",
-                          value: formatters.mongoObjectId(),
-                        },
-                        {
-                          label: "Excel date/time",
-                          value: formatters.excelDateTime(),
-                        },
-                      ].map((format, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col gap-3 min-h-[80px]"
-                        >
-                          <div className="text-muted-foreground text-sm font-medium">
-                            {format.label}
-                          </div>
-                          <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
-                            <div className="flex-1 min-w-0">
-                              <div className="font-mono break-all text-left text-sm leading-relaxed">
-                                {format.value}
-                              </div>
+                      {/* Right Column */}
+                      <div className="flex flex-col gap-4 flex-1">
+                        {[
+                          {
+                            label: "Unix timestamp",
+                            value: formatters.unixTimestamp(),
+                          },
+                          { label: "Timestamp", value: formatters.timestamp() },
+                          {
+                            label: "UTC format",
+                            value: formatters.utcFormat(),
+                          },
+                          {
+                            label: "Mongo ObjectID",
+                            value: formatters.mongoObjectId(),
+                          },
+                          {
+                            label: "Excel date/time",
+                            value: formatters.excelDateTime(),
+                          },
+                        ].map((format, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-col gap-3 min-h-[80px]"
+                          >
+                            <div className="text-muted-foreground text-sm font-medium">
+                              {format.label}
                             </div>
-                            <CopyButton
-                              text={format.value}
-                              size="icon"
-                              title="Copy to clipboard"
-                              className="flex-shrink-0"
-                            />
+                            <div className="bg-muted rounded-lg p-4 flex items-center gap-3 border border-border hover:bg-muted/80 transition-colors flex-1">
+                              <div className="flex-1 min-w-0">
+                                <div className="font-mono break-all text-left text-sm leading-relaxed">
+                                  {format.value}
+                                </div>
+                              </div>
+                              <CopyButton
+                                text={format.value}
+                                size="icon"
+                                title="Copy to clipboard"
+                                className="flex-shrink-0"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </ToolGridContainer>
           <_DateTimeConverterWiki />
 
