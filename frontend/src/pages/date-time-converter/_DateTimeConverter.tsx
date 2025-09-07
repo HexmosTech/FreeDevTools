@@ -161,7 +161,7 @@ const DateTimeConverter = () => {
         <ToolBody>
           <ToolGridContainer>
             {/* Input Section - Priority #1 */}
-            <div className="w-full max-w-4xl mx-auto px-6 py-12">
+            <div className="w-full max-w-4xl mx-auto px-4 py-8 md:px-6 md:py-12">
               <div className="space-y-6">
                 {/* Main Input Box - Priority */}
                 <div className="relative">
@@ -171,9 +171,17 @@ const DateTimeConverter = () => {
                     placeholder={getPlaceholder()}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="w-full h-16 text-lg px-6    focus:ring-4 focus:ring-primary/10   backdrop-blur-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="w-full h-16 text-sm md:text-base lg:text-lg px-6 pr-16 focus:ring-4 focus:ring-primary/10 backdrop-blur-sm transition-all duration-200 shadow-sm md:shadow-lg  hover:shadow-md md:hover:shadow-lg"
                   />
-                  <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary/5 to-blue-500/5 pointer-events-none" />
+                  {input && (
+                    <button
+                      onClick={() => setInput("")}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted/50"
+                      title="Clear input"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
 
                 {/* Controls Row */}
