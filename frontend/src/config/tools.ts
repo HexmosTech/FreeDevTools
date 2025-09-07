@@ -17,24 +17,21 @@ export interface Tool {
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-prettifier": {
-    title: "JSON Prettifier - Format, Minify & Validate JSON Online",
+    title: "JSON Formatter, Validator and Linter | Online Free DevTools",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
-      "Format, minify, and validate JSON data instantly. Multiple indentation options, real-time validation, and no registration required.",
+      "Format, validate, and lint JSON online for free with Hexmos Free DevTools. Enjoy multiple indentation options and real-time validation in an ad-free environment.",
     category: "Developer Tools",
     icon: "📄",
     themeColor: "#10b981",
     canonical: "https://hexmos.com/freedevtools/t/json-prettifier/",
     keywords: [
-      "json prettifier",
-      "json formatter",
-      "json minifier",
-      "json validator",
-      "json beautifier",
-      "json online",
-      "developer tools",
-      "api tools",
+      "JSON online formatter",
+      "JSON online validator",
+      "JSON online linter",
+      "JSON online",
+      "Best JSON formatter",
     ],
     features: [
       "JSON formatting",
@@ -49,32 +46,74 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/json-prettier.png",
   },
 
+  "json-validator": {
+    title: "JSON Validator - Check & Validate Your JSON Online",
+    name: "JSON Validator",
+    path: "/freedevtools/t/json-validator/",
+    description:
+      "Validate your JSON instantly. Detect errors, check formatting, and ensure your JSON is well-formed.",
+    category: "Developer Tools",
+    icon: "✅",
+    themeColor: "#f59e0b",
+    canonical: "https://hexmos.com/freedevtools/t/json-validator/",
+    keywords: ["json validator", "json check", "validate json", "developer tools"],
+    features: [
+      "Validate JSON structure",
+      "Detect formatting errors",
+      "Real-time error messages",
+      "Copy to clipboard",
+    ],
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator.png",
+  },
+
+  "json-fixer": {
+    title: "JSON Fixer - Automatically Correct JSON Errors",
+    name: "JSON Fixer",
+    path: "/freedevtools/t/json-fixer/",
+    description:
+      "Automatically fix invalid JSON data. Correct errors, format it properly, and get clean JSON instantly.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/json-fixer/",
+    keywords: ["json fixer", "fix json", "correct json", "developer tools"],
+    features: [
+      "Auto-correct invalid JSON",
+      "Format JSON properly",
+      "Real-time feedback",
+      "Copy fixed JSON",
+    ],
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer.png",
+  },
   "password-generator": {
-    title: "Password Generator - Create Secure & Random Passwords",
+    title: "Secure, Strong & Random Password Generator | Online Free Devtools",
     name: "Password Generator",
     path: "/freedevtools/t/password-generator/",
     description:
-      "Generate secure, customizable passwords instantly. Create strong passwords with custom length, character types, and readability options for maximum security.",
+      "Generate secure passwords instantly with Hexmos Free DevTools. Choose quick presets, customize password type, length, and characters for strong, random passwords.",
     category: "Security Tools",
     icon: "�",
     themeColor: "#6366f1",
     canonical: "https://hexmos.com/freedevtools/t/password-generator/",
     keywords: [
       "password generator",
-      "secure password",
-      "random password",
-      "strong password",
-      "password creator",
-      "cybersecurity",
-      "security tools",
-      "password maker",
-      "custom password",
-      "safe password",
+      "secure password generator",
+      "random password generator",
+      "strong password generator",
+      "free password generator",
+      "online password generator",
+      "custom password generator",
+      "password creator tool",
+      "password maker online",
+      "cybersecurity tools",
     ],
     features: [
+      "Quick presets for easy selection",
+      "Password types: word-based or character-based",
       "Customizable password length",
       "Multiple character set options",
-      "Word-based memorable passwords",
       "Readable password generation",
       "Instant password creation",
       "Copy to clipboard",
@@ -87,7 +126,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "dockerfile-linter": {
-    title: "Dockerfile Linter – Analyze, Validate and Lint Tool",
+    title: "Dockerfile Linter and Validator | Online Free DevTools",
     name: "Dockerfile Linter",
     path: "/freedevtools/t/dockerfile-linter/",
     description:
@@ -122,11 +161,11 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
   },
   "date-time-converter": {
-    title: "Date Time Converter - Convert UTC, ISO, Unix Timestamps",
+    title: "Date Time Converter | Online Free DevTools",
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
-      "Free online Date Time Converter by Hexmos. Instantly transform UTC, ISO, Unix timestamps, and more formats with no registration required. Paste or pick a date to see all formats at once.",
+      "Free online Date Time Converter by Hexmos. Instantly convert UTC, ISO, Unix timestamps, and more. Paste or pick a date to see all formats at once, no signup needed.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
@@ -137,8 +176,6 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "time converter",
       "timestamp converter",
       "unix timestamp",
-      "iso date",
-      "utc",
       "online date converter",
       "free date converter",
       "timestamp converter online",
@@ -161,6 +198,8 @@ export function getToolByKey(key: string): Tool | undefined {
 }
 
 export function getAllTools(): Tool[] {
+  const keys = Object.keys(TOOLS_CONFIG);
+  console.log("STATIC PATH KEYS:", keys);
   return Object.values(TOOLS_CONFIG);
 }
 
