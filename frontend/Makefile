@@ -1,11 +1,15 @@
-.PHONY: build deploy run clean gen
+.PHONY: build deploy run clean gen banners
 
 # Build the project
 build:
 	npm run build
 
-# Deploy: build first, then rsync to server
-deploy: build 
+# Generate all tool banners
+banners:
+	node scripts/generate-all-banners.cjs || true
+
+# Deploy: generate banners, build, then rsync to server
+deploy: banners build
 	rsync -avzv --progress ./dist/ nats03-do:/tools/
 
 # Run development server
