@@ -1,8 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+const { getToolKeys } = require("./parseToolConfig.cjs");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
-async function runPageSpeedInsights(targetUrl) {
+async function runPageSpeedInsights(
+  targetUrl,
+  isMinimal = false,
+  skipOutput = false
+) {
   // Get API key from environment variable
   const apiKey = process.env.PAGESPEED_API_KEY;
   const BASE_URL = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";
@@ -12,7 +17,7 @@ async function runPageSpeedInsights(targetUrl) {
       "Error: PAGESPEED_API_KEY not found in environment variables"
     );
     console.error("Please add your API key to the .env file");
-    return;
+    return null;
   }
   const url = new URL(BASE_URL);
   url.searchParams.set("url", targetUrl);
@@ -31,23 +36,37 @@ async function runPageSpeedInsights(targetUrl) {
     const json = await response.json();
     const lighthouse = json.lighthouseResult;
 
-    // Simple console output with just the scores
-    console.log("\n===== PERFORMANCE METRICS =====\n");
+    // Display all category scores with colored output if not skipped
+    if (!skipOutput) {
+      // Simple console output with just the scores
+      console.log("\n===== PERFORMANCE METRICS =====\n");
 
-    // Display all category scores
-    for (const category in lighthouse.categories) {
-      const score = lighthouse.categories[category].score * 100;
-      console.log(
-        `${lighthouse.categories[category].title}: ${score.toFixed(1)}%`
-      );
+      for (const category in lighthouse.categories) {
+        const score = lighthouse.categories[category].score * 100;
+        const title = lighthouse.categories[category].title;
+
+        // Color coding: green for good (>=90), yellow for okay (>=70), red for poor (<70)
+        let color = "\x1b[31m"; // Red (poor)
+        if (score >= 90) {
+          color = "\x1b[32m"; // Green (good)
+        } else if (score >= 70) {
+          color = "\x1b[33m"; // Yellow (okay)
+        }
+        const reset = "\x1b[0m"; // Reset color
+
+        console.log(`${color}${title}: ${score.toFixed(1)}%${reset}`);
+      }
     }
 
-    // Generate detailed report file
-    generateDetailedReport(targetUrl, json);
+    // Generate detailed report file only if not in minimal mode
+    if (!isMinimal) {
+      generateDetailedReport(targetUrl, json);
+    }
 
     return json;
   } catch (error) {
     console.error("Error fetching PageSpeed Insights:", error);
+    return null;
   }
 }
 
@@ -222,7 +241,114 @@ function generateDetailedReport(targetUrl, data) {
   console.log(`\nDetailed report saved to: ${reportFileName}`);
 }
 
-// Get the tool path from command line arguments
-const toolPath = process.argv[2] || "dockerfile-linter";
-const targetUrl = `https://hexmos.com/freedevtools/t/${toolPath}/`;
-runPageSpeedInsights(targetUrl);
+// Read the tools configuration
+function getAvailableTools() {
+  try {
+    const toolsFilePath = path.join(
+      __dirname,
+      "..",
+      "src",
+      "config",
+      "tools.ts"
+    );
+    if (!fs.existsSync(toolsFilePath)) {
+      console.warn("Tools configuration file not found:", toolsFilePath);
+      return [];
+    }
+
+    const tsContent = fs.readFileSync(toolsFilePath, "utf8");
+    return getToolKeys(tsContent);
+  } catch (error) {
+    console.error("Error reading tools configuration:", error);
+    return [];
+  }
+}
+
+// Sleep function to prevent rate limiting
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Main function
+async function main() {
+  // Check for flags
+  const isRunAll = process.argv.includes("--all");
+  const isMinimal = process.argv.includes("--minimal");
+
+  // Show appropriate message about report generation
+  if (isMinimal) {
+    console.log("Running in minimal mode - no report files will be created");
+  }
+
+  if (isRunAll) {
+    // Get all tool paths from the configuration
+    const availableTools = getAvailableTools();
+
+    if (availableTools.length === 0) {
+      console.error("No tools found in the configuration");
+      process.exit(1);
+    }
+
+    console.log(
+      `Running PageSpeed Insights for all ${availableTools.length} tools...`
+    );
+
+    // Run PageSpeed Insights for each tool
+    for (let i = 0; i < availableTools.length; i++) {
+      const tool = availableTools[i];
+      const targetUrl = `https://hexmos.com/freedevtools/t/${tool}/`;
+
+      console.log(`\n[${i + 1}/${availableTools.length}] Processing: ${tool}`);
+      await runPageSpeedInsights(targetUrl, isMinimal);
+
+      // Add a delay between requests to prevent rate limiting
+      if (i < availableTools.length - 1) {
+        console.log("Waiting before next request...");
+        await sleep(5000); // 5 second delay
+      }
+    }
+
+    console.log("\nCompleted PageSpeed Insights for all tools!");
+  } else {
+    // Get the tool path from command line arguments
+    // Filter out the --minimal flag if present
+    const args = process.argv.slice(2).filter((arg) => arg !== "--minimal");
+    const toolPath = args[0];
+
+    if (!toolPath) {
+      console.error(
+        "Usage: node pageSpeed.cjs <tool-path> [--all] [--minimal]"
+      );
+      console.error("Example: node pageSpeed.cjs dockerfile-linter");
+      console.error("Or to run for all tools: node pageSpeed.cjs --all");
+      console.error("Add --minimal to skip report generation");
+      process.exit(1);
+    }
+
+    // Validate if the tool exists in configuration
+    const availableTools = getAvailableTools();
+    if (availableTools.length > 0 && !availableTools.includes(toolPath)) {
+      console.warn(
+        `Warning: "${toolPath}" is not found in tools.ts configuration.`
+      );
+      console.warn("Available tools:", availableTools.join(", "));
+      console.warn("Using the tool path anyway, but it might not exist.");
+    }
+
+    const targetUrl = `https://hexmos.com/freedevtools/t/${toolPath}/`;
+    await runPageSpeedInsights(targetUrl, isMinimal);
+  }
+}
+
+// Export functions for use in other modules
+module.exports = {
+  runPageSpeedInsights,
+  getAvailableTools,
+  generateDetailedReport,
+};
+
+// Only run main function if this script is executed directly
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error in main function:", error);
+    process.exit(1);
+  });
+}

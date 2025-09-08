@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed
 
 # Build the project
 build:
@@ -8,9 +8,24 @@ build:
 banners:
 	node scripts/generate-all-banners.cjs || true
 
-# Deploy: generate banners, build, then rsync to server
-deploy: banners build
+# Check PageSpeed scores for all tools
+check-pagespeed:
+	@echo "Checking PageSpeed scores for all tools..."
+	@node scripts/check-pagespeed-thresholds.cjs || (echo "❌ PageSpeed check failed! Some metrics are below the required thresholds." && exit 1)
+
+# Deploy without PageSpeed check
+deploy-no-pagespeed: banners build
+	@echo "⚠️ Skipping PageSpeed check during deployment"
 	rsync -avzv --progress ./dist/ nats03-do:/tools/
+
+# Deploy: check PageSpeed, generate banners, build, then rsync to server
+deploy:
+	@if [ "$(filter --skip-pagespeed,$(MAKEFLAGS))" != "" ]; then \
+		$(MAKE) deploy-no-pagespeed; \
+	else \
+		$(MAKE) check-pagespeed banners build && \
+		rsync -avzv --progress ./dist/ nats03-do:/tools/; \
+	fi
 
 # Run development server
 run:
