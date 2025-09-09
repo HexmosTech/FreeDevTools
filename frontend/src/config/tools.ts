@@ -19,15 +19,15 @@ export interface Tool {
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-utilities": {
     title: "JSON Formatter, Validator and Linter | Online Free DevTools",
-    "name": "JSON Utilities",
-    "path": "/freedevtools/t/json-utilities/",
-    "description":
+    name: "JSON Utilities",
+    path: "/freedevtools/t/json-utilities/",
+    description:
     "Format, validate, and lint JSON online for free with Hexmos Free DevTools. Enjoy multiple indentation options and real-time validation in an ad-free environment.",
     "category": "Developer Tools",
-    "icon": "🧰",
-    "themeColor": "#14b8a6",
-    "canonical": "https://hexmos.com/freedevtools/t/json-utilities/",
-    "keywords": [
+    icon: "🧰",
+    themeColor: "#14b8a6",
+    canonical: "https://hexmos.com/freedevtools/t/json-utilities/",
+    keywords: [
       "json utilities",
       "json tools",
       "json formatter",
@@ -41,7 +41,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "api tools",
       "online json editor"
     ],
-    "features": [
+    features: [
       "Format and beautify JSON",
       "Validate JSON structure",
       "Auto-correct invalid JSON",
@@ -50,8 +50,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Instant error detection",
       "Copy to clipboard"
     ],
-    "ogImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
-    "twitterImage": "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
+    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
   },
   "json-prettifier": {
     title: "JSON Formatter, Validator and Linter | Online Free DevTools",
@@ -78,9 +78,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time validation",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
     "variationOf": "json-utilities"
   },
 
@@ -101,8 +101,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time error messages",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
+    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
     "variationOf": "json-utilities"
   },
 
@@ -123,8 +123,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time feedback",
       "Copy fixed JSON",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
-    twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
+    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
     "variationOf": "json-utilities"
   },
   "password-generator": {
@@ -160,9 +160,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time password strength indicator",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
   },
 
   "dockerfile-linter": {
@@ -196,9 +196,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy results to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
+      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
+      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
   },
   "date-time-converter": {
     title: "Date Time Converter | Online Free DevTools",
@@ -227,9 +227,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
+      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
+      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
   },
 };
 

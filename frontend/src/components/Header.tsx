@@ -12,7 +12,7 @@ const Header: React.FC = () => {
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
             >
               <img
-                src="/freedevtools/t/freedevtool-logo_32.webp"
+                src="/freedevtools/freedevtool-logo_32.webp"
                 alt="Free DevTools Logo"
                 className="w-8 h-8 flex-shrink-0"
               />
@@ -28,7 +28,10 @@ const Header: React.FC = () => {
             </a>
 
             {/* Theme Switcher - ensure it doesn't extend beyond banner edge */}
-            <div className="flex-shrink-0">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <a href="/freedevtools/c" className="text-sm text-slate-800 dark:text-slate-300 hover:text-neon dark:hover:text-neon-light transition-colors">
+                Cheatsheets
+              </a>
               <ThemeSwitcher />
             </div>
           </div>
