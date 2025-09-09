@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env
 
 # Build the project
 build:
@@ -45,6 +45,12 @@ gen:
 		exit 1; \
 	fi
 	node scripts/generateTool.cjs $(tool) 
+
+
+local-env:
+	@echo "PAGESPEED_API_KEY=" > .env
+	@echo "PUBLIC_GA_ID=" >> .env
+	@echo "✅ .env created"
 
 # Convert images to WebP format (usage: make convert-to-webp src=path/to/image.jpg out=path/to/image.webp)
 # Requires: sudo dnf install -y libwebp-tools (Fedora) or sudo apt install -y webp (Debian/Ubuntu)
