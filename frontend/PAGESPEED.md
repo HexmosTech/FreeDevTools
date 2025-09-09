@@ -1,6 +1,7 @@
 # PageSpeed Testing
 
 This document explains the PageSpeed Insights testing functionality integrated into the FreeDevTools.
+
 ## Overview
 
 The PageSpeed testing tools allow you to:
@@ -30,17 +31,16 @@ Once you have your API key, add it to your environment:
 echo "PAGESPEED_API_KEY=your-api-key-here" >> frontend/.env
 ```
 
-
 ## Available Commands
 
 ### NPM Commands
 
-| Command | Description |
-|---------|-------------|
+| Command                         | Description                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
 | `npm run pagespeed <tool-path>` | Run PageSpeed test for a specific tool (e.g., `npm run pagespeed dockerfile-linter`) |
-| `npm run pagespeed:all` | Run PageSpeed tests for all tools defined in `tools.ts` |
-| `npm run pagespeed:minimal` | Run PageSpeed test for a specific tool without generating a detailed report |
-| `npm run pagespeed:all:minimal` | Run PageSpeed tests for all tools without generating detailed reports |
+| `npm run pagespeed:all`         | Run PageSpeed tests for all tools defined in `tools.ts`                              |
+| `npm run pagespeed:minimal`     | Run PageSpeed test for a specific tool without generating a detailed report          |
+| `npm run pagespeed:all:minimal` | Run PageSpeed tests for all tools without generating detailed reports                |
 
 Example usage:
 
@@ -56,11 +56,11 @@ npm run pagespeed:all:minimal
 
 The following make commands are available in `Makefile` for PageSpeed testing:
 
-| Command | Description |
-|---------|-------------|
-| `make check-pagespeed` | Run PageSpeed tests for all tools and verify they meet the minimum thresholds |
-| `make deploy` | Full deployment with PageSpeed checks, banner generation, and build |
-| `make deploy --skip-pagespeed` | Deploy without running PageSpeed checks (useful for quick deployments) |
+| Command                        | Description                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `make check-pagespeed`         | Run PageSpeed tests for all tools and verify they meet the minimum thresholds |
+| `make deploy`                  | Full deployment with PageSpeed checks, banner generation, and build           |
+| `make deploy SKIP_PAGESPEED=1` | Deploy without running PageSpeed checks (useful for quick deployments)        |
 
 Example usage:
 
@@ -72,7 +72,7 @@ make check-pagespeed
 make deploy
 
 # Deploy without PageSpeed validation (skip performance checks)
-make deploy --skip-pagespeed
+make deploy SKIP_PAGESPEED=1
 ```
 
 ## Understanding the Output
@@ -93,6 +93,7 @@ Detailed report saved to: scripts/pageSpeedReport/json-utilities_2025-09-09.txt
 ```
 
 The scores are color-coded:
+
 - Green: Good score (≥90%)
 - Yellow: Average score (≥70%)
 - Red: Poor score (<70%)
@@ -102,6 +103,7 @@ The scores are color-coded:
 Detailed reports are saved to the `scripts/pageSpeedReport/` directory with filenames in the format `<tool-name>_<date>.txt`.
 
 These reports include:
+
 - Summary scores for all categories
 - Core Web Vitals metrics
 - Performance opportunities for improvement

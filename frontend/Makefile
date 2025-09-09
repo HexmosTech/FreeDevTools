@@ -20,7 +20,7 @@ deploy-no-pagespeed: banners build
 
 # Deploy: check PageSpeed, generate banners, build, then rsync to server
 deploy:
-	@if [ "$(filter --skip-pagespeed,$(MAKEFLAGS))" != "" ]; then \
+	@if [ "$(SKIP_PAGESPEED)" = "1" ]; then \
 		$(MAKE) deploy-no-pagespeed; \
 	else \
 		$(MAKE) check-pagespeed banners build && \
