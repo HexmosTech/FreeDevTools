@@ -48,10 +48,17 @@ export async function getCommandsByPlatform(platform: string) {
 
 export async function getCommand(platform: string, commandName: string) {
   try {
-    const commandFile = await import(
-      /* @vite-ignore */
-      `/src/pages/markdown_pages/tldr/${platform}/${commandName}.md`
-    );
+    const commandFiles = import.meta.glob("/src/pages/markdown_pages/**/*.md", {
+      eager: true,
+    });
+
+    const filePath = `/src/pages/markdown_pages/tldr/${platform}/${commandName}.md`;
+    const commandFile = commandFiles[filePath];
+
+    if (!commandFile) {
+      return null;
+    }
+
     return commandFile;
   } catch (error) {
     return null;
