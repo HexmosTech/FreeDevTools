@@ -903,7 +903,7 @@ const DockerfileLinter: React.FC = () => {
       ) : (
         <ToolBody>
           {/* Tool Cards Group */}
-          <ToolCardWrapper className="space-y-0 !space-y-0 grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
+          <ToolCardWrapper className="!space-y-0 grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
             {/* Input Section */}
             <Card className="tool-card-bg">
               <CardHeader>
