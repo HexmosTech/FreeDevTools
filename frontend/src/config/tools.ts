@@ -208,9 +208,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy results to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
   },
   "date-time-converter": {
     title: "Date Time Converter | Online Free DevTools",
@@ -239,9 +239,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
   },
 };
 

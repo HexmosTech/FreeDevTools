@@ -26,6 +26,10 @@ const Header: React.FC = () => {
                 </p>
               </div>
             </a>
+            {/* Theme Switcher - ensure it doesn't extend beyond banner edge */}
+            <div className="flex-shrink-0">
+              <ThemeSwitcher />
+            </div>
           </div>
         </header>
       </div>
