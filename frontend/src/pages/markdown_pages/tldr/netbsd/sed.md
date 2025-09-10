@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sed/"
 description: "Edit text scriptably with SED. Use text substitution for batch editing text files. Free online tool, no registration required."
 category: netbsd
 keywords:
-- text stream editor for NetBSD
-- text substitution using regex
-- batch text editing
-- command-line text processing
-- scripted text transformations in NetBSD
-- pattern matching and replacement
-- in-place file modification with SED
-- global search and replace tool
-- advanced text editing utilities in NetBSD
-- NetBSD text processing automation
+  - text stream editor for NetBSD
+  - text substitution using regex
+  - batch text editing
+  - command-line text processing
+  - scripted text transformations in NetBSD
+  - pattern matching and replacement
+  - in-place file modification with SED
+  - global search and replace tool
+  - advanced text editing utilities in NetBSD
+  - NetBSD text processing automation
 features:
-- perform text substitution with regular expressions in NetBSD
-- execute scripts for complex text transformations on NetBSD
-- delay file opening for optimized text processing
-- use GNU regex extensions for advanced pattern matching on NetBSD
-- modify files in place without temporary copies on NetBSD
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - perform text substitution with regular expressions in NetBSD
+  - execute scripts for complex text transformations on NetBSD
+  - delay file opening for optimized text processing
+  - use GNU regex extensions for advanced pattern matching on NetBSD
+  - modify files in place without temporary copies on NetBSD
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/netbsd/df/"
 description: "Analyze disk space usage with df, a NetBSD command line tool. Monitor filesystem utilization and storage capacity reporting. Free online tool, no registration required."
 category: netbsd
 keywords:
-- disk space usage analysis
-- filesystem utilization monitoring
-- storage capacity reporting
-- netbsd disk usage
-- netbsd df command
-- file system health check
-- directory size information
-- disk usage statistics command
-- netbsd system administration
-- command line disk utility
+  - disk space usage analysis
+  - filesystem utilization monitoring
+  - storage capacity reporting
+  - netbsd disk usage
+  - netbsd df command
+  - file system health check
+  - directory size information
+  - disk usage statistics command
+  - netbsd system administration
+  - command line disk utility
 features:
-- display disk space in human-readable format
-- show disk usage for specific files and directories
-- report inode usage statistics on netbsd
-- display all filesystem information details
-- report disk space usage in different unit sizes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - display disk space in human-readable format
+  - show disk usage for specific files and directories
+  - report inode usage statistics on netbsd
+  - display all filesystem information details
+  - report disk space usage in different unit sizes
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

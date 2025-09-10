@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sockstat/"
 description: "Monitor network sockets on NetBSD with sockstat. Analyze network connections and troubleshoot network issues using socket information. Free online tool, no registration required."
 category: netbsd
 keywords:
-- netbsd network socket monitoring
-- netbsd internet socket information
-- netbsd unix domain socket information
-- network connection analysis netbsd
-- socket listening status netbsd
-- network protocol analysis netbsd
-- netbsd network troubleshooting
-- system administration netbsd
-- network socket statistics netbsd
-- active network connections netbsd
+  - netbsd network socket monitoring
+  - netbsd internet socket information
+  - netbsd unix domain socket information
+  - network connection analysis netbsd
+  - socket listening status netbsd
+  - network protocol analysis netbsd
+  - netbsd network troubleshooting
+  - system administration netbsd
+  - network socket statistics netbsd
+  - active network connections netbsd
 features:
-- Display IPv4 and IPv6 socket connection information
-- List listening and connected sockets on NetBSD
-- Filter sockets by protocol and port on NetBSD
-- Display UNIX domain socket information on NetBSD
-- Show numeric socket output without name resolution on NetBSD
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - Display IPv4 and IPv6 socket connection information
+  - List listening and connected sockets on NetBSD
+  - Filter sockets by protocol and port on NetBSD
+  - Display UNIX domain socket information on NetBSD
+  - Show numeric socket output without name resolution on NetBSD
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

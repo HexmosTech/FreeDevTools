@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/android/pm/"
 description: "List Android app packages and extract application details with Package Manager. Identify system and third-party apps on Android devices. Free online tool, no registration required."
 category: android
 keywords:
-- android package manager
-- adb package management
-- list android applications
-- identify system apps android
-- identify third-party apps android
-- search android apps
-- android apk path
-- android application details
-- android debugging tools
-- android development utilities
+  - android package manager
+  - adb package management
+  - list android applications
+  - identify system apps android
+  - identify third-party apps android
+  - search android apps
+  - android apk path
+  - android application details
+  - android debugging tools
+  - android development utilities
 features:
-- list installed Android app packages
-- filter for system applications
-- filter for third-party applications
-- search app packages by keyword
-- display APK file path for apps
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - list installed Android app packages
+  - filter for system applications
+  - filter for third-party applications
+  - search app packages by keyword
+  - display APK file path for apps
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

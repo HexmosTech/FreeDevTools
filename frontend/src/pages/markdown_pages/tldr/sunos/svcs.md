@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcs/"
 description: "List SunOS services and check their status with the svcs command. Diagnose issues, view logs, and manage dependencies. Free online tool, no registration required."
 category: sunos
 keywords:
-- sunos service management
-- svcs command sunos
-- check sunos service status
-- sunos service troubleshooting
-- list sunos background processes
-- examine sunos service logs
-- view sunos service dependencies
-- diagnose sunos service issues
-- sunos system administration
-- svcs command examples
+  - sunos service management
+  - svcs command sunos
+  - check sunos service status
+  - sunos service troubleshooting
+  - list sunos background processes
+  - examine sunos service logs
+  - view sunos service dependencies
+  - diagnose sunos service issues
+  - sunos system administration
+  - svcs command examples
 features:
-- List all running services on SunOS
-- Identify services that are not running
-- Show detailed information about a specific service
-- Display the location of a service's log file
-- Display the end of a service's log file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - List all running services on SunOS
+  - Identify services that are not running
+  - Show detailed information about a specific service
+  - Display the location of a service's log file
+  - Display the end of a service's log file
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
