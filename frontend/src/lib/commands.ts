@@ -28,7 +28,7 @@ export async function getAllCommands() {
 
     commandsByPlatform[platform].push({
       name: commandName,
-      url: `/freedevtools/t/tldr/${platform}/${commandName}`,
+      url: `/freedevtools/tldr/${platform}/${commandName}`,
       description,
     });
   }

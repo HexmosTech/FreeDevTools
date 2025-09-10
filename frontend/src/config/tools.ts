@@ -243,40 +243,41 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
   },
-  tldr: {
-    title: "TLDR - Command Documentation | Free DevTools",
-    name: "TLDR",
-    path: "/freedevtools/t/tldr/",
-    description:
-      "Comprehensive documentation for command-line tools across different platforms including Linux, macOS, Windows, Android, and more.",
-    category: "Documentation",
-    icon: "📚",
-    themeColor: "#8b5cf6",
-    canonical: "https://hexmos.com/freedevtools/t/tldr/",
-    keywords: [
-      "tldr",
-      "command documentation",
-      "cli commands",
-      "terminal commands",
-      "linux commands",
-      "macos commands",
-      "windows commands",
-      "android commands",
-      "command reference",
-      "developer documentation",
-    ],
-    features: [
-      "Platform-specific command documentation",
-      "Searchable command database",
-      "Syntax examples and usage",
-      "Cross-platform command reference",
-      "Mobile and desktop commands",
-    ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
-    twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
-  },
 };
+
+// tldr: {
+//   title: "TLDR - Command Documentation | Free DevTools",
+//   name: "TLDR",
+//   path: "/freedevtools/tldr/",
+//   description:
+//     "Comprehensive documentation for command-line tools across different platforms including Linux, macOS, Windows, Android, and more.",
+//   category: "Documentation",
+//   icon: "📚",
+//   themeColor: "#8b5cf6",
+//   canonical: "https://hexmos.com/freedevtools/tldr/",
+//   keywords: [
+//     "tldr",
+//     "command documentation",
+//     "cli commands",
+//     "terminal commands",
+//     "linux commands",
+//     "macos commands",
+//     "windows commands",
+//     "android commands",
+//     "command reference",
+//     "developer documentation",
+//   ],
+//   features: [
+//     "Platform-specific command documentation",
+//     "Searchable command database",
+//     "Syntax examples and usage",
+//     "Cross-platform command reference",
+//     "Mobile and desktop commands",
+//   ],
+//   ogImage: "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+//   twitterImage:
+//     "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+// },
 
 export function getToolByKey(key: string): Tool | undefined {
   return TOOLS_CONFIG[key];
