@@ -1,6 +1,6 @@
 // Utility function to get all command markdown files
 export async function getAllCommands() {
-  const commandFiles = import.meta.glob("/src/pages/markdown_pages/**/*.md", {
+  const commandFiles = import.meta.glob("/src/pages/markdown_pages/tldr/**/*.md", {
     eager: true,
   });
 
