@@ -50,7 +50,7 @@ export async function getCommand(platform: string, commandName: string) {
   try {
     const commandFile = await import(
       /* @vite-ignore */
-      `/src/pages/markdown_pages/${platform}/${commandName}.md`
+      `/src/pages/markdown_pages/tldr/${platform}/${commandName}.md`
     );
     return commandFile;
   } catch (error) {
