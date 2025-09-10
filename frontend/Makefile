@@ -16,7 +16,7 @@ check-pagespeed:
 # Deploy without PageSpeed check
 deploy-no-pagespeed: banners build
 	@echo "⚠️ Skipping PageSpeed check during deployment"
-	rsync -avzv --progress ./dist/ nats03-do:/tools/
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ nats03-do:/tools/
 
 # Deploy: check PageSpeed, generate banners, build, then rsync to server
 deploy:
@@ -24,7 +24,7 @@ deploy:
 		$(MAKE) deploy-no-pagespeed; \
 	else \
 		$(MAKE) check-pagespeed banners build && \
-		rsync -avzv --progress ./dist/ nats03-do:/tools/; \
+		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ nats03-do:/tools/; \
 	fi
 
 # Run development server
