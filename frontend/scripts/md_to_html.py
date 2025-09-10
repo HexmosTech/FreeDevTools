@@ -172,9 +172,22 @@ def convert_md_to_html(repo_path, output_folder="html_output"):
                 # Create complete HTML document
                 html_document = create_html_template(final_content, title, language if ext != '.md' else None)
 
-                # Save HTML file
+                # Preserve directory structure in output
+                # Get relative path from repo_path to maintain structure
+                rel_path = os.path.relpath(root, repo_path)
+                
+                # Create output directory structure
+                if rel_path == '.':
+                    # File is in root directory
+                    output_dir = output_folder
+                else:
+                    # File is in a subdirectory
+                    output_dir = os.path.join(output_folder, rel_path)
+                    os.makedirs(output_dir, exist_ok=True)
+
+                # Save HTML file with preserved directory structure
                 html_filename = os.path.splitext(file)[0] + ".html"
-                html_path = os.path.join(output_folder, html_filename)
+                html_path = os.path.join(output_dir, html_filename)
 
                 with open(html_path, "w", encoding="utf-8") as f:
                     f.write(html_document)
