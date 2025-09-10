@@ -11,7 +11,7 @@ export interface Tool {
   features: string[];
   ogImage: string;
   twitterImage: string;
-  variationOf?: string,
+  variationOf?: string;
   datePublished?: string;
   softwareVersion?: string;
 }
@@ -22,8 +22,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "JSON Utilities",
     path: "/freedevtools/t/json-utilities/",
     description:
-    "Format, validate, and lint JSON online for free with Hexmos Free DevTools. Enjoy multiple indentation options and real-time validation in an ad-free environment.",
-    "category": "Developer Tools",
+      "Format, validate, and lint JSON online for free with Hexmos Free DevTools. Enjoy multiple indentation options and real-time validation in an ad-free environment.",
+    category: "Developer Tools",
     icon: "🧰",
     themeColor: "#14b8a6",
     canonical: "https://hexmos.com/freedevtools/t/json-utilities/",
@@ -39,7 +39,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "json corrector",
       "developer tools",
       "api tools",
-      "online json editor"
+      "online json editor",
     ],
     features: [
       "Format and beautify JSON",
@@ -48,10 +48,12 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Multiple indentation options",
       "Real-time validation and feedback",
       "Instant error detection",
-      "Copy to clipboard"
+      "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
-    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
   },
   "json-prettifier": {
     title: "JSON Formatter, Validator and Linter | Online Free DevTools",
@@ -78,10 +80,11 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time validation",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
-    "variationOf": "json-utilities"
+      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+    variationOf: "json-utilities",
   },
 
   "json-validator": {
@@ -94,16 +97,23 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     icon: "✅",
     themeColor: "#f59e0b",
     canonical: "https://hexmos.com/freedevtools/t/json-validator/",
-    keywords: ["json validator", "json check", "validate json", "developer tools"],
+    keywords: [
+      "json validator",
+      "json check",
+      "validate json",
+      "developer tools",
+    ],
     features: [
       "Validate JSON structure",
       "Detect formatting errors",
       "Real-time error messages",
       "Copy to clipboard",
     ],
-    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
-    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
-    "variationOf": "json-utilities"
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+    variationOf: "json-utilities",
   },
 
   "json-fixer": {
@@ -123,9 +133,11 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time feedback",
       "Copy fixed JSON",
     ],
-    ogImage: "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
-    twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
-    "variationOf": "json-utilities"
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+    variationOf: "json-utilities",
   },
   "password-generator": {
     title: "Secure, Strong & Random Password Generator | Online Free Devtools",
@@ -232,6 +244,40 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
   },
 };
+
+// tldr: {
+//   title: "TLDR - Command Documentation | Free DevTools",
+//   name: "TLDR",
+//   path: "/freedevtools/tldr/",
+//   description:
+//     "Comprehensive documentation for command-line tools across different platforms including Linux, macOS, Windows, Android, and more.",
+//   category: "Documentation",
+//   icon: "📚",
+//   themeColor: "#8b5cf6",
+//   canonical: "https://hexmos.com/freedevtools/tldr/",
+//   keywords: [
+//     "tldr",
+//     "command documentation",
+//     "cli commands",
+//     "terminal commands",
+//     "linux commands",
+//     "macos commands",
+//     "windows commands",
+//     "android commands",
+//     "command reference",
+//     "developer documentation",
+//   ],
+//   features: [
+//     "Platform-specific command documentation",
+//     "Searchable command database",
+//     "Syntax examples and usage",
+//     "Cross-platform command reference",
+//     "Mobile and desktop commands",
+//   ],
+//   ogImage: "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+//   twitterImage:
+//     "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+// },
 
 export function getToolByKey(key: string): Tool | undefined {
   return TOOLS_CONFIG[key];

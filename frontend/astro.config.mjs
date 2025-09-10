@@ -6,7 +6,7 @@ import path from "path";
 
 // https://astro.build/config
 export default defineConfig({
-  base: "/freedevtools/",
+  base: "/freedevtools",
   integrations: [react(), tailwind()],
   vite: {
     resolve: {

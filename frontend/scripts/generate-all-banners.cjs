@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { parseToolsConfig } = require("./parseToolConfig.cjs");
 
 const projectRoot = path.resolve(__dirname, "..", "..");
 const frontendDir = path.join(projectRoot, "frontend");
@@ -12,40 +13,20 @@ const screenshotsDirPreferred = path.join(
   "tool-banners",
   "tool-screenshots"
 );
-const screenshotsDirLegacy = path.join(frontendDir, "src", "assets", "tool-screenshots");
-const defaultScreenshotPath = path.join(screenshotsDirPreferred, "ss-default.png");
+const screenshotsDirLegacy = path.join(
+  frontendDir,
+  "src",
+  "assets",
+  "tool-screenshots"
+);
+const defaultScreenshotPath = path.join(
+  screenshotsDirPreferred,
+  "ss-default.png"
+);
 
 const { generateToolBanner, BANNER_CONFIG } = require(
   path.join(__dirname, "tool-banners", "create-tool-banner.cjs")
 );
-
-function parseToolsConfig(tsContent) {
-  const tools = [];
-
-  const objectMatch = tsContent.match(/export const TOOLS_CONFIG:[\s\S]*?=\s*\{([\s\S]*?)\}\s*;/);
-  if (!objectMatch) return tools;
-
-  const body = objectMatch[1];
-
-  // "json-prettifier": { ... name: "JSON Prettifier", ... }
-  const entryRegex = /"([^"]+)"\s*:\s*\{([\s\S]*?)\}/g;
-  let match;
-  while ((match = entryRegex.exec(body)) !== null) {
-    const key = match[1];
-    const block = match[2];
-
-    // Prefer explicit name field (handle quoted or unquoted keys)
-    let nameMatch = block.match(/(?:\bname|\"name\")\s*:\s*"([^"]+)"/);
-    // Fallback to title if name not present (handle quoted or unquoted keys)
-    if (!nameMatch) {
-      nameMatch = block.match(/(?:\btitle|\"title\")\s*:\s*"([^"]+)"/);
-    }
-    const name = nameMatch ? nameMatch[1] : key;
-
-    tools.push({ key, name });
-  }
-  return tools;
-}
 
 async function main() {
   if (!fs.existsSync(toolsFilePath)) {
@@ -57,7 +38,9 @@ async function main() {
     ? BANNER_CONFIG.templatePath
     : path.join(__dirname, "tool-banners", "template.png");
   if (!fs.existsSync(templatePath)) {
-    console.warn(`⚠️ Missing template at ${templatePath}. Skipping banner generation.`);
+    console.warn(
+      `⚠️ Missing template at ${templatePath}. Skipping banner generation.`
+    );
     return;
   }
 
@@ -71,7 +54,10 @@ async function main() {
 
   console.log("\n----- Generating tool banners -----\n");
 
-  if (!fs.existsSync(screenshotsDirPreferred) && !fs.existsSync(screenshotsDirLegacy)) {
+  if (
+    !fs.existsSync(screenshotsDirPreferred) &&
+    !fs.existsSync(screenshotsDirLegacy)
+  ) {
     console.warn(
       `⚠️ Screenshots directory not found: ${screenshotsDirPreferred} (or legacy: ${screenshotsDirLegacy})`
     );
@@ -79,7 +65,10 @@ async function main() {
 
   const missingScreenshots = [];
   for (const { key, name } of tools) {
-    const candidatePreferred = path.join(screenshotsDirPreferred, `ss-${key}.png`);
+    const candidatePreferred = path.join(
+      screenshotsDirPreferred,
+      `ss-${key}.png`
+    );
     const candidateLegacy = path.join(screenshotsDirLegacy, `ss-${key}.png`);
     let screenshotPath = null;
     if (fs.existsSync(candidatePreferred)) {
@@ -92,9 +81,13 @@ async function main() {
       const expectedHint = fs.existsSync(screenshotsDirPreferred)
         ? path.join(screenshotsDirPreferred, `ss-${key}.png`)
         : path.join(screenshotsDirLegacy, `ss-${key}.png`);
-      console.warn(`⚠️ Missing screenshot for '${key}' (expected: ${expectedHint})`);
+      console.warn(
+        `⚠️ Missing screenshot for '${key}' (expected: ${expectedHint})`
+      );
       missingScreenshots.push({ key, path: expectedHint });
-      screenshotPath = fs.existsSync(defaultScreenshotPath) ? defaultScreenshotPath : null;
+      screenshotPath = fs.existsSync(defaultScreenshotPath)
+        ? defaultScreenshotPath
+        : null;
     }
 
     try {
@@ -128,5 +121,3 @@ main().catch((err) => {
   console.error("Unexpected error during banner generation:", err);
   // Do not block deployment
 });
-
-
