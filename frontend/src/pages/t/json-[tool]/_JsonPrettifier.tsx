@@ -1,25 +1,25 @@
+import { useTheme } from "@/components/theme/ThemeContext";
+import { toast } from "@/components/ToastProvider";
+import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useEffect, useRef, useState } from "react";
-import ToolContainer from "../../components/tool/ToolContainer";
-import ToolHead from "../../components/tool/ToolHead";
-import CopyButton from "../../components/ui/copy-button";
-import { toast } from "../../components/ToastProvider";
-import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
-import { useTheme } from "../../components/theme/ThemeContext";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolBody from "@/components/tool/ToolBody";
 import { jsonrepair } from "jsonrepair";
+import React, { useEffect, useRef, useState } from "react";
+import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
 
 // Ace editor
+import { getToolByKey, type Tool } from "@/config/tools";
 import ace from "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-textmate";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
 import workerJsonUrl from "ace-builds/src-noconflict/worker-json?url";
-import { getToolByKey, type Tool } from "@/config/tools";
 ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
 
 const LIGHT_THEME = "ace/theme/textmate";
@@ -103,7 +103,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
       try {
         const JSONEditor = (await import("jsoneditor")).default;
 
-        await import("../../assets/jsoneditor.min.css");
+        await import("../../../assets/jsoneditor.min.css");
 
         // Initialize input editor (code mode for user input)
         if (!inputEditorRef.current) return;
@@ -298,7 +298,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
       {!isClient ? (
         <JsonPrettifierSkeleton />
       ) : (
-        <ToolBody>  
+        <ToolBody>
           {/* Tool Cards Group */}
           <ToolCardWrapper>
             {/* Combined Tool Card */}
@@ -733,7 +733,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       >
                         JSON.org
                       </a>{" "}
-                     Official JSON specification
+                      Official JSON specification
                     </li>
                     <li>
                       <a
