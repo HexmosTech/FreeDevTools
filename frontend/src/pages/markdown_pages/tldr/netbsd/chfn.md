@@ -1,27 +1,29 @@
 ---
-title: chfn
+title: "Change User Info - Update User Data | Free DevTools"
 name: chfn
 path: /freedevtools/tldr/netbsd/chfn
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chfn/"
-description: This command is an alias of `chpass`. View documentation for the original command `tldr chpass`.
+description: "Update user information with chfn command, an alias of chpass, on NetBSD. Modify user details including name, office, and phone numbers. Free online tool, no registration required."
 category: netbsd
 keywords:
-  - change user information
-  - update user account details
-  - modify user's finger information
-  - system administration tool
-  - user management commands
-  - change full name
-  - change office location
-  - change office phone number
-  - change home phone number
-  - alias for chpass command
+- netbsd change user information
+- chfn netbsd user management
+- change user full name netbsd
+- update user account details netbsd
+- modify user finger information netbsd
+- netbsd system administration tool
+- netbsd chpass alias command
+- change office location netbsd
+- change office phone number netbsd
+- change home phone number netbsd
 features:
-  - change user full name
-  - change user office location
-  - change user office phone number
-  - change user home phone number
-  - utilize chpass command functions
+- Modify user's full name using chfn
+- Update user's office location with chfn
+- Change user's office phone number via chfn
+- Alter user's home phone number using chfn
+- Utilize chpass command functions through chfn alias
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

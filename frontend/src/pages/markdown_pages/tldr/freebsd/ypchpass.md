@@ -1,27 +1,29 @@
 ---
-title: ypchpass
+title: "YPCHPASS - Manage NIS Passwords | Free DevTools"
 name: ypchpass
 path: /freedevtools/tldr/freebsd/ypchpass
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ypchpass/"
-description: This command is an alias of `chpass`. View documentation for the original command.
+description: "Manage NIS passwords easily with YPCHPASS. A streamlined interface for updating user credentials in your network information service domain. Free online tool, no registration required."
 category: freebsd
 keywords:
-  - change user password for NIS accounts
-  - NIS password management tool
-  - modify NIS password
-  - password update utility for NIS
-  - network information service administration
-  - user account management in NIS
-  - change password via network
-  - network security administration
-  - NIS domain password control
-  - manage user authentication in NIS
+- NIS password manager
+- FreeBSD NIS password change
+- ypchpass command
+- NIS user authentication
+- network password management
+- ypchpass network security
+- freebsd password control
+- distributed authentication utility
+- ypchpass user management
+- NIS password update
 features:
-  - change user passwords
-  - manage NIS passwords
-  - provide password management
-  - redirect to the chpass command
-  - support network user authentication
+- Change network user passwords.
+- Redirect to the chpass command interface.
+- Simplify NIS password updates.
+- Offer a centralized password management tool.
+- Support network user authentication via NIS.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

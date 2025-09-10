@@ -21,11 +21,110 @@ TWITTER_IMAGE = (
 FRONTMATTER_FILE = "frontmatter.json"
 
 
+def validate_seo_compliance(yaml_content, platform, command_name):
+    """Validate SEO compliance and return issues"""
+    issues = []
+    lines = yaml_content.split("\n")
+
+    for line in lines:
+        line = line.strip()
+
+        # Check title length and format
+        if line.startswith("title:"):
+            title = line.split(":", 1)[1].strip().strip("\"'")
+            if len(title) < 50 or len(title) > 60:
+                issues.append(f"Title length {len(title)} chars (should be 50-60)")
+            if not title.endswith("| Free DevTools"):
+                issues.append("Title missing brand suffix '| Free DevTools'")
+            if not any(
+                word in title.lower()
+                for word in [
+                    "control",
+                    "generate",
+                    "format",
+                    "validate",
+                    "create",
+                    "manage",
+                    "convert",
+                ]
+            ):
+                issues.append("Title missing action word")
+
+        # Check description length and format
+        elif line.startswith("description:"):
+            desc = line.split(":", 1)[1].strip().strip("\"'")
+            if len(desc) < 140 or len(desc) > 160:
+                issues.append(
+                    f"Description length {len(desc)} chars (should be 140-160)"
+                )
+            if not any(
+                phrase in desc.lower()
+                for phrase in [
+                    "free online tool",
+                    "no registration",
+                    "instantly",
+                    "easily",
+                ]
+            ):
+                issues.append("Description missing call-to-action")
+
+    return issues
+
+
+def enhance_seo_keywords(keywords, platform, command_name):
+    """Enhance keywords based on platform and command"""
+    enhanced = []
+
+    # Platform-specific keyword mapping
+    platform_keywords = {
+        "android": ["adb", "android development", "mobile debugging"],
+        "linux": ["linux command", "unix", "terminal", "bash"],
+        "macos": ["macos command", "osx", "terminal", "zsh"],
+        "windows": ["windows command", "powershell", "cmd", "dos"],
+        "freebsd": ["freebsd command", "bsd", "unix"],
+        "ubuntu": ["ubuntu command", "debian", "apt"],
+        "centos": ["centos command", "rhel", "yum"],
+        "fedora": ["fedora command", "dnf", "rpm"],
+        "arch": ["arch command", "pacman", "aur"],
+        "alpine": ["alpine command", "apk", "musl"],
+    }
+
+    # Command-specific keyword mapping
+    command_keywords = {
+        "am": ["activity manager", "android activities", "intent management"],
+        "base64": ["base64 encoding", "data encoding", "text encoding"],
+        "grep": ["text search", "pattern matching", "file search"],
+        "find": ["file search", "directory search", "file location"],
+        "ls": ["directory listing", "file listing", "directory contents"],
+        "ps": ["process management", "running processes", "system processes"],
+        "top": ["system monitoring", "process monitoring", "resource usage"],
+        "kill": ["process termination", "kill process", "stop process"],
+        "chmod": ["file permissions", "permission management", "access control"],
+        "chown": ["file ownership", "ownership management", "user management"],
+    }
+
+    # Add platform-specific keywords
+    if platform in platform_keywords:
+        enhanced.extend(platform_keywords[platform])
+
+    # Add command-specific keywords
+    if command_name in command_keywords:
+        enhanced.extend(command_keywords[command_name])
+
+    # Add existing keywords
+    enhanced.extend(keywords)
+
+    # Remove duplicates and limit to 10
+    return list(dict.fromkeys(enhanced))[:10]
+
+
 def normalize_yaml_format(yaml_content, platform, command_name):
     """Convert array syntax to proper YAML list format and fix path format"""
     lines = yaml_content.split("\n")
     normalized_lines = []
     canonical_added = False
+    keywords_section = False
+    current_keywords = []
 
     i = 0
     while i < len(lines):
@@ -43,9 +142,11 @@ def normalize_yaml_format(yaml_content, platform, command_name):
                 normalized_lines.append("keywords:")
                 for item in items:
                     if item:  # Skip empty items
+                        current_keywords.append(item)
                         normalized_lines.append(f"  - {item}")
             else:
                 normalized_lines.append(line)
+                keywords_section = True
         elif line.startswith("features:") and "[" in line:
             # Extract array content
             array_start = line.find("[")
@@ -81,6 +182,30 @@ def normalize_yaml_format(yaml_content, platform, command_name):
         elif line.startswith("canonical:"):
             # Skip any existing canonical lines from AI
             pass
+        elif keywords_section and line.startswith("- "):
+            # Collect keywords for enhancement
+            current_keywords.append(line[2:].strip())
+            normalized_lines.append(line)
+        elif keywords_section and not line.startswith("- ") and line:
+            # End of keywords section, enhance them
+            if current_keywords:
+                enhanced_keywords = enhance_seo_keywords(
+                    current_keywords, platform, command_name
+                )
+                # Replace the keywords section
+                normalized_lines = [
+                    l for l in normalized_lines if not l.startswith("  - ")
+                ]
+                # Remove the keywords: line
+                normalized_lines = [
+                    l for l in normalized_lines if not l.startswith("keywords:")
+                ]
+                # Add enhanced keywords
+                normalized_lines.append("keywords:")
+                for keyword in enhanced_keywords:
+                    normalized_lines.append(f"  - {keyword}")
+                keywords_section = False
+            normalized_lines.append(line)
         else:
             normalized_lines.append(line)
         i += 1
@@ -105,30 +230,55 @@ def find_markdown_files(root_dir):
 
 
 def send_to_gemini(md_content, platform, command_name):
-    prompt = f"""Generate frontmatter metadata in YAML format for the following markdown content:
+    prompt = f"""Generate SEO-optimized frontmatter metadata in YAML format for the following markdown content:
 
 Platform: {platform}
 Command: {command_name}
 
 {md_content}
 
-Requirements:
+SEO Requirements (CRITICAL):
 - Include: title, name, path, description, category, keywords, features
 - Use proper YAML list format with dashes (-) for keywords and features, NOT array syntax
-- Generate 10 meaningful, descriptive keywords (not single words, but descriptive phrases)
-- Generate 5 specific features that describe what the command can do
-- Keywords should be descriptive phrases like "file management", "system administration", "network operations"
-- Features should be specific capabilities like "create directories", "manage processes", "configure network"
+
+TITLE Requirements:
+- Format: "[Tool Name] - [Primary Function] | Free DevTools"
+- Length: 50-60 characters
+- Primary keyword in first 3 words
+- Use action words like "Control", "Generate", "Format", "Validate", "Create"
+- Include brand "Free DevTools" at the end
+
+DESCRIPTION Requirements:
+- Format: "[Primary keyword action] with [Tool Name]"
+- Length: 140-160 characters
+- Contains primary keyword
+- Contains 1 secondary keyword
+- Has clear call-to-action like "Free online tool, no registration required"
+
+KEYWORDS Requirements:
+- Generate 10 SEO-friendly keywords following formula: [Data/Format Type] + [Action/Tool Type]
+- Primary keyword should be the main search term users type
+- Include platform-specific keywords (e.g., "adb", "android", "linux", "macos")
+- Include tool-specific keywords (e.g., "activity manager", "file converter", "password generator")
+- No generic words like "tool", "helper", "utility"
+- No keyword stuffing - natural distribution
+
+FEATURES Requirements:
+- Generate 5 specific capabilities that describe what the command can do
+- Use action-oriented language
+- Be specific about functionality
+
+OTHER Requirements:
 - Use lowercase for category (use the platform name as category)
 - Path should be in the format "/freedevtools/tldr/{platform}/{command_name}"
 - Do NOT include canonical field - it will be added automatically
 - Return ONLY the YAML content without any code block markers (no ```yaml or ```)
 
 Example format:
-title: {command_name}
+title: "Android Activity Manager - Control App Activities with ADB | Free DevTools"
 name: {command_name}
 path: /freedevtools/tldr/{platform}/{command_name}
-description: Brief description of the command.
+description: "Control Android app activities instantly with ADB Activity Manager. Start activities, manage intents, and debug applications using command line. Free online tool, no registration required."
 category: {platform}
 keywords:
   - descriptive keyword phrase 1
@@ -167,6 +317,12 @@ features:
             generated_text = normalize_yaml_format(
                 generated_text, platform, command_name
             )
+
+            # Validate SEO compliance
+            seo_issues = validate_seo_compliance(generated_text, platform, command_name)
+            if seo_issues:
+                print(f"SEO Issues for {command_name}: {', '.join(seo_issues)}")
+
             return generated_text.strip()
         except Exception as e:
             print("Failed to parse Gemini response:", e)
@@ -247,10 +403,7 @@ def process_file(md_file, base_path, entries):
                     platform = path_parts[i - 1]
                 break
 
-        print(f"Debug: File: {md_file}")
-        print(f"Debug: Relative path: {relative_path}")
-        print(f"Debug: Path parts: {path_parts}")
-        print(f"Debug: Extracted platform: {platform}")
+        print(f"Processing: {md_file} (platform: {platform})")
 
         if already_processed(entries, name, path):
             print(f"Skipping {md_file}, already processed.")
@@ -273,12 +426,19 @@ def main():
         sys.exit(1)
 
     root_dir = sys.argv[1]
+    print(f"Searching for markdown files in: {root_dir}")
     md_files = find_markdown_files(root_dir)
+    print(f"Found {len(md_files)} markdown files")
+
     entries = load_frontmatter()
+    print(f"Loaded {len(entries)} existing entries from frontmatter.json")
 
     for md_file in md_files:
+        print(f"Processing: {md_file}")
         process_file(md_file, root_dir, entries)
 
 
 if __name__ == "__main__":
+    print("Script starting...")
     main()
+    print("Script completed.")

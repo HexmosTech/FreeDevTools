@@ -1,27 +1,29 @@
 ---
-title: chpass
+title: "Change Password - Manage User Passwords | Free DevTools"
 name: chpass
 path: /freedevtools/tldr/netbsd/chpass
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chpass/"
-description: Add or change user database information, including login shell and password.
+description: "Manage user passwords easily with chpass. Update user database information and login shell on NetBSD systems. Free online tool, no registration required."
 category: netbsd
 keywords:
-- user account management
-- change user password
-- modify user login shell
-- system administration tasks
-- manage user database
-- update password file
-- modify user information
-- netbsd user management
+- netbsd user password management
+- change user account password
+- modify login shell netbsd
+- netbsd user database update
+- update password file netbsd
+- manage user information netbsd
+- netbsd system administration
 - configure user environment
-- command line utility
+- update local password netbsd
+- command line user management
 features:
-- set a specific login shell
+- set a specific login shell interactively
 - update user database entries
-- modify password information
-- update local password file
+- modify password information locally
 - change yP password database entry
+- update local password file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

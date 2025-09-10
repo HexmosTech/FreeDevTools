@@ -1,27 +1,29 @@
 ---
-title: cmd
+title: "Android Service Manager - Control Services with CMD | Free DevTools"
 name: cmd
 path: /freedevtools/tldr/android/cmd
 canonical: "https://hexmos.com/freedevtools/tldr/android/cmd/"
-description: Android service manager for interacting with system services.
+description: "Control Android system services easily with CMD service manager. List services, invoke methods, and debug system processes. Free online tool, no registration required."
 category: android
 keywords:
-- android service management
-- inter-process communication
-- system service interaction
-- android debugging tool
-- service manager control
+- android service manager
+- android system service control
+- adb service management
+- inter process communication android
+- android service invocation
+- cmd service interaction
+- android process management
+- android service debugging
+- remote service method calls
 - android system utility
-- accessing android services
-- command line service interface
-- managing android processes
-- troubleshooting android services
 features:
 - list running android services
-- call specific android services
+- invoke specific android services
 - pass arguments to android services
-- interact with system services
-- remotely invoke service methods
+- remotely call service methods
+- interact with system services via command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

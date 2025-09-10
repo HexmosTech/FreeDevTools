@@ -1,27 +1,29 @@
 ---
-title: pkgin
+title: "Manage Packages - Control Software with pkgin | Free DevTools"
 name: pkgin
 path: /freedevtools/tldr/netbsd/pkgin
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/pkgin/"
-description: Manage pkgsrc binary packages on NetBSD.
+description: "Manage pkgsrc binary packages effortlessly with pkgin on NetBSD. Streamline software installation, removal, and upgrades on your system. Free online tool, no registration required."
 category: netbsd
 keywords:
-- package management on NetBSD
-- installing software packages
-- removing software packages
-- upgrading software packages
-- searching for packages
-- listing installed software
-- resolving package dependencies
-- automated package removal
-- binary package management
+- NetBSD package management
+- pkgin package manager
+- install NetBSD packages
+- remove NetBSD packages
+- upgrade NetBSD software
+- NetBSD binary packages
+- pkgsrc package management
+- NetBSD package dependencies
+- pkgin autoremove
 - NetBSD system administration
 features:
-- install software packages
-- remove software packages and dependencies
-- upgrade all installed packages
-- search for specific packages
-- remove orphaned dependencies
+- Install software packages from binary repositories
+- Remove packages and their unused dependencies
+- Upgrade all installed packages to the latest versions
+- Search for packages by name or description
+- Automatically remove orphaned dependencies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

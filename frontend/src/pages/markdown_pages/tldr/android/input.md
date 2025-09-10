@@ -1,27 +1,29 @@
 ---
-title: input
+title: "Android Input - Control Device Input via ADB | Free DevTools"
 name: input
 path: /freedevtools/tldr/android/input
 canonical: "https://hexmos.com/freedevtools/tldr/android/input/"
-description: Send event codes or touchscreen gestures to an Android device using adb shell.
+description: "Control Android device input seamlessly with Android Input command. Simulate taps, swipes, and send key events using adb shell. Free online tool, no registration required."
 category: android
 keywords:
-- android device control
-- simulating user input on android
-- sending key events via adb
-- automating android touchscreen gestures
-- android input command usage
-- controlling android device remotely
-- android device testing and automation
-- sending text input to android device
-- simulating taps and swipes on android
-- android automation scripting
+- android input control
+- adb shell input
+- android device automation
+- simulating user actions on android
+- android tap gesture
+- android swipe gesture
+- send key events android
+- android remote control via adb
+- automating android testing
+- android input keyevent command
 features:
-- send key events to android
-- send text input to android
-- simulate single taps on android
-- simulate swipe gestures on android
-- simulate long presses on android
+- send key events to android devices via adb
+- simulate single and multi-finger taps on android
+- simulate swipe gestures with customizable duration
+- inject text input into android devices
+- automate long press actions on android
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

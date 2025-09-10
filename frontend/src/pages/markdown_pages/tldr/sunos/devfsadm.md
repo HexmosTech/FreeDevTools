@@ -1,27 +1,29 @@
 ---
-title: devfsadm
+title: "Manage Device Filesystem - Control /dev | Free DevTools"
 name: devfsadm
 path: /freedevtools/tldr/sunos/devfsadm
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/devfsadm/"
-description: Administration command for /dev. Maintains the /dev namespace.
+description: "Control /dev filesystem with devfsadm on SunOS. Dynamically manage device nodes, scan for new devices, and clean up dangling links. Free online tool, no registration required."
 category: sunos
 keywords:
 - device filesystem management
+- SunOS device management
+- /dev directory control
 - dynamic device creation
-- /dev directory administration
-- device node management
-- system device configuration
-- hardware discovery and setup
-- operating system device handling
+- device node administration
 - persistent device naming
-- device driver integration
-- hotplug device support
+- hardware discovery SunOS
+- hotplug device configuration
+- system device setup
+- /dev namespace maintenance
 features:
-- scan for new devices
-- cleanup dangling /dev links
-- perform dry-run device management
-- manage disk devices
-- maintain /dev namespace
+- Scan for new device nodes in /dev
+- Clean up dangling symbolic links in /dev
+- Perform dry-run device management operations
+- Manage disk devices within the filesystem
+- Maintain the integrity of the /dev namespace
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

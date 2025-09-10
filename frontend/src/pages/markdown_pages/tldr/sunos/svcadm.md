@@ -1,27 +1,29 @@
 ---
-title: svcadm
+title: "Control SunOS Services - svcadm | Free DevTools"
 name: svcadm
 path: /freedevtools/tldr/sunos/svcadm
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcadm/"
-description: Manipulate service instances in SunOS.
+description: "Control service instances in SunOS with svcadm. Manage service dependencies, enable or disable, and refresh configurations via command line. Free online tool, no registration required."
 category: sunos
 keywords:
-- service management in sunos
-- enable disable services
-- restart running services
-- refresh service configuration
-- clear service maintenance state
-- sunos service administration
-- control system services
-- manage service dependencies
-- administer system daemons
-- service instance control
+- sunos service management
+- svcadm command sunos
+- enable disable sunos services
+- restart sunos services
+- refresh sunos service configuration
+- clear sunos service maintenance
+- sunos system administration
+- manage sunos service dependencies
+- sunos daemon control
+- sunos service instance control
 features:
-- enable service instances
-- disable service instances
-- restart service instances
-- refresh service configurations
-- clear service maintenance flags
+- enable sunos service instances
+- disable sunos service instances
+- restart sunos service instances
+- refresh sunos service configurations
+- clear sunos service maintenance flags
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

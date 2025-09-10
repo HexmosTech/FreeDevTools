@@ -1,27 +1,29 @@
 ---
-title: pm
+title: "Android Package Manager - List Apps | Free DevTools"
 name: pm
 path: /freedevtools/tldr/android/pm
 canonical: "https://hexmos.com/freedevtools/tldr/android/pm/"
-description: Display information about apps on an Android device.
+description: "List Android app packages and extract application details with Package Manager. Identify system and third-party apps on Android devices. Free online tool, no registration required."
 category: android
 keywords:
-- android package management
-- list installed applications
-- identify system applications
-- identify third-party applications
-- search for specific apps
-- retrieve apk file path
-- application package information
-- android application listing
+- android package manager
+- adb package management
+- list android applications
+- identify system apps android
+- identify third-party apps android
+- search android apps
+- android apk path
+- android application details
 - android debugging tools
 - android development utilities
 features:
-- list installed app packages
-- filter system applications
-- filter third-party applications
+- list installed Android app packages
+- filter for system applications
+- filter for third-party applications
 - search app packages by keyword
-- display apk file path for apps
+- display APK file path for apps
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

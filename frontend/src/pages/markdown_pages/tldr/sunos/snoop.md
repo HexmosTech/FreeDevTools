@@ -1,27 +1,29 @@
 ---
-title: snoop
+title: "Capture Network Packets with Snoop | Free DevTools"
 name: snoop
 path: /freedevtools/tldr/sunos/snoop
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/snoop/"
-description: Network packet sniffer for capturing and analyzing network traffic.
+description: "Capture network packets efficiently with Snoop, the SunOS network packet sniffer. Monitor network traffic and analyze data. Free online tool, no registration required."
 category: sunos
 keywords:
 - network packet capture and analysis
-- network traffic monitoring tool
-- capturing data on network interfaces
-- saving captured network data to files
-- verbose protocol layer summary display
-- filtering network packets by hostname and port
-- hexadecimal dump of network packet data
-- debugging network communication issues
-- analyzing network protocols and data
-- sunos network troubleshooting tool
+- sunos network packet sniffer
+- network traffic monitoring on sunos
+- capturing network data on sunos
+- sunos network troubleshooting
+- network packet filtering by port
+- network protocol analysis tool
+- network debugging on sunos
+- hexadecimal packet data display
+- sunos snoop command
 features:
 - capture packets on specific network interfaces
-- save captured packets to a file
-- display verbose protocol layer summary
-- filter packets by hostname and port
+- save captured network packets to a file
+- display verbose protocol layer summaries
+- filter network packets by hostname and port
 - display a hexadecimal dump of network packets
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,29 @@
 ---
-title: logcat
+title: "Android Logcat - Monitor System Logs | Free DevTools"
 name: logcat
 path: /freedevtools/tldr/android/logcat
 canonical: "https://hexmos.com/freedevtools/tldr/android/logcat/"
-description: Dump a log of system messages, including stack traces and information messages.
+description: "Monitor system logs with Android Logcat. Analyze application errors and system events in real-time. Free online tool, no registration required."
 category: android
 keywords:
-- android system logging
-- debugging android applications
-- analyzing application errors
-- monitoring system events
-- inspecting runtime behavior
-- filtering log messages
-- writing logs to file
-- displaying specific process logs
-- examining stack traces
-- troubleshooting android issues
+- android system logs
+- android debugging tool
+- android error analysis
+- adb logcat
+- android system events
+- android runtime behavior
+- android log message filtering
+- android log analysis
+- android stack trace examination
+- android issue troubleshooting
 features:
 - display system logs in real-time
 - write log output to a file
 - filter logs using regular expressions
 - display logs for a specific process ID
 - display logs for a specific package
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

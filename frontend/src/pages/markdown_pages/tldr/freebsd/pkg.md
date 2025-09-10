@@ -1,27 +1,29 @@
 ---
-title: pkg
+title: "Package Manager - Manage FreeBSD Packages | Free DevTools"
 name: pkg
 path: /freedevtools/tldr/freebsd/pkg
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/pkg/"
-description: FreeBSD package manager.
+description: "Manage software packages with pkg, the FreeBSD package manager. Easily install, remove, and update software. Free online resource, no registration required."
 category: freebsd
 keywords:
-- package management in FreeBSD
-- installing software packages
-- removing software packages
-- updating software packages
-- searching for available packages
-- displaying package information
-- managing software dependencies
-- automating package removal
-- system administration tasks
-- software distribution management
+- FreeBSD package management
+- pkg install FreeBSD
+- software package installer
+- package removal FreeBSD
+- FreeBSD package update
+- pkg search command
+- system administration FreeBSD
+- dependency management
+- software deployment FreeBSD
+- binary package manager
 features:
-- install new software packages
-- remove installed software packages
-- upgrade all installed packages
-- search for packages by keyword
-- list all currently installed packages
+- Install new software packages from repositories
+- Remove installed software packages and dependencies
+- Upgrade all installed packages to the latest versions
+- Search for packages by name or keyword
+- Automatically remove orphaned dependencies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

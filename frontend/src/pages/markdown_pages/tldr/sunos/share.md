@@ -1,27 +1,29 @@
 ---
-title: share
+title: "Share Filesystem - Control Network Shares on SunOS | Free DevTools"
 name: share
 path: /freedevtools/tldr/sunos/share
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/share/"
-description: Make local resources/filesystems available for mounting by remote systems.
+description: "Control network shares on SunOS with Share command. Manage NFS exports, set permissions, and make resources available over the network. Free online tool, no registration required."
 category: sunos
 keywords:
-- network file sharing
-- making directories accessible
-- remote filesystem access
-- configuring NFS shares
-- sharing resources over network
-- controlling access to filesystems
-- setting share permissions
-- persistent filesystem sharing
-- system administration tasks
-- managing shared resources
+- network file sharing sunos
+- nfs share configuration
+- sunos filesystem sharing
+- remote filesystem management sunos
+- share command sunos
+- sunos nfs exports
+- controlling network shares sunos
+- persistent network sharing sunos
+- sunos system administration share
+- managing shared resources sunos
 features:
-- share directories with read/write access
-- share directories with read-only access
-- configure share options like root access
-- list currently shared file systems
-- make sharing persistent across reboots
+- share directories with read/write access on SunOS
+- share directories with read-only access on SunOS
+- configure share options for root access
+- list currently shared file systems on SunOS
+- make sharing persistent across reboots using dfstab
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
