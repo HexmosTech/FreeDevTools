@@ -1,3 +1,31 @@
+---
+title: cal
+name: cal
+path: /freedevtools/tldr/netbsd/cal
+canonical: "https://hexmos.com/freedevtools/tldr/netbsd/cal/"
+description: Display a calendar.
+category: netbsd
+keywords:
+- display calendar information
+- show current month calendar
+- show specific year calendar
+- show specific month and year
+- highlight today's date
+- display julian days
+- display surrounding months
+- customize starting day of week
+- adjust calendar context
+- calendar display options
+features:
+- display current month calendar
+- display specific year calendar
+- display specific month and year calendar
+- highlight the current day
+- customize calendar output
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cal
 
 > Display a calendar.

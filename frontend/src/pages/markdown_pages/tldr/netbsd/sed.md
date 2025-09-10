@@ -1,3 +1,31 @@
+---
+title: sed
+name: sed
+path: /freedevtools/tldr/netbsd/sed
+canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sed/"
+description: Edit text in a scriptable manner.
+category: netbsd
+keywords:
+- stream editor for text manipulation
+- text substitution using regular expressions
+- batch editing of text files
+- command line text processing
+- scripted text transformations
+- pattern matching and replacement
+- in-place file modification
+- global search and replace
+- advanced text editing utilities
+- text processing automation tool
+features:
+- perform text substitution with regular expressions
+- execute scripts for complex text transformations
+- delay file opening for optimized processing
+- use GNU regex extensions for advanced pattern matching
+- modify files in place without creating temporary copies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sed
 
 > Edit text in a scriptable manner.

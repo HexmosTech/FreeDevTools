@@ -1,3 +1,31 @@
+---
+title: look
+name: look
+path: /freedevtools/tldr/freebsd/look
+canonical: "https://hexmos.com/freedevtools/tldr/freebsd/look/"
+description: Display lines beginning with a prefix in a sorted file.
+category: freebsd
+keywords:
+- search for prefixes in sorted files
+- find lines matching a given prefix
+- quickly locate entries in a dictionary
+- case insensitive prefix searching
+- alphanumeric prefix searching
+- string termination character specification
+- search in the default words file
+- display lines beginning with a pattern
+- text manipulation and searching
+- accessing word lists and dictionaries
+features:
+- search for lines based on prefix matching
+- perform case-insensitive searches
+- filter searches to alphanumeric characters only
+- customize the string termination character
+- search in the system's default dictionary file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # look
 
 > Display lines beginning with a prefix in a sorted file.

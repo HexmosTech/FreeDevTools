@@ -1,3 +1,31 @@
+---
+title: dumpsys
+name: dumpsys
+path: /freedevtools/tldr/android/dumpsys
+canonical: "https://hexmos.com/freedevtools/tldr/android/dumpsys/"
+description: Get information about Android system services.
+category: android
+keywords:
+- android system diagnostics
+- android service information
+- debugging android applications
+- android system service analysis
+- android performance monitoring
+- analyzing android system behavior
+- inspecting android system internals
+- gathering android system data
+- troubleshooting android issues
+- examining android service states
+features:
+- diagnose android system services
+- list available android services
+- filter diagnostic output by service
+- specify timeout for diagnostic output
+- exclude services from diagnostic output
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dumpsys
 
 > Get information about Android system services.

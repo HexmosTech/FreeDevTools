@@ -1,3 +1,31 @@
+---
+title: settings
+name: settings
+path: /freedevtools/tldr/android/settings
+canonical: "https://hexmos.com/freedevtools/tldr/android/settings/"
+description: Get information about the Android OS settings.
+category: android
+keywords:
+- android system configuration
+- modify system settings
+- retrieve settings values
+- android global settings management
+- android secure settings manipulation
+- android system settings modification
+- airplane mode configuration
+- screen brightness control
+- screensaver settings management
+- android settings namespace interaction
+features:
+- list settings in a namespace
+- get the value of a specific setting
+- set a specific setting value
+- delete a specific setting
+- manage various android system configurations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # settings
 
 > Get information about the Android OS.

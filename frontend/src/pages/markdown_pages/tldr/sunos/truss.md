@@ -1,3 +1,31 @@
+---
+title: truss
+name: truss
+path: /freedevtools/tldr/sunos/truss
+canonical: "https://hexmos.com/freedevtools/tldr/sunos/truss/"
+description: Troubleshooting tool for tracing system calls in SunOS.
+category: sunos
+keywords:
+- system call tracing
+- process monitoring
+- debugging tool
+- application analysis
+- system administration tool
+- fault diagnosis
+- performance analysis
+- troubleshooting system issues
+- monitoring child processes
+- displaying program arguments
+features:
+- trace system calls of a process
+- follow child processes during tracing
+- display arguments and environment variables
+- summarize system call statistics
+- filter output by specific system calls
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # truss
 
 > Troubleshooting tool for tracing system calls.

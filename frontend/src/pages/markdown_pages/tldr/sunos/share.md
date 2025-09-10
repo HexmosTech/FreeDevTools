@@ -1,3 +1,31 @@
+---
+title: share
+name: share
+path: /freedevtools/tldr/sunos/share
+canonical: "https://hexmos.com/freedevtools/tldr/sunos/share/"
+description: Make local resources/filesystems available for mounting by remote systems.
+category: sunos
+keywords:
+- network file sharing
+- making directories accessible
+- remote filesystem access
+- configuring NFS shares
+- sharing resources over network
+- controlling access to filesystems
+- setting share permissions
+- persistent filesystem sharing
+- system administration tasks
+- managing shared resources
+features:
+- share directories with read/write access
+- share directories with read-only access
+- configure share options like root access
+- list currently shared file systems
+- make sharing persistent across reboots
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # share
 
 > Make local resource/filesystem available for mounting by remote systems.

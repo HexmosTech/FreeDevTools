@@ -1,3 +1,31 @@
+---
+title: sockstat
+name: sockstat
+path: /freedevtools/tldr/netbsd/sockstat
+canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sockstat/"
+description: List open Internet or UNIX domain sockets on NetBSD systems.
+category: netbsd
+keywords:
+- network socket monitoring
+- internet socket information
+- unix domain socket information
+- network connection analysis
+- socket listening status
+- network protocol analysis
+- network troubleshooting tool
+- system administration tool
+- network socket statistics
+- active network connections
+features:
+- display IPv4 and IPv6 socket information
+- list listening and connected sockets
+- filter sockets by protocol and port
+- display UNIX domain socket information
+- show numeric output without name resolution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sockstat
 
 > List open Internet or UNIX domain sockets.

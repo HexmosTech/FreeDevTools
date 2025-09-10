@@ -1,3 +1,31 @@
+---
+title: svcadm
+name: svcadm
+path: /freedevtools/tldr/sunos/svcadm
+canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcadm/"
+description: Manipulate service instances in SunOS.
+category: sunos
+keywords:
+- service management in sunos
+- enable disable services
+- restart running services
+- refresh service configuration
+- clear service maintenance state
+- sunos service administration
+- control system services
+- manage service dependencies
+- administer system daemons
+- service instance control
+features:
+- enable service instances
+- disable service instances
+- restart service instances
+- refresh service configurations
+- clear service maintenance flags
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # svcadm
 
 > Manipulate service instances.

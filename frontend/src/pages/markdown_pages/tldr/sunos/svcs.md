@@ -1,3 +1,31 @@
+---
+title: svcs
+name: svcs
+path: /freedevtools/tldr/sunos/svcs
+canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcs/"
+description: List information about running services.
+category: sunos
+keywords:
+- service management in sunos
+- list running services
+- check service status
+- diagnose service issues
+- examine service logs
+- view service dependencies
+- sunos system administration
+- service troubleshooting commands
+- display service configuration
+- manage background processes
+features:
+- list all services and their states
+- identify non-running services
+- show detailed information about a service
+- display the location of a service's log file
+- view the contents of a service's log file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # svcs
 
 > List information about running services.
