@@ -49,7 +49,7 @@ function generateTool(toolKey) {
 
   console.log(`\n🎉 Tool "${toolName}" generated successfully!`);
   console.log(`📁 Location: ${toolDir}`);
-  console.log(`🔗 URL: /freedevtools/${toolKey}/`);
+  console.log(`🔗 URL: /freedevtools/t/${toolKey}/`);
   console.log(`\nNext steps:`);
   console.log(`1. Customize the React component in _${componentName}.tsx`);
   console.log(
@@ -301,7 +301,7 @@ function updateSitemap(toolKey, toolName) {
   const sitemapPath = path.join(__dirname, "..", "public", "sitemap.xml");
   const sitemapContent = fs.readFileSync(sitemapPath, "utf-8");
 
-  const newToolUrl = `https://hexmos.com/freedevtools/${toolKey}/`;
+  const newToolUrl = `https://hexmos.com/freedevtools/t/${toolKey}/`;
   const newToolEntry = `  <url>
     <loc>${newToolUrl}</loc>
     <changefreq>weekly</changefreq>

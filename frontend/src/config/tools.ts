@@ -172,9 +172,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time password strength indicator",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
   },
 
   "dockerfile-linter": {
