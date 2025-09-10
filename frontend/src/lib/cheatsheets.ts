@@ -11,7 +11,7 @@ export type CheatsheetsByCategory = Record<string, Array<CheatsheetItem>>;
 // Get all cheatsheets grouped by category
 export async function getAllCheatsheets(): Promise<CheatsheetsByCategory> {
   const files = import.meta.glob(
-    "/src/pages/markdown_pages/cheatsheets/**/*.md",
+    "/src/pages/html_pages/cheatsheets/**/*.html",
     { eager: true }
   );
 
@@ -21,16 +21,14 @@ export async function getAllCheatsheets(): Promise<CheatsheetsByCategory> {
     const pathParts = path.split("/");
     const category = pathParts[pathParts.length - 2];
     const fileName = pathParts[pathParts.length - 1];
-    const name = fileName.replace(".md", "");
+    const name = fileName.replace(".html", "");
 
     if (!sheetsByCategory[category]) {
       sheetsByCategory[category] = [];
     }
 
-    const description =
-      (file as any).frontmatter?.description ||
-      (file as any).frontmatter?.title ||
-      `Cheatsheet for ${name}`;
+    // For HTML files, we'll use a default description since they don't have frontmatter
+    const description = `Cheatsheet for ${name}`;
 
     sheetsByCategory[category].push({
       name,
@@ -56,9 +54,18 @@ export async function getSheetsByCategory(
 export async function getCheatsheet(category: string, name: string) {
   try {
     const file = await import(
-      /* @vite-ignore */ `/src/pages/markdown_pages/cheatsheets/${category}/${name}.md`
+      /* @vite-ignore */ `/src/pages/html_pages/cheatsheets/${category}/${name}.html?raw`
     );
-    return file as any;
+    const htmlContent = file.default as string;
+    
+    // Extract content from the body tag, removing the outer HTML structure
+    const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    if (bodyMatch) {
+      return bodyMatch[1].trim();
+    }
+    
+    // If no body tag found, return the content as is
+    return htmlContent;
   } catch (error) {
     return null;
   }
