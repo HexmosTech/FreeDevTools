@@ -3,12 +3,12 @@ import ThemeSwitcher from "./theme/ThemeSwitcher";
 
 const Header: React.FC = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50">
+    <div id="common-header" className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-6xl mx-auto px-2 md:px-6 pt-6">
         <header className="bg-neon/1 shadow-sm backdrop-blur-lg rounded-b-lg">
           <div className=" py-1 flex items-center justify-between">
             <a
-              href="/freedevtools/t"
+              href="/freedevtools"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
             >
               <img
