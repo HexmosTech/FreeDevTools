@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useEffect, useState } from "react";
-import ToolContainer from "../../components/tool/ToolContainer";
-import ToolHead from "../../components/tool/ToolHead";
-import CopyButton from "../../components/ui/copy-button";
-import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
-import { toast } from "../../components/ToastProvider";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolHead from "@/components/tool/ToolHead";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import CopyButton from "@/components/ui/copy-button";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useState } from "react";
+import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
 
 // Docker parser functions adapted from dockerparser.js
 const TOKEN_WHITESPACE = /[\t\v\f\r ]+/;
@@ -402,7 +402,7 @@ const DockerfileLinter: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  
+
   // YAML-based rule definitions (converted to JavaScript objects)
   const lineRules: Record<
     string,
@@ -827,7 +827,7 @@ const DockerfileLinter: React.FC = () => {
       toast.info("Analyzing Dockerfile...");
       const analysisResult = lintDockerfile(dockerfileContent);
       setAnalysis(analysisResult);
-      
+
       if (analysisResult.results.length === 0) {
         toast.success("Analysis complete! No issues found.");
       } else {
@@ -901,7 +901,7 @@ const DockerfileLinter: React.FC = () => {
       {!loaded ? (
         <DockerfileLinterSkeleton />
       ) : (
-        <ToolBody>  
+        <ToolBody>
           {/* Tool Cards Group */}
           <ToolCardWrapper className="space-y-0 !space-y-0 grid grid-cols-1 xl:grid-cols-2 gap-6 py-2 md:py-4 lg:py-6">
             {/* Input Section */}
@@ -985,10 +985,10 @@ const DockerfileLinter: React.FC = () => {
                               key={index}
                               className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                             >
-                                                          <div className="flex items-start space-x-3">
-                              <span>
-                                {getLevelIcon(result.level)}
-                              </span>
+                              <div className="flex items-start space-x-3">
+                                <span>
+                                  {getLevelIcon(result.level)}
+                                </span>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
                                     {result.line > 0 && (
@@ -1181,7 +1181,7 @@ const DockerfileLinter: React.FC = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://www.cisecurity.org/benchmark/docker"
                     target="_blank"
@@ -1197,7 +1197,7 @@ const DockerfileLinter: React.FC = () => {
                       </div>
                     </div>
                   </a>
-                  
+
                   <a
                     href="https://csrc.nist.gov/publications/detail/sp/800-190/final"
                     target="_blank"
@@ -1217,7 +1217,7 @@ const DockerfileLinter: React.FC = () => {
               </CardContent>
             </Card>
           </ToolContentCardWrapper>
-        </ToolBody>  
+        </ToolBody>
       )}
     </ToolContainer>
   );
