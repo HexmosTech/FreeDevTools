@@ -26,10 +26,14 @@ export async function getAllCommands() {
       (file as any).frontmatter?.title ||
       `Documentation for ${commandName} command`;
 
+    // Get additional frontmatter data
+    const frontmatter = (file as any).frontmatter || {};
+
     commandsByPlatform[platform].push({
-      name: commandName,
-      url: `/freedevtools/tldr/${platform}/${commandName}`,
+      name: frontmatter.name || commandName,
+      url: frontmatter.path || `/freedevtools/tldr/${platform}/${commandName}`,
       description,
+      category: frontmatter.category,
     });
   }
 

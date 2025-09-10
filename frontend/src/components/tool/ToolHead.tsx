@@ -10,7 +10,7 @@ const ToolHead: React.FC<ToolHeadProps> = ({ name, description }) => {
   return (
     <>
       {/* Ad Banner */}
-      <div className="mb-16 mt-[74px]">
+      <div className="mb-10 mt-10">
         <AdBanner />
       </div>
       <div>

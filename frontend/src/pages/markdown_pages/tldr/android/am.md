@@ -1,3 +1,31 @@
+---
+title: "Activity Manager - Control Android Activities with ADB | Free DevTools"
+name: am
+path: /freedevtools/tldr/android/am
+canonical: "https://hexmos.com/freedevtools/tldr/android/am/"
+description: "Control Android activities instantly with ADB Activity Manager. Start components, manage intents and convert to URIs using command line. Free online tool, no registration required."
+category: android
+keywords:
+  - android activity manager
+  - adb activity control
+  - android intent handling
+  - adb command am
+  - android activity debugging
+  - android package management
+  - adb intent URI conversion
+  - android application control
+  - adb activity launch
+  - android debug bridge am
+features:
+  - Start activities by component name
+  - Manage intents with actions and data
+  - Start activities by matching action and category
+  - Convert intents to URI format
+  - Directly control Android application activities
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # am
 
 > Android activity manager.
