@@ -208,9 +208,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy results to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
   },
   "date-time-converter": {
     title: "Date Time Converter | Online Free DevTools",
@@ -239,9 +239,61 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter.png",
+      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
+  },
+
+  "openai-token-counter": {
+    title: "OpenAI Token Counter | Online Free DevTools",
+    name: "OpenAI Token Counter",
+    path: "/freedevtools/t/openai-token-counter/",
+    description:
+      "Count tokens for OpenAI models like GPT-5, GPT-4, GPT-3.5, and more. Optimize your usage with our free online token counter tool.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/openai-token-counter/",
+    keywords: [
+      "openai-token-counter",
+      "developer tools",
+      "TODO: add more keywords",
+    ],
+    features: [
+      "TODO: Add feature 1",
+      "TODO: Add feature 2",
+      "TODO: Add feature 3",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/openai-token-counter.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/openai-token-counter.png",
+  },
+
+  "anthropic-token-counter": {
+    name: "Anthropic Token Counter",
+    path: "/freedevtools/t/anthropic-token-counter/",
+    description:
+      "Count tokens for Anthropic models like Claude 3, Claude 2, and more. Optimize your usage with our free online token counter tool.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/anthropic-token-counter/",
+    keywords: [
+      "anthropic-token-counter",
+      "developer tools",
+      "TODO: add more keywords",
+    ],
+    features: [
+      "TODO: Add feature 1",
+      "TODO: Add feature 2",
+      "TODO: Add feature 3",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
+    title: "Anthropic Token Counter | Online Free DevTools",
   },
 };
 
