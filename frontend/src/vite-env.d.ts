@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+// Global type declarations for @ aliases
 declare module "@/config/tools" {
   export interface Tool {
     title: string;
@@ -27,29 +28,17 @@ declare module "@/config/tools" {
 }
 
 declare module "@/layouts/BaseLayout.astro" {
-  interface BaseLayoutProps {
-    name: string;
-    title?: string;
-    path?: string;
-    description?: string;
-    canonical?: string;
-    themeColor?: string;
-    keywords?: string[];
-    ogImage?: string;
-    twitterImage?: string;
-    datePublished?: string;
-    softwareVersion?: string;
-    features?: string[];
-    showSidebar?: boolean;
-    showHeader?: boolean;
-    children?: any;
-  }
-
-  const BaseLayout: (props: BaseLayoutProps) => any;
+  const BaseLayout: any;
   export default BaseLayout;
 }
 
 declare module "@/components/*" {
   const component: any;
   export default component;
+}
+
+// Path mapping for @ alias
+declare module "*" {
+  const value: any;
+  export default value;
 }
