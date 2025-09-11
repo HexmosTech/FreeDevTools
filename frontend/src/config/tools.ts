@@ -245,24 +245,29 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "openai-token-counter": {
-    title: "OpenAI Token Counter | Online Free DevTools",
+    title: "OpenAI Token Counter - Count GPT Tokens | Online Free DevTools",
     name: "OpenAI Token Counter",
     path: "/freedevtools/t/openai-token-counter/",
     description:
-      "Count tokens for OpenAI models like GPT-5, GPT-4, GPT-3.5, and more. Optimize your usage with our free online token counter tool.",
+      "Count OpenAI tokens instantly with our free online token counter. Calculate GPT-5, GPT-4, GPT-3.5, o1 tokens.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
     canonical: "https://hexmos.com/freedevtools/t/openai-token-counter/",
     keywords: [
-      "openai-token-counter",
-      "developer tools",
-      "TODO: add more keywords",
+      "openai token counter",
+      "gpt token counter",
+      "openai api token calculator",
+      "gpt-4 token counter",
+      "gpt-5 token counter",
+      "tiktoken counter",
     ],
     features: [
-      "TODO: Add feature 1",
-      "TODO: Add feature 2",
-      "TODO: Add feature 3",
+      "Count tokens for all OpenAI models (GPT-4, GPT-3.5, o1, o3)",
+      "Real-time token calculation using tiktoken",
+      "Support for latest models including GPT-5 and embedding models",
+      "Context limit tracking and usage percentage",
+      "Browser-based processing - your data stays private",
     ],
     ogImage:
       "https://hexmos.com/freedevtools/t/tool-banners/openai-token-counter.png",
@@ -274,26 +279,32 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "Anthropic Token Counter",
     path: "/freedevtools/t/anthropic-token-counter/",
     description:
-      "Count tokens for Anthropic models like Claude 3, Claude 2, and more. Optimize your usage with our free online token counter tool.",
+      "Count Anthropic tokens instantly with our free online Claude token counter. Calculate Claude-3.5, Claude-3, Opus tokens.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
     canonical: "https://hexmos.com/freedevtools/t/anthropic-token-counter/",
     keywords: [
-      "anthropic-token-counter",
-      "developer tools",
-      "TODO: add more keywords",
+      "anthropic token counter",
+      "claude token counter",
+      "anthropic api token calculator",
+      "claude-3 token counter",
+      "claude-4 token counter",
+      "claude token calculator",
     ],
     features: [
-      "TODO: Add feature 1",
-      "TODO: Add feature 2",
-      "TODO: Add feature 3",
+      "Count tokens for all Claude models (Opus, Sonnet, Haiku)",
+      "Real-time token calculation using official Anthropic tokenizers",
+      "Support for latest models including Claude-3.5 and Claude-4",
+      "Context limit tracking and usage percentage calculation",
+      "Browser-based processing - your data stays private",
     ],
     ogImage:
       "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
-    title: "Anthropic Token Counter | Online Free DevTools",
+    title:
+      "Anthropic Token Counter - Count Claude Tokens | Online Free DevTools",
   },
 };
 

@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
@@ -19,6 +20,7 @@ import {
 } from "../../../components/ui/select";
 import ToolBody from "../../../components/tool/ToolBody";
 import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
 import { Tiktoken } from "js-tiktoken";
 
 // OpenAI Models Configuration
@@ -202,13 +204,14 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
     <ToolContainer>
       <ToolHead
         name="OpenAI Token Counter"
-        description="Count tokens accurately for OpenAI GPT models using tiktoken. Get exact token counts for all OpenAI models including GPT-4, GPT-3.5, o1, o3, and embedding models."
+        description="Count tokens accurately for OpenAI GPT models. Get exact token counts for all OpenAI models including GPT-5, GPT-4, GPT-3.5, o1, o3, and embedding models."
       />
 
       {!loaded ? (
         <LlmTokenCounterSkeleton />
       ) : (
         <ToolBody>
+          {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
               <CardContent className="space-y-6 pt-6">
@@ -230,14 +233,11 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="Enter your text to count tokens... 
 
-Try pasting:
-- API prompts
-- Code snippets
-- Long documents
-- Chat messages
-
-Exact token counting using OpenAI's tiktoken.
-All calculations happen locally in your browser."
+                      Try pasting:
+                      - API prompts
+                      - Code snippets
+                      - Long documents
+                      - Chat messages"
                       className="w-full h-48 p-3 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
                     />
                   </div>
@@ -337,6 +337,322 @@ All calculations happen locally in your browser."
               </CardContent>
             </Card>
           </ToolCardWrapper>
+
+          {/* CONTENT CARDS SECTION */}
+          <ToolContentCardWrapper>
+            {/* How OpenAI Models Calculate Tokens - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  How OpenAI Models Calculate Tokens
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    When you use OpenAI's API, the text you send and receive is
+                    broken down into smaller chunks called{" "}
+                    <strong>tokens</strong>. Tokens can be words, parts of
+                    words, or even punctuation. Think of tokens as the building
+                    blocks that the model reads and writes.
+                  </p>
+
+                  <p>
+                    Typically, one token is about{" "}
+                    <strong>four characters</strong> or{" "}
+                    <strong>three-quarters of a word</strong> in English. Before
+                    generating a response, the API counts how many tokens are in
+                    your prompt and the generated output. This helps manage how
+                    much text the model processes and also affects pricing.
+                  </p>
+
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-blue-800 dark:text-blue-200 text-sm">
+                      <strong>💡 Quick Rule:</strong> 1 token ≈ 4 characters ≈
+                      0.75 words in English
+                    </p>
+                  </div>
+
+                  <p>
+                    OpenAI provides a handy tokenizer tool and libraries like{" "}
+                    <strong>Tiktoken</strong> to see how text is split into
+                    tokens, making it easier to estimate usage and costs. Our
+                    tool uses the same Tiktoken library that OpenAI uses
+                    internally for accurate token counting.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Understanding Token Pricing and Context Limits - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Understanding Token Pricing and Context Limits
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    OpenAI charges based on the number of tokens processed,
+                    which includes both your input (prompt) and the model's
+                    output (completion). Different models have different pricing
+                    per token and context limits.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Context Window
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        The maximum number of tokens (input + output) a model
+                        can process in a single request. Newer models have
+                        larger context windows.
+                      </p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Token Pricing
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Input tokens are typically cheaper than output tokens.
+                        More capable models cost more per token.
+                      </p>
+                    </div>
+                  </div>
+
+                  <p>
+                    Use our token counter to estimate costs before making API
+                    calls and to ensure your prompts fit within the model's
+                    context limits.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tiktoken Library and Technical Implementation - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Tiktoken Library and Technical Implementation
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    <strong>Tiktoken</strong> is OpenAI's official tokenizer
+                    library that provides exact token counting for all OpenAI
+                    models. Our tool uses the JavaScript version of Tiktoken to
+                    provide accurate, real-time token counting directly in your
+                    browser.
+                  </p>
+
+                  <div className="bg-slate-100 dark:bg-slate-700 rounded p-4 font-mono text-sm">
+                    <div className="text-slate-600 dark:text-slate-400 mb-2">
+                      // Example tokenization process
+                    </div>
+                    <div className="text-slate-800 dark:text-slate-200">
+                      Text: "Hello, world!"
+                      <br />
+                      Tokens: ["Hello", ",", " world", "!"]
+                      <br />
+                      Count: 4 tokens
+                    </div>
+                  </div>
+
+                  <p>
+                    Each OpenAI model uses a specific encoding scheme. Our tool
+                    automatically selects the correct tokenizer for your chosen
+                    model, ensuring 100% accuracy with OpenAI's billing and API
+                    behavior.
+                  </p>
+
+                  <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                    <p className="text-green-800 dark:text-green-200 text-sm">
+                      <strong>🔒 Privacy Note:</strong> All tokenization happens
+                      locally in your browser. Your text never leaves your
+                      device.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Optimization Tips for Token Usage - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Optimization Tips for Token Usage
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    Efficiently managing your token usage can significantly
+                    reduce API costs and improve response times. Here are proven
+                    strategies for token optimization:
+                  </p>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        Prompt Optimization
+                      </h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Use concise, clear language</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Remove unnecessary words and filler</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Use abbreviations where appropriate</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Structure prompts with bullet points</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        Response Management
+                      </h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          <span>Set appropriate max_tokens limits</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          <span>Use stop sequences to control output</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          <span>Choose the right model for your task</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          <span>Cache common responses when possible</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <p>
+                    Remember: Using a more capable model efficiently is often
+                    more cost-effective than using a cheaper model
+                    inefficiently.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Official Resources and Tools - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Official OpenAI Resources and Tools
+                </CardTitle>
+                <CardDescription>
+                  Explore OpenAI's official documentation and interactive tools
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3">
+                  <a
+                    href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                        📖
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        OpenAI Official Token Guide
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Comprehensive guide on what tokens are and how to count
+                        them
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://platform.openai.com/tokenizer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                      <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                        🛠️
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-green-600 dark:group-hover:text-green-400">
+                        Interactive Tokenizer Demo
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        OpenAI's official web-based tokenizer tool
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://github.com/openai/tiktoken"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-600 dark:text-purple-400 font-semibold text-sm">
+                        ⚡
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                        Tiktoken Library
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Official tokenizer library source code and documentation
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://platform.openai.com/docs/guides/text-generation"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                      <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">
+                        🎯
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">
+                        Text Generation Guide
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Best practices for working with OpenAI's text generation
+                        models
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </ToolContentCardWrapper>
         </ToolBody>
       )}
     </ToolContainer>
