@@ -376,6 +376,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "jwt-parser": {
+    title: "JWT Parser - Decode JSON Web Tokens Online | Free DevTools",
+    name: "JWT Parser",
+    path: "/freedevtools/t/jwt-parser/",
+    description:
+      "Parse and decode JWT tokens instantly with our free online JWT parser. Decode header, payload, and signature from JSON Web Tokens with real-time validation. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "🔐",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/jwt-parser/",
+    keywords: [
+      "jwt parser",
+      "jwt decoder",
+      "json web token parser",
+      "decode jwt online",
+      "jwt token decoder",
+      "free jwt parser",
+      "online jwt decoder",
+      "jwt validation tool",
+    ],
+    features: [
+      "Parse JWT tokens instantly with real-time decoding",
+      "Decode header, payload, and signature sections separately",
+      "Real-time JWT validation and error detection",
+      "Sample JWT tokens for testing and learning",
+      "Copy decoded sections to clipboard individually",
+      "Browser-based processing - tokens never leave your device",
+      "Support for all JWT algorithms and formats",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/jwt-parser-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/jwt-parser-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
