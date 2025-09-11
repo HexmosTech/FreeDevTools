@@ -306,6 +306,39 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     title:
       "Anthropic Token Counter - Count Claude Tokens | Online Free DevTools",
   },
+
+  "json-to-csv-converter": {
+    title: "JSON to CSV Converter - Transform JSON Data | Online Free DevTools",
+    name: "Json To Csv Converter",
+    path: "/freedevtools/t/json-to-csv-converter/",
+    description:
+      "Convert JSON data to CSV format instantly. Transform arrays of objects to spreadsheet-ready CSV files with real-time preview and advanced formatting options.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/json-to-csv-converter/",
+    keywords: [
+      "json-to-csv-converter",
+      "developer tools",
+      "csv converter",
+      "json converter",
+      "data transformation",
+      "json to spreadsheet",
+    ],
+    features: [
+      "Real-time JSON to CSV conversion",
+      "Flatten nested JSON objects",
+      "Download CSV files instantly",
+      "Handle arrays and single objects",
+      "Empty field customization",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+  },
 };
 
 // tldr: {
