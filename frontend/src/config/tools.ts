@@ -249,7 +249,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "OpenAI Token Counter",
     path: "/freedevtools/t/openai-token-counter/",
     description:
-      "Count OpenAI tokens instantly with our free token counter. Calculate GPT-5, GPT-4, GPT-3.5, o1 tokens. Optimize API usage, no registration required.",
+      "Count OpenAI tokens instantly with our free online token counter. Calculate GPT-5, GPT-4, GPT-3.5, o1 tokens.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
@@ -279,7 +279,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     name: "Anthropic Token Counter",
     path: "/freedevtools/t/anthropic-token-counter/",
     description:
-      "Count Anthropic tokens instantly with our free online Claude token counter. Calculate Claude-3.5, Claude-3, Opus tokens. No registration required.",
+      "Count Anthropic tokens instantly with our free online Claude token counter. Calculate Claude-3.5, Claude-3, Opus tokens.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
@@ -297,7 +297,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time token calculation using official Anthropic tokenizers",
       "Support for latest models including Claude-3.5 and Claude-4",
       "Context limit tracking and usage percentage calculation",
-      "Browser-based processing - your data stays private"
+      "Browser-based processing - your data stays private",
     ],
     ogImage:
       "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
