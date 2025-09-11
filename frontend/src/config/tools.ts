@@ -339,6 +339,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
   },
+
+  "image-to-base64": {
+    title:
+      "Image to Base64 Converter - Encode Images Instantly | Free DevTools",
+    name: "Image To Base64",
+    path: "/freedevtools/t/image-to-base64/",
+    description:
+      "Convert images to Base64 format instantly with our free online converter. Upload PNG, JPG, GIF, WebP images and get Base64 string, HTML img tag, CSS background code. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "🖼️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/image-to-base64/",
+    keywords: [
+      "image to base64 converter",
+      "base64 image encoder",
+      "convert image to base64",
+      "base64 image generator",
+      "online image encoder",
+      "image data uri converter",
+      "png to base64",
+      "jpg to base64",
+    ],
+    features: [
+      "Convert images to Base64 format instantly",
+      "Support for PNG, JPG, GIF, WebP, SVG formats",
+      "Generate HTML img tags and CSS background code",
+      "Drag-and-drop file upload interface",
+      "Browser-based processing - no server uploads",
+      "Real-time conversion with copy functionality",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/tool-banners/image-to-base64-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/tool-banners/image-to-base64-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
