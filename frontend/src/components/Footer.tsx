@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col space-y-3">
             <div className="flex flex-col md:flex-row gap-4 md:gap-8">
               <a
-                href="https://livereview.dev"
+                href="https://hexmos.com/livereview/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
                 LiveReview
               </a>
               <a
-                href="https://blog.hexmos.com"
+                href="https://journal.hexmos.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
           <div className="flex items-center space-x-4">
             <span className="text-slate-600 dark:text-slate-400">Follow us:</span>
             <a
-              href="https://github.com/hexmos"
+              href="https://github.com/HexmosTech/FreeDevTools"
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200"
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
               </svg>
             </a>
             <a
-              href="https://linkedin.com/company/hexmos"
+              href="https://www.linkedin.com/company/hexmos"
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200"
