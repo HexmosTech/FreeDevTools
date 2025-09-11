@@ -18,8 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import ToolBody from "../../../components/tool/ToolBody";
-import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
+import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
 import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
 
 // Anthropic Models Configuration
