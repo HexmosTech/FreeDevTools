@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serialization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Serialization</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content"><h3>Serialization</h3>
+<p>Serializers allow complex data like querysets and model instances to be converted to native Python datatypes that can then be easily rendered into JSON, XML, and other formats.</p>
+<h4>Using ModelSerializer class:</h4>
+<p>Suppose we wanted to create a PostSerializer for our example <a href="#base-example-model">Post</a> model and CommentSerializer for our <a href="#base-example-model">Comment</a> model.</p>
+<pre class="codehilite"><code class="language-python">class PostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'text', 'created')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('post', 'user', 'text')
+</code></pre>
+
+<p>Or you can also use <code>exclude</code> to exclude certain fields from being seialized. ModelSerializer has default implementations for the <code>create()</code> and <code>update()</code> methods.</p>
+<h5>Nested Serialization</h5>
+<p>By default, instances are serialized with primary keys to represent relationships. To get nested serialization we could use, <em>General</em> or <em>Explicit</em> methods.</p>
+<h6>General</h6>
+<p>Using <code>depth</code> parameter.</p>
+<pre class="codehilite"><code class="language-python">class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        depth = 2
+</code></pre>
+
+<h6>Explicit</h6>
+<p>You can also define and nest serializers within eachother...</p>
+<pre class="codehilite"><code class="language-python">class CommentSerializer(serializers.ModelSerializer):
+    post = PostSerializer()
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+</code></pre>
+
+<p>So here, the comment's <code>post</code> field (how we named it in models.py) will serialize however we defined it in <code>PostSerializer</code>.</p>
+<h4>HyperlinkedModelSerializer</h4>
+<p>This makes your web API a lot more easy to use (in browser) and would be a nice feature to add.</p>
+<p>Lets say we wanted to see the comments that every post has in each of the <a href="#base-example-model">Post</a> instances of our API. With <code>HyperlinkedModelSerializer</code>, instead of having nested primary keys or nested fields, we get a link to each individual <a href="#base-example-model">Comment</a> (url).</p>
+<pre class="codehilite"><code class="language-python">class PostSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'text', 'created', 'comments')
+        read_only_fields = ('comments',)
+</code></pre>
+
+<p><strong>Note:</strong> without the <code>read_only_fields</code>, the <code>create</code> form for Posts would always require a <code>comments</code> input, which doesn't make sense (comments on a post are normally made AFTER the post is created).</p>
+<p>Another way of hyperlinking is just adding a <code>HyperlinkedRelatedField</code> definition to a normal serializer.</p>
+<pre class="codehilite"><code class="language-python">class PostSerializer(serializers.ModelSerializer):
+    comments = serializers.HyperlinkedRelatedField(many=True, view_name='comment-detail', read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'text', 'created', 'comments')
+</code></pre>
+
+<h4>Dynamically modifying fields in serializer</h4>
+<p>This makes your API easier for extracting a limited number of parameters in a response. Let's say you want to set which fields should be used by a serializer at the point of initialization.</p>
+<p>Just copy below code and paste it in your serliazer file</p>
+<pre class="codehilite"><code class="language-python">class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        fields = kwargs.pop('fields', None)
+
+        # Instantiate the superclass normally
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+</code></pre>
+
+<p>Extend <code>DynamicFieldsModelSerializer</code> from your serializer class</p>
+<pre class="codehilite"><code class="language-python">class UserSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
+</code></pre>
+
+<p>Mention the fields name inside <code>fields</code></p>
+<pre class="codehilite"><code class="language-python">UserSerializer(user, fields=('id', 'email'))
+</code></pre>
+
+<p>Here, you will get only <code>id</code>and <code>email</code> from serializer instead of all.</p>
+<p><a href="#drf-cheat-sheet">Back to Top ↑</a></p>
+<p><br/></p></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
