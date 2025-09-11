@@ -6,7 +6,10 @@ import ToolContainer from "../../../components/tool/ToolContainer";
 import ToolHead from "../../../components/tool/ToolHead";
 import {
   Card,
-  CardContent
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "../../../components/ui/card";
 import {
   Select,
@@ -15,7 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
+import ToolBody from "../../../components/tool/ToolBody";
+import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
 
 // Anthropic Models Configuration
 const ANTHROPIC_MODELS = {
@@ -182,13 +187,14 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
     <ToolContainer>
       <ToolHead
         name="Anthropic Token Counter"
-        description="Count tokens accurately for Anthropic Claude models using official tokenizers. Get exact token counts for all Claude models from Opus to Haiku variants."
+        description="Count tokens accurately for Anthropic Claude models. Get exact token counts for all Claude models from Opus to Haiku variants."
       />
 
       {!loaded ? (
         <AnthropicTokenCounterSkeleton />
       ) : (
         <ToolBody>
+          {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
               <CardContent className="space-y-6 pt-6">
@@ -209,15 +215,13 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="Enter your text to count tokens... 
-
 Try pasting:
-- API prompts
-- Code snippets
-- Long documents
-- Chat messages
+  - API prompts
+  - Code snippets
+  - Long documents
+  - Chat messages
 
-Exact token counting using Anthropic's official tokenizer.
-All calculations happen locally in your browser."
+                      All calculations happen locally in your browser."
                       className="w-full h-48 p-3 border border-slate-300 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
                     />
                   </div>
@@ -319,6 +323,314 @@ All calculations happen locally in your browser."
               </CardContent>
             </Card>
           </ToolCardWrapper>
+
+          {/* CONTENT CARDS SECTION */}
+          <ToolContentCardWrapper>
+            {/* How Claude Models Calculate Tokens - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  How Claude Models Calculate Tokens
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    Anthropic's Claude models use a sophisticated tokenization
+                    process to break down text into manageable units called{" "}
+                    <strong>tokens</strong>. Unlike simple word-based splitting,
+                    tokens can represent complete words, parts of words,
+                    punctuation marks, or even special characters.
+                  </p>
+
+                  <p>
+                    Claude's tokenizer is designed to efficiently handle diverse
+                    content types, from natural language conversations to
+                    complex code snippets. Each token serves as a fundamental
+                    unit that the model processes, influencing both{" "}
+                    <strong>API costs</strong> and{" "}
+                    <strong>context limitations</strong>.
+                  </p>
+
+                  <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <p className="text-purple-800 dark:text-purple-200 text-sm">
+                      <strong>💡 Claude Advantage:</strong> Claude's tokenizer
+                      is optimized for longer contexts and maintains consistent
+                      performance across different languages and content types.
+                    </p>
+                  </div>
+
+                  <p>
+                    Our tool uses the same tokenization approach as Anthropic's
+                    API, ensuring that your token counts exactly match what
+                    you'll be charged for when using Claude through the official
+                    API.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Understanding Claude Pricing and Context Windows - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Understanding Claude Pricing and Context Windows
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    Anthropic's pricing model is based on tokens consumed, with
+                    separate rates for input and output tokens. Claude models
+                    offer some of the largest context windows in the industry,
+                    allowing for extensive conversations and document analysis.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Claude 3 Haiku
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Fastest model with 200K context window. Ideal for quick
+                        responses and high-frequency tasks.
+                      </p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Claude 3.5 Sonnet
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Balanced performance and speed with 200K context. Great
+                        for most applications.
+                      </p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Claude 3 Opus
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Most capable model with 200K context. Best for complex
+                        reasoning and analysis.
+                      </p>
+                    </div>
+                  </div>
+
+                  <p>
+                    Use our token counter to estimate costs and ensure your
+                    prompts and documents fit comfortably within Claude's
+                    generous context limits.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Optimization Strategies for Claude Usage - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Optimization Strategies for Claude Usage
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
+                  <p>
+                    Maximizing efficiency with Claude requires understanding how
+                    to leverage its strengths while managing token consumption.
+                    Here are proven strategies for optimal Claude usage:
+                  </p>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        Context Management
+                      </h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">•</span>
+                          <span>
+                            Leverage Claude's large context window for
+                            comprehensive documents
+                          </span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">•</span>
+                          <span>
+                            Include relevant context in single requests vs.
+                            multiple calls
+                          </span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">•</span>
+                          <span>
+                            Use structured prompts with clear sections
+                          </span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">•</span>
+                          <span>
+                            Maintain conversation history for coherent
+                            interactions
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        Model Selection
+                      </h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Use Haiku for simple, high-volume tasks</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Choose Sonnet for balanced performance</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Reserve Opus for complex reasoning tasks</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span>Consider cost vs. quality trade-offs</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <p>
+                    <strong>Pro Tip:</strong> Claude's excellent instruction
+                    following means you can often achieve better results with
+                    clearer prompts rather than longer ones, leading to both
+                    cost savings and improved responses.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Official Anthropic Resources and Documentation - Content Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-slate-700 dark:text-slate-300">
+                  Official Anthropic Resources and Documentation
+                </CardTitle>
+                <CardDescription>
+                  Explore Anthropic's official guides and developer resources
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3">
+                  <a
+                    href="https://docs.anthropic.com/claude/docs/intro-to-claude"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-600 dark:text-purple-400 font-semibold text-sm">
+                        📖
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                        Introduction to Claude
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Official guide to Claude's capabilities and best
+                        practices
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://docs.anthropic.com/claude/docs/models-overview"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                        🤖
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        Models Overview
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Compare Claude models and their capabilities
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://docs.anthropic.com/claude/docs/prompt-engineering"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                      <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                        ✨
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-green-600 dark:group-hover:text-green-400">
+                        Prompt Engineering Guide
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Learn how to write effective prompts for Claude
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://console.anthropic.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                      <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">
+                        🚀
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">
+                        Anthropic Console
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Try Claude directly in Anthropic's web interface
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://docs.anthropic.com/claude/reference/getting-started-with-the-api"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                      <span className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
+                        ⚡
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                        API Documentation
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Technical reference for integrating Claude API
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </ToolContentCardWrapper>
         </ToolBody>
       )}
     </ToolContainer>
