@@ -53,11 +53,19 @@ export async function getSheetsByCategory(
 
 export async function getCheatsheet(category: string, name: string) {
   try {
-    const file = await import(
-      /* @vite-ignore */ `/src/pages/html_pages/cheatsheets/${category}/${name}.html?raw`
-    );
-    const htmlContent = file.default as string;
+    // Preload all cheatsheet HTML files as raw strings at build-time
+    const rawFiles = import.meta.glob(
+      "/src/pages/html_pages/cheatsheets/**/*.html",
+      { eager: true, as: "raw" }
+    ) as Record<string, string>;
+
+    const filePath = `/src/pages/html_pages/cheatsheets/${category}/${name}.html`;
+    const htmlContent = rawFiles[filePath];
     
+    if (!htmlContent) {
+      return null;
+    }
+
     // Extract content from the body tag, removing the outer HTML structure
     const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
     if (bodyMatch) {
