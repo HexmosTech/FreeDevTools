@@ -1,3 +1,31 @@
+---
+title: "Disk Space Usage - Analyze Filesystem with df | Free DevTools"
+name: df
+path: /freedevtools/tldr/freebsd/df
+canonical: "https://hexmos.com/freedevtools/tldr/freebsd/df/"
+description: "Analyze filesystem disk space usage with the df command.  View detailed information on free and used space, including filesystem types and inodes. Free online tool, no registration required."
+category: freebsd
+keywords:
+  - disk space analyzer
+  - filesystem analysis command
+  - df command usage
+  - linux df command
+  - unix df command
+  - file system space checker
+  - disk usage monitor
+  - filesystem information
+  - command line disk space
+  - view disk usage
+features:
+  - Display total disk space usage for all filesystems.
+  - Show disk space usage in human-readable units (KB, MB, GB).
+  - Filter disk usage information for a specific file or directory.
+  - Provide detailed statistics on inodes (free and used).
+  - Display filesystem types alongside usage information.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # df
 
 > Display an overview of the filesystem disk space usage.
