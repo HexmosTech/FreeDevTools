@@ -560,6 +560,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "rgb-to-hex": {
+    title: "RGB to HEX Converter - Convert RGB Colors Online | Free DevTools",
+    name: "RGB to HEX Converter",
+    path: "/freedevtools/t/rgb-to-hex/",
+    description:
+      "Convert RGB color values to HEX format instantly with our free online RGB to HEX converter. Transform red, green, blue values to hexadecimal color codes with real-time preview and multiple format outputs.",
+    category: "Developer Tools",
+    icon: "🎨",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/rgb-to-hex/",
+    keywords: [
+      "rgb to hex converter",
+      "rgb hex converter",
+      "convert rgb to hex",
+      "color converter online",
+      "rgb to hexadecimal",
+      "css color converter",
+      "rgb hex color tool",
+      "hex color generator",
+    ],
+    features: [
+      "Real-time RGB to HEX conversion",
+      "Interactive color preview",
+      "Multiple format outputs (CSS, HSL, Swift, Android)",
+      "Bidirectional conversion (RGB ↔ HEX)",
+      "Copy to clipboard functionality",
+      "Mobile development color codes",
+      "Browser-based processing - no server uploads",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
