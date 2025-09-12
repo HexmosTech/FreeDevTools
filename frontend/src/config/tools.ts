@@ -486,6 +486,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "svg-viewer": {
+    title: "SVG Viewer - View & Analyze SVG Files Online | Free DevTools",
+    name: "SVG Viewer",
+    path: "/freedevtools/t/svg-viewer/",
+    description:
+      "View and analyze SVG files instantly with our free online SVG viewer. Upload SVG files or paste SVG code to visualize, edit, and download. Real-time preview with dimension analysis.",
+    category: "Developer Tools",
+    icon: "�️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/svg-viewer/",
+    keywords: [
+      "svg viewer",
+      "svg file viewer",
+      "view svg online",
+      "svg preview tool",
+      "svg analyzer",
+      "svg code viewer",
+      "online svg editor",
+      "svg dimension checker",
+    ],
+    features: [
+      "Upload SVG files or paste SVG code directly",
+      "Real-time SVG preview and rendering",
+      "SVG dimension and file size analysis",
+      "Download processed SVG files",
+      "Fullscreen preview mode",
+      "Browser-based processing - data stays private",
+      "Support for all SVG elements and attributes",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
