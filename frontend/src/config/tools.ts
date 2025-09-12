@@ -413,6 +413,42 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "yaml-to-json": {
+    title: "YAML to JSON Converter - Transform YAML Online | Free DevTools",
+    name: "YAML to JSON Converter",
+    path: "/freedevtools/t/yaml-to-json/",
+    description:
+      "Convert YAML to JSON format instantly with our free online converter. Transform YAML configuration files to JSON with real-time validation and formatting. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/yaml-to-json/",
+    keywords: [
+      "yaml to json converter",
+      "convert yaml to json online",
+      "yaml json converter free",
+      "yaml to json online tool",
+      "transform yaml data json",
+      "yaml configuration converter",
+      "online yaml parser",
+    ],
+    features: [
+      "Real-time YAML to JSON conversion",
+      "Support for multi-document YAML files",
+      "Comprehensive error handling and validation",
+      "Sample YAML data for testing",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+      "Support for all YAML syntax features",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
