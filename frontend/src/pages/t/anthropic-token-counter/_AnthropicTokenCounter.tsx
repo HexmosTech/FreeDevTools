@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from "../../../components/ToastProvider";
-import ToolBody from "../../../components/tool/ToolBody";
-import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
-import ToolContainer from "../../../components/tool/ToolContainer";
-import ToolHead from "../../../components/tool/ToolHead";
+import { toast } from "@/components/ToastProvider";
+import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolHead from "@/components/tool/ToolHead";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "@/components/ui/select";
 import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
-import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 
 // Anthropic Models Configuration
 const ANTHROPIC_MODELS = {

@@ -1,26 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "../../../components/tool/ToolContainer";
-import ToolHead from "../../../components/tool/ToolHead";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolHead from "@/components/tool/ToolHead";
 import LlmTokenCounterSkeleton from "./_OpenaiTokenCounterSkeleton";
-import { toast } from "../../../components/ToastProvider";
-import { Button } from "../../../components/ui/button";
+import { toast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
-import ToolBody from "../../../components/tool/ToolBody";
-import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
+} from "@/components/ui/select";
+import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import { Tiktoken } from "js-tiktoken";
 
 // OpenAI Models Configuration
