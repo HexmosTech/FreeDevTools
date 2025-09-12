@@ -1,3 +1,31 @@
+---
+title: "Control Bluetooth Devices - Bluetoothd Management | Free DevTools"
+name: bluetoothd
+path: /freedevtools/tldr/linux/bluetoothd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/bluetoothd/"
+description: "Control Bluetooth devices on Linux with bluetoothd. Start, configure, and debug your Bluetooth daemon easily. Free online tool, no registration required."
+category: linux
+keywords:
+- linux bluetooth management
+- bluetooth daemon control
+- bluetoothd configuration
+- linux bluetooth troubleshooting
+- bluetoothctl alternative
+- systemd bluetooth service
+- bluetooth adapter manager
+- bluetooth device discovery linux
+- command line bluetooth
+- bluetoothd debug
+features:
+- Start the Bluetooth daemon
+- Configure Bluetooth daemon with a specific file
+- Debug Bluetooth daemon output to stderr
+- Specify debugging output from particular source files
+- Run the Bluetooth daemon without detaching from the terminal
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # bluetoothd
 
 > Daemon to manage bluetooth devices.

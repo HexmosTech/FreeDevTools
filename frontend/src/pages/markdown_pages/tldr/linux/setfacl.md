@@ -1,3 +1,31 @@
+---
+title: "Setfacl - Control File Access Lists on Linux | Free DevTools"
+name: setfacl
+path: /freedevtools/tldr/linux/setfacl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/setfacl/"
+description: "Control file access lists with Setfacl. Manage permissions on Linux systems, set default ACLs, and remove specific user access. Free online tool, no registration required."
+category: linux
+keywords:
+- setfacl linux
+- linux acl
+- file access control linux
+- setfacl command
+- linux permissions management
+- setfacl modify access
+- setfacl remove access
+- setfacl default acl
+- linux file permissions
+- acl permissions linux
+features:
+- Modify file access control lists for specific users
+- Set default ACLs for newly created files in a directory
+- Remove ACL entries for specified users
+- Remove all ACL entries from a file or directory
+- Manage file permissions using ACLs on Linux
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # setfacl
 
 > Set file access control lists (ACL).

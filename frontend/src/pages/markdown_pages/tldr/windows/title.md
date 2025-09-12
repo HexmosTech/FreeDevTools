@@ -1,3 +1,31 @@
+---
+title: "Title - Set Command Prompt Title | Free DevTools"
+name: title
+path: /freedevtools/tldr/windows/title
+canonical: "https://hexmos.com/freedevtools/tldr/windows/title/"
+description: "Set the command prompt title with Title. Customize your console window title effortlessly using this command. Free online tool, no registration required."
+category: windows
+keywords:
+- command prompt title
+- windows console title
+- set window title
+- command line title
+- batch script title
+- change prompt title
+- cmd title
+- windows title command
+- powershell title
+- terminal title
+features:
+- Sets the title of the command prompt window.
+- Changes the title dynamically from the command line.
+- Customizes the appearance of the command prompt.
+- Can be used in batch scripts to set titles programmatically.
+- Reflects changes immediately in the console window.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # title
 
 > Set the title of the command prompt window.

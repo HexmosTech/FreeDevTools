@@ -1,3 +1,31 @@
+---
+title: "Unopkg - Manage LibreOffice Extensions | Free DevTools"
+name: unopkg
+path: /freedevtools/tldr/linux/unopkg
+canonical: "https://hexmos.com/freedevtools/tldr/linux/unopkg/"
+description: "Manage LibreOffice extensions effectively with Unopkg. Add, remove, and list extensions for enhanced functionality. Free online tool, no registration required."
+category: linux
+keywords:
+- libreoffice extension manager
+- linux libreoffice extensions
+- unopkg command
+- install libreoffice extension
+- remove libreoffice extension
+- list libreoffice extensions
+- libreoffice extension deployment
+- libreoffice package manager
+- extension manager linux
+- unopkg linux
+features:
+- Add and deploy LibreOffice extensions via command line
+- Remove specific LibreOffice extensions by ID
+- Display a list of installed LibreOffice extensions
+- Launch the LibreOffice extensions GUI
+- Reinstall all deployed LibreOffice extensions
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # unopkg
 
 > LibreOffice extensions manager.

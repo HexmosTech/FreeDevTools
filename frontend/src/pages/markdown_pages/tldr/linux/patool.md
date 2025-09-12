@@ -1,3 +1,31 @@
+---
+title: "Create Archive Files - Manage Files with patool | Free DevTools"
+name: patool
+path: /freedevtools/tldr/linux/patool
+canonical: "https://hexmos.com/freedevtools/tldr/linux/patool/"
+description: "Create archive files easily with patool on Linux. Manage various archive formats and manipulate files with this versatile command-line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- archive file manager
+- linux archive tool
+- patool extract
+- patool create
+- patool list archives
+- patool search archives
+- archive file comparison
+- command-line archiver
+- file compression linux
+- archive manipulation
+features:
+- Extract files from various archive formats
+- Create archives in multiple formats
+- List the contents of an archive
+- Compare the contents of two archives
+- Search for specific strings within archives
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # patool
 
 > Archive file manager.

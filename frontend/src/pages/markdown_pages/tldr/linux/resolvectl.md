@@ -1,3 +1,31 @@
+---
+title: "Resolvectl - Control DNS Resolution | Free DevTools"
+name: resolvectl
+path: /freedevtools/tldr/linux/resolvectl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/resolvectl/"
+description: "Control DNS resolution with resolvectl. Resolve domains, query IP addresses, and manage DNS settings on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+- DNS resolution linux
+- Resolve domain names
+- Linux network configuration
+- Resolve IP address linux
+- Query DNS records
+- Flush DNS cache linux
+- DNS settings management
+- Systemd resolvectl command
+- Linux DNS resolver
+- Network troubleshooting linux
+features:
+- Resolve domain names to IP addresses
+- Query DNS records for specified domains
+- Flush the local DNS cache
+- Display DNS resolver statistics
+- Retrieve MX and SRV records
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # resolvectl
 
 > Resolve domain names, IPv4 and IPv6 addresses, DNS resource records, and services.

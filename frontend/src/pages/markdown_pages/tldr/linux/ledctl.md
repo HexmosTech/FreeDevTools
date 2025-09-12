@@ -1,3 +1,31 @@
+---
+title: "LED Control - Manage Enclosure LEDs | Free DevTools"
+name: ledctl
+path: /freedevtools/tldr/linux/ledctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ledctl/"
+description: "Control enclosure LEDs with ledctl. Manage device status, locate devices, and turn LEDs on or off on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+- linux led control
+- enclosure led manager
+- ledctl command
+- server led control
+- linux device led
+- storage led management
+- disk led control
+- linux hardware control
+- led status command
+- system led controller
+features:
+- Control the "Locate" LED for specified devices
+- Turn off the "Locate" LED for specified devices
+- Disable both "Status" and "Failure" LEDs
+- Reset LEDs to the "normal" (all off) state
+- Manage enclosure LEDs via command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ledctl
 
 > Intel(R) Enclosure LED Control Application.

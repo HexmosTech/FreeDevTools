@@ -1,3 +1,31 @@
+---
+title: "Scontrol - Control Slurm Jobs | Free DevTools"
+name: scontrol
+path: /freedevtools/tldr/linux/scontrol
+canonical: "https://hexmos.com/freedevtools/tldr/linux/scontrol/"
+description: "Control Slurm jobs with scontrol on Linux. Suspend, resume, hold, and release jobs with this free command-line interface tool. Free online tool, no registration required."
+category: linux
+keywords:
+- slurm job control
+- scontrol command line
+- linux job management
+- slurm job suspend
+- slurm job resume
+- slurm job hold
+- slurm job release
+- slurm job modify
+- slurm job information
+- slurm scheduler
+features:
+- Show information about Slurm jobs.
+- Suspend running Slurm jobs.
+- Resume suspended Slurm jobs.
+- Hold queued Slurm jobs.
+- Release held Slurm jobs.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # scontrol
 
 > View information about and modify jobs.

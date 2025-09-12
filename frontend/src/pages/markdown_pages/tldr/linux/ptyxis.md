@@ -1,3 +1,31 @@
+---
+title: "Ptyxis Terminal - Control GNOME Sessions | Free DevTools"
+name: ptyxis
+path: /freedevtools/tldr/linux/ptyxis
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ptyxis/"
+description: "Control GNOME terminal sessions with Ptyxis Terminal, a container-oriented terminal for Linux. Manage windows, tabs, and execute commands easily. Free online tool, no registration required."
+category: linux
+keywords:
+- linux terminal emulator
+- gnome terminal manager
+- container terminal linux
+- ptyxis command line
+- linux shell manager
+- session manager linux
+- gnome shell commands
+- linux tab manager
+- ptyxis window control
+- ptyxis terminal commands
+features:
+- Open new Ptyxis terminal windows
+- Execute commands in new terminal sessions
+- Open new tabs in existing windows
+- Set custom titles for terminal tabs and windows
+- Specify working directories for new terminal sessions
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ptyxis
 
 > A container-oriented terminal for GNOME.

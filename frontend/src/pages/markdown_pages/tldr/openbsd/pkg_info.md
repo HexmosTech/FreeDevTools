@@ -1,3 +1,31 @@
+---
+title: "List Packages - View OpenBSD Packages with pkg_info | Free DevTools"
+name: pkg_info
+path: /freedevtools/tldr/openbsd/pkg_info
+canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg_info/"
+description: "List packages with pkg_info. View installed software, search by name, and generate package lists. Free online tool, no registration required."
+category: openbsd
+keywords:
+- openbsd package listing
+- openbsd software information
+- pkg_info package search
+- list installed packages openbsd
+- openbsd package details
+- view package information
+- openbsd package manager
+- software inventory openbsd
+- package name lookup
+- openbsd pkg_add list
+features:
+- Display detailed information about installed packages
+- Search for packages by name or keyword
+- Generate a list of installed packages compatible with pkg_add
+- Output machine-readable package information
+- Show package dependencies and version numbers
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pkg_info
 
 > View information about packages in OpenBSD.

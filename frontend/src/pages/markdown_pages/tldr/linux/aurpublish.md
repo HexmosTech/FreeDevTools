@@ -1,3 +1,31 @@
+---
+title: "AUR Publish - Create AUR Packages for Linux | Free DevTools"
+name: aurpublish
+path: /freedevtools/tldr/linux/aurpublish
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aurpublish/"
+description: "Create AUR packages easily with aurpublish. Automate package publishing, verify integrity, and generate commit messages. Free online tool, no registration required."
+category: linux
+keywords:
+- aur package manager
+- linux package builder
+- arch user repository
+- pkgbuild generator
+- aur upload tool
+- aur helper linux
+- aur package creator
+- aur package publisher
+- linux aur management
+- aur commit message
+features:
+- Automates AUR package creation
+- Verifies PKGBUILD integrity
+- Generates .SRCINFO files
+- Creates commit message templates
+- Publishes packages to the AUR
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aurpublish
 
 > Publish Arch User Repository packages.

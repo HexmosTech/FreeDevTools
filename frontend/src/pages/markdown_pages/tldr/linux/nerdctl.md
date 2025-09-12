@@ -1,3 +1,31 @@
+---
+title: "Nerdctl - Control Containerd Containers | Free DevTools"
+name: nerdctl
+path: /freedevtools/tldr/linux/nerdctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nerdctl/"
+description: "Control containerd containers with Nerdctl. Manage container lifecycle and images directly from the command line. Free online tool, no registration required."
+category: linux
+keywords:
+- containerd container control
+- nerdctl container manager
+- linux container runtime
+- container image management
+- docker compatible cli
+- container lifecycle management
+- nerdctl command reference
+- nerdctl linux commands
+- container cli tool
+- command line container control
+features:
+- List running and stopped containers
+- Manage container lifecycle (start, stop, remove)
+- Pull container images from registries
+- Execute commands inside running containers
+- Fetch and follow container logs
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nerdctl
 
 > Docker-compatible CLI for containerd.

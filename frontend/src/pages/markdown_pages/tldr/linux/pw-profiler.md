@@ -1,3 +1,31 @@
+---
+title: "pw-profiler - Profile Instances | Free DevTools"
+name: pw-profiler
+path: /freedevtools/tldr/linux/pw-profiler
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-profiler/"
+description: "Profile instances easily with pw-profiler. Analyze performance, identify bottlenecks and optimize applications. Free online tool, no registration required."
+category: linux
+keywords:
+- pipewire profiler
+- linux profiler
+- instance profiler
+- command line profiler
+- pw-profiler linux
+- performance analysis
+- bottleneck detection
+- application optimization
+- pipewire debugging
+- remote instance profiling
+features:
+- Profile local PipeWire instances
+- Profile remote PipeWire instances over a network
+- Log profiling data to a specified file
+- Generate gnuplot files for visualization
+- Generate HTML file for visualizing results
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pw-profiler
 
 > Profile a local or remote instance.

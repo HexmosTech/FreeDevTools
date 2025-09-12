@@ -1,3 +1,31 @@
+---
+title: "Compare Files - Compare File Contents | Free DevTools"
+name: comp
+path: /freedevtools/tldr/windows/comp
+canonical: "https://hexmos.com/freedevtools/tldr/windows/comp/"
+description: "Compare file contents easily with Compare Files. Find differences between files and sets of files using wildcard support. Free online tool, no registration required."
+category: windows
+keywords:
+- file comparison
+- compare files
+- windows compare files
+- file difference checker
+- wildcard file comparison
+- command line file comparison
+- file content comparison
+- ASCII file comparison
+- decimal file comparison
+- case insensitive comparison
+features:
+- Compare two specified files
+- Compare sets of files using wildcards
+- Display differences in decimal or ASCII format
+- Display line numbers for differences
+- Compare files case-insensitively
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # comp
 
 > Compare the contents of two files or sets of files.

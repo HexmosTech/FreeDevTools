@@ -1,3 +1,31 @@
+---
+title: "Iwinfo - Control Wireless Interfaces | Free DevTools"
+name: iwinfo
+path: /freedevtools/tldr/linux/iwinfo
+canonical: "https://hexmos.com/freedevtools/tldr/linux/iwinfo/"
+description: "Control wireless interfaces instantly with iwinfo on Linux. Monitor network connections, scan for networks, and troubleshoot connectivity issues with this command. Free online tool, no registration required."
+category: linux
+keywords:
+- linux wireless interface control
+- iwinfo network information
+- openwrt wireless monitoring
+- linux network scanner
+- wireless interface diagnostics
+- linux network troubleshooting
+- iwinfo association list
+- wifi interface information
+- linux wireless configuration
+- command-line network tools
+features:
+- List available wireless interfaces
+- Display detailed wireless interface information
+- Scan for nearby wireless networks
+- Show connected devices on the network
+- List supported frequency channels
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # iwinfo
 
 > Retrieve information about wireless interfaces on OpenWrt.

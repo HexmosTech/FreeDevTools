@@ -1,3 +1,31 @@
+---
+title: "PipeWire Control - Manage Objects via Command Line | Free DevTools"
+name: pw-cli
+path: /freedevtools/tldr/linux/pw-cli
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-cli/"
+description: "Control PipeWire audio and video objects with pw-cli. Manage modules, devices, nodes, and links for real-time processing. Free online tool, no registration required."
+category: linux
+keywords:
+- pipewire control
+- pipewire command line
+- linux audio management
+- linux video management
+- pw-cli audio
+- pw-cli video
+- pipewire object management
+- pipewire module control
+- pipewire device control
+- pipewire link management
+features:
+- List PipeWire objects with filtering
+- Inspect specific PipeWire objects by ID
+- Monitor PipeWire object changes in real-time
+- Manage PipeWire modules from the CLI
+- Display detailed help and usage instructions
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pw-cli
 
 > Manage a PipeWire instance's modules, objects, nodes, devices, links and much more.

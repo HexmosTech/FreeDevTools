@@ -1,3 +1,31 @@
+---
+title: "Fingerprint Verify - Authenticate Users on Linux | Free DevTools"
+name: fprintd-verify
+path: /freedevtools/tldr/linux/fprintd-verify
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-verify/"
+description: "Authenticate users with Fingerprint Verify on Linux. Secure access using fingerprint scanning and verification. Free online tool, no registration required."
+category: linux
+keywords:
+- linux fingerprint authentication
+- fingerprint verification linux
+- fprintd user authentication
+- linux biometric security
+- user fingerprint scanning linux
+- fprintd-verify command
+- linux system security
+- fprintd fingerprint database
+- biometric authentication tool
+- command line fingerprint scanner
+features:
+- Verify fingerprints against a database
+- Authenticate users by fingerprint scan
+- Specify a particular fingerprint to verify
+- Support multiple fingerprint readers on Linux
+- Fail verification if no match is found
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fprintd-verify
 
 > Verify fingerprints against the database.

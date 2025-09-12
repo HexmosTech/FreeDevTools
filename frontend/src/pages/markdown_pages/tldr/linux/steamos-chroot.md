@@ -1,3 +1,31 @@
+---
+title: "SteamOS Chroot - Switch Root Directories | Free DevTools"
+name: steamos-chroot
+path: /freedevtools/tldr/linux/steamos-chroot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-chroot/"
+description: "Switch root directories with SteamOS Chroot, allowing you to easily transition between A/B partitions and different drives in a SteamOS environment. Free online tool, no registration required."
+category: linux
+keywords:
+- steamos chroot
+- linux chroot
+- steamos root directory
+- linux root directory
+- steamos partition switch
+- linux partition switch
+- steamos ab partition
+- linux ab partition
+- steamos drive switch
+- linux drive switch
+features:
+- Switch between SteamOS A/B partitions
+- Switch to a SteamOS partition on another drive
+- Change the root directory in SteamOS
+- Mount a different filesystem as root
+- Access the SteamOS environment from an alternative root filesystem
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # steamos-chroot
 
 > Switch root directory in a SteamOS environment.

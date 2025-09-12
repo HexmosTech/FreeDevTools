@@ -1,3 +1,31 @@
+---
+title: "Einfo - Retrieve Entrez Database Information | Free DevTools"
+name: einfo
+path: /freedevtools/tldr/linux/einfo
+canonical: "https://hexmos.com/freedevtools/tldr/linux/einfo/"
+description: "Retrieve Entrez database information with einfo. Explore database fields, links, and update dates using the command line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- Entrez database information
+- NCBI database query
+- Einfo command linux
+- Database metadata retrieval
+- Bioinformatic command line
+- Protein database links
+- Nucleotide database fields
+- Linux database exploration
+- NCBI einfo tool
+- Command line database information
+features:
+- Display available Entrez database names
+- Retrieve complete database information in XML format
+- Print all fields within a specified database
+- List all linked databases for a given database
+- Show the last update date of a database
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # einfo
 
 > Provides the number of records indexed in each database field, the last update date of the database, and the available links from the database to other Entrez databases.

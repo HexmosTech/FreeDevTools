@@ -1,3 +1,31 @@
+---
+title: "RDP Sign - Sign RDP Files | Free DevTools"
+name: rdpsign
+path: /freedevtools/tldr/windows/rdpsign
+canonical: "https://hexmos.com/freedevtools/tldr/windows/rdpsign/"
+description: "Sign RDP files instantly with RDP Sign. Secure your Remote Desktop Protocol connections by applying digital signatures. Free online tool, no registration required."
+category: windows
+keywords:
+- RDP file signing
+- Windows RDP sign
+- RDP digital signature
+- Secure RDP connection
+- Remote desktop security
+- RDP file validation
+- Windows command line RDP
+- RDP file authentication
+- SHA256 RDP sign
+- Authenticate RDP file
+features:
+- Sign RDP files with a digital signature
+- Validate RDP file integrity
+- Secure remote desktop connections
+- Enable quiet output mode
+- Test RDP signing without updating the file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rdpsign
 
 > A tool for signing Remote Desktop Protocol (RDP) files.

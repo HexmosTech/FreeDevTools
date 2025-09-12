@@ -1,3 +1,31 @@
+---
+title: "Homectl - Control Home Directories on Linux | Free DevTools"
+name: homectl
+path: /freedevtools/tldr/linux/homectl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/homectl/"
+description: "Control home directories on Linux with Homectl. Manage user accounts, passwords, and disk space effortlessly using command line. Free online tool, no registration required."
+category: linux
+keywords:
+- linux home directory manager
+- homectl command line tool
+- user account management linux
+- linux user password reset
+- home directory resize linux
+- systemd homed service
+- create linux user account
+- remove linux user account
+- linux home directory lock
+- linux user directory control
+features:
+- Create and manage user home directories
+- Change user passwords via command line
+- Resize home directory disk space allocations
+- Lock and unlock user home directories securely
+- Execute commands within a specific user's home directory context
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # homectl
 
 > Create, remove, change or inspect home directories using the systemd-homed service.

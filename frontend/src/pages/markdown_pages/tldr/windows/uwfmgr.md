@@ -1,3 +1,31 @@
+---
+title: "UWF Manager - Control Windows Write Filter | Free DevTools"
+name: uwfmgr
+path: /freedevtools/tldr/windows/uwfmgr
+canonical: "https://hexmos.com/freedevtools/tldr/windows/uwfmgr/"
+description: "Control Windows Unified Write Filter (UWF) with UWF Manager. Protect drives by redirecting writes to a virtual overlay. Free online tool, no registration required."
+category: windows
+keywords:
+- Windows UWF Manager
+- Unified Write Filter
+- Windows drive protection
+- Virtual overlay protection
+- Windows UWF configuration
+- UWF file commit
+- UWF volume management
+- UWF enable disable
+- Windows system hardening
+- Windows write redirection
+features:
+- Enable or disable UWF protection on Windows
+- Protect specific drives with the Unified Write Filter
+- Commit file changes on protected drives to persist across reboots
+- Remove drives from the UWF protection list
+- Manage the UWF configuration settings on Windows
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # uwfmgr
 
 > Unified Write Filter (UWF).

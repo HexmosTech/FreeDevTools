@@ -1,3 +1,31 @@
+---
+title: "Portage Query - Manage Gentoo Packages | Free DevTools"
+name: portageq
+path: /freedevtools/tldr/linux/portageq
+canonical: "https://hexmos.com/freedevtools/tldr/linux/portageq/"
+description: "Manage Gentoo packages easily with Portage Query. Inspect package metadata, repositories, and environment variables. Free online tool, no registration required."
+category: linux
+keywords:
+- gentoo package manager
+- portage package manager
+- linux package query
+- portage query tool
+- ebuild metadata
+- repository configuration
+- gentoo environment variables
+- portage package information
+- package dependency analysis
+- software package management
+features:
+- Query Portage environment variables
+- Display Portage repository configurations
+- List repositories by priority
+- Retrieve package metadata from ebuilds
+- Inspect package dependencies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # portageq
 
 > Query for information about Portage, the Gentoo Linux package manager.

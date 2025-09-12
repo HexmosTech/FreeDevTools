@@ -1,3 +1,31 @@
+---
+title: "NDCTL Control - Manage NVDIMMs | Free DevTools"
+name: ndctl
+path: /freedevtools/tldr/linux/ndctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ndctl/"
+description: "Control NVDIMMs with NDCTL. Manage namespaces, regions, and buses for non-volatile memory on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+- nvdimm management
+- ndctl command line
+- linux memory management
+- namespace creation
+- region control
+- bus enumeration
+- persistent memory
+- fsdax configuration
+- raw mode change
+- nvdimm health monitoring
+features:
+- Create and manage NVDIMM namespaces
+- Reconfigure namespace modes (e.g., raw, fsdax)
+- Check and repair sector mode namespaces
+- List NVDIMM resources (namespaces, regions, buses)
+- Monitor NVDIMM SMART health events
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ndctl
 
 > Utility for managing Non-Volatile DIMMs.

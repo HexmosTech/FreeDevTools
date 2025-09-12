@@ -1,3 +1,31 @@
+---
+title: "Lrztar - Compress Directories | Free DevTools"
+name: lrztar
+path: /freedevtools/tldr/linux/lrztar
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lrztar/"
+description: "Compress directories easily with Lrztar, a wrapper for lrzip. Enhance file compression and archiving on Linux systems using command line. Free online tool, no registration required."
+category: linux
+keywords:
+- Linux directory compression
+- Lrzip archive tool
+- Command line archiving
+- File compression Linux
+- Lrztar command examples
+- Tar archive compression
+- ZPAQ extreme compression
+- Linux file archiver
+- Lrzip directory wrapper
+- Lrztar usage guide
+features:
+- Compress directories using lrzip
+- Specify output file for the archive
+- Override processor thread count
+- Force overwrite existing files
+- Utilize ZPAQ for extreme compression
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lrztar
 
 > A wrapper for `lrzip` to simplify compression of directories.

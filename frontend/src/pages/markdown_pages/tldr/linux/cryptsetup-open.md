@@ -1,3 +1,31 @@
+---
+title: "Cryptsetup Open - Create Encrypted Mappings | Free DevTools"
+name: cryptsetup-open
+path: /freedevtools/tldr/linux/cryptsetup-open
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptsetup-open/"
+description: "Create encrypted mappings with Cryptsetup Open, ensuring secure data storage on Linux. Enable TRIM, use keyfiles, and control disk access. Free online tool, no registration required."
+category: linux
+keywords:
+- LUKS volume mapping
+- encrypted drive open
+- cryptsetup disk decryption
+- linux disk encryption
+- cryptsetup mapping create
+- persistent LUKS option
+- keyfile based decryption
+- allow discards cryptsetup
+- read-only LUKS volume
+- cryptsetup command line
+features:
+- Create decrypted mappings of encrypted volumes
+- Use keyfiles for authentication instead of passphrases
+- Allow the use of TRIM on encrypted devices
+- Persistently enable TRIM support in LUKS headers
+- Open LUKS volumes in read-only mode
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cryptsetup open
 
 > Create a decrypted mapping of an encrypted volume.

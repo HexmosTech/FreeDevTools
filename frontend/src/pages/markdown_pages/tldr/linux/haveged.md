@@ -1,3 +1,31 @@
+---
+title: "Generate Random Numbers - Control Linux RNG with haveged | Free DevTools"
+name: haveged
+path: /freedevtools/tldr/linux/haveged
+canonical: "https://hexmos.com/freedevtools/tldr/linux/haveged/"
+description: "Generate random numbers on Linux with haveged. Enhance system entropy and control random number generation using command line. Free online tool, no registration required."
+category: linux
+keywords:
+- Random number generator linux
+- Linux entropy generator
+- Haveged command line
+- Hardware random number generator
+- RNG management linux
+- Secure random number generation
+- Linux random data source
+- Entropy pool management
+- Haveged foreground execution
+- Random number file output
+features:
+- Generate random numbers for enhanced entropy
+- Run haveged in foreground mode
+- Specify output file path for random data
+- Set daemon run level
+- Configure collection buffer size
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # haveged
 
 > Hardware-based random number generator.

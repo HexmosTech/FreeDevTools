@@ -1,3 +1,31 @@
+---
+title: "AUR Vote - Manage Arch User Repository Votes | Free DevTools"
+name: aurvote
+path: /freedevtools/tldr/linux/aurvote
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aurvote/"
+description: "Manage AUR package votes with AUR Vote. Easily vote, unvote, and check package voting status on the Arch User Repository. Free online tool, no registration required."
+category: linux
+keywords:
+- aur package vote
+- arch user repository voting
+- linux aurvote command
+- aur package manager
+- aur vote cli
+- arch linux package voting
+- aur package unvote
+- aur package check vote
+- aurvote linux command
+- aur package management
+features:
+- Vote for Arch User Repository packages.
+- Unvote Arch User Repository packages.
+- Check if AUR packages have already been voted for.
+- Interactively configure AUR credentials.
+- Manage package votes directly from the command line.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aurvote
 
 > Vote for packages in the Arch User Repository.

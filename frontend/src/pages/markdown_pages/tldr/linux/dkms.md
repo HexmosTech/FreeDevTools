@@ -1,3 +1,31 @@
+---
+title: "DKMS - Build Kernel Modules Dynamically | Free DevTools"
+name: dkms
+path: /freedevtools/tldr/linux/dkms
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dkms/"
+description: "Build kernel modules dynamically with DKMS. Manage kernel module versions and rebuild modules. Free online tool, no registration required."
+category: linux
+keywords:
+- DKMS kernel module
+- Linux kernel module manager
+- Dynamic kernel module support
+- DKMS module rebuild
+- Linux module installation
+- Kernel module version control
+- DKMS autoinstall
+- DKMS remove module
+- DKMS status check
+- DKMS Linux
+features:
+- Dynamically build kernel modules
+- Rebuild modules for current kernel
+- Install specific module versions
+- Remove modules from all kernels
+- List currently installed modules
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dkms
 
 > A framework that allows for dynamic building of kernel modules.

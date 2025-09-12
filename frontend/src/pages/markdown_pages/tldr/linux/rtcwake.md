@@ -1,3 +1,31 @@
+---
+title: "RTCWake - Control System Sleep States | Free DevTools"
+name: rtcwake
+path: /freedevtools/tldr/linux/rtcwake
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rtcwake/"
+description: "Control system sleep states with RTCWake. Schedule wake-up times, manage power saving modes, and disable alarms on Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- linux rtcwake command
+- rtcwake sleep mode
+- rtcwake wakeup time
+- rtcwake alarm scheduler
+- rtcwake power management
+- rtcwake suspend to ram
+- rtcwake suspend to disk
+- linux system sleep
+- linux system suspend
+- linux alarm disable
+features:
+- Schedule system wake-up times using the BIOS clock
+- Suspend the system to RAM or disk for power saving
+- Set wake-up alarms based on relative or absolute times
+- Disable previously set RTC alarms
+- Freeze the system and wake up at a specific date and time
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rtcwake
 
 > Enter a system sleep state until specified wakeup time relative to your BIOS clock.

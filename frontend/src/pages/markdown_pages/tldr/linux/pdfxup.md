@@ -1,3 +1,31 @@
+---
+title: "Create PDF N-up Layouts - pdfxup | Free DevTools"
+name: pdfxup
+path: /freedevtools/tldr/linux/pdfxup
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfxup/"
+description: "Create PDF n-up layouts with pdfxup. Arrange multiple PDF pages onto a single page for printing or presentation. Free online tool, no registration required."
+category: linux
+keywords:
+- pdf n-up layout
+- pdf page arranger
+- linux pdf tools
+- pdf booklet maker
+- pdf page scaling
+- pdf page rotation
+- command line pdf
+- pdf grid layout
+- pdf multi-page layout
+- pdf printing tool
+features:
+- Create 2-up or N-up PDF layouts
+- Arrange pages in booklet mode for printing
+- Specify number of columns and rows in the grid
+- Scale and rotate pages to fit the layout
+- Output to a new PDF file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pdfxup
 
 > N-up PDF pages.

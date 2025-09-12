@@ -1,3 +1,31 @@
+---
+title: "Socket Activate - Control Systemd Services | Free DevTools"
+name: systemd-socket-activate
+path: /freedevtools/tldr/linux/systemd-socket-activate
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-socket-activate/"
+description: "Control systemd services instantly with systemd-socket-activate. Manage socket activation and pass environment variables with this command line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- systemd socket activation
+- systemd service management
+- linux socket management
+- socket activation command
+- systemd service control
+- linux service manager
+- systemd activation tool
+- linux socket activate
+- systemd configuration
+- service environment variables
+features:
+- Activate services via socket connections
+- Manage multiple sockets for a single service
+- Pass environment variables to activated services
+- Activate services alongside notification sockets
+- Specify custom ports for service activation
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-socket-activate
 
 > Socket activation for systemd services.

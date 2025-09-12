@@ -1,3 +1,31 @@
+---
+title: "Network Control - Manage Network Links | Free DevTools"
+name: networkctl
+path: /freedevtools/tldr/linux/networkctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/networkctl/"
+description: "Network control with networkctl. Manage network links and configurations using systemd-networkd on Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- linux network control
+- networkctl command
+- systemd-networkd manager
+- linux network configuration
+- network link status
+- network interface management
+- dynamic IP address renewal
+- network configuration reload
+- network device control
+- linux command line network
+features:
+- List network link status information
+- Manage network device states (up/down)
+- Renew dynamic IP address configurations
+- Reload network configuration files
+- Reconfigure network interfaces
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # networkctl
 
 > Query the status of network links.

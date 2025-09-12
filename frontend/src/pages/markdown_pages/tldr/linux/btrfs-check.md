@@ -1,3 +1,31 @@
+---
+title: "Btrfs Check - Repair Filesystems | Free DevTools"
+name: btrfs-check
+path: /freedevtools/tldr/linux/btrfs-check
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-check/"
+description: "Repair Btrfs filesystems with Btrfs Check. Identify and fix errors, rebuild trees, and verify checksums. Free online tool, no registration required."
+category: linux
+keywords:
+- btrfs filesystem check
+- btrfs repair tool
+- linux filesystem repair
+- btrfs checksum verification
+- btrfs superblock recovery
+- btrfs extent tree repair
+- btrfs data integrity check
+- btrfs error correction
+- linux btrfs maintenance
+- btrfs recovery linux
+features:
+- Check a Btrfs filesystem for errors
+- Repair a Btrfs filesystem with error correction
+- Verify data checksums within the filesystem
+- Rebuild the checksum tree for data integrity
+- Initialize and rebuild the extent tree
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # btrfs check
 
 > Check or repair a btrfs filesystem.

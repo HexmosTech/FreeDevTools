@@ -1,3 +1,31 @@
+---
+title: "PCT Create - Generate LXC Containers in Proxmox | Free DevTools"
+name: pct-create
+path: /freedevtools/tldr/linux/pct-create
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-create/"
+description: "Generate LXC containers with PCT Create. Manage and configure Proxmox containers with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- proxmox lxc container create
+- lxc container creation linux
+- proxmox container generator
+- linux container configuration
+- pct create command proxmox
+- proxmox pct management
+- container virtualization linux
+- lxc container deployment
+- proxmox command line tools
+- pct create template
+features:
+- Create LXC containers from templates
+- Configure container memory limits
+- Assign hostnames and passwords to containers
+- Configure container networking
+- Start containers immediately after creation
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pct create
 
 > Create LXC containers in Proxmox.

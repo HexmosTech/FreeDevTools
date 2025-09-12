@@ -1,3 +1,31 @@
+---
+title: "Create Screenshots - Flameshot GUI | Free DevTools"
+name: flameshot
+path: /freedevtools/tldr/linux/flameshot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/flameshot/"
+description: "Create screenshots with Flameshot screenshot utility. Capture screen regions and annotate images directly. Free online tool, no registration required."
+category: linux
+keywords:
+- screenshot linux
+- linux screenshot tool
+- image capture linux
+- flameshot screenshot
+- screen capture linux
+- linux screen grab
+- gui screenshot linux
+- linux image annotation
+- command line screenshot linux
+- linux screenshot utility
+features:
+- Capture specific screen regions
+- Annotate screenshots with shapes and text
+- Save screenshots to a specified path
+- Copy screenshots to the clipboard
+- Capture screenshots with a time delay
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # flameshot
 
 > Screenshot utility with a GUI.

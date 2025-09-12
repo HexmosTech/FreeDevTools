@@ -1,3 +1,31 @@
+---
+title: "Create Dynamic Menu - Control Input with dmenu | Free DevTools"
+name: dmenu
+path: /freedevtools/tldr/linux/dmenu
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dmenu/"
+description: "Create dynamic menus with dmenu. Quickly filter and select items from text input using the command line. Free online tool, no registration required."
+category: linux
+keywords:
+- dynamic menu linux
+- text input menu linux
+- dmenu command
+- command-line menu linux
+- linux menu selector
+- terminal menu linux
+- dmenu custom menu
+- dmenu select item
+- dmenu filter input
+- dmenu script menu
+features:
+- Generate menus from standard input
+- Filter and select items quickly from the terminal
+- Customize menu appearance and behavior
+- Integrate dmenu with shell scripts
+- Launch applications or execute commands based on selection
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dmenu
 
 > Dynamic menu.

@@ -1,3 +1,31 @@
+---
+title: "Check Filesystem - Inspect and Repair Disks | Free DevTools"
+name: fsck
+path: /freedevtools/tldr/osx/fsck
+canonical: "https://hexmos.com/freedevtools/tldr/osx/fsck/"
+description: "Check filesystem integrity with fsck. Inspect disks for errors and repair damaged filesystems on macOS. Free online tool, no registration required."
+category: osx
+keywords:
+- macOS filesystem check
+- disk integrity check
+- APFS repair
+- HFS+ repair
+- filesystem repair command
+- disk error reporting
+- macOS disk utility
+- fsck command macOS
+- filesystem consistency check
+- disk repair tool
+features:
+- Check filesystem integrity for various formats
+- Report damaged blocks on a specified disk
+- Interactively repair filesystem errors
+- Automatically repair detected filesystem issues
+- Verify if a filesystem was cleanly unmounted
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fsck
 
 > Check the integrity of a filesystem or repair it. The filesystem should be unmounted at the time the command is run.

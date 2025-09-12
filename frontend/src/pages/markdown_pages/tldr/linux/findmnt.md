@@ -1,3 +1,31 @@
+---
+title: "Find Filesystem - Locate Mount Points | Free DevTools"
+name: findmnt
+path: /freedevtools/tldr/linux/findmnt
+canonical: "https://hexmos.com/freedevtools/tldr/linux/findmnt/"
+description: "Locate filesystems with Findmnt on Linux. Quickly identify mount points and device information. Analyze mount tables effectively. Free online tool, no registration required."
+category: linux
+keywords:
+- linux findmnt
+- filesystem finder
+- mount point location
+- mount table analysis
+- device identification linux
+- linux mount information
+- find filesystem type linux
+- find filesystem label linux
+- linux mount verification
+- etc fstab check linux
+features:
+- List all mounted filesystems
+- Search for a specific device by path
+- Search for a specific mountpoint
+- Find filesystems based on type
+- Find filesystems with a specific label
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # findmnt
 
 > Find your filesystem.

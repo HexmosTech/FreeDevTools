@@ -1,3 +1,31 @@
+---
+title: "Path Analyzer - Resolve File Paths on Linux | Free DevTools"
+name: namei
+path: /freedevtools/tldr/linux/namei
+canonical: "https://hexmos.com/freedevtools/tldr/linux/namei/"
+description: "Analyze file paths with Namei. Resolve symbolic links and identify path issues on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+- linux path analyzer
+- resolve symbolic links linux
+- namei linux command
+- linux file path debugging
+- file system path resolution
+- linux directory traversal
+- symbolic link checker
+- diagnose path errors linux
+- linux file system analyzer
+- path resolution tool linux
+features:
+- Resolve file paths including symbolic links
+- Identify 'too many levels of symbolic links' errors
+- Display file type mode bits
+- Show owner and group name for each file
+- Resolve paths without following symlinks
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # namei
 
 > Follows a pathname (which can be a symbolic link) until a terminal point is found (a file/directory/char device etc).

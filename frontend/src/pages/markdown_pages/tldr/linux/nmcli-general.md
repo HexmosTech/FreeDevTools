@@ -1,3 +1,31 @@
+---
+title: "Nmcli General - Manage Network Settings | Free DevTools"
+name: nmcli-general
+path: /freedevtools/tldr/linux/nmcli-general
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-general/"
+description: "Manage network settings with Nmcli General on Linux. Control hostname, permissions, and logging levels with this powerful command-line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- linux network manager
+- nmcli general commands
+- command line network configuration
+- linux hostname management
+- network logging tools linux
+- linux network permissions
+- nmcli network settings
+- configure network interface linux
+- linux networking commands
+- network manager command line tool
+features:
+- Display NetworkManager general status
+- Show current device hostname
+- Modify device hostname
+- Display NetworkManager permissions
+- Configure NetworkManager logging levels
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nmcli general
 
 > Manage general settings of NetworkManager.

@@ -1,3 +1,31 @@
+---
+title: "Manage Windows Licenses - Control Activation with slmgr.vbs | Free DevTools"
+name: slmgr.vbs
+path: /freedevtools/tldr/windows/slmgr.vbs
+canonical: "https://hexmos.com/freedevtools/tldr/windows/slmgr.vbs/"
+description: "Manage Windows licenses with slmgr.vbs and control activation status. Install product keys, activate online, and remove keys from registry securely. Free online tool, no registration required."
+category: windows
+keywords:
+- Windows license management
+- Windows activation control
+- slmgr.vbs command
+- Windows product key
+- Windows license status
+- Activate Windows offline
+- Uninstall Windows license
+- Windows volume activation
+- Command-line license manager
+- Windows licensing script
+features:
+- Install a Windows product key.
+- Activate Windows online or offline.
+- Display Windows license information.
+- Remove a product key from the registry.
+- Uninstall the current Windows license.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # slmgr.vbs
 
 > Install, activate, and manage Windows licenses.

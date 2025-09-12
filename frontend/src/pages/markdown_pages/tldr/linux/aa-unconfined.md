@@ -1,3 +1,31 @@
+---
+title: "AA-Unconfined - List Unconfined Linux Processes | Free DevTools"
+name: aa-unconfined
+path: /freedevtools/tldr/linux/aa-unconfined
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-unconfined/"
+description: "List unconfined Linux processes instantly with AA-Unconfined. Identify processes lacking AppArmor profiles and enhance system security. Free online tool, no registration required."
+category: linux
+keywords:
+- aa-unconfined processes
+- list unconfined processes
+- linux process security
+- apparmor status
+- unconfined socket detection
+- tcp udp ports
+- security profiling linux
+- audit unconfined processes
+- detect apparmor bypass
+- linux security hardening
+features:
+- List processes without AppArmor profiles.
+- Detect open TCP/UDP ports of unconfined processes.
+- Utilize `ss` or `netstat` for network socket detection.
+- Offer a paranoid mode for comprehensive process inspection.
+- Display help information for command options.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aa-unconfined
 
 > List processes with open TCP/UDP ports that do not have AppArmor profiles loaded.

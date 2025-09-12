@@ -1,3 +1,31 @@
+---
+title: "Choco Search - Find Chocolatey Packages | Free DevTools"
+name: choco-search
+path: /freedevtools/tldr/windows/choco-search
+canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-search/"
+description: "Find Chocolatey packages easily with Choco Search. Discover, manage, and install software packages on Windows. Free online tool, no registration required."
+category: windows
+keywords:
+- chocolatey package search
+- choco search windows
+- windows package manager
+- command line search
+- software package discovery
+- choco install package
+- windows application search
+- choco package lookup
+- chocolatey package list
+- command line software manager
+features:
+- Search for Chocolatey packages by name
+- Filter search results for exact matches
+- Specify a custom source for package searches
+- Authenticate package searches with credentials
+- Search for packages locally without network access
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # choco search
 
 > Search for a local or remote package with Chocolatey.

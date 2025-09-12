@@ -1,3 +1,31 @@
+---
+title: "CMSTP - Manage Connection Profiles | Free DevTools"
+name: cmstp
+path: /freedevtools/tldr/windows/cmstp
+canonical: "https://hexmos.com/freedevtools/tldr/windows/cmstp/"
+description: "Manage connection profiles with CMSTP. Install, uninstall, and configure connection service profiles on Windows easily. Free online tool, no registration required."
+category: windows
+keywords:
+- Connection Profile Management
+- CMSTP Installer Windows
+- Windows Connection Manager
+- Connection Service Profiles
+- Install Connection Profiles
+- Uninstall Connection Profiles
+- Windows CMSTP Command
+- Connection Settings Windows
+- CMSTP silent install
+- Windows Profile Installer
+features:
+- Install connection service profiles from file
+- Uninstall existing connection service profiles
+- Perform silent installations without prompts
+- Install profiles for the current user only
+- Install profiles for all users with admin privileges
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cmstp
 
 > Manage connection service profiles.

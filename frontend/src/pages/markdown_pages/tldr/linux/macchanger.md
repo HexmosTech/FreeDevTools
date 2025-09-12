@@ -1,3 +1,31 @@
+---
+title: "MAC Address Changer - Control Network Interface MAC | Free DevTools"
+name: macchanger
+path: /freedevtools/tldr/linux/macchanger
+canonical: "https://hexmos.com/freedevtools/tldr/linux/macchanger/"
+description: "Control network interface MAC address with MAC Address Changer. Spoof MAC addresses and enhance network security. Free online tool, no registration required."
+category: linux
+keywords:
+- MAC address changer
+- Linux MAC changer
+- Network interface MAC
+- MAC address spoofing
+- MAC address randomizer
+- Network security tool
+- Ethernet MAC address
+- WiFi MAC address
+- Hardware address modifier
+- Linux networking
+features:
+- Randomize network interface MAC address
+- Set a specific MAC address for a network interface
+- Reset network interface to permanent MAC address
+- Display current and permanent MAC addresses
+- List vendor identifications for MAC addresses
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # macchanger
 
 > Manipulate network interface MAC addresses.

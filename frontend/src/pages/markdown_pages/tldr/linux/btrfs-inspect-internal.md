@@ -1,3 +1,31 @@
+---
+title: "Btrfs Inspect - Query Filesystem | Free DevTools"
+name: btrfs-inspect-internal
+path: /freedevtools/tldr/linux/btrfs-inspect-internal
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-inspect-internal/"
+description: "Query filesystem details with Btrfs Inspect-Internal on Linux. Analyze metadata and troubleshoot your Btrfs file system. Free online tool, no registration required."
+category: linux
+keywords:
+- btrfs filesystem query
+- btrfs metadata analysis
+- btrfs superblock dump
+- btrfs tree stats
+- btrfs inode resolve
+- btrfs logical resolve
+- linux btrfs inspect
+- btrfs filesystem debugging
+- btrfs partition inspection
+- btrfs internal information
+features:
+- Dump Btrfs superblock information
+- Resolve file inodes in a Btrfs filesystem
+- Resolve logical addresses in a Btrfs filesystem
+- Print Btrfs filesystem metadata information
+- Print Btrfs tree statistics
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # btrfs inspect-internal
 
 > Query internal information of a btrfs filesystem.

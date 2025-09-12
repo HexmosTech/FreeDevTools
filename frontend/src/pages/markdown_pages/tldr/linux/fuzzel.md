@@ -1,3 +1,31 @@
+---
+title: "Fuzzel Launcher - Run Applications | Free DevTools"
+name: fuzzel
+path: /freedevtools/tldr/linux/fuzzel
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fuzzel/"
+description: "Run applications instantly with Fuzzel Launcher, a Wayland-native application launcher.  Quickly find and execute programs with this fuzzy finder. Free online tool, no registration required."
+category: linux
+keywords:
+- application launcher
+- wayland launcher
+- fuzzy finder
+- linux application launcher
+- linux fuzzy finder
+- command line launcher
+- dmenu alternative
+- rofi alternative
+- application search
+- sway launcher
+features:
+- Launch applications from the command line
+- Execute commands in dmenu mode
+- Filter command output using fuzzy search
+- Customize menu items with new line separators
+- Launch applications on a specific monitor
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fuzzel
 
 > A Wayland-native application launcher and fuzzy finder, inspired by `rofi` and `dmenu`.

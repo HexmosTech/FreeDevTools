@@ -1,3 +1,31 @@
+---
+title: "Runcon - Control SELinux Context | Free DevTools"
+name: runcon
+path: /freedevtools/tldr/linux/runcon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/runcon/"
+description: "Control SELinux security contexts with Runcon. Execute programs in different security contexts for enhanced system security. Free online tool, no registration required."
+category: linux
+keywords:
+- linux runcon
+- runcon command
+- selinux context
+- security context control
+- linux security
+- selinux domain
+- run command as user
+- run command with role
+- change selinux context
+- linux command line
+features:
+- Execute commands in a specified SELinux domain
+- Run programs with a defined SELinux role
+- Specify the full SELinux security context for command execution
+- Override the default security context for specific applications
+- Isolate program execution environments using SELinux policies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # runcon
 
 > Run a program in a different SELinux security context.

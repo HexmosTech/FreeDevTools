@@ -1,3 +1,31 @@
+---
+title: "Measure Command - Analyze Script Performance | Free DevTools"
+name: measure-command
+path: /freedevtools/tldr/windows/measure-command
+canonical: "https://hexmos.com/freedevtools/tldr/windows/measure-command/"
+description: "Analyze PowerShell script performance with Measure Command. Measure execution time and optimize code using this powerful command. Free online tool, no registration required."
+category: windows
+keywords:
+- powershell measure command
+- script execution time
+- performance analysis
+- cmdlet performance
+- powershell performance tuning
+- powershell timing command
+- powershell script profiling
+- measure script block
+- powershell execution analysis
+- windows powershell
+features:
+- Measures the execution time of script blocks.
+- Analyzes cmdlet performance in PowerShell.
+- Provides detailed timing information for script optimization.
+- Supports piping input for complex measurement scenarios.
+- Identifies performance bottlenecks in PowerShell scripts.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Measure-Command
 
 > Measures the time it takes to run script blocks and cmdlets.

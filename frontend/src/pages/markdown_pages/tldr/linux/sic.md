@@ -1,3 +1,31 @@
+---
+title: "Control IRC Sessions - Simple IRC Client | Free DevTools"
+name: sic
+path: /freedevtools/tldr/linux/sic
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sic/"
+description: "Control IRC sessions with sic, a simple IRC client. Connect to servers, manage channels, and send messages directly from the Linux command line. Free online tool, no registration required."
+category: linux
+keywords:
+- linux irc client
+- command line irc
+- terminal irc client
+- sic irc
+- irc client linux
+- irc client terminal
+- suckless tools irc
+- linux chat client
+- command line chat
+- console irc client
+features:
+- Connect to IRC servers using command line
+- Manage IRC channels directly from the terminal
+- Send and receive messages within IRC channels
+- Set default channel or user for easier messaging
+- Authenticate with IRC servers using nicknames and passwords
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sic
 
 > Simple IRC client.

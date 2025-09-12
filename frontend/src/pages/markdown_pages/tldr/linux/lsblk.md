@@ -1,3 +1,31 @@
+---
+title: "List Block Devices - Control Disk Info with lsblk | Free DevTools"
+name: lsblk
+path: /freedevtools/tldr/linux/lsblk
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lsblk/"
+description: "List block devices and control disk information with lsblk on Linux. Analyze storage devices, partitions, and file systems using this command-line utility. Free online tool, no registration required."
+category: linux
+keywords:
+- disk information linux
+- block device listing
+- storage device analysis
+- linux partition tool
+- lsblk command linux
+- file system info linux
+- disk topology linux
+- linux storage manager
+- list hard drives linux
+- display disk partitions
+features:
+- List all available block devices in a tree-like format.
+- Display filesystem information for each device.
+- Show block device topology details.
+- Exclude specific devices from the output by major number.
+- Customize the output by specifying columns to display.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lsblk
 
 > List information about devices.

@@ -1,3 +1,31 @@
+---
+title: "Rename Files - Bulk Rename Tool | Free DevTools"
+name: rnm
+path: /freedevtools/tldr/linux/rnm
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rnm/"
+description: "Rename files in bulk with RNM, a powerful command-line utility. Automate file renaming tasks, search/replace strings, and add indexes. Free online tool, no registration required."
+category: linux
+keywords:
+- bulk rename linux
+- rename files command line
+- linux file rename
+- rnm rename utility
+- batch rename files
+- command line rename tool
+- find and replace filenames linux
+- rename files with index
+- rename files from list linux
+- rename files modification time
+features:
+- Replace strings in filenames using regex or literal matches
+- Add auto-incrementing indexes to filenames for easy sequencing
+- Rename files using a list of new names from a text file
+- Filter files for renaming by type (files only, ignoring directories)
+- Sort files by modification time before applying renaming operations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rnm
 
 > Bulk Rename Utility.

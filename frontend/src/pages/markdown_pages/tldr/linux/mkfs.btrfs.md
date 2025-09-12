@@ -1,3 +1,31 @@
+---
+title: "Create BTRFS Filesystem - Format Partitions | Free DevTools"
+name: mkfs.btrfs
+path: /freedevtools/tldr/linux/mkfs.btrfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.btrfs/"
+description: "Create BTRFS filesystem with mkfs.btrfs. Format partitions and manage storage efficiently on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+- btrfs filesystem creation
+- linux partition formatting
+- mkfs.btrfs command
+- btrfs raid configuration
+- linux storage management
+- btrfs filesystem label
+- btrfs force format
+- linux disk partitioning
+- btrfs single device filesystem
+- btrfs multiple device filesystem
+features:
+- Create BTRFS filesystems on empty partitions
+- Format single-device BTRFS filesystems
+- Format multi-device BTRFS filesystems with RAID1
+- Set filesystem labels for easy identification
+- Force overwrite existing filesystems
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mkfs.btrfs
 
 > Create a BTRFS filesystem.

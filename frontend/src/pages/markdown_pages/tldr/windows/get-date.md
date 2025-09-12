@@ -1,3 +1,31 @@
+---
+title: "Get-Date - Display Date and Time | Free DevTools"
+name: get-date
+path: /freedevtools/tldr/windows/get-date
+canonical: "https://hexmos.com/freedevtools/tldr/windows/get-date/"
+description: "Display current date and time with Get-Date. Convert timestamps and format output on Windows. Free online tool, no registration required."
+category: windows
+keywords:
+- date and time display
+- powershell get-date
+- windows date command
+- timestamp conversion
+- datetime formatting
+- utc conversion
+- iso 8601 format
+- unix timestamp
+- powershell command
+- date and time
+features:
+- Display the current date and time in various formats.
+- Convert Unix timestamps to datetime objects.
+- Format date and time output using .NET format specifiers.
+- Display date and time in UTC.
+- Output date and time in ISO 8601 format.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Get-Date
 
 > Get the current date and time.

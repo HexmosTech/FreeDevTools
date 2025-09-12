@@ -1,3 +1,31 @@
+---
+title: "Repair BDE - Decrypt Damaged Volumes | Free DevTools"
+name: repair-bde
+path: /freedevtools/tldr/windows/repair-bde
+canonical: "https://hexmos.com/freedevtools/tldr/windows/repair-bde/"
+description: "Decrypt damaged BitLocker volumes with Repair BDE. Recover data from encrypted drives using command line interface. Free online tool, no registration required."
+category: windows
+keywords:
+- bitlocker repair
+- decrypt bitlocker volume
+- repair damaged volume
+- windows bitlocker recovery
+- command line bitlocker
+- bde recovery
+- bitlocker data recovery
+- encrypted drive repair
+- windows disk repair
+- bitlocker unlock password
+features:
+- Recover data from damaged BitLocker encrypted volumes
+- Decrypt volumes using recovery key or password
+- Output repaired data to a specified volume
+- Log all output to a specific file
+- Utilize key packages for recovery
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # repair-bde
 
 > Attempt to repair or decrypt a damaged BitLocker-encrypted volume.

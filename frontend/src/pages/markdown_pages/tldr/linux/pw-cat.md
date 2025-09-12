@@ -1,3 +1,31 @@
+---
+title: "Pw-cat - Play and Record Audio | Free DevTools"
+name: pw-cat
+path: /freedevtools/tldr/linux/pw-cat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-cat/"
+description: "Play audio files with pw-cat, a powerful PipeWire command-line tool. Control audio playback and recording on Linux systems with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- PipeWire audio player
+- Linux audio recording
+- Command-line audio tool
+- pw-cat audio control
+- WAV file playback
+- Audio sample rate control
+- Audio volume adjustment
+- PipeWire audio utility
+- Linux command-line audio
+- Audio recording tool
+features:
+- Play audio files through PipeWire
+- Record audio files through PipeWire
+- Control audio sample rate
+- Adjust audio volume levels
+- Specify resampler quality for playback
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pw-cat
 
 > Play and record audio files through PipeWire.

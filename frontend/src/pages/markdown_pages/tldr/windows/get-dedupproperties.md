@@ -1,3 +1,31 @@
+---
+title: "Get-DedupProperties - Control Data Deduplication | Free DevTools"
+name: get-dedupproperties
+path: /freedevtools/tldr/windows/get-dedupproperties
+canonical: "https://hexmos.com/freedevtools/tldr/windows/get-dedupproperties/"
+description: "Control data deduplication with Get-DedupProperties. Retrieve deduplication information, manage storage, and optimize disk space. Free online tool, no registration required."
+category: windows
+keywords:
+- data deduplication properties
+- deduplication information
+- windows data deduplication
+- powershell deduplication
+- storage optimization
+- disk space management
+- get-dedupproperties command
+- volume properties
+- file system information
+- drive analysis
+features:
+- Retrieve data deduplication properties for a specific drive.
+- Get data deduplication information using drive labels.
+- Obtain deduplication details using an input object.
+- Analyze storage efficiency and deduplication effectiveness.
+- Manage and optimize disk space utilization.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Get-DedupProperties
 
 > Get Data Deduplication information.

@@ -1,3 +1,31 @@
+---
+title: "Create RPM Repository - Initialize Packages on Linux | Free DevTools"
+name: createrepo
+path: /freedevtools/tldr/linux/createrepo
+canonical: "https://hexmos.com/freedevtools/tldr/linux/createrepo/"
+description: "Create RPM repository with createrepo. Quickly initialize package metadata for your Linux distributions. Free online tool, no registration required."
+category: linux
+keywords:
+- rpm repository creator
+- linux package manager
+- yum repository tool
+- rpm metadata generator
+- create rpm database
+- rpm package index
+- linux repo management
+- rpm repository builder
+- createrepo linux
+- update rpm metadata
+features:
+- Initialize RPM repositories
+- Generate package metadata XML
+- Create SQLite database for RPMs
+- Exclude specific RPM packages
+- Specify checksum algorithms
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # createrepo
 
 > Initializes an RPM repository in a directory, including all XML and SQLite files.

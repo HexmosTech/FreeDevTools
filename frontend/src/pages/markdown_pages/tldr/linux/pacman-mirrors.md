@@ -1,3 +1,31 @@
+---
+title: "Generate Pacman Mirrorlist - Optimize Manjaro Repos | Free DevTools"
+name: pacman-mirrors
+path: /freedevtools/tldr/linux/pacman-mirrors
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-mirrors/"
+description: "Generate a Pacman mirrorlist with pacman-mirrors, optimizing your Manjaro Linux repositories for faster updates.  Free online tool, no registration required."
+category: linux
+keywords:
+- pacman mirrorlist generator
+- manjaro mirror selection
+- linux repository optimizer
+- pacman mirror status
+- manjaro update branch switch
+- pacman geoip mirror
+- linux pacman
+- pacman mirror configuration
+- manjaro repository management
+- fasttrack mirror generation
+features:
+- Generate an optimized mirrorlist for Manjaro Linux
+- Display the status of current mirrors
+- Switch to a different update branch
+- Generate a mirrorlist using mirrors in your country based on GeoIP
+- Quickly generate mirrorlist with fasttrack setting
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacman-mirrors
 
 > Generate a `pacman` mirrorlist for Manjaro Linux.

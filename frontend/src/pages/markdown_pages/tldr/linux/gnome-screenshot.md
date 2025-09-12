@@ -1,3 +1,31 @@
+---
+title: "Screenshot Capture - Take Screenshots with Gnome | Free DevTools"
+name: gnome-screenshot
+path: /freedevtools/tldr/linux/gnome-screenshot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-screenshot/"
+description: "Capture screenshots instantly with Gnome Screenshot, a powerful linux tool. Save to file or clipboard, delay capture, and launch GUI. Free online tool, no registration required."
+category: linux
+keywords:
+- linux screenshot capture
+- gnome screenshot tool
+- command line screenshot
+- screenshot to file linux
+- screenshot to clipboard linux
+- delayed screenshot linux
+- gnome screenshot gui
+- linux image capture
+- screenshot utility linux
+- linux terminal screenshot
+features:
+- Capture full screen, specific windows, or selected areas.
+- Save screenshots directly to a specified file path.
+- Copy screenshots to the clipboard for easy sharing.
+- Delay screenshot capture by a specified number of seconds.
+- Launch the interactive GNOME Screenshot graphical interface.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # gnome-screenshot
 
 > Capture the screen, a window, or a user-defined area and save the image to a file.

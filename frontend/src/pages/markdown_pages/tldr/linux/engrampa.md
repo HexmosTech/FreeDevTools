@@ -1,3 +1,31 @@
+---
+title: "Create Archives - Package Files with Engrampa | Free DevTools"
+name: engrampa
+path: /freedevtools/tldr/linux/engrampa
+canonical: "https://hexmos.com/freedevtools/tldr/linux/engrampa/"
+description: "Create archives with Engrampa, a package management tool for Linux. Compress and extract files using various formats. Free online tool, no registration required."
+category: linux
+keywords:
+- tar archive creation
+- zip archive creation
+- linux archive manager
+- engrampa archive tool
+- compress files linux
+- extract files linux
+- mate desktop archiving
+- linux file compression
+- tar.gz file extraction
+- archive file management
+features:
+- Create zip and tar archives
+- Open and extract existing archives
+- Add files and directories to archives recursively
+- Extract files to a specific directory
+- Support various archive formats like tar, zip, 7z
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # engrampa
 
 > Package files into zip/tar file in MATE desktop environment.

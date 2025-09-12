@@ -1,3 +1,31 @@
+---
+title: "Balooctl - Control KDE File Indexing | Free DevTools"
+name: balooctl
+path: /freedevtools/tldr/linux/balooctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/balooctl/"
+description: "Control KDE file indexing with Balooctl. Manage index status, purge databases, and suspend/resume indexing. Free online tool, no registration required."
+category: linux
+keywords:
+- linux file indexing
+- kde plasma file indexing
+- balooctl control
+- file index management
+- baloo search framework
+- linux search tool
+- balooctl purge database
+- balooctl suspend indexing
+- linux command line file index
+- kde file system tools
+features:
+- Display the status of the file indexer
+- Enable or disable the file indexer
+- Clean the index database
+- Suspend and resume file indexing
+- Check for and index unindexed files
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # balooctl
 
 > File indexing and searching framework for KDE Plasma.

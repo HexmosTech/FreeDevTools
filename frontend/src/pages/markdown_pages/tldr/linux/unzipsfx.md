@@ -1,3 +1,31 @@
+---
+title: "Create Self-Extracting Zip - unzipsfx | Free DevTools"
+name: unzipsfx
+path: /freedevtools/tldr/linux/unzipsfx
+canonical: "https://hexmos.com/freedevtools/tldr/linux/unzipsfx/"
+description: "Create self-extracting Zip files with unzipsfx for easy file distribution on Linux. Securely compress and distribute your files. Free online tool, no registration required."
+category: linux
+keywords:
+- self-extracting Zip creator
+- self-extracting archive maker
+- Zip archive compressor
+- Linux self-extracting executable
+- command-line Zip utility
+- shell script archive
+- Zip file extractor
+- Linux archive creator
+- compressed file distribution
+- unzipsfx Linux
+features:
+- Create self-extracting binaries from Zip archives
+- Test self-extracting binaries for integrity
+- Extract files from self-extracting archives
+- Display file content without extraction
+- Print comments on Zip archives within binaries
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # unzipsfx
 
 > Create a self-extracting compressed binary file by prepending self-extracting stubs on a Zip file.

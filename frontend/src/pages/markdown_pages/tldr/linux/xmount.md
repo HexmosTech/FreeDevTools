@@ -1,3 +1,31 @@
+---
+title: "Create Disk Images - Mount and Convert with Xmount | Free DevTools"
+name: xmount
+path: /freedevtools/tldr/linux/xmount
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xmount/"
+description: "Create disk images with Xmount, convert between image formats like raw, DMG, EWF, and VHD. Efficient disk imaging tool for Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- disk image creation
+- raw image converter
+- DMG file converter
+- EWF image mounting
+- VHD image converter
+- linux disk imaging
+- forensic image analysis
+- virtual disk mounting
+- disk image mounting
+- xmount disk conversion
+features:
+- Convert between various disk image formats
+- Mount disk images as virtual filesystems
+- Support write-cache for modified images
+- Specify offset to mount specific partitions
+- Create virtual representations of disk images
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xmount
 
 > Convert on-the-fly between multiple input and output hard disk image types with optional write cache support.

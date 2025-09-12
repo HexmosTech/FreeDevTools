@@ -1,3 +1,31 @@
+---
+title: "HDD Temperature - Display Drive Temps | Free DevTools"
+name: hddtemp
+path: /freedevtools/tldr/linux/hddtemp
+canonical: "https://hexmos.com/freedevtools/tldr/linux/hddtemp/"
+description: "Display HDD temperature with hddtemp, a S.M.A.R.T. monitoring tool for Linux. Monitor hard drive health and prevent overheating. Free online tool, no registration required."
+category: linux
+keywords:
+- linux hdd temperature
+- hddtemp command
+- smart monitoring linux
+- hard drive temperature sensor
+- sata temperature monitoring
+- disk temperature linux
+- linux drive health
+- temperature monitoring tool linux
+- smartctl alternative
+- command line hddtemp
+features:
+- Display temperature for specific drives.
+- Log drive temperatures to syslog.
+- Print numeric temperature value.
+- Define the unit used for temperature display.
+- Wake up ATA drive before reading temperature.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # hddtemp
 
 > Display temperature of HDD via S.M.A.R.T.

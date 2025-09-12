@@ -1,3 +1,31 @@
+---
+title: "Stratis Manager - Manage Linux Storage Pools | Free DevTools"
+name: stratis
+path: /freedevtools/tldr/linux/stratis
+canonical: "https://hexmos.com/freedevtools/tldr/linux/stratis/"
+description: "Manage Linux storage with Stratis Manager. Create pools, volumes, and filesystems effortlessly using command line. Free online tool, no registration required."
+category: linux
+keywords:
+- stratis linux manager
+- linux stratis storage
+- stratis pool management
+- stratis volume control
+- linux xfs filesystem
+- stratis command line
+- stratis storage pool
+- stratis filesystem manager
+- linux stratis command
+- stratis storage administration
+features:
+- Create and manage Stratis storage pools
+- Create and manage Stratis filesystems (volumes)
+- Extend existing Stratis pools with new devices
+- Mount Stratis volumes manually or automatically at boot
+- Delete Stratis volumes when no longer needed
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # stratis
 
 > Manage local storage pools and volumes using the Stratis storage manager.

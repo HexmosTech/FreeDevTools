@@ -1,3 +1,31 @@
+---
+title: "RPM Spec - Query Package Specs on Linux | Free DevTools"
+name: rpmspec
+path: "/freedevtools/tldr/linux/rpmspec"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rpmspec/"
+description: "Query RPM package specs with rpmspec. Inspect package metadata, list dependencies and extract build instructions. Free online tool, no registration required."
+category: linux
+keywords:
+- rpm spec query
+- linux package inspection
+- rpm metadata extract
+- rpm build instructions
+- rpm dependency list
+- rpm package details
+- rpmspec command linux
+- rpm spec file analysis
+- rpmbuild specification
+- rpm package content
+features:
+- List binary packages from RPM spec
+- Show query format options for RPM spec
+- Extract summary information from RPM spec
+- Generate source RPM from RPM spec
+- Parse and display RPM spec file content
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rpmspec
 
 > Query a RPM spec file.

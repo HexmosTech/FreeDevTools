@@ -1,3 +1,31 @@
+---
+title: "SteamOS Finalize - Complete System Setup | Free DevTools"
+name: steamos-finalize-install
+path: /freedevtools/tldr/linux/steamos-finalize-install
+canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-finalize-install/"
+description: "Complete system setup with SteamOS Finalize. Set up bootloaders and apply updates to finalize SteamOS installations. Free online tool, no registration required."
+category: linux
+keywords:
+- steamos finalize
+- linux steamOS installation
+- linux system setup
+- linux bootloader configuration
+- steamOS update
+- steamos system migration
+- linux roothash setting
+- linux kernel update
+- steamos finalize install command
+- linux system configuration
+features:
+- Finalize a SteamOS installation.
+- Update bootloaders and kernel during finalization.
+- Skip migration steps during system setup.
+- Set a specific root hash for security.
+- Force system migration regardless of environment.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # steamos-finalize-install
 
 > Complete a SteamOS installation by setting up bootloaders and applying system updates.

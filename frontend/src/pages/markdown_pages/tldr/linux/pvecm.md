@@ -1,3 +1,31 @@
+---
+title: "Proxmox Control - Manage VE Cluster | Free DevTools"
+name: pvecm
+path: /freedevtools/tldr/linux/pvecm
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pvecm/"
+description: "Control Proxmox VE Clusters with pvecm. Manage nodes, display status, and generate configurations with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- proxmox cluster manager
+- ve cluster control
+- linux cluster management
+- pvecm command
+- proxmox ve command line
+- cluster node management
+- proxmox status display
+- proxmox configuration
+- proxmox cluster api
+- proxmox ve cluster
+features:
+- Add nodes to an existing Proxmox VE cluster
+- Generate new cluster configurations easily
+- Remove nodes from a Proxmox VE cluster
+- Display the local view of the cluster nodes
+- Display the local view of the cluster status
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pvecm
 
 > Proxmox VE Cluster Manager.

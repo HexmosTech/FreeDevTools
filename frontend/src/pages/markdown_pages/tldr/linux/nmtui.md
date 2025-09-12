@@ -1,3 +1,31 @@
+---
+title: "Nmtui - Control Network Connections | Free DevTools"
+name: nmtui
+path: /freedevtools/tldr/linux/nmtui
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nmtui/"
+description: "Control network connections with Nmtui, the NetworkManager text user interface. Manage, activate, and deactivate network connections easily. Free online tool, no registration required."
+category: linux
+keywords:
+- linux network manager
+- network connection manager
+- text user interface network
+- terminal network configuration
+- nmcli alternative
+- network interface controller
+- linux networking commands
+- command line network tool
+- network settings editor
+- system hostname tool
+features:
+- Open the NetworkManager text user interface
+- List and manage available network connections
+- Activate or deactivate specific network connections
+- Edit, add, or delete network profiles
+- Set the system hostname via the command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nmtui
 
 > Text user interface for controlling NetworkManager.

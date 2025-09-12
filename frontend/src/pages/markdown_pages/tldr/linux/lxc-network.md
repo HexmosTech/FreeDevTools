@@ -1,3 +1,31 @@
+---
+title: "LXC Network - Manage LXD Container Networks | Free DevTools"
+name: lxc-network
+path: /freedevtools/tldr/linux/lxc-network
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-network/"
+description: "Manage LXD container networks efficiently with LXC Network. Control network configurations, attach containers, and create new networks. Free online tool, no registration required."
+category: linux
+keywords:
+- lxc network configuration
+- linux container networking
+- lxd network manager
+- lxc network command
+- container network bridge
+- lxd network attach
+- lxc network create
+- linux network management
+- lxd network ipv4
+- ubuntu lxc network
+features:
+- List available LXD networks
+- Show detailed network configuration
+- Attach running instances to networks
+- Create managed networks effortlessly
+- Configure network bridge interfaces
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lxc network
 
 > Manage networks for LXD containers.

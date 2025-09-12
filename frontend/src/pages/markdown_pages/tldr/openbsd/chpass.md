@@ -1,3 +1,31 @@
+---
+title: "Change Password - Manage User Info on OpenBSD | Free DevTools"
+name: chpass
+path: "/freedevtools/tldr/openbsd/chpass"
+canonical: "https://hexmos.com/freedevtools/tldr/openbsd/chpass/"
+description: "Manage user information with Change Password (chpass) on OpenBSD. Update login shells, passwords, and user database entries quickly. Free online tool, no registration required."
+category: openbsd
+keywords:
+- "user password manager"
+- "OpenBSD user account"
+- "login shell editor"
+- "user database modifier"
+- "chpass OpenBSD"
+- "password encryption"
+- "user ID control"
+- "group ID control"
+- "user account settings"
+- "OpenBSD security"
+features:
+- "Modify user login shell"
+- "Change user password securely"
+- "Update user database information"
+- "Specify user entry in passwd format"
+- "Manage OpenBSD user accounts"
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # chpass
 
 > Add or change user database information, including login shell and password.

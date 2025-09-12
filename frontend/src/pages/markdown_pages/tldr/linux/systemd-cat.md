@@ -1,3 +1,31 @@
+---
+title: "Systemd-cat - Capture System Output | Free DevTools"
+name: systemd-cat
+path: /freedevtools/tldr/linux/systemd-cat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cat/"
+description: "Capture system output with systemd-cat to the systemd journal. Log program output and pipeline streams efficiently for centralized logging. Free online tool, no registration required."
+category: linux
+keywords:
+- systemd journal log
+- systemd cat output
+- linux system logging
+- command output to journal
+- pipeline output to journal
+- systemd-cat linux
+- systemd logging
+- systemd-cat command
+- centralized logging linux
+- application output logging
+features:
+- Capture stdout and stderr of commands
+- Integrate pipeline output into systemd journal
+- Assign custom identifiers to logged messages
+- Specify default priority levels for messages
+- Differentiate priority between stdout and stderr
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-cat
 
 > Connect a pipeline or program's output streams with the systemd journal.

@@ -1,3 +1,31 @@
+---
+title: "PCT Set - Control Linux Containers | Free DevTools"
+name: pct-set
+path: /freedevtools/tldr/linux/pct-set
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-set/"
+description: "Control Linux containers easily with PCT Set. Configure networking, manage resources, and automate container startup. Free online tool, no registration required."
+category: linux
+keywords:
+- linux container configuration
+- pct set command
+- proxmox container management
+- container networking linux
+- linux container resource limits
+- pct container automation
+- vmbr0 bridge configuration
+- linux container tags
+- container boot settings
+- proxmox pct set
+features:
+- Configure container networking interfaces
+- Manage container CPU and memory resources
+- Set containers to automatically start on boot
+- Mount host directories into containers
+- Apply tags for container organization
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pct set
 
 > Set container options.

@@ -1,3 +1,31 @@
+---
+title: "Plist Converter - Format & Validate Property Lists | Free DevTools"
+name: plutil
+path: /freedevtools/tldr/osx/plutil
+canonical: "https://hexmos.com/freedevtools/tldr/osx/plutil/"
+description: "Format Property Lists with plutil. Convert plist files between XML, binary, JSON, Swift, and Objective-C formats. Free online tool, no registration required."
+category: osx
+keywords:
+- plist converter
+- property list editor
+- osx plist editor
+- macos plist converter
+- plutil command line
+- plist xml converter
+- plist binary converter
+- plist json converter
+- plist validation
+- plist formatting
+features:
+- Convert plist files between XML, binary, JSON, Swift, and Objective-C
+- Display plist file contents in human-readable format
+- Validate plist file syntax and structure
+- Overwrite existing plist files with converted formats
+- Output converted plist data to standard output
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # plutil
 
 > View, convert, validate, or edit property list ("plist") files.

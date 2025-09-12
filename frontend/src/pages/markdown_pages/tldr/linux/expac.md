@@ -1,3 +1,31 @@
+---
+title: "Extract Package Data - Control Alpm Databases with expac | Free DevTools"
+name: expac
+path: /freedevtools/tldr/linux/expac
+canonical: "https://hexmos.com/freedevtools/tldr/linux/expac/"
+description: "Extract package data with expac. Control alpm databases and manage pacman utilities effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+- alpm database extraction
+- pacman package manager
+- linux package analysis
+- expac package dependencies
+- software package metadata
+- alpm query tool
+- package size calculation
+- dependency tree visualization
+- arch linux package info
+- pacman database inspection
+features:
+- Extract package dependencies
+- List optional package dependencies
+- Calculate package download sizes
+- Identify packages marked for upgrade
+- Display explicitly installed packages
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # expac
 
 > A data extraction tool for alpm databases, offering printf-like flexibility for pacman-based utilities.

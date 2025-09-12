@@ -1,3 +1,31 @@
+---
+title: "Registry Manager - Control Windows Registry | Free DevTools"
+name: reg
+path: /freedevtools/tldr/windows/reg
+canonical: "https://hexmos.com/freedevtools/tldr/windows/reg/"
+description: "Control Windows Registry with Registry Manager. Add, delete, query, export, and import registry keys and values quickly. Free online tool, no registration required."
+category: windows
+keywords:
+- windows registry management
+- registry key editor
+- registry value modification
+- windows reg command
+- registry compare tool
+- registry export windows
+- registry import windows
+- reg add command
+- reg delete command
+- registry backup and restore
+features:
+- Add new registry keys and values
+- Delete existing registry keys and values
+- Export registry keys to a file
+- Import registry keys from a file
+- Query and compare registry keys and values
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # reg
 
 > Manage keys and their values in the Windows registry.

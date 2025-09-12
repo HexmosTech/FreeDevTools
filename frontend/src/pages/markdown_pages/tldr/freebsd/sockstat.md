@@ -1,3 +1,31 @@
+---
+title: "Sockstat - List Open Sockets | Free DevTools"
+name: sockstat
+path: "/freedevtools/tldr/freebsd/sockstat"
+canonical: "https://hexmos.com/freedevtools/tldr/freebsd/sockstat/"
+description: "List open sockets with Sockstat, a network utility for FreeBSD. Examine listening ports, connected sockets, and protocol states. Free online tool, no registration required."
+category: freebsd
+keywords:
+- FreeBSD socket status
+- network socket list
+- FreeBSD connection monitor
+- open port viewer
+- UNIX domain sockets
+- TCP socket analysis
+- UDP socket analysis
+- sockstat command
+- FreeBSD network troubleshooting
+- FreeBSD network stats
+features:
+- List listening network ports
+- Display connected sockets
+- Show protocol states for sockets
+- Filter sockets by jail ID or name
+- View UNIX domain socket information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sockstat
 
 > List open Internet or UNIX domain sockets.

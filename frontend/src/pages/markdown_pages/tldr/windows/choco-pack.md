@@ -1,3 +1,31 @@
+---
+title: "Choco Pack - Create NuGet Packages | Free DevTools"
+name: choco-pack
+path: /freedevtools/tldr/windows/choco-pack
+canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-pack/"
+description: "Create NuGet packages easily with Choco Pack. Streamline your software distribution by packaging NuGet specifications. Free online tool, no registration required."
+category: windows
+keywords:
+- nuget package creator
+- chocolatey pack tool
+- choco nupkg generator
+- windows package manager
+- nuget specification packaging
+- chocolatey package build
+- choco package versioning
+- nuget package deployment
+- windows choco-pack
+- package specification tool
+features:
+- Package NuGet specifications into nupkg files
+- Specify the version of the resulting NuGet package
+- Output NuGet packages to a specific directory
+- Build NuGet packages from command line
+- Automate NuGet packaging process
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # choco pack
 
 > Package a NuGet specification into a `nupkg` file.

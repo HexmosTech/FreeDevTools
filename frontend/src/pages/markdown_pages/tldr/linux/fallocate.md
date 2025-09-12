@@ -1,3 +1,31 @@
+---
+title: "Allocate Disk Space - Control Files with fallocate | Free DevTools"
+name: fallocate
+path: /freedevtools/tldr/linux/fallocate
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fallocate/"
+description: "Control disk space allocation with fallocate. Reserve and deallocate file space quickly and easily using the command line. Free online tool, no registration required."
+category: linux
+keywords:
+- linux fallocate
+- allocate disk space
+- reserve file space
+- deallocate file space
+- fallocate command
+- file system utility
+- disk space management
+- linux file management
+- fallocate examples
+- linux command line tool
+features:
+- Reserve disk space for files
+- Deallocate disk space from files
+- Shrink already allocated files
+- Specify an offset for space allocation
+- Allocate space without zeroing
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fallocate
 
 > Reserve or deallocate disk space to files.

@@ -1,3 +1,31 @@
+---
+title: "Python Launcher - Run Python Versions | Free DevTools"
+name: py
+path: /freedevtools/tldr/windows/py
+canonical: "https://hexmos.com/freedevtools/tldr/windows/py/"
+description: "Run Python versions with Python Launcher for Windows. Execute scripts, start REPL sessions, and specify Python versions directly. Free online tool, no registration required."
+category: windows
+keywords:
+- python launcher
+- windows python
+- python version manager
+- py launcher command
+- python repl windows
+- python script executor
+- pylauncher install
+- py --list
+- python windows command line
+- python launcher windows
+features:
+- Execute Python scripts with specified versions.
+- Launch interactive Python REPL sessions.
+- List all installed Python versions.
+- Auto-install missing Python versions.
+- Run Python with custom arguments.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # py
 
 > Python Launcher for Windows that runs with specified Python version.

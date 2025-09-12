@@ -1,3 +1,31 @@
+---
+title: "DB Client - Secure Shell Access | Free DevTools"
+name: dbclient
+path: /freedevtools/tldr/linux/dbclient
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dbclient/"
+description: "Secure shell access with dbclient. Connect securely to remote servers and execute commands. Free online tool, no registration required."
+category: linux
+keywords:
+- lightweight ssh client
+- secure shell access
+- linux ssh client
+- command line ssh tool
+- dropbear ssh client
+- remote server connection
+- ssh key authentication
+- agent forwarding ssh
+- secure terminal access
+- dbclient linux
+features:
+- Establish secure shell connections to remote servers
+- Authenticate using password or SSH key
+- Execute commands on remote hosts
+- Forward agent connections securely
+- Specify port for secure connections
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dbclient
 
 > Lightweight Dropbear Secure Shell client.

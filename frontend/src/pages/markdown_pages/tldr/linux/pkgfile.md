@@ -1,3 +1,31 @@
+---
+title: "Search Linux Packages - Find Files with pkgfile | Free DevTools"
+name: pkgfile
+path: /freedevtools/tldr/linux/pkgfile
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgfile/"
+description: "Search for files within Linux packages using pkgfile. Easily identify the package containing a specific file. Free online tool, no registration required."
+category: linux
+keywords:
+- linux package search
+- find file in package
+- arch linux package manager
+- pkgfile file lookup
+- locate linux file owner
+- resolve package dependency
+- arch package database
+- linux command line tools
+- package version lookup
+- linux file system search
+features:
+- Search for packages owning a specific file
+- List all files provided by a package
+- Locate executables provided by a package
+- Perform case-insensitive file searches
+- Search for files within specific repositories
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pkgfile
 
 > Search files from packages in the official repositories on Arch-based systems.

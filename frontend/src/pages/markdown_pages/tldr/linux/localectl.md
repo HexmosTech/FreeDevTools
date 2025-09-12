@@ -1,3 +1,31 @@
+---
+title: "Localectl - Control System Locale | Free DevTools"
+name: localectl
+path: /freedevtools/tldr/linux/localectl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/localectl/"
+description: "Control system locale settings with Localectl. Manage keyboard layouts and system languages on Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- linux locale control
+- system locale manager
+- keyboard layout configuration
+- freedesktop localectl
+- linux language settings
+- locale variable editor
+- set system keymap
+- list available locales
+- linux keyboard mapping
+- localectl command line
+features:
+- Set system locale variables
+- List available locales
+- Configure keyboard mapping for console
+- Configure keyboard mapping for X11
+- Display current system locale settings
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # localectl
 
 > Control the system locale and keyboard layout settings.

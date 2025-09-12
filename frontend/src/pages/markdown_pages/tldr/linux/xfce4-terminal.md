@@ -1,3 +1,31 @@
+---
+title: "XFCE4 Terminal - Control Linux Terminal | Free DevTools"
+name: xfce4-terminal
+path: /freedevtools/tldr/linux/xfce4-terminal
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xfce4-terminal/"
+description: "Control Linux terminal sessions with XFCE4 Terminal. Manage tabs, execute commands and customize titles with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- linux terminal control
+- xfce4-terminal command
+- linux command execution
+- terminal tab manager
+- shell command launcher
+- linux session manager
+- xfce4 terminal emulator
+- terminal command hold
+- initial title terminal
+- linux command line
+features:
+- Open new terminal windows
+- Set custom terminal titles
+- Execute commands in new tabs
+- Keep terminals open after command completion
+- Open multiple tabs with command execution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xfce4-terminal
 
 > The XFCE4 terminal emulator.

@@ -1,3 +1,31 @@
+---
+title: "View Package Dependency - Control Linux Packages | Free DevTools"
+name: pactree
+path: /freedevtools/tldr/linux/pactree
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pactree/"
+description: "Control Linux package dependencies easily with Pactree. Analyze package relationships and identify dependencies quickly. Free online tool, no registration required."
+category: linux
+keywords:
+- Linux package dependency
+- Pacman dependency tree
+- Pacman package manager
+- Pactree dependency viewer
+- Linux dependency analysis
+- Package relationship graph
+- Software dependency control
+- Reverse dependency lookup
+- Unique dependency list
+- Optional dependency inclusion
+features:
+- Display the dependency tree of a specific package.
+- List packages that depend on a specific package.
+- Output dependencies one per line, skipping duplicates.
+- Include optional dependencies in the dependency tree.
+- Colorize the dependency tree output for better readability.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pactree
 
 > Package dependency tree viewer for pacman.

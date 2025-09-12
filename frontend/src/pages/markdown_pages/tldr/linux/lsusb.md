@@ -1,3 +1,31 @@
+---
+title: "List USB Devices - Display USB Info | Free DevTools"
+name: lsusb
+path: /freedevtools/tldr/linux/lsusb
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lsusb/"
+description: "List USB devices with lsusb. Discover connected USB devices and their details using this command line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- usb device list
+- usb device information
+- linux usb devices
+- lsusb command
+- usb bus
+- usb vendor id
+- usb product id
+- lsusb linux
+- usb device tree
+- usb verbose
+features:
+- List all connected USB devices
+- Display USB device hierarchy as a tree
+- Show verbose information about USB devices
+- Filter devices by vendor and product ID
+- Display detailed information for a specific device
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lsusb
 
 > Display information about USB buses and devices connected to them.

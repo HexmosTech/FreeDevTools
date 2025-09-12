@@ -1,3 +1,31 @@
+---
+title: "Dstat - Generate System Statistics | Free DevTools"
+name: dstat
+path: /freedevtools/tldr/linux/dstat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dstat/"
+description: "Generate system statistics with Dstat. Monitor CPU usage, disk I/O, network traffic, and more using command line. Free online tool, no registration required."
+category: linux
+keywords:
+- system resource monitoring
+- linux performance analysis
+- cpu usage statistics
+- disk i/o metrics
+- network traffic monitoring
+- dstat command line tool
+- system performance metrics
+- linux system monitoring
+- resource usage tracking
+- system activity reporting
+features:
+- Display real-time CPU, disk, network, and memory statistics
+- Monitor system resource usage with customizable intervals
+- List all available Dstat plugins
+- Identify processes consuming the most memory and CPU resources
+- Display battery percentage and remaining battery time
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dstat
 
 > Versatile tool for generating system resource statistics.

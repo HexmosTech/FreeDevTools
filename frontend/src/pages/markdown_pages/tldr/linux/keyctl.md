@@ -1,3 +1,31 @@
+---
+title: "Keyctl - Control Linux Kernel Keyrings | Free DevTools"
+name: keyctl
+path: /freedevtools/tldr/linux/keyctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/keyctl/"
+description: "Control Linux kernel keyrings with Keyctl. Manage, add, timeout and revoke kernel keys. Free online tool, no registration required."
+category: linux
+keywords:
+- linux keyring manager
+- kernel key control
+- keyctl command linux
+- linux key management
+- keyring manipulation linux
+- add linux kernel key
+- revoke linux kernel key
+- timeout linux kernel key
+- list linux kernel keys
+- linux security keys
+features:
+- List keys within specified keyrings
+- Store keys with user-defined values
+- Set timeouts for key expiration
+- Revoke keys to prevent further access
+- Read key values in raw or hex-dump format
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # keyctl
 
 > Manipulate the Linux kernel keyring.

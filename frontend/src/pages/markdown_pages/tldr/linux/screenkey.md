@@ -1,3 +1,31 @@
+---
+title: "Display Keys - Control Screenkey | Free DevTools"
+name: screenkey
+path: /freedevtools/tldr/linux/screenkey
+canonical: "https://hexmos.com/freedevtools/tldr/linux/screenkey/"
+description: "Display pressed keys with Screenkey on Linux. Show keystrokes and mouse clicks on screen for screencasting and presentations. Free online tool, no registration required."
+category: linux
+keywords:
+- keystroke display
+- screenkey screencast
+- linux keystroke visualizer
+- pressed keys display
+- mouse click indicator
+- linux screen recorder
+- linux presentation tool
+- screencast keyboard overlay
+- keystroke visualizer linux
+- on-screen keyboard display
+features:
+- Display pressed keys on the screen
+- Visualize mouse clicks alongside keystrokes
+- Customize the display position on the screen
+- Change the appearance with custom colors and fonts
+- Select a specific window for screenkey display
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # screenkey
 
 > A screencast tool to display keys pressed.

@@ -1,3 +1,31 @@
+---
+title: "ABRT-CLI - Report Linux Crashes | Free DevTools"
+name: abrt-cli
+path: /freedevtools/tldr/linux/abrt-cli
+canonical: "https://hexmos.com/freedevtools/tldr/linux/abrt-cli/"
+description: "Report Linux crashes effortlessly with ABRT-CLI. Analyze crash reports and submit them to bug trackers. Free online tool, no registration required."
+category: linux
+keywords:
+- linux crash reporting
+- abrt crash analysis
+- bugzilla report linux
+- fedora crash reporter
+- linux error detection
+- command line crash report
+- application crash log
+- abrt-cli command
+- debug report generation
+- linux automatic bug reporting
+features:
+- List detected application problems
+- Show detailed information on specific problems
+- Remove unwanted crash reports
+- Report problems to configured bug trackers
+- Monitor log files and trigger actions on errors
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # abrt-cli
 
 > Automatic Bug Reporting Tool for Fedora-based systems.

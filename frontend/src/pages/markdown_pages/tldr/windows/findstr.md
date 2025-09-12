@@ -1,3 +1,31 @@
+---
+title: "Findstr - Search Text in Files | Free DevTools"
+name: findstr
+path: /freedevtools/tldr/windows/findstr
+canonical: "https://hexmos.com/freedevtools/tldr/windows/findstr/"
+description: "Search text within files with Findstr. Quickly locate specific strings or patterns in multiple files. Free online tool, no registration required."
+category: windows
+keywords:
+- text search windows
+- file search windows
+- find text windows
+- string search command
+- windows findstr command
+- windows command line find
+- text pattern matching windows
+- regex search windows
+- file content search windows
+- find string in files
+features:
+- Find text within multiple files
+- Perform case-insensitive text searches
+- Search files recursively
+- Search using regular expressions
+- Display line numbers for matches
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # findstr
 
 > Find specified text within one or more files.

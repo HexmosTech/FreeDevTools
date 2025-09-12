@@ -1,3 +1,31 @@
+---
+title: "Iptables Firewall - Control Linux Network Traffic | Free DevTools"
+name: iptables
+path: /freedevtools/tldr/linux/iptables
+canonical: "https://hexmos.com/freedevtools/tldr/linux/iptables/"
+description: "Control Linux network traffic with Iptables Firewall. Secure your server, manage rules, and configure network settings. Free online tool, no registration required."
+category: linux
+keywords:
+- iptables firewall
+- linux firewall
+- network traffic control
+- iptables rules
+- firewall configuration
+- iptables commands
+- network security linux
+- linux packet filtering
+- iptables nat
+- firewall management
+features:
+- Configure IPv4 firewall rules
+- Manage network packet filtering
+- Set chain policies for traffic control
+- Append rules based on IP, protocol, and port
+- Delete specific chain rules by line number
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # iptables
 
 > Configure tables, chains and rules of the Linux kernel IPv4 firewall.

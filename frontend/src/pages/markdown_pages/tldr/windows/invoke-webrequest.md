@@ -1,3 +1,31 @@
+---
+title: "WebRequest Invoke - Perform HTTP/HTTPS Requests | Free DevTools"
+name: invoke-webrequest
+path: /freedevtools/tldr/windows/invoke-webrequest
+canonical: "https://hexmos.com/freedevtools/tldr/windows/invoke-webrequest/"
+description: "Perform HTTP/HTTPS requests with Invoke-WebRequest. Send data in JSON format and manage authentication seamlessly with this powerful command. Free online tool, no registration required."
+category: windows
+keywords:
+- http request windows
+- https request windows
+- powershell web request
+- invoke-webrequest powershell
+- windows web client
+- powershell http client
+- api request powershell
+- download file powershell
+- post request powershell
+- authentication powershell
+features:
+- Download content from a URL to a file.
+- Send form-encoded data using the POST method.
+- Include custom headers in web requests.
+- Send data in JSON format with appropriate content-type.
+- Pass username and password for server authentication.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Invoke-WebRequest
 
 > Performs a HTTP/HTTPS request to the Web.

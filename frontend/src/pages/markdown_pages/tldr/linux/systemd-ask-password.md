@@ -1,3 +1,31 @@
+---
+title: "Systemd Password Query - Ask System Passwords | Free DevTools"
+name: systemd-ask-password
+path: /freedevtools/tldr/linux/systemd-ask-password
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-ask-password/"
+description: "Query system passwords with systemd-ask-password. Configure timeout, specify identifiers, and use kernel keyring for caching. Free online tool, no registration required."
+category: linux
+keywords:
+- systemd password query
+- linux password prompt
+- systemd ask password
+- kernel keyring password
+- command line password tool
+- linux systemd tool
+- secure password prompt
+- system password management
+- systemd configuration
+- tty password query
+features:
+- Query passwords with a specific prompt
+- Use kernel keyring as password cache
+- Set a custom timeout for password queries
+- Pass asked password to another program
+- Store passwords securely in kernel keyring
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-ask-password
 
 > Query the user for a system password.

@@ -1,3 +1,31 @@
+---
+title: "Larasail - Manage Laravel Servers | Free DevTools"
+name: larasail
+path: /freedevtools/tldr/linux/larasail
+canonical: "https://hexmos.com/freedevtools/tldr/linux/larasail/"
+description: "Manage Laravel servers efficiently with Larasail. Deploy, configure, and host Laravel applications on Digital Ocean. Free online tool, no registration required."
+category: linux
+keywords:
+- laravel server management
+- digital ocean laravel deployment
+- larasail server configuration
+- laravel hosting linux
+- larasail command line tool
+- laravel digital ocean setup
+- php server setup
+- linux laravel application
+- laravel site deployment
+- larasail password retrieval
+features:
+- Deploy Laravel applications to Digital Ocean servers
+- Configure servers with necessary Laravel dependencies
+- Host multiple Laravel sites on a single server
+- Retrieve Larasail user and MySQL passwords
+- Set up servers with specific PHP versions
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # larasail
 
 > Manage Laravel on Digital Ocean servers.

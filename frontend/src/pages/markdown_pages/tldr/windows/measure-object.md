@@ -1,3 +1,31 @@
+---
+title: "Measure Object - Calculate File Metrics | Free DevTools"
+name: measure-object
+path: /freedevtools/tldr/windows/measure-object
+canonical: "https://hexmos.com/freedevtools/tldr/windows/measure-object/"
+description: "Calculate metrics with Measure-Object. Determine the count, average, sum, minimum, and maximum values of objects. Free online tool, no registration required."
+category: windows
+keywords:
+- powershell measure object
+- windows powershell measure
+- file size calculator powershell
+- line counter powershell
+- word counter powershell
+- character counter powershell
+- powershell script metrics
+- powershell measure performance
+- powershell object analysis
+- powershell statistics calculation
+features:
+- Calculate the number of objects in a collection
+- Determine average, sum, minimum, and maximum numeric properties
+- Count characters, words, and lines in string objects
+- Analyze file contents for statistical data
+- Measure script performance by timing execution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Measure-Object
 
 > Calculates the numeric properties of objects, and the characters, words, and lines in string objects, such as files of text.

@@ -1,3 +1,31 @@
+---
+title: "Generate IaC Configurations - aiac | Free DevTools"
+name: aiac
+path: /freedevtools/tldr/osx/aiac
+canonical: "https://hexmos.com/freedevtools/tldr/osx/aiac/"
+description: "Generate IaC configurations with aiac. Automate infrastructure provisioning and management across multiple clouds. Free online tool, no registration required."
+category: osx
+keywords:
+- IaC generator
+- Infrastructure as Code
+- Terraform generator
+- Dockerfile generator
+- GitHub Actions generator
+- MongoDB query generator
+- Azure infrastructure
+- Cloud automation
+- OpenAI IaC
+- MacOS automation
+features:
+- Generate Terraform configurations using natural language
+- Create Dockerfiles based on user input
+- Automate GitHub Actions workflows for IaC deployment
+- Generate MongoDB queries for data aggregation
+- Simplify cloud infrastructure management with AI
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aiac
 
 > Use OpenAI to generate IaC configurations, utilities, queries and more.

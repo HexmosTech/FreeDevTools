@@ -1,3 +1,31 @@
+---
+title: "Add Mageia Media - Control Repositories | Free DevTools"
+name: urpmi.addmedia
+path: /freedevtools/tldr/linux/urpmi.addmedia
+canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi.addmedia/"
+description: "Add Mageia repositories and control media sources with urpmi.addmedia. Manage package sources and update your system effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+- Mageia repository manager
+- Linux package manager
+- urpmi media source control
+- Mageia urpmi.addmedia command
+- RPM package management Linux
+- Mageia mirror selection tool
+- Linux distribution update tool
+- Command-line repository configuration
+- RPM package source management
+- Mageia package installation tool
+features:
+- Add media sources to the urpmi configuration
+- Specify repository URLs for package updates
+- Configure mirror lists for automatic mirror selection
+- Add media from local hard drives
+- Manage package sources in Mageia Linux
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # urpmi.addmedia
 
 > Add media in Mageia.

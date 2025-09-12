@@ -1,3 +1,31 @@
+---
+title: "Gcov - Generate Code Coverage Reports | Free DevTools"
+name: gcov
+path: /freedevtools/tldr/linux/gcov
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gcov/"
+description: "Generate code coverage reports with Gcov. Analyze code execution and identify untested parts of your program. Free online tool, no registration required."
+category: linux
+keywords:
+- code coverage report
+- gcov code analysis
+- linux code coverage
+- c++ code coverage
+- execution analysis
+- gnu gcov
+- code profiling linux
+- program testing
+- software testing
+- untested code discovery
+features:
+- Generate code coverage reports for C/C++ programs.
+- Analyze code execution frequency.
+- Identify untested code segments.
+- Write branch probabilities to output files.
+- Provide function-level execution summaries.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # gcov
 
 > Code coverage analysis and profiling tool that discovers untested parts of a program.

@@ -1,3 +1,31 @@
+---
+title: "XBPS Remove - Uninstall Packages on Linux | Free DevTools"
+name: xbps-remove
+path: /freedevtools/tldr/linux/xbps-remove
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-remove/"
+description: "Uninstall packages instantly with XBPS Remove. Manage software, remove dependencies, and clean your Linux system. Free online tool, no registration required."
+category: linux
+keywords:
+- linux package manager
+- xbps package removal
+- void linux xbps
+- linux software uninstall
+- xbps remove package
+- uninstall linux packages
+- delete linux software
+- xbps orphan removal
+- linux package cleanup
+- xbps clean cache
+features:
+- Remove specified packages from the system
+- Recursively remove packages and their dependencies
+- Remove orphaned packages no longer required
+- Clean the XBPS package cache
+- Uninstall software on Void Linux
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xbps-remove
 
 > XBPS utility to remove packages.

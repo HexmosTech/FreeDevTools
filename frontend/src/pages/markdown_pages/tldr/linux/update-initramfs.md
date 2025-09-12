@@ -1,3 +1,31 @@
+---
+title: "Create initramfs - Manage Linux Images | Free DevTools"
+name: update-initramfs
+path: /freedevtools/tldr/linux/update-initramfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/update-initramfs/"
+description: "Create Linux initramfs images with update-initramfs. Update, generate, or remove initramfs images for different kernel versions. Free online tool, no registration required."
+category: linux
+keywords:
+- linux initramfs manager
+- initramfs image creator
+- linux kernel image update
+- initramfs update command
+- update initramfs linux
+- linux initramfs rebuild
+- kernel initramfs utility
+- linux boot image manager
+- initramfs package manager
+- linux image updater
+features:
+- Generate new initramfs images for specific kernel versions
+- Update existing initramfs images to reflect system changes
+- Remove obsolete initramfs images from the system
+- Manage initramfs for multiple installed kernels
+- Integrate seamlessly with the Linux kernel update process
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # update-initramfs
 
 > Manage initramfs.

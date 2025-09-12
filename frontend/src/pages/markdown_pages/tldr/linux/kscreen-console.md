@@ -1,3 +1,31 @@
+---
+title: "KScreen Console - Query KScreen Status | Free DevTools"
+name: kscreen-console
+path: /freedevtools/tldr/linux/kscreen-console
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kscreen-console/"
+description: "Query KScreen's status with KScreen Console. Monitor display configurations and troubleshoot display issues. Free online tool, no registration required."
+category: linux
+keywords:
+- kscreen status
+- display configuration
+- linux display manager
+- kscreen console utility
+- monitor display changes
+- query outputs
+- kscreen configuration
+- kde display settings
+- linux display resolution
+- display bug reporting
+features:
+- Show all outputs for bug reporting
+- Display KScreen configuration file paths
+- Show KScreen output information and configuration
+- Monitor KScreen for display changes
+- Display current KScreen configuration as JSON
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # kscreen-console
 
 > Query KScreen's status.

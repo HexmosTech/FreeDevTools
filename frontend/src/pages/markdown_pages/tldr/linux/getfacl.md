@@ -1,3 +1,31 @@
+---
+title: "Getfacl - Control File Access Lists on Linux | Free DevTools"
+name: getfacl
+path: /freedevtools/tldr/linux/getfacl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/getfacl/"
+description: "Control file access lists (ACLs) with Getfacl on Linux. Manage permissions and enhance system security using file access lists. Free online tool, no registration required."
+category: linux
+keywords:
+- linux file ACL
+- getfacl file permissions
+- access control list linux
+- linux permission manager
+- file system access control
+- getfacl command linux
+- linux getfacl tool
+- file ACL linux command
+- manage linux file permissions
+- linux access control tool
+features:
+- Display file access control lists
+- Show numeric user and group IDs
+- Output in tabular format
+- Manage file system permissions
+- Control access to files and directories
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # getfacl
 
 > Get file access control lists (ACL).

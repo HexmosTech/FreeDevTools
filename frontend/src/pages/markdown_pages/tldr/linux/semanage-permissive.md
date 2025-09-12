@@ -1,3 +1,31 @@
+---
+title: "Semanage Permissive - Control SELinux Domains | Free DevTools"
+name: semanage-permissive
+path: /freedevtools/tldr/linux/semanage-permissive
+canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage-permissive/"
+description: "Control SELinux permissive domains with Semanage Permissive. Manage security contexts and configure SELinux policy on Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- semanage permissive
+- selinux permissive domain
+- linux selinux policy
+- semanage selinux
+- selinux context management
+- linux security
+- selinux configuration
+- permissive domain control
+- semanage policy
+- linux selinux semanage
+features:
+- List permissive SELinux domains
+- Add domains to permissive mode
+- Delete domains from permissive mode
+- Manage SELinux security contexts
+- Configure SELinux policy persistently
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # semanage permissive
 
 > Manage persistent SELinux permissive domains.

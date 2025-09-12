@@ -1,3 +1,31 @@
+---
+title: "Reg Query - Display Registry Values | Free DevTools"
+name: reg-query
+path: /freedevtools/tldr/windows/reg-query
+canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-query/"
+description: "Display registry values with Reg Query, a powerful Windows command-line tool. Retrieve specific values, search keys, and manage registry settings easily. Free online tool, no registration required."
+category: windows
+keywords:
+- registry value query
+- windows registry access
+- reg query command
+- registry key retrieval
+- windows registry search
+- command line registry tool
+- reg query windows
+- registry data extraction
+- cmd registry lookup
+- registry value display
+features:
+- Display all values of a specified registry key.
+- Retrieve the value of a specific registry key.
+- Search for registry keys and values matching a pattern.
+- Filter registry queries by data type.
+- Perform case-sensitive, exact-match registry searches.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # reg query
 
 > Display the values of keys and subkeys in the registry.

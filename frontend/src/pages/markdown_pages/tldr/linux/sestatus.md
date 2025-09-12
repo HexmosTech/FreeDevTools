@@ -1,3 +1,31 @@
+---
+title: "SELinux Status - Control Security Policies | Free DevTools"
+name: sestatus
+path: /freedevtools/tldr/linux/sestatus
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sestatus/"
+description: "Control SELinux security policies with sestatus. Check current policy status, booleans, and contexts. Free online tool, no registration required."
+category: linux
+keywords:
+- selinux status
+- linux selinux
+- security policy status
+- selinux boolean status
+- selinux context
+- selinux configuration
+- linux security
+- security administration
+- policy enforcement
+- linux command line
+features:
+- Displays current SELinux status information
+- Shows the status of all policy booleans
+- Prints file and process security contexts
+- Provides a summary of loaded policies
+- Reports SELinux policy enforcement mode
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sestatus
 
 > Print the current SELinux status.

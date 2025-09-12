@@ -1,3 +1,31 @@
+---
+title: "Bleachbit - Clean Junk Files | Free DevTools"
+name: bleachbit_console
+path: /freedevtools/tldr/windows/bleachbit_console
+canonical: "https://hexmos.com/freedevtools/tldr/windows/bleachbit_console/"
+description: "Clean junk files with Bleachbit, a powerful system cleaner. Securely shred files and preview cleanup operations for privacy. Free online tool, no registration required."
+category: windows
+keywords:
+- system cleaner windows
+- file shredder windows
+- disk cleanup tool
+- privacy cleaner windows
+- bleachbit command line
+- secure file deletion
+- junk file remover
+- windows cleaner
+- system maintenance
+- temporary file cleaner
+features:
+- Shred files securely to prevent recovery
+- Preview files to be deleted before cleanup
+- List available cleaning options and customize cleanup process
+- Clean specific system areas and applications
+- Automate cleanup tasks with command-line interface
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # bleachbit_console
 
 > Clean junk files on the filesystem.

@@ -1,3 +1,31 @@
+---
+title: "Mux Streams - Intercept and Multiplex Data | Free DevTools"
+name: mux
+path: /freedevtools/tldr/linux/mux
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mux/"
+description: "Multiplex data streams with Mux. Intercept and route input events across multiple outputs. Streamline data flow management with this free online tool, no registration required."
+category: linux
+keywords:
+- linux mux streams
+- mux input multiplexer
+- mux output router
+- linux command mux
+- data stream interception
+- event multiplexing linux
+- stream routing tool
+- linux data redirection
+- muxer tool linux
+- stream multiplexing tool
+features:
+- Create named muxers for stream management
+- Set internal queue size for muxer instances
+- Read input from a specified muxer
+- Write output to multiple named muxers simultaneously
+- Intercept and multiplex input event streams
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mux
 
 > Intercept and multiplex streams of input events.

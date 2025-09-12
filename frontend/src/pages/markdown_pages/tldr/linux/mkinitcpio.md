@@ -1,3 +1,31 @@
+---
+title: "Mkinitcpio - Generate Linux Initramfs Images | Free DevTools"
+name: mkinitcpio
+path: /freedevtools/tldr/linux/mkinitcpio
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkinitcpio/"
+description: "Generate Linux initramfs images with mkinitcpio. Create custom initial ramdisk environments for booting the Linux kernel. Free online tool, no registration required."
+category: linux
+keywords:
+- linux initramfs generator
+- mkinitcpio linux
+- linux ramdisk image creation
+- generate initrd image
+- linux kernel boot image
+- mkinitcpio configuration
+- linux preset generator
+- linux boot sequence configuration
+- mkinitcpio hooks
+- linux kernel module loading
+features:
+- Generate initramfs images from presets
+- Customize boot environments with hooks
+- Create initramfs for specific kernel versions
+- Generate initramfs using alternative configuration files
+- List available mkinitcpio hooks
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mkinitcpio
 
 > Generate initial ramdisk environments for booting the Linux kernel based on the specified preset(s).

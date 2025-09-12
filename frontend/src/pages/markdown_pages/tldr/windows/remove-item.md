@@ -1,3 +1,31 @@
+---
+title: "Remove-Item - Delete Files and Folders | Free DevTools"
+name: remove-item
+path: "/freedevtools/tldr/windows/remove-item"
+canonical: "https://hexmos.com/freedevtools/tldr/windows/remove-item/"
+description: "Delete files with Remove-Item command. Erase files, folders, registry keys on Windows using PowerShell. Free online tool, no registration required."
+category: windows
+keywords:
+- Windows file deletion
+- PowerShell Remove-Item
+- Delete files command
+- Remove folder Windows
+- Erase registry key
+- Windows PowerShell script
+- Remove-Item force delete
+- PowerShell delete directory
+- Windows file removal
+- Command-line file delete
+features:
+- Delete files and folders recursively
+- Force removal of read-only files
+- Interactive removal with confirmation prompts
+- Remove Windows registry keys and subkeys
+- Perform dry run deletion for testing
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Remove-Item
 
 > Delete files, folders, as well as registry keys and subkeys.

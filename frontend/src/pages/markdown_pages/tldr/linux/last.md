@@ -1,3 +1,32 @@
+---
+title: "Last Command - View User Logins | Free DevTools"
+name: last
+path: "/freedevtools/tldr/linux/last"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/last/"
+description: "View user login details with the Last Command. Analyze login history, track user activity and audit system access effectively. Free online tool, no registration required."
+category: linux
+keywords:
+- linux login history
+- user login tracker
+- last login viewer
+- wtmp log analyzer
+- system access audit
+- command line login utility
+- last command examples
+- user activity monitoring
+- terminal login details
+- linux account access
+
+features:
+- Display last login information for all users
+- Filter logins by specific username
+- Limit the number of logins displayed
+- Print full date and time for login entries
+- View all recorded system reboots
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # last
 
 > View the last logged in users.

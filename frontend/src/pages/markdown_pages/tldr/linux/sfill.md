@@ -1,3 +1,31 @@
+---
+title: "Securely Overwrite with Sfill - Free Space Eraser | Free DevTools"
+name: sfill
+path: /freedevtools/tldr/linux/sfill
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sfill/"
+description: "Securely overwrite data with Sfill, a free space eraser for Linux. Permanently delete files and protect sensitive information from recovery. Free online tool, no registration required."
+category: linux
+keywords:
+- disk wiping tool
+- secure delete linux
+- data sanitization linux
+- sfill command
+- linux free space eraser
+- hard drive shredder
+- secure file deletion
+- inode overwriting
+- data security linux
+- disk cleaning tool
+features:
+- Securely overwrites free space on mounted drives
+- Overwrites inodes for enhanced security
+- Offers multiple write passes for data sanitization
+- Allows for verbose output to monitor progress
+- Provides options to overwrite only free space or inodes
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sfill
 
 > Securely overwrite the free space and inodes of the partition where the specified directory resides.

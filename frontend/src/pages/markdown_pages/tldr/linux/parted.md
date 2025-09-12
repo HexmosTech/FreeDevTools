@@ -1,3 +1,31 @@
+---
+title: "Parted - Control Disk Partitions | Free DevTools"
+name: parted
+path: /freedevtools/tldr/linux/parted
+canonical: "https://hexmos.com/freedevtools/tldr/linux/parted/"
+description: "Control disk partitions with Parted. Create partition tables, resize partitions, and manage flags on Linux devices. Free online tool, no registration required."
+category: linux
+keywords:
+- disk partition manager
+- parted linux command
+- partition table creator
+- gpt partition editor
+- msdos partition tool
+- disk management linux
+- partition resize command
+- boot flag controller
+- device partition tool
+- disk partition utilities
+features:
+- List partitions on all block devices.
+- Create new partition tables with various label types.
+- Create GPT partitions with specified sizes.
+- Set boot flags on specified partitions.
+- Start interactive mode to manage partitions.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # parted
 
 > A partition manipulation program.

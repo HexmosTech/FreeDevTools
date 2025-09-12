@@ -1,3 +1,31 @@
+---
+title: "Instaloader - Download Instagram Media | Free DevTools"
+name: instaloader
+path: /freedevtools/tldr/linux/instaloader
+canonical: "https://hexmos.com/freedevtools/tldr/linux/instaloader/"
+description: "Download Instagram media with Instaloader, including photos, videos, stories, and highlights. Easily archive Instagram content offline. Free online tool, no registration required."
+category: linux
+keywords:
+- instagram downloader
+- instaloader download
+- instagram photo downloader
+- instagram video downloader
+- instagram story downloader
+- instagram highlights downloader
+- instagram archive
+- instagram backup
+- instaloader linux
+- instagram media scraper
+features:
+- Download Instagram profiles including posts and metadata
+- Download Instagram stories and IGTV videos with login
+- Download Instagram highlights for specific profiles
+- Filter downloads based on geotags and other criteria
+- Update existing Instagram archives quickly
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # instaloader
 
 > Download pictures, videos, captions, and other metadata from Instagram.

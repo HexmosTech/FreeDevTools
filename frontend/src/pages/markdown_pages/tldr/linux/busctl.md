@@ -1,3 +1,31 @@
+---
+title: "Busctl - Introspect D-Bus Bus | Free DevTools"
+name: busctl
+path: /freedevtools/tldr/linux/busctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/busctl/"
+description: "Introspect D-Bus bus with Busctl. Monitor messages, inspect object trees, and retrieve properties of services. Free online tool, no registration required."
+category: linux
+keywords:
+- D-Bus introspection
+- Linux D-Bus monitor
+- Busctl command
+- Systemd busctl
+- D-Bus object tree
+- Service property retrieval
+- Message bus debugging
+- Linux service introspection
+- D-Bus method invocation
+- Linux D-Bus tool
+features:
+- List all peers on the D-Bus bus
+- Show process information for a bus service
+- Dump messages exchanged on the bus
+- Show the object tree of a service
+- Retrieve object properties of a D-Bus service
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # busctl
 
 > Introspect and monitor the D-Bus bus.

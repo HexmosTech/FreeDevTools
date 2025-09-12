@@ -1,3 +1,31 @@
+---
+title: "Test-NetConnection - Network Diagnostic Information | Free DevTools"
+name: test-netconnection
+path: /freedevtools/tldr/windows/test-netconnection
+canonical: "https://hexmos.com/freedevtools/tldr/windows/test-netconnection/"
+description: "Diagnose network connection issues with Test-NetConnection, a powerful PowerShell command. Troubleshoot network problems and verify connectivity. Free online tool, no registration required."
+category: windows
+keywords:
+- network connection test
+- powershell network test
+- test network connectivity
+- windows network troubleshooting
+- network diagnostic command
+- test tcp connection
+- test port connection
+- powershell test-netconnection command
+- network ping test
+- network connection analysis
+features:
+- Diagnose network connection problems
+- Test connectivity to remote hosts
+- Verify connection using specific port numbers
+- Display detailed network information
+- Troubleshoot network latency issues
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # Test-NetConnection
 
 > Display diagnostic information for a connection.

@@ -1,3 +1,31 @@
+---
+title: "Forfiles - Control Files with Windows Command | Free DevTools"
+name: forfiles
+path: /freedevtools/tldr/windows/forfiles
+canonical: "https://hexmos.com/freedevtools/tldr/windows/forfiles/"
+description: "Control files effectively with Forfiles, the Windows command-line utility. Automate file processing and batch operations. Free online tool, no registration required."
+category: windows
+keywords:
+- windows file management
+- forfiles command
+- batch file processing windows
+- command line file selection
+- windows file automation
+- file date filter windows
+- recursive file search windows
+- glob pattern file selection
+- windows command shell scripting
+- file processing script windows
+features:
+- Select files based on date criteria
+- Execute commands on a group of files
+- Search for files recursively in subdirectories
+- Filter files using glob patterns
+- Automate batch processing operations on Windows
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # forfiles
 
 > Select files to execute a specified command on.

@@ -1,3 +1,31 @@
+---
+title: "Control Xclip Clipboard - Linux Data Transfer | Free DevTools"
+name: xclip
+path: /freedevtools/tldr/linux/xclip
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xclip/"
+description: "Control clipboard data with Xclip, a versatile Linux command-line tool. Transfer data between applications efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+- xclip clipboard
+- linux clipboard manager
+- x11 clipboard
+- command line clipboard
+- clipboard data transfer
+- linux data transfer
+- xclip copy paste
+- terminal clipboard
+- primary selection
+- system clipboard
+features:
+- Copy command output to X11 clipboard
+- Paste clipboard content to console
+- Transfer data between applications
+- Manipulate primary and secondary selections
+- Integrate with system clipboard for cut and paste
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xclip
 
 > X11 clipboard manipulation tool, similar to `xsel`.

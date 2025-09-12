@@ -1,3 +1,31 @@
+---
+title: "Boltctl - Control Thunderbolt Devices | Free DevTools"
+name: boltctl
+path: /freedevtools/tldr/linux/boltctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/boltctl/"
+description: "Control Thunderbolt devices easily with Boltctl. Authorize, enroll, and manage your thunderbolt connections efficiently on Linux. Free online tool, no registration required."
+category: linux
+keywords:
+- thunderbolt device control
+- boltctl linux command
+- linux thunderbolt manager
+- thunderbolt authorization linux
+- linux device management
+- thunderbolt security linux
+- boltctl device enrollment
+- linux boltctl usage
+- thunderbolt connection manager
+- linux thunderbolt configuration
+features:
+- List connected Thunderbolt devices.
+- Authorize Thunderbolt devices temporarily.
+- Enroll Thunderbolt devices for persistent authorization.
+- Revoke authorization from Thunderbolt devices.
+- Display detailed information about Thunderbolt devices.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # boltctl
 
 > Control thunderbolt devices.

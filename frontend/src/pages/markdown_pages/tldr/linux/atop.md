@@ -1,3 +1,31 @@
+---
+title: "Linux atop - Monitor System Processes | Free DevTools"
+name: atop
+path: /freedevtools/tldr/linux/atop
+canonical: "https://hexmos.com/freedevtools/tldr/linux/atop/"
+description: "Monitor system processes with Linux atop, a powerful resource monitoring tool. Analyze CPU, memory, disk, and network activity. Free online tool, no registration required."
+category: linux
+keywords:
+- linux system monitor
+- atop process monitor
+- system resource analysis
+- performance monitoring linux
+- linux cpu usage
+- linux memory usage
+- linux disk i/o
+- linux process accounting
+- system activity report
+- linux resource monitoring
+features:
+- Monitor system-wide resource utilization in real-time
+- Identify processes with high resource consumption
+- Display detailed information about CPU, memory, disk, and network activity
+- Filter and sort processes based on resource usage
+- Analyze historical resource usage data
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # atop
 
 > Linux system and process monitor.

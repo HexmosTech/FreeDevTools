@@ -1,3 +1,31 @@
+---
+title: "Pacstall Package Manager - Control Ubuntu Packages | Free DevTools"
+name: pacstall
+path: /freedevtools/tldr/linux/pacstall
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacstall/"
+description: "Control Ubuntu package management with Pacstall Package Manager. Install, remove, and update packages effortlessly on your Linux system. Free online tool, no registration required."
+category: linux
+keywords:
+- pacstall package manager
+- ubuntu package manager
+- linux package installer
+- AUR package manager ubuntu
+- pacstall repository manager
+- linux package upgrade
+- ubuntu pacstall commands
+- pacstall search
+- linux software installation
+- debian package management
+features:
+- Install packages from repositories
+- Remove installed packages easily
+- Update Pacstall's scripts efficiently
+- Upgrade all packages simultaneously
+- List all currently installed packages
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacstall
 
 > An AUR package manager for Ubuntu.

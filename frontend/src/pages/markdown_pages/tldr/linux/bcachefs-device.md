@@ -1,3 +1,31 @@
+---
+title: "Bcachefs Device - Manage Storage Devices | Free DevTools"
+name: bcachefs-device
+path: /freedevtools/tldr/linux/bcachefs-device
+canonical: "https://hexmos.com/freedevtools/tldr/linux/bcachefs-device/"
+description: "Manage storage devices with Bcachefs Device, allowing you to add, evacuate, and remove devices from your bcachefs filesystem. Free online tool, no registration required."
+category: linux
+keywords:
+- bcachefs device manager
+- linux storage management
+- bcachefs disk utility
+- bcachefs device add
+- bcachefs device evacuate
+- bcachefs device remove
+- filesystem device control
+- bcachefs raid configuration
+- linux bcachefs tools
+- block device management
+features:
+- Add new devices to a bcachefs filesystem
+- Migrate data off a bcachefs device
+- Remove devices permanently from a bcachefs filesystem
+- Format devices for use in a bcachefs filesystem
+- Evacuate device data before removal
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # bcachefs device
 
 > Manage devices within a running `bcachefs` filesystem.

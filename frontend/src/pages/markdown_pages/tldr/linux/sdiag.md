@@ -1,3 +1,31 @@
+---
+title: "Slurm Diagnose - Inspect Slurmctld | Free DevTools"
+name: sdiag
+path: /freedevtools/tldr/linux/sdiag
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sdiag/"
+description: "Inspect slurmctld execution with Slurm Diagnose. Analyze performance counters, reset metrics, and format output. Free online tool, no registration required."
+category: linux
+keywords:
+- slurm diagnose
+- slurmctld diagnose
+- linux slurm
+- slurm performance
+- slurm cluster monitoring
+- slurm command line tool
+- slurm diagnostic tool
+- slurm troubleshooting
+- linux cluster management
+- slurm job scheduler
+features:
+- Show all slurmctld performance counters
+- Reset slurmctld performance counters
+- Specify output format as JSON or YAML
+- Target a specific slurm cluster
+- Analyze slurm scheduler execution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sdiag
 
 > Show information about the execution of `slurmctld`.

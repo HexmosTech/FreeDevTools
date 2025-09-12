@@ -1,3 +1,31 @@
+---
+title: "Eject GPU - Safely Eject GPU on macOS | Free DevTools"
+name: safeejectgpu
+path: /freedevtools/tldr/osx/safeejectgpu
+canonical: "https://hexmos.com/freedevtools/tldr/osx/safeejectgpu/"
+description: "Safely eject a GPU with SafeEjectGPU on macOS. Manage GPU devices and applications using the command line. Free online tool, no registration required."
+category: osx
+keywords:
+- macOS GPU Eject
+- GPU Safe Eject
+- SafeEjectGPU Command
+- macOS GPU Management
+- GPU Device Control
+- GPU Application List
+- GPU Status Check
+- Command Line GPU
+- GPU Eject Utility
+- macOS GPU Tools
+features:
+- Safely eject GPUs on macOS
+- List all attached GPU devices
+- Display applications using a specific GPU
+- Check the current status of a GPU
+- Launch an application on a designated GPU
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # SafeEjectGPU
 
 > Eject a GPU safely.

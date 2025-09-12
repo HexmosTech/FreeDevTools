@@ -1,3 +1,31 @@
+---
+title: "Control Mac App Store - Manage Apps with mas CLI | Free DevTools"
+name: mas
+path: /freedevtools/tldr/osx/mas
+canonical: "https://hexmos.com/freedevtools/tldr/osx/mas/"
+description: "Manage Mac App Store apps with mas CLI. Install, update, search and list applications directly from the command line. Free online tool, no registration required."
+category: osx
+keywords:
+- mac app store cli
+- mas command line
+- osx package manager
+- macos app installer
+- mas install app
+- mas upgrade app
+- mas search app
+- mas list apps
+- mas outdated apps
+- apple store cli
+features:
+- Install applications from the Mac App Store using the command line.
+- Update installed applications directly from the terminal.
+- Search the Mac App Store for applications using keywords.
+- List all installed applications and their associated product identifiers.
+- Upgrade specific applications using their numeric ID.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mas
 
 > Command-line interface for the Mac App Store.

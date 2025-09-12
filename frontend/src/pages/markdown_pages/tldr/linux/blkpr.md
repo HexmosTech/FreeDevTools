@@ -1,3 +1,31 @@
+---
+title: "Control Persistent Reservations - blkpr | Free DevTools"
+name: blkpr
+path: /freedevtools/tldr/linux/blkpr
+canonical: "https://hexmos.com/freedevtools/tldr/linux/blkpr/"
+description: "Control persistent reservations with blkpr. Manage block device reservations, register keys, and clear reservations. Free online tool, no registration required."
+category: linux
+keywords:
+- persistent reservation control
+- block device management
+- Linux persistent reservation
+- SCSI reservations
+- persistent reservation register
+- persistent reservation preempt
+- persistent reservation release
+- block device reservation clear
+- reservation key management
+- blkpr command-line tool
+features:
+- Register persistent reservations with unique keys.
+- Reserve block devices for exclusive access.
+- Preempt existing reservations and replace them.
+- Release reservations based on key and type.
+- Clear all reservations from a block device.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # blkpr
 
 > Register, reserve, release, preempt, and clear persistent reservations on a block device that supports Persistent Reservations.

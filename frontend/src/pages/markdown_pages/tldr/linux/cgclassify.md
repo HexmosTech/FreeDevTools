@@ -1,3 +1,31 @@
+---
+title: "CGClassify - Control Linux Cgroups | Free DevTools"
+name: cgclassify
+path: /freedevtools/tldr/linux/cgclassify
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cgclassify/"
+description: "Control Linux cgroups effectively with CGClassify. Isolate resources and manage processes with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- linux cgroups manager
+- cgroup process controller
+- linux resource isolation
+- process management linux
+- cgclassify command line
+- cgroup configuration
+- linux process cgroup
+- systemd cgroup control
+- cgroup resource limiter
+- linux containerization
+features:
+- Move running tasks to specific cgroups
+- Classify processes based on configuration
+- Apply CPU hierarchy rules to processes
+- Manage process resources effectively
+- Isolate and control process execution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cgclassify
 
 > Move running tasks to `cgroups`.

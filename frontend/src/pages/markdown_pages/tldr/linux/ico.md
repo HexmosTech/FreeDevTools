@@ -1,3 +1,31 @@
+---
+title: "ICO - Display Polyhedron Animation | Free DevTools"
+name: ico
+path: "/freedevtools/tldr/linux/ico"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ico/"
+description: "Display polyhedron animation with ICO. Visualize complex shapes and control animation parameters with this command-line tool. Free online tool, no registration required."
+category: linux
+keywords:
+- polyhedron animation
+- 3D model display
+- wireframe visualization
+- Linux graphics command
+- command-line animation
+- ico animation
+- geometric shape renderer
+- icosahedron display
+- command line graphics
+- Linux animation tool
+features:
+- Animate polyhedron shapes from the command line
+- Customize colors and background for polyhedron display
+- Control animation speed and display parameters
+- Render wireframe or solid polyhedron models
+- Adjust line width and threading for optimal performance
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ico
 
 > Display an animation of a polyhedron.

@@ -1,3 +1,31 @@
+---
+title: "Eventcreate - Create Event Log Entries | Free DevTools"
+name: eventcreate
+path: /freedevtools/tldr/windows/eventcreate
+canonical: "https://hexmos.com/freedevtools/tldr/windows/eventcreate/"
+description: "Create event log entries with eventcreate. Manage event logs, specify event IDs, and send events to remote machines. Free online tool, no registration required."
+category: windows
+keywords:
+- windows event log entry
+- eventcreate command windows
+- event log message creator
+- windows event id generator
+- custom event logger windows
+- command line event logger
+- windows system event create
+- remote event logging windows
+- windows event source create
+- event type specification windows
+features:
+- Create custom entries in the Windows event log
+- Specify the event ID for new log entries
+- Define the type of event (success, error, warning, information)
+- Create events in specific named event logs
+- Send events to remote Windows machines
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # eventcreate
 
 > Create custom entries in the event log.

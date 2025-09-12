@@ -1,3 +1,31 @@
+---
+title: "Upgrade Packages - Manage Arch Linux Packages | Free DevTools"
+name: pacman-upgrade
+path: /freedevtools/tldr/linux/pacman-upgrade
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-upgrade/"
+description: "Manage packages with Pacman Upgrade. Install, update, and manage software packages on Arch Linux systems with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- arch linux package upgrade
+- pacman package manager
+- linux package installer
+- arch linux update packages
+- pacman update command
+- linux software management
+- pacman force install
+- arch linux package overwrite
+- pacman skip dependencies
+- arch linux package print affected
+features:
+- Install packages from local files
+- Force install packages without confirmation
+- Overwrite conflicting files during package installation
+- Skip dependency version checks during installation
+- Print packages affected by an upgrade
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacman --upgrade
 
 > Arch Linux package manager utility.

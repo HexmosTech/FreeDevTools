@@ -1,3 +1,31 @@
+---
+title: "PCT - Manage LXC Containers in Proxmox | Free DevTools"
+name: pct
+path: /freedevtools/tldr/linux/pct
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pct/"
+description: "Manage LXC containers with PCT, a powerful Proxmox command. Create, start, stop, and resize containers effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+- lxc container management
+- proxmox container control
+- pct command linux
+- linux container tools
+- container lifecycle management
+- proxmox lxc automation
+- pct create container
+- pct resize container
+- proxmox pct snapshot
+- pct container shell
+features:
+- Create LXC containers from templates
+- Resize container disks easily
+- Snapshot and restore containers
+- Access container shell for debugging
+- Start, stop, and reboot containers remotely
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pct
 
 > Manage LXC containers in Proxmox.

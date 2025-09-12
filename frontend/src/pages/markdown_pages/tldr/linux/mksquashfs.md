@@ -1,3 +1,31 @@
+---
+title: "Create Squashfs Filesystems - mksquashfs | Free DevTools"
+name: mksquashfs
+path: /freedevtools/tldr/linux/mksquashfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mksquashfs/"
+description: "Create squashfs filesystems with mksquashfs. Compress, exclude files, and build customized archives quickly. Free online tool, no registration required."
+category: linux
+keywords:
+- Squashfs image creation
+- Linux filesystem builder
+- Create compressed archives
+- Mksquashfs command examples
+- Squashfs file exclusion
+- Linux archive tool
+- Gzip compression squashfs
+- LZ4 compression squashfs
+- Filesystem image generator
+- Linux archive management
+features:
+- Create Squashfs filesystems from files and directories.
+- Apply different compression algorithms to Squashfs filesystems (gzip, lzo, lz4, xz, zstd, lzma).
+- Exclude specific files or directories from the Squashfs filesystem.
+- Use wildcards to exclude files based on patterns.
+- Utilize regular expressions to exclude files for advanced filtering.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mksquashfs
 
 > Create or append files and directories to squashfs filesystems.

@@ -1,3 +1,31 @@
+---
+title: "GRUB File Check - Validate Bootable Image Type | Free DevTools"
+name: grub-file
+path: /freedevtools/tldr/linux/grub-file
+canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-file/"
+description: "Validate bootable image types with GRUB file, a Linux command to verify image architectures like EFI and XNU. Free online tool, no registration required."
+category: linux
+keywords:
+- Bootable image validator
+- Grub file check
+- Linux image verification
+- EFI image identifier
+- XNU image validator
+- ARM kernel checker
+- i386 EFI validator
+- x86_64 EFI validator
+- grub-file linux command
+- Kernel image identifier
+features:
+- Identify ARM EFI images
+- Verify i386 EFI images
+- Validate x86_64 EFI images
+- Check for ARM Linux kernels
+- Determine x86_64 XNU image types
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # grub-file
 
 > Check if a file is of a bootable image type.

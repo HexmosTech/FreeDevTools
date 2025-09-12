@@ -1,3 +1,31 @@
+---
+title: "Doskey - Manage Windows Commands | Free DevTools"
+name: doskey
+path: /freedevtools/tldr/windows/doskey
+canonical: "https://hexmos.com/freedevtools/tldr/windows/doskey/"
+description: "Manage Windows commands with Doskey. Create macros, manage command-lines, and recall commands. Free online tool, no registration required."
+category: windows
+keywords:
+- windows command macro
+- doskey macro management
+- command-line alias windows
+- windows command history
+- doskey command recall
+- windows batch script alias
+- doskey command substitution
+- windows macro definition
+- doskey macro creation
+- windows command-line editor
+features:
+- Define aliases for frequently used commands
+- Create macros with parameter substitution
+- Store and recall command history
+- Manage command-line editing
+- Execute complex command sequences with a single alias
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # doskey
 
 > Manage macros, windows commands and command-lines.

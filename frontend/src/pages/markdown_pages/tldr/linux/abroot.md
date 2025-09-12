@@ -1,3 +1,31 @@
+---
+title: "ABRoot - Manage Linux Root Partitions | Free DevTools"
+name: abroot
+path: /freedevtools/tldr/linux/abroot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/abroot/"
+description: "Manage Linux root partitions with ABRoot, ensuring system consistency through OCI image-based updates. Secure rollback and kernel parameter editing. Free online tool, no registration required."
+category: linux
+keywords:
+- linux partition manager
+- abroot image updater
+- immutable linux system
+- atomic root filesystem
+- linux oci updates
+- abroot rollback utility
+- kernel parameter editor
+- linux system recovery
+- abroot system updates
+- dual partition boot
+features:
+- Transactional updates between root partitions
+- Perform system rollback to a previous state
+- Manage and modify kernel parameters
+- List, add, or remove packages from a local image
+- Display system status and configuration
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # abroot
 
 > Utility providing full immutability and atomicity by transacting between 2 root partition states (A⟺B).

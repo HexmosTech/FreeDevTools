@@ -1,3 +1,31 @@
+---
+title: "Chcon - Control File Context on Linux | Free DevTools"
+name: chcon
+path: /freedevtools/tldr/linux/chcon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/chcon/"
+description: "Control file context with Chcon, the Linux command-line tool. Manage SELinux security contexts to enhance system security. Free online tool, no registration required."
+category: linux
+keywords:
+- linux file context
+- change selinux context
+- chcon command
+- linux security
+- selinux management
+- file permissions linux
+- context modification
+- linux file security
+- selinux configuration
+- security context tool
+features:
+- Modify SELinux user identity
+- Alter SELinux role assignment
+- Change SELinux type enforcement
+- Update SELinux range/level attributes
+- Apply context from a reference file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # chcon
 
 > Change SELinux security context of a file or files/directories.

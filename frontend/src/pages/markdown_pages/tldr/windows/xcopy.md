@@ -1,3 +1,31 @@
+---
+title: "Xcopy - Copy Files and Directories | Free DevTools"
+name: xcopy
+path: /freedevtools/tldr/windows/xcopy
+canonical: "https://hexmos.com/freedevtools/tldr/windows/xcopy/"
+description: "Copy files instantly with Xcopy, the Windows command-line tool for file and directory replication. Secure your data and simplify backups. Free online tool, no registration required."
+category: windows
+keywords:
+- windows xcopy command
+- file copy windows
+- directory copy windows
+- xcopy command line
+- windows file transfer
+- windows directory replication
+- xcopy syntax
+- xcopy examples
+- xcopy backup
+- xcopy archive
+features:
+- Copy files and directories to a specified destination
+- Replicate directory structures without copying files
+- Resume file transfers after network interruptions
+- Include or exclude empty directories in the copy process
+- Preserve Access Control Lists (ACLs) during file copies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xcopy
 
 > Copy files and directory trees.

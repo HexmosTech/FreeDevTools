@@ -1,3 +1,31 @@
+---
+title: "Manage Files - Dolphin File Manager on Linux | Free DevTools"
+name: dolphin
+path: /freedevtools/tldr/linux/dolphin
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dolphin/"
+description: "Manage files with Dolphin file manager on Linux. Navigate directories, select files, and open multiple windows. Free online tool, no registration required."
+category: linux
+keywords:
+- Linux file manager
+- KDE file manager
+- Dolphin file browser
+- Linux directory navigation
+- Graphical file management Linux
+- Linux file selection tool
+- Dolphin split view
+- Command line file management
+- Linux GUI file manager
+- Linux file organization
+features:
+- Launch the Dolphin file manager.
+- Open specific directories using the command line.
+- Select specific files or directories when opening.
+- Open new Dolphin windows.
+- Open directories in a split view for easy comparison.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dolphin
 
 > KDE's file manager to manage files and directories.

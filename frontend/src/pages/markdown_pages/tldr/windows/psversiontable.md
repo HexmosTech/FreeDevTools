@@ -1,3 +1,31 @@
+---
+title: "Get PowerShell Version - Check PSVersionTable | Free DevTools"
+name: psversiontable
+path: /freedevtools/tldr/windows/psversiontable
+canonical: "https://hexmos.com/freedevtools/tldr/windows/psversiontable/"
+description: "Get PowerShell version information with PSVersionTable. Inspect PowerShell edition, Git commit ID, and supported script versions easily. Free online tool, no registration required."
+category: windows
+keywords:
+- PowerShell version information
+- PSVersionTable details
+- PowerShell edition check
+- Windows PowerShell version
+- PowerShell Core version
+- PowerShell Git commit ID
+- PowerShell script versions
+- PowerShell compatibility check
+- Windows system version
+- PowerShell environment data
+features:
+- Display installed PowerShell version details
+- Retrieve PowerShell edition information (Core or Windows)
+- List compatible PowerShell script versions
+- Obtain the Git commit ID of the PowerShell build
+- Provide comprehensive PowerShell environment information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # PSVersionTable
 
 > A read-only variable (as `$PSVersionTable`) to get the current PowerShell version.

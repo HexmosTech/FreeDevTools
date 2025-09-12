@@ -1,3 +1,31 @@
+---
+title: "Brightness Control - Manage Display Brightness | Free DevTools"
+name: brightnessctl
+path: /freedevtools/tldr/linux/brightnessctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/brightnessctl/"
+description: "Control display brightness with brightnessctl on Linux. Adjust screen luminosity and manage multiple displays from the command line. Free online tool, no registration required."
+category: linux
+keywords:
+- display brightness control
+- linux brightness manager
+- brightnessctl command
+- screen brightness adjust
+- command line brightness
+- linux display settings
+- brightness percentage control
+- monitor brightness tool
+- backlight brightness adjust
+- device brightness control
+features:
+- List available brightness devices
+- Get current brightness levels
+- Set brightness to a specific percentage
+- Increment or decrement brightness
+- Control brightness for specific devices
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # brightnessctl
 
 > Utility for reading and controlling device brightness for Linux operating systems.

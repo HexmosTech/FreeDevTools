@@ -1,3 +1,31 @@
+---
+title: "Blkid - List Partitions and UUIDs | Free DevTools"
+name: blkid
+path: /freedevtools/tldr/linux/blkid
+canonical: "https://hexmos.com/freedevtools/tldr/linux/blkid/"
+description: "List partitions and their UUIDs with Blkid. Easily identify devices and mount points on your Linux system. Free online tool, no registration required."
+category: linux
+keywords:
+- linux partitions
+- linux UUID
+- blkid command
+- device identification
+- filesystem information
+- partition listing
+- device mapping
+- block device UUID
+- linux disk management
+- block device information
+features:
+- List all recognized partitions
+- Display Universally Unique Identifiers (UUIDs)
+- Show partition mountpoints
+- Present partition information in table format
+- Retrieve specific UUID values from a partition
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # blkid
 
 > List all recognized partitions and their Universally Unique Identifier (UUID).

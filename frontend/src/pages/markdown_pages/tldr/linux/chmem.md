@@ -1,3 +1,31 @@
+---
+title: "Chmem - Modify Memory Blocks in Linux | Free DevTools"
+name: chmem
+path: /freedevtools/tldr/linux/chmem
+canonical: "https://hexmos.com/freedevtools/tldr/linux/chmem/"
+description: "Modify memory blocks with Chmem, a Linux memory management tool. Control memory hotplug in virtualized environments. Free online tool, no registration required."
+category: linux
+keywords:
+- linux memory management
+- chmem memory control
+- memory block offline
+- memory block online
+- linux memory hotplug
+- memory zone assignment
+- chmem command examples
+- hexadecimal memory address
+- virtualized memory manager
+- linux memory tools
+features:
+- Set memory blocks offline
+- Set memory blocks online
+- Control memory ranges via hexadecimal addresses
+- Assign memory to specific zones
+- Manage memory hotplug in Linux
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # chmem
 
 > Modify the state of memory blocks (online or offline) in a Linux system.

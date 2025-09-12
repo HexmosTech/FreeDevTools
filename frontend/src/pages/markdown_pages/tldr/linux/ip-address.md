@@ -1,3 +1,31 @@
+---
+title: "IP Address - Control Network Addresses | Free DevTools"
+name: ip-address
+path: /freedevtools/tldr/linux/ip-address
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-address/"
+description: "Control IP Addresses with ip command. Manage network interfaces, assign IP addresses, and troubleshoot network connectivity with this free Linux tool. Free online tool, no registration required."
+category: linux
+keywords:
+- linux ip address
+- ip address command
+- network interface configuration
+- ip address management
+- linux network tools
+- ip address add
+- ip address delete
+- ip address show
+- linux networking commands
+- network troubleshooting linux
+features:
+- List network interfaces and their addresses
+- Add or remove IP addresses from interfaces
+- Filter network interfaces by status
+- Flush IP addresses in a specific scope
+- Display detailed interface information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ip address
 
 > IP Address management subcommand.

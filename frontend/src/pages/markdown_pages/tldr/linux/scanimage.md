@@ -1,3 +1,31 @@
+---
+title: "Scan Images - Digitize Photos with Scanimage | Free DevTools"
+name: scanimage
+path: /freedevtools/tldr/linux/scanimage
+canonical: "https://hexmos.com/freedevtools/tldr/linux/scanimage/"
+description: "Digitize images with Scanimage, a powerful command-line tool for Linux. Convert physical documents and photos into digital formats easily. Free online tool, no registration required."
+category: linux
+keywords:
+- linux image scanning
+- scanimage command line
+- digital image creation
+- image to digital conversion
+- linux document digitization
+- scanimage linux tool
+- pnm image conversion
+- tiff image scanning
+- png image scanning
+- linux image management
+features:
+- Scan images directly from the command line
+- Convert scanned documents to various formats (PNM, TIFF, PNG, JPEG, PDF)
+- List available scanners connected to the system
+- Specify the scanning device to use
+- Adjust resolution for scanned images
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # scanimage
 
 > Scan images with the Scanner Access Now Easy API.

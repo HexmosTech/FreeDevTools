@@ -1,3 +1,31 @@
+---
+title: "UVC Control - Manage UVC Cameras on Linux | Free DevTools"
+name: uvcdynctrl
+path: /freedevtools/tldr/linux/uvcdynctrl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/uvcdynctrl/"
+description: "Control UVC cameras on Linux with uvcdynctrl. Adjust camera settings, save configurations, and load profiles. Free online tool, no registration required."
+category: linux
+keywords:
+- uvc control linux
+- linux uvc control
+- uvc camera control
+- uvcdynctrl linux
+- v4l2 uvc control
+- linux camera settings
+- uvc settings manager
+- video4linux control
+- camera control cli
+- linux video controls
+features:
+- List available UVC cameras
+- Adjust UVC camera settings
+- Save and load camera configurations
+- Get current control values
+- Set new control values
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # uvcdynctrl
 
 > Manage dynamic controls in uvcvideo.

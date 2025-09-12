@@ -1,3 +1,31 @@
+---
+title: "Trash Manager - Control Recycling Bin | Free DevTools"
+name: trash
+path: /freedevtools/tldr/linux/trash
+canonical: "https://hexmos.com/freedevtools/tldr/linux/trash/"
+description: "Control trash management with Trash Manager on Linux. Effortlessly manage, restore, and empty your trash, reclaiming disk space easily. Free online tool, no registration required."
+category: linux
+keywords:
+- linux trash manager
+- recycle bin controller
+- trash CLI tool
+- file deletion tool
+- linux trash restore
+- command line trash
+- trashcan management
+- linux file recovery
+- trash-cli linux
+- empty trash command
+features:
+- Send files to the trash from the command line
+- List all files currently in the trash
+- Interactively restore files from the trash
+- Empty the trash of all files or files older than a specific number of days
+- Remove specific files or files matching a pattern from the trash
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # trash
 
 > Manage the trashcan/recycling bin.

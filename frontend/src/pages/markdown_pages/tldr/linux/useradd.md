@@ -1,3 +1,31 @@
+---
+title: "Create User - Manage Linux Users | Free DevTools"
+name: useradd
+path: /freedevtools/tldr/linux/useradd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/useradd/"
+description: "Create Linux users effortlessly with useradd. Manage user accounts, assign groups, and configure home directories. Free online tool, no registration required."
+category: linux
+keywords:
+- linux user creation
+- user account management linux
+- linux useradd command
+- add user linux
+- linux system administration
+- user group management linux
+- user id linux
+- shell assignment linux
+- home directory creation linux
+- linux user security
+features:
+- Create new user accounts on Linux systems.
+- Assign specific user IDs during user creation.
+- Configure default shells for new users.
+- Add users to multiple groups simultaneously.
+- Create home directories for new user accounts.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # useradd
 
 > Create a new user.

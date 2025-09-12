@@ -1,3 +1,31 @@
+---
+title: "Control RetroArch - Emulate Games on Linux | Free DevTools"
+name: retroarch
+path: /freedevtools/tldr/linux/retroarch
+canonical: "https://hexmos.com/freedevtools/tldr/linux/retroarch/"
+description: "Control your gaming experience with RetroArch emulator on Linux. Emulate classic games and manage configuration files easily. Free online tool, no registration required."
+category: linux
+keywords:
+- retroarch emulator
+- linux emulator frontend
+- libretro api
+- game emulator configuration
+- cross-platform emulation
+- retro gaming linux
+- retroarch command line
+- emulator management
+- game engine frontend
+- media player frontend
+features:
+- Start RetroArch in menu mode
+- Launch RetroArch in full-screen mode
+- List compiled features of RetroArch
+- Specify a custom configuration file path
+- Display RetroArch version information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # retroarch
 
 > A frontend for emulators, game engines and media players.

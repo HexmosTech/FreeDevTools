@@ -1,3 +1,31 @@
+---
+title: "Btrfs Restore - Salvage Files from Btrfs Filesystem | Free DevTools"
+name: btrfs-restore
+path: /freedevtools/tldr/linux/btrfs-restore
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-restore/"
+description: "Salvage Btrfs data with Btrfs Restore. Recover files from corrupted or damaged Btrfs filesystems. Free online tool, no registration required."
+category: linux
+keywords:
+- btrfs filesystem restore
+- linux btrfs data recovery
+- btrfs damaged filesystem salvage
+- btrfs file extraction
+- btrfs data recovery tool
+- linux filesystem repair
+- btrfs volume recovery
+- btrfs snapshot restore
+- btrfs recovery linux command
+- btrfs file system backup
+features:
+- Restore files from a damaged Btrfs filesystem to a specified directory
+- List files that can be restored without performing the actual restore operation
+- Restore files based on a regular expression matching the file path
+- Restore files using a specific root tree bytenr for recovery
+- Restore files along with metadata, extended attributes, and symlinks, with overwrite option
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # btrfs restore
 
 > Try to salvage files from a damaged btrfs filesystem.

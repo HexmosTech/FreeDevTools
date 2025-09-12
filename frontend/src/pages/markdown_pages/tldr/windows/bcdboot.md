@@ -1,3 +1,31 @@
+---
+title: "BCDboot - Create Boot Files | Free DevTools"
+name: bcdboot
+path: /freedevtools/tldr/windows/bcdboot
+canonical: "https://hexmos.com/freedevtools/tldr/windows/bcdboot/"
+description: "Create boot files with BCDboot. Configure and repair boot configuration data on Windows systems, ensuring a proper boot sequence. Free online tool, no registration required."
+category: windows
+keywords:
+- BCDboot boot files
+- Windows boot repair
+- Boot configuration data
+- Windows BCD editor
+- BCD bootloader
+- Windows boot sequence
+- Command-line boot tool
+- Windows recovery environment
+- Windows boot manager
+- UEFI boot configuration
+features:
+- Initialize system partitions using BCD files
+- Enable verbose mode for detailed output
+- Specify the system partition volume letter
+- Configure the locale for boot files
+- Specify the firmware type for boot file copying
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # bcdboot
 
 > Configure or repair boot files.

@@ -1,3 +1,31 @@
+---
+title: "Nixos Rebuild - Control System Configuration | Free DevTools"
+name: nixos-rebuild
+path: /freedevtools/tldr/linux/nixos-rebuild
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-rebuild/"
+description: "Control system configuration with Nixos Rebuild. Manage boot entries, rollback changes, and test configurations. Free online tool, no registration required."
+category: linux
+keywords:
+- nixos configuration management
+- linux system configuration
+- nixos rebuild switch
+- nixos boot entry
+- nixos rollback configuration
+- nixos virtual machine build
+- nixos generation list
+- nixos configuration testing
+- nixos boot management
+- linux nix package manager
+features:
+- Switch to a new NixOS configuration
+- Create named boot entries for configurations
+- Rollback to a previous NixOS generation
+- Build and test configurations in a virtual machine
+- List available NixOS generations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nixos-rebuild
 
 > Reconfigure a NixOS machine.

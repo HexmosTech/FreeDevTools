@@ -1,3 +1,31 @@
+---
+title: "Roll Dice - Generate Random Numbers with Rolldice | Free DevTools"
+name: rolldice
+path: /freedevtools/tldr/linux/rolldice
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rolldice/"
+description: "Generate random numbers with Rolldice, a Linux dice rolling command.  Simulate dice rolls for games and development. Free online tool, no registration required."
+category: linux
+keywords:
+- linux dice roller
+- command line dice
+- random number generator linux
+- dice rolling simulator
+- rolldice command
+- linux random number tool
+- dice rolling bash script
+- command line rpg dice
+- linux gaming tools
+- rolldice generator
+features:
+- Roll dice with specified number of sides
+- Drop the lowest roll from a set of dice
+- Add modifiers to dice rolls
+- Roll multiple dice simultaneously
+- Simulate dice rolls in the command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rolldice
 
 > Roll virtual dice.

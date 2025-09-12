@@ -1,3 +1,31 @@
+---
+title: "DM-tool - Control Display Manager | Free DevTools"
+name: dm-tool
+path: /freedevtools/tldr/linux/dm-tool
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dm-tool/"
+description: "Control Display Manager with dm-tool. Switch users, lock sessions and manage seats. Free online tool, no registration required."
+category: linux
+keywords:
+- linux display manager control
+- dm-tool session management
+- display manager session locking
+- linux user switching command
+- lightdm seat management
+- linux greeter control
+- command line display utility
+- dm-tool authentication prompt
+- linux display configuration
+- session restore command
+features:
+- Switch to the display manager greeter
+- Lock the current user session
+- Switch to a specified user account
+- Add dynamic seats to a LightDM session
+- Manage display manager from the command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dm-tool
 
 > A tool to communicate with the display manager.

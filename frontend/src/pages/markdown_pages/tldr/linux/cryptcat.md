@@ -1,3 +1,31 @@
+---
+title: "Cryptcat - Encrypt Network Connections | Free DevTools"
+name: cryptcat
+path: /freedevtools/tldr/linux/cryptcat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptcat/"
+description: "Encrypt network connections with Cryptcat. Securely transmit data over networks using encryption. Free online tool, no registration required."
+category: linux
+keywords:
+- encrypted network connection
+- secure data transfer
+- cryptcat linux
+- network encryption tool
+- command line encryption
+- network security
+- tcp encryption
+- port scanning linux
+- proxy tool linux
+- secure communication linux
+features:
+- Encrypt data streams over TCP/IP networks
+- Listen for encrypted connections on specified ports
+- Connect to remote hosts using encryption
+- Perform port scanning with verbose output
+- Act as a proxy to forward encrypted data streams
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cryptcat
 
 > Cryptcat is netcat with encryption capabilities.

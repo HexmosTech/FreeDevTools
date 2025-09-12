@@ -1,3 +1,31 @@
+---
+title: "Create SquashFS - From Tar Archive | Free DevTools"
+name: sqfstar
+path: /freedevtools/tldr/linux/sqfstar
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sqfstar/"
+description: "Create SquashFS filesystems with sqfstar. Compress and package directories into efficient archives. Free online tool, no registration required."
+category: linux
+keywords:
+- squashfs creator
+- squashfs from tar
+- linux archive tool
+- filesystem creation
+- data compression
+- tar to squashfs conversion
+- archive management linux
+- linux filesystem tool
+- sqfstar command
+- squashfs tool
+features:
+- Create squashfs filesystems from tar archives
+- Compress filesystems using gzip, lzo, lz4, xz, zstd, or lzma
+- Exclude specific files or file patterns from the filesystem
+- Support for tar archives compressed with gzip, xz, zstd, and lz4
+- Regex-based file exclusion for fine-grained control
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sqfstar
 
 > Create a squashfs filesystem from a tar archive.

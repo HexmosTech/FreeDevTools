@@ -1,3 +1,31 @@
+---
+title: "Scoop Bucket - Manage App Repositories | Free DevTools"
+name: scoop-bucket
+path: /freedevtools/tldr/windows/scoop-bucket
+canonical: "https://hexmos.com/freedevtools/tldr/windows/scoop-bucket/"
+description: "Manage Scoop buckets with Scoop Bucket. Add, remove, and list app repositories for easy installation. Free online tool, no registration required."
+category: windows
+keywords:
+- scoop bucket manager
+- windows package manager
+- scoop repository
+- scoop app installer
+- scoop add bucket
+- scoop remove bucket
+- scoop bucket list
+- scoop bucket known
+- windows command line
+- software repository
+features:
+- List all available Scoop buckets.
+- Add new application buckets to Scoop.
+- Remove existing buckets from Scoop.
+- List currently used Scoop buckets.
+- Manage software repositories efficiently.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # scoop bucket
 
 > Manage buckets: Git repositories containing files which describe how scoop installs applications.

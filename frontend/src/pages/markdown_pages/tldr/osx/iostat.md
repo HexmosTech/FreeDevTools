@@ -1,3 +1,31 @@
+---
+title: "Iostat - Monitor Device Statistics | Free DevTools"
+name: iostat
+path: /freedevtools/tldr/osx/iostat
+canonical: "https://hexmos.com/freedevtools/tldr/osx/iostat/"
+description: "Monitor device statistics with Iostat on MacOS. Analyze disk I/O performance and CPU usage. Free online tool, no registration required."
+category: osx
+keywords:
+- disk I/O statistics
+- iostat device monitoring
+- osx performance analysis
+- system resource monitor
+- disk usage statistics
+- CPU usage statistics
+- terminal I/O metrics
+- command line monitoring
+- MacOS iostat command
+- disk performance analysis
+features:
+- Display device statistics in kilobytes, transfers per second, and megabytes per second
+- Show incremental reports of CPU and disk statistics at specified intervals
+- Monitor statistics for specific disks
+- Output total device statistics for transfers and megabytes
+- Display in old-style iostat display with sectors and milliseconds
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # iostat
 
 > Report statistics for devices.

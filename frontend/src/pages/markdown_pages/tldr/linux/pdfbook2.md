@@ -1,3 +1,31 @@
+---
+title: "Create PDF Booklets - Format PDF for Printing | Free DevTools"
+name: pdfbook2
+path: /freedevtools/tldr/linux/pdfbook2
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfbook2/"
+description: "Create printable PDF booklets with pdfbook2. Format PDF files for double-sided printing and manage margins. Free online tool, no registration required."
+category: linux
+keywords:
+- PDF booklet creator
+- PDF formatting tool
+- Linux PDF printer
+- Double sided PDF printing
+- PDF margin adjustment
+- Printable PDF generator
+- PDF book signature
+- PDF to booklet converter
+- Command line PDF tools
+- Landscape PDF format
+features:
+- Create double-sided printable PDF booklets
+- Adjust inner margins for booklet printing
+- Set paper size for PDF booklets
+- Organize large PDFs with print signatures
+- Format PDF for landscape printing
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pdfbook2
 
 > Create a double sided printable PDF booklet from a PDF.
