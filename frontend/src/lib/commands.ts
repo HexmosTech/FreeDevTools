@@ -1,8 +1,11 @@
 // Utility function to get all command markdown files
 export async function getAllCommands() {
-  const commandFiles = import.meta.glob("/src/pages/markdown_pages/tldr/**/*.md", {
-    eager: true,
-  });
+  const commandFiles = import.meta.glob(
+    "/src/pages/markdown_pages/tldr/**/*.md",
+    {
+      eager: true,
+    }
+  );
 
   const commandsByPlatform: Record<
     string,
@@ -29,18 +32,43 @@ export async function getAllCommands() {
     // Get additional frontmatter data
     const frontmatter = (file as any).frontmatter || {};
 
+    const commandName_final = frontmatter.name || commandName;
+
+    // Debug logging
+    if (!frontmatter.name) {
+      console.log(
+        `❌ Missing name field: ${path} -> using fallback: ${commandName}`
+      );
+    }
+    if (frontmatter.name === "") {
+      console.log(`❌ Empty name field: ${path}`);
+    }
+
     commandsByPlatform[platform].push({
-      name: frontmatter.name || commandName,
+      name: commandName_final,
       url: frontmatter.path || `/freedevtools/tldr/${platform}/${commandName}`,
       description,
       category: frontmatter.category,
     });
   }
 
-  // Sort commands within each platform
-  Object.keys(commandsByPlatform).forEach((platform) => {
-    commandsByPlatform[platform].sort((a, b) => a.name.localeCompare(b.name));
-  });
+  // Sort commands within each platform - COMMENTED OUT FOR NOW
+  // Object.keys(commandsByPlatform).forEach((platform) => {
+  //   commandsByPlatform[platform].sort((a, b) => {
+  //     const nameA = a.name || "";
+  //     const nameB = b.name || "";
+
+  //     // Debug logging for sorting issues
+  //     if (!a.name) {
+  //       console.log(`❌ Sorting issue - undefined name in object:`, a);
+  //     }
+  //     if (!b.name) {
+  //       console.log(`❌ Sorting issue - undefined name in object:`, b);
+  //     }
+
+  //     return nameA.localeCompare(nameB);
+  //   });
+  // });
 
   return commandsByPlatform;
 }
