@@ -597,6 +597,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "diff-checker": {
+    title: "Diff Checker - Compare Text & Code Online | Free DevTools",
+    name: "Diff Checker",
+    path: "/freedevtools/t/diff-checker/",
+    description:
+      "Compare text and code differences instantly with our free online diff checker. Visualize changes character by character, word by word, or line by line with advanced comparison options and unified diff export.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/diff-checker/",
+    keywords: [
+      "diff checker",
+      "text comparison tool",
+      "code diff online",
+      "compare text files",
+      "difference checker",
+      "file comparison tool",
+      "online diff tool",
+      "text diff viewer",
+    ],
+    features: [
+      "Real-time text and code comparison",
+      "Multiple comparison modes (character, word, line, sentence)",
+      "Ignore case and whitespace options",
+      "Visual diff highlighting with color coding",
+      "Unified diff export for version control",
+      "Statistical analysis of changes",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
