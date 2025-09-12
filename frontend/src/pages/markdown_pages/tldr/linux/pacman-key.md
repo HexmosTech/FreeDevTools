@@ -1,3 +1,31 @@
+---
+title: "Pacman Key Manager - Secure Package Management | Free DevTools"
+name: pacman-key
+path: /freedevtools/tldr/linux/pacman-key
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-key/"
+description: "Secure pacman package management with pacman-key. Manage keys, verify package integrity, and enhance system security. Free online tool, no registration required."
+category: linux
+keywords:
+- pacman key management
+- linux keyring manager
+- arch linux key utility
+- gpg package verification
+- package signing linux
+- pacman key server
+- arch linux security
+- linux package integrity
+- pacman keyring populate
+- pacman key add
+features:
+- Initialize the pacman keyring for secure package installation.
+- Populate the keyring with default Arch Linux keys for verification.
+- Manage and list keys in the keyring to verify package origins.
+- Add and sign keys to establish trust for custom packages.
+- Remove untrusted or compromised keys to maintain system security.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacman-key
 
 > Wrapper script for GnuPG used to manage pacman's keyring.

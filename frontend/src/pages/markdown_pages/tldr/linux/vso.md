@@ -1,3 +1,31 @@
+---
+title: "Control Vanilla OS - System Operator with VSO | Free DevTools"
+name: vso
+path: /freedevtools/tldr/linux/vso
+canonical: "https://hexmos.com/freedevtools/tldr/linux/vso/"
+description: "Control Vanilla OS system operations with VSO. Update packages, manage the Pico subsystem, and automate tasks. Free online tool, no registration required."
+category: linux
+keywords:
+- vanilla os package manager
+- linux system updater
+- task automation linux
+- vso command line tool
+- pico subsystem management
+- vanilla os update manager
+- linux package installer
+- vso system operator
+- application deployment linux
+- container management linux
+features:
+- Upgrade the Vanilla OS host system
+- Manage packages within the Pico subsystem
+- Enter and execute commands in the subsystem shell
+- Display and manage VSO configuration settings
+- Run applications installed in the subsystem
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # vso
 
 > Package manager, system updater and a task automator for Vanilla OS.

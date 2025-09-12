@@ -1,3 +1,31 @@
+---
+title: "Inotifywait - Monitor File Changes | Free DevTools"
+name: inotifywait
+path: /freedevtools/tldr/linux/inotifywait
+canonical: "https://hexmos.com/freedevtools/tldr/linux/inotifywait/"
+description: "Monitor file changes with Inotifywait. Watch files and directories for specific events, such as modification, access, or creation. Free online tool, no registration required."
+category: linux
+keywords:
+- file change monitor
+- directory watch linux
+- inotifywait file events
+- linux file system monitoring
+- command line file watcher
+- inotifywait recursive watch
+- file modification detection
+- linux inotify
+- event-based file system monitoring
+- real-time file change notification
+features:
+- Watch specific files or directories for events.
+- Monitor file system changes recursively.
+- Filter events based on regular expressions.
+- Exit after a specified timeout period.
+- Trigger commands upon file access or modification.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # inotifywait
 
 > Waits for changes to files.

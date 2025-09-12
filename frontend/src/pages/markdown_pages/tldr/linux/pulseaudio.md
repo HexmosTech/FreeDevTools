@@ -1,3 +1,31 @@
+---
+title: "Control PulseAudio - Manage Audio on Linux | Free DevTools"
+name: pulseaudio
+path: /freedevtools/tldr/linux/pulseaudio
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pulseaudio/"
+description: "Control audio on Linux with PulseAudio. Manage sound servers, load modules and troubleshoot audio issues using the command line. Free online tool, no registration required."
+category: linux
+keywords:
+- pulseaudio control
+- linux audio management
+- pulseaudio module loader
+- pulseaudio troubleshooting
+- pulseaudio daemon manager
+- pulseaudio sound server
+- linux audio server
+- pulseaudio configuration
+- pulseaudio command line
+- audio management linux
+features:
+- Start the PulseAudio daemon
+- Kill a running PulseAudio daemon
+- Check the PulseAudio daemon status
+- List all available PulseAudio modules
+- Load specific PulseAudio modules with arguments
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pulseaudio
 
 > The PulseAudio sound system daemon and manager.

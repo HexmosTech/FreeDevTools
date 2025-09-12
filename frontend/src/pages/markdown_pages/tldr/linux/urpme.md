@@ -1,3 +1,31 @@
+---
+title: "Urpme - Uninstall Packages in Mageia | Free DevTools"
+name: urpme
+path: /freedevtools/tldr/linux/urpme
+canonical: "https://hexmos.com/freedevtools/tldr/linux/urpme/"
+description: "Uninstall packages with Urpme, the Mageia package manager. Remove software, dependencies, and orphans. Free online tool, no registration required."
+category: linux
+keywords:
+- linux package manager
+- mageia package removal
+- urpme uninstall
+- rpm package manager
+- linux dependency removal
+- orphan package removal linux
+- command line package uninstall
+- mageia software removal
+- urpme command
+- linux urpme
+features:
+- Uninstall specified packages
+- Remove orphan packages automatically
+- Uninstall packages and their dependencies recursively
+- Manage software packages on Mageia Linux
+- Remove software using the command line
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # urpme
 
 > Uninstall packages in Mageia.

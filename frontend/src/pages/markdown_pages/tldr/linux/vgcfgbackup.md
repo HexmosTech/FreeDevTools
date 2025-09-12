@@ -1,3 +1,31 @@
+---
+title: "Backup VG - Backup Volume Group Configuration | Free DevTools"
+name: vgcfgbackup
+path: /freedevtools/tldr/linux/vgcfgbackup
+canonical: "https://hexmos.com/freedevtools/tldr/linux/vgcfgbackup/"
+description: "Backup Volume Group configurations easily with vgcfgbackup. Securely manage LVM metadata and prevent data loss. Free online tool, no registration required."
+category: linux
+keywords:
+- LVM backup
+- volume group backup
+- vgcfgbackup command
+- Linux LVM metadata
+- LVM configuration backup
+- vgcfgbackup linux
+- Linux volume management
+- LVM data protection
+- Linux server backup
+- volume group metadata
+features:
+- Back up LVM volume group metadata
+- Save VG configuration to a file
+- Backup multiple volume groups simultaneously
+- Increase verbosity for detailed backup process
+- Support for custom backup file locations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # vgcfgbackup
 
 > Back up volume group configuration metadata to files (not user data).

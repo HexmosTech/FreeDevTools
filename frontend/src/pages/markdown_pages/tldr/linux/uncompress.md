@@ -1,3 +1,31 @@
+---
+title: "Uncompress - Extract Compressed Files | Free DevTools"
+name: uncompress
+path: /freedevtools/tldr/linux/uncompress
+canonical: "https://hexmos.com/freedevtools/tldr/linux/uncompress/"
+description: "Extract compressed files with Uncompress. Quickly decompress .Z archives on Linux, restoring original files with ease. Free online tool, no registration required."
+category: linux
+keywords:
+- uncompress files
+- compress archive extractor
+- linux uncompress
+- z file extraction
+- unix compress
+- decompress z archives
+- command line uncompress
+- linux archive utilities
+- file decompression tool
+- uncompress command linux
+features:
+- Extract .Z compressed files
+- Ignore non-existent files during extraction
+- Write decompressed output to stdout
+- Display verbose percentage reduction or expansion
+- Force extraction even if files already exist
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # uncompress
 
 > Uncompress files compressed using the Unix `compress` command.
