@@ -1,0 +1,60 @@
+---
+title: "Bzgrep - Search Bzip2 Files with Grep | Free DevTools"
+name: bzgrep
+path: /freedevtools/tldr/common/bzgrep
+canonical: "https://hexmos.com/freedevtools/tldr/common/bzgrep/"
+description: "Search bzip2 compressed files with Bzgrep. Quickly find patterns and extract relevant information from archived data. Free online tool, no registration required."
+category: common
+keywords:
+- bzip2 search
+- compressed file grep
+- bz2 grep command
+- bzip2 file search
+- grep bzip2 archive
+- linux bzgrep
+- macos bzgrep
+- command line grep
+- file content search
+- compressed text search
+features:
+- Search for patterns within bzip2 compressed files.
+- Use extended regular expressions for complex pattern matching.
+- Display context lines around matching patterns.
+- Print file names and line numbers of matched lines.
+- Recursively search files in a bzip2 compressed tar archive.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
+# bzgrep
+
+> Find patterns in `bzip2` compressed files using `grep`.
+> More information: <https://manned.org/bzgrep>.
+
+- Search for a pattern within a compressed file:
+
+`bzgrep "{{search_pattern}}" {{path/to/file}}`
+
+- Use extended `regex` (supports `?`, `+`, `{}`, `()` and `|`), in case-insensitive mode:
+
+`bzgrep {{[-E|--extended-regexp]}} {{[-i|--ignore-case]}} "{{search_pattern}}" {{path/to/file}}`
+
+- Print 3 lines of [C]ontext around, [B]efore, or [A]fter each match:
+
+`bzgrep --{{context|before-context|after-context}} {{3}} "{{search_pattern}}" {{path/to/file}}`
+
+- Print file name and line number for each match:
+
+`bzgrep {{[-H|--with-filename]}} {{[-n|--line-number]}} "{{search_pattern}}" {{path/to/file}}`
+
+- Search for lines matching a pattern, printing only the matched text:
+
+`bzgrep {{[-o|--only-matching]}} "{{search_pattern}}" {{path/to/file}}`
+
+- Recursively search files in a bzip2 compressed tar archive for a pattern:
+
+`bzgrep {{[-r|--recursive]}} "{{search_pattern}}" {{path/to/tar/file}}`
+
+- Search `stdin` for lines that do not match a pattern:
+
+`cat {{path/to/bz/compressed/file}} | bzgrep {{[-v|--invert-match]}} "{{search_pattern}}"`

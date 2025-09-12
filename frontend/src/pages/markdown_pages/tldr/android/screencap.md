@@ -1,27 +1,29 @@
 ---
-title: "Capture Android Screenshot - Save Screen with ADB | Free DevTools"
+title: "Android Screencap - Capture Screenshots with ADB | Free DevTools"
 name: screencap
-path: /freedevtools/tldr/android/screencap
-canonical: "https://hexmos.com/freedevtools/tldr/android/screencap/"
-description: "Capture Android device screenshots instantly with screencap. Save screen images to a specified file path using the ADB shell command. Free online tool, no registration required."
-category: android
+path: /freedevtools/tldr/unknown/screencap
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/screencap/"
+description: "Capture Android screenshots instantly with Android Screencap. Save screen images remotely with ADB shell command. Free online tool, no registration required."
+category: unknown
 keywords:
-  - android screenshot capture
-  - adb screencap command
-  - device screen saving
-  - png image generation
-  - adb shell utility
-  - command line screenshot
-  - mobile display capture
-  - remote device access
-  - automated screenshot tool
-  - android debugging bridge
+- android screenshot capture
+- adb screencap command
+- mobile screen saving
+- png image generation adb
+- adb shell screenshot
+- command line screen capture
+- remote device screenshot
+- automated screen capture
+- android debugging bridge
+- android screencap utility
 features:
-  - capture entire Android screen content
-  - save screenshot as PNG using adb
-  - specify file path for saving screenshot
-  - automate Android screenshot process via shell
-  - execute screen capture command remotely
+- capture the entire Android screen content
+- save screenshots as PNG files using adb
+- specify a file path for saving screenshots
+- automate screenshot capture through the shell
+- execute screen capture commands remotely
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
