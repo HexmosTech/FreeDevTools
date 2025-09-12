@@ -1,27 +1,27 @@
 ---
 title: "Indent - Format C/C++ Code | Free DevTools"
 name: indent
-path: /freedevtools/tldr/unknown/indent
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/indent/"
+path: /freedevtools/tldr/osx/indent
+canonical: "https://hexmos.com/freedevtools/tldr/osx/indent/"
 description: "Format C/C++ code with Indent. Improve code readability and consistency with this powerful command-line tool. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- C/C++ formatter
-- code indentation
-- source code beautifier
-- command line indent
-- indent Linux
-- indent macOS
-- Berkeley style formatter
-- K&R style formatter
-- whitespace formatting
-- code style enforcement
+  - C/C++ formatter
+  - code indentation
+  - source code beautifier
+  - command line indent
+  - indent Linux
+  - indent macOS
+  - Berkeley style formatter
+  - K&R style formatter
+  - whitespace formatting
+  - code style enforcement
 features:
-- Format C/C++ code according to Berkeley style
-- Format C/C++ code according to Kernighan & Ritchie (K&R) style
-- Insert or delete whitespace in C/C++ code
-- Improve code readability and consistency
-- Enforce specific coding styles via command line
+  - Format C/C++ code according to Berkeley style
+  - Format C/C++ code according to Kernighan & Ritchie (K&R) style
+  - Insert or delete whitespace in C/C++ code
+  - Improve code readability and consistency
+  - Enforce specific coding styles via command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

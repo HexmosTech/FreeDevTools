@@ -1,27 +1,27 @@
 ---
 title: "Calendar - Display Calendar with Cal Command | Free DevTools"
 name: cal
-path: /freedevtools/tldr/unknown/cal
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cal/"
+path: /freedevtools/tldr/openbsd/cal
+canonical: "https://hexmos.com/freedevtools/tldr/openbsd/cal/"
 description: "Display calendars quickly with Cal command. View specific months, years, and Julian dates. Free online tool, no registration required."
-category: unknown
+category: openbsd
 keywords:
-- calendar command
-- cal command
-- unix calendar
-- linux calendar
-- terminal calendar
-- command line calendar
-- calendar date
-- calendar year
-- julian date calendar
-- month calendar
+  - calendar command
+  - cal command
+  - unix calendar
+  - linux calendar
+  - terminal calendar
+  - command line calendar
+  - calendar date
+  - calendar year
+  - julian date calendar
+  - month calendar
 features:
-- Display the current month's calendar
-- Display a calendar for a specific year
-- Display a calendar for a specific month and year
-- Display Julian days starting from January 1
-- Set Monday as the week's starting day
+  - Display the current month's calendar
+  - Display a calendar for a specific year
+  - Display a calendar for a specific month and year
+  - Display Julian days starting from January 1
+  - Set Monday as the week's starting day
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

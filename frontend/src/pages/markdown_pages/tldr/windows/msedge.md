@@ -1,27 +1,27 @@
 ---
 title: "Microsoft Edge - Control Web Browsing with msedge | Free DevTools"
 name: msedge
-path: /freedevtools/tldr/unknown/msedge
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/msedge/"
+path: /freedevtools/tldr/widows/msedge
+canonical: "https://hexmos.com/freedevtools/tldr/widows/msedge/"
 description: "Control web browsing sessions with Microsoft Edge. Open URLs, manage profiles, and configure proxy settings using the msedge command. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- web browser command
-- edge browser flags
-- chromium command line
-- msedge url opener
-- edge private mode
-- edge application mode
-- edge proxy settings
-- microsoft edge profiles
-- msedge devtools
-- msedge web security
+  - web browser command
+  - edge browser flags
+  - chromium command line
+  - msedge url opener
+  - edge private mode
+  - edge application mode
+  - edge proxy settings
+  - microsoft edge profiles
+  - msedge devtools
+  - msedge web security
 features:
-- Open specific URLs or files in Microsoft Edge
-- Launch Microsoft Edge in InPrivate mode for privacy
-- Open URLs in a new Microsoft Edge window
-- Start Microsoft Edge in application mode for focused use
-- Configure and use proxy servers with Microsoft Edge
+  - Open specific URLs or files in Microsoft Edge
+  - Launch Microsoft Edge in InPrivate mode for privacy
+  - Open URLs in a new Microsoft Edge window
+  - Start Microsoft Edge in application mode for focused use
+  - Configure and use proxy servers with Microsoft Edge
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

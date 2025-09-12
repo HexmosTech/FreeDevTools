@@ -1,27 +1,27 @@
 ---
 title: "Wget - Download Files via Command Line | Free DevTools"
 name: wget
-path: /freedevtools/tldr/unknown/wget
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/wget/"
+path: /freedevtools/tldr/widows/wget
+canonical: "https://hexmos.com/freedevtools/tldr/widows/wget/"
 description: "Download files easily with Wget. Retrieve web content using the command line. Access web servers, automate downloads, and mirror websites. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- command line download
-- wget download manager
-- web file retrieval
-- command line web access
-- download automation script
-- wget mirroring websites
-- wget linux command
-- wget macos command
-- http download cli
-- https download cli
+  - command line download
+  - wget download manager
+  - web file retrieval
+  - command line web access
+  - download automation script
+  - wget mirroring websites
+  - wget linux command
+  - wget macos command
+  - http download cli
+  - https download cli
 features:
-- Download files from web servers
-- Automate batch file downloads
-- Mirror entire websites recursively
-- Support HTTP and HTTPS protocols
-- Resume interrupted downloads
+  - Download files from web servers
+  - Automate batch file downloads
+  - Mirror entire websites recursively
+  - Support HTTP and HTTPS protocols
+  - Resume interrupted downloads
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

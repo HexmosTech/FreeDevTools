@@ -1,27 +1,27 @@
 ---
 title: "Stat - Display File Status | Free DevTools"
 name: stat
-path: /freedevtools/tldr/unknown/stat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/stat/"
+path: /freedevtools/tldr/osx/stat
+canonical: "https://hexmos.com/freedevtools/tldr/osx/stat/"
 description: "Display file status with Stat. Analyze file properties and permissions effortlessly using this command line tool. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- file status display
-- file properties analyzer
-- command line stat
-- unix stat command
-- file permissions viewer
-- file size reader
-- access date retrieval
-- creation date display
-- file metadata extractor
-- stat command examples
+  - file status display
+  - file properties analyzer
+  - command line stat
+  - unix stat command
+  - file permissions viewer
+  - file size reader
+  - access date retrieval
+  - creation date display
+  - file metadata extractor
+  - stat command examples
 features:
-- Display file size in bytes
-- Show octal file permissions
-- Provide verbose file information
-- Display file owner and group
-- Show file creation and access dates
+  - Display file size in bytes
+  - Show octal file permissions
+  - Provide verbose file information
+  - Display file owner and group
+  - Show file creation and access dates
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

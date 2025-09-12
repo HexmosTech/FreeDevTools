@@ -1,27 +1,27 @@
 ---
 title: "Security - Manage Keychains & Certificates | Free DevTools"
 name: security
-path: /freedevtools/tldr/unknown/security
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/security/"
+path: /freedevtools/tldr/osx/security
+canonical: "https://hexmos.com/freedevtools/tldr/osx/security/"
 description: "Manage keychains and certificates with Security. Securely store passwords, add trusted certs, and administer security settings. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- keychain management
-- certificate management
-- security framework
-- security keychain
-- trusted certificate
-- keychain password
-- security identity preference
-- security cli tool
-- security command
-- macos security
+  - keychain management
+  - certificate management
+  - security framework
+  - security keychain
+  - trusted certificate
+  - keychain password
+  - security identity preference
+  - security cli tool
+  - security command
+  - macos security
 features:
-- List available keychains.
-- Delete specific keychains.
-- Create new keychains with passwords.
-- Set certificate identity preferences for services.
-- Add and remove trusted CA certificates.
+  - List available keychains.
+  - Delete specific keychains.
+  - Create new keychains with passwords.
+  - Set certificate identity preferences for services.
+  - Add and remove trusted CA certificates.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

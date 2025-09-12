@@ -1,27 +1,27 @@
 ---
 title: "Calculate with bc - Precision Calculation Tool | Free DevTools"
 name: bc
-path: /freedevtools/tldr/unknown/bc
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/bc/"
+path: /freedevtools/tldr/osx/bc
+canonical: "https://hexmos.com/freedevtools/tldr/osx/bc/"
 description: "Calculate expressions with bc, an arbitrary precision calculator language. Perform complex math and execute scripts with ease. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- arbitrary precision calculation
-- bc calculator linux
-- bc math scripting
-- bc command line calculator
-- bc expression evaluator
-- bc scale calculation
-- bc mathlib functions
-- bc command examples
-- bc shell scripting
-- bc interactive mode
+  - arbitrary precision calculation
+  - bc calculator linux
+  - bc math scripting
+  - bc command line calculator
+  - bc expression evaluator
+  - bc scale calculation
+  - bc mathlib functions
+  - bc command examples
+  - bc shell scripting
+  - bc interactive mode
 features:
-- Perform arbitrary precision calculations
-- Execute bc scripts for complex computations
-- Utilize the standard math library for advanced functions
-- Calculate expressions directly from the command line
-- Control the scale (number of decimal places) of calculations
+  - Perform arbitrary precision calculations
+  - Execute bc scripts for complex computations
+  - Utilize the standard math library for advanced functions
+  - Calculate expressions directly from the command line
+  - Control the scale (number of decimal places) of calculations
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "PWD Command - Determine Current Directory | Free DevTools"
 name: pwd
-path: /freedevtools/tldr/unknown/pwd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pwd/"
+path: /freedevtools/tldr/widows/pwd
+canonical: "https://hexmos.com/freedevtools/tldr/widows/pwd/"
 description: "Determine current directory with the PWD command. Find the absolute path of your present working directory across various systems. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- current directory command
-- PWD command
-- get current path
-- present working directory
-- shell command PWD
-- terminal PWD
-- directory path finder
-- command line PWD
-- PowerShell get-location
-- cmd cd command
+  - current directory command
+  - PWD command
+  - get current path
+  - present working directory
+  - shell command PWD
+  - terminal PWD
+  - directory path finder
+  - command line PWD
+  - PowerShell get-location
+  - cmd cd command
 features:
-- Displays the absolute path of the current directory.
-- Works across different command-line interfaces.
-- Provides a quick way to identify the working directory.
-- Simplifies navigation within the file system.
-- Replicates 'Get-Location' in PowerShell and 'cd' functionality in CMD.
+  - Displays the absolute path of the current directory.
+  - Works across different command-line interfaces.
+  - Provides a quick way to identify the working directory.
+  - Simplifies navigation within the file system.
+  - Replicates 'Get-Location' in PowerShell and 'cd' functionality in CMD.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

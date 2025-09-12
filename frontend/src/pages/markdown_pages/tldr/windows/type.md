@@ -1,27 +1,27 @@
 ---
 title: "Display File Content - Read Files with Type | Free DevTools"
 name: type
-path: /freedevtools/tldr/unknown/type
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/type/"
+path: /freedevtools/tldr/widows/type
+canonical: "https://hexmos.com/freedevtools/tldr/widows/type/"
 description: "Display file content instantly with Type command. Inspect text files, code, and configurations. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- file content display
-- type command utility
-- display file content windows
-- command line file viewer
-- text file reader
-- view file content
-- file inspection tool
-- command line text viewer
-- file display command
-- unknown platform file viewer
+  - file content display
+  - type command utility
+  - display file content windows
+  - command line file viewer
+  - text file reader
+  - view file content
+  - file inspection tool
+  - command line text viewer
+  - file display command
+  - unknown platform file viewer
 features:
-- Display the contents of a file in the console.
-- Quickly inspect file content.
-- Read text files from the command line.
-- View configuration files without opening an editor.
-- Display multiple files sequentially.
+  - Display the contents of a file in the console.
+  - Quickly inspect file content.
+  - Read text files from the command line.
+  - View configuration files without opening an editor.
+  - Display multiple files sequentially.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

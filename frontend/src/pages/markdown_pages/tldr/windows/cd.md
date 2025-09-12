@@ -1,27 +1,27 @@
 ---
 title: "Control Directory - Navigate Filesystems with CD | Free DevTools"
 name: cd
-path: /freedevtools/tldr/unknown/cd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cd/"
+path: /freedevtools/tldr/widows/cd
+canonical: "https://hexmos.com/freedevtools/tldr/widows/cd/"
 description: "Control file system navigation with CD command. Change directories, access parent folders, and manage paths efficiently. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- directory navigation command
-- change directory cmd
-- filesystem cd command
-- windows cd command
-- command prompt cd
-- powershell set-location
-- parent directory traversal
-- absolute path navigation
-- relative path navigation
-- user profile directory access
+  - directory navigation command
+  - change directory cmd
+  - filesystem cd command
+  - windows cd command
+  - command prompt cd
+  - powershell set-location
+  - parent directory traversal
+  - absolute path navigation
+  - relative path navigation
+  - user profile directory access
 features:
-- Navigate to specific directories by path
-- Traverse to parent directories easily
-- Access user profile or home directory
-- Change directory across different drives
-- Return to the root of the current drive
+  - Navigate to specific directories by path
+  - Traverse to parent directories easily
+  - Access user profile or home directory
+  - Change directory across different drives
+  - Return to the root of the current drive
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Gcrane - Generate Shell Completions | Free DevTools"
 name: gcrane-completion
-path: /freedevtools/tldr/unknown/gcrane-completion
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/gcrane-completion/"
+path: /freedevtools/tldr/osx/gcrane-completion
+canonical: "https://hexmos.com/freedevtools/tldr/osx/gcrane-completion/"
 description: "Generate shell autocompletion scripts with Gcrane. Enhance command-line efficiency and reduce errors with autocompletion suggestions. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- gcrane shell completion
-- bash completion generator
-- zsh completion generator
-- fish completion generator
-- powershell completion generator
-- command line autocompletion
-- shell script generator
-- cli completion script
-- gcrane autocomplete
-- container registry completion
+  - gcrane shell completion
+  - bash completion generator
+  - zsh completion generator
+  - fish completion generator
+  - powershell completion generator
+  - command line autocompletion
+  - shell script generator
+  - cli completion script
+  - gcrane autocomplete
+  - container registry completion
 features:
-- Generate autocompletion scripts for bash
-- Generate autocompletion scripts for zsh
-- Generate autocompletion scripts for fish
-- Generate autocompletion scripts for powershell
-- Disable completion descriptions
+  - Generate autocompletion scripts for bash
+  - Generate autocompletion scripts for zsh
+  - Generate autocompletion scripts for fish
+  - Generate autocompletion scripts for powershell
+  - Disable completion descriptions
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Control Chromium Browser - Open URLs with Flags | Free DevTools"
 name: chromium
-path: /freedevtools/tldr/unknown/chromium
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/chromium/"
+path: /freedevtools/tldr/widows/chromium
+canonical: "https://hexmos.com/freedevtools/tldr/widows/chromium/"
 description: "Control Chromium browser tabs and windows with command-line flags. Launch in incognito mode, set proxies, disable CORS, and more. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- chromium browser control
-- chromium command flags
-- chromium incognito mode
-- chromium proxy settings
-- chromium disable cors
-- chromium application mode
-- chromium custom profile
-- browser command line
-- web browser automation
-- headless browser
+  - chromium browser control
+  - chromium command flags
+  - chromium incognito mode
+  - chromium proxy settings
+  - chromium disable cors
+  - chromium application mode
+  - chromium custom profile
+  - browser command line
+  - web browser automation
+  - headless browser
 features:
-- Launch Chromium in incognito mode for private browsing
-- Configure Chromium with custom proxy server settings
-- Disable CORS validation for API testing
-- Open specific URLs in application mode without browser UI
-- Utilize custom user data directories for different profiles
+  - Launch Chromium in incognito mode for private browsing
+  - Configure Chromium with custom proxy server settings
+  - Disable CORS validation for API testing
+  - Open specific URLs in application mode without browser UI
+  - Utilize custom user data directories for different profiles
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

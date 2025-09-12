@@ -1,27 +1,27 @@
 ---
 title: "Ping Network Host - Test Network Connectivity | Free DevTools"
 name: ping
-path: /freedevtools/tldr/unknown/ping
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ping/"
+path: /freedevtools/tldr/common/ping
+canonical: "https://hexmos.com/freedevtools/tldr/common/ping/"
 description: "Test network connectivity with Ping Network Host.  Check network latency and packet loss using this command-line tool. Free online tool, no registration required."
-category: unknown
+category: common
 keywords:
-- network connectivity testing
-- ping command
-- icmp echo request
-- network diagnostics
-- command line ping
-- packet loss analysis
-- network troubleshooting
-- latency measurement
-- host reachability
-- network monitoring
+  - network connectivity testing
+  - ping command
+  - icmp echo request
+  - network diagnostics
+  - command line ping
+  - packet loss analysis
+  - network troubleshooting
+  - latency measurement
+  - host reachability
+  - network monitoring
 features:
-- Send ICMP ECHO_REQUEST packets to remote hosts.
-- Measure round-trip time (latency) to network hosts.
-- Identify network packet loss.
-- Determine host reachability.
-- Control the number of pings sent and the interval between requests.
+  - Send ICMP ECHO_REQUEST packets to remote hosts.
+  - Measure round-trip time (latency) to network hosts.
+  - Identify network packet loss.
+  - Determine host reachability.
+  - Control the number of pings sent and the interval between requests.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

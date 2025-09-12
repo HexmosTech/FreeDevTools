@@ -1,27 +1,27 @@
 ---
 title: "Open Files - Launch Applications | Free DevTools"
 name: open
-path: /freedevtools/tldr/unknown/open
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/open/"
+path: /freedevtools/tldr/osx/open
+canonical: "https://hexmos.com/freedevtools/tldr/osx/open/"
 description: "Launch applications and files directly with Open command. Easily access directories and reveal files in Finder. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- file launcher
-- application opener
-- directory navigator
-- macOS application launcher
-- Finder integration
-- bundle identifier lookup
-- command line file opener
-- open file extension
-- reveal file in finder
-- new instance application
+  - file launcher
+  - application opener
+  - directory navigator
+  - macOS application launcher
+  - Finder integration
+  - bundle identifier lookup
+  - command line file opener
+  - open file extension
+  - reveal file in finder
+  - new instance application
 features:
-- Open files with associated applications
-- Launch macOS applications by name
-- Launch macOS applications by bundle identifier
-- Open current directory in Finder
-- Reveal files in Finder
+  - Open files with associated applications
+  - Launch macOS applications by name
+  - Launch macOS applications by bundle identifier
+  - Open current directory in Finder
+  - Reveal files in Finder
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

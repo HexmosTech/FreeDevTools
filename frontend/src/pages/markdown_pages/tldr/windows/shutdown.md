@@ -1,27 +1,27 @@
 ---
 title: "Control Shutdown - Manage System Power States | Free DevTools"
 name: shutdown
-path: /freedevtools/tldr/unknown/shutdown
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/shutdown/"
+path: /freedevtools/tldr/widows/shutdown
+canonical: "https://hexmos.com/freedevtools/tldr/widows/shutdown/"
 description: "Manage system power states with Control Shutdown. Schedule shutdowns, restarts, hibernation, and logoffs easily. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- system shutdown command
-- force shutdown command
-- restart command
-- hibernate command
-- log off command
-- schedule shutdown command
-- abort shutdown command
-- remote shutdown command
-- windows shutdown command
-- linux shutdown command
+  - system shutdown command
+  - force shutdown command
+  - restart command
+  - hibernate command
+  - log off command
+  - schedule shutdown command
+  - abort shutdown command
+  - remote shutdown command
+  - windows shutdown command
+  - linux shutdown command
 features:
-- Gracefully shutdown the current machine
-- Force-close applications before shutting down
-- Immediately restart the machine
-- Hibernate the current machine to save power
-- Log off the current user session
+  - Gracefully shutdown the current machine
+  - Force-close applications before shutting down
+  - Immediately restart the machine
+  - Hibernate the current machine to save power
+  - Log off the current user session
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

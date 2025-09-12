@@ -1,27 +1,27 @@
 ---
 title: "Control VPN Daemon - Manage VPN Connections | Free DevTools"
 name: vpnd
-path: /freedevtools/tldr/unknown/vpnd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/vpnd/"
+path: /freedevtools/tldr/osx/vpnd
+canonical: "https://hexmos.com/freedevtools/tldr/osx/vpnd/"
 description: "Control VPN daemon connections with vpnd. Manage server configurations and troubleshoot VPN issues with this essential command line tool. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- vpn daemon control
-- vpn connection manager
-- command line vpn
-- vpn configuration management
-- vpnd macos
-- vpnd linux
-- network daemon controller
-- server configuration tool
-- troubleshooting vpn issues
-- vpn service monitor
+  - vpn daemon control
+  - vpn connection manager
+  - command line vpn
+  - vpn configuration management
+  - vpnd macos
+  - vpnd linux
+  - network daemon controller
+  - server configuration tool
+  - troubleshooting vpn issues
+  - vpn service monitor
 features:
-- Start the VPN daemon in different modes
-- Run the daemon in the foreground with logging
-- Validate arguments before running the daemon
-- Configure the daemon for a specific server ID
-- Display help information for the vpnd command
+  - Start the VPN daemon in different modes
+  - Run the daemon in the foreground with logging
+  - Validate arguments before running the daemon
+  - Configure the daemon for a specific server ID
+  - Display help information for the vpnd command
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

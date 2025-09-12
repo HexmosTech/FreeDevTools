@@ -1,27 +1,27 @@
 ---
 title: "Edit Text with Sed - Scriptable Text Editing | Free DevTools"
 name: sed
-path: /freedevtools/tldr/unknown/sed
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/sed/"
+path: /freedevtools/tldr/openbsd/sed
+canonical: "https://hexmos.com/freedevtools/tldr/openbsd/sed/"
 description: "Edit text effectively with Sed, a powerful scriptable text editing tool. Perform complex text manipulations using regular expressions. Free online tool, no registration required."
-category: unknown
+category: openbsd
 keywords:
-- text editor sed
-- sed command
-- sed regex
-- stream editor
-- sed script
-- find and replace sed
-- sed text manipulation
-- sed linux
-- sed macos
-- sed awk compare
+  - text editor sed
+  - sed command
+  - sed regex
+  - stream editor
+  - sed script
+  - find and replace sed
+  - sed text manipulation
+  - sed linux
+  - sed macos
+  - sed awk compare
 features:
-- Replace text using regular expressions
-- Execute sed scripts from files
-- Perform in-place file editing
-- Use extended regular expressions
-- Print specific lines to stdout
+  - Replace text using regular expressions
+  - Execute sed scripts from files
+  - Perform in-place file editing
+  - Use extended regular expressions
+  - Print specific lines to stdout
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

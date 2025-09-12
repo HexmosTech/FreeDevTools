@@ -1,27 +1,27 @@
 ---
 title: "PowerShell - Control System Administration | Free DevTools"
 name: powershell
-path: /freedevtools/tldr/unknown/powershell
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/powershell/"
+path: /freedevtools/tldr/widows/powershell
+canonical: "https://hexmos.com/freedevtools/tldr/widows/powershell/"
 description: "Control system administration with PowerShell. Execute commands, run scripts, and manage system settings effortlessly. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- PowerShell command
-- PowerShell script execution
-- PowerShell system administration
-- Windows PowerShell
-- PowerShell command line
-- PowerShell version management
-- PowerShell input format
-- PowerShell output format
-- PowerShell NoProfile
-- PowerShell NoExit
+  - PowerShell command
+  - PowerShell script execution
+  - PowerShell system administration
+  - Windows PowerShell
+  - PowerShell command line
+  - PowerShell version management
+  - PowerShell input format
+  - PowerShell output format
+  - PowerShell NoProfile
+  - PowerShell NoExit
 features:
-- Execute PowerShell commands directly from the command line
-- Run PowerShell scripts from a specified file path
-- Control PowerShell version for compatibility
-- Prevent the shell from exiting after running startup commands
-- Define input and output formats for data exchange
+  - Execute PowerShell commands directly from the command line
+  - Run PowerShell scripts from a specified file path
+  - Control PowerShell version for compatibility
+  - Prevent the shell from exiting after running startup commands
+  - Define input and output formats for data exchange
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

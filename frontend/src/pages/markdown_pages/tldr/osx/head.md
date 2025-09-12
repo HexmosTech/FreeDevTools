@@ -1,27 +1,27 @@
 ---
 title: "Head - Output File Headings | Free DevTools"
 name: head
-path: /freedevtools/tldr/unknown/head
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/head/"
+path: /freedevtools/tldr/osx/head
+canonical: "https://hexmos.com/freedevtools/tldr/osx/head/"
 description: "Output file headings effortlessly with Head command. Extract specific lines or bytes from files using command-line options. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- file head command
-- output file lines
-- output file bytes
-- linux head command
-- macos head command
-- head command usage
-- extract file segment
-- display file header
-- text file manipulation
-- command line file output
+  - file head command
+  - output file lines
+  - output file bytes
+  - linux head command
+  - macos head command
+  - head command usage
+  - extract file segment
+  - display file header
+  - text file manipulation
+  - command line file output
 features:
-- Output specified number of lines
-- Output specified number of bytes
-- Exclude last lines from output
-- Exclude last bytes from output
-- Display file content header
+  - Output specified number of lines
+  - Output specified number of bytes
+  - Exclude last lines from output
+  - Exclude last bytes from output
+  - Display file content header
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Disk Usage - Estimate Space Usage with du | Free DevTools"
 name: du
-path: /freedevtools/tldr/unknown/du
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/du/"
+path: /freedevtools/tldr/osx/du
+canonical: "https://hexmos.com/freedevtools/tldr/osx/du/"
 description: "Estimate file and directory space usage with du. Analyze disk usage effectively with this command-line utility. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- disk space analyzer
-- directory size estimator
-- file space usage
-- linux disk usage
-- macos disk usage
-- command line du
-- du command
-- file size summary
-- disk usage report
-- du command examples
+  - disk space analyzer
+  - directory size estimator
+  - file space usage
+  - linux disk usage
+  - macos disk usage
+  - command line du
+  - du command
+  - file size summary
+  - disk usage report
+  - du command examples
 features:
-- Estimate directory and subdirectory sizes
-- Summarize total disk usage
-- Display sizes in human-readable format
-- Control depth of directory traversal
-- Calculate cumulative size totals
+  - Estimate directory and subdirectory sizes
+  - Summarize total disk usage
+  - Display sizes in human-readable format
+  - Control depth of directory traversal
+  - Calculate cumulative size totals
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

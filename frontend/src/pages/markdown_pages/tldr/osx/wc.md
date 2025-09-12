@@ -1,27 +1,27 @@
 ---
 title: "Count Words - Analyze Text Files with wc | Free DevTools"
 name: wc
-path: /freedevtools/tldr/unknown/wc
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/wc/"
+path: /freedevtools/tldr/osx/wc
+canonical: "https://hexmos.com/freedevtools/tldr/osx/wc/"
 description: "Analyze text files with wc. Count lines, words, characters, and bytes with this command-line tool. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- text file analyzer
-- word count tool
-- line count utility
-- character count tool
-- byte count tool
-- wc command line
-- linux wc
-- macos wc
-- text statistics tool
-- file size analyzer
+  - text file analyzer
+  - word count tool
+  - line count utility
+  - character count tool
+  - byte count tool
+  - wc command line
+  - linux wc
+  - macos wc
+  - text statistics tool
+  - file size analyzer
 features:
-- Count lines in a text file
-- Count words in a text file
-- Count bytes in a text file
-- Count characters in a text file
-- Process input from stdin
+  - Count lines in a text file
+  - Count words in a text file
+  - Count bytes in a text file
+  - Count characters in a text file
+  - Process input from stdin
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

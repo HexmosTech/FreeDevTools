@@ -1,27 +1,27 @@
 ---
 title: "Netstat - Display Network Connections | Free DevTools"
 name: netstat
-path: /freedevtools/tldr/unknown/netstat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/netstat/"
+path: /freedevtools/tldr/osx/netstat
+canonical: "https://hexmos.com/freedevtools/tldr/osx/netstat/"
 description: "Display network connections with Netstat, showing open ports and routing tables. Diagnose network issues and monitor traffic. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- network connections
-- open ports
-- routing table
-- network statistics
-- connection monitoring
-- socket information
-- tcp connections
-- udp connections
-- network troubleshooting
-- network diagnostics
+  - network connections
+  - open ports
+  - routing table
+  - network statistics
+  - connection monitoring
+  - socket information
+  - tcp connections
+  - udp connections
+  - network troubleshooting
+  - network diagnostics
 features:
-- Display active network connections
-- Show listening ports and associated processes
-- Print routing tables
-- Filter network information by protocol (TCP, UDP)
-- Resolve IP addresses to hostnames (optional)
+  - Display active network connections
+  - Show listening ports and associated processes
+  - Print routing tables
+  - Filter network information by protocol (TCP, UDP)
+  - Resolve IP addresses to hostnames (optional)
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Display Disk Space - Manage Filesystems with df | Free DevTools"
 name: df
-path: /freedevtools/tldr/unknown/df
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/df/"
+path: /freedevtools/tldr/openbsd/df
+canonical: "https://hexmos.com/freedevtools/tldr/openbsd/df/"
 description: "Manage filesystem disk space with df command. Get a detailed overview of disk usage, inodes, and more on your system. Free online tool, no registration required."
-category: unknown
+category: openbsd
 keywords:
-- disk space usage
-- filesystem overview
-- df command
-- linux disk space
-- macos disk space
-- free space checker
-- inode statistics
-- disk usage analyzer
-- file system reporting
-- disk space management
+  - disk space usage
+  - filesystem overview
+  - df command
+  - linux disk space
+  - macos disk space
+  - free space checker
+  - inode statistics
+  - disk usage analyzer
+  - file system reporting
+  - disk space management
 features:
-- Display disk usage for all filesystems
-- Show disk space in human-readable format
-- Check disk usage for specific files or directories
-- Include statistics on free and used inodes
-- Display information in a portable format
+  - Display disk usage for all filesystems
+  - Show disk space in human-readable format
+  - Check disk usage for specific files or directories
+  - Include statistics on free and used inodes
+  - Display information in a portable format
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Uname - Print System Information | Free DevTools"
 name: uname
-path: /freedevtools/tldr/unknown/uname
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/uname/"
+path: /freedevtools/tldr/osx/uname
+canonical: "https://hexmos.com/freedevtools/tldr/osx/uname/"
 description: "Print system information with Uname. Display kernel name, operating system version, and hardware architecture details. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- system information display
-- operating system details
-- kernel version display
-- hardware architecture details
-- uname command
-- unix system info
-- linux system information
-- macos system information
-- system hostname display
-- os version check
+  - system information display
+  - operating system details
+  - kernel version display
+  - hardware architecture details
+  - uname command
+  - unix system info
+  - linux system information
+  - macos system information
+  - system hostname display
+  - os version check
 features:
-- Print the kernel name of the system.
-- Display system architecture and processor information.
-- Show kernel release and version details.
-- Print the system's hostname.
-- Output all available system information.
+  - Print the kernel name of the system.
+  - Display system architecture and processor information.
+  - Show kernel release and version details.
+  - Print the system's hostname.
+  - Output all available system information.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

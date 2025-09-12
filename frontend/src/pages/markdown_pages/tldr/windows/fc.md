@@ -1,27 +1,27 @@
 ---
 title: "Compare Files - Find File Differences with FC | Free DevTools"
 name: fc
-path: /freedevtools/tldr/unknown/fc
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/fc/"
+path: /freedevtools/tldr/widows/fc
+canonical: "https://hexmos.com/freedevtools/tldr/widows/fc/"
 description: "Find file differences instantly with FC. Compare file content and identify changes across various file types. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- file comparison tool
-- file difference finder
-- fc command line
-- text file comparison
-- binary file comparison
-- compare file content
-- find file changes
-- file comparison windows
-- ascii file comparison
-- unicode file comparison
+  - file comparison tool
+  - file difference finder
+  - fc command line
+  - text file comparison
+  - binary file comparison
+  - compare file content
+  - find file changes
+  - file comparison windows
+  - ascii file comparison
+  - unicode file comparison
 features:
-- Compare two specified files or sets of files
-- Perform case-insensitive file comparisons
-- Compare files as Unicode or ASCII text
-- Compare files in binary mode
-- Suppress tab expansion during comparison
+  - Compare two specified files or sets of files
+  - Perform case-insensitive file comparisons
+  - Compare files as Unicode or ASCII text
+  - Compare files in binary mode
+  - Suppress tab expansion during comparison
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
@@ -29,7 +29,7 @@ twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-ban
 # fc
 
 > Compare the differences between two files or sets of files.
-> Use wildcards (*) to compare sets of files.
+> Use wildcards (\*) to compare sets of files.
 > More information: <https://learn.microsoft.com/windows-server/administration/windows-commands/fc>.
 
 - Compare 2 specified files:

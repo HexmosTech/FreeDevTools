@@ -1,27 +1,27 @@
 ---
 title: "Format Date - Control System Time | Free DevTools"
 name: date
-path: /freedevtools/tldr/unknown/date
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/date/"
+path: /freedevtools/tldr/common/date
+canonical: "https://hexmos.com/freedevtools/tldr/common/date/"
 description: "Format and control system date and time with the date command.  Display dates in various formats, including Unix timestamps and ISO 8601. Free online tool, no registration required."
-category: unknown
+category: common
 keywords:
-- date formatting command
-- date manipulation command
-- unix timestamp converter
-- iso 8601 date converter
-- date command line tool
-- system date control
-- time zone conversion
-- rfc 3339 date format
-- command line date
-- date time formatting
+  - date formatting command
+  - date manipulation command
+  - unix timestamp converter
+  - iso 8601 date converter
+  - date command line tool
+  - system date control
+  - time zone conversion
+  - rfc 3339 date format
+  - command line date
+  - date time formatting
 features:
-- Display the current date and time in various formats.
-- Convert between Unix timestamps and human-readable dates.
-- Set the system date and time.
-- Utilize different time zones (UTC, local).
-- Format dates according to specific standards (ISO 8601, RFC 3339).
+  - Display the current date and time in various formats.
+  - Convert between Unix timestamps and human-readable dates.
+  - Set the system date and time.
+  - Utilize different time zones (UTC, local).
+  - Format dates according to specific standards (ISO 8601, RFC 3339).
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

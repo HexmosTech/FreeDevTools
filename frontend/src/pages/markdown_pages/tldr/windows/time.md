@@ -1,27 +1,27 @@
 ---
 title: "Time - Control System Time | Free DevTools"
 name: time
-path: /freedevtools/tldr/unknown/time
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/time/"
+path: /freedevtools/tldr/widows/time
+canonical: "https://hexmos.com/freedevtools/tldr/widows/time/"
 description: "Control system time settings with Time command. Display current time and set a new time with this simple command-line tool. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- system time command
-- display system time
-- set system time
-- command line time
-- time utility
-- time management
-- windows time
-- time format
-- time display
-- system clock
+  - system time command
+  - display system time
+  - set system time
+  - command line time
+  - time utility
+  - time management
+  - windows time
+  - time format
+  - time display
+  - system clock
 features:
-- Display the current system time.
-- Set a new system time interactively.
-- Suppress the prompt for a new time.
-- Control time settings from the command line.
-- View time without modification.
+  - Display the current system time.
+  - Set a new system time interactively.
+  - Suppress the prompt for a new time.
+  - Control time settings from the command line.
+  - View time without modification.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

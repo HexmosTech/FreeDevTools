@@ -1,27 +1,27 @@
 ---
 title: "Set Environment Variables - Control CMD Instance | Free DevTools"
 name: set
-path: /freedevtools/tldr/unknown/set
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/set/"
+path: /freedevtools/tldr/widows/set
+canonical: "https://hexmos.com/freedevtools/tldr/widows/set/"
 description: "Control environment variables with Set Environment Variables. Quickly set and display variables for CMD instance. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- cmd environment variable set
-- windows set command
-- command line variable manager
-- batch script variable setter
-- env variable editor
-- setx alternative
-- cmd set examples
-- set environment variables
-- dos set command
-- instance variable controller
+  - cmd environment variable set
+  - windows set command
+  - command line variable manager
+  - batch script variable setter
+  - env variable editor
+  - setx alternative
+  - cmd set examples
+  - set environment variables
+  - dos set command
+  - instance variable controller
 features:
-- List all current environment variables
-- Set environment variables to specific values
-- List variables starting with a specified string
-- Prompt user for variable value input
-- Control CMD instance environment settings
+  - List all current environment variables
+  - Set environment variables to specific values
+  - List variables starting with a specified string
+  - Prompt user for variable value input
+  - Control CMD instance environment settings
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

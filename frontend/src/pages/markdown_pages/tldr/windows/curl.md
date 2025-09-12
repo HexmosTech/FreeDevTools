@@ -1,27 +1,27 @@
 ---
 title: "Control Curl Requests - Manage Web Transfers | Free DevTools"
 name: curl
-path: /freedevtools/tldr/unknown/curl
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/curl/"
+path: /freedevtools/tldr/widows/curl
+canonical: "https://hexmos.com/freedevtools/tldr/widows/curl/"
 description: "Control web transfers with Curl. Manage HTTP requests, download files, and interact with APIs effortlessly. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- curl command
-- curl download
-- curl HTTP request
-- curl API interaction
-- command line web transfer
-- terminal web downloader
-- cross-platform curl
-- curl example
-- curl tutorial
-- curl version
+  - curl command
+  - curl download
+  - curl HTTP request
+  - curl API interaction
+  - command line web transfer
+  - terminal web downloader
+  - cross-platform curl
+  - curl example
+  - curl tutorial
+  - curl version
 features:
-- Manage HTTP requests via command line
-- Download files from URLs
-- Interact with REST APIs
-- Check curl installation status
-- Display documentation for both curl and Invoke-WebRequest
+  - Manage HTTP requests via command line
+  - Download files from URLs
+  - Interact with REST APIs
+  - Check curl installation status
+  - Display documentation for both curl and Invoke-WebRequest
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

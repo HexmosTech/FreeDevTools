@@ -1,27 +1,27 @@
 ---
 title: "Enable Privileged Mode - Control Device Access | Free DevTools"
 name: enable
-path: /freedevtools/tldr/unknown/enable
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/enable/"
+path: /freedevtools/tldr/cisco-ios/enable
+canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/enable/"
 description: "Control device access by enabling privileged mode with Enable Privileged Mode Tool. Enhance security configuration and manage access levels efficiently. Free online tool, no registration required."
-category: unknown
+category: cisco-ios
 keywords:
-- enable privileged mode
-- device configuration
-- network device access
-- command-line interface
-- Cisco IOS configuration
-- secure device management
-- system administrator tools
-- privileged execution mode
-- security enhancement tool
-- access control management
+  - enable privileged mode
+  - device configuration
+  - network device access
+  - command-line interface
+  - Cisco IOS configuration
+  - secure device management
+  - system administrator tools
+  - privileged execution mode
+  - security enhancement tool
+  - access control management
 features:
-- Enter privileged execution mode for advanced configurations.
-- Securely manage device access levels.
-- Enhance network security through privileged commands.
-- Gain full control over device settings and operations.
-- Configure advanced system parameters and security protocols.
+  - Enter privileged execution mode for advanced configurations.
+  - Securely manage device access levels.
+  - Enhance network security through privileged commands.
+  - Gain full control over device settings and operations.
+  - Configure advanced system parameters and security protocols.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

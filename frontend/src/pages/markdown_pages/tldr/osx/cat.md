@@ -1,27 +1,27 @@
 ---
 title: "Cat - Print and Concatenate Files | Free DevTools"
 name: cat
-path: /freedevtools/tldr/unknown/cat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cat/"
+path: /freedevtools/tldr/osx/cat
+canonical: "https://hexmos.com/freedevtools/tldr/osx/cat/"
 description: "Print and concatenate files with Cat. Process text and data efficiently using command line. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- cat command
-- file concatenation
-- print file contents
-- text processing
-- stdin to file
-- stdout redirection
-- command line utilities
-- file manipulation
-- data stream processing
-- linux cat command
+  - cat command
+  - file concatenation
+  - print file contents
+  - text processing
+  - stdin to file
+  - stdout redirection
+  - command line utilities
+  - file manipulation
+  - data stream processing
+  - linux cat command
 features:
-- Print file contents to standard output
-- Concatenate multiple files into one
-- Append files to an existing file
-- Display non-printable characters visibly
-- Number all output lines for readability
+  - Print file contents to standard output
+  - Concatenate multiple files into one
+  - Append files to an existing file
+  - Display non-printable characters visibly
+  - Number all output lines for readability
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

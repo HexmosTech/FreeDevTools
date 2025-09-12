@@ -1,10 +1,10 @@
 ---
 title: "Android Settings - Control System Configuration | Free DevTools"
 name: settings
-path: /freedevtools/tldr/unknown/settings
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/settings/"
+path: /freedevtools/tldr/android/settings
+canonical: "https://hexmos.com/freedevtools/tldr/android/settings/"
 description: "Control Android settings with the settings command. Modify system configuration, retrieve settings values, and manage Android parameters. Free online tool, no registration required."
-category: unknown
+category: android
 keywords:
   - android settings control
   - adb settings management

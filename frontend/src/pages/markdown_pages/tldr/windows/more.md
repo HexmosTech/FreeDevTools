@@ -1,27 +1,27 @@
 ---
 title: "Display Paged Output - Control Text Output with More | Free DevTools"
 name: more
-path: /freedevtools/tldr/unknown/more
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/more/"
+path: /freedevtools/tldr/widows/more
+canonical: "https://hexmos.com/freedevtools/tldr/widows/more/"
 description: "Control paged output with More. Display content from files or stdin and format text output. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- paginated output display
-- command line pager
-- text file viewer
-- more command
-- stdin output display
-- windows more command
-- console pager
-- text formatting tool
-- file output control
-- command line text viewer
+  - paginated output display
+  - command line pager
+  - text file viewer
+  - more command
+  - stdin output display
+  - windows more command
+  - console pager
+  - text formatting tool
+  - file output control
+  - command line text viewer
 features:
-- Display output from stdin
-- Display output from multiple files
-- Convert tabs to spaces
-- Clear the screen before displaying output
-- Start output display at a specific line
+  - Display output from stdin
+  - Display output from multiple files
+  - Convert tabs to spaces
+  - Clear the screen before displaying output
+  - Start output display at a specific line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

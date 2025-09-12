@@ -1,27 +1,27 @@
 ---
 title: "Remove Directory - Erase Folders with Rmdir | Free DevTools"
 name: rmdir
-path: /freedevtools/tldr/unknown/rmdir
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/rmdir/"
+path: /freedevtools/tldr/widows/rmdir
+canonical: "https://hexmos.com/freedevtools/tldr/widows/rmdir/"
 description: "Remove directories easily with Rmdir. Delete empty or non-empty folders recursively and suppress prompts for quicker directory management. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- directory removal cmd
-- rmdir command prompt
-- delete folder command line
-- remove directory recursively
-- cmd rmdir options
-- windows rmdir command
-- rmdir /s /q
-- command line directory management
-- folder eraser windows
-- delete directory force cmd
+  - directory removal cmd
+  - rmdir command prompt
+  - delete folder command line
+  - remove directory recursively
+  - cmd rmdir options
+  - windows rmdir command
+  - rmdir /s /q
+  - command line directory management
+  - folder eraser windows
+  - delete directory force cmd
 features:
-- Recursively remove directories and their contents
-- Delete empty directories
-- Suppress prompts during recursive removal
-- Force deletion of folders without confirmation
-- Utilize command prompt to remove directories
+  - Recursively remove directories and their contents
+  - Delete empty directories
+  - Suppress prompts during recursive removal
+  - Force deletion of folders without confirmation
+  - Utilize command prompt to remove directories
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

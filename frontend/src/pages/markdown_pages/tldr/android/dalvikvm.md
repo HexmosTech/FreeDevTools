@@ -1,10 +1,10 @@
 ---
 title: "Dalvikvm - Execute Android Java Code | Free DevTools"
 name: dalvikvm
-path: /freedevtools/tldr/unknown/dalvikvm
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dalvikvm/"
+path: /freedevtools/tldr/android/dalvikvm
+canonical: "https://hexmos.com/freedevtools/tldr/android/dalvikvm/"
 description: "Execute Android Java bytecode with Dalvikvm. Easily run JAR files and manage classpaths for application development. Free online tool, no registration required."
-category: unknown
+category: android
 keywords:
   - dalvik bytecode execution
   - android virtual machine

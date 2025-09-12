@@ -1,27 +1,27 @@
 ---
 title: "Create Directory - Organize Files | Free DevTools"
 name: mkdir
-path: "/freedevtools/tldr/unknown/mkdir"
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkdir/"
+path: "/freedevtools/tldr/widows/mkdir"
+canonical: "https://hexmos.com/freedevtools/tldr/widows/mkdir/"
 description: "Create directories easily with mkdir. Organize your files and manage your file system efficiently. Free online tool, no registration required."
-category: unknown
+category: windows
 keywords:
-- directory creation command
-- mkdir command
-- file system manager
-- create directory
-- nested directory
-- command line mkdir
-- file management
-- directory organizer
-- windows mkdir
-- file structure command
+  - directory creation command
+  - mkdir command
+  - file system manager
+  - create directory
+  - nested directory
+  - command line mkdir
+  - file management
+  - directory organizer
+  - windows mkdir
+  - file structure command
 features:
-- Create a new directory at a specified path
-- Create nested directory structures recursively
-- Organize files and folders
-- Manage file systems using command-line
-- Simplify directory creation tasks
+  - Create a new directory at a specified path
+  - Create nested directory structures recursively
+  - Organize files and folders
+  - Manage file systems using command-line
+  - Simplify directory creation tasks
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

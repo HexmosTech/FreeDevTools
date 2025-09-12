@@ -1,27 +1,27 @@
 ---
 title: "Assemble GNU Code - Assemble Files with as | Free DevTools"
 name: as
-path: /freedevtools/tldr/unknown/as
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/as/"
+path: /freedevtools/tldr/osx/as
+canonical: "https://hexmos.com/freedevtools/tldr/osx/as/"
 description: "Assemble GNU assembly code with as. Create executable files from assembly source code with this portable GNU assembler. Free online tool, no registration required."
-category: unknown
+category: osx
 keywords:
-- GNU assembler
-- assembly code
-- executable file generator
-- GCC assembler
-- linker input
-- object file creator
-- assembly source
-- as command
-- command line assembler
-- system programming
+  - GNU assembler
+  - assembly code
+  - executable file generator
+  - GCC assembler
+  - linker input
+  - object file creator
+  - assembly source
+  - as command
+  - command line assembler
+  - system programming
 features:
-- Assemble assembly source files into object code
-- Generate output files with specified names
-- Skip whitespace and comment preprocessing for faster assembly
-- Include specified directories in the search path for include files
-- Create object files ready for linking with ld
+  - Assemble assembly source files into object code
+  - Generate output files with specified names
+  - Skip whitespace and comment preprocessing for faster assembly
+  - Include specified directories in the search path for include files
+  - Create object files ready for linking with ld
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

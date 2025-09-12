@@ -2,7 +2,7 @@
 title: "Generate Android Bug Report - Analyze System State | Free DevTools"
 name: bugreport
 path: /freedevtools/tldr/android/bugreport
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/bugreport/"
+canonical: "https://hexmos.com/freedevtools/tldr/android/bugreport/"
 description: "Generate Android bug reports with `bugreport`. Analyze system state and collect device logs for effective debugging. Free online tool, no registration required."
 category: android
 keywords:
