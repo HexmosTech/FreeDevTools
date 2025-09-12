@@ -1,3 +1,31 @@
+---
+title: "For Command - Execute Commands Iteratively | Free DevTools"
+name: for
+path: /freedevtools/tldr/unknown/for
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/for/"
+description: "Execute commands iteratively with the 'for' command in your terminal. Simplify repetitive tasks and automate workflows. Free online tool, no registration required."
+category: unknown
+keywords:
+- Command iteration
+- Batch processing
+- Loop execution
+- Conditional command execution
+- File system iteration
+- Directory traversal
+- Command automation
+- Iterative scripting
+- Windows command line
+- Shell scripting
+features:
+- Execute commands for a specified set of items.
+- Iterate over a numerical range with custom steps.
+- Process a list of files using a wildcard pattern.
+- Operate on a collection of directories.
+- Apply commands to every directory in the current path.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # for
 
 > Conditionally execute a command several times.

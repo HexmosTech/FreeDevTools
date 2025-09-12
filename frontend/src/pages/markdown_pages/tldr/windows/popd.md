@@ -1,3 +1,31 @@
+---
+title: "Control Directory Stack - popd Command | Free DevTools"
+name: popd
+path: /freedevtools/tldr/unknown/popd
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/popd/"
+description: "Control your directory stack with the popd command. Easily navigate file systems and manage directory history. Free online tool, no registration required."
+category: unknown
+keywords:
+- directory stack management
+- command line navigation
+- popd command reference
+- file system navigation
+- shell scripting directory
+- terminal directory stack
+- windows popd command
+- command line directory history
+- stack based directory change
+- path management command
+features:
+- Switch to the last directory pushed onto the stack.
+- Remove the top directory from the directory stack.
+- Navigate back through previously visited directories.
+- Simplify complex directory traversal in scripts.
+- Access a history of recently used directories.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # popd
 
 > Changes the current directory to the directory stored by the `pushd` command.

@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/unknown/settings/"
 description: "Control Android settings with the settings command. Modify system configuration, retrieve settings values, and manage Android parameters. Free online tool, no registration required."
 category: unknown
 keywords:
-- android settings control
-- adb settings management
-- system configuration android
-- modify android settings
-- android global settings
-- android secure settings
-- retrieve settings values
-- android configuration management
-- airplane mode settings
-- screen brightness settings
+  - android settings control
+  - adb settings management
+  - system configuration android
+  - modify android settings
+  - android global settings
+  - android secure settings
+  - retrieve settings values
+  - android configuration management
+  - airplane mode settings
+  - screen brightness settings
 features:
-- list settings within a specified namespace
-- retrieve the value of a specific setting
-- set a specific setting to a new value
-- delete a specific setting from the system
-- manage android system configurations through command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - list settings within a specified namespace
+  - retrieve the value of a specific setting
+  - set a specific setting to a new value
+  - delete a specific setting from the system
+  - manage android system configurations through command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

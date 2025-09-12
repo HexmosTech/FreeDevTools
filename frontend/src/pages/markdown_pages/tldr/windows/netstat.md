@@ -1,3 +1,31 @@
+---
+title: "Netstat - Control Network Connections | Free DevTools"
+name: netstat
+path: /freedevtools/tldr/unknown/netstat
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/netstat/"
+description: "Control network connections with Netstat, a command-line tool to display network statistics and active TCP connections. Analyze network performance. Free online tool, no registration required."
+category: unknown
+keywords:
+- netstat command
+- network connection status
+- tcp connection analysis
+- network statistics display
+- routing table information
+- port listening information
+- network adapter statistics
+- windows netstat
+- ipv4 statistics
+- ipv6 statistics
+features:
+- Display active TCP connections.
+- Show listening ports on the computer.
+- Present network adapter statistics.
+- Reveal the IP routing table.
+- Display statistics by protocol.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # netstat
 
 > Display active TCP connections, ports on which the computer is listening, network adapter statistics, the IP routing table, IPv4 statistics and IPv6 statistics.

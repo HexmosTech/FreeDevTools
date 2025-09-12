@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/unknown/bugreportz/"
 description: "Generate zipped Android bug reports with bugreportz. Collect system logs, identify device problems, and resolve Android errors. Free online tool, no registration required."
 category: unknown
 keywords:
-- zipped android bug reports
-- android debugging and diagnostics
-- adb shell bug reporting
-- system log data collection
-- device problem reporting
-- zipped bug report generation
-- detailed system state capture
-- android application analysis
-- mobile device issue identification
-- compressed debugging information
+  - zipped android bug reports
+  - android debugging and diagnostics
+  - adb shell bug reporting
+  - system log data collection
+  - device problem reporting
+  - zipped bug report generation
+  - detailed system state capture
+  - android application analysis
+  - mobile device issue identification
+  - compressed debugging information
 features:
-- generate complete zipped bug reports for Android
-- show progress of bug report generation via adb
-- write bug report content to stdout using adb
-- display help information for bugreportz command
-- display the bugreportz version information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - generate complete zipped bug reports for Android
+  - show progress of bug report generation via adb
+  - write bug report content to stdout using adb
+  - display help information for bugreportz command
+  - display the bugreportz version information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

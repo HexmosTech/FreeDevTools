@@ -1,3 +1,31 @@
+---
+title: "If Command - Control Conditional Processing | Free DevTools"
+name: if
+path: /freedevtools/tldr/unknown/if
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/if/"
+description: "Control conditional processing with the If command. Manage execution flow based on conditions, error levels, and string comparisons. Free online tool, no registration required."
+category: unknown
+keywords:
+- batch if command
+- cmd if statement
+- windows if command
+- conditional execution
+- batch script condition
+- errorlevel check
+- string comparison batch
+- file existence check
+- batch script logic
+- command line conditional
+features:
+- Execute commands based on condition evaluation
+- Check error levels to determine command execution
+- Compare strings for equality or inequality
+- Verify the existence of a specified file path
+- Perform case-insensitive string comparisons
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # if
 
 > Performs conditional processing in batch scripts.

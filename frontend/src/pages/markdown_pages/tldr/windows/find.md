@@ -1,3 +1,31 @@
+---
+title: "Find String - Search Files for Text | Free DevTools"
+name: find
+path: /freedevtools/tldr/unknown/find
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/find/"
+description: "Search files for specific text with Find. Efficiently locate strings and display line counts in files. Free online tool, no registration required."
+category: unknown
+keywords:
+- text search tool
+- find string in files
+- file content search
+- command line find
+- search text in directory
+- find text in file windows
+- find string windows command
+- windows find command
+- find command examples
+- find text with line numbers
+features:
+- Locate lines containing a specific string
+- Display lines that do not contain a specific string
+- Count the number of lines containing a string
+- Show line numbers for found text
+- Search for text in files and directories
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # find
 
 > Find a specified string in files.

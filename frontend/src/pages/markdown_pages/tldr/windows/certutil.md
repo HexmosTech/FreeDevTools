@@ -1,3 +1,31 @@
+---
+title: "CertUtil - Manage Certificate Information | Free DevTools"
+name: certutil
+path: "/freedevtools/tldr/unknown/certutil"
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/certutil/"
+description: "Manage certificate information with CertUtil. Encode, decode, and hash files for secure data handling using this command-line tool. Free online tool, no registration required."
+category: unknown
+keywords:
+- certificate management
+- certutil command
+- file encoding
+- file decoding
+- cryptographic hashing
+- windows certificate utility
+- certutil examples
+- base64 encode
+- hexadecimal encode
+- sha256 hash
+features:
+- Encode files to Base64 format
+- Decode Base64-encoded files
+- Generate cryptographic hashes for files
+- Encode files in hexadecimal format
+- Display configuration information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # certutil
 
 > A tool to manage and configure certificate information.

@@ -1,3 +1,31 @@
+---
+title: "Whoami - Display User Details | Free DevTools"
+name: whoami
+path: /freedevtools/tldr/unknown/whoami
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/whoami/"
+description: "Display user details with Whoami. Show username, groups, privileges, and logon ID. A comprehensive user information retrieval tool. Free online tool, no registration required."
+category: unknown
+keywords:
+- user details
+- display user
+- user information
+- username lookup
+- group membership
+- user privileges
+- logon ID
+- user principal name
+- user identity
+- command line user
+features:
+- Display current user's username
+- List user's group memberships
+- Show user's assigned privileges
+- Retrieve user principal name (UPN)
+- Display user's logon ID
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # whoami
 
 > Display details about the current user.

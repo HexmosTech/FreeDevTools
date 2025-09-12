@@ -1,3 +1,31 @@
+---
+title: "Locate Files - Find Files with Where Command | Free DevTools"
+name: where
+path: /freedevtools/tldr/unknown/where
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/where/"
+description: "Find files instantly with Where Command. Locate files by pattern, search recursively, and verify file existence using command line. Free online tool, no registration required."
+category: unknown
+keywords:
+- file location command
+- find file by name
+- where command windows
+- command line file search
+- locate file path
+- file search utility
+- windows command where
+- path environment variable
+- search files recursively
+- command line tools
+features:
+- Locate files matching a specified pattern.
+- Recursively search for files in a given directory.
+- Display file size and date along with location.
+- Silently check for file existence using exit codes.
+- Search for files using the PATH environment variable.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # where
 
 > Display the location of files that match the search pattern.

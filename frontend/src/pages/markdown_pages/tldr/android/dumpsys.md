@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/unknown/dumpsys/"
 description: "Analyze Android system services instantly with Dumpsys. Inspect service states, diagnose issues, and gather diagnostic data. Free online tool, no registration required."
 category: android
 keywords:
-- android dumpsys analysis
-- adb dumpsys command
-- android system service data
-- android debugging tool
-- android performance analysis
-- dumpsys system information
-- android service state inspection
-- dumpsys diagnostics adb shell
-- android system behavior
-- analyze android system services
+  - android dumpsys analysis
+  - adb dumpsys command
+  - android system service data
+  - android debugging tool
+  - android performance analysis
+  - dumpsys system information
+  - android service state inspection
+  - dumpsys diagnostics adb shell
+  - android system behavior
+  - analyze android system services
 features:
-- diagnose android system service issues
-- list all available android system services
-- filter diagnostic output by service name
-- exclude specific services from diagnostic output
-- specify a timeout for diagnostic output gathering
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+  - diagnose android system service issues
+  - list all available android system services
+  - filter diagnostic output by service name
+  - exclude specific services from diagnostic output
+  - specify a timeout for diagnostic output gathering
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

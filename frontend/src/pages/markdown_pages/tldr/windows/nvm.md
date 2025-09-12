@@ -1,3 +1,31 @@
+---
+title: "Control Node.js Versions - NVM | Free DevTools"
+name: nvm
+path: /freedevtools/tldr/unknown/nvm
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/nvm/"
+description: "Control Node.js versions with NVM. Install, uninstall, and switch between Node versions effortlessly. Free online tool, no registration required."
+category: unknown
+keywords:
+- node.js version manager
+- nvm install node
+- nvm use node
+- nvm list versions
+- nvm uninstall node
+- node version control
+- windows nvm
+- nvm windows
+- node.js environment manager
+- command line nvm
+features:
+- Install specific Node.js versions.
+- Set the default Node.js version.
+- List available Node.js versions.
+- List remote Node.js versions.
+- Uninstall specific Node.js versions.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nvm
 
 > Install, uninstall, or switch between Node.js versions.
