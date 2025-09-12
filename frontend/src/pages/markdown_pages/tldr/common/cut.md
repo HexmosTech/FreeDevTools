@@ -1,3 +1,31 @@
+---
+title: "Cut Data - Extract Fields with cut | Free DevTools"
+name: cut
+path: /freedevtools/tldr/unknown/cut
+canonical: "https://hexmos.com/freedevtools/tldr/unknown/cut/"
+description: "Extract fields and characters with the cut command.  Process text files efficiently using various delimiters and options. Free online tool, no registration required."
+category: unknown
+keywords:
+- text field extraction
+- command line cut
+- data field selection
+- character range extraction
+- linux cut command
+- text processing cut
+- data manipulation cut
+- file data extraction
+- unix cut command
+- string manipulation cut
+features:
+- Extract specific character ranges from text.
+- Select fields based on delimiters (e.g., comma, tab).
+- Process data from standard input or files.
+- Handle NUL-terminated lines for advanced scenarios.
+- Define custom field and character ranges for precise extraction.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cut
 
 > Cut out fields from `stdin` or files.
