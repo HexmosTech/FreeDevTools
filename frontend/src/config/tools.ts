@@ -413,6 +413,116 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "yaml-to-json": {
+    title: "YAML to JSON Converter - Transform YAML Online | Free DevTools",
+    name: "YAML to JSON Converter",
+    path: "/freedevtools/t/yaml-to-json/",
+    description:
+      "Convert YAML to JSON format instantly with our free online converter. Transform YAML configuration files to JSON with real-time validation and formatting. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/yaml-to-json/",
+    keywords: [
+      "yaml to json converter",
+      "convert yaml to json online",
+      "yaml json converter free",
+      "yaml to json online tool",
+      "transform yaml data json",
+      "yaml configuration converter",
+      "online yaml parser",
+    ],
+    features: [
+      "Real-time YAML to JSON conversion",
+      "Support for multi-document YAML files",
+      "Comprehensive error handling and validation",
+      "Sample YAML data for testing",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+      "Support for all YAML syntax features",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "uuid-generator": {
+    title: "UUID Generator - Generate Secure UUIDs Online | Free DevTools",
+    name: "UUID Generator",
+    path: "/freedevtools/t/uuid-generator/",
+    description:
+      "Generate secure UUIDs instantly with our free online UUID generator. Create random v4 UUIDs, timestamp-based v1 UUIDs, or special nil/max UUIDs. Bulk generation and analysis tools included.",
+    category: "Developer Tools",
+    icon: "🆔",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/uuid-generator/",
+    keywords: [
+      "uuid generator",
+      "guid generator",
+      "unique identifier generator",
+      "random uuid generator",
+      "uuid v4 generator",
+      "bulk uuid generator",
+      "online uuid generator",
+      "free uuid generator",
+    ],
+    features: [
+      "Generate UUID v1, v4, nil, and max versions",
+      "Bulk UUID generation (up to 1000 at once)",
+      "UUID format customization (uppercase, no dashes)",
+      "Real-time UUID analysis and validation",
+      "Copy individual or bulk UUIDs to clipboard",
+      "Browser-based processing - no server uploads",
+      "Support for all standard UUID formats and variants",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "svg-viewer": {
+    title: "SVG Viewer - View & Analyze SVG Files Online | Free DevTools",
+    name: "SVG Viewer",
+    path: "/freedevtools/t/svg-viewer/",
+    description:
+      "View and analyze SVG files instantly with our free online SVG viewer. Upload SVG files or paste SVG code to visualize, edit, and download. Real-time preview with dimension analysis.",
+    category: "Developer Tools",
+    icon: "�️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/svg-viewer/",
+    keywords: [
+      "svg viewer",
+      "svg file viewer",
+      "view svg online",
+      "svg preview tool",
+      "svg analyzer",
+      "svg code viewer",
+      "online svg editor",
+      "svg dimension checker",
+    ],
+    features: [
+      "Upload SVG files or paste SVG code directly",
+      "Real-time SVG preview and rendering",
+      "SVG dimension and file size analysis",
+      "Download processed SVG files",
+      "Fullscreen preview mode",
+      "Browser-based processing - data stays private",
+      "Support for all SVG elements and attributes",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
