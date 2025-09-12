@@ -449,6 +449,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "uuid-generator": {
+    title: "UUID Generator - Generate Secure UUIDs Online | Free DevTools",
+    name: "UUID Generator",
+    path: "/freedevtools/t/uuid-generator/",
+    description:
+      "Generate secure UUIDs instantly with our free online UUID generator. Create random v4 UUIDs, timestamp-based v1 UUIDs, or special nil/max UUIDs. Bulk generation and analysis tools included.",
+    category: "Developer Tools",
+    icon: "🆔",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/uuid-generator/",
+    keywords: [
+      "uuid generator",
+      "guid generator",
+      "unique identifier generator",
+      "random uuid generator",
+      "uuid v4 generator",
+      "bulk uuid generator",
+      "online uuid generator",
+      "free uuid generator",
+    ],
+    features: [
+      "Generate UUID v1, v4, nil, and max versions",
+      "Bulk UUID generation (up to 1000 at once)",
+      "UUID format customization (uppercase, no dashes)",
+      "Real-time UUID analysis and validation",
+      "Copy individual or bulk UUIDs to clipboard",
+      "Browser-based processing - no server uploads",
+      "Support for all standard UUID formats and variants",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
