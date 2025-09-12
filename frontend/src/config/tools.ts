@@ -523,6 +523,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "sql-minifier": {
+    title: "SQL Minifier - Optimize SQL Queries Online | Free DevTools",
+    name: "SQL Minifier",
+    path: "/freedevtools/t/sql-minifier/",
+    description:
+      "Minify SQL queries instantly with our free online SQL minifier. Remove comments, extra spaces, and optimize SQL formatting for better performance and smaller file sizes. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/sql-minifier/",
+    keywords: [
+      "sql minifier",
+      "sql optimizer",
+      "minify sql online",
+      "sql code minifier",
+      "compress sql queries",
+      "sql formatter",
+      "optimize sql code",
+      "remove sql comments",
+    ],
+    features: [
+      "Minify SQL queries instantly with real-time processing",
+      "Remove comments and extra whitespace from SQL code",
+      "Preserve or strip SQL comments based on preferences",
+      "Calculate compression ratio and size savings",
+      "Support for all SQL dialects and database systems",
+      "Browser-based processing - queries never leave your device",
+      "Copy minified SQL to clipboard with one click",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {

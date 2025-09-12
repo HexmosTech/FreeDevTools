@@ -15,7 +15,7 @@ function generateTool(toolKey) {
   console.log(`🚀 Generating tool: ${toolName} (${toolKey})`);
 
   // Create tool directory
-  const toolDir = path.join(__dirname, "..", "src/pages", toolKey);
+  const toolDir = path.join(__dirname, "..", "src/pages/t", toolKey);
   if (!fs.existsSync(toolDir)) {
     fs.mkdirSync(toolDir, { recursive: true });
     console.log(`✅ Created directory: ${toolDir}`);
@@ -62,12 +62,12 @@ function generateTool(toolKey) {
 
 function generateReactComponent(componentName, toolName) {
   return `import React, { useState, useEffect } from "react";
-import ToolContainer from "../../components/tool/ToolContainer";
-import ToolHead from "../../components/tool/ToolHead";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolHead from "@/components/tool/ToolHead";
 import ${componentName}Skeleton from "./_${componentName}Skeleton";
-import CopyButton from "../../components/ui/copy-button";
-import { toast } from "../../components/ToastProvider";
-import { Button } from "../../components/ui/button";
+import CopyButton from "@/components/ui/copy-button";
+import { toast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/button";
 
 const ${componentName}: React.FC = () => {
   const [input, setInput] = useState("");
@@ -244,18 +244,27 @@ export default ${componentName}Skeleton;
 
 function generateAstroPage(toolKey, componentName) {
   return `---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ${componentName} from './_${componentName}';
-import { getToolByKey } from '../../config/tools';
+import type { Tool } from '@/config/tools';
+import { getToolByKey } from '@/config/tools';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SvgViewer from './_${componentName}';
 
-const tool = getToolByKey('${toolKey}');
+const tool = getToolByKey('${toolKey}') as Tool;
 ---
 
 <BaseLayout 
-  title={\`\${tool?.name} - TODO: Add subtitle | Free DevTools\`}
-  description={tool?.description}
-  canonical={tool?.canonical}
-  themeColor={tool?.themeColor}
+   name={tool.name}
+  title={tool.title}
+  path={tool.path}
+  description={tool.description}
+  canonical={tool.canonical}
+  themeColor={tool.themeColor}
+  keywords={tool.keywords}
+  ogImage={tool.ogImage}
+  twitterImage={tool.twitterImage}
+  datePublished={tool.datePublished}
+  softwareVersion={tool.softwareVersion}
+  features={tool.features}
 >
   <${componentName} client:load />
 </BaseLayout>
