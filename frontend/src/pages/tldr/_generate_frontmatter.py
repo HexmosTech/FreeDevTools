@@ -3,15 +3,24 @@
 import json
 import os
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
-API_KEY = (
-    "AIzaSyBMiwN1oFzdPTSpSUcldFsdGFa0NE6FyZc"  # Replace or load from env for security
-)
+API_KEYS = [
+    # "AIzaSyAVAR1SS6dLMQh8ZNSiHBUDQd42B99wvkU",
+    # "AIzaSyBV8t-jWkEfBHrvl08CInavK5uVt6qY2so",
+    # "AIzaSyBex1VxCp4vTwT8T6N_DP-8qCWXBqn2Os0",
+    # "AIzaSyBSBUGFt1_ziVdWAwyw1OG27ujVYOPFcxk",
+    # "AIzaSyBMiwN1oFzdPTSpSUcldFsdGFa0NE6FyZc",
+    # "AIzaSyA6dVENKeUXeqpyZZ6Fi5KhbzDxkarTLJU",
+    # "AIzaSyAeJac3PjsEeGSUEMVZp3XQD4HXVCbvXU4",
+    # "AIzaSyAn1hZKys-vhdtb-PXHtqswtHqySVnsunw",
+    # "AIzaSyBoyRv75AkXwqWP--u-JmnpLwyMXsmjBkY",
+    "AIzaSyAIor2IVN50eTPFDLdZQJG5BeHJYYduDNs",  # Hexmos Paid
+]
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-
-HEADERS = {"Content-Type": "application/json", "X-goog-api-key": API_KEY}
 
 OG_IMAGE = "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 TWITTER_IMAGE = (
@@ -229,7 +238,7 @@ def find_markdown_files(root_dir):
     return md_files
 
 
-def send_to_gemini(md_content, platform, command_name):
+def send_to_gemini(md_content, platform, command_name, api_key):
     prompt = f"""Generate SEO-optimized frontmatter metadata in YAML format for the following markdown content:
 
 Platform: {platform}
@@ -298,8 +307,9 @@ features:
   - specific capability 4
   - specific capability 5"""
 
+    headers = {"Content-Type": "application/json", "X-goog-api-key": api_key}
     data = {"contents": [{"parts": [{"text": prompt}]}]}
-    response = requests.post(API_URL, headers=HEADERS, json=data)
+    response = requests.post(API_URL, headers=headers, json=data)
     if response.status_code == 200:
         try:
             result = response.json()
@@ -378,7 +388,7 @@ def update_frontmatter_json(entries, name, path):
     save_frontmatter(entries)
 
 
-def process_file(md_file, base_path, entries):
+def process_file(md_file, base_path, api_key, process_id, file_index, total_files):
     try:
         with open(md_file, "r") as f:
             content = f.read()
@@ -403,21 +413,49 @@ def process_file(md_file, base_path, entries):
                     platform = path_parts[i - 1]
                 break
 
-        print(f"Processing: {md_file} (platform: {platform})")
-
-        if already_processed(entries, name, path):
-            print(f"Skipping {md_file}, already processed.")
-            return
-
-        frontmatter_yaml = send_to_gemini(content, platform, name)
+        frontmatter_yaml = send_to_gemini(content, platform, name, api_key)
         if frontmatter_yaml:
             update_markdown_file(md_file, frontmatter_yaml)
-            update_frontmatter_json(entries, name, path)
-            print(f"Processed {md_file} (platform: {platform})")
+            return {"status": "success", "file": md_file, "platform": platform}
         else:
-            print(f"Skipped {md_file}, no frontmatter returned.")
+            return {
+                "status": "failed",
+                "file": md_file,
+                "reason": "no frontmatter returned",
+            }
     except Exception as e:
-        print(f"Error processing {md_file}: {e}")
+        return {"status": "error", "file": md_file, "error": str(e)}
+
+
+def process_batch(batch_files, base_path, api_key, process_id):
+    """Process a batch of files with a single API key"""
+    print(f"Process {process_id} started with {len(batch_files)} files")
+
+    for i, md_file in enumerate(batch_files):
+        print(
+            f"Process {process_id}: Processing {i+1}/{len(batch_files)} - {os.path.basename(md_file)}"
+        )
+        result = process_file(
+            md_file, base_path, api_key, process_id, i + 1, len(batch_files)
+        )
+
+        if result["status"] == "success":
+            print(
+                f"Process {process_id}: ✅ {os.path.basename(md_file)} - {result['platform']}"
+            )
+        elif result["status"] == "skipped":
+            print(
+                f"Process {process_id}: ⏭️  {os.path.basename(md_file)} - already processed"
+            )
+        else:
+            print(
+                f"Process {process_id}: ❌ {os.path.basename(md_file)} - {result.get('reason', result.get('error', 'unknown error'))}"
+            )
+
+        # Small delay to avoid rate limiting
+        time.sleep(1)
+
+    print(f"Process {process_id} completed")
 
 
 def main():
@@ -430,15 +468,82 @@ def main():
     md_files = find_markdown_files(root_dir)
     print(f"Found {len(md_files)} markdown files")
 
-    entries = load_frontmatter()
-    print(f"Loaded {len(entries)} existing entries from frontmatter.json")
-
+    # Filter out files that already have frontmatter (--- markers)
+    unprocessed_files = []
     for md_file in md_files:
-        print(f"Processing: {md_file}")
-        process_file(md_file, root_dir, entries)
+        # Check if file already has frontmatter
+        try:
+            with open(md_file, "r") as f:
+                content = f.read()
+
+            # Count --- markers
+            dash_count = content.count("---")
+            if dash_count >= 2:
+                print(
+                    f"⏭️  Skipping {os.path.basename(md_file)} - already has frontmatter ({dash_count} --- markers)"
+                )
+                continue
+
+        except Exception as e:
+            print(f"⚠️  Could not read {os.path.basename(md_file)}: {e}")
+            continue
+
+        unprocessed_files.append(md_file)
+
+    print(f"Found {len(unprocessed_files)} unprocessed files")
+
+    if not unprocessed_files:
+        print("All files have been processed!")
+        return
+
+    # Calculate batch size (split by 5 processes, max 10 files per process)
+    total_files = len(unprocessed_files)
+    num_processes = min(5, len(API_KEYS))
+    batch_size = max(1, total_files // num_processes)
+
+    print(
+        f"Processing {total_files} files in {num_processes} batches of ~{batch_size} files each"
+    )
+    print(f"Using {len(API_KEYS)} API keys")
+
+    # Create batches
+    batches = []
+    for i in range(0, len(unprocessed_files), batch_size):
+        batch = unprocessed_files[i : i + batch_size]
+        batches.append(batch)
+
+    # Ensure we don't have more batches than API keys
+    batches = batches[: len(API_KEYS)]
+
+    # Process batches in parallel
+    print(f"\n🚀 Starting {len(batches)} parallel processes...")
+
+    with ThreadPoolExecutor(max_workers=len(batches)) as executor:
+        # Submit all batches
+        futures = []
+        for i, batch in enumerate(batches):
+            api_key = API_KEYS[i % len(API_KEYS)]
+            future = executor.submit(process_batch, batch, root_dir, api_key, i + 1)
+            futures.append(future)
+
+        # Wait for all processes to complete
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"❌ Process failed: {e}")
+
+    print("\n🎉 All processes completed!")
 
 
 if __name__ == "__main__":
     print("Script starting...")
-    main()
-    print("Script completed.")
+    print(f"Available API keys: {len(API_KEYS)}")
+    try:
+        main()
+        print("Script completed successfully.")
+    except Exception as e:
+        print(f"Script failed with error: {e}")
+        import traceback
+
+        traceback.print_exc()
