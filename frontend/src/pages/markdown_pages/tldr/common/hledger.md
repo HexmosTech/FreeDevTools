@@ -1,0 +1,65 @@
+---
+title: "Control hledger - Plain Text Accounting | Free DevTools"
+name: hledger
+path: "/freedevtools/tldr/common/hledger"
+canonical: "https://hexmos.com/freedevtools/tldr/common/hledger/"
+description: "Control plain text accounting with hledger. Manage financial transactions, generate reports, and track expenses effectively. Free online tool, no registration required."
+category: common
+keywords:
+- plain text accounting
+- hledger accounting
+- command line accounting
+- ledger journal
+- double entry bookkeeping
+- financial transactions
+- account balance
+- income statement
+- balance sheet
+- hledger command
+features:
+- Record financial transactions interactively
+- Import transactions from CSV files
+- Print transaction reports from multiple journal files
+- Display account hierarchies and balances
+- Generate income and expense reports
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
+# hledger
+
+> A robust, friendly plain text accounting app.
+> See also: `hledger-ui` for TUI, `hledger-web` for web interface.
+> More information: <https://hledger.org/hledger.html>.
+
+- Record new transactions interactively, saving to the default journal file:
+
+`hledger add`
+
+- Import new transactions from `bank.csv`, using `bank.csv.rules` to convert:
+
+`hledger import {{path/to/bank.csv}}`
+
+- Print all transactions, reading from multiple specified journal files:
+
+`hledger print {{[-f|--file]}} {{path/to/prices-2024.journal}} {{[-f|--file]}} {{path/to/prices-2023.journal}}`
+
+- Show all accounts, as a hierarchy, and their types:
+
+`hledger accounts {{[-t|--tree]}} --types`
+
+- Show asset and liability account balances, including zeros, hierarchically:
+
+`hledger {{[bs|balancesheet]}} {{[-E|--empty]}} {{[-t|--tree]}} --no-elide`
+
+- Show monthly incomes/expenses/totals, largest first, summarised to 2 levels:
+
+`hledger {{[is|incomestatement]}} {{[-M|--monthly]}} {{[-T|--row-total]}} {{[-A|--average]}} --sort {{[-2|--depth 2]}}`
+
+- Show the `assets:bank:checking` account's transactions and running balance:
+
+`hledger {{[areg|aregister]}} assets:bank:checking`
+
+- Show the amount spent on food from the `assets:cash` account:
+
+`hledger print assets:cash | hledger {{[-f|--file]}} - {{[-I|--ignore-assertions]}} aregister expenses:food`
