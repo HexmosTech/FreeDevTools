@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Metrics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Container Metrics</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content"><h1>Container Metrics</h1>
+<p>Examples for Prometheus focused on Container Level Metrics, scraped from cadvisor.</p>
+<h2>Requirements</h2>
+<p>This is used on a ECS Cluster with the following:</p>
+<ol>
+<li>cadvisor running on the cluster with this <a href="https://github.com/ruanbekker/cheatsheets/blob/master/ecs/task-definitions/cadvisor_taskdef.json">cadvisor_taskdef.json</a></li>
+<li>prometheus scrape config with:</li>
+</ol>
+<pre class="codehilite"><code>  # cadvisor
+  - job_name: container-metrics
+    scrape_interval: 15s
+    ec2_sd_configs:
+    - region: eu-west-1
+      role_arn: 'arn:aws:iam::xxxxxxxxxxxx:role/prometheus-ec2-role'
+      port: 9100
+      filters:
+        - name: tag:PrometheusContainerScrape
+          values:
+            - Enabled
+    relabel_configs:
+    - source_labels: [__meta_ec2_private_ip]
+      replacement: '${1}:8080'
+      target_label: __address__
+    - source_labels: [__meta_ec2_tag_Name]
+      target_label: instance
+    - source_labels: [__meta_ec2_tag_ECSClusterName]
+      target_label: cluster_name
+</code></pre>
+
+<h2>Grafana Variables</h2>
+<p>Interval:</p>
+<pre class="codehilite"><code>Name: interval
+Label: Interval
+Type: interval
+Values: 1m,10m,30m,1h,6h,12h,1d,7d,14d,30d
+</code></pre>
+
+<p>Cluster Name: </p>
+<pre class="codehilite"><code>Name: cluster_name
+Label: ECS Cluster
+Type: Query
+Values: label_values(cadvisor_version_info,  cluster_name)
+</code></pre>
+
+<p>Service Name:</p>
+<pre class="codehilite"><code>Name: service_name
+Label: Service Name
+Type: Query
+Values: label_values(container_cpu_load_average_10s{cluster_name=~&quot;$cluster_name&quot;}, container_label_com_amazonaws_ecs_container_name)
+</code></pre>
+
+<h2>Example Prometheus Queries</h2>
+<p>Queries used in Grafana</p>
+<h3>CPU</h3>
+<p>Used CPU Utilization per container (graph):</p>
+<pre class="codehilite"><code>sum(rate(container_cpu_usage_seconds_total{name=~&quot;.+&quot;, cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster) * 100
+</code></pre>
+
+<p>Used CPU Utilization aggregated by service (guage):</p>
+<pre class="codehilite"><code>sum(sum(rate(container_cpu_usage_seconds_total{name=~&quot;.+&quot;, cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by ( container_label_com_amazonaws_ecs_container_name) * 100)
+</code></pre>
+
+<h3>Memory</h3>
+<p>Used memory per container (graph):</p>
+<pre class="codehilite"><code>sum(container_memory_rss{cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster)
+</code></pre>
+
+<p>Used memory aggregated by service (guage):</p>
+<pre class="codehilite"><code>sum(sum(container_memory_rss{name=~&quot;.+&quot;, cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster))
+</code></pre>
+
+<p>Used memory percentage:</p>
+<pre class="codehilite"><code>avg((avg (container_memory_working_set_bytes{name=~&quot;.+&quot;}) by (name, instance ))/ on (name, instance)(avg (container_spec_memory_limit_bytes&gt;0 ) by (name, instance))*100)
+</code></pre>
+
+<p>Memory limits:</p>
+<pre class="codehilite"><code>container_spec_memory_limit_bytes{container_label_com_docker_compose_service=~&quot;$service_name&quot;, instance=~&quot;$host&quot;}
+</code></pre>
+
+<h3>Network</h3>
+<p>Incoming Network Traffic per Container (graph):</p>
+<pre class="codehilite"><code>sum(rate(container_network_receive_bytes_total{cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster)
+</code></pre>
+
+<p>Outgoing Network Traffic per Container (graph):</p>
+<pre class="codehilite"><code>sum(rate(container_network_transmit_bytes_total{cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster)
+</code></pre>
+
+<p>To combine both metrics in one panel and invert the direction of the graph for outgoing:</p>
+<pre class="codehilite"><code>Incoming:
+  - Legend =&gt; down: {{name}}
+Outgoing:
+  - Legend =&gt; up: {{name}}
+
+Series overrides
+  - Alias or regex =&gt; /.*up.*/
+  - Transform =&gt; negative-y
+</code></pre>
+
+<p>Incoming Network Traffic aggregated by Service (gauge):</p>
+<pre class="codehilite"><code>sum(sum(rate(container_network_receive_bytes_total{cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster))
+</code></pre>
+
+<p>Outgoing Network Traffic aggregated by Service (gauge):</p>
+<pre class="codehilite"><code>sum(sum(rate(container_transmit_receive_bytes_total{cluster_name=~&quot;$cluster_name&quot;, container_label_com_amazonaws_ecs_container_name=~&quot;$service_name&quot;}[$interval])) by (name, container_label_com_amazonaws_ecs_container_name, container_label_com_amazonaws_ecs_cluster))
+</code></pre></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

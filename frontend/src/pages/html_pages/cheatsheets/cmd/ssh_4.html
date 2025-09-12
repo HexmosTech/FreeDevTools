@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readme</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Readme</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content"><h1>SSH Cheatsheet</h1>
+<ul>
+<li><a href="#proxy-jump">Proxy Jump</a></li>
+<li><a href="#ssh-tunnel">SSH Tunnel</a></li>
+</ul>
+<h2>External Resources:</h2>
+<ul>
+<li>https://cheatsheet.dennyzhang.com/cheatsheet-ssh-a4</li>
+<li>https://docs.ycrc.yale.edu/clusters-at-yale/access/advanced-config/</li>
+</ul>
+<h2>Proxy Jump</h2>
+<h3>Method 1</h3>
+<p>Using your key for SSH to bastion and using your key to SSH to target host:</p>
+<pre class="codehilite"><code>Host *
+    Port 22
+    User ubuntu
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 30
+
+Host jump-host
+    HostName bastion.domain.com
+    IdentityFile ~/.ssh/bastion.pem
+
+Host target-a
+    HostName target-a.pvt.domain.com
+    IdentityFile ~/.ssh/target_a.pem
+    ProxyJump jump-host
+</code></pre>
+
+<h3>Method 2</h3>
+<p>Using your key to SSH to bastion and using the remote key on B to SSH to the target host:</p>
+<pre class="codehilite"><code>Host *
+    Port 22
+    User ubuntu
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 30
+
+Host jump-host
+    HostName bastion.domain.com
+    IdentityFile ~/.ssh/bastion.pem
+
+Host target-b
+    HostName target-b.pvt.domain.com
+    IdentityFile /home/ubuntu/.ssh/id_rsa
+    ProxyCommand ssh -o 'ForwardAgent yes' jump-host 'ssh-add &amp;&amp; nc %h %p'
+</code></pre>
+
+<h3>Method 3</h3>
+<p>One liner:</p>
+<pre class="codehilite"><code>ssh -i ~/.ssh/target.pem -o ProxyCommand=&quot;ssh -W %h:%p -i ~/.ssh/id_rsa -q ubuntu@bastion.domain&quot; ubuntu@target.domain
+</code></pre>
+
+<h2>SOCKS5 SSH Tunnel</h2>
+<p>To run a socks5 ssh tunnel in the foreground:</p>
+<pre class="codehilite"><code>ssh -D 1337 -q -C -N jump-host
+</code></pre>
+
+<p>To run a forked socks5 ssh tunnel in the background:</p>
+<pre class="codehilite"><code>ssh -D 1337 -q -C -N -f jump-host
+</code></pre>
+
+<p><a href="https://ma.ttias.be/socks-proxy-linux-ssh-bypass-content-filters/">Credit</a></p>
+<h2>SSH Tunnel</h2>
+<p>Setup a local tunnel accessible on port 8080 which will traverse via the tunnel to access port 9100 on target-a which is only accessible locally on the remote end.</p>
+<p>First to setup our SSH Config (optional):</p>
+<pre class="codehilite"><code>$ cat ~/.ssh/config
+Host jump-host
+    HostName jump-host.mydomain.com
+    Port 22
+    User ruan
+    IdentityFile ~/.ssh/id_rsa
+
+Host target-a
+    Hostname 172.31.16.3
+    User ec2-user
+    IdentityFile ~/.ssh/id_rsa
+    ProxyCommand ssh -o 'ForwardAgent yes' jump-host 'ssh-add &amp;&amp; nc %h %p'
+</code></pre>
+
+<h3>Method 1</h3>
+<p>This ssh session will log you into the remote server, so the session will remain active as long as you are logged in:</p>
+<pre class="codehilite"><code>$ ssh -L 8080:localhost:9100 target-a
+</code></pre>
+
+<h3>Method 2</h3>
+<p>Then we can do the same, but fork the ssh session to the background:</p>
+<pre class="codehilite"><code>$ ssh -fN -L 8080:localhost:9100 target-a
+</code></pre>
+
+<p>To kill the session, you can get the <code>pid</code> by running: <code>ps aux | grep '8080:localhost:9100'</code>, and then kill the pid with: <code>kill $pid</code></p>
+<h3>Method 3</h3>
+<p>Then we can do the same, but run the ssh session in the forground:</p>
+<pre class="codehilite"><code>$ ssh -fN -L 8080:localhost:9100 -CqN target-a
+</code></pre>
+
+<p>Now when you try to access port 8080 locally, you will see that we can reach port 80 on the remote target:</p>
+<pre class="codehilite"><code>$ nc -vz localhost 8080
+Connection to localhost port 8080 [tcp/*] succeeded!
+</code></pre>
+
+<h3>Resources</h3>
+<ul>
+<li><a href="https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump">Bastion ProxyJump</a></li>
+<li><a href="https://www.techrepublic.com/article/how-to-use-ssh-to-proxy-through-a-linux-jump-host/">Bastion JumpHost</a></li>
+<li><a href="https://serverfault.com/a/701884">Proxy Jump to C using Key B</a></li>
+</ul></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

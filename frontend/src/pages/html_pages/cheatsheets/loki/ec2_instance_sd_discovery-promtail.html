@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ec2 Instance Sd Discovery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ec2 Instance Sd Discovery</h1>
+        </div>
+        <div class="content">
+            <pre><code class="language-yaml"># https://grafana.com/docs/loki/latest/clients/promtail/scraping/
+# https://grafana.com/blog/2020/07/13/loki-tutorial-how-to-set-up-promtail-on-aws-ec2-to-find-and-analyze-your-logs/
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 0
+
+clients:
+  - url: https://user:pass@loki.domain.com/loki/api/v1/push
+
+positions:
+  filename: /opt/promtail/positions.yaml
+
+scrape_configs:
+  - job_name: prod/ec2-logs
+    ec2_sd_configs:
+      - region: eu-west-1
+        #access_key: REDACTED
+        #secret_key: REDACTED
+        #role_arn: arn:aws:iam::000000000000:role/PrometheusEC2DynamicScrapeRole
+    relabel_configs:
+      - source_labels: [__meta_ec2_architecture]
+        regex: "(.*)"
+        replacement: "prod/server-logs"
+        target_label: job
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: name
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance
+        action: replace
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: zone
+        action: replace
+      - action: replace
+        replacement: /var/log/**.log
+        target_label: __path__
+      - source_labels: [__meta_ec2_private_dns_name]
+        regex: "(.*)\\.(.*)\\.compute\\.internal"
+        replacement: '${1}'
+        target_label: __host__
+
+  - job_name: prod/journal
+    journal:
+      json: false
+      max_age: 12h
+      path: /var/log/journal
+      labels:
+        job: prod/systemd-journal
+        name: my-ec2-instance
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'
+      - source_labels: ['__journal__hostname']
+        target_label: __host__
+      - source_labels: ['__journal_syslog_identifier']
+        target_label: syslog_identifier
+
+# prod/ec2-logs produces:
+#  job="prod/server-logs"
+#  instance="i-00000000000"
+#  name="my-ec2-instance"
+#  zone="eu-west-1a"
+#  filename="/var/log/auth.log"
+
+# prod/journal produces:
+#  job="prod/systemd-journal"
+#  name="my-ec2-instance"
+#  syslog_identifier="promtail"
+#  unit="promtail.service"
+</code></pre>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

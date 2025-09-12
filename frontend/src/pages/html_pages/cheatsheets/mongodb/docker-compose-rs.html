@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Compose Rs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Docker Compose Rs</h1>
+        </div>
+        <div class="content">
+            <pre><code class="language-yaml">version: '2'
+
+services:
+  mongodb-rs-0:
+    image: mongo:4.2
+    container_name: mongodb-rs-0
+    restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "30001"]
+    #environment:
+    #  - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USERNAME}
+    #  - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    volumes:
+      - ${MONGODB_DATA}/mongodb-rs-0/data/db:/data/db
+      - ${MONGODB_DATA}/mongodb-rs-0/data/backups:/dump
+    ports:
+     - 30001:30001
+    networks:
+      - public
+    depends_on:
+      - mongodb-rs-1
+      - mongodb-rs-2
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongodb-rs-0:30001\"},{_id:1,host:\"mongodb-rs-1:30002\"},{_id:2,host:\"mongodb-rs-2:30003\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
+      interval: 15s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+  mongodb-rs-1:
+    image: mongo:4.2
+    container_name: mongodb-rs-1
+    restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "30002"]
+    #environment:
+    #  - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USERNAME}
+    #  - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    volumes:
+      - ${MONGODB_DATA}/mongodb-rs-1/data/db:/data/db
+      - ${MONGODB_DATA}/mongodb-rs-1/data/backups:/dump
+    ports:
+     - 30002:30002
+    networks:
+      - public
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:30002/test --quiet
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+  mongodb-rs-2:
+    image: mongo:4.2
+    container_name: mongodb-rs-2
+    restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "30003"]
+    #environment:
+    #  - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USERNAME}
+    #  - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    volumes:
+      - ${MONGODB_DATA}/mongodb-rs-2/data/db:/data/db
+      - ${MONGODB_DATA}/mongodb-rs-2/data/backups:/dump
+    ports:
+     - 30003:30003
+    networks:
+      - public
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:30003/test --quiet
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+  mongodb-express:
+    image: mongo-express
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongodb-rs-0:30001,mongodb-rs-1:30002,mongodb-rs-2:30003/?replicaSet=rs0
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    #  - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ROOT_USERNAME}
+    #  - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGODB_EXPRESS_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGODB_EXPRESS_PASSWORD}
+    ports:
+      - 18086:8081
+    networks:
+      - public
+    depends_on:
+      - mongodb-rs-0
+      - mongodb-rs-1
+      - mongodb-rs-2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+networks:
+  public:
+    name: public
+</code></pre>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

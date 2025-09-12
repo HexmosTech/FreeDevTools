@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kubernetes</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content"><h1>kubernetes-prometheus-metrics</h1>
+<h2>Container Metrics</h2>
+<h3>PodWithResourceConstraints</h3>
+<p>This shows the pod's memory usage and limits, given they have resource requests and limits configured.</p>
+<pre class="codehilite"><code>process_resident_memory_bytes{pod=&quot;prometheus-prometheus-kube-prometheus-prometheus-0&quot;}
+kube_pod_container_resource_requests{resource=&quot;memory&quot;, pod=&quot;kube-prometheus-prometheus-0&quot;}
+kube_pod_container_resource_limits{resource=&quot;memory&quot;, pod=&quot;kube-prometheus-prometheus-0&quot;}
+</code></pre>
+
+<h3>CPUThrottlingHigh</h3>
+<p><code>{{ $value | humanizePercentage }}</code> throttling of CPU in namespace <code>{{ $labels.namespace }}</code> for container <code>{{ $labels.container }}</code> in pod <code>{{ $labels.pod }}</code>.</p>
+<pre class="codehilite"><code>sum by(container, pod, namespace) (increase(container_cpu_cfs_throttled_periods_total{container!=&quot;&quot;}[5m])) / sum by(container, pod, namespace) (increase(container_cpu_cfs_periods_total[5m])) &gt; (25 / 100)
+</code></pre>
+
+<h3>KubeAPIDown</h3>
+<p>KubeAPI has disappeared from Prometheus target discovery.</p>
+<pre class="codehilite"><code>absent(up{job=&quot;apiserver&quot;} == 1)
+</code></pre>
+
+<h3>KubeletDown</h3>
+<p>Kubelet has disappeared from Prometheus target discovery.</p>
+<pre class="codehilite"><code>absent(up{job=&quot;kubelet&quot;} == 1)
+</code></pre>
+
+<h3>KubeAPIErrorsHigh</h3>
+<p>API server is returning errors for <code>{{ $value | humanizePercentage }}</code> of requests for <code>{{ $labels.verb }} {{ $labels.resource }} {{ $labels.subresource }}</code>.</p>
+<pre class="codehilite"><code>sum by(resource, subresource, verb) (rate(apiserver_request_total{code=~&quot;5..&quot;,job=&quot;apiserver&quot;}[5m])) / sum by(resource, subresource, verb) (rate(apiserver_request_total{job=&quot;apiserver&quot;}[5m])) &gt; 0.1
+</code></pre>
+
+<h3>KubeAPILatencyHigh</h3>
+<p>The API server has an abnormal latency of <code>{{ $value }}</code> seconds for <code>{{ $labels.verb }} {{ $labels.resource }}</code>.</p>
+<pre class="codehilite"><code>(cluster:apiserver_request_duration_seconds:mean5m{job=&quot;apiserver&quot;} &gt; on(verb) group_left() (avg by(verb) (cluster:apiserver_request_duration_seconds:mean5m{job=&quot;apiserver&quot;} &gt;= 0) + 2 * stddev by(verb) (cluster:apiserver_request_duration_seconds:mean5m{job=&quot;apiserver&quot;} &gt;= 0))) &gt; on(verb) group_left() 1.2 * avg by(verb) (cluster:apiserver_request_duration_seconds:mean5m{job=&quot;apiserver&quot;} &gt;= 0) and on(verb, resource) cluster_quantile:apiserver_request_duration_seconds:histogram_quantile{job=&quot;apiserver&quot;,quantile=&quot;0.99&quot;} &gt; 1
+</code></pre>
+
+<h3>KubeContainerWaiting</h3>
+<p>Pod <code>{{ $labels.namespace }}</code> / <code>{{ $labels.pod }}</code> container <code>{{ $labels.container }}</code> has been in waiting state for longer than 1 hour.</p>
+<pre class="codehilite"><code>sum by(namespace, pod, container) (kube_pod_container_status_waiting_reason{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}) &gt; 0
+</code></pre>
+
+<h3>KubeDeploymentReplicasMismatch</h3>
+<p>Deployment <code>{{ $labels.namespace }}</code>/<code>{{ $labels.deployment }}</code> has not matched the expected number of replicas for longer than 15 minutes.</p>
+<pre class="codehilite"><code>(kube_deployment_spec_replicas{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;} != kube_deployment_status_replicas_available{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}) and (changes(kube_deployment_status_replicas_updated{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}[5m]) == 0)
+</code></pre>
+
+<h3>KubeStatefulSetReplicasMismatch</h3>
+<p>StatefulSet <code>{{ $labels.namespace }}</code> / <code>{{ $labels.statefulset }}</code> has not matched the expected number of replicas for longer than 15 minutes.</p>
+<pre class="codehilite"><code>(kube_statefulset_status_replicas_ready{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;} != kube_statefulset_status_replicas{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}) and (changes(kube_statefulset_status_replicas_updated{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}[5m]) == 0)
+</code></pre>
+
+<h3>KubePersistentVolumeFillingUp</h3>
+<p>The PersistentVolume claimed by <code>{{ $labels.persistentvolumeclaim }}</code> in Namespace <code>{{ $labels.namespace }}</code> is only <code>{{ $value | humanizePercentage }}</code> free.</p>
+<pre class="codehilite"><code>kubelet_volume_stats_available_bytes{job=&quot;kubelet&quot;,metrics_path=&quot;/metrics&quot;,namespace=~&quot;.*&quot;} / kubelet_volume_stats_capacity_bytes{job=&quot;kubelet&quot;,metrics_path=&quot;/metrics&quot;,namespace=~&quot;.*&quot;} &lt; 0.03
+</code></pre>
+
+<h3>KubePersistentVolumePercentageLow</h3>
+<p>The PersistentVolume claimed by <code>{{ $labels.persistentvolumeclaim }}</code> in Namespace <code>{{ $labels.namespace }}</code> is only <code>{{ $value | humanizePercentage }}</code> free.</p>
+<pre class="codehilite"><code>sum by (persistentvolumeclaim) (kubelet_volume_stats_used_bytes{job=&quot;kubelet&quot;} / kubelet_volume_stats_capacity_bytes) * 100.0 &gt; 80
+</code></pre>
+
+<h3>KubePersistentVolumeErrors</h3>
+<p>The persistent volume <code>{{ $labels.persistentvolume }}</code> has status <code>{{ $labels.phase }}</code>.</p>
+<pre class="codehilite"><code>kube_persistentvolume_status_phase{job=&quot;kube-state-metrics&quot;,phase=~&quot;Failed|Pending&quot;} &gt; 0
+</code></pre>
+
+<h3>KubePodCrashLooping</h3>
+<p>Pod is restarting x amount of times / 5 minutes.</p>
+<pre class="codehilite"><code>rate(kube_pod_container_status_restarts_total{job=&quot;kube-state-metrics&quot;,namespace=~&quot;.*&quot;}[15m]) * 60 * 5 &gt; 0
+</code></pre>
+
+<p>And to manipulate the message:</p>
+<pre class="codehilite"><code>Pod {{ $labels.namespace }} / {{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf &quot;%.2f&quot; $value }} times / 5 minutes.
+</code></pre>
+
+<h3>PodNotRunning</h3>
+<pre class="codehilite"><code>sum by (pod)(kube_pod_status_ready{condition=&quot;true&quot;} == 0)
+</code></pre>
+
+<h3>TotalRestartsForContainer</h3>
+<pre class="codehilite"><code>increase(kube_pod_container_status_restarts_total[1h])
+# or
+increase(kube_pod_container_status_restarts_total{namespace=&quot;my-namespace&quot;, pod=~&quot;.*prefix.*&quot;}[1h])
+</code></pre>
+
+<h3>OomReasonForTermination</h3>
+<pre class="codehilite"><code>kube_pod_container_status_last_terminated_reason{reason=&quot;OOMKilled&quot;}
+# or
+container_oom_events_total{name=&quot;container-name&quot;}
+# or
+kube_pod_container_status_last_terminated_reason{reason=&quot;OOMKilled&quot;,namespace=&quot;my-namespace&quot;}
+</code></pre>
+
+<h3>LessReplicasThanDesired</h3>
+<pre class="codehilite"><code>kube_deployment_status_replicas_available{namespace=&quot;my-namespace&quot;} / kube_deployment_spec_replicas{namespace=&quot;my-namespace&quot;}
+</code></pre>
+
+<h3>PrometheusDown</h3>
+<p>Prometheus has disappeared from Prometheus target discovery.</p>
+<pre class="codehilite"><code>absent(up{job=&quot;prometheus-operator-prometheus&quot;,namespace=&quot;monitoring&quot;} == 1)
+</code></pre>
+
+<h2>NodeMetrics</h2>
+<h3>NodeFilesystemSpaceFillingUp</h3>
+<p>Filesystem on <code>{{ $labels.device }}</code> at <code>{{ $labels.instance }}</code> has only <code>{{ printf "%.2f" $value }}%</code> available space left and is filling up.</p>
+<pre class="codehilite"><code>(node_filesystem_avail_bytes{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} / node_filesystem_size_bytes{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} * 100 &lt; 40 and predict_linear(node_filesystem_avail_bytes{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;}[6h], 24 * 60 * 60) &lt; 0 and node_filesystem_readonly{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} == 0)
+</code></pre>
+
+<h3>NodeFilesystemAlmostOutOfSpace</h3>
+<p>Filesystem on <code>{{ $labels.device }}</code> at <code>{{ $labels.instance }}</code> has only <code>{{ printf "%.2f" $value }}%</code> available space left.</p>
+<pre class="codehilite"><code>(node_filesystem_avail_bytes{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} / node_filesystem_size_bytes{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} * 100 &lt; 5 and node_filesystem_readonly{fstype!=&quot;&quot;,job=&quot;node-exporter&quot;} == 0)
+</code></pre>
+
+<h3>NodeCPUHigh</h3>
+<pre class="codehilite"><code>100 - (avg by(instance) (irate(node_cpu_seconds_total{mode=&quot;idle&quot;, instance=~&quot;(.*)&quot;}[5m])) * 100) * on(instance) group_left(nodename) node_uname_info{} &gt; 80
+</code></pre>
+
+<h3>NodeMemoryHigh</h3>
+<pre class="codehilite"><code>100 * (1 - ((avg_over_time(node_memory_MemFree_bytes[10m]) + avg_over_time(node_memory_Cached_bytes[10m]) + avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTotal_bytes[10m]))) * on(instance) group_left(nodename) node_uname_info{} &gt; 80
+</code></pre></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
