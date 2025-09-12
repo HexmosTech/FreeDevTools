@@ -1,27 +1,27 @@
 ---
 title: "Select Timezone - Interactively Choose Timezone | Free DevTools"
 name: tzselect
-path: /freedevtools/tldr/unknown/tzselect
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/tzselect/"
+path: /freedevtools/tldr/linux/tzselect
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tzselect/"
 description: "Select timezone interactively with tzselect. Find the correct timezone based on your location using command line interface. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- timezone selector
-- interactive timezone selection
-- command line timezone tool
-- tzselect linux
-- tzselect command
-- find timezone by coordinates
-- timezone identifier
-- timezone lookup
-- geographical timezone finder
-- ISO 6709 timezone
+  - timezone selector
+  - interactive timezone selection
+  - command line timezone tool
+  - tzselect linux
+  - tzselect command
+  - find timezone by coordinates
+  - timezone identifier
+  - timezone lookup
+  - geographical timezone finder
+  - ISO 6709 timezone
 features:
-- Interactively select a timezone from a list of regions and cities.
-- Print the selected timezone identifier to standard output.
-- Find the nearest timezone using geographic coordinates in ISO 6709 format.
-- Navigate through the timezone selection menu using terminal input.
-- Provide a simple command-line interface for timezone selection.
+  - Interactively select a timezone from a list of regions and cities.
+  - Print the selected timezone identifier to standard output.
+  - Find the nearest timezone using geographic coordinates in ISO 6709 format.
+  - Navigate through the timezone selection menu using terminal input.
+  - Provide a simple command-line interface for timezone selection.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Query Debian Packages - Manage Apt Packages | Free DevTools"
+name: apt-cache
+path: /freedevtools/tldr/linux/apt-cache
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-cache/"
+description: "Manage Debian and Ubuntu packages with apt-cache. Search, view details, check status, and manage dependencies easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - apt package search
+  - apt package management
+  - debian package query
+  - ubuntu package info
+  - linux package manager
+  - apt-cache command
+  - apt package dependencies
+  - linux package details
+  - apt policy command
+  - debian package installer
+features:
+  - Search for packages in repositories
+  - Display detailed package information
+  - Check package installation status and updates
+  - Show package dependencies and reverse dependencies
+  - Manage and troubleshoot package installations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # apt-cache
 
 > Debian and Ubuntu package query tool.

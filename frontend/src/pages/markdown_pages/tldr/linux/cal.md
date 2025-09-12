@@ -1,3 +1,31 @@
+---
+title: "Display Calendar - View Monthly & Yearly Schedules | Free DevTools"
+name: cal
+path: /freedevtools/tldr/linux/cal
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cal/"
+description: "View and manage monthly and yearly schedules with the cal command.  Easily display calendars for specific months, years, or ranges. Free online tool, no registration required."
+category: linux
+keywords:
+  - calendar display command
+  - calendar viewing utility
+  - command line calendar
+  - terminal calendar
+  - linux calendar command
+  - unix calendar command
+  - monthly calendar view
+  - yearly calendar view
+  - date scheduling command
+  - system calendar tool
+features:
+  - Display the current month's calendar.
+  - Show multiple months at once.
+  - View the entire year's calendar.
+  - Display the next twelve months.
+  - Customize the starting day of the week.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cal
 
 > Display a calendar with the current day highlighted.

@@ -1,27 +1,27 @@
 ---
 title: "Transfer Files via QR - qrcp | Free DevTools"
 name: qrcp
-path: /freedevtools/tldr/unknown/qrcp
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qrcp/"
+path: /freedevtools/tldr/linux/qrcp
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qrcp/"
 description: "Transfer files easily with qrcp using QR codes. Secure file transfer across devices using command-line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- QR code file transfer
-- command line file transfer
-- secure file transfer
-- cross platform file transfer
-- network file transfer
-- qrcp send
-- qrcp receive
-- terminal file transfer
-- adhoc file sharing
-- local file transfer
+  - QR code file transfer
+  - command line file transfer
+  - secure file transfer
+  - cross platform file transfer
+  - network file transfer
+  - qrcp send
+  - qrcp receive
+  - terminal file transfer
+  - adhoc file sharing
+  - local file transfer
 features:
-- Transfer files and directories via QR code
-- Receive files from a device using QR code
-- Compress content before transferring for faster speeds
-- Specify a custom port for file transfer
-- Keep the server alive for multiple transfers
+  - Transfer files and directories via QR code
+  - Receive files from a device using QR code
+  - Compress content before transferring for faster speeds
+  - Specify a custom port for file transfer
+  - Keep the server alive for multiple transfers
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Control Network Traffic - Termshark Packet Analysis | Free DevTools"
 name: termshark
-path: /freedevtools/tldr/unknown/termshark
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/termshark/"
+path: /freedevtools/tldr/linux/termshark
+canonical: "https://hexmos.com/freedevtools/tldr/linux/termshark/"
 description: "Control network traffic instantly with Termshark, a terminal-based network analyzer. Capture packets, filter protocols, and inspect connections. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Network Packet Analysis
-- Terminal Network Monitor
-- Wireshark Terminal Interface
-- Packet Capture Tool
-- Network Troubleshooting Linux
-- Command Line Packet Sniffer
-- Network Protocol Analyzer
-- Traffic Analysis Tool
-- Security Monitoring
-- Pcap Analysis
+  - Network Packet Analysis
+  - Terminal Network Monitor
+  - Wireshark Terminal Interface
+  - Packet Capture Tool
+  - Network Troubleshooting Linux
+  - Command Line Packet Sniffer
+  - Network Protocol Analyzer
+  - Traffic Analysis Tool
+  - Security Monitoring
+  - Pcap Analysis
 features:
-- Monitor network traffic in a terminal
-- Filter packets by protocol and address
-- Inspect packet contents using Wireshark-like interface
-- Capture network traffic to a file
-- Analyze network connections
+  - Monitor network traffic in a terminal
+  - Filter packets by protocol and address
+  - Inspect packet contents using Wireshark-like interface
+  - Capture network traffic to a file
+  - Analyze network connections
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

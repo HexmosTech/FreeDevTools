@@ -1,27 +1,27 @@
 ---
 title: "Trace-cmd - Control Linux Kernel Tracing | Free DevTools"
 name: trace-cmd
-path: /freedevtools/tldr/unknown/trace-cmd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/trace-cmd/"
+path: /freedevtools/tldr/linux/trace-cmd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/trace-cmd/"
 description: "Control Linux kernel tracing with trace-cmd. Analyze system performance and debug kernel issues with ease. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux kernel tracer
-- ftrace analysis
-- system performance monitoring
-- kernel debugging tool
-- trace event recording
-- trace-cmd command
-- linux tracing utility
-- kernel function tracing
-- system call tracing
-- dynamic tracing linux
+  - linux kernel tracer
+  - ftrace analysis
+  - system performance monitoring
+  - kernel debugging tool
+  - trace event recording
+  - trace-cmd command
+  - linux tracing utility
+  - kernel function tracing
+  - system call tracing
+  - dynamic tracing linux
 features:
-- Start and stop kernel tracing sessions
-- Record and analyze system events
-- Display trace output in real-time
-- Clear trace buffers for new sessions
-- List available kernel tracers
+  - Start and stop kernel tracing sessions
+  - Record and analyze system events
+  - Display trace output in real-time
+  - Clear trace buffers for new sessions
+  - List available kernel tracers
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

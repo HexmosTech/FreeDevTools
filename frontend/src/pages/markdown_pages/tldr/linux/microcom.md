@@ -1,27 +1,27 @@
 ---
 title: "Control Serial Ports - Microcom Terminal | Free DevTools"
 name: microcom
-path: "/freedevtools/tldr/unknown/microcom"
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/microcom/"
+path: "/freedevtools/tldr/linux/microcom"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/microcom/"
 description: "Control serial ports with Microcom. Connect to serial, CAN, and telnet devices from the command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- serial communication
-- serial terminal
-- serial console
-- telnet client
-- CAN connection
-- command line terminal
-- device communication
-- port monitoring
-- serial debugging
-- remote access
+  - serial communication
+  - serial terminal
+  - serial console
+  - telnet client
+  - CAN connection
+  - command line terminal
+  - device communication
+  - port monitoring
+  - serial debugging
+  - remote access
 features:
-- Open serial ports with custom baud rates
-- Establish telnet connections to remote hosts
-- Access remote devices from the console
-- Monitor serial communication data streams
-- Connect to devices via serial, CAN, or telnet
+  - Open serial ports with custom baud rates
+  - Establish telnet connections to remote hosts
+  - Access remote devices from the console
+  - Monitor serial communication data streams
+  - Connect to devices via serial, CAN, or telnet
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

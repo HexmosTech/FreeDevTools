@@ -1,27 +1,27 @@
 ---
 title: "Pacaur Package Manager - Install AUR Packages | Free DevTools"
 name: pacaur
-path: /freedevtools/tldr/unknown/pacaur
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pacaur/"
+path: /freedevtools/tldr/linux/pacaur
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacaur/"
 description: "Install AUR packages easily with Pacaur Package Manager. Update, remove, and search Arch Linux packages. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- aur package manager
-- arch linux package
-- pacaur install
-- pacaur update
-- pacaur remove
-- pacaur search
-- aur repository
-- arch user repository
-- linux package manager
-- command line package
+  - aur package manager
+  - arch linux package
+  - pacaur install
+  - pacaur update
+  - pacaur remove
+  - pacaur search
+  - aur repository
+  - arch user repository
+  - linux package manager
+  - command line package
 features:
-- Synchronize and update all packages, including AUR.
-- Install new packages from both official repositories and AUR.
-- Remove packages and their dependencies, including AUR packages.
-- Search the package database for specific keywords.
-- List all currently installed packages, including AUR packages.
+  - Synchronize and update all packages, including AUR.
+  - Install new packages from both official repositories and AUR.
+  - Remove packages and their dependencies, including AUR packages.
+  - Search the package database for specific keywords.
+  - List all currently installed packages, including AUR packages.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Create PipeWire Loopback - Audio Routing | Free DevTools"
 name: pw-loopback
-path: /freedevtools/tldr/unknown/pw-loopback
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pw-loopback/"
+path: /freedevtools/tldr/linux/pw-loopback
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-loopback/"
 description: "Create audio loopback devices with pw-loopback for advanced PipeWire audio routing. Manage input/output streams and connect virtual audio devices. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- pipewire loopback
-- audio routing
-- virtual audio device
-- pw-loopback command
-- linux audio
-- pipewire audio
-- audio sink
-- audio source
-- pipewire configuration
-- audio stream management
+  - pipewire loopback
+  - audio routing
+  - virtual audio device
+  - pw-loopback command
+  - linux audio
+  - pipewire audio
+  - audio sink
+  - audio source
+  - pipewire configuration
+  - audio stream management
 features:
-- Create default loopback devices in PipeWire
-- Connect loopback devices to speakers
-- Connect loopback devices to microphones
-- Create dummy loopback devices without automatic connections
-- Swap left and right audio channels between sink and source
+  - Create default loopback devices in PipeWire
+  - Connect loopback devices to speakers
+  - Connect loopback devices to microphones
+  - Create dummy loopback devices without automatic connections
+  - Swap left and right audio channels between sink and source
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

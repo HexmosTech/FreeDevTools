@@ -1,3 +1,31 @@
+---
+title: "Analyze Packets with tshark - Network Monitoring | Free DevTools"
+name: tshark
+path: /freedevtools/tldr/linux/tshark
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tshark/"
+description: "Analyze network packets effectively with tshark, the command-line network protocol analyzer. Capture, filter, and decode packets with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - packet analyzer CLI
+  - network protocol analyzer command line
+  - tshark capture filter
+  - tshark packet decoding
+  - command-line network monitoring
+  - tshark output format
+  - pcap file analysis tshark
+  - tcpdump alternative tshark
+  - network traffic analysis tshark
+  - wireshark command line tshark
+features:
+  - Capture and analyze network packets in real-time.
+  - Apply powerful capture and display filters for targeted analysis.
+  - Decode various network protocols (e.g., HTTP, TCP, UDP).
+  - Export captured packets in different formats (e.g., JSON, text).
+  - Analyze packet captures from saved `.pcap` files.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # tshark
 
 > Packet analysis tool, CLI version of Wireshark.

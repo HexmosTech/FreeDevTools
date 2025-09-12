@@ -1,27 +1,27 @@
 ---
 title: "Compress Files - Control File Size | Free DevTools"
 name: compress
-path: /freedevtools/tldr/unknown/compress
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/compress/"
+path: /freedevtools/tldr/linux/compress
+canonical: "https://hexmos.com/freedevtools/tldr/linux/compress/"
 description: "Compress files to reduce size with the Compress command. Manage file compression using Unix commands for efficient storage. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- file compression
-- compress files
-- unix compress
-- linux compress command
-- compress command examples
-- file archive
-- reduce file size
-- data compression
-- command line compress
-- file size optimization
+  - file compression
+  - compress files
+  - unix compress
+  - linux compress command
+  - compress command examples
+  - file archive
+  - reduce file size
+  - data compression
+  - command line compress
+  - file size optimization
 features:
-- Compress specific files
-- Decompress files
-- Specify maximum compression bits
-- Write compressed output to stdout
-- Display compression percentage
+  - Compress specific files
+  - Decompress files
+  - Specify maximum compression bits
+  - Write compressed output to stdout
+  - Display compression percentage
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

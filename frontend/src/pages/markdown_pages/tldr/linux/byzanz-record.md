@@ -1,27 +1,27 @@
 ---
 title: "Record Screen - Capture Screen Recordings with Byzanz-record | Free DevTools"
 name: byzanz-record
-path: /freedevtools/tldr/unknown/byzanz-record
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/byzanz-record/"
+path: /freedevtools/tldr/linux/byzanz-record
+canonical: "https://hexmos.com/freedevtools/tldr/linux/byzanz-record/"
 description: "Record screen activity with Byzanz-record. Create GIFs, FLVs, and more with this simple screen recording command-line tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Screen recording
-- Byzanz-record screen capture
-- GIF recorder
-- FLV recorder
-- Command line screen recorder
-- Linux screen recording
-- Terminal screen recorder
-- Byzanz animation
-- Screen capture tool
-- Video capture
+  - Screen recording
+  - Byzanz-record screen capture
+  - GIF recorder
+  - FLV recorder
+  - Command line screen recorder
+  - Linux screen recording
+  - Terminal screen recorder
+  - Byzanz animation
+  - Screen capture tool
+  - Video capture
 features:
-- Capture screen recordings to various formats
-- Control recording duration
-- Delay recording start time
-- Display verbose recording information
-- Record specific areas of the screen
+  - Capture screen recordings to various formats
+  - Control recording duration
+  - Delay recording start time
+  - Display verbose recording information
+  - Record specific areas of the screen
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

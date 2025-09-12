@@ -1,27 +1,27 @@
 ---
 title: "A2disconf - Disable Apache Configs | Free DevTools"
 name: a2disconf
-path: /freedevtools/tldr/unknown/a2disconf
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/a2disconf/"
+path: /freedevtools/tldr/linux/a2disconf
+canonical: "https://hexmos.com/freedevtools/tldr/linux/a2disconf/"
 description: "Disable Apache configurations easily with A2disconf. Deactivate specified Apache configuration files on Debian systems. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- apache configuration disable
-- a2disconf debian
-- disable apache config file
-- apache config management
-- debian server configuration
-- a2disconf command line
-- apache config a2disconf
-- server config disable
-- apache module management
-- linux apache config
+  - apache configuration disable
+  - a2disconf debian
+  - disable apache config file
+  - apache config management
+  - debian server configuration
+  - a2disconf command line
+  - apache config a2disconf
+  - server config disable
+  - apache module management
+  - linux apache config
 features:
-- Disable specified Apache configuration files
-- Prevent loading configuration files on startup
-- Operate silently using quiet mode
-- Manage Apache server configurations on Debian
-- Streamline Apache config deactivation
+  - Disable specified Apache configuration files
+  - Prevent loading configuration files on startup
+  - Operate silently using quiet mode
+  - Manage Apache server configurations on Debian
+  - Streamline Apache config deactivation
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

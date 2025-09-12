@@ -1,27 +1,27 @@
 ---
 title: "Control OpenRC Services - Manage Runlevels | Free DevTools"
 name: rc-update
-path: /freedevtools/tldr/unknown/rc-update
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/rc-update/"
+path: /freedevtools/tldr/linux/rc-update
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-update/"
 description: "Control OpenRC services and manage runlevels with rc-update. Add, delete, and list services for efficient system administration. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- openrc service management
-- linux runlevel control
-- rc-update command
-- service configuration linux
-- boot sequence management
-- systemd alternative
-- openrc service add
-- openrc service delete
-- service dependency management
-- init system control
+  - openrc service management
+  - linux runlevel control
+  - rc-update command
+  - service configuration linux
+  - boot sequence management
+  - systemd alternative
+  - openrc service add
+  - openrc service delete
+  - service dependency management
+  - init system control
 features:
-- Add services to specific runlevels
-- Delete services from runlevels
-- List all enabled services
-- List all available services
-- Manage service dependencies
+  - Add services to specific runlevels
+  - Delete services from runlevels
+  - List all enabled services
+  - List all available services
+  - Manage service dependencies
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

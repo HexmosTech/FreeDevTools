@@ -1,27 +1,27 @@
 ---
 title: "VMStat - Monitor System Activity | Free DevTools"
 name: vmstat
-path: /freedevtools/tldr/unknown/vmstat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/vmstat/"
+path: /freedevtools/tldr/linux/vmstat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/vmstat/"
 description: "Monitor system activity with VMStat. Analyze memory usage, CPU activity, and I/O operations. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- virtual memory statistics
-- vmstat monitoring
-- system performance analysis
-- linux system metrics
-- cpu activity monitoring
-- memory usage analysis
-- disk i/o statistics
-- process activity monitoring
-- system resource tracking
-- virtual machine stats
+  - virtual memory statistics
+  - vmstat monitoring
+  - system performance analysis
+  - linux system metrics
+  - cpu activity monitoring
+  - memory usage analysis
+  - disk i/o statistics
+  - process activity monitoring
+  - system resource tracking
+  - virtual machine stats
 features:
-- Display virtual memory statistics
-- Report CPU activity
-- Track disk I/O operations
-- Monitor process activity
-- Provide system resource usage information
+  - Display virtual memory statistics
+  - Report CPU activity
+  - Track disk I/O operations
+  - Monitor process activity
+  - Provide system resource usage information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

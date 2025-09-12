@@ -1,27 +1,27 @@
 ---
 title: "Analyze User Connection Time - AC Command | Free DevTools"
 name: ac
-path: /freedevtools/tldr/unknown/ac
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ac/"
+path: /freedevtools/tldr/linux/ac
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ac/"
 description: "Analyze user connection time with AC command. Quickly track user login durations and generate daily summaries. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- user connection time analysis
-- account statistics command
-- ac command linux
-- linux user login duration
-- user session analyzer
-- daily connection time reports
-- connection time calculator
-- system accounting tool
-- user activity monitor
-- command line accounting
+  - user connection time analysis
+  - account statistics command
+  - ac command linux
+  - linux user login duration
+  - user session analyzer
+  - daily connection time reports
+  - connection time calculator
+  - system accounting tool
+  - user activity monitor
+  - command line accounting
 features:
-- Calculate total connection time for users
-- Generate daily connection time summaries
-- Track individual user connection durations
-- Display compatibility details for various systems
-- Provide historical user connection data
+  - Calculate total connection time for users
+  - Generate daily connection time summaries
+  - Track individual user connection durations
+  - Display compatibility details for various systems
+  - Provide historical user connection data
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

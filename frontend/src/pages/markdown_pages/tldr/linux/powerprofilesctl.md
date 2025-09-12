@@ -1,3 +1,31 @@
+---
+title: "Power Profiles Control - Manage Power Profiles with powerprofilesctl | Free DevTools"
+name: powerprofilesctl
+path: /freedevtools/tldr/linux/powerprofilesctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/powerprofilesctl/"
+description: "Manage power profiles effectively with powerprofilesctl. List available profiles and set specific profiles easily via command line. Free online tool, no registration required."
+category: linux
+keywords:
+  - power profile management
+  - powerprofilesctl command
+  - linux power management
+  - system power profiles
+  - power profile control linux
+  - dbus power control
+  - power profile switching
+  - command line power control
+  - powerprofilesctl tutorial
+  - linux power profiles command
+features:
+  - List all available power profiles on the system.
+  - Set a specific power profile using a given profile name.
+  - Control system power consumption through command-line interface.
+  - Utilize D-Bus for efficient power profile management.
+  - Integrate with existing Linux power management systems.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # powerprofilesctl
 
 > Make power profiles handling available over D-Bus.

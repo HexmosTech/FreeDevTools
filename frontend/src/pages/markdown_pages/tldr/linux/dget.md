@@ -1,3 +1,31 @@
+---
+title: "Download Debian Packages - dget Command | Free DevTools"
+name: dget
+path: /freedevtools/tldr/linux/dget
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dget/"
+description: "Download Debian packages efficiently with the dget command.  Manage binary packages and source code effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+  - debian package downloader
+  - dget command linux
+  - download debian packages
+  - debian package manager
+  - linux package download
+  - source package download
+  - debian dsc download
+  - download debian source
+  - linux package installation
+  - command-line package manager
+features:
+  - Downloads Debian binary packages directly.
+  - Downloads and extracts Debian source packages from .dsc files.
+  - Allows downloading Debian source package tarballs without extraction.
+  - Provides a command-line interface for easy package management.
+  - Simplifies the process of obtaining Debian packages.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dget
 
 > Download Debian packages.

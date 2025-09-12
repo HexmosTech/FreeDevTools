@@ -1,3 +1,31 @@
+---
+title: "Bridge Network Control - Manage Network Bridges | Free DevTools"
+name: bridge
+path: /freedevtools/tldr/linux/bridge
+canonical: "https://hexmos.com/freedevtools/tldr/linux/bridge/"
+description: "Control and manage network bridges with the 'bridge' command. List interfaces, assign VLANs, monitor changes, and more. Free online tool, no registration required."
+category: linux
+keywords:
+  - network bridge control
+  - bridge interface management
+  - vlan configuration bridge
+  - linux bridge commands
+  - network bridge monitoring
+  - bridge vlan assignment
+  - bridge port configuration
+  - network bridge troubleshooting
+  - manage network bridges
+  - bridge command line tool
+features:
+  - List all bridges and their associated interfaces.
+  - View port VLAN information for network bridges.
+  - Assign VLANs to specific network bridge ports.
+  - Remove VLAN assignments from network bridge ports.
+  - Monitor network bridge interfaces for changes in real-time.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # bridge
 
 > Show and manipulate network bridge addresses and devices.

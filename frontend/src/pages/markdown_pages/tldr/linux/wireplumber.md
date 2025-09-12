@@ -1,3 +1,31 @@
+---
+title: "WirePlumber - Manage PipeWire Sessions | Free DevTools"
+name: wireplumber
+path: /freedevtools/tldr/linux/wireplumber
+canonical: "https://hexmos.com/freedevtools/tldr/linux/wireplumber/"
+description: "Manage PipeWire audio sessions efficiently with WirePlumber.  Control audio routing and policies using simple commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - PipeWire session manager
+  - PipeWire policy manager
+  - Linux audio management
+  - wireplumber commands
+  - audio routing control
+  - systemd service management
+  - GObject library
+  - PipeWire configuration
+  - command-line audio tool
+  - Linux audio daemon
+features:
+  - Manages PipeWire audio sessions and policies.
+  - Provides a modular and extensible architecture.
+  - Integrates seamlessly with systemd for user session management.
+  - Offers command-line interface for easy configuration.
+  - Enables customized audio routing and device control.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # wireplumber
 
 > A modular session/policy manager for PipeWire and a GObject-based high-level library that wraps PipeWire's API.

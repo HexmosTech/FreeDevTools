@@ -1,27 +1,27 @@
 ---
 title: "Submit Qsub Scripts - Manage Jobs | Free DevTools"
 name: qsub
-path: /freedevtools/tldr/unknown/qsub
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qsub/"
+path: /freedevtools/tldr/linux/qsub
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qsub/"
 description: "Submit scripts with Qsub and manage jobs in TORQUE queue management system. Control resource allocation and efficiently schedule tasks. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Qsub script submission
-- TORQUE job management
-- HPC resource allocation
-- Cluster job scheduler
-- Command line job submission
-- Qsub walltime control
-- Parallel processing jobs
-- Queue-specific job submission
-- Node and core allocation
-- Linux job management
+  - Qsub script submission
+  - TORQUE job management
+  - HPC resource allocation
+  - Cluster job scheduler
+  - Command line job submission
+  - Qsub walltime control
+  - Parallel processing jobs
+  - Queue-specific job submission
+  - Node and core allocation
+  - Linux job management
 features:
-- Submit scripts to the TORQUE queue management system.
-- Specify wallclock runtime limits for job execution.
-- Allocate jobs to specific nodes and cores.
-- Submit scripts to a particular queue.
-- Control resource usage for submitted jobs.
+  - Submit scripts to the TORQUE queue management system.
+  - Specify wallclock runtime limits for job execution.
+  - Allocate jobs to specific nodes and cores.
+  - Submit scripts to a particular queue.
+  - Control resource usage for submitted jobs.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

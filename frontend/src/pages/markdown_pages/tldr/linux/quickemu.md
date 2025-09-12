@@ -1,3 +1,31 @@
+---
+title: "Quickemu - Create VMs Quickly | Free DevTools"
+name: quickemu
+path: /freedevtools/tldr/linux/quickemu
+canonical: "https://hexmos.com/freedevtools/tldr/linux/quickemu/"
+description: "Create and manage highly optimized desktop virtual machines quickly with Quickemu.  Manage snapshots and customize configurations effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+  - virtual machine manager
+  - quickemu command
+  - vm configuration tool
+  - desktop virtualization
+  - snapshot management
+  - vm creation tool
+  - qemu alternative
+  - linux vm manager
+  - windows vm manager
+  - fast vm setup
+features:
+  - Create and run VMs from configuration files.
+  - Manage VM snapshots (create, restore, delete).
+  - Customize VM settings (display, sound, etc.).
+  - Run VMs in fullscreen mode with various display backends.
+  - Create desktop shortcuts for easy VM access.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # quickemu
 
 > Build and manage highly optimised desktop virtual machines quickly.

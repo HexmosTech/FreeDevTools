@@ -1,3 +1,31 @@
+---
+title: "ASCII Art Generator - Convert Images to ASCII | Free DevTools"
+name: asciiart
+path: /freedevtools/tldr/linux/asciiart
+canonical: "https://hexmos.com/freedevtools/tldr/linux/asciiart/"
+description: "Convert images to ASCII art with this free online tool.  Easily transform JPGs and other image formats into text-based art. Free online tool, no registration required."
+category: linux
+keywords:
+  - image to ascii converter
+  - ascii art generator
+  - image ascii art
+  - convert image to text
+  - ascii image converter
+  - text art generator
+  - jpg to ascii
+  - png to ascii
+  - ascii image art
+  - online ascii art converter
+features:
+  - Converts images from files to ASCII art.
+  - Converts images from URLs to ASCII art.
+  - Allows customization of output width.
+  - Offers colorized ASCII output.
+  - Supports text and HTML output formats.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # asciiart
 
 > Convert images to ASCII.

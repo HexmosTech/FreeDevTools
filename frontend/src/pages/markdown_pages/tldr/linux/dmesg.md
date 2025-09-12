@@ -1,3 +1,31 @@
+---
+title: "View Kernel Messages - dmesg Command | Free DevTools"
+name: dmesg
+path: /freedevtools/tldr/linux/dmesg
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dmesg/"
+description: "View and analyze Linux kernel messages with the dmesg command.  Inspect system logs, troubleshoot errors, and monitor memory usage easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux kernel messages
+  - dmesg command linux
+  - system log viewer linux
+  - kernel log analysis
+  - linux system monitoring
+  - dmesg troubleshooting
+  - linux error logs
+  - memory usage dmesg
+  - real-time kernel logs
+  - linux command line tools
+features:
+  - Display real-time kernel messages
+  - Filter kernel messages by level (e.g., errors)
+  - View kernel messages with timestamps
+  - Display memory usage information
+  - Output messages in human-readable format
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dmesg
 
 > Write the kernel messages to `stdout`.

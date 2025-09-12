@@ -1,3 +1,31 @@
+---
+title: "Create ISO Images - Generate ISO Files with mkisofs | Free DevTools"
+name: mkisofs
+path: /freedevtools/tldr/linux/mkisofs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkisofs/"
+description: "Generate ISO images with mkisofs, a powerful command-line tool for creating ISO9660 disk images from directories.  Easily create custom ISO files. Free online tool, no registration required."
+category: linux
+keywords:
+  - iso image creation
+  - mkisofs command
+  - iso9660 generator
+  - linux iso creation
+  - create iso from directory
+  - genisoimage alternative
+  - command-line iso creation
+  - disk image creation
+  - iso file generator
+  - system image creation
+features:
+  - Creates ISO9660 compliant disk images.
+  - Allows specifying a volume label for the ISO.
+  - Supports creating ISOs from directories and files.
+  - Enables customization of ISO image settings.
+  - Provides a command-line interface for easy automation.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mkisofs
 
 > Create ISO files from directories.

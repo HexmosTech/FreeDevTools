@@ -1,27 +1,27 @@
 ---
 title: "Execute DNS Server - Resolve Hostnames with Named | Free DevTools"
 name: named
-path: /freedevtools/tldr/unknown/named
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/named/"
+path: /freedevtools/tldr/linux/named
+canonical: "https://hexmos.com/freedevtools/tldr/linux/named/"
 description: "Execute DNS server operations with Named. Convert hostnames to IP addresses and vice versa. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- DNS server execution
-- hostname resolution
-- IP address conversion
-- named configuration file
-- domain name lookup
-- DNS query management
-- named daemon
-- network address translation
-- DNS protocol
-- zone file management
+  - DNS server execution
+  - hostname resolution
+  - IP address conversion
+  - named configuration file
+  - domain name lookup
+  - DNS query management
+  - named daemon
+  - network address translation
+  - DNS protocol
+  - zone file management
 features:
-- Execute the DNS server daemon
-- Read and apply custom configuration files
-- Restrict execution to IPv4 or IPv6 only
-- Listen for queries on a specified port
-- Run the server in the foreground, skipping daemonization
+  - Execute the DNS server daemon
+  - Read and apply custom configuration files
+  - Restrict execution to IPv4 or IPv6 only
+  - Listen for queries on a specified port
+  - Run the server in the foreground, skipping daemonization
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

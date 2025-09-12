@@ -1,3 +1,31 @@
+---
+title: "mdadm RAID Management - Create and Control RAID Arrays | Free DevTools"
+name: mdadm
+path: /freedevtools/tldr/linux/mdadm
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mdadm/"
+description: "Manage RAID arrays with mdadm. Create, stop, and modify RAID configurations easily using command-line instructions. Free online tool, no registration required."
+category: linux
+keywords:
+  - raid array management
+  - mdadm commands
+  - linux raid tool
+  - mdadm tutorial
+  - create raid array
+  - manage raid devices
+  - mdadm linux
+  - raid configuration
+  - mdadm superblock
+  - raid array commands
+features:
+  - Create new RAID arrays with specified parameters.
+  - Stop and start existing RAID arrays.
+  - Manage failed disks within a RAID array.
+  - Add and remove disks from a RAID array.
+  - Inspect detailed information about RAID arrays.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mdadm
 
 > RAID management utility.

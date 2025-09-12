@@ -1,3 +1,31 @@
+---
+title: "Btrfs Device Manager - Control Filesystem Devices | Free DevTools"
+name: btrfs-device
+path: /freedevtools/tldr/linux/btrfs-device
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-device/"
+description: "Manage btrfs filesystem devices efficiently with the btrfs-device command. Add, remove, and scan devices; view detailed usage statistics. Free online tool, no registration required."
+category: linux
+keywords:
+  - btrfs device management
+  - btrfs filesystem tools
+  - linux btrfs commands
+  - btrfs device add
+  - btrfs device remove
+  - btrfs device scan
+  - btrfs device statistics
+  - btrfs disk usage
+  - btrfs filesystem administration
+  - linux system administration
+features:
+  - Add new devices to a btrfs filesystem.
+  - Remove devices from a btrfs filesystem.
+  - Display detailed error statistics for btrfs devices.
+  - Scan all disks for btrfs filesystems and inform the kernel.
+  - Show per-disk allocation statistics for improved capacity planning.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # btrfs device
 
 > Manage devices in a btrfs filesystem.

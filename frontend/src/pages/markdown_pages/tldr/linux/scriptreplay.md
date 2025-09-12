@@ -1,27 +1,27 @@
 ---
 title: "Scriptreplay - Replay Terminal Sessions | Free DevTools"
 name: scriptreplay
-path: /freedevtools/tldr/unknown/scriptreplay
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/scriptreplay/"
+path: /freedevtools/tldr/linux/scriptreplay
+canonical: "https://hexmos.com/freedevtools/tldr/linux/scriptreplay/"
 description: "Replay terminal sessions accurately with Scriptreplay. Analyze recorded terminal activity and reproduce it at varying speeds. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- terminal session replay
-- typescript playback
-- command line replay
-- script recording analysis
-- terminal recording tool
-- script timing analysis
-- tty recording replay
-- command replay tool
-- shell session replay
-- scriptreplay tool
+  - terminal session replay
+  - typescript playback
+  - command line replay
+  - script recording analysis
+  - terminal recording tool
+  - script timing analysis
+  - tty recording replay
+  - command replay tool
+  - shell session replay
+  - scriptreplay tool
 features:
-- Replay terminal sessions at original speed
-- Adjust playback speed for faster or slower replay
-- Analyze and reproduce recorded terminal activity
-- Support replay of typescript files created by the `script` command
-- Replay terminal interaction for auditing and debugging
+  - Replay terminal sessions at original speed
+  - Adjust playback speed for faster or slower replay
+  - Analyze and reproduce recorded terminal activity
+  - Support replay of typescript files created by the `script` command
+  - Replay terminal interaction for auditing and debugging
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

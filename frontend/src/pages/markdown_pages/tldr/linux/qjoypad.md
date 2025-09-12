@@ -1,3 +1,31 @@
+---
+title: "Control Gamepads - QJoypad Keyboard/Mouse Translator | Free DevTools"
+name: qjoypad
+path: /freedevtools/tldr/linux/qjoypad
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qjoypad/"
+description: "Translate gamepad input into keyboard strokes and mouse actions with QJoypad.  Configure custom layouts and manage multiple devices. Free online tool, no registration required."
+category: linux
+keywords:
+  - gamepad keyboard translator
+  - joystick keyboard mapper
+  - gamepad mouse emulator
+  - linux gamepad controller
+  - qjoypad configuration
+  - joystick input translator
+  - gamepad mapping software
+  - custom gamepad layouts
+  - keyboard remapper gamepad
+  - gamepad to mouse converter
+features:
+  - Translates gamepad inputs to keyboard strokes and mouse clicks.
+  - Supports custom layouts for personalized control schemes.
+  - Allows specifying input devices from a specific directory.
+  - Offers options for managing system tray icon visibility.
+  - Enables updating device and layout lists in a running instance.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # qjoypad
 
 > Translate input from gamepads or joysticks into keyboard strokes or mouse actions.

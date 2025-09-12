@@ -1,27 +1,27 @@
 ---
 title: "Run Command as Root - Elevate Privileges | Free DevTools"
 name: run0
-path: /freedevtools/tldr/unknown/run0
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/run0/"
+path: /freedevtools/tldr/linux/run0
+canonical: "https://hexmos.com/freedevtools/tldr/linux/run0/"
 description: "Elevate privileges instantly with Run Command as Root. Execute commands as root or another user via polkit, using systemd service. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- run command as root
-- elevate privileges linux
-- polkit authentication
-- systemd service command
-- execute command as user
-- run command as group
-- linux privilege escalation
-- command line root access
-- linux run0 command
-- interactive root shell
+  - run command as root
+  - elevate privileges linux
+  - polkit authentication
+  - systemd service command
+  - execute command as user
+  - run command as group
+  - linux privilege escalation
+  - command line root access
+  - linux run0 command
+  - interactive root shell
 features:
-- Execute commands as root interactively
-- Run commands as a specific user
-- Run commands as a specific group
-- Authenticate via polkit for privilege elevation
-- Execute commands using a systemd service
+  - Execute commands as root interactively
+  - Run commands as a specific user
+  - Run commands as a specific group
+  - Authenticate via polkit for privilege elevation
+  - Execute commands using a systemd service
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

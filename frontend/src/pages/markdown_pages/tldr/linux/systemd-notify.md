@@ -1,27 +1,27 @@
 ---
 title: "Systemd-notify - Control Service Status | Free DevTools"
 name: systemd-notify
-path: /freedevtools/tldr/unknown/systemd-notify
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/systemd-notify/"
+path: /freedevtools/tldr/linux/systemd-notify
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-notify/"
 description: "Control systemd service status with systemd-notify. Notify service manager, signal readiness and provide custom messages. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- systemd notify
-- service status notification
-- systemd service manager
-- linux systemd
-- systemd-notify command
-- service startup completion
-- daemon status changes
-- systemctl status
-- systemd readiness signal
-- systemd custom status
+  - systemd notify
+  - service status notification
+  - systemd service manager
+  - linux systemd
+  - systemd-notify command
+  - service startup completion
+  - daemon status changes
+  - systemctl status
+  - systemd readiness signal
+  - systemd custom status
 features:
-- Notify systemd about service startup completion
-- Signal service readiness to systemd
-- Provide custom status messages to systemd
-- Update service status information
-- Control systemd service notifications
+  - Notify systemd about service startup completion
+  - Signal service readiness to systemd
+  - Provide custom status messages to systemd
+  - Update service status information
+  - Control systemd service notifications
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

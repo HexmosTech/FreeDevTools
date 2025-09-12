@@ -1,27 +1,27 @@
 ---
 title: "Mount SteamOS - Control Filesystem Partitions | Free DevTools"
 name: mount.steamos
-path: /freedevtools/tldr/unknown/mount.steamos
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mount.steamos/"
+path: /freedevtools/tldr/linux/mount.steamos
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mount.steamos/"
 description: "Control SteamOS filesystem partitions with mount.steamos. Mount and unmount partitions, exclude specific partitions, and display help information. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- SteamOS partition mount
-- filesystem mount command
-- linux mount utility
-- SteamOS mount options
-- partition unmount command
-- linux filesystem management
-- mount point control
-- SteamOS filesystem tools
-- command-line disk utility
-- SteamOS system administration
+  - SteamOS partition mount
+  - filesystem mount command
+  - linux mount utility
+  - SteamOS mount options
+  - partition unmount command
+  - linux filesystem management
+  - mount point control
+  - SteamOS filesystem tools
+  - command-line disk utility
+  - SteamOS system administration
 features:
-- Mount all necessary partitions to a target directory.
-- Exclude specific partitions during mount operations.
-- Unmount all partitions mounted under a specified directory.
-- Display help information for the mount.steamos command.
-- Provide options for fine-grained control over partition mounting.
+  - Mount all necessary partitions to a target directory.
+  - Exclude specific partitions during mount operations.
+  - Unmount all partitions mounted under a specified directory.
+  - Display help information for the mount.steamos command.
+  - Provide options for fine-grained control over partition mounting.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

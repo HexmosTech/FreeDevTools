@@ -1,3 +1,31 @@
+---
+title: "Wake-on-LAN Client - Send WoL Packets | Free DevTools"
+name: wol
+path: /freedevtools/tldr/linux/wol
+canonical: "https://hexmos.com/freedevtools/tldr/linux/wol/"
+description: "Send Wake-on-LAN magic packets with this simple client.  Manage network devices remotely using MAC address, IP, hostname or file input. Free online tool, no registration required."
+category: linux
+keywords:
+  - wake-on-lan client
+  - wol magic packet sender
+  - network device control
+  - remote device activation
+  - mac address wake-on-lan
+  - ip address wake-on-lan
+  - hostname wake-on-lan
+  - wol command line tool
+  - network administration
+  - system management
+features:
+  - Send Wake-on-LAN packets using MAC address.
+  - Target devices via IP address or hostname.
+  - Specify target port for packet transmission.
+  - Read device information from configuration files.
+  - Supports verbose output for detailed operation logging.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # wol
 
 > Client for sending Wake-on-LAN magic packets.

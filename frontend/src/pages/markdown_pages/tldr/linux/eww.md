@@ -1,3 +1,31 @@
+---
+title: "Eww Widget Manager - Control Window Manager Widgets | Free DevTools"
+name: eww
+path: /freedevtools/tldr/linux/eww
+canonical: "https://hexmos.com/freedevtools/tldr/linux/eww/"
+description: "Control custom widgets in your window manager with Eww.  Manage and customize widgets easily using command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - eww widget manager
+  - eww window manager
+  - eww command line
+  - eww configuration
+  - eww daemon control
+  - custom widget management
+  - window manager widgets
+  - linux window manager tools
+  - desktop customization tools
+  - widget configuration commands
+features:
+  - Start and manage an Eww daemon process.
+  - Open and close individual widgets by name.
+  - Reload Eww configuration without restarting the daemon.
+  - View and monitor Eww logs for debugging purposes.
+  - Control multiple widgets simultaneously from the command line.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # eww
 
 > Implement your own custom widgets in any window manager.

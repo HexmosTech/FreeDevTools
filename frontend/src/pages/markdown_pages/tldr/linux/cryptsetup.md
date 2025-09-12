@@ -1,3 +1,31 @@
+---
+title: "Cryptsetup - Manage Encrypted Volumes | Free DevTools"
+name: cryptsetup
+path: /freedevtools/tldr/linux/cryptsetup
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptsetup/"
+description: "Manage encrypted volumes with Cryptsetup, a powerful command-line tool for Linux.  Format, open, and manage LUKS encrypted partitions easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - luks encryption linux
+  - cryptsetup command linux
+  - dm-crypt management
+  - linux disk encryption
+  - luksFormat command
+  - luksChangeKey command
+  - cryptsetup open command
+  - cryptsetup close command
+  - cryptsetup status command
+  - linux volume encryption
+features:
+  - Format LUKS encrypted volumes.
+  - Open and close LUKS encrypted volumes.
+  - Manage LUKS encrypted volume keys.
+  - Display status information of mappings.
+  - Change LUKS volume passphrases.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cryptsetup
 
 > Manage plain `dm-crypt` and LUKS (Linux Unified Key Setup) encrypted volumes.

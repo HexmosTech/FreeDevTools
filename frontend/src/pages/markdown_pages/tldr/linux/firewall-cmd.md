@@ -1,3 +1,31 @@
+---
+title: "Control Firewall with firewall-cmd - Manage Network Security | Free DevTools"
+name: firewall-cmd
+path: /freedevtools/tldr/linux/firewall-cmd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/firewall-cmd/"
+description: "Manage network security with firewall-cmd, the command-line firewall interface.  Configure firewall rules, zones, and services easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - firewall command line
+  - linux firewall management
+  - firewalld configuration
+  - network security command
+  - firewall zone control
+  - iptables alternative
+  - systemd firewall
+  - firewall rule editor
+  - port management firewall
+  - dynamic firewall rules
+features:
+  - Manage firewall zones and their associated rules.
+  - Add, remove, and modify firewall rules permanently.
+  - Control network interfaces and their access levels.
+  - Configure port forwarding for incoming connections.
+  - Implement emergency "panic" mode to block all traffic.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # firewall-cmd
 
 > The firewalld command-line client.

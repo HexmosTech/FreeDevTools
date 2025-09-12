@@ -1,3 +1,31 @@
+---
+title: "Find Overridden systemd Files - systemd-delta Control | Free DevTools"
+name: systemd-delta
+path: /freedevtools/tldr/linux/systemd-delta
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-delta/"
+description: "Find and manage overridden systemd configuration files with systemd-delta. Identify masked, equivalent, redirected, and overridden files easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - systemd configuration files
+  - systemd-delta command
+  - linux systemd override
+  - systemd file finder
+  - find systemd files
+  - systemd configuration management
+  - systemd file analysis
+  - linux system administration
+  - systemd delta tool
+  - overridden systemd detection
+features:
+  - Identify all overridden systemd configuration files.
+  - Filter results by specific configuration file types (masked, equivalent, redirected, overridden, extended, unchanged).
+  - Search for files based on path prefixes.
+  - Refine searches using path suffixes in combination with prefixes.
+  - Quickly locate and manage conflicting systemd configurations.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-delta
 
 > Find overridden systemd-related configuration files.

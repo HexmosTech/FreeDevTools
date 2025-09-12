@@ -1,27 +1,27 @@
 ---
 title: "GSettings - Control dconf Settings | Free DevTools"
 name: gsettings
-path: /freedevtools/tldr/unknown/gsettings
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/gsettings/"
+path: /freedevtools/tldr/linux/gsettings
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gsettings/"
 description: "Control dconf settings with GSettings. Modify and query settings using schema validation. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- dconf settings management
-- gsettings command line
-- schema validation tool
-- linux configuration settings
-- gnome settings editor
-- dconf editor alternative
-- gsettings get command
-- gsettings set command
-- gsettings reset command
-- desktop configuration
+  - dconf settings management
+  - gsettings command line
+  - schema validation tool
+  - linux configuration settings
+  - gnome settings editor
+  - dconf editor alternative
+  - gsettings get command
+  - gsettings set command
+  - gsettings reset command
+  - desktop configuration
 features:
-- Set the value of a dconf key with validation.
-- Print the value of a dconf key or its schema default.
-- Unset a dconf key to revert to the schema default.
-- Display all schemas, keys, and values recursively.
-- Display schema-allowed values for a specified key.
+  - Set the value of a dconf key with validation.
+  - Print the value of a dconf key or its schema default.
+  - Unset a dconf key to revert to the schema default.
+  - Display all schemas, keys, and values recursively.
+  - Display schema-allowed values for a specified key.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

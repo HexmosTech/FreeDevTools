@@ -1,3 +1,31 @@
+---
+title: "Manage GNOME Extensions - Control Shell Extensions | Free DevTools"
+name: gnome-extensions
+path: /freedevtools/tldr/linux/gnome-extensions
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-extensions/"
+description: "Manage GNOME shell extensions efficiently with gnome-extensions. List, enable, disable, and uninstall extensions via the command line. Free online tool, no registration required."
+category: linux
+keywords:
+  - gnome extension manager
+  - gnome shell extension control
+  - linux extension management
+  - gnome-extensions command
+  - terminal extension control
+  - gnome extension listing
+  - linux command-line tool
+  - gnome extension installation
+  - extension uninstall tool
+  - gnome shell management
+features:
+  - List all installed GNOME extensions
+  - Enable or disable specific extensions
+  - Uninstall unwanted extensions
+  - Get detailed information on individual extensions
+  - Manage extensions via simple command-line interface
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # gnome-extensions
 
 > Manage gnome extensions from the terminal.

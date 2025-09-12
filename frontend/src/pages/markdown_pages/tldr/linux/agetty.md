@@ -1,27 +1,27 @@
 ---
 title: "Control agetty TTY - Open Ports and Prompt Login | Free DevTools"
 name: agetty
-path: /freedevtools/tldr/unknown/agetty
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/agetty/"
+path: /freedevtools/tldr/linux/agetty
+canonical: "https://hexmos.com/freedevtools/tldr/linux/agetty/"
 description: "Control TTY ports with agetty. Open ports, prompt logins, and execute commands via serial console.  Free online tool, no registration required for this TTY manager."
-category: unknown
+category: linux
 keywords:
-- tty controller
-- serial console manager
-- linux getty alternative
-- login prompt command
-- agetty command parameters
-- terminal port control
-- serial port configuration
-- linux console management
-- utmp file modification
-- chroot directory setting
+  - tty controller
+  - serial console manager
+  - linux getty alternative
+  - login prompt command
+  - agetty command parameters
+  - terminal port control
+  - serial port configuration
+  - linux console management
+  - utmp file modification
+  - chroot directory setting
 features:
-- Open a TTY port and prompt for login.
-- Set a timeout for the login process.
-- Override the TERM environment variable.
-- Skip the login and invoke another program.
-- Change the root directory for login.
+  - Open a TTY port and prompt for login.
+  - Set a timeout for the login process.
+  - Override the TERM environment variable.
+  - Skip the login and invoke another program.
+  - Change the root directory for login.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

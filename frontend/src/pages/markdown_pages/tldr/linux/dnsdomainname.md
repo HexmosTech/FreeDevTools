@@ -1,27 +1,27 @@
 ---
 title: "Show DNS Domain Name - Resolve Hostname | Free DevTools"
 name: dnsdomainname
-path: /freedevtools/tldr/unknown/dnsdomainname
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dnsdomainname/"
+path: /freedevtools/tldr/linux/dnsdomainname
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsdomainname/"
 description: "Show DNS domain name by resolving hostname with dnsdomainname. Obtain the fully qualified domain name of your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- dns domain name
-- hostname resolution
-- fqdn
-- system domain name
-- linux dns
-- macos dns
-- show domain name
-- canonical name
-- domain name lookup
-- getaddrinfo
+  - dns domain name
+  - hostname resolution
+  - fqdn
+  - system domain name
+  - linux dns
+  - macos dns
+  - show domain name
+  - canonical name
+  - domain name lookup
+  - getaddrinfo
 features:
-- Resolve hostname to its DNS domain name
-- Display the system's fully qualified domain name (FQDN)
-- Utilize gethostname and getaddrinfo functions
-- Obtain the canonical name of the system
-- Retrieve the network domain name
+  - Resolve hostname to its DNS domain name
+  - Display the system's fully qualified domain name (FQDN)
+  - Utilize gethostname and getaddrinfo functions
+  - Obtain the canonical name of the system
+  - Retrieve the network domain name
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

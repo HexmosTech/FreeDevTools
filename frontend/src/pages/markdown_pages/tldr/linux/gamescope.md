@@ -1,3 +1,31 @@
+---
+title: "Gamescope Control - Manage Game Layering | Free DevTools"
+name: gamescope
+path: /freedevtools/tldr/linux/gamescope
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gamescope/"
+description: "Control game layering with Gamescope, a micro-compositor for enhanced gaming.  Manage game resolution, framerate, and output seamlessly. Free online tool, no registration required."
+category: linux
+keywords:
+  - gamescope command
+  - linux gamescope
+  - gamescope steam
+  - gamescope scaling
+  - gamescope framerate
+  - gamescope compositor
+  - gamescope overlay
+  - gamescope resolution
+  - gamescope performance
+  - gamescope integration
+features:
+  - Run programs and games with custom settings
+  - Upscale game resolution with integer scaling
+  - Limit framerate for smoother gameplay
+  - Integrate with Steam's Big Picture Mode
+  - Manage display output preferences
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # gamescope
 
 > A micro-compositor used as a game layer.

@@ -1,27 +1,27 @@
 ---
 title: "Control Bluetooth Devices - hcitool Command | Free DevTools"
 name: hcitool
-path: /freedevtools/tldr/unknown/hcitool
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/hcitool/"
+path: /freedevtools/tldr/linux/hcitool
+canonical: "https://hexmos.com/freedevtools/tldr/linux/hcitool/"
 description: "Control Bluetooth devices with hcitool. Monitor connections, configure settings, and send commands to Bluetooth devices. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- bluetooth control linux
-- bluetooth device scan
-- bluetooth connection manager
-- hcitool command reference
-- bluetooth device information
-- bluetooth link quality check
-- bluetooth transmit power
-- bluetooth authentication tool
-- bluetooth mac address lookup
-- linux bluetooth utility
+  - bluetooth control linux
+  - bluetooth device scan
+  - bluetooth connection manager
+  - hcitool command reference
+  - bluetooth device information
+  - bluetooth link quality check
+  - bluetooth transmit power
+  - bluetooth authentication tool
+  - bluetooth mac address lookup
+  - linux bluetooth utility
 features:
-- Scan for nearby Bluetooth devices
-- Display the MAC address of Bluetooth devices
-- Fetch detailed information about a remote Bluetooth device
-- Check the link quality to a Bluetooth device
-- Modify Bluetooth transmit power levels
+  - Scan for nearby Bluetooth devices
+  - Display the MAC address of Bluetooth devices
+  - Fetch detailed information about a remote Bluetooth device
+  - Check the link quality to a Bluetooth device
+  - Modify Bluetooth transmit power levels
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

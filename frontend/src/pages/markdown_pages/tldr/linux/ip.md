@@ -1,3 +1,31 @@
+---
+title: "Control Network with ip Command - Manage Routing | Free DevTools"
+name: ip
+path: /freedevtools/tldr/linux/ip
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ip/"
+description: "Manage network interfaces and routing tables with the ip command.  Configure IP addresses, routes, and network devices efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - network configuration command
+  - ip address management
+  - linux network tool
+  - routing table manipulation
+  - interface configuration
+  - ip route command
+  - network troubleshooting
+  - ip link command
+  - network administration
+  - ip neighbour command
+features:
+  - List and configure network interfaces
+  - Manage IP addresses and subnets
+  - Manipulate routing tables
+  - View ARP neighbor information
+  - Bring network interfaces up or down
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ip
 
 > Show/manipulate routing, devices, policy routing and tunnels.

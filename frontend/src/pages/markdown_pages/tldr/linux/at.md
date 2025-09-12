@@ -1,3 +1,31 @@
+---
+title: "Schedule Commands - Execute at Specific Times | Free DevTools"
+name: at
+path: /freedevtools/tldr/linux/at
+canonical: "https://hexmos.com/freedevtools/tldr/linux/at/"
+description: "Schedule command execution with the 'at' command.  Easily run commands at a later time and receive results via email. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux command scheduling
+  - unix command scheduling
+  - schedule commands linux
+  - delayed command execution
+  - at command tutorial
+  - batch job scheduling
+  - linux at command examples
+  - systemd atd service
+  - automated command execution
+  - time-based task scheduling
+features:
+  - Execute commands at a specified time or date.
+  - Receive email notification of command completion.
+  - Schedule commands interactively using a simple interface.
+  - Run commands from a file for complex scripts.
+  - Manage and view scheduled jobs using various command options.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # at
 
 > Execute commands once at a later time.

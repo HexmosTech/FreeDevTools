@@ -1,3 +1,31 @@
+---
+title: "Homesick - Synchronize Git Dotfiles | Free DevTools"
+name: homeshick
+path: /freedevtools/tldr/linux/homeshick
+canonical: "https://hexmos.com/freedevtools/tldr/linux/homeshick/"
+description: "Synchronize Git dotfiles easily with Homesick. Manage multiple configurations and streamline your workflow. Free online tool, no registration required."
+category: linux
+keywords:
+  - git dotfile synchronization
+  - homeshick configuration management
+  - version control dotfiles
+  - manage git dotfiles
+  - dotfile management system
+  - linux dotfile management
+  - mac dotfile management
+  - homeshick commands
+  - clone dotfiles with homeshick
+  - track dotfiles with homeshick
+features:
+  - Generate new dotfile configurations ("castles").
+  - Track changes to existing dotfiles within castles.
+  - Easily switch between different dotfile configurations.
+  - Clone dotfile repositories from GitHub.
+  - Symlink dotfiles to your home directory for seamless integration.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # homeshick
 
 > Synchronize Git dotfiles.

@@ -1,27 +1,27 @@
 ---
 title: "Enable Swapping - Manage Swap Space with Swapon | Free DevTools"
 name: swapon
-path: /freedevtools/tldr/unknown/swapon
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/swapon/"
+path: /freedevtools/tldr/linux/swapon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/swapon/"
 description: "Enable swap space with Swapon on Linux. Manage virtual memory and improve system performance by enabling devices and files for swapping. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Linux swap enable
-- swap management linux
-- swapon command linux
-- virtual memory linux
-- swap partition enable
-- linux swap file
-- enable swap area
-- swap device manager
-- linux memory management
-- fstab swap configuration
+  - Linux swap enable
+  - swap management linux
+  - swapon command linux
+  - virtual memory linux
+  - swap partition enable
+  - linux swap file
+  - enable swap area
+  - swap device manager
+  - linux memory management
+  - fstab swap configuration
 features:
-- Enable swap partitions by label
-- Enable swap areas specified in /etc/fstab
-- Display current swap usage information
-- Enable a specific swap file or partition
-- Manage system virtual memory using swap space
+  - Enable swap partitions by label
+  - Enable swap areas specified in /etc/fstab
+  - Display current swap usage information
+  - Enable a specific swap file or partition
+  - Manage system virtual memory using swap space
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Control Postfix Configuration - Manage Mail Server Settings | Free DevTools"
 name: postconf
-path: /freedevtools/tldr/unknown/postconf
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/postconf/"
+path: /freedevtools/tldr/linux/postconf
+canonical: "https://hexmos.com/freedevtools/tldr/linux/postconf/"
 description: "Manage Postfix configuration files with Postconf. Inspect, edit, and customize your mail server settings. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- postfix configuration
-- main.cf editor
-- mail server settings
-- postfix parameters
-- linux postfix
-- postfix sasl
-- postfix lookup tables
-- postfix tuning
-- mail server configuration
-- postfix command line
+  - postfix configuration
+  - main.cf editor
+  - mail server settings
+  - postfix parameters
+  - linux postfix
+  - postfix sasl
+  - postfix lookup tables
+  - postfix tuning
+  - mail server configuration
+  - postfix command line
 features:
-- Display main.cf parameter values
-- Edit main.cf configuration settings
-- Show default parameter settings
-- List available SASL plugin types
-- List supported lookup table types
+  - Display main.cf parameter values
+  - Edit main.cf configuration settings
+  - Show default parameter settings
+  - List available SASL plugin types
+  - List supported lookup table types
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

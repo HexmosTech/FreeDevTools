@@ -1,27 +1,27 @@
 ---
 title: "Dock Applications - Control System Tray Apps | Free DevTools"
 name: kdocker
-path: /freedevtools/tldr/unknown/kdocker
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kdocker/"
+path: /freedevtools/tldr/linux/kdocker
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kdocker/"
 description: "Control applications in the system tray with KDocker. Easily minimize apps to the tray and manage their visibility. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- system tray application
-- dock application linux
-- minimize app to tray
-- kdocker system tray
-- linux system tray
-- application window docker
-- window management linux
-- application docking tool
-- system tray manager
-- linux command line tool
+  - system tray application
+  - dock application linux
+  - minimize app to tray
+  - kdocker system tray
+  - linux system tray
+  - application window docker
+  - window management linux
+  - application docking tool
+  - system tray manager
+  - linux command line tool
 features:
-- Dock applications to the system tray.
-- Send focused window to the system tray.
-- Customize the tray icon for docked applications.
-- Minimize applications to the tray upon losing focus.
-- Control application visibility through the system tray.
+  - Dock applications to the system tray.
+  - Send focused window to the system tray.
+  - Customize the tray icon for docked applications.
+  - Minimize applications to the tray upon losing focus.
+  - Control application visibility through the system tray.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

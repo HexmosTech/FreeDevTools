@@ -1,27 +1,27 @@
 ---
 title: "D-Bus Daemon - Control Message Bus | Free DevTools"
 name: dbus-daemon
-path: /freedevtools/tldr/unknown/dbus-daemon
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dbus-daemon/"
+path: /freedevtools/tldr/linux/dbus-daemon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dbus-daemon/"
 description: "Control message exchange with D-Bus Daemon. Configure system-wide and session-specific message buses and manage process communication. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- d-bus daemon control
-- linux message bus daemon
-- interprocess communication
-- session message daemon
-- system message daemon
-- dbus configuration
-- message bus management
-- linux dbus daemon
-- dbus address configuration
-- dbus syslog
+  - d-bus daemon control
+  - linux message bus daemon
+  - interprocess communication
+  - session message daemon
+  - system message daemon
+  - dbus configuration
+  - message bus management
+  - linux dbus daemon
+  - dbus address configuration
+  - dbus syslog
 features:
-- Configure D-Bus message buses with specified configuration files.
-- Manage session-specific message bus instances.
-- Manage system-wide message bus instances.
-- Set custom listening addresses for the message bus.
-- Output the process ID to facilitate monitoring.
+  - Configure D-Bus message buses with specified configuration files.
+  - Manage session-specific message bus instances.
+  - Manage system-wide message bus instances.
+  - Set custom listening addresses for the message bus.
+  - Output the process ID to facilitate monitoring.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "TreeTime - Analyze Molecular Clock Phylogenies | Free DevTools"
 name: treetime
-path: /freedevtools/tldr/unknown/treetime
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/treetime/"
+path: /freedevtools/tldr/linux/treetime
+canonical: "https://hexmos.com/freedevtools/tldr/linux/treetime/"
 description: "Analyze molecular clock phylogenies with TreeTime. Infer ancestral sequences and estimate evolutionary parameters. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- molecular clock phylogeny analysis
-- ancestral sequence reconstruction
-- phylogenetic tree inference
-- molecular evolution analysis
-- recurrent mutation analysis
-- homoplasy detection
-- molecular clock parameter estimation
-- root phylogenetic tree
-- discrete character mapping
-- evolutionary rate estimation
+  - molecular clock phylogeny analysis
+  - ancestral sequence reconstruction
+  - phylogenetic tree inference
+  - molecular evolution analysis
+  - recurrent mutation analysis
+  - homoplasy detection
+  - molecular clock parameter estimation
+  - root phylogenetic tree
+  - discrete character mapping
+  - evolutionary rate estimation
 features:
-- Infer ancestral sequences using likelihood methods
-- Analyze patterns of recurrent mutations (homoplasies)
-- Estimate molecular clock parameters and reroot the tree
-- Map discrete characters onto a phylogenetic tree
-- Reconstruct ancestral states for traits of interest
+  - Infer ancestral sequences using likelihood methods
+  - Analyze patterns of recurrent mutations (homoplasies)
+  - Estimate molecular clock parameters and reroot the tree
+  - Map discrete characters onto a phylogenetic tree
+  - Reconstruct ancestral states for traits of interest
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

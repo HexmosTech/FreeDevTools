@@ -1,3 +1,31 @@
+---
+title: "Systemd Dissect - Inspect Disk Images | Free DevTools"
+name: systemd-dissect
+path: /freedevtools/tldr/linux/systemd-dissect
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-dissect/"
+description: "Inspect and interact with OS disk images using Systemd Dissect. Mount, unmount, list files, and manage loopback devices. Free online tool, no registration required."
+category: linux
+keywords:
+  - disk image inspection
+  - systemd disk image tool
+  - linux disk image analysis
+  - systemd-dissect commands
+  - raw image manipulation
+  - loopback device management
+  - os image mounting
+  - file system introspection
+  - ddi analysis
+  - systemd dissect tutorial
+features:
+  - Inspect general information about OS disk images.
+  - Mount and unmount OS images.
+  - List files within mounted OS images.
+  - Attach and detach OS images to/from loopback devices.
+  - Manage discoverable disk images (DDIs).
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-dissect
 
 > Introspect and interact with file system OS disk images, specifically Discoverable Disk Images (DDIs).

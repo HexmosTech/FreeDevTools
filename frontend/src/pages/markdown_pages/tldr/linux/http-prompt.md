@@ -1,3 +1,31 @@
+---
+title: "HTTP Client - Interact with APIs | Free DevTools"
+name: http-prompt
+path: /freedevtools/tldr/linux/http-prompt
+canonical: "https://hexmos.com/freedevtools/tldr/linux/http-prompt/"
+description: "Interact with APIs effortlessly using http-prompt, an interactive HTTP client.  Features autocomplete and syntax highlighting for efficient API testing and debugging. Free online tool, no registration required."
+category: linux
+keywords:
+  - HTTP client command
+  - interactive HTTP client
+  - API testing command
+  - HTTP request tool
+  - command-line HTTP client
+  - terminal HTTP client
+  - HTTP prompt autocomplete
+  - syntax highlighting HTTP
+  - API interaction tool
+  - HTTP debugging command
+features:
+  - Provides interactive command-line interface for making HTTP requests.
+  - Offers autocomplete suggestions for commands and URLs.
+  - Includes syntax highlighting for improved readability and error detection.
+  - Allows for easy session management, resuming previous sessions.
+  - Supports custom headers and authentication methods.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # http-prompt
 
 > An interactive HTTP client featuring autocomplete and syntax highlighting.

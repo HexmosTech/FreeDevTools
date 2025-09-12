@@ -1,27 +1,27 @@
 ---
 title: "Btrfs Subvolume - Manage Snapshots | Free DevTools"
 name: btrfs-subvolume
-path: /freedevtools/tldr/unknown/btrfs-subvolume
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/btrfs-subvolume/"
+path: /freedevtools/tldr/linux/btrfs-subvolume
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-subvolume/"
 description: "Manage Btrfs subvolumes with Btrfs Subvolume command. Create snapshots, list existing subvolumes, and delete subvolumes. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- btrfs subvolume manager
-- btrfs snapshot tool
-- linux btrfs subvolume
-- btrfs subvolume create
-- btrfs subvolume delete
-- btrfs subvolume list
-- btrfs subvolume snapshot
-- btrfs subvolume show
-- btrfs filesystem manager
-- btrfs partition tool
+  - btrfs subvolume manager
+  - btrfs snapshot tool
+  - linux btrfs subvolume
+  - btrfs subvolume create
+  - btrfs subvolume delete
+  - btrfs subvolume list
+  - btrfs subvolume snapshot
+  - btrfs subvolume show
+  - btrfs filesystem manager
+  - btrfs partition tool
 features:
-- Create new Btrfs subvolumes
-- List all subvolumes in a Btrfs filesystem
-- Delete specified Btrfs subvolumes
-- Create read-only snapshots of subvolumes
-- Display detailed information about a subvolume
+  - Create new Btrfs subvolumes
+  - List all subvolumes in a Btrfs filesystem
+  - Delete specified Btrfs subvolumes
+  - Create read-only snapshots of subvolumes
+  - Display detailed information about a subvolume
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

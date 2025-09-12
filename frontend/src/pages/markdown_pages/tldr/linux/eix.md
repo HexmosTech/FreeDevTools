@@ -1,27 +1,27 @@
 ---
 title: "Search Gentoo Packages - Find Packages with Eix | Free DevTools"
 name: eix
-path: /freedevtools/tldr/unknown/eix
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/eix/"
+path: /freedevtools/tldr/linux/eix
+canonical: "https://hexmos.com/freedevtools/tldr/linux/eix/"
 description: "Search Gentoo Linux packages efficiently with Eix. Quickly find software, view package descriptions, and manage licenses. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- gentoo package search
-- linux package manager
-- eix package lookup
-- gentoo eix utility
-- search installed packages
-- find package descriptions
-- gentoo license search
-- eix command line
-- linux package database
-- gentoo software management
+  - gentoo package search
+  - linux package manager
+  - eix package lookup
+  - gentoo eix utility
+  - search installed packages
+  - find package descriptions
+  - gentoo license search
+  - eix command line
+  - linux package database
+  - gentoo software management
 features:
-- Search for packages by name and keywords
-- Find installed packages quickly
-- Search package descriptions for specific terms
-- Filter packages by license type
-- Exclude packages based on license criteria
+  - Search for packages by name and keywords
+  - Find installed packages quickly
+  - Search package descriptions for specific terms
+  - Filter packages by license type
+  - Exclude packages based on license criteria
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

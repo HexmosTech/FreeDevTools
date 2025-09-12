@@ -1,27 +1,27 @@
 ---
 title: "Control X11 Clipboard - Xsel Clipboard Tool | Free DevTools"
 name: xsel
-path: /freedevtools/tldr/unknown/xsel
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/xsel/"
+path: /freedevtools/tldr/linux/xsel
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xsel/"
 description: "Control clipboard interactions with Xsel. A powerful X11 selection and clipboard manipulation tool for Linux systems. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- X11 clipboard manager
-- Linux clipboard tool
-- Xsel clipboard control
-- Command-line clipboard
-- X11 selection tool
-- Copy paste command line
-- Linux copy paste
-- Clipboard manipulation linux
-- X server clipboard
-- Mouse selection clipboard
+  - X11 clipboard manager
+  - Linux clipboard tool
+  - Xsel clipboard control
+  - Command-line clipboard
+  - X11 selection tool
+  - Copy paste command line
+  - Linux copy paste
+  - Clipboard manipulation linux
+  - X server clipboard
+  - Mouse selection clipboard
 features:
-- Copy command output to clipboard
-- Copy file content to clipboard
-- Paste clipboard content to terminal
-- Paste clipboard content to file
-- Clear the X11 clipboard
+  - Copy command output to clipboard
+  - Copy file content to clipboard
+  - Paste clipboard content to terminal
+  - Paste clipboard content to file
+  - Clear the X11 clipboard
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

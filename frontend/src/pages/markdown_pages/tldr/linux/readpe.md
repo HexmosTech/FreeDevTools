@@ -1,3 +1,31 @@
+---
+title: "PE File Analyzer - Inspect PE Files | Free DevTools"
+name: readpe
+path: /freedevtools/tldr/linux/readpe
+canonical: "https://hexmos.com/freedevtools/tldr/linux/readpe/"
+description: "Analyze PE files with readpe.  Inspect headers, sections, imports, and exports. Free online tool, no registration required."
+category: linux
+keywords:
+  - PE file analyzer
+  - PE file inspector
+  - executable file analysis
+  - Windows executable analysis
+  - PE header viewer
+  - PE section viewer
+  - import table viewer
+  - export table viewer
+  - PE file information
+  - binary file analysis
+features:
+  - Display comprehensive information about PE files.
+  - View all PE file headers (DOS, COFF, Optional).
+  - List all sections within a PE file.
+  - Display specific headers (DOS, COFF, Optional) on demand.
+  - Examine imported and exported functions.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # readpe
 
 > Display information about PE files.

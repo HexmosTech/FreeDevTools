@@ -1,27 +1,27 @@
 ---
 title: "Screen Recorder - GPU Encode Video | Free DevTools"
 name: gpu-screen-recorder
-path: /freedevtools/tldr/unknown/gpu-screen-recorder
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/gpu-screen-recorder/"
+path: /freedevtools/tldr/linux/gpu-screen-recorder
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gpu-screen-recorder/"
 description: "GPU Encode Video with Screen Recorder. Capture desktop screen using GPU acceleration. Optimize video recording process for performance with minimal configuration. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- GPU screen recording
-- GPU video encoding
-- command line screen recorder
-- screen capture utility
-- Linux screen recorder
-- MP4 video encoder
-- desktop screen recorder
-- replay buffer recording
-- video capture source selection
-- audio capture source selection
+  - GPU screen recording
+  - GPU video encoding
+  - command line screen recorder
+  - screen capture utility
+  - Linux screen recorder
+  - MP4 video encoder
+  - desktop screen recorder
+  - replay buffer recording
+  - video capture source selection
+  - audio capture source selection
 features:
-- Record screen using GPU acceleration
-- Select specific video or audio sources
-- Record and save replay buffers
-- List available video capture options
-- Encode video to MP4 format
+  - Record screen using GPU acceleration
+  - Select specific video or audio sources
+  - Record and save replay buffers
+  - List available video capture options
+  - Encode video to MP4 format
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

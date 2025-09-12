@@ -1,27 +1,27 @@
 ---
 title: "Control Real-Time Processes - chrt | Free DevTools"
 name: chrt
-path: /freedevtools/tldr/unknown/chrt
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/chrt/"
+path: /freedevtools/tldr/linux/chrt
+canonical: "https://hexmos.com/freedevtools/tldr/linux/chrt/"
 description: "Control real-time process attributes with chrt on Linux. Manage scheduling policies and priorities efficiently. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux real-time process control
-- chrt process scheduler
-- linux scheduling policy
-- process priority manager
-- real-time scheduling control
-- linux process management
-- command line process control
-- chrt command linux
-- set process priority linux
-- manipulate process attributes linux
+  - linux real-time process control
+  - chrt process scheduler
+  - linux scheduling policy
+  - process priority manager
+  - real-time scheduling control
+  - linux process management
+  - command line process control
+  - chrt command linux
+  - set process priority linux
+  - manipulate process attributes linux
 features:
-- Display real-time attributes of a specific process
-- Control scheduling priority of a process by PID
-- Set scheduling policy (deadline, idle, batch, rr, fifo, other)
-- Display min/max priority values available
-- Show attributes of all threads belonging to a process
+  - Display real-time attributes of a specific process
+  - Control scheduling priority of a process by PID
+  - Set scheduling policy (deadline, idle, batch, rr, fifo, other)
+  - Display min/max priority values available
+  - Show attributes of all threads belonging to a process
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

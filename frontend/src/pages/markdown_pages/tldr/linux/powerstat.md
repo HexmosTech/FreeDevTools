@@ -1,27 +1,27 @@
 ---
 title: "Powerstat - Measure Power Consumption | Free DevTools"
 name: powerstat
-path: /freedevtools/tldr/unknown/powerstat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/powerstat/"
+path: /freedevtools/tldr/linux/powerstat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/powerstat/"
 description: "Measure power consumption with Powerstat. Analyze battery usage and system power states. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- power consumption measurement
-- battery usage analysis
-- system power states
-- power monitoring linux
-- rapl power analysis
-- intel rapl interface
-- power statistics tool
-- energy consumption analysis
-- linux power profiling
-- powerstat command
+  - power consumption measurement
+  - battery usage analysis
+  - system power states
+  - power monitoring linux
+  - rapl power analysis
+  - intel rapl interface
+  - power statistics tool
+  - energy consumption analysis
+  - linux power profiling
+  - powerstat command
 features:
-- Measure power consumption over specified intervals
-- Display a histogram of power measurements
-- Utilize Intel's RAPL interface for power analysis
-- Enable comprehensive statistics gathering
-- Analyze battery usage and system power behavior
+  - Measure power consumption over specified intervals
+  - Display a histogram of power measurements
+  - Utilize Intel's RAPL interface for power analysis
+  - Enable comprehensive statistics gathering
+  - Analyze battery usage and system power behavior
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "opkg Package Manager - Manage OpenWrt Packages | Free DevTools"
+name: opkg
+path: /freedevtools/tldr/linux/opkg
+canonical: "https://hexmos.com/freedevtools/tldr/linux/opkg/"
+description: "Manage OpenWrt packages efficiently with opkg. Install, remove, update, and upgrade packages easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - opkg package manager
+  - openwrt package management
+  - linux package installer
+  - opkg install command
+  - opkg update command
+  - opkg remove command
+  - opkg upgrade command
+  - opkg list command
+  - embedded linux packages
+  - openwrt package control
+features:
+  - Install new packages from OpenWrt repositories.
+  - Remove unwanted or unnecessary packages.
+  - Update the package list to reflect available versions.
+  - Upgrade existing packages to their latest versions.
+  - Query package information and installed files.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # opkg
 
 > A lightweight package manager used to install OpenWrt packages.

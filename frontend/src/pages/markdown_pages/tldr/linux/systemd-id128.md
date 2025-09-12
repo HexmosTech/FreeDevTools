@@ -1,3 +1,31 @@
+---
+title: "Generate Systemd IDs - Create Unique Identifiers | Free DevTools"
+name: systemd-id128
+path: /freedevtools/tldr/linux/systemd-id128
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-id128/"
+description: "Generate unique systemd identifiers with systemd-id128.  Create random IDs, machine IDs, boot IDs, and invocation IDs easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - systemd id generator
+  - systemd id128 command
+  - linux id generator
+  - systemd unique identifier
+  - generate systemd ids
+  - systemd boot id
+  - systemd machine id
+  - systemd invocation id
+  - linux systemd tool
+  - random id generator linux
+features:
+  - Generates random sd-128 identifiers.
+  - Retrieves the current machine ID.
+  - Retrieves the current boot ID.
+  - Retrieves the current service invocation ID.
+  - Outputs identifiers as UUIDs.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-id128
 
 > Generate and print sd-128 identifiers.

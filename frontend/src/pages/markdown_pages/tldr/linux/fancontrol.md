@@ -1,27 +1,27 @@
 ---
 title: "Fan Control - Manage System Fan Speeds | Free DevTools"
 name: fancontrol
-path: /freedevtools/tldr/unknown/fancontrol
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/fancontrol/"
+path: /freedevtools/tldr/linux/fancontrol
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fancontrol/"
 description: "Control system fan speeds easily with fancontrol. Configure fan behavior, monitor temperatures, and optimize cooling performance. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- fan control
-- system fan control
-- linux fan control
-- fan speed management
-- temperature monitoring
-- cooling optimization
-- pwm control
-- sensor monitoring
-- fan configuration
-- thermal management
+  - fan control
+  - system fan control
+  - linux fan control
+  - fan speed management
+  - temperature monitoring
+  - cooling optimization
+  - pwm control
+  - sensor monitoring
+  - fan configuration
+  - thermal management
 features:
-- Dynamically adjust fan speeds based on temperature
-- Configure custom fan control profiles
-- Monitor system temperatures from various sensors
-- Control multiple fans independently
-- Read fan speeds using sensor data
+  - Dynamically adjust fan speeds based on temperature
+  - Configure custom fan control profiles
+  - Monitor system temperatures from various sensors
+  - Control multiple fans independently
+  - Read fan speeds using sensor data
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

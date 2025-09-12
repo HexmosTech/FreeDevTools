@@ -1,3 +1,31 @@
+---
+title: "Manage Packages with apt-get - Linux Package Management | Free DevTools"
+name: apt-get
+path: /freedevtools/tldr/linux/apt-get
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-get/"
+description: "Manage Linux packages efficiently with apt-get.  Install, update, remove, and upgrade packages easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package manager
+  - apt-get commands
+  - debian package management
+  - ubuntu package manager
+  - apt-get install
+  - apt-get update
+  - apt-get remove
+  - linux software installation
+  - package upgrade linux
+  - apt-get purge
+features:
+  - Install new software packages
+  - Update existing packages to the latest versions
+  - Remove unwanted packages
+  - Completely remove packages including configuration files
+  - Manage system dependencies during upgrades
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # apt-get
 
 > Debian and Ubuntu package management utility.

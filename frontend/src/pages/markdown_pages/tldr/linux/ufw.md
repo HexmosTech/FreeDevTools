@@ -1,27 +1,27 @@
 ---
 title: "UFW Firewall - Control Network Traffic with UFW | Free DevTools"
 name: ufw
-path: /freedevtools/tldr/unknown/ufw
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ufw/"
+path: /freedevtools/tldr/linux/ufw
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ufw/"
 description: "Control network traffic easily with UFW Firewall. Manage rules, allow/deny connections and secure your system with this command-line tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- ufw firewall
-- linux firewall
-- command line firewall
-- network security
-- ufw rules
-- iptables frontend
-- ubuntu firewall
-- port management
-- traffic control
-- firewall configuration
+  - ufw firewall
+  - linux firewall
+  - command line firewall
+  - network security
+  - ufw rules
+  - iptables frontend
+  - ubuntu firewall
+  - port management
+  - traffic control
+  - firewall configuration
 features:
-- Enable and disable the UFW firewall.
-- Manage incoming and outgoing network traffic.
-- Define rules for allowing or denying specific ports.
-- Delete existing firewall rules by their number.
-- Display firewall status and rule numbering.
+  - Enable and disable the UFW firewall.
+  - Manage incoming and outgoing network traffic.
+  - Define rules for allowing or denying specific ports.
+  - Delete existing firewall rules by their number.
+  - Display firewall status and rule numbering.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

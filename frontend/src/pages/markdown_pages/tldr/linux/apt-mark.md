@@ -1,3 +1,31 @@
+---
+title: "Manage Packages - Control Apt with apt-mark | Free DevTools"
+name: apt-mark
+path: /freedevtools/tldr/linux/apt-mark
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-mark/"
+description: "Control package installations with apt-mark.  Manage updates, hold packages, and view installation status efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package management
+  - apt package control
+  - apt-mark commands
+  - linux apt-mark tutorial
+  - manage linux packages
+  - apt package hold
+  - apt package auto
+  - apt-mark unhold
+  - linux system administration
+  - debian package management
+features:
+  - Mark packages for automatic installation.
+  - Prevent updates to specific packages (hold).
+  - Allow updates for previously held packages (unhold).
+  - List manually installed packages.
+  - Display packages currently held from updates.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # apt-mark
 
 > Utility to change the status of installed packages.

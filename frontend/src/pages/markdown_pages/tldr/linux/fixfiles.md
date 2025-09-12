@@ -1,27 +1,27 @@
 ---
 title: "Fix Files - Secure File Contexts | Free DevTools"
 name: fixfiles
-path: /freedevtools/tldr/unknown/fixfiles
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/fixfiles/"
+path: /freedevtools/tldr/linux/fixfiles
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fixfiles/"
 description: "Secure file contexts with Fix Files. Restore correct SELinux contexts to protect your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- selinux file context
-- fix file permissions
-- restore file security
-- linux file context
-- file relabeling
-- selinux policy
-- chcon alternative
-- fixfiles command
-- file security
-- selinux restorecon
+  - selinux file context
+  - fix file permissions
+  - restore file security
+  - linux file context
+  - file relabeling
+  - selinux policy
+  - chcon alternative
+  - fixfiles command
+  - file security
+  - selinux restorecon
 features:
-- Reset file contexts to match file_context definitions
-- Restore file contexts based on RPM database information
-- Restore file contexts of files modified since a specific date
-- Mount filesystems before relabeling to fix context issues
-- Force reset of context for customizable files
+  - Reset file contexts to match file_context definitions
+  - Restore file contexts based on RPM database information
+  - Restore file contexts of files modified since a specific date
+  - Mount filesystems before relabeling to fix context issues
+  - Force reset of context for customizable files
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

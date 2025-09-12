@@ -1,27 +1,27 @@
 ---
 title: "Generate Bug Reports - Reportbug Tool | Free DevTools"
 name: reportbug
-path: /freedevtools/tldr/unknown/reportbug
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/reportbug/"
+path: /freedevtools/tldr/linux/reportbug
+canonical: "https://hexmos.com/freedevtools/tldr/linux/reportbug/"
 description: "Generate bug reports with Reportbug, a powerful Debian bug reporting tool. Simplify issue reporting and contribute to open-source projects with this tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Debian bug report
-- Generate Debian bug reports
-- Debian issue reporting
-- Linux bug reporting
-- Command line bug reporting tool
-- Package bug report
-- System issue report
-- Reportbug Debian
-- Report bug Linux
-- Debian problem reporting
+  - Debian bug report
+  - Generate Debian bug reports
+  - Debian issue reporting
+  - Linux bug reporting
+  - Command line bug reporting tool
+  - Package bug report
+  - System issue report
+  - Reportbug Debian
+  - Report bug Linux
+  - Debian problem reporting
 features:
-- Generate bug reports for specific Debian packages
-- Report general system issues unrelated to specific packages
-- Save bug reports to a file instead of sending them immediately
-- Submit bug reports via email
-- Simplify Debian bug reporting process
+  - Generate bug reports for specific Debian packages
+  - Report general system issues unrelated to specific packages
+  - Save bug reports to a file instead of sending them immediately
+  - Submit bug reports via email
+  - Simplify Debian bug reporting process
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

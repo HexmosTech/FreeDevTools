@@ -1,3 +1,31 @@
+---
+title: "Run Mailcap - Execute Mail Programs | Free DevTools"
+name: run-mailcap
+path: /freedevtools/tldr/linux/run-mailcap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/run-mailcap/"
+description: "Execute mailcap programs with run-mailcap.  Control mail actions like view, edit, and compose using command-line arguments. Free online tool, no registration required."
+category: linux
+keywords:
+  - mailcap program execution
+  - command-line mailcap
+  - mailcap viewer
+  - mailcap editor
+  - mailcap composer
+  - run-mailcap command
+  - mailcap actions
+  - mime-type processing
+  - email processing command
+  - linux mailcap
+features:
+  - Execute view, edit, compose, and print actions on files.
+  - Process files based on mime-type definitions in mailcap.
+  - Debug mailcap program execution with verbose output.
+  - Suppress pager output for cleaner console output.
+  - Preview the command to be executed without running it.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # run-mailcap
 
 > Run MailCap Programs.

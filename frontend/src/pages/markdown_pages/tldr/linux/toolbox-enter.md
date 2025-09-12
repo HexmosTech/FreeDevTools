@@ -1,27 +1,27 @@
 ---
 title: "Toolbox Enter - Enter Containers Interactively | Free DevTools"
 name: toolbox-enter
-path: "/freedevtools/tldr/unknown/toolbox-enter"
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/toolbox-enter/"
+path: "/freedevtools/tldr/linux/toolbox-enter"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-enter/"
 description: "Enter Linux containers interactively with Toolbox Enter. Access different distributions and releases with ease. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux container enter
-- toolbox container access
-- fedora container entry
-- distro container shell
-- release container shell
-- command line container
-- interactive container session
-- linux toolbox command
-- container development environment
-- terminal container access
+  - linux container enter
+  - toolbox container access
+  - fedora container entry
+  - distro container shell
+  - release container shell
+  - command line container
+  - interactive container session
+  - linux toolbox command
+  - container development environment
+  - terminal container access
 features:
-- Access containers based on distribution.
-- Access containers based on release.
-- Enter a container with default settings.
-- Execute commands interactively inside a container.
-- Manage development environments using containers.
+  - Access containers based on distribution.
+  - Access containers based on release.
+  - Enter a container with default settings.
+  - Execute commands interactively inside a container.
+  - Manage development environments using containers.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

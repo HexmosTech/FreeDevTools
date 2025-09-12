@@ -1,27 +1,27 @@
 ---
 title: "Control Process Limits - prlimit | Free DevTools"
 name: prlimit
-path: /freedevtools/tldr/unknown/prlimit
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/prlimit/"
+path: /freedevtools/tldr/linux/prlimit
+canonical: "https://hexmos.com/freedevtools/tldr/linux/prlimit/"
 description: "Control process resource limits with prlimit. Modify soft and hard limits for CPU, memory, and open files. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- process limit control
-- resource limit management
-- prlimit command
-- linux process limits
-- set process limits
-- get process limits
-- modify resource usage
-- process resource control
-- soft and hard limits
-- linux prlimit command
+  - process limit control
+  - resource limit management
+  - prlimit command
+  - linux process limits
+  - set process limits
+  - get process limits
+  - modify resource usage
+  - process resource control
+  - soft and hard limits
+  - linux prlimit command
 features:
-- Display current resource limits for a process.
-- Modify process resource limits including open files.
-- Set both soft and hard resource limits.
-- Run commands with custom resource limits.
-- Target specific processes by PID.
+  - Display current resource limits for a process.
+  - Modify process resource limits including open files.
+  - Set both soft and hard resource limits.
+  - Run commands with custom resource limits.
+  - Target specific processes by PID.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

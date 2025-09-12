@@ -1,3 +1,31 @@
+---
+title: "Generate PipeWire Graph - Create .dot Files | Free DevTools"
+name: pw-dot
+path: /freedevtools/tldr/linux/pw-dot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-dot/"
+description: "Generate .dot files visualizing the PipeWire graph using pw-dot.  Easily manage and inspect your PipeWire audio and video connections. Free online tool, no registration required."
+category: linux
+keywords:
+  - pipewire graph generator
+  - pw-dot command
+  - pipewire visualization
+  - dot file creation
+  - linux audio visualization
+  - pipewire debugging
+  - graph generation tool
+  - pipewire network diagram
+  - system visualization tool
+  - linux command line tool
+features:
+  - Generate .dot files representing the PipeWire graph.
+  - Read objects from pw-dump JSON files for graph creation.
+  - Specify output file and include all object types.
+  - Print detailed .dot graph to stdout.
+  - Create graphs from remote PipeWire instances.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pw-dot
 
 > Create `.dot` files of the PipeWire graph.

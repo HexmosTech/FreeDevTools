@@ -1,27 +1,27 @@
 ---
 title: "Slurm Trigger - Control Cluster Actions | Free DevTools"
 name: strigger
-path: /freedevtools/tldr/unknown/strigger
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/strigger/"
+path: /freedevtools/tldr/linux/strigger
+canonical: "https://hexmos.com/freedevtools/tldr/linux/strigger/"
 description: "Control Slurm cluster actions with Slurm Trigger. Automate tasks, monitor events, and manage jobs through command line triggers. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- slurm trigger control
-- slurm event management
-- slurm job automation
-- linux cluster trigger
-- slurm command line tool
-- slurm trigger configuration
-- cluster event monitoring
-- slurm scheduler automation
-- slurm trigger management
-- slurm job event trigger
+  - slurm trigger control
+  - slurm event management
+  - slurm job automation
+  - linux cluster trigger
+  - slurm command line tool
+  - slurm trigger configuration
+  - cluster event monitoring
+  - slurm scheduler automation
+  - slurm trigger management
+  - slurm job event trigger
 features:
-- Register new event triggers for Slurm cluster
-- Execute programs upon job termination
-- View active Slurm triggers
-- View triggers for a specific job
-- Clear specific Slurm triggers
+  - Register new event triggers for Slurm cluster
+  - Execute programs upon job termination
+  - View active Slurm triggers
+  - View triggers for a specific job
+  - Clear specific Slurm triggers
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

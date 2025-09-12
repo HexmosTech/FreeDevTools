@@ -1,3 +1,31 @@
+---
+title: "List Hardware - System Information with lshw | Free DevTools"
+name: lshw
+path: /freedevtools/tldr/linux/lshw
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lshw/"
+description: "List and view detailed hardware information with lshw.  Generate reports in various formats, including HTML, XML and JSON. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux hardware information
+  - lshw command linux
+  - system hardware listing
+  - hardware details linux
+  - linux system report
+  - lshw output format
+  - hardware configuration linux
+  - detailed hardware report
+  - linux command lshw
+  - hardware inventory linux
+features:
+  - Generate detailed hardware reports
+  - List hardware in tabular format
+  - Save output to HTML, XML, or JSON
+  - Filter specific hardware classes (e.g., network, storage)
+  - Sanitize output to remove sensitive information
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lshw
 
 > List detailed information about hardware configurations as root user.

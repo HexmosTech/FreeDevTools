@@ -1,3 +1,31 @@
+---
+title: "List Linux Containers - Manage LXC with lxc-ls | Free DevTools"
+name: lxc-ls
+path: /freedevtools/tldr/linux/lxc-ls
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-ls/"
+description: "Manage Linux containers efficiently with the lxc-ls command. List, filter, and view container status with various options. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux container list
+  - lxc container management
+  - lxc-ls command
+  - list lxc containers
+  - manage linux containers
+  - linux system administration
+  - lxc status
+  - filter lxc containers
+  - lxc command line
+  - container monitoring
+features:
+  - List all Linux containers
+  - Filter containers by status (active, frozen, stopped)
+  - Display container information in a formatted column view
+  - Provide detailed help information on command usage
+  - Efficiently manage and monitor LXC containers
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lxc-ls
 
 > List Linux containers.

@@ -1,27 +1,27 @@
 ---
 title: "Create Cramfs Filesystem - Format ROM Images | Free DevTools"
 name: mkfs.cramfs
-path: /freedevtools/tldr/unknown/mkfs.cramfs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkfs.cramfs/"
+path: /freedevtools/tldr/linux/mkfs.cramfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.cramfs/"
 description: "Create Cramfs filesystem with mkfs.cramfs. Format ROM images and specify volume names using this command-line tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Cramfs filesystem create
-- ROM image format
-- mkfs.cramfs command
-- Linux filesystem tool
-- Compressed ROM filesystem
-- Read-only filesystem creator
-- Filesystem formatting tool
-- Embedded system filesystem
-- Linux cramfs utility
-- Cramfs image generation
+  - Cramfs filesystem create
+  - ROM image format
+  - mkfs.cramfs command
+  - Linux filesystem tool
+  - Compressed ROM filesystem
+  - Read-only filesystem creator
+  - Filesystem formatting tool
+  - Embedded system filesystem
+  - Linux cramfs utility
+  - Cramfs image generation
 features:
-- Create compressed ROM filesystems on specified devices
-- Define a custom volume name for the created Cramfs filesystem
-- Format partitions as Cramfs for embedded systems
-- Generate read-only file systems from directories
-- Package file systems for ROM storage
+  - Create compressed ROM filesystems on specified devices
+  - Define a custom volume name for the created Cramfs filesystem
+  - Format partitions as Cramfs for embedded systems
+  - Generate read-only file systems from directories
+  - Package file systems for ROM storage
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

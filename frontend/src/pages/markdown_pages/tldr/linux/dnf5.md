@@ -1,3 +1,31 @@
+---
+title: "DNF5 Package Manager - Manage Linux Packages | Free DevTools"
+name: dnf5
+path: /freedevtools/tldr/linux/dnf5
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf5/"
+description: "Manage Linux packages efficiently with DNF5 package manager.  Upgrade, install, remove, and search packages with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package manager
+  - dnf5 commands
+  - rhel package management
+  - fedora package manager
+  - centos package manager
+  - linux software installation
+  - linux software removal
+  - dnf5 upgrade
+  - dnf5 search
+  - dnf5 install
+features:
+  - Upgrade installed packages to their newest versions.
+  - Search for packages using keywords.
+  - Install new packages from repositories.
+  - Remove unwanted packages from the system.
+  - Manage cached package data efficiently.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dnf5
 
 > Package management utility for RHEL, Fedora, and CentOS (it replaces dnf, which in turn replaced yum).

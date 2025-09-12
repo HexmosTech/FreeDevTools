@@ -1,3 +1,31 @@
+---
+title: "Monitor System Performance with sar | Free DevTools"
+name: sar
+path: /freedevtools/tldr/linux/sar
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sar/"
+description: "Monitor Linux system performance efficiently with the sar command.  Track CPU usage, memory, I/O, and network activity. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux system monitoring
+  - sar command linux
+  - system performance analysis linux
+  - linux resource usage
+  - sar cpu monitoring
+  - sar memory monitoring
+  - sar network monitoring
+  - sar I/O monitoring
+  - linux performance metrics
+  - command-line system monitoring
+features:
+  - Reports I/O and transfer rates for physical devices.
+  - Provides detailed network device statistics.
+  - Monitors CPU utilization across all cores.
+  - Tracks memory utilization and paging activity.
+  - Displays run queue length and load averages.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sar
 
 > Monitor performance of various Linux subsystems.

@@ -1,27 +1,27 @@
 ---
 title: "List Initramfs - Inspect Image Contents | Free DevTools"
 name: lsinitrd
-path: /freedevtools/tldr/unknown/lsinitrd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lsinitrd/"
+path: /freedevtools/tldr/linux/lsinitrd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lsinitrd/"
 description: "Inspect initramfs image contents with lsinitrd. Analyze kernel modules, file structure, and unpack images. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- initramfs image analyzer
-- linux initramfs explorer
-- kernel module inspector
-- boot image viewer
-- ramdisk content list
-- lsinitrd command usage
-- initramfs debugging tool
-- system boot analysis
-- linux boot process
-- image file listing
+  - initramfs image analyzer
+  - linux initramfs explorer
+  - kernel module inspector
+  - boot image viewer
+  - ramdisk content list
+  - lsinitrd command usage
+  - initramfs debugging tool
+  - system boot analysis
+  - linux boot process
+  - image file listing
 features:
-- Display initramfs image content
-- List included kernel modules
-- Unpack initramfs to a directory
-- Specify a particular kernel version
-- Examine specific initramfs images
+  - Display initramfs image content
+  - List included kernel modules
+  - Unpack initramfs to a directory
+  - Specify a particular kernel version
+  - Examine specific initramfs images
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

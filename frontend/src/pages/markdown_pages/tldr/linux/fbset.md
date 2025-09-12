@@ -1,27 +1,27 @@
 ---
 title: "Framebuffer Control - Modify Display Settings | Free DevTools"
 name: fbset
-path: /freedevtools/tldr/unknown/fbset
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/fbset/"
+path: /freedevtools/tldr/linux/fbset
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fbset/"
 description: "Control framebuffer settings with fbset. Modify display resolution, geometry and color depth. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- framebuffer control
-- display settings modification
-- framebuffer resolution
-- linux framebuffer
-- console display
-- fbset command
-- display configuration
-- video mode setting
-- color depth control
-- tty settings
+  - framebuffer control
+  - display settings modification
+  - framebuffer resolution
+  - linux framebuffer
+  - console display
+  - fbset command
+  - display configuration
+  - video mode setting
+  - color depth control
+  - tty settings
 features:
-- Show current framebuffer settings
-- Set framebuffer mode from predefined configurations
-- Define arbitrary framebuffer modes
-- Configure display geometry
-- Adjust color depth settings
+  - Show current framebuffer settings
+  - Set framebuffer mode from predefined configurations
+  - Define arbitrary framebuffer modes
+  - Configure display geometry
+  - Adjust color depth settings
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

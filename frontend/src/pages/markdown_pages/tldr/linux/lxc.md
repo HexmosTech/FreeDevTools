@@ -1,27 +1,27 @@
 ---
 title: "LXC Container Manager - Control Linux Containers | Free DevTools"
 name: lxc
-path: /freedevtools/tldr/unknown/lxc
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lxc/"
+path: /freedevtools/tldr/linux/lxc
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc/"
 description: "Control Linux containers with LXC Container Manager. Easily manage, start, stop, and snapshot your containers using the command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux container manager
-- lxc container control
-- lxc command line
-- linux container management
-- lxc container snapshot
-- lxc container start
-- lxc container stop
-- lxc image management
-- lxc command reference
-- linux container command
+  - linux container manager
+  - lxc container control
+  - lxc command line
+  - linux container management
+  - lxc container snapshot
+  - lxc container start
+  - lxc container stop
+  - lxc image management
+  - lxc command reference
+  - linux container command
 features:
-- List available LXC containers locally
-- Manage LXC container images remotely
-- Create new containers from existing images
-- Start and stop LXC containers instantly
-- Execute commands inside existing LXC containers
+  - List available LXC containers locally
+  - Manage LXC container images remotely
+  - Create new containers from existing images
+  - Start and stop LXC containers instantly
+  - Execute commands inside existing LXC containers
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

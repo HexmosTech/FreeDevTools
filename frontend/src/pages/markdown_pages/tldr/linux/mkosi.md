@@ -1,27 +1,27 @@
 ---
 title: "mkosi - Create Linux Images | Free DevTools"
 name: mkosi
-path: /freedevtools/tldr/unknown/mkosi
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkosi/"
+path: /freedevtools/tldr/linux/mkosi
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkosi/"
 description: "Create Linux images with mkosi, a systemd tool for building modern, legacy-free operating system images. Easily configure and deploy custom Linux distributions. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux image creation
-- systemd mkosi
-- os image builder
-- legacy-free linux image
-- custom linux distribution
-- linux image configuration
-- bootable image creation
-- mkosi build tool
-- container image generation
-- linux distribution deployment
+  - linux image creation
+  - systemd mkosi
+  - os image builder
+  - legacy-free linux image
+  - custom linux distribution
+  - linux image configuration
+  - bootable image creation
+  - mkosi build tool
+  - container image generation
+  - linux distribution deployment
 features:
-- Build modern, legacy-free Linux images
-- Generate bootable images from command line
-- Configure image builds with summary command
-- Run images in systemd-nspawn containers
-- Boot images in QEMU virtual machines
+  - Build modern, legacy-free Linux images
+  - Generate bootable images from command line
+  - Configure image builds with summary command
+  - Run images in systemd-nspawn containers
+  - Boot images in QEMU virtual machines
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Control Rofi - Application Launcher | Free DevTools"
 name: rofi
-path: /freedevtools/tldr/unknown/rofi
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/rofi/"
+path: /freedevtools/tldr/linux/rofi
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rofi/"
 description: "Control applications with Rofi, a versatile application launcher. Quickly switch windows and execute commands. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- rofi application launcher
-- application launcher linux
-- window switcher linux
-- command launcher
-- rofi command execution
-- linux application runner
-- rofi menu
-- command line launcher
-- application selector
-- rofi window management
+  - rofi application launcher
+  - application launcher linux
+  - window switcher linux
+  - command launcher
+  - rofi command execution
+  - linux application runner
+  - rofi menu
+  - command line launcher
+  - application selector
+  - rofi window management
 features:
-- Launch applications quickly from the command line
-- Switch between active windows
-- Execute shell commands
-- Pipe input to `stdin` and print the selected output
-- Create custom menus with selectable items
+  - Launch applications quickly from the command line
+  - Switch between active windows
+  - Execute shell commands
+  - Pipe input to `stdin` and print the selected output
+  - Create custom menus with selectable items
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

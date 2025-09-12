@@ -1,27 +1,27 @@
 ---
 title: "Remap Keys - Control Keyboard Bindings with keyd | Free DevTools"
 name: keyd
-path: /freedevtools/tldr/unknown/keyd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/keyd/"
+path: /freedevtools/tldr/linux/keyd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/keyd/"
 description: "Control keyboard bindings with keyd. Remap keys and customize your keyboard layout on Linux using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- keyboard remapping
-- key binding configuration
-- linux keyboard layout
-- keyd configuration tool
-- customize keyboard keys
-- remap keyboard shortcuts
-- systemd service keyd
-- keyd bind command
-- keyboard customization linux
-- command line keyboard control
+  - keyboard remapping
+  - key binding configuration
+  - linux keyboard layout
+  - keyd configuration tool
+  - customize keyboard keys
+  - remap keyboard shortcuts
+  - systemd service keyd
+  - keyd bind command
+  - keyboard customization linux
+  - command line keyboard control
 features:
-- Start and enable the keyd service
-- Display keypress information in real-time
-- Reset bindings and reload configuration files
-- List all valid key names for remapping
-- Create temporary keyboard bindings
+  - Start and enable the keyd service
+  - Display keypress information in real-time
+  - Reset bindings and reload configuration files
+  - List all valid key names for remapping
+  - Create temporary keyboard bindings
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

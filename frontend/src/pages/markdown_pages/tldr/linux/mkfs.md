@@ -1,27 +1,27 @@
 ---
 title: "Create Filesystem - Format Partitions with mkfs | Free DevTools"
 name: mkfs
-path: /freedevtools/tldr/unknown/mkfs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkfs/"
+path: /freedevtools/tldr/linux/mkfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs/"
 description: "Create filesystem structures with mkfs. Format disk partitions to various types like ext4 or ntfs, checking for bad blocks. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux filesystem format
-- ext4 filesystem create
-- ntfs filesystem create
-- disk partition format
-- mkfs linux command
-- filesystem bad block check
-- linux partition manager
-- command line filesystem
-- terminal disk format
-- block device filesystem
+  - linux filesystem format
+  - ext4 filesystem create
+  - ntfs filesystem create
+  - disk partition format
+  - mkfs linux command
+  - filesystem bad block check
+  - linux partition manager
+  - command line filesystem
+  - terminal disk format
+  - block device filesystem
 features:
-- Format partitions with various filesystem types (ext2, ext4, ntfs)
-- Create a new Linux filesystem on a specified partition
-- Check for bad blocks during filesystem creation
-- Specify the filesystem type using command-line options
-- Build filesystems on block devices using mkfs
+  - Format partitions with various filesystem types (ext2, ext4, ntfs)
+  - Create a new Linux filesystem on a specified partition
+  - Check for bad blocks during filesystem creation
+  - Specify the filesystem type using command-line options
+  - Build filesystems on block devices using mkfs
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

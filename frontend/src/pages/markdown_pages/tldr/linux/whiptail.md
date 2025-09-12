@@ -1,3 +1,31 @@
+---
+title: "Whiptail Dialog Boxes - Create Shell Dialogs | Free DevTools"
+name: whiptail
+path: /freedevtools/tldr/linux/whiptail
+canonical: "https://hexmos.com/freedevtools/tldr/linux/whiptail/"
+description: "Create customizable text-based dialog boxes with Whiptail for shell scripts.  Easily display messages, input fields, and menus. Free online tool, no registration required."
+category: linux
+keywords:
+  - shell dialog creation
+  - terminal dialog boxes
+  - whiptail command line
+  - linux shell scripting
+  - text-based user interface
+  - command-line dialogs
+  - interactive shell scripts
+  - message boxes
+  - input boxes
+  - menu creation
+features:
+  - Display simple message boxes with custom titles and sizes.
+  - Implement yes/no dialogs with customizable button text.
+  - Create text input boxes for user data entry.
+  - Securely collect passwords using password input boxes.
+  - Build interactive menus with multiple choices and custom values.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # whiptail
 
 > Display text-based dialog boxes from shell scripts.

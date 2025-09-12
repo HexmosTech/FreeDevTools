@@ -1,3 +1,31 @@
+---
+title: "JPEGtran - Transform JPEG Images Losslessly | Free DevTools"
+name: jpegtran
+path: /freedevtools/tldr/linux/jpegtran
+canonical: "https://hexmos.com/freedevtools/tldr/linux/jpegtran/"
+description: "Transform JPEG images losslessly with jpegtran.  Perform operations like mirroring, rotating, transposing, and cropping. Free online tool, no registration required."
+category: linux
+keywords:
+  - jpeg image transformation
+  - lossless jpeg manipulation
+  - jpegtran command line
+  - jpeg mirroring
+  - jpeg rotation
+  - jpeg cropping
+  - jpeg transposition
+  - jpeg grayscale conversion
+  - image processing command
+  - command line image editor
+features:
+  - Mirror images horizontally or vertically.
+  - Rotate images by 90, 180, or 270 degrees.
+  - Transpose and transverse images.
+  - Convert images to grayscale.
+  - Crop images to specified rectangular regions.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # jpegtran
 
 > Perform lossless transformation of JPEG files.

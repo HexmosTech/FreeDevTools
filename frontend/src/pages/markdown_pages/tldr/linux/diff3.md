@@ -1,27 +1,27 @@
 ---
 title: "Compare Files - Analyze Differences with diff3 | Free DevTools"
 name: diff3
-path: /freedevtools/tldr/unknown/diff3
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/diff3/"
+path: /freedevtools/tldr/linux/diff3
+canonical: "https://hexmos.com/freedevtools/tldr/linux/diff3/"
 description: "Compare files with diff3 to analyze differences between three files side-by-side. Identify conflicts and merge changes efficiently. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- file comparison
-- diff tool
-- three way merge
-- text comparison
-- conflict resolution
-- file differencing
-- linux diff
-- unix diff
-- gnu diffutils
-- diff3 command
+  - file comparison
+  - diff tool
+  - three way merge
+  - text comparison
+  - conflict resolution
+  - file differencing
+  - linux diff
+  - unix diff
+  - gnu diffutils
+  - diff3 command
 features:
-- Compares three files line by line
-- Highlights differences between files
-- Identifies conflicting changes
-- Shows all changes with conflict outlining
-- Provides a detailed analysis of file content
+  - Compares three files line by line
+  - Highlights differences between files
+  - Identifies conflicting changes
+  - Shows all changes with conflict outlining
+  - Provides a detailed analysis of file content
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

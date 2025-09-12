@@ -1,27 +1,27 @@
 ---
 title: "Process ID Finder - Identify Processes | Free DevTools"
 name: pidof
-path: /freedevtools/tldr/unknown/pidof
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pidof/"
+path: /freedevtools/tldr/linux/pidof
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pidof/"
 description: "Identify processes with Process ID Finder. Quickly locate process IDs by name and manage running applications. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- process id finder
-- pidof command
-- linux process id
-- macos process id
-- get process id
-- find process by name
-- process management
-- command line process
-- shell script process id
-- kill process command
+  - process id finder
+  - pidof command
+  - linux process id
+  - macos process id
+  - get process id
+  - find process by name
+  - process management
+  - command line process
+  - shell script process id
+  - kill process command
 features:
-- List process IDs by name
-- Find a single process ID
-- Include scripts in process ID search
-- Kill processes by name
-- Manage running applications
+  - List process IDs by name
+  - Find a single process ID
+  - Include scripts in process ID search
+  - Kill processes by name
+  - Manage running applications
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

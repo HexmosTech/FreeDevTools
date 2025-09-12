@@ -1,27 +1,27 @@
 ---
 title: "Control Terminator - Manage GNOME Terminals | Free DevTools"
 name: terminator
-path: /freedevtools/tldr/unknown/terminator
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/terminator/"
+path: /freedevtools/tldr/linux/terminator
+canonical: "https://hexmos.com/freedevtools/tldr/linux/terminator/"
 description: "Control terminals with Terminator, a powerful GNOME terminal emulator. Split, tab, and manage multiple terminals in one window. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- gnome terminal manager
-- terminator terminal emulator
-- linux terminal multiplexer
-- terminal splitter linux
-- gnome shell terminator
-- terminal tab manager
-- command line terminator
-- terminator configuration
-- tiling terminal linux
-- multi terminal window
+  - gnome terminal manager
+  - terminator terminal emulator
+  - linux terminal multiplexer
+  - terminal splitter linux
+  - gnome shell terminator
+  - terminal tab manager
+  - command line terminator
+  - terminator configuration
+  - tiling terminal linux
+  - multi terminal window
 features:
-- Split terminals horizontally or vertically within a single window
-- Open new terminals in tabs for easy organization
-- Start Terminator in fullscreen mode for immersive workflows
-- Use keyboard shortcuts for efficient terminal management
-- Configure custom layouts and profiles for different tasks
+  - Split terminals horizontally or vertically within a single window
+  - Open new terminals in tabs for easy organization
+  - Start Terminator in fullscreen mode for immersive workflows
+  - Use keyboard shortcuts for efficient terminal management
+  - Configure custom layouts and profiles for different tasks
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

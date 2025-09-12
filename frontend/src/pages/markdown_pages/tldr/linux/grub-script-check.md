@@ -1,27 +1,27 @@
 ---
 title: "Validate GRUB Scripts - Check Syntax | Free DevTools"
 name: grub-script-check
-path: /freedevtools/tldr/unknown/grub-script-check
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/grub-script-check/"
+path: /freedevtools/tldr/linux/grub-script-check
+canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-script-check/"
 description: "Validate GRUB scripts with grub-script-check, ensuring error-free bootloader configurations. Check syntax and identify issues. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- GRUB script validation
-- GRUB config syntax check
-- Bootloader script analysis
-- GRUB script error detection
-- Linux GRUB configuration
-- GRUB script debugger
-- GRUB script checker
-- GRUB script linter
-- GRUB script testing
-- grub-script-check command
+  - GRUB script validation
+  - GRUB config syntax check
+  - Bootloader script analysis
+  - GRUB script error detection
+  - Linux GRUB configuration
+  - GRUB script debugger
+  - GRUB script checker
+  - GRUB script linter
+  - GRUB script testing
+  - grub-script-check command
 features:
-- Check GRUB scripts for syntax errors
-- Validate GRUB configuration files
-- Read GRUB scripts from standard input
-- Display verbose output during checking
-- Identify issues in GRUB bootloader scripts
+  - Check GRUB scripts for syntax errors
+  - Validate GRUB configuration files
+  - Read GRUB scripts from standard input
+  - Display verbose output during checking
+  - Identify issues in GRUB bootloader scripts
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

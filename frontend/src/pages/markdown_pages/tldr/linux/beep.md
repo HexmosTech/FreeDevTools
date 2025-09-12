@@ -1,27 +1,27 @@
 ---
 title: "Beep Generator - Create PC Speaker Sounds | Free DevTools"
 name: beep
-path: /freedevtools/tldr/unknown/beep
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/beep/"
+path: /freedevtools/tldr/linux/beep
+canonical: "https://hexmos.com/freedevtools/tldr/linux/beep/"
 description: "Generate PC speaker sounds with Beep Generator. Control frequency, duration, and repetition of beeps via the command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- pc speaker sound generator
-- beep command line tool
-- terminal beep sound
-- frequency sound generator
-- duration sound control
-- beep sequence creation
-- pc speaker control
-- custom beep generation
-- sound effect command
-- system beep utility
+  - pc speaker sound generator
+  - beep command line tool
+  - terminal beep sound
+  - frequency sound generator
+  - duration sound control
+  - beep sequence creation
+  - pc speaker control
+  - custom beep generation
+  - sound effect command
+  - system beep utility
 features:
-- Play a single beep sound
-- Repeat a beep sound multiple times
-- Control beep frequency in Hertz
-- Control beep duration in milliseconds
-- Generate a sequence of different beeps
+  - Play a single beep sound
+  - Repeat a beep sound multiple times
+  - Control beep frequency in Hertz
+  - Control beep duration in milliseconds
+  - Generate a sequence of different beeps
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

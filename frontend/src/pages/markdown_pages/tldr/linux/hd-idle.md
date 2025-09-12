@@ -1,3 +1,31 @@
+---
+title: "HD-Idle - Control Disk Spin Down | Free DevTools"
+name: hd-idle
+path: /freedevtools/tldr/linux/hd-idle
+canonical: "https://hexmos.com/freedevtools/tldr/linux/hd-idle/"
+description: "Control hard drive spin down with HD-Idle.  Manage power consumption and improve disk lifespan with this simple command-line tool. Free online tool, no registration required."
+category: linux
+keywords:
+  - disk spin down command
+  - linux disk management
+  - hd-idle linux
+  - power management command
+  - systemd service control
+  - hard drive idle time
+  - energy saving command
+  - command line disk utility
+  - linux hd-idle
+  - manage hard drive power
+features:
+  - Automatically spins down hard drives after inactivity.
+  - Allows manual spin down of specific disks.
+  - Configurable idle time settings for individual drives.
+  - Integrates with systemd for service management.
+  - Prevents unnecessary hard drive wear and power consumption.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # hd-idle
 
 > Spin down external disks after a period of idle time.

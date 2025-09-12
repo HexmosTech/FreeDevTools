@@ -1,27 +1,27 @@
 ---
 title: "Install Packages - Manage APT Packages | Free DevTools"
 name: apt-install
-path: /freedevtools/tldr/unknown/apt-install
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/apt-install/"
+path: /freedevtools/tldr/linux/apt-install
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-install/"
 description: "Install packages easily with APT Package Manager. Update, upgrade, and manage software on Debian-based systems. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- apt package manager
-- debian package install
-- ubuntu apt install
-- linux package management
-- command line apt
-- software installation linux
-- apt update package
-- apt upgrade package
-- debian software repository
-- apt package dependencies
+  - apt package manager
+  - debian package install
+  - ubuntu apt install
+  - linux package management
+  - command line apt
+  - software installation linux
+  - apt update package
+  - apt upgrade package
+  - debian software repository
+  - apt package dependencies
 features:
-- Install packages from repositories
-- Update existing packages to the latest version
-- Manage package dependencies automatically
-- Display verbose version information during installation
-- Upgrade all outdated packages
+  - Install packages from repositories
+  - Update existing packages to the latest version
+  - Manage package dependencies automatically
+  - Display verbose version information during installation
+  - Upgrade all outdated packages
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

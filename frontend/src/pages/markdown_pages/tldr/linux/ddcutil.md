@@ -1,3 +1,31 @@
+---
+title: "Control Displays - ddcutil DDC/CI Command | Free DevTools"
+name: ddcutil
+path: /freedevtools/tldr/linux/ddcutil
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ddcutil/"
+description: "Control display settings with ddcutil, a DDC/CI command-line tool.  Adjust brightness, contrast, and more. Free online tool, no registration required."
+category: linux
+keywords:
+  - ddcutil display control
+  - ddcci command line
+  - monitor settings command
+  - linux display settings
+  - display brightness control
+  - contrast adjustment command
+  - screen settings ddc
+  - i2c display control
+  - monitor configuration tool
+  - ddcutil vcp commands
+features:
+  - Adjust display brightness using DDC/CI.
+  - Modify display contrast via command line.
+  - Read current display settings.
+  - Detect connected displays compatible with ddcutil.
+  - Control multiple displays individually.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ddcutil
 
 > Control the settings of connected displays via DDC/CI.

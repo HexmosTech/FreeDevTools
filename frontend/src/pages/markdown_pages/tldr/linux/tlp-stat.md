@@ -1,3 +1,31 @@
+---
+title: "Generate TLP Status Reports - System Power Management | Free DevTools"
+name: tlp-stat
+path: /freedevtools/tldr/linux/tlp-stat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tlp-stat/"
+description: "Generate detailed system power management reports with tlp-stat.  Monitor power usage, temperatures, and device status. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux power management report
+  - tlp status report generator
+  - system power monitoring linux
+  - tlp-stat command linux
+  - linux battery status command
+  - generate power usage report
+  - linux thermal monitoring
+  - tlp configuration report
+  - linux device status report
+  - power supply diagnostics linux
+features:
+  - Generate comprehensive system power status reports.
+  - Monitor battery, processor, and disk activity.
+  - Display detailed information on various hardware components.
+  - Show current TLP configuration settings.
+  - Provide power supply diagnostics and thermal information.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # tlp-stat
 
 > Generate TLP status reports.

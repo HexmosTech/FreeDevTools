@@ -1,3 +1,31 @@
+---
+title: "Create Debian Systems - debootstrap Command | Free DevTools"
+name: debootstrap
+path: /freedevtools/tldr/linux/debootstrap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/debootstrap/"
+description: "Create Debian systems quickly with the debootstrap command.  Bootstrap minimal or full systems, specify releases, and manage dependencies effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+  - debian installer
+  - debian bootstrapper
+  - linux system creation
+  - debootstrap command
+  - minimal debian install
+  - debian system setup
+  - ubuntu installer
+  - chroot environment
+  - system bootstrapping
+  - linux package management
+features:
+  - Create minimal Debian systems with the --variant=minbase option.
+  - Bootstrap Debian systems from various release versions (stable, testing, unstable).
+  - Use a local mirror for faster bootstrapping.
+  - Create chroot environments for easy system administration.
+  - Install Debian systems to a specified directory.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # debootstrap
 
 > Create a basic Debian system.

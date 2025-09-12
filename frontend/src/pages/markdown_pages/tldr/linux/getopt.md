@@ -1,3 +1,31 @@
+---
+title: "Parse Arguments - getopt Command Line Parser | Free DevTools"
+name: getopt
+path: /freedevtools/tldr/linux/getopt
+canonical: "https://hexmos.com/freedevtools/tldr/linux/getopt/"
+description: "Parse command-line arguments with getopt.  Handle optional and required arguments, short and long options efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - command line argument parser
+  - getopt command line
+  - linux command line parsing
+  - shell script argument parsing
+  - argument parsing getopt
+  - command-line options parser
+  - bash getopt example
+  - sh getopt tutorial
+  - unix command line tools
+  - terminal argument handling
+features:
+  - Parses optional and required arguments.
+  - Supports short and long options with shorthands.
+  - Handles arguments with optional values.
+  - Allows for easy management of complex command-line interfaces.
+  - Provides a robust and efficient way to parse arguments.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # getopt
 
 > Parse command-line arguments.

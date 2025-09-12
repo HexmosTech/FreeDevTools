@@ -1,3 +1,31 @@
+---
+title: "Pacman Package Manager - Manage Arch Linux Packages | Free DevTools"
+name: pacman
+path: /freedevtools/tldr/linux/pacman
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman/"
+description: "Manage Arch Linux packages efficiently with Pacman. Install, remove, update, and query packages using simple commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - pacman package manager
+  - arch linux pacman
+  - linux package management
+  - pacman install package
+  - pacman remove package
+  - pacman update packages
+  - pacman search package
+  - pacman query package
+  - pacman dependency management
+  - linux command line tools
+features:
+  - Install new packages from the Arch Linux repositories.
+  - Remove packages and their dependencies.
+  - Update all installed packages to their latest versions.
+  - Search for packages using keywords or regular expressions.
+  - Manage package dependencies and resolve conflicts.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacman
 
 > Arch Linux package manager utility.

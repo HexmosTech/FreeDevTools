@@ -1,27 +1,27 @@
 ---
 title: "Create Linux Swap - Set Up Swap Space | Free DevTools"
 name: mkswap
-path: /freedevtools/tldr/unknown/mkswap
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkswap/"
+path: /freedevtools/tldr/linux/mkswap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkswap/"
 description: "Create Linux swap partitions quickly with mkswap. Format drives and enable memory management on your Linux system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux swap partition
-- swap space creator
-- mkswap command
-- format swap drive
-- linux memory management
-- virtual memory setup
-- linux swap area
-- swap file creation
-- disk formatting tool
-- command line swap tool
+  - linux swap partition
+  - swap space creator
+  - mkswap command
+  - format swap drive
+  - linux memory management
+  - virtual memory setup
+  - linux swap area
+  - swap file creation
+  - disk formatting tool
+  - command line swap tool
 features:
-- Format a device or file as a Linux swap area.
-- Check a partition for bad blocks before creating the swap.
-- Specify a label for the swap partition.
-- Set a specific UUID for the swap partition.
-- Create a swap file of a specified size.
+  - Format a device or file as a Linux swap area.
+  - Check a partition for bad blocks before creating the swap.
+  - Specify a label for the swap partition.
+  - Set a specific UUID for the swap partition.
+  - Create a swap file of a specified size.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

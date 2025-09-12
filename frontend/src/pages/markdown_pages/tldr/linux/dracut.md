@@ -1,27 +1,27 @@
 ---
 title: "Dracut - Generate Initramfs Images | Free DevTools"
 name: dracut
-path: /freedevtools/tldr/unknown/dracut
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dracut/"
+path: /freedevtools/tldr/linux/dracut
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dracut/"
 description: "Generate initramfs images with Dracut, ensuring proper Linux kernel booting. Create custom initramfs images for specific kernels. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- initramfs image generation
-- linux boot image creation
-- dracut command
-- kernel module loading
-- dracut configuration
-- initramfs customization
-- boot sequence management
-- linux boot process
-- system recovery images
-- kernel initialization
+  - initramfs image generation
+  - linux boot image creation
+  - dracut command
+  - kernel module loading
+  - dracut configuration
+  - initramfs customization
+  - boot sequence management
+  - linux boot process
+  - system recovery images
+  - kernel initialization
 features:
-- Generate initramfs images for the current kernel
-- Overwrite existing initramfs images with force option
-- Create initramfs images for a specific kernel version
-- List available dracut modules for customization
-- Configure initramfs images using dracut configuration files
+  - Generate initramfs images for the current kernel
+  - Overwrite existing initramfs images with force option
+  - Create initramfs images for a specific kernel version
+  - List available dracut modules for customization
+  - Configure initramfs images using dracut configuration files
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

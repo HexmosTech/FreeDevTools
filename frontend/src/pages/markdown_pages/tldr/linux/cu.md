@@ -1,3 +1,31 @@
+---
+title: "Control Serial Ports with cu - Terminal Access & File Transfer | Free DevTools"
+name: cu
+path: /freedevtools/tldr/linux/cu
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cu/"
+description: "Control serial port access and perform file transfers with the cu command.  This powerful Linux utility provides terminal access and data exchange capabilities. Free online tool, no registration required."
+category: linux
+keywords:
+  - serial port control linux
+  - cu command linux
+  - terminal access linux
+  - file transfer linux
+  - serial communication linux
+  - cu command terminal
+  - linux serial port
+  - dial-in terminal linux
+  - linux cu tutorial
+  - baud rate configuration linux
+features:
+  - Open and control serial ports with various baud rates.
+  - Establish dial-in/serial terminal connections to remote systems.
+  - Perform file transfers between systems via serial connection.
+  - Configure parity settings for serial communication (even, odd, none).
+  - Control hardware and software flow control options.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cu
 
 > Call Up another system and act as a dial-in/serial terminal or perform file transfers with no error checking.

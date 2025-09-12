@@ -1,27 +1,27 @@
 ---
 title: "Control Locale - Manage System Language with eselect | Free DevTools"
 name: eselect-locale
-path: /freedevtools/tldr/unknown/eselect-locale
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/eselect-locale/"
+path: /freedevtools/tldr/linux/eselect-locale
+canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-locale/"
 description: "Manage system language instantly with eselect-locale. Configure the LANG environment variable, list available locales and set your preferred system language. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- system language manager
-- locale configuration tool
-- eselect locale settings
-- linux language environment
-- LANG variable control
-- gentoo locale management
-- command line locale tool
-- system language selection
-- profile environment setup
-- linux eselect-locale
+  - system language manager
+  - locale configuration tool
+  - eselect locale settings
+  - linux language environment
+  - LANG variable control
+  - gentoo locale management
+  - command line locale tool
+  - system language selection
+  - profile environment setup
+  - linux eselect-locale
 features:
-- List available system locales
-- Set LANG environment variable
-- Update system language settings
-- Show current LANG variable value
-- Manage system language from the command line
+  - List available system locales
+  - Set LANG environment variable
+  - Update system language settings
+  - Show current LANG variable value
+  - Manage system language from the command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

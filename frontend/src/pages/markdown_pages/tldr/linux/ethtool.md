@@ -1,3 +1,31 @@
+---
+title: "ethtool - Control Network Interfaces | Free DevTools"
+name: ethtool
+path: /freedevtools/tldr/linux/ethtool
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ethtool/"
+description: "Control network interface parameters with ethtool.  View network statistics, configure link settings, and troubleshoot network issues. Free online tool, no registration required."
+category: linux
+keywords:
+  - network interface control linux
+  - ethtool network configuration
+  - linux network settings ethtool
+  - network driver information ethtool
+  - ethtool network statistics
+  - command-line network management
+  - ethtool link speed configuration
+  - linux system administration ethtool
+  - network troubleshooting ethtool
+  - interface settings ethtool
+features:
+  - Display and modify network interface settings.
+  - View driver information and supported features.
+  - Monitor network usage statistics.
+  - Configure link speed, duplex mode, and auto-negotiation.
+  - Control interface LEDs for identification.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # ethtool
 
 > Display and modify Network Interface Controller (NIC) parameters.

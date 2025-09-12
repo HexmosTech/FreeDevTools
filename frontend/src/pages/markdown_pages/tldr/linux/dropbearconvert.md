@@ -1,27 +1,27 @@
 ---
 title: "Dropbear Convert - Format Keys | Free DevTools"
 name: dropbearconvert
-path: /freedevtools/tldr/unknown/dropbearconvert
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dropbearconvert/"
+path: /freedevtools/tldr/linux/dropbearconvert
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dropbearconvert/"
 description: "Format private keys with Dropbear Convert. Transform keys between Dropbear and OpenSSH formats seamlessly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- dropbear key converter
-- openssh key converter
-- private key format
-- ssh key conversion
-- dropbear to openssh
-- openssh to dropbear
-- key format tool
-- linux key conversion
-- command line key converter
-- key management tool
+  - dropbear key converter
+  - openssh key converter
+  - private key format
+  - ssh key conversion
+  - dropbear to openssh
+  - openssh to dropbear
+  - key format tool
+  - linux key conversion
+  - command line key converter
+  - key management tool
 features:
-- Convert OpenSSH keys to Dropbear format
-- Convert Dropbear keys to OpenSSH format
-- Transform private key formats
-- Support command-line key conversions
-- Facilitate key format management
+  - Convert OpenSSH keys to Dropbear format
+  - Convert Dropbear keys to OpenSSH format
+  - Transform private key formats
+  - Support command-line key conversions
+  - Facilitate key format management
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

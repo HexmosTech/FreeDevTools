@@ -1,3 +1,31 @@
+---
+title: "MOPAC Quantum Chemistry - Perform Semiempirical Calculations | Free DevTools"
+name: mopac
+path: /freedevtools/tldr/linux/mopac
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mopac/"
+description: "Perform semiempirical quantum chemistry calculations with MOPAC.  This free online tool utilizes the NDDO approximation for molecular orbital calculations. No registration required."
+category: linux
+keywords:
+  - mopac calculations
+  - semiempirical quantum chemistry
+  - molecular orbital calculations
+  - NDDO approximation
+  - computational chemistry
+  - quantum chemistry software
+  - mopac input file
+  - .mop file processing
+  - scientific computing
+  - chemistry simulation
+features:
+  - Performs semiempirical quantum chemical calculations using the NDDO approximation.
+  - Processes input files in .mop, .dat, and .arc formats.
+  - Calculates molecular orbitals and energies.
+  - Supports various Hamiltonians (e.g., PM7).
+  - Outputs results to specified files.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mopac
 
 > MOPAC (Molecular Orbital PACkage) is a semiempirical quantum chemistry program based on Dewar and Thiel's NDDO approximation.

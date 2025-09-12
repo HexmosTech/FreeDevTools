@@ -1,27 +1,27 @@
 ---
 title: "Control nmcli Networking - Manage NetworkManager | Free DevTools"
 name: nmcli-networking
-path: /freedevtools/tldr/unknown/nmcli-networking
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/nmcli-networking/"
+path: /freedevtools/tldr/linux/nmcli-networking
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-networking/"
 description: "Control nmcli networking with this tool. Enable, disable and check the connectivity of NetworkManager managed interfaces. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- nmcli networking control
-- NetworkManager status
-- Linux networking command
-- Command-line networking tool
-- Network interface manager
-- Disable network interface
-- Enable network interface
-- Check network connectivity
-- Manage network status
-- nmcli commands
+  - nmcli networking control
+  - NetworkManager status
+  - Linux networking command
+  - Command-line networking tool
+  - Network interface manager
+  - Disable network interface
+  - Enable network interface
+  - Check network connectivity
+  - Manage network status
+  - nmcli commands
 features:
-- Show NetworkManager networking status
-- Enable or disable network interfaces
-- Display last known network connectivity state
-- Check current network connectivity state
-- Manage network interfaces from the command line
+  - Show NetworkManager networking status
+  - Enable or disable network interfaces
+  - Display last known network connectivity state
+  - Check current network connectivity state
+  - Manage network interfaces from the command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

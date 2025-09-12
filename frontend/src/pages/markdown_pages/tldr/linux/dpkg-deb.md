@@ -1,3 +1,31 @@
+---
+title: "dpkg-deb - Manage Debian Packages | Free DevTools"
+name: dpkg-deb
+path: /freedevtools/tldr/linux/dpkg-deb
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg-deb/"
+description: "Manage Debian packages with dpkg-deb.  Create, extract, and inspect .deb files easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - deb package manager
+  - deb package creation
+  - deb package extraction
+  - deb package information
+  - linux package manager
+  - dpkg deb commands
+  - deb file manipulation
+  - linux debian package
+  - debian package control
+  - package management linux
+features:
+  - Extract contents of Debian packages
+  - Create Debian packages from directories
+  - Inspect metadata of Debian packages
+  - List files within a Debian package
+  - Display package name and version
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dpkg-deb
 
 > Pack, unpack and provide information about Debian archives.

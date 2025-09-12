@@ -1,27 +1,27 @@
 ---
 title: "Lastlog - View User Login History | Free DevTools"
 name: lastlog
-path: /freedevtools/tldr/unknown/lastlog
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lastlog/"
+path: /freedevtools/tldr/linux/lastlog
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lastlog/"
 description: "View user login history with Lastlog. Analyze user activity and identify login patterns. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- user login history
-- last login details
-- user activity analysis
-- login record viewer
-- linux lastlog command
-- system login events
-- user session tracking
-- login timestamp information
-- user authentication logs
-- lastlog command examples
+  - user login history
+  - last login details
+  - user activity analysis
+  - login record viewer
+  - linux lastlog command
+  - system login events
+  - user session tracking
+  - login timestamp information
+  - user authentication logs
+  - lastlog command examples
 features:
-- Display the most recent login for all users
-- Show last login record of a specific user
-- Filter records by age (older than a certain number of days)
-- Filter records by recency (more recent than a certain number of days)
-- Analyze user login timestamps
+  - Display the most recent login for all users
+  - Show last login record of a specific user
+  - Filter records by age (older than a certain number of days)
+  - Filter records by recency (more recent than a certain number of days)
+  - Analyze user login timestamps
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

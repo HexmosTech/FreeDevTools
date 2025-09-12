@@ -1,3 +1,31 @@
+---
+title: "v4l2-ctl - Control Video Devices | Free DevTools"
+name: v4l2-ctl
+path: /freedevtools/tldr/linux/v4l2-ctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/v4l2-ctl/"
+description: "Control video devices with v4l2-ctl.  List formats, resolutions, capture images and raw video streams. Free online tool, no registration required."
+category: linux
+keywords:
+  - video device control
+  - v4l2-ctl commands
+  - linux video capture
+  - video format control
+  - video resolution settings
+  - mmap streaming
+  - jpeg capture v4l2
+  - raw video capture
+  - video device settings
+  - linux video control
+features:
+  - List all connected video devices.
+  - List supported video formats and resolutions.
+  - Capture JPEG images from video devices with specified resolution.
+  - Capture raw video streams with custom settings.
+  - Control individual video device settings.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # v4l2-ctl
 
 > Control video devices.

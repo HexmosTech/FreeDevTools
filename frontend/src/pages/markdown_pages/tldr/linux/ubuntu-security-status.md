@@ -1,27 +1,27 @@
 ---
 title: "Ubuntu Security Status - Manage Package Security | Free DevTools"
 name: ubuntu-security-status
-path: /freedevtools/tldr/unknown/ubuntu-security-status
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ubuntu-security-status/"
+path: /freedevtools/tldr/linux/ubuntu-security-status
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ubuntu-security-status/"
 description: "Manage Ubuntu package security with Ubuntu Security Status. Identify unsupported packages and third-party software on your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- ubuntu security status
-- linux package security
-- ubuntu security updates
-- debian security audit
-- command line security
-- package vulnerability scan
-- unsupported package list
-- third-party package check
-- security status report
-- ubuntu system security
+  - ubuntu security status
+  - linux package security
+  - ubuntu security updates
+  - debian security audit
+  - command line security
+  - package vulnerability scan
+  - unsupported package list
+  - third-party package check
+  - security status report
+  - ubuntu system security
 features:
-- Display the number of unsupported packages.
-- List packages no longer available for download.
-- Identify third-party packages installed on the system.
-- Provide a summary of security updates available.
-- Check package security support status.
+  - Display the number of unsupported packages.
+  - List packages no longer available for download.
+  - Identify third-party packages installed on the system.
+  - Provide a summary of security updates available.
+  - Check package security support status.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

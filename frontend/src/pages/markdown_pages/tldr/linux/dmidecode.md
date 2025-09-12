@@ -1,27 +1,27 @@
 ---
 title: "DMI Decode - Display System Hardware Info | Free DevTools"
 name: dmidecode
-path: /freedevtools/tldr/unknown/dmidecode
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dmidecode/"
+path: /freedevtools/tldr/linux/dmidecode
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dmidecode/"
 description: "Display system hardware information with DMI Decode. Retrieve BIOS version, serial number, and memory details. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- DMI decode information
-- SMBIOS table contents
-- hardware information retrieval
-- BIOS version retrieval
-- system serial number
-- memory details display
-- system information decoder
-- linux system hardware
-- dmidecode command line
-- hardware specification information
+  - DMI decode information
+  - SMBIOS table contents
+  - hardware information retrieval
+  - BIOS version retrieval
+  - system serial number
+  - memory details display
+  - system information decoder
+  - linux system hardware
+  - dmidecode command line
+  - hardware specification information
 features:
-- Display the complete DMI table contents.
-- Retrieve specific BIOS information like version.
-- Extract the system's serial number.
-- Show CPU information including manufacturer and model.
-- Display detailed memory module specifications.
+  - Display the complete DMI table contents.
+  - Retrieve specific BIOS information like version.
+  - Extract the system's serial number.
+  - Show CPU information including manufacturer and model.
+  - Display detailed memory module specifications.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Convert Logical Volumes - Manage LVM Storage | Free DevTools"
 name: lvconvert
-path: /freedevtools/tldr/unknown/lvconvert
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lvconvert/"
+path: /freedevtools/tldr/linux/lvconvert
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lvconvert/"
 description: "Manage LVM storage with lvconvert. Convert logical volume types, repair RAID arrays and merge snapshots. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- LVM volume convert
-- logical volume manager
-- linux lvconvert command
-- raid volume repair
-- lvm snapshot merge
-- thin provisioning lvm
-- lvm storage management
-- volume group control
-- convert raid1 volume
-- linux block device
+  - LVM volume convert
+  - logical volume manager
+  - linux lvconvert command
+  - raid volume repair
+  - lvm snapshot merge
+  - thin provisioning lvm
+  - lvm storage management
+  - volume group control
+  - convert raid1 volume
+  - linux block device
 features:
-- Convert logical volumes to RAID
-- Merge LVM snapshots
-- Repair degraded RAID arrays
-- Convert to thin-provisioned volumes
-- Modify logical volume types
+  - Convert logical volumes to RAID
+  - Merge LVM snapshots
+  - Repair degraded RAID arrays
+  - Convert to thin-provisioned volumes
+  - Modify logical volume types
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

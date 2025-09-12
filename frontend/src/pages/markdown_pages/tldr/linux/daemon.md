@@ -1,27 +1,27 @@
 ---
 title: "Control Daemon Processes - Manage Background Tasks | Free DevTools"
 name: daemon
-path: /freedevtools/tldr/unknown/daemon
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/daemon/"
+path: /freedevtools/tldr/linux/daemon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/daemon/"
 description: "Control daemon processes easily with the Daemon command. Manage background tasks, restart crashed processes and log output effectively. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- daemon process control
-- background process manager
-- linux daemon command
-- macos daemon process
-- respawn daemon process
-- daemon process logging
-- daemon process restart
-- process management command
-- systemd daemon alternative
-- daemon process killer
+  - daemon process control
+  - background process manager
+  - linux daemon command
+  - macos daemon process
+  - respawn daemon process
+  - daemon process logging
+  - daemon process restart
+  - process management command
+  - systemd daemon alternative
+  - daemon process killer
 features:
-- Run commands as background daemons
-- Automatically restart crashed daemons
-- Log daemon output to specific files
-- Stop running daemons gracefully
-- List all active daemon processes
+  - Run commands as background daemons
+  - Automatically restart crashed daemons
+  - Log daemon output to specific files
+  - Stop running daemons gracefully
+  - List all active daemon processes
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

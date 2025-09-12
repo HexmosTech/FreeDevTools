@@ -1,27 +1,27 @@
 ---
 title: "Create Virtual Machine - QEMU/KVM VM Manager | Free DevTools"
 name: qm-create
-path: /freedevtools/tldr/unknown/qm-create
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-create/"
+path: /freedevtools/tldr/linux/qm-create
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-create/"
 description: "Create virtual machines instantly with QEMU/KVM Virtual Machine Manager. Restore VMs, allocate resources, and configure OS types with this free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- qemu kvm create virtual machine
-- virtual machine manager command
-- proxmox vm creator
-- kvm machine configuration
-- qemu guest os setup
-- vm disk image management
-- linux vm creation
-- command line vm tool
-- virtual environment builder
-- qemu vm restore
+  - qemu kvm create virtual machine
+  - virtual machine manager command
+  - proxmox vm creator
+  - kvm machine configuration
+  - qemu guest os setup
+  - vm disk image management
+  - linux vm creation
+  - command line vm tool
+  - virtual environment builder
+  - qemu vm restore
 features:
-- Create new QEMU/KVM virtual machines
-- Restore virtual machines from archives
-- Allocate memory and CPU cores to VMs
-- Configure the operating system type for VMs
-- Attach ISO install media to virtual machines
+  - Create new QEMU/KVM virtual machines
+  - Restore virtual machines from archives
+  - Allocate memory and CPU cores to VMs
+  - Configure the operating system type for VMs
+  - Attach ISO install media to virtual machines
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

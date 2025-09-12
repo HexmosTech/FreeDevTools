@@ -1,3 +1,31 @@
+---
+title: "Show Proxmox VM Command - Display VM Startup Command | Free DevTools"
+name: qm-showcmd
+path: /freedevtools/tldr/linux/qm-showcmd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-showcmd/"
+description: "Display Proxmox VM startup commands with qm showcmd.  Quickly view the command-line used to start a virtual machine. Free online tool, no registration required."
+category: linux
+keywords:
+  - Proxmox command line
+  - qm showcmd command
+  - virtual machine command
+  - Proxmox VM startup
+  - showcmd Proxmox
+  - Linux VM command
+  - virtual machine debug
+  - Proxmox command reference
+  - qm command options
+  - virtual machine information
+features:
+  - Displays the command-line used to start a virtual machine.
+  - Supports specifying a specific virtual machine ID.
+  - Provides a human-readable output using the --pretty option.
+  - Allows fetching configuration from a specific snapshot.
+  - Offers valuable debugging information for Proxmox virtual machines.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # qm showcmd
 
 > Show command-line which is used to start the VM (debug info).

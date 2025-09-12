@@ -1,27 +1,27 @@
 ---
 title: "List Logged In Users - Find Login Info | Free DevTools"
 name: lastb
-path: /freedevtools/tldr/unknown/lastb
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lastb/"
+path: /freedevtools/tldr/linux/lastb
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lastb/"
 description: "Find last logged in users with lastb. Analyze user login history and identify potential security breaches using this command. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- last logged in users
-- linux login history
-- user login analysis
-- lastb command
-- linux user tracking
-- login session tracking
-- user activity monitoring
-- security audit logs
-- system login information
-- failed login attempts
+  - last logged in users
+  - linux login history
+  - user login analysis
+  - lastb command
+  - linux user tracking
+  - login session tracking
+  - user activity monitoring
+  - security audit logs
+  - system login information
+  - failed login attempts
 features:
-- List the last logged in users
-- Filter login history by date and time
-- Display IP addresses or hostnames
-- Identify failed login attempts
-- Analyze user login patterns
+  - List the last logged in users
+  - Filter login history by date and time
+  - Display IP addresses or hostnames
+  - Identify failed login attempts
+  - Analyze user login patterns
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

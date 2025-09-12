@@ -1,3 +1,31 @@
+---
+title: "Control Network Traffic with tc | Free DevTools"
+name: tc
+path: /freedevtools/tldr/linux/tc
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tc/"
+description: "Control and manipulate network traffic with the tc command.  Manage network delay, bandwidth, and packet loss. Free online tool, no registration required."
+category: linux
+keywords:
+  - network traffic control
+  - linux tc command
+  - network shaping tc
+  - tc qdisc
+  - bandwidth control tc
+  - packet loss simulation tc
+  - network delay simulation tc
+  - linux network management
+  - command line network tool
+  - tc netem
+features:
+  - Add constant or variable network delay to outbound packets.
+  - Simulate packet corruption, loss, and duplication.
+  - Limit bandwidth, burst rate, and maximum latency.
+  - Display active traffic control policies.
+  - Delete all traffic control rules.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # tc
 
 > Show/manipulate traffic control settings.

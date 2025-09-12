@@ -1,27 +1,27 @@
 ---
 title: "Pokemon Sprites - Display Terminal Pokemon Art | Free DevTools"
 name: pokego
-path: /freedevtools/tldr/unknown/pokego
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pokego/"
+path: /freedevtools/tldr/linux/pokego
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pokego/"
 description: "Display Pokemon sprites instantly with Pokego. Generate colored Pokemon art in your terminal using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- terminal pokemon sprites
-- command line pokemon art
-- pokego sprite generator
-- pokemon terminal art generator
-- cli pokemon display
-- pokemon art linux
-- pokemon art macos
-- pokemon art command line
-- pokemon color scripts
-- terminal sprite generator
+  - terminal pokemon sprites
+  - command line pokemon art
+  - pokego sprite generator
+  - pokemon terminal art generator
+  - cli pokemon display
+  - pokemon art linux
+  - pokemon art macos
+  - pokemon art command line
+  - pokemon color scripts
+  - terminal sprite generator
 features:
-- Display specific Pokemon by name
-- Render shiny versions of Pokemon
-- Show alternative forms of Pokemon (e.g., mega evolutions)
-- Generate random Pokemon sprites from specific generations
-- Suppress the display of Pokemon names
+  - Display specific Pokemon by name
+  - Render shiny versions of Pokemon
+  - Show alternative forms of Pokemon (e.g., mega evolutions)
+  - Generate random Pokemon sprites from specific generations
+  - Suppress the display of Pokemon names
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Wine Executable Runner - Run Windows Apps on Linux | Free DevTools"
+name: wine
+path: /freedevtools/tldr/linux/wine
+canonical: "https://hexmos.com/freedevtools/tldr/linux/wine/"
+description: "Run Windows executables seamlessly with Wine. Execute .exe files, install MSI packages, and utilize common Windows applications directly on Linux systems. Free online tool, no registration required."
+category: linux
+keywords:
+  - wine linux
+  - windows executable runner linux
+  - run windows apps linux
+  - wine msi installer
+  - wine command line
+  - execute exe linux
+  - wine notepad
+  - wine regedit
+  - wine explorer
+  - wine applications
+features:
+  - Run Windows applications on Linux systems.
+  - Execute .exe files directly.
+  - Install and uninstall MSI packages.
+  - Access common Windows utilities like Notepad and Registry Editor.
+  - Manage Windows processes from the command line.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # wine
 
 > Run Windows executables on Unix-based systems.

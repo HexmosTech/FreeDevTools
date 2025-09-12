@@ -1,3 +1,31 @@
+---
+title: "Pluma Text Editor - Edit Files in MATE | Free DevTools"
+name: pluma
+path: /freedevtools/tldr/linux/pluma
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pluma/"
+description: "Edit files efficiently with Pluma text editor.  Open, edit, and save files with various encoding options. Free online tool, no registration required."
+category: linux
+keywords:
+  - text editor linux
+  - pluma editor
+  - mate text editor
+  - linux text editing
+  - file editor command line
+  - pluma encoding options
+  - open file pluma
+  - pluma line number
+  - code editor mate
+  - command line text editor
+features:
+  - Open and edit text files.
+  - Supports various character encodings.
+  - Allows opening multiple files simultaneously.
+  - Enables navigating to specific line numbers.
+  - Provides a simple and user-friendly interface within the MATE desktop environment.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pluma
 
 > Edit files in MATE desktop environment.

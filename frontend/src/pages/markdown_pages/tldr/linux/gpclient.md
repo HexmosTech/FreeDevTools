@@ -1,3 +1,31 @@
+---
+title: "GlobalProtect VPN Client - Connect to VPN with gpclient | Free DevTools"
+name: gpclient
+path: /freedevtools/tldr/linux/gpclient
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gpclient/"
+description: "Connect to GlobalProtect VPNs easily with the gpclient command-line tool. Manage your VPN connections, troubleshoot issues, and optimize your connection. Free online tool, no registration required."
+category: linux
+keywords:
+  - globalprotect vpn client
+  - gpclient linux
+  - openconnect vpn
+  - linux vpn connection
+  - globalprotect command line
+  - vpn connection manager
+  - gpclient disconnect
+  - gpclient connect
+  - globalprotect troubleshooting
+  - openconnect configuration
+features:
+  - Connect to GlobalProtect VPN servers using a portal URL.
+  - Disconnect from currently active VPN sessions.
+  - Launch a graphical user interface for managing VPN connections.
+  - Bypass legacy OpenSSL renegotiation errors.
+  - Ignore TLS errors for problematic connections.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # gpclient
 
 > Connect to a GlobalProtect VPN on Linux via OpenConnect.

@@ -1,27 +1,27 @@
 ---
 title: "Configure ldconfig - Manage Shared Library Dependencies | Free DevTools"
 name: ldconfig
-path: /freedevtools/tldr/unknown/ldconfig
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ldconfig/"
+path: /freedevtools/tldr/linux/ldconfig
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ldconfig/"
 description: "Manage shared library dependencies with ldconfig. Update symlinks and cache for efficient library linking. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- shared library configuration
-- ldconfig update cache
-- linux shared library manager
-- configure ldconfig
-- ldconfig symlink
-- ldconfig library path
-- linux library dependency
-- ld library cache
-- ldconfig command
-- dynamic linker configuration
+  - shared library configuration
+  - ldconfig update cache
+  - linux shared library manager
+  - configure ldconfig
+  - ldconfig symlink
+  - ldconfig library path
+  - linux library dependency
+  - ld library cache
+  - ldconfig command
+  - dynamic linker configuration
 features:
-- Update shared library symlinks
-- Rebuild the library cache
-- Configure library paths
-- Print libraries from the cache
-- Check for library presence
+  - Update shared library symlinks
+  - Rebuild the library cache
+  - Configure library paths
+  - Print libraries from the cache
+  - Check for library presence
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

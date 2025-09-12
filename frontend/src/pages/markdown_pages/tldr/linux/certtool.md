@@ -1,3 +1,31 @@
+---
+title: "Generate Certificates with certtool - Secure X.509 Management | Free DevTools"
+name: certtool
+path: /freedevtools/tldr/linux/certtool
+canonical: "https://hexmos.com/freedevtools/tldr/linux/certtool/"
+description: "Generate X.509 certificates with certtool, a powerful command-line tool for managing keys and PKI structures.  Manage your digital identities easily and securely. Free online tool, no registration required."
+category: linux
+keywords:
+  - x509 certificate generator
+  - gnutls certificate tool
+  - pki certificate management
+  - ssl certificate creation
+  - self-signed certificate generation
+  - certificate signing request generation
+  - private key generation
+  - certificate verification tool
+  - linux certificate tool
+  - openssl certificate alternative
+features:
+  - Generate private keys for secure communication.
+  - Create self-signed certificates for development and testing.
+  - Generate Certificate Signing Requests (CSRs) for certificate authorities.
+  - Issue and manage Certificate Authority (CA) certificates.
+  - Verify certificates against trusted Certificate Authorities.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # certtool
 
 > Generate and manage X.509 certificates, keys, and PKI structures using GnuTLS.

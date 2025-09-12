@@ -1,27 +1,27 @@
 ---
 title: "Control Processes - Kill Processes with Command | Free DevTools"
 name: kill
-path: /freedevtools/tldr/unknown/kill
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kill/"
+path: /freedevtools/tldr/linux/kill
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kill/"
 description: "Control processes instantly with the Kill command. Send signals to terminate, interrupt, or pause processes on your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- process termination
-- terminate process
-- kill command
-- signal process
-- linux kill command
-- macos kill command
-- process management
-- sigterm signal
-- sighup signal
-- sigkill signal
+  - process termination
+  - terminate process
+  - kill command
+  - signal process
+  - linux kill command
+  - macos kill command
+  - process management
+  - sigterm signal
+  - sighup signal
+  - sigkill signal
 features:
-- Terminate processes by process ID
-- List available signal names and values
-- Terminate background jobs
-- Send custom signals to processes
-- Pause and resume processes with signals
+  - Terminate processes by process ID
+  - List available signal names and values
+  - Terminate background jobs
+  - Send custom signals to processes
+  - Pause and resume processes with signals
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

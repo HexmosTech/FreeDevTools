@@ -1,27 +1,27 @@
 ---
 title: "Edit Text Files - Kwrite Text Editor | Free DevTools"
 name: kwrite
-path: /freedevtools/tldr/unknown/kwrite
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kwrite/"
+path: /freedevtools/tldr/linux/kwrite
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kwrite/"
 description: "Edit text files easily with Kwrite, the KDE text editor. Open, modify, and save text files with custom encoding. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- kwrite text editor
-- KDE text editor
-- text file editor
-- edit text files
-- open text files
-- modify text files
-- text encoding
-- command line editor
-- linux text editor
-- KDE desktop environment
+  - kwrite text editor
+  - KDE text editor
+  - text file editor
+  - edit text files
+  - open text files
+  - modify text files
+  - text encoding
+  - command line editor
+  - linux text editor
+  - KDE desktop environment
 features:
-- Open and edit text files from the command line
-- Open multiple text files simultaneously
-- Specify custom encoding for text files
-- Navigate to specific lines and columns within a text file
-- Integrate with the KDE desktop environment
+  - Open and edit text files from the command line
+  - Open multiple text files simultaneously
+  - Specify custom encoding for text files
+  - Navigate to specific lines and columns within a text file
+  - Integrate with the KDE desktop environment
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

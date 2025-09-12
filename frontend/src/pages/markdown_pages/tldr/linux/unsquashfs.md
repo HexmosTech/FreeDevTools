@@ -1,3 +1,31 @@
+---
+title: "Unsquashfs - Extract Squashfs Filesystems | Free DevTools"
+name: unsquashfs
+path: /freedevtools/tldr/linux/unsquashfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/unsquashfs/"
+description: "Extract Squashfs filesystems with unsquashfs.  List and inspect files within Squashfs archives without extraction. Free online tool, no registration required."
+category: linux
+keywords:
+  - squashfs extraction
+  - squashfs command
+  - squashfs listing
+  - linux squashfs
+  - unsquashfs linux
+  - extract squashfs files
+  - list squashfs files
+  - inspect squashfs
+  - filesystem extraction
+  - command line squashfs
+features:
+  - Extract Squashfs filesystems to a specified directory.
+  - List files within a Squashfs filesystem without extraction.
+  - Display detailed file information during extraction.
+  - Support for various extraction options and parameters.
+  - Efficiently handle large Squashfs archives.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # unsquashfs
 
 > Uncompress, extract and list files in squashfs filesystems.

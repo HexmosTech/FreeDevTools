@@ -1,27 +1,27 @@
 ---
 title: "Manage VM Guest Agent - Control Virtual Machines | Free DevTools"
 name: qm-guest
-path: /freedevtools/tldr/unknown/qm-guest
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-guest/"
+path: /freedevtools/tldr/linux/qm-guest
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-guest/"
 description: "Control virtual machine guest agent with qm-guest. Execute commands, manage passwords, and freeze filesystems. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- vm guest agent control
-- qemu guest agent management
-- virtual machine command execution
-- proxmox vm control
-- qm guest password reset
-- vm filesystem freeze
-- guest agent command line
-- virtual machine status check
-- qm command exec
-- proxmox qm guest agent
+  - vm guest agent control
+  - qemu guest agent management
+  - virtual machine command execution
+  - proxmox vm control
+  - qm guest password reset
+  - vm filesystem freeze
+  - guest agent command line
+  - virtual machine status check
+  - qm command exec
+  - proxmox qm guest agent
 features:
-- Execute commands within a virtual machine via the guest agent
-- Manage and reset passwords for users within a virtual machine
-- Control and monitor the filesystem state using fsfreeze
-- Retrieve filesystem information from the guest operating system
-- Check the status of a specific process within the virtual machine
+  - Execute commands within a virtual machine via the guest agent
+  - Manage and reset passwords for users within a virtual machine
+  - Control and monitor the filesystem state using fsfreeze
+  - Retrieve filesystem information from the guest operating system
+  - Check the status of a specific process within the virtual machine
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

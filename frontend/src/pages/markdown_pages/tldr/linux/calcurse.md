@@ -1,3 +1,31 @@
+---
+title: "Manage Calendar - Calcurse Command-line Tool | Free DevTools"
+name: calcurse
+path: /freedevtools/tldr/linux/calcurse
+canonical: "https://hexmos.com/freedevtools/tldr/linux/calcurse/"
+description: "Manage your calendar appointments efficiently with the Calcurse command-line tool.  View, add, and edit events with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - calendar command-line
+  - command-line calendar
+  - text-based calendar
+  - schedule command-line
+  - calcurse appointments
+  - calcurse events
+  - terminal calendar
+  - linux calendar tool
+  - cli calendar manager
+  - caldav calendar
+features:
+  - View appointments and events.
+  - Add and edit calendar entries.
+  - Manage appointments interactively.
+  - Synchronize with CalDAV servers.
+  - Delete and import calendar items.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # calcurse
 
 > A text-based calendar and scheduling application for the command-line.

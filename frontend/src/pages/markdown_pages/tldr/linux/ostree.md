@@ -1,27 +1,27 @@
 ---
 title: "OSTree Control - Version Files Like Git | Free DevTools"
 name: ostree
-path: /freedevtools/tldr/unknown/ostree
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ostree/"
+path: /freedevtools/tldr/linux/ostree
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ostree/"
 description: "Control versioned files with OSTree, a Git-like tool for OS root filesystems. Manage snapshots and track changes efficiently. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- OSTree version control
-- binary file management
-- OS root filesystem versioning
-- immutable OS images
-- commit snapshots
-- branch management
-- git-like versioning
-- Fedora Silverblue
-- Fedora IoT
-- Fedora CoreOS
+  - OSTree version control
+  - binary file management
+  - OS root filesystem versioning
+  - immutable OS images
+  - commit snapshots
+  - branch management
+  - git-like versioning
+  - Fedora Silverblue
+  - Fedora IoT
+  - Fedora CoreOS
 features:
-- Initialize an OSTree repository.
-- Create commit snapshots of files.
-- Display files within a specific commit.
-- Show metadata associated with a commit.
-- List commit history for a branch.
+  - Initialize an OSTree repository.
+  - Create commit snapshots of files.
+  - Display files within a specific commit.
+  - Show metadata associated with a commit.
+  - List commit history for a branch.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

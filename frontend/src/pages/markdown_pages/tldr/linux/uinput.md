@@ -1,3 +1,31 @@
+---
+title: "Uinput - Control Input Events | Free DevTools"
+name: uinput
+path: /freedevtools/tldr/linux/uinput
+canonical: "https://hexmos.com/freedevtools/tldr/linux/uinput/"
+description: "Control input events with uinput, a powerful command-line tool for Linux.  Create and manage virtual input devices, merge YAML descriptions, and intercept events. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux input events
+  - uinput command
+  - virtual keyboard linux
+  - linux device creation
+  - yaml device configuration
+  - input event manipulation
+  - linux system control
+  - uinput yaml merge
+  - virtual input device
+  - linux input driver
+features:
+  - Create virtual input devices.
+  - Intercept and write input events.
+  - Merge YAML device descriptions.
+  - Merge device descriptions from existing nodes.
+  - Control keyboard input virtually.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # uinput
 
 > Intercept and write input events to a virtual keyboard device using /dev/uinput.

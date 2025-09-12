@@ -1,3 +1,31 @@
+---
+title: "Manage Fingerprints - fprintd Control | Free DevTools"
+name: fprintd
+path: /freedevtools/tldr/linux/fprintd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd/"
+description: "Manage fingerprints with fprintd, a powerful command-line tool for fingerprint authentication.  Enroll, verify, and delete fingerprints easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - fingerprint management
+  - fprintd commands
+  - fingerprint authentication
+  - linux fingerprint
+  - fingerprint enrollment
+  - fingerprint verification
+  - fingerprint deletion
+  - command line fingerprint
+  - fprintd linux
+  - secure fingerprint
+features:
+  - Enroll new fingerprints into the database.
+  - List currently enrolled fingerprints.
+  - Verify fingerprints against the database.
+  - Delete fingerprints from the database.
+  - Manage fingerprint authentication securely.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fprintd
 
 > Fingerprint management daemon.

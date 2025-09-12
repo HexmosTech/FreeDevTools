@@ -1,27 +1,27 @@
 ---
 title: "Build KDE Components - Source Compilation | Free DevTools"
 name: kdesrc-build
-path: /freedevtools/tldr/unknown/kdesrc-build
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kdesrc-build/"
+path: /freedevtools/tldr/linux/kdesrc-build
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kdesrc-build/"
 description: "Build KDE components with kdesrc-build. Easily compile KDE applications and dependencies from source code repositories using command-line options. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- KDE source build
-- KDE component compilation
-- KDE application build
-- kdesrc-build command
-- KDE development
-- KDE application compilation
-- Qt source build
-- Linux KDE build
-- KDE dependency build
-- KDE development tools
+  - KDE source build
+  - KDE component compilation
+  - KDE application build
+  - kdesrc-build command
+  - KDE development
+  - KDE application compilation
+  - Qt source build
+  - Linux KDE build
+  - KDE dependency build
+  - KDE development tools
 features:
-- Compile KDE components from source code
-- Manage KDE dependencies during build
-- Refresh build directories before compilation
-- Resume compilation from a specific dependency
-- Run KDE components with specified executable name
+  - Compile KDE components from source code
+  - Manage KDE dependencies during build
+  - Refresh build directories before compilation
+  - Resume compilation from a specific dependency
+  - Run KDE components with specified executable name
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

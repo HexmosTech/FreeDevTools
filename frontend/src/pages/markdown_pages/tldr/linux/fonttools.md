@@ -1,27 +1,27 @@
 ---
 title: "Font Tools - Manipulate Fonts | Free DevTools"
 name: fonttools
-path: /freedevtools/tldr/unknown/fonttools
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/fonttools/"
+path: /freedevtools/tldr/linux/fonttools
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fonttools/"
 description: "Manipulate font files with Fonttools. Subset, convert, and inspect font formats. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- font manipulation
-- ttf subsetting
-- font conversion
-- font inspection
-- python font tools
-- font editor
-- font optimizer
-- glyph manipulation
-- font hinting
-- unicode subsetting
+  - font manipulation
+  - ttf subsetting
+  - font conversion
+  - font inspection
+  - python font tools
+  - font editor
+  - font optimizer
+  - glyph manipulation
+  - font hinting
+  - unicode subsetting
 features:
-- Subset font files by Unicode ranges
-- Inspect font file metadata
-- Convert between different font formats
-- Optimize font files for web usage
-- Display font help information
+  - Subset font files by Unicode ranges
+  - Inspect font file metadata
+  - Convert between different font formats
+  - Optimize font files for web usage
+  - Display font help information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

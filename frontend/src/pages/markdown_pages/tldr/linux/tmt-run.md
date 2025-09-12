@@ -1,3 +1,31 @@
+---
+title: "TMT Run - Execute Test Steps | Free DevTools"
+name: tmt-run
+path: /freedevtools/tldr/linux/tmt-run
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tmt-run/"
+description: "Execute test steps with TMT Run.  Easily manage and run test plans, discover tests, and adjust provision options. Free online tool, no registration required."
+category: linux
+keywords:
+  - tmt test execution
+  - tmt test runner
+  - tmt plan execution
+  - tmt test automation
+  - tmt command line
+  - tmt test discovery
+  - tmt provision options
+  - tmt interactive testing
+  - tmt dry run
+  - tmt report generation
+features:
+  - Execute all or selected test steps within a plan.
+  - Discover tests and preview execution without running them.
+  - Customize provision step options for flexible test environments.
+  - Run specific plans and tests using name filters for targeted execution.
+  - Generate and open interactive reports to visualize test results.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # tmt run
 
 > Execute tmt test steps. By default, all steps are run.

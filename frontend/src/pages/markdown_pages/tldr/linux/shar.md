@@ -1,27 +1,27 @@
 ---
 title: "Create Shell Archive - Package Files | Free DevTools"
 name: shar
-path: /freedevtools/tldr/unknown/shar
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/shar/"
+path: /freedevtools/tldr/linux/shar
+canonical: "https://hexmos.com/freedevtools/tldr/linux/shar/"
 description: "Create shell archive with shar for easy file packaging. Compress archives and handle binary/text files efficiently. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- shell archive creation
-- file packaging
-- shell script archive
-- shar archive utility
-- archive compression
-- uuencode files
-- text file archiving
-- binary file archiving
-- shell archive extraction
-- shar utils
+  - shell archive creation
+  - file packaging
+  - shell script archive
+  - shar archive utility
+  - archive compression
+  - uuencode files
+  - text file archiving
+  - binary file archiving
+  - shell archive extraction
+  - shar utils
 features:
-- Create self-extracting shell archives
-- Compress files within the archive using specified compressors
-- Treat all files as binary using uuencode
-- Treat all files as text and disable uuencode
-- Include a name and cut mark in the archive header
+  - Create self-extracting shell archives
+  - Compress files within the archive using specified compressors
+  - Treat all files as binary using uuencode
+  - Treat all files as text and disable uuencode
+  - Include a name and cut mark in the archive header
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

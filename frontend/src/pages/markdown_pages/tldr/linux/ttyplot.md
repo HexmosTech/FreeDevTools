@@ -1,27 +1,27 @@
 ---
 title: "Plot Command-Line Data - Visualize Stdin with Ttyplot | Free DevTools"
 name: ttyplot
-path: /freedevtools/tldr/unknown/ttyplot
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ttyplot/"
+path: /freedevtools/tldr/linux/ttyplot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ttyplot/"
 description: "Visualize command-line data with Ttyplot, a real-time plotting utility.  Analyze streaming data from stdin and create dynamic charts. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- command line data visualization
-- real time plotter
-- stdin data plotting
-- ttyplot command line
-- command line graphing
-- terminal data display
-- dynamic chart generator
-- data stream analyzer
-- command line monitoring
-- terminal plotting tool
+  - command line data visualization
+  - real time plotter
+  - stdin data plotting
+  - ttyplot command line
+  - command line graphing
+  - terminal data display
+  - dynamic chart generator
+  - data stream analyzer
+  - command line monitoring
+  - terminal plotting tool
 features:
-- Plot data streamed from standard input in real-time.
-- Customize plot titles and units for better readability.
-- Visualize data from various command-line tools like ping.
-- Generate dynamic plots based on continuously changing values.
-- Monitor and analyze data directly from the command line.
+  - Plot data streamed from standard input in real-time.
+  - Customize plot titles and units for better readability.
+  - Visualize data from various command-line tools like ping.
+  - Generate dynamic plots based on continuously changing values.
+  - Monitor and analyze data directly from the command line.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

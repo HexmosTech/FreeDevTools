@@ -1,27 +1,27 @@
 ---
 title: "Debian Package Builder - Create Packages from Source | Free DevTools"
 name: debuild
-path: /freedevtools/tldr/unknown/debuild
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/debuild/"
+path: /freedevtools/tldr/linux/debuild
+canonical: "https://hexmos.com/freedevtools/tldr/linux/debuild/"
 description: "Create Debian packages quickly with debuild. Build binary packages and control lintian checks for quality assurance. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- debian package builder
-- deb package creator
-- build debian package from source
-- debian package development
-- lintian package check
-- debian build tool
-- debian packaging command
-- linux package manager
-- debian package management
-- build deb binary package
+  - debian package builder
+  - deb package creator
+  - build debian package from source
+  - debian package development
+  - lintian package check
+  - debian build tool
+  - debian packaging command
+  - linux package manager
+  - debian package management
+  - build deb binary package
 features:
-- Build Debian packages from source code
-- Create binary Debian packages
-- Skip lintian checks during package building
-- Build packages in the current directory
-- Streamline Debian package creation process
+  - Build Debian packages from source code
+  - Create binary Debian packages
+  - Skip lintian checks during package building
+  - Build packages in the current directory
+  - Streamline Debian package creation process
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

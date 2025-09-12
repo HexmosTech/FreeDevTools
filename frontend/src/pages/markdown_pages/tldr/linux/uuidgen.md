@@ -1,27 +1,27 @@
 ---
 title: "UUID Generator - Generate Unique Identifiers | Free DevTools"
 name: uuidgen
-path: /freedevtools/tldr/unknown/uuidgen
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/uuidgen/"
+path: /freedevtools/tldr/linux/uuidgen
+canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidgen/"
 description: "Generate UUIDs with UUID Generator. Create random, time-based, or namespace-based unique identifiers quickly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- UUID generator
-- unique identifier generator
-- UUIDv4 generator
-- UUIDv1 generator
-- UUIDv5 generator
-- random UUID generator
-- time based UUID
-- sha1 UUID
-- command line UUID
-- uuidgen command
+  - UUID generator
+  - unique identifier generator
+  - UUIDv4 generator
+  - UUIDv1 generator
+  - UUIDv5 generator
+  - random UUID generator
+  - time based UUID
+  - sha1 UUID
+  - command line UUID
+  - uuidgen command
 features:
-- Generate random UUIDs (v4)
-- Generate time-based UUIDs (v1)
-- Generate namespace-based UUIDs (v5)
-- Generate UUIDs using SHA1 hashing
-- Generate UUIDs with custom namespaces and names
+  - Generate random UUIDs (v4)
+  - Generate time-based UUIDs (v1)
+  - Generate namespace-based UUIDs (v5)
+  - Generate UUIDs using SHA1 hashing
+  - Generate UUIDs with custom namespaces and names
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

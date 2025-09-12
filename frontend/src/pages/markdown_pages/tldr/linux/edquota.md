@@ -1,3 +1,31 @@
+---
+title: "Edit Quotas - Manage Disk Usage with edquota | Free DevTools"
+name: edquota
+path: /freedevtools/tldr/linux/edquota
+canonical: "https://hexmos.com/freedevtools/tldr/linux/edquota/"
+description: "Manage disk usage with edquota, a command-line tool for controlling user and group quotas. Edit quota limits and grace periods easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux disk quota management
+  - edquota command-line tool
+  - user quota modification
+  - group quota modification
+  - filesystem quota control
+  - linux system administration
+  - quota grace period editing
+  - edquota usage examples
+  - command-line quota tool
+  - unix disk quota
+features:
+  - Edit user disk quotas
+  - Edit group disk quotas
+  - Set quota limits for filesystems
+  - Modify default grace periods for exceeding quotas
+  - Duplicate quotas between users
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # edquota
 
 > Edit quotas for a user or group. By default it operates on all filesystems with quotas.

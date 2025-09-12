@@ -1,27 +1,27 @@
 ---
 title: "Search SlackBuilds - Install Packages with Sport | Free DevTools"
 name: sport
-path: /freedevtools/tldr/unknown/sport
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/sport/"
+path: /freedevtools/tldr/linux/sport
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sport/"
 description: "Search and install SlackBuilds with Sport. Quickly find, check, and install packages on your Slackware system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- slackbuild package manager
-- slackware package installer
-- sport slackbuild search
-- linux package manager
-- command line package install
-- slackbuild repository
-- package dependency resolution
-- slackware package updates
-- rsync package management
-- software installation linux
+  - slackbuild package manager
+  - slackware package installer
+  - sport slackbuild search
+  - linux package manager
+  - command line package install
+  - slackbuild repository
+  - package dependency resolution
+  - slackware package updates
+  - rsync package management
+  - software installation linux
 features:
-- Search for packages by name
-- Check if a package is installed
-- Display README and .info files
-- Install packages with dependency resolution
-- Update package lists from remote repository
+  - Search for packages by name
+  - Check if a package is installed
+  - Display README and .info files
+  - Install packages with dependency resolution
+  - Update package lists from remote repository
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

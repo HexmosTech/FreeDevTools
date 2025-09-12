@@ -1,27 +1,27 @@
 ---
 title: "Control OpenRC - Manage Services | Free DevTools"
 name: openrc
-path: /freedevtools/tldr/unknown/openrc
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/openrc/"
+path: /freedevtools/tldr/linux/openrc
+canonical: "https://hexmos.com/freedevtools/tldr/linux/openrc/"
 description: "Control services with OpenRC, the service manager. Manage runlevels and service dependencies on Linux systems with ease. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- openrc service manager
-- linux service control
-- systemd alternative
-- runlevel management
-- rc service commands
-- openrc configuration
-- service dependency management
-- init system tools
-- gentoo openrc
-- openrc scripting
+  - openrc service manager
+  - linux service control
+  - systemd alternative
+  - runlevel management
+  - rc service commands
+  - openrc configuration
+  - service dependency management
+  - init system tools
+  - gentoo openrc
+  - openrc scripting
 features:
-- Change the current runlevel
-- Start services during boot
-- Stop services during shutdown
-- Manage service dependencies
-- Control services without stopping existing ones
+  - Change the current runlevel
+  - Start services during boot
+  - Stop services during shutdown
+  - Manage service dependencies
+  - Control services without stopping existing ones
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

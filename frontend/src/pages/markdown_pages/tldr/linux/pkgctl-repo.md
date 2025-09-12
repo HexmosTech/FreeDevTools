@@ -1,27 +1,27 @@
 ---
 title: "Pkgctl Repo - Manage Git Repositories | Free DevTools"
 name: pkgctl-repo
-path: /freedevtools/tldr/unknown/pkgctl-repo
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pkgctl-repo/"
+path: /freedevtools/tldr/linux/pkgctl-repo
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-repo/"
 description: "Manage Arch Linux Git package repositories with Pkgctl Repo. Clone, create, switch versions, and open repository websites. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Arch Linux package repository management
-- pkgctl repo git management
-- GitLab package repository creation
-- Arch Linux package version control
-- pkgctl repo clone command
-- Linux git repository manager
-- Arch Linux package building
-- pkgctl repo web command
-- Git repository version switching
-- GitLab package repository API
+  - Arch Linux package repository management
+  - pkgctl repo git management
+  - GitLab package repository creation
+  - Arch Linux package version control
+  - pkgctl repo clone command
+  - Linux git repository manager
+  - Arch Linux package building
+  - pkgctl repo web command
+  - Git repository version switching
+  - GitLab package repository API
 features:
-- Clone Arch Linux package repositories
-- Create new GitLab package repositories
-- Switch package repositories to specific versions
-- Open package repository websites directly
-- Manage Git repositories for Arch Linux packages
+  - Clone Arch Linux package repositories
+  - Create new GitLab package repositories
+  - Switch package repositories to specific versions
+  - Open package repository websites directly
+  - Manage Git repositories for Arch Linux packages
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

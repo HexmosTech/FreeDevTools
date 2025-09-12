@@ -1,3 +1,31 @@
+---
+title: "xrandr - Control Screen Resolution | Free DevTools"
+name: xrandr
+path: /freedevtools/tldr/linux/xrandr
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xrandr/"
+description: "Control screen resolution and orientation with xrandr.  Manage multiple displays, set brightness, and configure output settings easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - screen resolution configuration
+  - xrandr command linux
+  - display management linux
+  - monitor configuration linux
+  - output settings xrandr
+  - xrandr resolution change
+  - linux display settings
+  - xrandr brightness control
+  - multiple monitor setup xrandr
+  - xrandr command examples
+features:
+  - Set screen resolution and refresh rate.
+  - Configure display orientation (landscape, portrait).
+  - Manage multiple display outputs (e.g., HDMI, DisplayPort).
+  - Enable and disable display outputs.
+  - Adjust display brightness levels.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xrandr
 
 > Set the size, orientation and/or reflection of the outputs for a screen.

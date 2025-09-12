@@ -1,27 +1,27 @@
 ---
 title: "Nmcli - Manage Network Configuration | Free DevTools"
 name: nmcli
-path: /freedevtools/tldr/unknown/nmcli
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/nmcli/"
+path: /freedevtools/tldr/linux/nmcli
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli/"
 description: "Manage network configuration with Nmcli, controlling network connections and devices through NetworkManager. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- network manager command line
-- network connection manager
-- nmcli network configuration
-- linux network control
-- wifi connection manager
-- network device control
-- nmcli connection profiles
-- command line network tool
-- network interface manager
-- network troubleshooting linux
+  - network manager command line
+  - network connection manager
+  - nmcli network configuration
+  - linux network control
+  - wifi connection manager
+  - network device control
+  - nmcli connection profiles
+  - command line network tool
+  - network interface manager
+  - network troubleshooting linux
 features:
-- Configure network connections via command line
-- Manage NetworkManager settings efficiently
-- Control network devices status and properties
-- Establish and manage Wi-Fi connections
-- Monitor NetworkManager activity and events
+  - Configure network connections via command line
+  - Manage NetworkManager settings efficiently
+  - Control network devices status and properties
+  - Establish and manage Wi-Fi connections
+  - Monitor NetworkManager activity and events
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

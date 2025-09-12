@@ -1,3 +1,31 @@
+---
+title: "RPM Package Manager - Manage Packages with rpm | Free DevTools"
+name: rpm
+path: /freedevtools/tldr/linux/rpm
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm/"
+description: "Manage Linux packages efficiently with the rpm Package Manager.  Install, upgrade, query, and verify packages with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - rpm package manager
+  - linux rpm commands
+  - rpm package installation
+  - rpm package query
+  - rpm package upgrade
+  - rpm package verification
+  - linux package management
+  - rpm command line
+  - rpm package list
+  - rpm file query
+features:
+  - Install and upgrade RPM packages.
+  - Query package information (version, files, etc.).
+  - Verify package integrity.
+  - List files owned by a package.
+  - Manage package scripts.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rpm
 
 > RPM Package Manager.

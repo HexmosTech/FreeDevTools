@@ -1,27 +1,27 @@
 ---
 title: "Create EROFS Filesystem - Format Image | Free DevTools"
 name: mkfs.erofs
-path: /freedevtools/tldr/unknown/mkfs.erofs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkfs.erofs/"
+path: /freedevtools/tldr/linux/mkfs.erofs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.erofs/"
 description: "Create EROFS filesystem with mkfs.erofs. Generate compressed images and control file ownership. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- erofs filesystem image
-- create erofs image
-- format erofs volume
-- compress erofs
-- erofs uuid specification
-- erofs root ownership
-- linux filesystem creation
-- filesystem image generator
-- mkfs erofs command
-- erofs archive tool
+  - erofs filesystem image
+  - create erofs image
+  - format erofs volume
+  - compress erofs
+  - erofs uuid specification
+  - erofs root ownership
+  - linux filesystem creation
+  - filesystem image generator
+  - mkfs erofs command
+  - erofs archive tool
 features:
-- Create an EROFS filesystem image from a directory
-- Specify a UUID for the generated EROFS image
-- Create a compressed EROFS filesystem image
-- Set all files in the EROFS image to be owned by root
-- Generate a read-only filesystem image
+  - Create an EROFS filesystem image from a directory
+  - Specify a UUID for the generated EROFS image
+  - Create a compressed EROFS filesystem image
+  - Set all files in the EROFS image to be owned by root
+  - Generate a read-only filesystem image
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

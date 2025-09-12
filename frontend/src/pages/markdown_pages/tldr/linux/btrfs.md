@@ -1,27 +1,27 @@
 ---
 title: "Create Btrfs Subvolumes - Manage Linux Filesystems | Free DevTools"
 name: btrfs
-path: /freedevtools/tldr/unknown/btrfs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/btrfs/"
+path: /freedevtools/tldr/linux/btrfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs/"
 description: "Create Btrfs subvolumes with Btrfs. Manage Linux filesystems efficiently using copy-on-write. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- btrfs subvolume creation
-- linux filesystem management
-- btrfs quota control
-- btrfs space usage
-- btrfs subvolume list
-- btrfs enable quota
-- btrfs show quota
-- cow filesystem linux
-- btrfs command line
-- linux btrfs tools
+  - btrfs subvolume creation
+  - linux filesystem management
+  - btrfs quota control
+  - btrfs space usage
+  - btrfs subvolume list
+  - btrfs enable quota
+  - btrfs show quota
+  - cow filesystem linux
+  - btrfs command line
+  - linux btrfs tools
 features:
-- Create btrfs subvolumes for data isolation.
-- List existing btrfs subvolumes on a mount point.
-- Display space usage information for a btrfs filesystem.
-- Enable quota for a specific btrfs subvolume.
-- Show quota group information for a btrfs subvolume.
+  - Create btrfs subvolumes for data isolation.
+  - List existing btrfs subvolumes on a mount point.
+  - Display space usage information for a btrfs filesystem.
+  - Enable quota for a specific btrfs subvolume.
+  - Show quota group information for a btrfs subvolume.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

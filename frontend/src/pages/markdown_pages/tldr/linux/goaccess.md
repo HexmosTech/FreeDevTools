@@ -1,27 +1,27 @@
 ---
 title: "Analyze Web Logs - GoAccess Analyzer | Free DevTools"
 name: goaccess
-path: /freedevtools/tldr/unknown/goaccess
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/goaccess/"
+path: /freedevtools/tldr/linux/goaccess
+canonical: "https://hexmos.com/freedevtools/tldr/linux/goaccess/"
 description: "Analyze web logs with GoAccess. Gain real-time insights and generate comprehensive reports from web server log files. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- web log analyzer
-- web log analysis
-- real-time web logs
-- access log analysis
-- apache log analyzer
-- nginx log analyzer
-- iis log analyzer
-- command line log analysis
-- log file analysis
-- server log monitoring
+  - web log analyzer
+  - web log analysis
+  - real-time web logs
+  - access log analysis
+  - apache log analyzer
+  - nginx log analyzer
+  - iis log analyzer
+  - command line log analysis
+  - log file analysis
+  - server log monitoring
 features:
-- Analyze web logs in real-time
-- Generate interactive HTML reports from log data
-- Support custom log formats
-- Analyze logs from standard input
-- Filter and process specific log data
+  - Analyze web logs in real-time
+  - Generate interactive HTML reports from log data
+  - Support custom log formats
+  - Analyze logs from standard input
+  - Filter and process specific log data
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

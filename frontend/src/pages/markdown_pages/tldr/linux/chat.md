@@ -1,27 +1,27 @@
 ---
 title: "Automate Chat - Control Serial Device Conversations | Free DevTools"
 name: chat
-path: /freedevtools/tldr/unknown/chat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/chat/"
+path: /freedevtools/tldr/linux/chat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/chat/"
 description: "Automate serial device conversations with Chat, a command-line tool for scripting interactions. Establish PPP connections and manage modems easily. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- serial communication automation
-- modem chat script execution
-- PPP connection setup
-- command-line chat interface
-- serial port communication
-- automate modem interactions
-- chat script debugger
-- linux chat command
-- serial device control
-- expect-send script interpreter
+  - serial communication automation
+  - modem chat script execution
+  - PPP connection setup
+  - command-line chat interface
+  - serial port communication
+  - automate modem interactions
+  - chat script debugger
+  - linux chat command
+  - serial device control
+  - expect-send script interpreter
 features:
-- Automate modem or serial device conversations.
-- Execute chat scripts from the command line or a file.
-- Set custom timeouts for expecting responses.
-- Log conversation details to syslog.
-- Include abort conditions for error handling.
+  - Automate modem or serial device conversations.
+  - Execute chat scripts from the command line or a file.
+  - Set custom timeouts for expecting responses.
+  - Log conversation details to syslog.
+  - Include abort conditions for error handling.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

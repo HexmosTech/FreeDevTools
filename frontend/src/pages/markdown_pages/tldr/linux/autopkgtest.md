@@ -1,3 +1,31 @@
+---
+title: "Run Debian Package Tests with autopkgtest | Free DevTools"
+name: autopkgtest
+path: /freedevtools/tldr/linux/autopkgtest
+canonical: "https://hexmos.com/freedevtools/tldr/linux/autopkgtest/"
+description: "Run tests on Debian packages with autopkgtest.  Automate testing, manage different test scenarios, and improve software quality. Free online tool, no registration required."
+category: linux
+keywords:
+  - Debian package testing
+  - autopkgtest commands
+  - Linux package testing
+  - automated package testing
+  - Debian package build
+  - autopkgtest tutorial
+  - run system tests
+  - test Debian packages
+  - chroot testing
+  - package test automation
+features:
+  - Build and test Debian packages directly on the system.
+  - Run specific tests by name.
+  - Test packages downloaded via apt-get.
+  - Utilize a chroot environment for isolated testing.
+  - Test existing packages without rebuilding.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # autopkgtest
 
 > Run tests on Debian packages.

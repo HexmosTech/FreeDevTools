@@ -1,3 +1,31 @@
+---
+title: "Run Programs as Background - xwinwrap Control | Free DevTools"
+name: xwinwrap
+path: /freedevtools/tldr/linux/xwinwrap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xwinwrap/"
+description: "Control background processes with xwinwrap.  Run videos or programs as desktop wallpaper, adjust opacity, and position on multiple monitors. Free online tool, no registration required."
+category: linux
+keywords:
+  - xwinwrap background process
+  - xwinwrap video player
+  - linux background application
+  - xwinwrap desktop wallpaper
+  - xwinwrap opacity control
+  - xwinwrap multi-monitor support
+  - command line backgrounder
+  - xwinwrap mpv integration
+  - run program as wallpaper
+  - linux xwinwrap tutorial
+features:
+  - Run video files as desktop background.
+  - Control program window position and size.
+  - Adjust the opacity of the background program.
+  - Supports multiple monitors.
+  - Integrates seamlessly with mpv video player.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xwinwrap
 
 > Run a player or a program as desktop background.

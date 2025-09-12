@@ -1,27 +1,27 @@
 ---
 title: "ALSA Mixer - Control Soundcard Audio Levels | Free DevTools"
 name: alsamixer
-path: /freedevtools/tldr/unknown/alsamixer
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/alsamixer/"
+path: /freedevtools/tldr/linux/alsamixer
+canonical: "https://hexmos.com/freedevtools/tldr/linux/alsamixer/"
 description: "Control soundcard audio levels easily with ALSA Mixer. Adjust volume, select devices and manage audio settings directly from the command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- ALSA mixer
-- soundcard mixer
-- audio level control
-- command line audio
-- ALSA sound settings
-- linux audio mixer
-- terminal volume control
-- soundcard volume adjust
-- alsamixer commands
-- audio device selection
+  - ALSA mixer
+  - soundcard mixer
+  - audio level control
+  - command line audio
+  - ALSA sound settings
+  - linux audio mixer
+  - terminal volume control
+  - soundcard volume adjust
+  - alsamixer commands
+  - audio device selection
 features:
-- Control audio levels for ALSA soundcards
-- Select specific soundcards to control
-- Choose mixer devices to manage
-- Increase and decrease volume levels
-- Navigate the interface using keyboard shortcuts
+  - Control audio levels for ALSA soundcards
+  - Select specific soundcards to control
+  - Choose mixer devices to manage
+  - Increase and decrease volume levels
+  - Navigate the interface using keyboard shortcuts
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

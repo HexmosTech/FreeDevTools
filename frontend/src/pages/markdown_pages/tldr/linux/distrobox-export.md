@@ -1,3 +1,31 @@
+---
+title: "Distrobox Export - Export Apps & Binaries | Free DevTools"
+name: distrobox-export
+path: /freedevtools/tldr/linux/distrobox-export
+canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-export/"
+description: "Export applications and binaries from Distrobox containers with ease. Manage exported services and delete exports. Free online tool, no registration required."
+category: linux
+keywords:
+  - distrobox export command
+  - linux container export
+  - application export linux
+  - binary export linux
+  - distrobox app export
+  - export linux binaries
+  - container to host export
+  - distrobox service export
+  - manage distrobox exports
+  - delete distrobox exports
+features:
+  - Export applications from containers to the host system.
+  - Export binaries from containers to specified host paths.
+  - Export services from containers to the host system.
+  - Unexport or delete previously exported applications.
+  - Manage exported applications and binaries via command-line interface.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # distrobox-export
 
 > Export app/service/binary from container to host OS.

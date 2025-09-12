@@ -1,3 +1,31 @@
+---
+title: "i3-scrot Screenshot - Capture Screen on i3 | Free DevTools"
+name: i3-scrot
+path: /freedevtools/tldr/linux/i3-scrot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/i3-scrot/"
+description: "Capture screenshots with i3-scrot, a wrapper for scrot. Take full-screen, window, or selection screenshots and copy to clipboard. Free online tool, no registration required."
+category: linux
+keywords:
+  - i3 screenshot
+  - i3 window manager screenshot
+  - linux screenshot
+  - scrot wrapper
+  - i3-scrot command
+  - screenshot utility i3
+  - command-line screenshot
+  - i3 screenshot tool
+  - desktop screenshot i3
+  - full-screen screenshot i3
+features:
+  - Capture full-screen screenshots
+  - Capture screenshots of individual windows
+  - Capture screenshots of selected regions
+  - Copy screenshots to the clipboard
+  - Utilize a configurable save location via config file
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # i3-scrot
 
 > Wrapper script around the screenshot utility `scrot` for the i3 window manager.

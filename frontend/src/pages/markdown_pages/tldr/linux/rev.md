@@ -1,27 +1,27 @@
 ---
 title: "Reverse Text - Reverse Lines and Files | Free DevTools"
 name: rev
-path: /freedevtools/tldr/unknown/rev
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/rev/"
+path: /freedevtools/tldr/linux/rev
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rev/"
 description: "Reverse text strings with rev. Quickly reverse entire files or specific lines of text using this command-line tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Text Reversal
-- String Reversal
-- File Reversal
-- Line Reversal
-- Command Line Text Reversal
-- Unix rev
-- Linux rev
-- MacOS rev
-- Standard Input Reversal
-- Zero Terminated Reversal
+  - Text Reversal
+  - String Reversal
+  - File Reversal
+  - Line Reversal
+  - Command Line Text Reversal
+  - Unix rev
+  - Linux rev
+  - MacOS rev
+  - Standard Input Reversal
+  - Zero Terminated Reversal
 features:
-- Reverse individual lines of text from standard input
-- Reverse entire files from the command line
-- Utilize '\0' as a line separator for zero termination
-- Output reversed content to stdout
-- Display help and version information
+  - Reverse individual lines of text from standard input
+  - Reverse entire files from the command line
+  - Utilize '\0' as a line separator for zero termination
+  - Output reversed content to stdout
+  - Display help and version information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

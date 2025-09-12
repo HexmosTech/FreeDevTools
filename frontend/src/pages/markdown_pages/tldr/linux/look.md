@@ -1,27 +1,27 @@
 ---
 title: "Look - Display Sorted File Lines | Free DevTools"
 name: look
-path: /freedevtools/tldr/unknown/look
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/look/"
+path: /freedevtools/tldr/linux/look
+canonical: "https://hexmos.com/freedevtools/tldr/linux/look/"
 description: "Display sorted file lines with Look. Quickly find lines beginning with a specific prefix in a file. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- sorted file search
-- prefix search
-- command line look
-- linux look command
-- text search tool
-- file content filtering
-- sorted data lookup
-- pattern matching
-- string termination
-- dictionary search
+  - sorted file search
+  - prefix search
+  - command line look
+  - linux look command
+  - text search tool
+  - file content filtering
+  - sorted data lookup
+  - pattern matching
+  - string termination
+  - dictionary search
 features:
-- Search sorted files for lines beginning with a prefix
-- Perform case-insensitive searches
-- Ignore non-alphanumeric characters during search
-- Specify custom string termination characters
-- Search default dictionary files like `/usr/share/dict/words`
+  - Search sorted files for lines beginning with a prefix
+  - Perform case-insensitive searches
+  - Ignore non-alphanumeric characters during search
+  - Specify custom string termination characters
+  - Search default dictionary files like `/usr/share/dict/words`
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

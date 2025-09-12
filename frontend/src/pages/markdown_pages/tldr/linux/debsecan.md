@@ -1,27 +1,27 @@
 ---
 title: "Debsecan - List Debian Vulnerabilities | Free DevTools"
 name: debsecan
-path: /freedevtools/tldr/unknown/debsecan
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/debsecan/"
+path: /freedevtools/tldr/linux/debsecan
+canonical: "https://hexmos.com/freedevtools/tldr/linux/debsecan/"
 description: "List Debian vulnerabilities quickly with Debsecan. Identify security issues, find fixed vulnerabilities, and upgrade vulnerable packages. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- debian vulnerability scanner
-- debian security analyzer
-- debian security audit
-- linux vulnerability detection
-- apt vulnerability check
-- debsecan security report
-- debian package security
-- debian sid vulnerability
-- debian upgrade packages
-- debian security update
+  - debian vulnerability scanner
+  - debian security analyzer
+  - debian security audit
+  - linux vulnerability detection
+  - apt vulnerability check
+  - debsecan security report
+  - debian package security
+  - debian sid vulnerability
+  - debian upgrade packages
+  - debian security update
 features:
-- Scan for vulnerabilities in installed Debian packages.
-- Filter vulnerabilities by Debian release suite.
-- List only fixed vulnerabilities.
-- Generate package lists for upgrades.
-- Integrate with apt for package upgrades.
+  - Scan for vulnerabilities in installed Debian packages.
+  - Filter vulnerabilities by Debian release suite.
+  - List only fixed vulnerabilities.
+  - Generate package lists for upgrades.
+  - Integrate with apt for package upgrades.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

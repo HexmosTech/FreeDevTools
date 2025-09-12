@@ -1,27 +1,27 @@
 ---
 title: "Network Control - Manage Data with Ncat | Free DevTools"
 name: ncat
-path: /freedevtools/tldr/unknown/ncat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ncat/"
+path: /freedevtools/tldr/linux/ncat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ncat/"
 description: "Manage network data with Ncat. Read, write, redirect, and encrypt data across networks, replacing netcat functionality. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- network control
-- data transfer
-- port listener
-- network encryption
-- ncat command
-- socket communication
-- tcp connection
-- udp connection
-- network redirection
-- network debugging
+  - network control
+  - data transfer
+  - port listener
+  - network encryption
+  - ncat command
+  - socket communication
+  - tcp connection
+  - udp connection
+  - network redirection
+  - network debugging
 features:
-- Listen for incoming connections on a specified port
-- Transfer data between hosts over a network
-- Encrypt network traffic using SSL
-- Redirect input and output streams across a network
-- Check network connectivity to a remote host
+  - Listen for incoming connections on a specified port
+  - Transfer data between hosts over a network
+  - Encrypt network traffic using SSL
+  - Redirect input and output streams across a network
+  - Check network connectivity to a remote host
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

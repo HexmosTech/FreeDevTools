@@ -1,3 +1,31 @@
+---
+title: "SMTP Tester - Test Email Deliverability with swaks | Free DevTools"
+name: swaks
+path: /freedevtools/tldr/linux/swaks
+canonical: "https://hexmos.com/freedevtools/tldr/linux/swaks/"
+description: "Test email deliverability with swaks SMTP tester.  Send test emails, authenticate with various methods, and test spam/virus scanners. Free online tool, no registration required."
+category: linux
+keywords:
+  - smtp testing
+  - email deliverability testing
+  - swaks command
+  - smtp server testing
+  - email authentication testing
+  - spam test email
+  - virus scan test email
+  - smtp protocol test
+  - lmtp protocol test
+  - email transaction testing
+features:
+  - Send standard test emails with various SMTP options.
+  - Authenticate using different methods (e.g., CRAM-MD5).
+  - Test email attachments for virus scanning.
+  - Test email content for spam scanning.
+  - Use LMTP protocol via UNIX domain sockets.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # swaks
 
 > Swiss Army Knife SMTP, the all-purpose SMTP transaction tester.

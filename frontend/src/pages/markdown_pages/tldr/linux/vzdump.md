@@ -1,27 +1,27 @@
 ---
 title: "Vzdump - Backup Virtual Machines & Containers | Free DevTools"
 name: vzdump
-path: /freedevtools/tldr/unknown/vzdump
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/vzdump/"
+path: /freedevtools/tldr/linux/vzdump
+canonical: "https://hexmos.com/freedevtools/tldr/linux/vzdump/"
 description: "Backup virtual machines with Vzdump. Securely backup, restore, and manage Proxmox containers with this command-line utility. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- virtual machine backup
-- container backup
-- proxmox vzdump
-- vm backup vzdump
-- vzdump command
-- vzdump container backup
-- vzdump vm backup
-- vzdump exclude
-- vzdump snapshot
-- vzdump suspend
+  - virtual machine backup
+  - container backup
+  - proxmox vzdump
+  - vm backup vzdump
+  - vzdump command
+  - vzdump container backup
+  - vzdump vm backup
+  - vzdump exclude
+  - vzdump snapshot
+  - vzdump suspend
 features:
-- Backup virtual machines to a specified directory
-- Exclude specific VMs from the backup process
-- Utilize suspend mode for minimal downtime
-- Create backups in snapshot mode for zero downtime
-- Backup all guest systems with email notifications
+  - Backup virtual machines to a specified directory
+  - Exclude specific VMs from the backup process
+  - Utilize suspend mode for minimal downtime
+  - Create backups in snapshot mode for zero downtime
+  - Backup all guest systems with email notifications
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

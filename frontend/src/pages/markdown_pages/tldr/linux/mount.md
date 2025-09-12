@@ -1,3 +1,31 @@
+---
+title: "Mount Filesystem - Access Filesystems | Free DevTools"
+name: mount
+path: /freedevtools/tldr/linux/mount
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mount/"
+description: "Access filesystems instantly with the mount command. Manage devices, directories, and permissions with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - filesystem mount command
+  - mount linux
+  - mount device
+  - mount directory
+  - mount options
+  - filesystem access
+  - file system mounting
+  - bind mount
+  - mount permissions
+  - fstab mount
+features:
+  - Mount devices to directories.
+  - Create mount points automatically.
+  - Specify user and group access permissions.
+  - Mount various filesystem types (e.g., ISO9660).
+  - Manage mounts via `/etc/fstab`.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mount
 
 > Get access to an entire filesystem in one directory.

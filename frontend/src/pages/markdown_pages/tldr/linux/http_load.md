@@ -1,27 +1,27 @@
 ---
 title: "HTTP Load Test - Benchmark Web Server Throughput | Free DevTools"
 name: http_load
-path: /freedevtools/tldr/unknown/http_load
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/http_load/"
+path: /freedevtools/tldr/linux/http_load
+canonical: "https://hexmos.com/freedevtools/tldr/linux/http_load/"
 description: "Load test your web server with HTTP Load. Simulate concurrent requests and measure throughput. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- HTTP load testing
-- web server benchmarking
-- website performance test
-- HTTP throughput analysis
-- concurrent request simulation
-- website stress testing
-- Linux load test
-- MacOS load test
-- command-line benchmarking
-- HTTP response time
+  - HTTP load testing
+  - web server benchmarking
+  - website performance test
+  - HTTP throughput analysis
+  - concurrent request simulation
+  - website stress testing
+  - Linux load test
+  - MacOS load test
+  - command-line benchmarking
+  - HTTP response time
 features:
-- Simulate concurrent HTTP requests
-- Measure web server throughput
-- Perform website load testing
-- Analyze HTTP response times
-- Benchmark web server performance
+  - Simulate concurrent HTTP requests
+  - Measure web server throughput
+  - Perform website load testing
+  - Analyze HTTP response times
+  - Benchmark web server performance
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

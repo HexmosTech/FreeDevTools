@@ -1,3 +1,31 @@
+---
+title: "Speed Read Text - Increase Reading Speed with RSVP | Free DevTools"
+name: speedread
+path: /freedevtools/tldr/linux/speedread
+canonical: "https://hexmos.com/freedevtools/tldr/linux/speedread/"
+description: "Increase reading speed with Speed Read Text, a terminal-based RSVP reader.  Control your reading pace with adjustable WPM and multi-word display. Free online tool, no registration required."
+category: linux
+keywords:
+  - text speed reader
+  - RSVP reader
+  - terminal speed reading
+  - command line speed reader
+  - rapid serial visual presentation
+  - speed reading software
+  - text reading optimization
+  - wpm adjustment tool
+  - line resume reader
+  - multi-word display reader
+features:
+  - Read text files at adjustable words-per-minute (WPM) speeds.
+  - Resume reading from a specific line number.
+  - Display multiple words simultaneously for enhanced reading flow.
+  - Dynamically adjust reading speed by 10% increments during a session.
+  - Pause reading and display context lines for improved comprehension.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # speedread
 
 > A simple terminal-based open source Spritz-alike.

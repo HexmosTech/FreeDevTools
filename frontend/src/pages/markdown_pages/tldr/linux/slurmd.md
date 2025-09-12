@@ -1,27 +1,27 @@
 ---
 title: "Slurmd Control - Manage Slurm Compute Nodes | Free DevTools"
 name: slurmd
-path: /freedevtools/tldr/unknown/slurmd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/slurmd/"
+path: /freedevtools/tldr/linux/slurmd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmd/"
 description: "Control Slurm compute node tasks with Slurmd. Monitor, launch, and manage tasks on your Slurm cluster. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- slurm compute node management
-- slurm task monitoring
-- slurm job control
-- slurmd command line
-- linux slurm daemon
-- slurm cluster administration
-- slurm task launcher
-- slurm node controller
-- slurmd configuration
-- slurm resource manager
+  - slurm compute node management
+  - slurm task monitoring
+  - slurm job control
+  - slurmd command line
+  - linux slurm daemon
+  - slurm cluster administration
+  - slurm task launcher
+  - slurm node controller
+  - slurmd configuration
+  - slurm resource manager
 features:
-- Monitor tasks running on Slurm compute nodes
-- Accept and launch tasks on demand
-- Terminate running tasks upon request
-- Report node reboots for testing purposes
-- Configure Slurmd using specified configuration files
+  - Monitor tasks running on Slurm compute nodes
+  - Accept and launch tasks on demand
+  - Terminate running tasks upon request
+  - Report node reboots for testing purposes
+  - Configure Slurmd using specified configuration files
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

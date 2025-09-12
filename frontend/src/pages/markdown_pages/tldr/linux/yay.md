@@ -1,3 +1,31 @@
+---
+title: "Yay - Manage Arch Packages | Free DevTools"
+name: yay
+path: /freedevtools/tldr/linux/yay
+canonical: "https://hexmos.com/freedevtools/tldr/linux/yay/"
+description: "Manage Arch Linux packages efficiently with Yay.  Install, update, and remove packages from the AUR and repositories easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - Arch Linux package manager
+  - AUR package installer
+  - Linux package management
+  - Yay Arch Linux
+  - pacman alternative
+  - AUR package management
+  - Arch Linux AUR
+  - Linux command line tool
+  - yay install package
+  - yay remove package
+features:
+  - Install packages from the AUR and official repositories.
+  - Update all installed packages from the AUR and repositories.
+  - Remove packages and their dependencies.
+  - Search for packages using keywords.
+  - Clean pacman and yay caches.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # yay
 
 > Yet Another Yogurt: build and install packages from the Arch User Repository.

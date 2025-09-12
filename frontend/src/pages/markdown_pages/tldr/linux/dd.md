@@ -1,27 +1,27 @@
 ---
 title: "Convert Files - Convert and Copy with dd | Free DevTools"
 name: dd
-path: /freedevtools/tldr/unknown/dd
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dd/"
+path: /freedevtools/tldr/linux/dd
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dd/"
 description: "Convert files with dd. Copy data, clone drives, and generate random files. A powerful command line file converter. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- file conversion
-- data copying
-- disk cloning
-- image creation
-- drive backup
-- random data generation
-- command line tool
-- linux dd
-- macos dd
-- data recovery
+  - file conversion
+  - data copying
+  - disk cloning
+  - image creation
+  - drive backup
+  - random data generation
+  - command line tool
+  - linux dd
+  - macos dd
+  - data recovery
 features:
-- Clone entire disks or partitions
-- Generate files filled with random data
-- Convert data between different formats
-- Create bootable USB drives from ISO images
-- Benchmark disk write performance
+  - Clone entire disks or partitions
+  - Generate files filled with random data
+  - Convert data between different formats
+  - Create bootable USB drives from ISO images
+  - Benchmark disk write performance
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

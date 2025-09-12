@@ -1,3 +1,31 @@
+---
+title: "rdesktop Remote Desktop - Connect to Servers | Free DevTools"
+name: rdesktop
+path: /freedevtools/tldr/linux/rdesktop
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rdesktop/"
+description: "Connect to remote computers with rdesktop, a powerful RDP client.  Manage remote sessions and access resources easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - rdesktop remote connection
+  - rdesktop RDP client
+  - rdesktop remote desktop software
+  - rdesktop windows connection
+  - rdesktop linux command
+  - rdesktop server access
+  - rdesktop terminal command
+  - rdesktop network access
+  - rdesktop remote administration
+  - rdesktop session management
+features:
+  - Connect to remote computers via RDP.
+  - Supports custom resolutions and color depths.
+  - Enables full-screen remote desktop sessions.
+  - Allows authentication using domain user credentials.
+  - Offers command-line interface for automation.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rdesktop
 
 > Remote Desktop Protocol client.

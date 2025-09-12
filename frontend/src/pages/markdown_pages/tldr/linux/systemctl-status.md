@@ -1,27 +1,27 @@
 ---
 title: "Control Systemd Status - Manage System Units | Free DevTools"
 name: systemctl-status
-path: /freedevtools/tldr/unknown/systemctl-status
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/systemctl-status/"
+path: /freedevtools/tldr/linux/systemctl-status
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-status/"
 description: "Control Systemd status with systemctl. Manage systemd units and services, check status, and diagnose issues easily. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- systemd status control
-- systemctl status manager
-- linux service status
-- systemd unit status
-- linux systemd control
-- systemd service manager
-- systemctl service status
-- systemctl unit status
-- linux system administration
-- systemd troubleshooting
+  - systemd status control
+  - systemctl status manager
+  - linux service status
+  - systemd unit status
+  - linux systemd control
+  - systemd service manager
+  - systemctl service status
+  - systemctl unit status
+  - linux system administration
+  - systemd troubleshooting
 features:
-- Display the status of systemd units
-- Show status of failed units
-- List all running systemd services
-- List units by type (service, timer, socket, etc.)
-- Show the status of user units
+  - Display the status of systemd units
+  - Show status of failed units
+  - List all running systemd services
+  - List units by type (service, timer, socket, etc.)
+  - Show the status of user units
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Control OpenRC Services - Manage System Processes with rc-service | Free DevTools"
+name: rc-service
+path: /freedevtools/tldr/linux/rc-service
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-service/"
+description: "Manage system processes effortlessly with rc-service. Control OpenRC services, start, stop, restart, and run custom commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - OpenRC service management
+  - Linux service control
+  - rc-service command
+  - system process management
+  - service status check
+  - start OpenRC services
+  - stop OpenRC services
+  - restart OpenRC services
+  - run custom service commands
+  - resolve service location
+features:
+  - Check the status of OpenRC services.
+  - Start OpenRC services.
+  - Stop OpenRC services.
+  - Restart OpenRC services.
+  - Execute custom commands for OpenRC services.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # rc-service
 
 > Locate and run OpenRC services with arguments.

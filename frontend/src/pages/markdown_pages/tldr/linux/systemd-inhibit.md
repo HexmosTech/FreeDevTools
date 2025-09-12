@@ -1,3 +1,31 @@
+---
+title: "Control System Power States with systemd-inhibit | Free DevTools"
+name: systemd-inhibit
+path: /freedevtools/tldr/linux/systemd-inhibit
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-inhibit/"
+description: "Control system power states with systemd-inhibit.  Prevent system sleep, shutdown, and idle. Free online tool, no registration required."
+category: linux
+keywords:
+  - systemd power management
+  - systemd inhibit commands
+  - linux systemd control
+  - systemd shutdown inhibition
+  - systemd sleep prevention
+  - linux power state control
+  - systemd inhibitor list
+  - systemd-inhibit usage
+  - command line power control
+  - linux command line tools
+features:
+  - Prevent system sleep and suspend
+  - Inhibit system shutdown and reboot
+  - Block automatic idle handling
+  - Manage power states from the command line
+  - Control system power based on specific events or commands
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # systemd-inhibit
 
 > Prohibit the system from entering certain power states.

@@ -1,3 +1,31 @@
+---
+title: "List Sockets - Monitor Network Connections | Free DevTools"
+name: sockstat
+path: /freedevtools/tldr/linux/sockstat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sockstat/"
+description: "Monitor network connections with sockstat.  List open internet or UNIX domain sockets, filtering by protocol, port, process ID, or user. Free online tool, no registration required."
+category: linux
+keywords:
+  - socket listener
+  - network connection monitor
+  - unix socket viewer
+  - ipv4 socket checker
+  - ipv6 socket monitor
+  - process socket identifier
+  - port socket display
+  - protocol socket filter
+  - linux socket command
+  - network debugging tool
+features:
+  - Displays open IPv4 and IPv6 sockets.
+  - Filters sockets by listening status, connected status, and protocol.
+  - Allows filtering by specific ports, process IDs (PIDs), user IDs (UIDs), and group IDs (GIDs).
+  - Shows details of both internet and UNIX domain sockets.
+  - Provides a concise and easily understandable output.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sockstat
 
 > List open Internet or UNIX domain sockets.

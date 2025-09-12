@@ -1,3 +1,31 @@
+---
+title: "Evtest Input Device - Display Events | Free DevTools"
+name: evtest
+path: /freedevtools/tldr/linux/evtest
+canonical: "https://hexmos.com/freedevtools/tldr/linux/evtest/"
+description: "Display and control input device events with evtest.  Monitor keystrokes, mouse movements, and other input activity using command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - input device events display
+  - linux input event viewer
+  - evtest command monitoring
+  - event code analysis linux
+  - input device debugging linux
+  - system input diagnostics
+  - evtest exclusive grab
+  - keyboard event monitoring
+  - mouse event monitoring
+  - linux system tools
+features:
+  - List all detected input devices
+  - Display real-time events from input devices
+  - Grab input devices exclusively
+  - Query the state of specific keys or buttons
+  - Diagnose input device malfunctions
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # evtest
 
 > Display information from input device drivers.

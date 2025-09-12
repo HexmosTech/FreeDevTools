@@ -1,3 +1,31 @@
+---
+title: "Manage Packages - Control Yay, Flatpak, and Snap | Free DevTools"
+name: paxs
+path: /freedevtools/tldr/linux/paxs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/paxs/"
+description: "Manage packages across Yay, Flatpak, and Snap with paxs.  Search, install, remove, and upgrade packages effortlessly. Free online tool, no registration required."
+category: linux
+keywords:
+  - package manager linux
+  - linux package control
+  - flatpak management tool
+  - snap package management
+  - yay package management
+  - cross-platform package manager
+  - command-line package manager
+  - linux software installer
+  - package upgrade linux
+  - search packages linux
+features:
+  - Search and locate packages across multiple package managers
+  - Install packages from Yay, Flatpak, and Snap sources
+  - Remove packages from Yay, Flatpak, and Snap sources
+  - Upgrade all installed packages across all sources
+  - Check for updates for all installed packages
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # paxs
 
 > Manage packages across Yay, Flatpak, and Snap.

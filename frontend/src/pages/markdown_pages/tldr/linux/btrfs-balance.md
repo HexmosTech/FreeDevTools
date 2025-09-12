@@ -1,3 +1,31 @@
+---
+title: "Btrfs Balance - Manage Block Groups | Free DevTools"
+name: btrfs-balance
+path: /freedevtools/tldr/linux/btrfs-balance
+canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-balance/"
+description: "Balance Btrfs filesystem block groups efficiently with btrfs-balance.  Control disk space utilization and optimize performance. Free online tool, no registration required."
+category: linux
+keywords:
+  - btrfs filesystem balance
+  - btrfs block group management
+  - linux btrfs optimization
+  - btrfs data balance command
+  - btrfs metadata balance
+  - btrfs raid conversion
+  - btrfs performance tuning
+  - btrfs space management
+  - btrfs balance status check
+  - linux btrfs tool
+features:
+  - Show status of balance operations.
+  - Balance all block groups for optimal distribution.
+  - Balance data blocks based on utilization percentage.
+  - Balance metadata chunks based on utilization and device.
+  - Convert data and metadata blocks to different RAID levels.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # btrfs balance
 
 > Balance block groups on a btrfs filesystem.

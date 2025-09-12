@@ -1,3 +1,31 @@
+---
+title: "Certbot - Obtain SSL Certificates | Free DevTools"
+name: certbot
+path: /freedevtools/tldr/linux/certbot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/certbot/"
+description: "Obtain and manage SSL certificates with Certbot.  Automate certificate renewal and easily integrate with web servers. Free online tool, no registration required."
+category: linux
+keywords:
+  - ssl certificate generation
+  - letsencrypt client
+  - ssl certificate renewal
+  - automatic ssl certificate
+  - web server ssl
+  - nginx ssl certbot
+  - apache ssl certbot
+  - certbot webroot
+  - command line ssl
+  - certbot tutorial
+features:
+  - Automatically obtain Let's Encrypt SSL certificates.
+  - Renew certificates before expiry.
+  - Integrate with Nginx, Apache, and other web servers.
+  - Supports various authentication methods (webroot, nginx, apache).
+  - Offers dry-run and test certificate options for safe testing.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # certbot
 
 > The Let's Encrypt Agent for automatically obtaining and renewing TLS certificates.

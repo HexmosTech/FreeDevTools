@@ -1,3 +1,31 @@
+---
+title: "Alien - Convert Package Formats | Free DevTools"
+name: alien
+path: /freedevtools/tldr/linux/alien
+canonical: "https://hexmos.com/freedevtools/tldr/linux/alien/"
+description: "Convert installation packages between Debian (.deb), Red Hat (.rpm), and Slackware (.tgz) formats with Alien.  Manage Linux software packages easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - deb package converter
+  - rpm package converter
+  - tgz package converter
+  - linux package conversion
+  - alien package manager
+  - debian package management
+  - redhat package management
+  - slackware package management
+  - cross-distribution package conversion
+  - linux software installation
+features:
+  - Converts .deb packages to .rpm, .tgz, and vice-versa.
+  - Enables installation of packages from different distributions.
+  - Supports Debian, Red Hat, and Slackware package formats.
+  - Offers command-line interface for easy automation.
+  - Simplifies cross-distribution software deployment.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # alien
 
 > Convert different installation packages to other formats.

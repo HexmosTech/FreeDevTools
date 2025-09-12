@@ -1,27 +1,27 @@
 ---
 title: "Display Time as ASCII Art - cacaclock | Free DevTools"
 name: cacaclock
-path: /freedevtools/tldr/unknown/cacaclock
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cacaclock/"
+path: /freedevtools/tldr/linux/cacaclock
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cacaclock/"
 description: "Display the current time as ASCII art with cacaclock. Customize font and format using strftime. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- ASCII art clock display
-- Command line clock
-- Terminal clock display
-- Caca clock generator
-- Strftime time formatter
-- Text-based time display
-- Debian clock utility
-- Linux clock tool
-- ASCII art generator
-- Command line time display
+  - ASCII art clock display
+  - Command line clock
+  - Terminal clock display
+  - Caca clock generator
+  - Strftime time formatter
+  - Text-based time display
+  - Debian clock utility
+  - Linux clock tool
+  - ASCII art generator
+  - Command line time display
 features:
-- Display the current time in ASCII art
-- Customize the font used for the clock
-- Format the time using strftime specifications
-- Generate clock output directly in the terminal
-- Customize the clock display through command line options
+  - Display the current time in ASCII art
+  - Customize the font used for the clock
+  - Format the time using strftime specifications
+  - Generate clock output directly in the terminal
+  - Customize the clock display through command line options
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

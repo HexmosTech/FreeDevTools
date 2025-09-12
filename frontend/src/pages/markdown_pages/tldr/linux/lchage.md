@@ -1,3 +1,31 @@
+---
+title: "Manage Linux Passwords - Control User Policies with lchage | Free DevTools"
+name: lchage
+path: /freedevtools/tldr/linux/lchage
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lchage/"
+description: "Control Linux user password policies with lchage.  Manage password expiration, enforce password changes, and set warning periods. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux password management
+  - lchage command
+  - linux user policy
+  - password expiration control
+  - password change enforcement
+  - linux security command
+  - user account management
+  - linux system administration
+  - password policy settings
+  - linux command line tool
+features:
+  - Disable password expiration for users.
+  - Display current password policy settings for users.
+  - Enforce password changes after a specified number of days.
+  - Configure password expiry warning periods.
+  - Manage multiple user accounts' password policies simultaneously.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lchage
 
 > Display or change user password policy.

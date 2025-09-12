@@ -1,3 +1,31 @@
+---
+title: "Scrot Screenshot - Capture Screens Easily | Free DevTools"
+name: scrot
+path: /freedevtools/tldr/linux/scrot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/scrot/"
+description: "Capture screenshots easily with scrot.  Take full-screen, region-specific, or window-focused screenshots with simple commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - screenshot capture command
+  - linux screenshot tool
+  - scrot command line
+  - screen capture utility
+  - image capture scrot
+  - command line screenshot
+  - interactive screenshot
+  - focused window capture
+  - timed screenshot scrot
+  - desktop screenshot capture
+features:
+  - Capture full-screen screenshots
+  - Capture screenshots of selected regions
+  - Capture screenshots of the focused window
+  - Set custom filenames and save locations
+  - Use a countdown timer before capturing
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # scrot
 
 > Screen capture utility.

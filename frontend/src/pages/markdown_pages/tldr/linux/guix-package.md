@@ -1,3 +1,31 @@
+---
+title: "Guix Package Manager - Manage Packages | Free DevTools"
+name: guix-package
+path: /freedevtools/tldr/linux/guix-package
+canonical: "https://hexmos.com/freedevtools/tldr/linux/guix-package/"
+description: "Manage Guix packages efficiently with the guix package command. Install, remove, search, and roll back package versions easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - guix package manager
+  - guix package installation
+  - guix package removal
+  - guix package search
+  - guix package rollback
+  - linux package manager
+  - guix system administration
+  - guix package listing
+  - guix software management
+  - guix package control
+features:
+  - Install new Guix packages
+  - Remove unwanted Guix packages
+  - Search the Guix package database
+  - List installed and available Guix packages
+  - Roll back to previous package configurations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # guix package
 
 > Install, upgrade and remove Guix packages, or rollback to previous configurations.

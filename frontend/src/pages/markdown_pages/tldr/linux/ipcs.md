@@ -1,27 +1,27 @@
 ---
 title: "IPCS Tool - Control System V IPC Facilities | Free DevTools"
 name: ipcs
-path: /freedevtools/tldr/unknown/ipcs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ipcs/"
+path: /freedevtools/tldr/linux/ipcs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ipcs/"
 description: "Control System V IPC facilities with IPCS tool. Inspect shared memory segments, message queues, and semaphore arrays. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- system v ipc
-- ipc facilities
-- shared memory
-- message queues
-- semaphore arrays
-- linux ipc
-- unix ipc
-- ipc status
-- ipc monitoring
-- ipc resource usage
+  - system v ipc
+  - ipc facilities
+  - shared memory
+  - message queues
+  - semaphore arrays
+  - linux ipc
+  - unix ipc
+  - ipc status
+  - ipc monitoring
+  - ipc resource usage
 features:
-- Display information about all active IPC facilities.
-- Show details on shared memory, message queues, or semaphore sets.
-- Inspect IPC resource usage with specific IDs.
-- Show IPC limits in bytes or human-readable format.
-- Report creator and owner UIDs/PIDs for IPC resources.
+  - Display information about all active IPC facilities.
+  - Show details on shared memory, message queues, or semaphore sets.
+  - Inspect IPC resource usage with specific IDs.
+  - Show IPC limits in bytes or human-readable format.
+  - Report creator and owner UIDs/PIDs for IPC resources.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

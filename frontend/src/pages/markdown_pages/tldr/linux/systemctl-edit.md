@@ -1,27 +1,27 @@
 ---
 title: "Systemctl Edit - Control Systemd Units | Free DevTools"
 name: systemctl-edit
-path: /freedevtools/tldr/unknown/systemctl-edit
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/systemctl-edit/"
+path: /freedevtools/tldr/linux/systemctl-edit
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-edit/"
 description: "Control Systemd unit files with Systemctl Edit. Easily overlay, edit, and create systemd configurations on Linux. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- systemd unit editor
-- systemctl unit modification
-- linux systemd configuration
-- edit systemd service files
-- systemd service overlay
-- systemd configuration manager
-- create systemd unit
-- modify linux services
-- systemd file editor
-- linux systemctl edit command
+  - systemd unit editor
+  - systemctl unit modification
+  - linux systemd configuration
+  - edit systemd service files
+  - systemd service overlay
+  - systemd configuration manager
+  - create systemd unit
+  - modify linux services
+  - systemd file editor
+  - linux systemctl edit command
 features:
-- Overlay systemd unit files non-destructively
-- Edit existing systemd unit files directly
-- Create new systemd unit files from scratch
-- Modify user-specific systemd unit files
-- Manage systemd services through command line
+  - Overlay systemd unit files non-destructively
+  - Edit existing systemd unit files directly
+  - Create new systemd unit files from scratch
+  - Modify user-specific systemd unit files
+  - Manage systemd services through command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Distrobox Enter - Access Containers | Free DevTools"
+name: distrobox-enter
+path: /freedevtools/tldr/linux/distrobox-enter
+canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-enter/"
+description: "Access Distrobox containers easily with the distrobox-enter command.  Manage Linux containers and execute commands within them. Free online tool, no registration required."
+category: linux
+keywords:
+  - distrobox container access
+  - linux container management
+  - distrobox command line
+  - container shell access
+  - headless container execution
+  - distrobox enter command
+  - linux container entry
+  - manage linux containers
+  - distrobox usage
+  - command line container
+features:
+  - Access Distrobox containers directly.
+  - Execute commands within a container at login.
+  - Run commands without a tty (headless mode).
+  - Specify custom shells or commands for container entry.
+  - Seamless integration with existing Distrobox setups.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # distrobox-enter
 
 > Enter a Distrobox container.

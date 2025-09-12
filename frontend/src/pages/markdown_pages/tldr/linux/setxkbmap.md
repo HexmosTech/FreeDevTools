@@ -1,3 +1,31 @@
+---
+title: "Set Keyboard Layout - Control X Keyboard with setxkbmap | Free DevTools"
+name: setxkbmap
+path: /freedevtools/tldr/linux/setxkbmap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/setxkbmap/"
+description: "Control keyboard layouts with setxkbmap.  Easily switch between multiple keyboard layouts, variants, and options. Free online tool, no registration required."
+category: linux
+keywords:
+  - keyboard layout manager
+  - linux keyboard configuration
+  - setxkbmap command
+  - x keyboard extension
+  - keyboard layout switcher
+  - linux command line
+  - keyboard layout options
+  - x11 keyboard settings
+  - multiple keyboard layouts
+  - setxkbmap tutorial
+features:
+  - Set single keyboard layouts (e.g., French AZERTY).
+  - Configure multiple keyboard layouts simultaneously.
+  - Define keyboard layout variants (e.g., QWERTY).
+  - Customize keyboard switching options (e.g., Alt+Caps Lock toggle).
+  - List available layouts, variants, and options.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # setxkbmap
 
 > Set the keyboard using the X Keyboard Extension.

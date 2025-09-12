@@ -1,27 +1,27 @@
 ---
 title: "Foreman - Manage Procfile Apps | Free DevTools"
 name: foreman
-path: /freedevtools/tldr/unknown/foreman
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/foreman/"
+path: /freedevtools/tldr/linux/foreman
+canonical: "https://hexmos.com/freedevtools/tldr/linux/foreman/"
 description: "Manage Procfile-based applications with Foreman. Start, check, and run processes effortlessly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- procfile management
-- foreman command
-- application process manager
-- procfile runner
-- command execution environment
-- application deployment
-- process automation
-- foreman start
-- foreman check
-- foreman run
+  - procfile management
+  - foreman command
+  - application process manager
+  - procfile runner
+  - command execution environment
+  - application deployment
+  - process automation
+  - foreman start
+  - foreman check
+  - foreman run
 features:
-- Start applications from Procfiles
-- Validate Procfile syntax and format
-- Run commands with process environments
-- Start specific application processes
-- Control process formation with overrides
+  - Start applications from Procfiles
+  - Validate Procfile syntax and format
+  - Run commands with process environments
+  - Start specific application processes
+  - Control process formation with overrides
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

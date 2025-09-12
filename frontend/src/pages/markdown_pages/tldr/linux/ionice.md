@@ -1,27 +1,27 @@
 ---
 title: "Ionice - Control I/O Scheduling | Free DevTools"
 name: ionice
-path: /freedevtools/tldr/unknown/ionice
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ionice/"
+path: /freedevtools/tldr/linux/ionice
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ionice/"
 description: "Control I/O scheduling with Ionice. Prioritize disk access for processes and improve system performance using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- I/O scheduling control
-- Linux ionice command
-- Process I/O priority
-- Disk access management
-- Command-line I/O tool
-- Realtime scheduling control
-- Best-effort scheduling
-- Idle I/O scheduling
-- Linux process management
-- System performance tuning
+  - I/O scheduling control
+  - Linux ionice command
+  - Process I/O priority
+  - Disk access management
+  - Command-line I/O tool
+  - Realtime scheduling control
+  - Best-effort scheduling
+  - Idle I/O scheduling
+  - Linux process management
+  - System performance tuning
 features:
-- Set I/O scheduling class for processes
-- Adjust I/O priority levels
-- Manage disk access for running processes
-- Ignore failures when setting priority
-- Display I/O scheduling information
+  - Set I/O scheduling class for processes
+  - Adjust I/O priority levels
+  - Manage disk access for running processes
+  - Ignore failures when setting priority
+  - Display I/O scheduling information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Waitpid - Control Process Termination | Free DevTools"
 name: waitpid
-path: /freedevtools/tldr/unknown/waitpid
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/waitpid/"
+path: /freedevtools/tldr/linux/waitpid
+canonical: "https://hexmos.com/freedevtools/tldr/linux/waitpid/"
 description: "Control process termination with Waitpid. Monitor, manage, and debug processes by waiting for their completion. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- process termination control
-- process management command
-- waitpid linux
-- waitpid macos
-- process monitoring tool
-- signal handling command
-- background process control
-- child process monitoring
-- process status check
-- command line process wait
+  - process termination control
+  - process management command
+  - waitpid linux
+  - waitpid macos
+  - process monitoring tool
+  - signal handling command
+  - background process control
+  - child process monitoring
+  - process status check
+  - command line process wait
 features:
-- Wait for specific processes to terminate
-- Set a timeout for process termination
-- Ignore errors if processes have already exited
-- Wait until a specific number of processes have exited
-- Display help information for the command
+  - Wait for specific processes to terminate
+  - Set a timeout for process termination
+  - Ignore errors if processes have already exited
+  - Wait until a specific number of processes have exited
+  - Display help information for the command
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

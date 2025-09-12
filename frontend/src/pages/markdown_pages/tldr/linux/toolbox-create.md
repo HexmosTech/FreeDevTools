@@ -1,3 +1,31 @@
+---
+title: "Toolbox Create - Container Creation | Free DevTools"
+name: toolbox-create
+path: /freedevtools/tldr/linux/toolbox-create
+canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-create/"
+description: "Create toolbox containers easily with the toolbox create command. Manage distributions, releases, and custom images for seamless development. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux container creation
+  - toolbox container management
+  - fedora toolbox image
+  - custom container image
+  - distro specific container
+  - release specific container
+  - toolbox command line
+  - create linux containers
+  - manage toolbox instances
+  - deploy toolbox environments
+features:
+  - Create toolbox containers for specific distributions.
+  - Create containers for specific releases of a distribution.
+  - Use custom images to build toolbox containers.
+  - Leverage Fedora images for container creation.
+  - Employ default images for streamlined setup.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # toolbox create
 
 > Create a new `toolbox` container.

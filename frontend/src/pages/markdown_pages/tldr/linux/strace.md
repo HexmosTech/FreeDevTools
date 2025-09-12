@@ -1,3 +1,31 @@
+---
+title: "strace - Trace System Calls | Free DevTools"
+name: strace
+path: /freedevtools/tldr/linux/strace
+canonical: "https://hexmos.com/freedevtools/tldr/linux/strace/"
+description: "Trace system calls with strace, a powerful debugging and troubleshooting command-line utility. Analyze process behavior and identify issues efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - system call tracer
+  - linux system call tracing
+  - strace command
+  - process tracing tool
+  - debugging with strace
+  - system call analysis
+  - command-line debugger
+  - troubleshoot system calls
+  - linux troubleshooting
+  - process monitoring
+features:
+  - Trace system calls made by a process.
+  - Filter system call output by specific calls.
+  - Generate summary reports of system call statistics.
+  - Time system calls and show durations.
+  - Trace file and network operations.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # strace
 
 > Troubleshooting tool for tracing system calls.

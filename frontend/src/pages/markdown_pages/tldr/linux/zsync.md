@@ -1,3 +1,31 @@
+---
+title: "zsync Downloader - Download Files Efficiently | Free DevTools"
+name: zsync
+path: /freedevtools/tldr/linux/zsync
+canonical: "https://hexmos.com/freedevtools/tldr/linux/zsync/"
+description: "Download files efficiently with zsync, leveraging partial downloads for faster transfers and resuming interrupted downloads.  Supports HTTP URLs. Free online tool, no registration required."
+category: linux
+keywords:
+  - zsync download
+  - zsync command
+  - zsync partial download
+  - zsync resume download
+  - zsync file transfer
+  - zsync http download
+  - zsync control file
+  - linux zsync
+  - command-line zsync
+  - efficient file transfer
+features:
+  - Downloads files using a .zsync control file.
+  - Resumes interrupted downloads.
+  - Uses existing files as seeds for faster downloads.
+  - Saves downloaded files to a specified location.
+  - Offers quiet mode for minimal output during download.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # zsync
 
 > Partial/differential file downloader.

@@ -1,27 +1,27 @@
 ---
 title: "Systemctl Cat - Show Unit File Contents | Free DevTools"
 name: systemctl-cat
-path: /freedevtools/tldr/unknown/systemctl-cat
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/systemctl-cat/"
+path: /freedevtools/tldr/linux/systemctl-cat
+canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-cat/"
 description: "Show Unit file contents with Systemctl Cat. View configurations, templates, and user units with this command. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- systemctl cat unit file
-- show systemd unit contents
-- linux systemctl command
-- systemctl cat template
-- view systemd configuration
-- systemctl user unit
-- systemd service file
-- systemctl service cat
-- systemctl cat command
-- linux system configuration
+  - systemctl cat unit file
+  - show systemd unit contents
+  - linux systemctl command
+  - systemctl cat template
+  - view systemd configuration
+  - systemctl user unit
+  - systemd service file
+  - systemctl service cat
+  - systemctl cat command
+  - linux system configuration
 features:
-- Display the complete content of a systemd unit file.
-- Show the content of multiple systemd unit files simultaneously.
-- Reveal the contents of templated systemd unit files.
-- Retrieve the contents of user-specific systemd unit files.
-- Display the absolute path of the unit file.
+  - Display the complete content of a systemd unit file.
+  - Show the content of multiple systemd unit files simultaneously.
+  - Reveal the contents of templated systemd unit files.
+  - Retrieve the contents of user-specific systemd unit files.
+  - Display the absolute path of the unit file.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

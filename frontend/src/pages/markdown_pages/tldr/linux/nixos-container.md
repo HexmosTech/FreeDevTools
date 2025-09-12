@@ -1,3 +1,31 @@
+---
+title: "NixOS Container - Create & Manage Containers | Free DevTools"
+name: nixos-container
+path: /freedevtools/tldr/linux/nixos-container
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-container/"
+description: "Create and manage NixOS containers easily with nixos-container.  Start, stop, and run commands within containers using simple commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - nixos container management
+  - linux container creation
+  - nixos container commands
+  - container orchestration nixos
+  - nixos container runtime
+  - manage nixos containers
+  - linux container tools
+  - nixos system containers
+  - create nixos containers
+  - run commands in nixos containers
+features:
+  - Create NixOS containers from configuration files.
+  - Start, stop, terminate, and destroy containers.
+  - Run commands inside running containers.
+  - Update container configurations dynamically.
+  - Access an interactive shell within a container.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nixos-container
 
 > Starts NixOS containers using Linux containers.

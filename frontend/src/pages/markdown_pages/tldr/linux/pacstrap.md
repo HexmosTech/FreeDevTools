@@ -1,3 +1,31 @@
+---
+title: "Pacstrap - Install Arch Packages | Free DevTools"
+name: pacstrap
+path: /freedevtools/tldr/linux/pacstrap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacstrap/"
+description: "Install Arch Linux packages efficiently with Pacstrap.  Manage base systems, kernels, and specific packages using a command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package installer
+  - arch linux pacstrap
+  - pacman package management
+  - linux system installation
+  - base system installation linux
+  - linux kernel installation
+  - pacstrap command guide
+  - arch linux setup guide
+  - linux package manager
+  - install linux packages
+features:
+  - Installs Arch Linux base system packages.
+  - Supports installation of specific packages.
+  - Allows for custom configuration file usage.
+  - Provides options for managing the pacman keyring and cache.
+  - Offers interactive mode for confirmation of installations.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pacstrap
 
 > Install Arch Linux packages in the specified new root directory.

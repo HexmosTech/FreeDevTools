@@ -1,27 +1,27 @@
 ---
 title: "Manage ID3 Tags - Convert & List ID3v1/v2 | Free DevTools"
 name: id3v2
-path: /freedevtools/tldr/unknown/id3v2
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/id3v2/"
+path: /freedevtools/tldr/linux/id3v2
+canonical: "https://hexmos.com/freedevtools/tldr/linux/id3v2/"
 description: "Manage ID3 tags with id3v2. Convert ID3v1 to ID3v2, list tag information, and delete tags easily. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- id3 tag manager
-- mp3 tag editor
-- id3v2 tag editor
-- id3v1 to id3v2 converter
-- audio metadata editor
-- id3 tag remover
-- command line id3 editor
-- linux id3 tag
-- macos id3 tag
-- mp3 metadata viewer
+  - id3 tag manager
+  - mp3 tag editor
+  - id3v2 tag editor
+  - id3v1 to id3v2 converter
+  - audio metadata editor
+  - id3 tag remover
+  - command line id3 editor
+  - linux id3 tag
+  - macos id3 tag
+  - mp3 metadata viewer
 features:
-- List all available ID3 genres
-- Display all tags within specified audio files
-- Delete ID3v1 tags from audio files
-- Delete ID3v2 tags from audio files
-- Show the installed id3v2 version
+  - List all available ID3 genres
+  - Display all tags within specified audio files
+  - Delete ID3v1 tags from audio files
+  - Delete ID3v2 tags from audio files
+  - Show the installed id3v2 version
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

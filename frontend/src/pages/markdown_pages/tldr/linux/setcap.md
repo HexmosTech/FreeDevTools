@@ -1,27 +1,27 @@
 ---
 title: "Setcap - Set File Capabilities | Free DevTools"
 name: setcap
-path: /freedevtools/tldr/unknown/setcap
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/setcap/"
+path: /freedevtools/tldr/linux/setcap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/setcap/"
 description: "Set file capabilities with setcap to manage permissions and security attributes for executables. Grant or revoke specific privileges on files. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- File capabilities
-- Set file attributes
-- Linux file permissions
-- Manage capabilities
-- Command line security
-- Security attributes
-- Cap_net_raw
-- DAC permissions
-- Sys_tty_config
-- Setcap command
+  - File capabilities
+  - Set file attributes
+  - Linux file permissions
+  - Manage capabilities
+  - Command line security
+  - Security attributes
+  - Cap_net_raw
+  - DAC permissions
+  - Sys_tty_config
+  - Setcap command
 features:
-- Grant specific capabilities to files
-- Revoke all capabilities from files
-- Verify existing file capabilities
-- Set effective permitted capabilities
-- Set capabilities within user namespaces
+  - Grant specific capabilities to files
+  - Revoke all capabilities from files
+  - Verify existing file capabilities
+  - Set effective permitted capabilities
+  - Set capabilities within user namespaces
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

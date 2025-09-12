@@ -1,27 +1,27 @@
 ---
 title: "Flashcards - Learn with Flash Cards in Terminal | Free DevTools"
 name: flash
-path: /freedevtools/tldr/unknown/flash
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/flash/"
+path: /freedevtools/tldr/linux/flash
+canonical: "https://hexmos.com/freedevtools/tldr/linux/flash/"
 description: "Learn with flashcards easily with Flash, a terminal-based flashcard system. Study decks, review concepts, and enhance knowledge retention. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- terminal flashcards
-- command line flashcards
-- flashcard deck manager
-- terminal learning
-- study with terminal
-- flashcard CLI
-- linux flashcards
-- macos flashcards
-- command-line learning tool
-- flashcard review system
+  - terminal flashcards
+  - command line flashcards
+  - flashcard deck manager
+  - terminal learning
+  - study with terminal
+  - flashcard CLI
+  - linux flashcards
+  - macos flashcards
+  - command-line learning tool
+  - flashcard review system
 features:
-- Open a menu to select flashcard decks
-- Display information about the flashcard system
-- Customize the previewer used for displaying cards
-- View help information for available options
-- Show the installed version of the flash tool
+  - Open a menu to select flashcard decks
+  - Display information about the flashcard system
+  - Customize the previewer used for displaying cards
+  - View help information for available options
+  - Show the installed version of the flash tool
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

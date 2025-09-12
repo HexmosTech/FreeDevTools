@@ -1,27 +1,27 @@
 ---
 title: "APX Subsystems - Manage Containers | Free DevTools"
 name: apx-subsystems
-path: /freedevtools/tldr/unknown/apx-subsystems
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/apx-subsystems/"
+path: /freedevtools/tldr/linux/apx-subsystems
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apx-subsystems/"
 description: "Manage Linux subsystems with APX. Create, list, reset, and remove containerized environments for customized development. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- APX Subsystems management
-- Linux container control
-- Containerized environment manager
-- APX development tool
-- Subsystem reset command
-- Linux APX command line
-- VanillaOS APX subsystems
-- Container removal tool
-- Software stack management
-- APX container creation
+  - APX Subsystems management
+  - Linux container control
+  - Containerized environment manager
+  - APX development tool
+  - Subsystem reset command
+  - Linux APX command line
+  - VanillaOS APX subsystems
+  - Container removal tool
+  - Software stack management
+  - APX container creation
 features:
-- Create new subsystems based on pre-existing stacks
-- List available subsystems for management
-- Reset subsystems to their initial state
-- Force reset subsystems for troubleshooting
-- Remove subsystems from the APX environment
+  - Create new subsystems based on pre-existing stacks
+  - List available subsystems for management
+  - Reset subsystems to their initial state
+  - Force reset subsystems for troubleshooting
+  - Remove subsystems from the APX environment
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

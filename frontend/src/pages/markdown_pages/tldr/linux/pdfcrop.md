@@ -1,27 +1,27 @@
 ---
 title: "PDF Crop - Remove PDF Margins | Free DevTools"
 name: pdfcrop
-path: /freedevtools/tldr/unknown/pdfcrop
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pdfcrop/"
+path: /freedevtools/tldr/linux/pdfcrop
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfcrop/"
 description: "Crop PDF margins efficiently with PDFCrop. Automatically remove or set custom margins for PDF documents. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- PDF crop
-- PDF margin removal
-- PDF margin adjustment
-- PDF bounding box
-- PDF batch processing
-- PDF automation
-- Command line PDF editor
-- PDF page cropping
-- PDF resolution adjustment
-- PDF command line tool
+  - PDF crop
+  - PDF margin removal
+  - PDF margin adjustment
+  - PDF bounding box
+  - PDF batch processing
+  - PDF automation
+  - Command line PDF editor
+  - PDF page cropping
+  - PDF resolution adjustment
+  - PDF command line tool
 features:
-- Automatically detect and remove PDF margins
-- Set custom margins for PDF pages
-- Define a user-defined bounding box for cropping
-- Adjust cropping resolution for improved performance
-- Apply different bounding boxes to odd and even pages
+  - Automatically detect and remove PDF margins
+  - Set custom margins for PDF pages
+  - Define a user-defined bounding box for cropping
+  - Adjust cropping resolution for improved performance
+  - Apply different bounding boxes to odd and even pages
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

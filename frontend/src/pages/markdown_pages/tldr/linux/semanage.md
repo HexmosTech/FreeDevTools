@@ -1,3 +1,31 @@
+---
+title: "Manage SELinux Policy - Control Linux Security with semanage | Free DevTools"
+name: semanage
+path: /freedevtools/tldr/linux/semanage
+canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage/"
+description: "Control Linux security with semanage, a powerful command-line tool for managing SELinux policies.  Modify booleans, file contexts, and ports. Free online tool, no registration required."
+category: linux
+keywords:
+  - selinux policy management
+  - semanage linux command
+  - linux security management
+  - selinux boolean control
+  - file context management linux
+  - semanage fcontext
+  - port labeling selinux
+  - semanage port command
+  - selinux permissive mode
+  - semanage export import
+features:
+  - Manage SELinux booleans to customize policy rules.
+  - Define file context labeling rules for access control.
+  - Configure port labeling rules to specify allowed listening ports.
+  - Set or unset permissive mode for specific domains.
+  - Export and import SELinux customizations for backup and restoration.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # semanage
 
 > SELinux persistent policy management tool.

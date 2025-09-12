@@ -1,27 +1,27 @@
 ---
 title: "Control Packages - APK Package Manager | Free DevTools"
 name: apk
-path: /freedevtools/tldr/unknown/apk
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/apk/"
+path: /freedevtools/tldr/linux/apk
+canonical: "https://hexmos.com/freedevtools/tldr/linux/apk/"
 description: "Control packages on Alpine Linux with APK Package Manager. Easily update, install, remove and search packages on your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- alpine linux package manager
-- apk package management
-- apk install package
-- apk remove package
-- apk search package
-- linux package control
-- apk update repository
-- alpine package keeper
-- apk fix package
-- apk package information
+  - alpine linux package manager
+  - apk package management
+  - apk install package
+  - apk remove package
+  - apk search package
+  - linux package control
+  - apk update repository
+  - alpine package keeper
+  - apk fix package
+  - apk package information
 features:
-- Update package repository indexes
-- Install new packages on Alpine Linux
-- Remove existing packages from system
-- Search for packages by name or description
-- Display detailed package information
+  - Update package repository indexes
+  - Install new packages on Alpine Linux
+  - Remove existing packages from system
+  - Search for packages by name or description
+  - Display detailed package information
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

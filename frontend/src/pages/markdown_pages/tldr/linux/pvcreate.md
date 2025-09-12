@@ -1,27 +1,27 @@
 ---
 title: "PVCreate - Initialize Physical Volumes | Free DevTools"
 name: pvcreate
-path: /freedevtools/tldr/unknown/pvcreate
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pvcreate/"
+path: /freedevtools/tldr/linux/pvcreate
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pvcreate/"
 description: "Initialize physical volumes with PVCreate, a powerful LVM command. Manage disk partitions for Linux logical volume management. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- physical volume create
-- lvm pvcreate
-- linux pvcreate command
-- initialize disk lvm
-- partition manager linux
-- lvm configuration tool
-- disk management linux
-- volume group management
-- linux storage management
-- physical volume initialization
+  - physical volume create
+  - lvm pvcreate
+  - linux pvcreate command
+  - initialize disk lvm
+  - partition manager linux
+  - lvm configuration tool
+  - disk management linux
+  - volume group management
+  - linux storage management
+  - physical volume initialization
 features:
-- Initialize disks for LVM use
-- Force volume creation without prompts
-- Manage physical volumes effectively
-- Prepare partitions for volume groups
-- Enable LVM functionality on devices
+  - Initialize disks for LVM use
+  - Force volume creation without prompts
+  - Manage physical volumes effectively
+  - Prepare partitions for volume groups
+  - Enable LVM functionality on devices
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

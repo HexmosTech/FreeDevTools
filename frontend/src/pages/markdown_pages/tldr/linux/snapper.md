@@ -1,27 +1,27 @@
 ---
 title: "Snapshot Manager - Create File System Snapshots | Free DevTools"
 name: snapper
-path: /freedevtools/tldr/unknown/snapper
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/snapper/"
+path: /freedevtools/tldr/linux/snapper
+canonical: "https://hexmos.com/freedevtools/tldr/linux/snapper/"
 description: "Create file system snapshots with Snapper. Manage snapshots for data recovery and versioning using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- file system snapshot manager
-- snapper snapshot create
-- linux snapshot tool
-- btrfs snapshot management
-- ext4 snapshot manager
-- snapper config management
-- data recovery snapshot
-- snapper command line
-- file versioning snapshots
-- file system backup linux
+  - file system snapshot manager
+  - snapper snapshot create
+  - linux snapshot tool
+  - btrfs snapshot management
+  - ext4 snapshot manager
+  - snapper config management
+  - data recovery snapshot
+  - snapper command line
+  - file versioning snapshots
+  - file system backup linux
 features:
-- Create file system snapshots
-- Manage snapshot configurations
-- List existing snapshots
-- Delete snapshots by number or range
-- Describe snapshot creation
+  - Create file system snapshots
+  - Manage snapshot configurations
+  - List existing snapshots
+  - Delete snapshots by number or range
+  - Describe snapshot creation
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

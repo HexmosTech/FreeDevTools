@@ -1,27 +1,27 @@
 ---
 title: "Exif Editor - Change Image Metadata | Free DevTools"
 name: exif
-path: "/freedevtools/tldr/unknown/exif"
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/exif/"
+path: "/freedevtools/tldr/linux/exif"
+canonical: "https://hexmos.com/freedevtools/tldr/linux/exif/"
 description: "Edit image metadata with Exif Editor. Change EXIF information in JPEG files quickly and easily. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- jpeg metadata editor
-- exif data viewer
-- image exif changer
-- exif tag remover
-- exif tag adder
-- image metadata manipulator
-- jpeg exiftool
-- command line exif
-- exiftool alternative
-- exif thumbnail extractor
+  - jpeg metadata editor
+  - exif data viewer
+  - image exif changer
+  - exif tag remover
+  - exif tag adder
+  - image metadata manipulator
+  - jpeg exiftool
+  - command line exif
+  - exiftool alternative
+  - exif thumbnail extractor
 features:
-- Show all EXIF information in an image
-- List known EXIF tags and their existence
-- Extract image thumbnails to separate files
-- Display raw contents of specific EXIF tags
-- Change the value of EXIF tags and save the changes
+  - Show all EXIF information in an image
+  - List known EXIF tags and their existence
+  - Extract image thumbnails to separate files
+  - Display raw contents of specific EXIF tags
+  - Change the value of EXIF tags and save the changes
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

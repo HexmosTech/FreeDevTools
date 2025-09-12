@@ -1,3 +1,31 @@
+---
+title: "AUR Package Manager - Build Arch Packages | Free DevTools"
+name: aur
+path: /freedevtools/tldr/linux/aur
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aur/"
+description: "Build Arch Linux packages effortlessly with AUR Package Manager.  Manage local repositories and streamline your package installations. Free online tool, no registration required."
+category: linux
+keywords:
+  - arch linux package manager
+  - aur package builder
+  - linux package management
+  - aur repository manager
+  - pacman package management
+  - arch linux build system
+  - aur package installer
+  - linux command line tool
+  - aur database search
+  - arch linux build tools
+features:
+  - Build and install AUR packages.
+  - Manage local pacman repositories.
+  - Search the AUR database for packages.
+  - Upgrade installed AUR packages.
+  - Clean up build files after installation.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aur
 
 > Build packages from the AUR and manage local repositories.

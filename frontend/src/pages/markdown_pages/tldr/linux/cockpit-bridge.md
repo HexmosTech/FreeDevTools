@@ -1,27 +1,27 @@
 ---
 title: "Control Cockpit Bridge - Manage Server Communication | Free DevTools"
 name: cockpit-bridge
-path: /freedevtools/tldr/unknown/cockpit-bridge
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cockpit-bridge/"
+path: /freedevtools/tldr/linux/cockpit-bridge
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-bridge/"
 description: "Control server communication with Cockpit Bridge. Relay messages and execute commands between the frontend and server seamlessly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Cockpit Bridge control
-- Server message relay
-- Frontend command execution
-- Linux cockpit bridge
-- Cockpit package management
-- Cockpit server administration
-- Cockpit remote access
-- Bridge configuration utility
-- Cockpit command line interface
-- Cockpit server communication
+  - Cockpit Bridge control
+  - Server message relay
+  - Frontend command execution
+  - Linux cockpit bridge
+  - Cockpit package management
+  - Cockpit server administration
+  - Cockpit remote access
+  - Bridge configuration utility
+  - Cockpit command line interface
+  - Cockpit server communication
 features:
-- List installed cockpit packages
-- Display command-line help
-- Relay messages between frontend and server
-- Execute commands on the server
-- Facilitate cockpit suite communication
+  - List installed cockpit packages
+  - Display command-line help
+  - Relay messages between frontend and server
+  - Execute commands on the server
+  - Facilitate cockpit suite communication
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

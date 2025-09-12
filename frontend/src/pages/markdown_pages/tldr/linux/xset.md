@@ -1,27 +1,27 @@
 ---
 title: "Control X Server - Manage X Settings | Free DevTools"
 name: xset
-path: /freedevtools/tldr/unknown/xset
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/xset/"
+path: /freedevtools/tldr/linux/xset
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xset/"
 description: "Control X server user preferences with xset. Disable screensaver, adjust bell sound, and manage DPMS settings easily. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- x server control
-- xset configuration
-- linux display settings
-- x display manager
-- screensaver disable
-- dpms management
-- bell sound control
-- x server query
-- x window system settings
-- x server preferences
+  - x server control
+  - xset configuration
+  - linux display settings
+  - x display manager
+  - screensaver disable
+  - dpms management
+  - bell sound control
+  - x server query
+  - x window system settings
+  - x server preferences
 features:
-- Disable the X server screensaver
-- Disable the X server bell sound
-- Configure screensaver timeout settings
-- Enable or disable DPMS energy saving features
-- Query information on any X server display
+  - Disable the X server screensaver
+  - Disable the X server bell sound
+  - Configure screensaver timeout settings
+  - Enable or disable DPMS energy saving features
+  - Query information on any X server display
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

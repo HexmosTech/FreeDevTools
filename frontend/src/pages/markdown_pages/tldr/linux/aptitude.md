@@ -1,3 +1,31 @@
+---
+title: "Manage Packages with Aptitude - Debian/Ubuntu Package Manager | Free DevTools"
+name: aptitude
+path: /freedevtools/tldr/linux/aptitude
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aptitude/"
+description: "Manage Debian and Ubuntu packages efficiently with Aptitude.  Install, remove, update, and search for packages easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package manager
+  - aptitude commands
+  - debian package management
+  - ubuntu package management
+  - aptitude install
+  - aptitude update
+  - aptitude search
+  - aptitude remove
+  - aptitude upgrade
+  - linux software management
+features:
+  - Install new packages and their dependencies
+  - Remove packages and their dependents
+  - Update package lists to the latest versions
+  - Upgrade installed packages to their newest versions
+  - Search for installed or available packages
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # aptitude
 
 > Debian and Ubuntu package management utility.

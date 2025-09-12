@@ -1,27 +1,27 @@
 ---
 title: "Size - Display Binary File Sections | Free DevTools"
 name: size
-path: /freedevtools/tldr/unknown/size
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/size/"
+path: /freedevtools/tldr/linux/size
+canonical: "https://hexmos.com/freedevtools/tldr/linux/size/"
 description: "Display binary file section sizes with Size. Analyze object and executable files to determine memory layout. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- binary size analyzer
-- executable size viewer
-- object file size
-- section size report
-- linux size command
-- macos size command
-- elf size analysis
-- coff size examination
-- binary file inspection
-- program size breakdown
+  - binary size analyzer
+  - executable size viewer
+  - object file size
+  - section size report
+  - linux size command
+  - macos size command
+  - elf size analysis
+  - coff size examination
+  - binary file inspection
+  - program size breakdown
 features:
-- Display section sizes in object files
-- Analyze executable memory layout
-- Output sizes in octal, decimal, or hexadecimal
-- Provide a breakdown of file sections
-- Support various binary formats
+  - Display section sizes in object files
+  - Analyze executable memory layout
+  - Output sizes in octal, decimal, or hexadecimal
+  - Provide a breakdown of file sections
+  - Support various binary formats
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

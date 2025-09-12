@@ -1,27 +1,27 @@
 ---
 title: "SteamOS Branch Select - Control Releases | Free DevTools"
 name: steamos-select-branch
-path: /freedevtools/tldr/unknown/steamos-select-branch
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/steamos-select-branch/"
+path: /freedevtools/tldr/linux/steamos-select-branch
+canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-select-branch/"
 description: "Control SteamOS release branches with steamos-select-branch. Switch between stable, beta, and bleeding edge versions effortlessly using the command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- SteamOS release management
-- SteamOS branch selector
-- Linux distribution update
-- Command line branch switch
-- Stable release selection
-- Beta release selection
-- Bleeding edge updates
-- SteamOS package management
-- System update control
-- Linux command-line tool
+  - SteamOS release management
+  - SteamOS branch selector
+  - Linux distribution update
+  - Command line branch switch
+  - Stable release selection
+  - Beta release selection
+  - Bleeding edge updates
+  - SteamOS package management
+  - System update control
+  - Linux command-line tool
 features:
-- Switch between SteamOS release branches
-- List all available SteamOS branches
-- View the current SteamOS branch
-- Update to a specific SteamOS release
-- Manage SteamOS system updates via CLI
+  - Switch between SteamOS release branches
+  - List all available SteamOS branches
+  - View the current SteamOS branch
+  - Update to a specific SteamOS release
+  - Manage SteamOS system updates via CLI
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

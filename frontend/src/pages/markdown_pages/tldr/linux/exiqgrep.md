@@ -1,27 +1,27 @@
 ---
 title: "Exiqgrep - Filter Exim Queue Output | Free DevTools"
 name: exiqgrep
-path: /freedevtools/tldr/unknown/exiqgrep
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/exiqgrep/"
+path: /freedevtools/tldr/linux/exiqgrep
+canonical: "https://hexmos.com/freedevtools/tldr/linux/exiqgrep/"
 description: "Filter Exim queue output easily with Exiqgrep. Quickly find emails and messages by sender or recipient. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- exim queue filter
-- exim message search
-- exim queue grep
-- exim email filter
-- exim message identifier
-- exim bounce message
-- exim email address search
-- linux exim
-- unix exim
-- exim queue management
+  - exim queue filter
+  - exim message search
+  - exim queue grep
+  - exim email filter
+  - exim message identifier
+  - exim bounce message
+  - exim email address search
+  - linux exim
+  - unix exim
+  - exim queue management
 features:
-- Match sender addresses case-insensitively
-- Display message IDs exclusively
-- Match recipient addresses
-- Remove messages matching a specific sender
-- Identify bounced messages in the queue
+  - Match sender addresses case-insensitively
+  - Display message IDs exclusively
+  - Match recipient addresses
+  - Remove messages matching a specific sender
+  - Identify bounced messages in the queue
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

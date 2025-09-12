@@ -1,3 +1,31 @@
+---
+title: "Number Lines - Format Text Output | Free DevTools"
+name: nl
+path: /freedevtools/tldr/linux/nl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nl/"
+description: "Format text output with the nl command, easily numbering lines in files or from stdin.  Customize numbering style, increments, separators, and more. Free online tool, no registration required."
+category: linux
+keywords:
+  - line numbering command
+  - text formatting command
+  - file processing command
+  - linux command line tool
+  - unix command line tool
+  - number lines in file
+  - customize line numbering
+  - stdin line numbering
+  - command-line text processing
+  - text output formatting
+features:
+  - Number lines from a file or standard input.
+  - Customize line numbering increments.
+  - Control the formatting of line numbers (width, justification).
+  - Specify a custom separator between line numbers and text.
+  - Number only specific lines matching a regular expression.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nl
 
 > Number lines from a file or from `stdin`.

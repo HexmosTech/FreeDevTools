@@ -1,3 +1,31 @@
+---
+title: "Pwn Exploit Tool - Generate Shellcode & Analyze Binaries | Free DevTools"
+name: pwn
+path: /freedevtools/tldr/linux/pwn
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pwn/"
+description: "Generate shellcode and analyze binaries with the Pwn exploit development library.  Convert assembly, create cyclic patterns, encode/decode hex, and check binary security settings. Free online tool, no registration required."
+category: linux
+keywords:
+  - assembly code generator
+  - shellcode generator linux
+  - hex encoder decoder
+  - binary security analyzer
+  - cyclic pattern creator
+  - exploit development tool
+  - pwn tool command line
+  - linux binary analysis
+  - x64 shellcode
+  - elf file checker
+features:
+  - Convert assembly code to bytes
+  - Create cyclic patterns of specified length
+  - Encode and decode data in hexadecimal format
+  - Generate x64 Linux shellcode for executing commands
+  - Check security settings of ELF binaries
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pwn
 
 > Exploit Development Library designed for rapid prototyping.

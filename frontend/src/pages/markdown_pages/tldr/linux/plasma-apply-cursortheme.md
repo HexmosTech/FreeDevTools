@@ -1,27 +1,27 @@
 ---
 title: "Control Cursor Theme - Plasma Apply Cursortheme | Free DevTools"
 name: plasma-apply-cursortheme
-path: /freedevtools/tldr/unknown/plasma-apply-cursortheme
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/plasma-apply-cursortheme/"
+path: /freedevtools/tldr/linux/plasma-apply-cursortheme
+canonical: "https://hexmos.com/freedevtools/tldr/linux/plasma-apply-cursortheme/"
 description: "Control Plasma cursor themes with Plasma Apply Cursortheme. Easily switch between different cursors. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- plasma cursor theme controller
-- kde cursor manager
-- linux cursor customization
-- plasma appearance settings
-- command line cursor changer
-- breeze cursor theme
-- system theme modification
-- desktop environment theming
-- cursor style adjustment
-- plasma theming utility
+  - plasma cursor theme controller
+  - kde cursor manager
+  - linux cursor customization
+  - plasma appearance settings
+  - command line cursor changer
+  - breeze cursor theme
+  - system theme modification
+  - desktop environment theming
+  - cursor style adjustment
+  - plasma theming utility
 features:
-- List available Plasma cursor themes.
-- Apply a specified cursor theme.
-- Change the cursor appearance on the system.
-- Provide command-line help information.
-- Support various cursor theme types.
+  - List available Plasma cursor themes.
+  - Apply a specified cursor theme.
+  - Change the cursor appearance on the system.
+  - Provide command-line help information.
+  - Support various cursor theme types.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

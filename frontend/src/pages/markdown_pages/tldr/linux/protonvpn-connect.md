@@ -1,27 +1,27 @@
 ---
 title: "ProtonVPN Connect - Control VPN Connection | Free DevTools"
 name: protonvpn-connect
-path: /freedevtools/tldr/unknown/protonvpn-connect
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/protonvpn-connect/"
+path: /freedevtools/tldr/linux/protonvpn-connect
+canonical: "https://hexmos.com/freedevtools/tldr/linux/protonvpn-connect/"
 description: "Control ProtonVPN connections with ProtonVPN Connect. Secure your internet traffic and bypass censorship using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- protonvpn connect
-- vpn connect command
-- linux vpn client
-- command line vpn
-- secure vpn connection
-- protonvpn terminal
-- network privacy tool
-- censorship bypass
-- fastest vpn server
-- tor vpn connection
+  - protonvpn connect
+  - vpn connect command
+  - linux vpn client
+  - command line vpn
+  - secure vpn connection
+  - protonvpn terminal
+  - network privacy tool
+  - censorship bypass
+  - fastest vpn server
+  - tor vpn connection
 features:
-- Connect to ProtonVPN interactively
-- Connect to the fastest available server
-- Connect using a specific server and protocol
-- Connect to a random server with a specified protocol
-- Connect through the fastest Tor-supporting server
+  - Connect to ProtonVPN interactively
+  - Connect to the fastest available server
+  - Connect using a specific server and protocol
+  - Connect to a random server with a specified protocol
+  - Connect through the fastest Tor-supporting server
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

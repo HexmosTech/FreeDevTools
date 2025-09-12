@@ -1,27 +1,27 @@
 ---
 title: "Create Wordlist - Spider URLs with cewl | Free DevTools"
 name: cewl
-path: /freedevtools/tldr/unknown/cewl
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/cewl/"
+path: /freedevtools/tldr/linux/cewl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cewl/"
 description: "Create wordlists from website content with cewl, a powerful URL spidering tool. Extract targeted words and boost penetration testing efforts. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- URL spidering wordlist
-- website wordlist generator
-- cewl web scraper
-- password cracking wordlist
-- penetration testing tool
-- web content extraction
-- linux wordlist generator
-- command line wordlist
-- URL analysis tool
-- website security testing
+  - URL spidering wordlist
+  - website wordlist generator
+  - cewl web scraper
+  - password cracking wordlist
+  - penetration testing tool
+  - web content extraction
+  - linux wordlist generator
+  - command line wordlist
+  - URL analysis tool
+  - website security testing
 features:
-- Generate wordlists from specific URLs
-- Control link depth during spidering
-- Extract alphanumeric words with minimum length
-- Filter and extract email addresses from web content
-- Authenticate with HTTP Basic or Digest for protected sites
+  - Generate wordlists from specific URLs
+  - Control link depth during spidering
+  - Extract alphanumeric words with minimum length
+  - Filter and extract email addresses from web content
+  - Authenticate with HTTP Basic or Digest for protected sites
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

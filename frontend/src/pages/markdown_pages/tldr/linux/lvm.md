@@ -1,3 +1,31 @@
+---
+title: "LVM Manage Volumes - Create and Manage Logical Volumes | Free DevTools"
+name: lvm
+path: /freedevtools/tldr/linux/lvm
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lvm/"
+description: "Manage and control Linux logical volumes with LVM. Create, display, and modify physical volumes, volume groups, and logical volumes. Free online tool, no registration required."
+category: linux
+keywords:
+  - lvm volume management
+  - linux lvm commands
+  - logical volume manager tutorial
+  - lvm pvcreate command
+  - lvm vgcreate command
+  - lvm lvcreate command
+  - linux disk management
+  - lvm administration
+  - lvm pvdisplay command
+  - lvm lvdisplay command
+features:
+  - Create physical volumes from raw disk partitions.
+  - Create volume groups from one or more physical volumes.
+  - Create logical volumes within volume groups.
+  - Display detailed information about physical volumes, volume groups, and logical volumes.
+  - Manage and resize existing logical volumes.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lvm
 
 > Manage physical volumes, volume groups, and logical volumes using the Logical Volume Manager (LVM) interactive shell.

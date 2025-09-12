@@ -1,27 +1,27 @@
 ---
 title: "AppArmor Audit - Control Security Profiles | Free DevTools"
 name: aa-audit
-path: /freedevtools/tldr/unknown/aa-audit
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/aa-audit/"
+path: /freedevtools/tldr/linux/aa-audit
+canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-audit/"
 description: "Control AppArmor security profiles with aa-audit. Set profiles to audit mode, remove audit status, and manage configurations effortlessly on Linux systems. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- AppArmor audit mode
-- Linux security profiles
-- aa-audit command
-- AppArmor profile management
-- Security audit tool
-- Linux system administration
-- AppArmor configuration
-- Audit profile settings
-- Force audit application
-- Remove AppArmor audit
+  - AppArmor audit mode
+  - Linux security profiles
+  - aa-audit command
+  - AppArmor profile management
+  - Security audit tool
+  - Linux system administration
+  - AppArmor configuration
+  - Audit profile settings
+  - Force audit application
+  - Remove AppArmor audit
 features:
-- Set AppArmor profiles to audit mode
-- Remove audit mode from AppArmor profiles
-- Force audit mode application
-- Manage AppArmor profiles from a specified directory
-- Disable reloading during audit mode setup
+  - Set AppArmor profiles to audit mode
+  - Remove audit mode from AppArmor profiles
+  - Force audit mode application
+  - Manage AppArmor profiles from a specified directory
+  - Disable reloading during audit mode setup
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

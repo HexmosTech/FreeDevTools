@@ -1,3 +1,31 @@
+---
+title: "Create Debian Chroots with mmdebstrap | Free DevTools"
+name: mmdebstrap
+path: /freedevtools/tldr/linux/mmdebstrap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mmdebstrap/"
+description: "Create Debian chroots quickly with mmdebstrap, a powerful alternative to debootstrap.  Generate customized chroots with ease using various options including specifying mirrors and packages. Free online tool, no registration required."
+category: linux
+keywords:
+  - debian chroot creator
+  - mmdebstrap linux
+  - debian installer command
+  - linux system builder
+  - create debian chroot
+  - mmdebstrap tutorial
+  - debian root creator
+  - debian package installer
+  - linux chroot manager
+  - build debian system
+features:
+  - Creates Debian chroots from various sources.
+  - Supports different Debian releases (stable, bookworm, sid).
+  - Allows specifying custom mirrors for faster downloads.
+  - Enables inclusion of additional packages during chroot creation.
+  - Generates tarball chroots for portability and offline use.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mmdebstrap
 
 > Create a Debian chroot.

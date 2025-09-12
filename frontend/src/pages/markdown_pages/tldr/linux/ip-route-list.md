@@ -1,27 +1,27 @@
 ---
 title: "IP Route - List Routing Tables | Free DevTools"
 name: ip-route-list
-path: /freedevtools/tldr/unknown/ip-route-list
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/ip-route-list/"
+path: /freedevtools/tldr/linux/ip-route-list
+canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-route-list/"
 description: "List IP routes with this command line tool. Inspect routing tables and network paths quickly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- ip route list
-- network routing table
-- command line route
-- linux route
-- route lookup
-- route cache
-- ip route table
-- network diagnostics
-- routing troubleshooting
-- ip address routing
+  - ip route list
+  - network routing table
+  - command line route
+  - linux route
+  - route lookup
+  - route cache
+  - ip route table
+  - network diagnostics
+  - routing troubleshooting
+  - ip address routing
 features:
-- Display the main routing table
-- List routes from a specific device
-- Filter routes by scope
-- Display the routing cache
-- Show IPv4 or IPv6 routes only
+  - Display the main routing table
+  - List routes from a specific device
+  - Filter routes by scope
+  - Display the routing cache
+  - Show IPv4 or IPv6 routes only
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

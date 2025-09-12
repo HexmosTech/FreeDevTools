@@ -1,27 +1,27 @@
 ---
 title: "Generate initramfs - Create Linux Boot Image | Free DevTools"
 name: mkinitfs
-path: /freedevtools/tldr/unknown/mkinitfs
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mkinitfs/"
+path: /freedevtools/tldr/linux/mkinitfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkinitfs/"
 description: "Generate initramfs images with mkinitfs on Alpine Linux. Customize boot process and manage kernel modules efficiently. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- initramfs generator
-- linux boot image
-- alpine linux
-- kernel modules
-- mkinitfs configuration
-- boot process customization
-- linux boot sequence
-- initramfs compression
-- linux system administration
-- system bootloader
+  - initramfs generator
+  - linux boot image
+  - alpine linux
+  - kernel modules
+  - mkinitfs configuration
+  - boot process customization
+  - linux boot sequence
+  - initramfs compression
+  - linux system administration
+  - system bootloader
 features:
-- Generate initramfs image from configuration file
-- Compress initramfs using specified algorithm
-- List files to be included in initramfs image
-- List available features for initramfs creation
-- Customize initramfs image using configuration options
+  - Generate initramfs image from configuration file
+  - Compress initramfs using specified algorithm
+  - List files to be included in initramfs image
+  - List available features for initramfs creation
+  - Customize initramfs image using configuration options
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

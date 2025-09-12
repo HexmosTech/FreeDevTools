@@ -1,3 +1,31 @@
+---
+title: "Manage Packages with emerge - Gentoo Package Management | Free DevTools"
+name: emerge
+path: /freedevtools/tldr/linux/emerge
+canonical: "https://hexmos.com/freedevtools/tldr/linux/emerge/"
+description: "Manage Gentoo packages efficiently with emerge, the powerful package manager.  Update, install, remove, and search for packages with ease. Free online tool, no registration required."
+category: linux
+keywords:
+  - Gentoo package manager
+  - emerge commands
+  - linux package management
+  - portage emerge
+  - gentoo update
+  - gentoo install packages
+  - gentoo remove packages
+  - gentoo package search
+  - emerge sync
+  - emerge update
+features:
+  - Synchronize all Gentoo packages
+  - Update all installed packages and their dependencies
+  - Resume interrupted package installations
+  - Install new packages with dependency resolution
+  - Remove packages and their dependencies
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # emerge
 
 > Gentoo Linux package manager utility.

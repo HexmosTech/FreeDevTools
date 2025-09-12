@@ -1,3 +1,31 @@
+---
+title: "Manage Encrypted Storage - Tomb Command | Free DevTools"
+name: tomb
+path: /freedevtools/tldr/linux/tomb
+canonical: "https://hexmos.com/freedevtools/tldr/linux/tomb/"
+description: "Manage and control encrypted storage directories with the Tomb command.  Create, lock, open, and securely manage encrypted data using simple commands. Free online tool, no registration required."
+category: linux
+keywords:
+  - encrypted storage management
+  - secure directory command
+  - tomb command line tool
+  - filesystem encryption
+  - data protection command
+  - encrypted data management
+  - secure file storage
+  - command-line encryption
+  - linux encryption tool
+  - portable encrypted directory
+features:
+  - Create and manage encrypted storage directories.
+  - Securely lock and unlock encrypted tombs using keys.
+  - Mount encrypted tombs as regular filesystem directories.
+  - Forcefully close open tombs, even if in use.
+  - List all currently open encrypted tombs.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # tomb
 
 > Manage encrypted storage directories that can be safely transported and hidden in a filesystem.

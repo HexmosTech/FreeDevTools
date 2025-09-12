@@ -1,3 +1,31 @@
+---
+title: "Manage Symbolic Links - Control Default Commands | Free DevTools"
+name: update-alternatives
+path: /freedevtools/tldr/linux/update-alternatives
+canonical: "https://hexmos.com/freedevtools/tldr/linux/update-alternatives/"
+description: "Control default commands by managing symbolic links with update-alternatives.  Easily add, remove, and configure links for various applications. Free online tool, no registration required."
+category: linux
+keywords:
+  - symbolic link manager
+  - linux command update-alternatives
+  - manage default commands linux
+  - command line symbolic link
+  - update-alternatives tutorial
+  - default command switcher
+  - linux system administration
+  - configure default programs
+  - symbolic link management tools
+  - alternative command selector
+features:
+  - Add new symbolic links to specify default commands.
+  - Configure existing symbolic links to change default programs.
+  - Remove unwanted symbolic links easily.
+  - Display information about existing symbolic links.
+  - Manage multiple versions of the same command.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # update-alternatives
 
 > Convenientily maintain symbolic links to determine default commands.

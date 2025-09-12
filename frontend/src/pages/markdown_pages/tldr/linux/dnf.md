@@ -1,3 +1,31 @@
+---
+title: "DNF Package Manager - Manage Linux Packages | Free DevTools"
+name: dnf
+path: /freedevtools/tldr/linux/dnf
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf/"
+description: "Manage Linux packages efficiently with DNF. Upgrade, install, remove, and search packages easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package manager
+  - dnf commands
+  - fedora package manager
+  - centos package manager
+  - rhel package manager
+  - linux package installation
+  - linux package removal
+  - dnf upgrade
+  - dnf search
+  - dnf install
+features:
+  - Upgrade installed packages to their latest versions.
+  - Search for packages using keywords.
+  - Install new packages with automatic confirmation.
+  - Remove unwanted packages from the system.
+  - List all installed packages on the system.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # dnf
 
 > Package management utility for RHEL, Fedora, and CentOS (replaces yum).

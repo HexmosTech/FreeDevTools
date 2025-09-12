@@ -1,27 +1,27 @@
 ---
 title: "Control Virtual Machines - virt-viewer | Free DevTools"
 name: virt-viewer
-path: /freedevtools/tldr/unknown/virt-viewer
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/virt-viewer/"
+path: /freedevtools/tldr/linux/virt-viewer
+canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-viewer/"
 description: "Control virtual machines with virt-viewer. Connect to VMs, manage connections and monitor performance. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- virtual machine control
-- virt-viewer manager
-- qemu virtual machine
-- xen virtual machine
-- remote VM connection
-- virtual machine viewer
-- linux virtual machine
-- KVM virtual machine
-- domain manager
-- virtual machine reconnect
+  - virtual machine control
+  - virt-viewer manager
+  - qemu virtual machine
+  - xen virtual machine
+  - remote VM connection
+  - virtual machine viewer
+  - linux virtual machine
+  - KVM virtual machine
+  - domain manager
+  - virtual machine reconnect
 features:
-- Launch a graphical interface for virtual machines
-- Connect to virtual machines by ID, UUID or name
-- Automatically reconnect to VMs after shutdown and restart
-- Connect to remote VMs over TLS
-- Connect to remote VMs over SSH
+  - Launch a graphical interface for virtual machines
+  - Connect to virtual machines by ID, UUID or name
+  - Automatically reconnect to VMs after shutdown and restart
+  - Connect to remote VMs over TLS
+  - Connect to remote VMs over SSH
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

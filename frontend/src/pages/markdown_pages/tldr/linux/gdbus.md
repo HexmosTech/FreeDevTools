@@ -1,27 +1,27 @@
 ---
 title: "DBus Interact - Control D-Bus Objects | Free DevTools"
 name: gdbus
-path: /freedevtools/tldr/unknown/gdbus
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/gdbus/"
+path: /freedevtools/tldr/linux/gdbus
+canonical: "https://hexmos.com/freedevtools/tldr/linux/gdbus/"
 description: "Interact with D-Bus objects using gdbus. Introspect interfaces, call methods, and monitor signals on the bus with this free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- D-Bus object interaction
-- gdbus command line tool
-- D-Bus introspection tool
-- Linux message bus control
-- gdbus method call
-- gdbus signal emission
-- D-Bus object monitoring
-- gdbus bus exploration
-- Linux inter-process communication
-- gdbus command examples
+  - D-Bus object interaction
+  - gdbus command line tool
+  - D-Bus introspection tool
+  - Linux message bus control
+  - gdbus method call
+  - gdbus signal emission
+  - D-Bus object monitoring
+  - gdbus bus exploration
+  - Linux inter-process communication
+  - gdbus command examples
 features:
-- List available names on the session or system bus
-- Introspect D-Bus objects to view interfaces and methods
-- Call specific methods on D-Bus objects with arguments
-- Emit signals from D-Bus objects with specified arguments
-- Monitor all messages on a D-Bus bus
+  - List available names on the session or system bus
+  - Introspect D-Bus objects to view interfaces and methods
+  - Call specific methods on D-Bus objects with arguments
+  - Emit signals from D-Bus objects with specified arguments
+  - Monitor all messages on a D-Bus bus
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

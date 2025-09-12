@@ -1,27 +1,27 @@
 ---
 title: "UPower Battery Monitor - Control Power Status | Free DevTools"
 name: upower
-path: /freedevtools/tldr/unknown/upower
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/upower/"
+path: /freedevtools/tldr/linux/upower
+canonical: "https://hexmos.com/freedevtools/tldr/linux/upower/"
 description: "Control power status with UPower Battery Monitor, a system utility for power and battery information. Monitor power devices and status changes. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- upower battery monitor
-- linux power management
-- battery status check
-- power device enumeration
-- upower command line
-- system power statistics
-- battery health monitoring
-- power consumption analysis
-- device power information
-- linux battery information
+  - upower battery monitor
+  - linux power management
+  - battery status check
+  - power device enumeration
+  - upower command line
+  - system power statistics
+  - battery health monitoring
+  - power consumption analysis
+  - device power information
+  - linux battery information
 features:
-- Display detailed power and battery information.
-- List all available power devices on the system.
-- Monitor and report real-time power status changes.
-- Show detailed power status change events.
-- Output the installed upower version number.
+  - Display detailed power and battery information.
+  - List all available power devices on the system.
+  - Monitor and report real-time power status changes.
+  - Show detailed power status change events.
+  - Output the installed upower version number.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

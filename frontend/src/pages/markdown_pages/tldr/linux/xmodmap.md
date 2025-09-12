@@ -1,3 +1,31 @@
+---
+title: "xmodmap - Control Keymaps & Pointer | Free DevTools"
+name: xmodmap
+path: /freedevtools/tldr/linux/xmodmap
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xmodmap/"
+description: "Control keymaps and pointer settings with xmodmap.  Modify keyboard layouts and button mappings easily. Free online tool, no registration required."
+category: linux
+keywords:
+  - xmodmap keybinding
+  - xmodmap linux
+  - xmodmap keyboard mapping
+  - xmodmap pointer control
+  - xmodmap key reassignment
+  - xmodmap keycode
+  - xmodmap configuration
+  - xmodmap command
+  - xmodmap tutorial
+  - xmodmap customization
+features:
+  - Swap left and right mouse button clicks.
+  - Reassign keyboard keys to different functions.
+  - Disable specific keyboard keys.
+  - Load keymap configurations from external files.
+  - Modify pointer button mappings.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xmodmap
 
 > Utility for modifying keymaps and pointer button mappings in X.

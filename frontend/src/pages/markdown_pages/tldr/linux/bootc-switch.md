@@ -1,27 +1,27 @@
 ---
 title: "Bootc Switch - Change OS Image | Free DevTools"
 name: bootc-switch
-path: /freedevtools/tldr/unknown/bootc-switch
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/bootc-switch/"
+path: /freedevtools/tldr/linux/bootc-switch
+canonical: "https://hexmos.com/freedevtools/tldr/linux/bootc-switch/"
 description: "Switch operating systems with Bootc. Target new container images and update your system seamlessly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- container image switch
-- bootable image update
-- os image deployment
-- bootc image management
-- linux image switch
-- container image deployment
-- bootable container management
-- operating system update command
-- linux bootable image
-- container image boot
+  - container image switch
+  - bootable image update
+  - os image deployment
+  - bootc image management
+  - linux image switch
+  - container image deployment
+  - bootable container management
+  - operating system update command
+  - linux bootable image
+  - container image boot
 features:
-- Switch to a new container image as the base OS
-- Target images from a container registry
-- Use local container storage as an image source
-- Deploy images directly from a tarball
-- Update the bootable system image
+  - Switch to a new container image as the base OS
+  - Target images from a container registry
+  - Use local container storage as an image source
+  - Deploy images directly from a tarball
+  - Update the bootable system image
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

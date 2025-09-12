@@ -1,3 +1,31 @@
+---
+title: "SNMP Scanner braa - Scan Networks Fast | Free DevTools"
+name: braa
+path: /freedevtools/tldr/linux/braa
+canonical: "https://hexmos.com/freedevtools/tldr/linux/braa/"
+description: "Scan networks rapidly with braa SNMP scanner.  Query OIDs, manage network devices, and automate SNMP tasks. Free online tool, no registration required."
+category: linux
+keywords:
+  - snmp scanner
+  - network scanner
+  - snmp query
+  - snmp automation
+  - mass snmp scan
+  - snmp oid query
+  - network monitoring
+  - system information
+  - snmp walk
+  - braa scanner
+features:
+  - Walk the SNMP tree of a host.
+  - Query specific OIDs on multiple hosts simultaneously.
+  - Scan entire subnets for specific OIDs.
+  - Set SNMP OID values remotely.
+  - Supports both public and private SNMP communities.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # braa
 
 > Ultra-fast mass SNMP scanner allowing multiple hosts simultaneously.

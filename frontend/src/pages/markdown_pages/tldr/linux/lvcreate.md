@@ -1,3 +1,31 @@
+---
+title: "Create Logical Volumes - lvcreate Command | Free DevTools"
+name: lvcreate
+path: /freedevtools/tldr/linux/lvcreate
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lvcreate/"
+description: "Create logical volumes with the lvcreate command in Linux. Manage disk space and partitions efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - logical volume creation linux
+  - lvcreate command linux
+  - linux logical volume manager
+  - lvm lvcreate examples
+  - create lv linux
+  - manage logical volumes
+  - linux disk management
+  - lvcreate size options
+  - lvcreate extent options
+  - linux system administration
+features:
+  - Create logical volumes of specified sizes.
+  - Create logical volumes using a percentage of available space.
+  - Create logical volumes using all free space.
+  - Assign custom names to logical volumes.
+  - Manage logical volumes within existing volume groups.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # lvcreate
 
 > Create a logical volume in an existing volume group. A volume group is a collection of logical and physical volumes.

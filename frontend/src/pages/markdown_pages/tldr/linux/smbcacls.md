@@ -1,27 +1,27 @@
 ---
 title: "Control SMB ACLs - Manage Windows Permissions | Free DevTools"
 name: smbcacls
-path: /freedevtools/tldr/unknown/smbcacls
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/smbcacls/"
+path: /freedevtools/tldr/linux/smbcacls
+canonical: "https://hexmos.com/freedevtools/tldr/linux/smbcacls/"
 description: "Control SMB ACLs with smbcacls. Manage Windows file sharing permissions and access control lists. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- SMB ACL control
-- Windows ACL management
-- Samba permissions
-- smbcacls command
-- SMB share security
-- Network file access control
-- Linux SMB administration
-- Windows file permissions
-- CIFS ACL manipulation
-- Samba access control
+  - SMB ACL control
+  - Windows ACL management
+  - Samba permissions
+  - smbcacls command
+  - SMB share security
+  - Network file access control
+  - Linux SMB administration
+  - Windows file permissions
+  - CIFS ACL manipulation
+  - Samba access control
 features:
-- Display ACLs for files and directories on SMB shares
-- Set new ACLs for files on remote SMB shares
-- Remove all existing ACL entries and set a new ACL
-- Specify alternative workgroups or domains
-- Manage Windows file sharing permissions from the command line
+  - Display ACLs for files and directories on SMB shares
+  - Set new ACLs for files on remote SMB shares
+  - Remove all existing ACL entries and set a new ACL
+  - Specify alternative workgroups or domains
+  - Manage Windows file sharing permissions from the command line
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

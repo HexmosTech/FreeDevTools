@@ -1,28 +1,28 @@
 ---
 title: "Access KJV Bible - Read Scriptures on Your Desktop | Free DevTools"
 name: kjv
-path: /freedevtools/tldr/unknown/kjv
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kjv/"
+path: /freedevtools/tldr/linux/kjv
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kjv/"
 description: "Access KJV Bible verses directly from your desktop with KJV. A command-line tool for scripture lookup and study. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- KJV Bible CLI
-- Scripture command line tool
-- Bible verse lookup
-- KJV text search
-- Command line bible reader
-- Desktop scripture access
-- Bible verse retriever
-- KJV command reference
-- Scripture study tool
-- Text-based bible search
+  - KJV Bible CLI
+  - Scripture command line tool
+  - Bible verse lookup
+  - KJV text search
+  - Command line bible reader
+  - Desktop scripture access
+  - Bible verse retriever
+  - KJV command reference
+  - Scripture study tool
+  - Text-based bible search
 features:
-- Display specific books of the Bible
-- Open a specific chapter by book name
-- Retrieve a specific verse by chapter and verse number
-- Display a range of verses within a chapter
-- Search for verses matching a specific pattern
-- Display verses across multiple chapters
+  - Display specific books of the Bible
+  - Open a specific chapter by book name
+  - Retrieve a specific verse by chapter and verse number
+  - Display a range of verses within a chapter
+  - Search for verses matching a specific pattern
+  - Display verses across multiple chapters
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

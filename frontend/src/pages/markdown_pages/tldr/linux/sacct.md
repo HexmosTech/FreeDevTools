@@ -1,3 +1,31 @@
+---
+title: "Sacct Command - Display Slurm Accounting Data | Free DevTools"
+name: sacct
+path: /freedevtools/tldr/linux/sacct
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sacct/"
+description: "Display and manage Slurm job accounting data with the sacct command.  Filter jobs by time, state, and resource usage. Free online tool, no registration required."
+category: linux
+keywords:
+  - slurm accounting data
+  - sacct command
+  - slurm job information
+  - linux cluster accounting
+  - slurm job reporting
+  - high performance computing
+  - hpc accounting
+  - slurm resource usage
+  - job state analysis
+  - slurm command line
+features:
+  - Display job details including ID, name, state, and resource usage.
+  - Filter jobs based on time, state, and other criteria.
+  - Output customized reports with selected attributes.
+  - Analyze job allocation and resource consumption.
+  - Retrieve detailed job exit codes and reasons for failure.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sacct
 
 > Display accounting data from the Slurm service.

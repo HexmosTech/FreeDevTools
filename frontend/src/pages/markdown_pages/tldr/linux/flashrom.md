@@ -1,3 +1,31 @@
+---
+title: "Flashrom - Manage Flash Memory | Free DevTools"
+name: flashrom
+path: /freedevtools/tldr/linux/flashrom
+canonical: "https://hexmos.com/freedevtools/tldr/linux/flashrom/"
+description: "Manage flash memory with flashrom. Read, write, verify, and erase flash chips easily using command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - flash memory management
+  - flashrom command
+  - linux flashrom
+  - spi flash programmer
+  - microcontroller programming
+  - bios flashing
+  - firmware flashing
+  - eeprom programming
+  - flash chip reader
+  - read flash memory
+features:
+  - Read data from flash memory chips.
+  - Write data to flash memory chips.
+  - Verify data written to flash memory chips.
+  - Erase data from flash memory chips.
+  - Support various programmers and interfaces.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # flashrom
 
 > Read, write, verify and erase flash chips.

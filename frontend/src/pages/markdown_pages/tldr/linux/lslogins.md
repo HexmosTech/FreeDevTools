@@ -1,27 +1,27 @@
 ---
 title: "Lslogins - Show User Logins on Linux | Free DevTools"
 name: lslogins
-path: /freedevtools/tldr/unknown/lslogins
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/lslogins/"
+path: /freedevtools/tldr/linux/lslogins
+canonical: "https://hexmos.com/freedevtools/tldr/linux/lslogins/"
 description: "Display Linux user logins with lslogins. Quickly review user accounts, last logins, and group memberships on your system. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- linux user logins
-- show user logins linux
-- linux login information
-- command line user data
-- user account details linux
-- system user accounts
-- last login details linux
-- linux group memberships
-- linux account management
-- linux security auditing
+  - linux user logins
+  - show user logins linux
+  - linux login information
+  - command line user data
+  - user account details linux
+  - system user accounts
+  - last login details linux
+  - linux group memberships
+  - linux account management
+  - linux security auditing
 features:
-- Display all user accounts on the system
-- Filter users by group membership
-- Show last login timestamps
-- List system accounts separately
-- Display supplementary groups for users
+  - Display all user accounts on the system
+  - Filter users by group membership
+  - Show last login timestamps
+  - List system accounts separately
+  - Display supplementary groups for users
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

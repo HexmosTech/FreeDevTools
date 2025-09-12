@@ -1,3 +1,31 @@
+---
+title: "Cockpit WS - Control Websocket Communication | Free DevTools"
+name: cockpit-ws
+path: /freedevtools/tldr/linux/cockpit-ws
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-ws/"
+description: "Control websocket communication with Cockpit WS.  Manage connections, configure settings, and integrate with Cockpit Bridge. Free online tool, no registration required."
+category: linux
+keywords:
+  - websocket communication manager
+  - cockpit websocket server
+  - cockpit-ws configuration
+  - linux websocket server
+  - cockpit bridge integration
+  - websocket server management
+  - secure websocket connection
+  - cockpit-ws command line
+  - remote websocket control
+  - local websocket server
+features:
+  - Enables secure communication between browser and Cockpit services.
+  - Allows specifying custom IP addresses and ports for binding.
+  - Supports TLS encryption for secure connections.
+  - Offers easy integration with Cockpit Bridge.
+  - Provides a command-line interface for simple management.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cockpit-ws
 
 > Communicate between the browser application and various configuration tools and services like `cockpit-bridge`.

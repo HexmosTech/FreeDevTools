@@ -1,27 +1,27 @@
 ---
 title: "Control urxvt Terminal - Customize Terminal Emulator | Free DevTools"
 name: urxvt
-path: /freedevtools/tldr/unknown/urxvt
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/urxvt/"
+path: /freedevtools/tldr/linux/urxvt
+canonical: "https://hexmos.com/freedevtools/tldr/linux/urxvt/"
 description: "Control terminal behavior with urxvt, a highly customizable terminal emulator. Tailor your command-line experience with advanced configurations. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- urxvt terminal
-- customize terminal
-- terminal emulator
-- linux terminal
-- command line interface
-- rxvt-unicode
-- terminal configuration
-- terminal appearance
-- command execution
-- shell integration
+  - urxvt terminal
+  - customize terminal
+  - terminal emulator
+  - linux terminal
+  - command line interface
+  - rxvt-unicode
+  - terminal configuration
+  - terminal appearance
+  - command execution
+  - shell integration
 features:
-- Open new urxvt terminal windows
-- Execute commands in specific directories
-- Run commands within a new terminal instance
-- Keep terminal windows open after command execution
-- Integrate commands within a sh shell
+  - Open new urxvt terminal windows
+  - Execute commands in specific directories
+  - Run commands within a new terminal instance
+  - Keep terminal windows open after command execution
+  - Integrate commands within a sh shell
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

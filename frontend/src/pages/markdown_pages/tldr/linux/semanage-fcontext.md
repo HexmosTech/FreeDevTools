@@ -1,27 +1,27 @@
 ---
 title: "Manage SELinux Contexts - Control File Security | Free DevTools"
 name: semanage-fcontext
-path: /freedevtools/tldr/unknown/semanage-fcontext
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/semanage-fcontext/"
+path: /freedevtools/tldr/linux/semanage-fcontext
+canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage-fcontext/"
 description: "Control SELinux file contexts with semanage-fcontext. Manage persistent security rules, define file labels using PCRE regex, and recursively relabel directories. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- SELinux context management
-- file labeling rules
-- security context configuration
-- semanage fcontext command
-- PCRE regex labeling
-- linux security
-- file security policy
-- restorecon command
-- security administration
-- selinux policy rules
+  - SELinux context management
+  - file labeling rules
+  - security context configuration
+  - semanage fcontext command
+  - PCRE regex labeling
+  - linux security
+  - file security policy
+  - restorecon command
+  - security administration
+  - selinux policy rules
 features:
-- List all SELinux file context rules
-- Add user-defined file labeling rules
-- Delete user-defined file labeling rules
-- Relabel directories recursively
-- Manage persistent SELinux security contexts
+  - List all SELinux file context rules
+  - Add user-defined file labeling rules
+  - Delete user-defined file labeling rules
+  - Relabel directories recursively
+  - Manage persistent SELinux security contexts
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

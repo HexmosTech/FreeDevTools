@@ -1,27 +1,27 @@
 ---
 title: "View Slurm Info - Control Cluster Status | Free DevTools"
 name: sinfo
-path: /freedevtools/tldr/unknown/sinfo
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/sinfo/"
+path: /freedevtools/tldr/linux/sinfo
+canonical: "https://hexmos.com/freedevtools/tldr/linux/sinfo/"
 description: "View Slurm cluster information with Sinfo. Monitor partition status, node availability, and resource allocation effectively with this Slurm command. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Slurm cluster info
-- Slurm node status
-- Slurm partition status
-- Slurm resource management
-- Slurm workload manager
-- Slurm sinfo command
-- Linux cluster management
-- HPC cluster monitoring
-- Slurm node allocation
-- Slurm job scheduling
+  - Slurm cluster info
+  - Slurm node status
+  - Slurm partition status
+  - Slurm resource management
+  - Slurm workload manager
+  - Slurm sinfo command
+  - Linux cluster management
+  - HPC cluster monitoring
+  - Slurm node allocation
+  - Slurm job scheduling
 features:
-- Display detailed status of Slurm partitions
-- Show information about idle nodes
-- Summarize the status of dead nodes
-- List reasons for node failures
-- Provide a quick summary overview of the cluster
+  - Display detailed status of Slurm partitions
+  - Show information about idle nodes
+  - Summarize the status of dead nodes
+  - List reasons for node failures
+  - Provide a quick summary overview of the cluster
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

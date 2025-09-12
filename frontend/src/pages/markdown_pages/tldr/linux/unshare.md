@@ -1,27 +1,27 @@
 ---
 title: "Unshare Command - Execute in New Namespaces | Free DevTools"
 name: unshare
-path: /freedevtools/tldr/unknown/unshare
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/unshare/"
+path: /freedevtools/tldr/linux/unshare
+canonical: "https://hexmos.com/freedevtools/tldr/linux/unshare/"
 description: "Execute commands with Unshare Command in isolated namespaces. Create separate network, mount, and PID spaces to isolate processes. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Linux unshare command
-- Unshare network namespace
-- Unshare mount namespace
-- Unshare PID namespace
-- Isolate processes Linux
-- Linux command namespace
-- Unshare command example
-- Execute command isolated
-- Linux process management
-- Command line unshare
+  - Linux unshare command
+  - Unshare network namespace
+  - Unshare mount namespace
+  - Unshare PID namespace
+  - Isolate processes Linux
+  - Linux command namespace
+  - Unshare command example
+  - Execute command isolated
+  - Linux process management
+  - Command line unshare
 features:
-- Execute commands in new network namespaces
-- Create isolated mount namespaces
-- Run processes in separate PID namespaces
-- Fork processes into unshared namespaces
-- Isolate commands from the host environment
+  - Execute commands in new network namespaces
+  - Create isolated mount namespaces
+  - Run processes in separate PID namespaces
+  - Fork processes into unshared namespaces
+  - Isolate commands from the host environment
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

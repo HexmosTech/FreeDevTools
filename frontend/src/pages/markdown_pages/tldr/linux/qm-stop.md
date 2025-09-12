@@ -1,27 +1,27 @@
 ---
 title: "QM Stop - Control Virtual Machines | Free DevTools"
 name: qm-stop
-path: /freedevtools/tldr/unknown/qm-stop
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-stop/"
+path: /freedevtools/tldr/linux/qm-stop
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-stop/"
 description: "Control virtual machines easily with QM Stop. Stop, timeout, and manage VM states with this command-line tool. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- proxmox vm stop
-- qm vm stop command
-- virtual machine control
-- proxmox virtual environment
-- kvm vm management
-- qm stop timeout
-- proxmox cli tools
-- vm state management
-- pve vm shutdown
-- proxmox vm force stop
+  - proxmox vm stop
+  - qm vm stop command
+  - virtual machine control
+  - proxmox virtual environment
+  - kvm vm management
+  - qm stop timeout
+  - proxmox cli tools
+  - vm state management
+  - pve vm shutdown
+  - proxmox vm force stop
 features:
-- Immediately stop a virtual machine
-- Specify a timeout for VM shutdown
-- Skip lock when stopping a VM (requires root)
-- Prevent deactivation of storage volumes
-- Manage virtual machine lifecycle
+  - Immediately stop a virtual machine
+  - Specify a timeout for VM shutdown
+  - Skip lock when stopping a VM (requires root)
+  - Prevent deactivation of storage volumes
+  - Manage virtual machine lifecycle
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

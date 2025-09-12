@@ -1,27 +1,27 @@
 ---
 title: "PipeWire Monitor - Observe PipeWire Objects | Free DevTools"
 name: pw-mon
-path: /freedevtools/tldr/unknown/pw-mon
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pw-mon/"
+path: /freedevtools/tldr/linux/pw-mon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-mon/"
 description: "Observe PipeWire objects with pw-mon. Monitor default or remote PipeWire instances and customize color configurations. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- pipewire monitor
-- pipewire object monitoring
-- pipewire instance monitor
-- pw-mon command
-- linux pipewire
-- audio monitoring
-- video monitoring
-- pipewire debugging
-- pipewire command line tool
-- multimedia monitoring
+  - pipewire monitor
+  - pipewire object monitoring
+  - pipewire instance monitor
+  - pw-mon command
+  - linux pipewire
+  - audio monitoring
+  - video monitoring
+  - pipewire debugging
+  - pipewire command line tool
+  - multimedia monitoring
 features:
-- Monitor PipeWire objects on default instances
-- Monitor PipeWire objects on specific remote instances
-- Customize color configuration for output
-- Display help information for command usage
-- Observe real-time updates from PipeWire instances
+  - Monitor PipeWire objects on default instances
+  - Monitor PipeWire objects on specific remote instances
+  - Customize color configuration for output
+  - Display help information for command usage
+  - Observe real-time updates from PipeWire instances
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "VM Set - Control Virtual Machine Options | Free DevTools"
 name: qm-set
-path: /freedevtools/tldr/unknown/qm-set
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-set/"
+path: /freedevtools/tldr/linux/qm-set
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-set/"
 description: "Control virtual machine settings with VM Set. Configure CPU cores, memory, network devices and GPU passthrough. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- VM configuration
-- virtual machine set
-- KVM settings
-- Proxmox VM options
-- qm set command
-- virtual machine CPU
-- virtual machine memory
-- virtual machine network
-- virtual machine GPU passthrough
-- virtual machine autostart
+  - VM configuration
+  - virtual machine set
+  - KVM settings
+  - Proxmox VM options
+  - qm set command
+  - virtual machine CPU
+  - virtual machine memory
+  - virtual machine network
+  - virtual machine GPU passthrough
+  - virtual machine autostart
 features:
-- Set virtual machine name in GUI
-- Configure VM to autostart on boot
-- Allocate CPU cores to a VM
-- Allocate memory to a VM
-- Configure network devices for a VM
+  - Set virtual machine name in GUI
+  - Configure VM to autostart on boot
+  - Allocate CPU cores to a VM
+  - Allocate memory to a VM
+  - Configure network devices for a VM
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

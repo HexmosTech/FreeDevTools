@@ -1,27 +1,27 @@
 ---
 title: "Importctl - Control Disk Images | Free DevTools"
 name: importctl
-path: /freedevtools/tldr/unknown/importctl
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/importctl/"
+path: /freedevtools/tldr/linux/importctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/importctl/"
 description: "Control disk images with Importctl. Download, import, and export disk images effortlessly. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- disk image import
-- disk image export
-- disk image download
-- tarball import
-- raw image import
-- qcow2 image import
-- linux disk image
-- command line disk
-- image conversion tool
-- image management tool
+  - disk image import
+  - disk image export
+  - disk image download
+  - tarball import
+  - raw image import
+  - qcow2 image import
+  - linux disk image
+  - command line disk
+  - image conversion tool
+  - image management tool
 features:
-- Download disk images from remote URLs.
-- Import raw disk images with compression support.
-- Export container images as tarball archives.
-- Convert disk images between raw and qcow2 formats.
-- Manage disk images with command-line interface.
+  - Download disk images from remote URLs.
+  - Import raw disk images with compression support.
+  - Export container images as tarball archives.
+  - Convert disk images between raw and qcow2 formats.
+  - Manage disk images with command-line interface.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

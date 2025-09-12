@@ -1,27 +1,27 @@
 ---
 title: "Pacman Query - Manage Arch Linux Packages | Free DevTools"
 name: pacman-query
-path: /freedevtools/tldr/unknown/pacman-query
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pacman-query/"
+path: /freedevtools/tldr/linux/pacman-query
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-query/"
 description: "Manage Arch Linux packages efficiently with Pacman Query. Find package information, dependencies, and file ownership. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- arch linux package manager
-- pacman query tool
-- linux package manager
-- find package file ownership
-- list installed packages
-- arch linux package dependencies
-- pacman upgrade packages
-- query local package database
-- orphan package removal
-- foreign packages list
+  - arch linux package manager
+  - pacman query tool
+  - linux package manager
+  - find package file ownership
+  - list installed packages
+  - arch linux package dependencies
+  - pacman upgrade packages
+  - query local package database
+  - orphan package removal
+  - foreign packages list
 features:
-- Query the local package database
-- List explicitly installed packages
-- Find package file ownership
-- Display detailed package information
-- List files owned by a package
+  - Query the local package database
+  - List explicitly installed packages
+  - Find package file ownership
+  - Display detailed package information
+  - List files owned by a package
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

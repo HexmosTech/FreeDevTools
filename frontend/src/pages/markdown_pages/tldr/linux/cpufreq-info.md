@@ -1,3 +1,31 @@
+---
+title: "CPU Frequency Info - Check CPU Speed | Free DevTools"
+name: cpufreq-info
+path: /freedevtools/tldr/linux/cpufreq-info
+canonical: "https://hexmos.com/freedevtools/tldr/linux/cpufreq-info/"
+description: "Check CPU frequency information with cpufreq-info.  Get details on CPU speed, governors, and limits. Free online tool, no registration required."
+category: linux
+keywords:
+  - cpu frequency information
+  - linux cpu frequency
+  - cpufreq-info command
+  - cpu speed checker
+  - cpu governor control
+  - cpu frequency limits
+  - system performance monitoring
+  - command line cpu info
+  - linux system tools
+  - cpu frequency analysis
+features:
+  - Display current CPU frequency for all CPUs.
+  - Show minimum and maximum CPU frequency limits.
+  - List available CPU frequency governors.
+  - View CPU frequency policies and settings.
+  - Display CPU frequency in human-readable format.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cpufreq-info
 
 > Show CPU frequency information.

@@ -1,27 +1,27 @@
 ---
 title: "Reboot Virtual Machine - Control VMs with qm-reboot | Free DevTools"
 name: qm-reboot
-path: /freedevtools/tldr/unknown/qm-reboot
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-reboot/"
+path: /freedevtools/tldr/linux/qm-reboot
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-reboot/"
 description: "Control virtual machines with qm-reboot. Reboot VMs, manage pending changes and ensure smooth server operations. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- virtual machine reboot
-- proxmox vm reboot
-- qm reboot command
-- proxmox qm-reboot
-- linux vm management
-- server restart tool
-- vm command line
-- proxmox command line
-- virtual machine control
-- proxmox server management
+  - virtual machine reboot
+  - proxmox vm reboot
+  - qm reboot command
+  - proxmox qm-reboot
+  - linux vm management
+  - server restart tool
+  - vm command line
+  - proxmox command line
+  - virtual machine control
+  - proxmox server management
 features:
-- Gracefully reboot virtual machines
-- Apply pending configuration changes during reboot
-- Control VM reboot timeout
-- Manage Proxmox virtual machines via command line
-- Ensure proper VM shutdown and startup sequence
+  - Gracefully reboot virtual machines
+  - Apply pending configuration changes during reboot
+  - Control VM reboot timeout
+  - Manage Proxmox virtual machines via command line
+  - Ensure proper VM shutdown and startup sequence
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

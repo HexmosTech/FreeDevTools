@@ -1,3 +1,31 @@
+---
+title: "Control Loop Devices with losetup | Free DevTools"
+name: losetup
+path: /freedevtools/tldr/linux/losetup
+canonical: "https://hexmos.com/freedevtools/tldr/linux/losetup/"
+description: "Control and manage loop devices with the losetup command.  Create, attach, and detach loop devices easily and efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - loop device control
+  - losetup command
+  - linux loop device
+  - manage loop devices
+  - loop device setup
+  - attach loop device
+  - detach loop device
+  - create loop device
+  - loop device management
+  - linux system administration
+features:
+  - Attach files to loop devices.
+  - Detach loop devices.
+  - List all loop devices with detailed information.
+  - Create read-only loop devices.
+  - Scan for partitions on attached devices.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # losetup
 
 > Set up and control loop devices.

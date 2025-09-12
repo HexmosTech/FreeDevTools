@@ -1,27 +1,27 @@
 ---
 title: "Control Wacom Tablet - Configure Pen Tablets | Free DevTools"
 name: xsetwacom
-path: /freedevtools/tldr/unknown/xsetwacom
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/xsetwacom/"
+path: /freedevtools/tldr/linux/xsetwacom
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xsetwacom/"
 description: "Control Wacom tablets with xsetwacom. Configure settings at runtime and customize your pen tablet experience. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- Wacom tablet control
-- Wacom pen configuration
-- xsetwacom command
-- Linux Wacom settings
-- Pen tablet customization
-- Input device management
-- Tablet screen mapping
-- Wacom rotation settings
-- Pen mode configuration
-- Input device settings
+  - Wacom tablet control
+  - Wacom pen configuration
+  - xsetwacom command
+  - Linux Wacom settings
+  - Pen tablet customization
+  - Input device management
+  - Tablet screen mapping
+  - Wacom rotation settings
+  - Pen mode configuration
+  - Input device settings
 features:
-- List available Wacom devices
-- Map Wacom area to a specific screen
-- Set relative or absolute mode for the pen
-- Rotate input for tablet PCs
-- Configure button functionality based on pen tip contact
+  - List available Wacom devices
+  - Map Wacom area to a specific screen
+  - Set relative or absolute mode for the pen
+  - Rotate input for tablet PCs
+  - Configure button functionality based on pen tip contact
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

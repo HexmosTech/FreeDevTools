@@ -1,3 +1,31 @@
+---
+title: "NordVPN CLI - Manage VPN Connections | Free DevTools"
+name: nordvpn
+path: /freedevtools/tldr/linux/nordvpn
+canonical: "https://hexmos.com/freedevtools/tldr/linux/nordvpn/"
+description: "Manage VPN connections easily with the NordVPN command-line interface.  Connect to servers worldwide, check status, and configure autoconnect. Free online tool, no registration required for CLI usage."
+category: linux
+keywords:
+  - vpn command line
+  - nordvpn connection
+  - vpn server management
+  - vpn cli linux
+  - vpn status check
+  - nordvpn login cli
+  - vpn autoconnect
+  - secure vpn connection
+  - command line vpn
+  - nordvpn cli commands
+features:
+  - Connect to NordVPN servers worldwide.
+  - Check your current VPN connection status.
+  - Log in to your NordVPN account via the command line.
+  - List available countries and cities for connection.
+  - Configure autoconnect settings for seamless VPN access.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # nordvpn
 
 > Command-line interface for NordVPN.

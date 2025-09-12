@@ -13,12 +13,16 @@ API_KEYS = [
     # "AIzaSyBV8t-jWkEfBHrvl08CInavK5uVt6qY2so",
     # "AIzaSyBex1VxCp4vTwT8T6N_DP-8qCWXBqn2Os0",
     # "AIzaSyBSBUGFt1_ziVdWAwyw1OG27ujVYOPFcxk",
-    # "AIzaSyBMiwN1oFzdPTSpSUcldFsdGFa0NE6FyZc",
+    "AIzaSyBMiwN1oFzdPTSpSUcldFsdGFa0NE6FyZc",
     # "AIzaSyA6dVENKeUXeqpyZZ6Fi5KhbzDxkarTLJU",
     # "AIzaSyAeJac3PjsEeGSUEMVZp3XQD4HXVCbvXU4",
     # "AIzaSyAn1hZKys-vhdtb-PXHtqswtHqySVnsunw",
     # "AIzaSyBoyRv75AkXwqWP--u-JmnpLwyMXsmjBkY",
-    "AIzaSyAIor2IVN50eTPFDLdZQJG5BeHJYYduDNs",  # Hexmos Paid
+    # "AIzaSyADWkiwCTUxkdVMFEWEzJvfCe94skPpjzk",  # G MainAccount
+    # "AIzaSyAJ8gQjKd86AM2tlMr4gTKymPzLXos0qBs",  # G Amazing-2
+    # "AIzaSyBEnzANfNo5QBUr1X8bwl_SCrTPLof1V7o",  # Movie
+    # "AIzaSyAIor2IVN50eTPFDLdZQJG5BeHJYYduDNs",  # Hexmos Paid
+    "AIzaSyCg38oy1nAPhD7cKZVWc-78Un6qExsUY3o",
 ]
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 

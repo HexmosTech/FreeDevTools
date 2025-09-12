@@ -1,27 +1,27 @@
 ---
 title: "Manage AUR Packages - Paru Package Manager | Free DevTools"
 name: paru
-path: /freedevtools/tldr/unknown/paru
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/paru/"
+path: /freedevtools/tldr/linux/paru
+canonical: "https://hexmos.com/freedevtools/tldr/linux/paru/"
 description: "Manage AUR packages easily with Paru package manager. Update, search, and install packages from the AUR repository. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- AUR package manager
-- Arch User Repository
-- Pacman wrapper
-- Paru AUR helper
-- Linux package manager
-- Command line package install
-- System update utility
-- PKGBUILD manager
-- AUR package search
-- Terminal package installer
+  - AUR package manager
+  - Arch User Repository
+  - Pacman wrapper
+  - Paru AUR helper
+  - Linux package manager
+  - Command line package install
+  - System update utility
+  - PKGBUILD manager
+  - AUR package search
+  - Terminal package installer
 features:
-- Interactively search and install packages
-- Synchronize and update all system packages
-- Upgrade AUR packages efficiently
-- Download PKGBUILD source files
-- Display package PKGBUILD file content
+  - Interactively search and install packages
+  - Synchronize and update all system packages
+  - Upgrade AUR packages efficiently
+  - Download PKGBUILD source files
+  - Display package PKGBUILD file content
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
 title: "Create Genome Tree - mashtree | Free DevTools"
 name: mashtree
-path: /freedevtools/tldr/unknown/mashtree
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mashtree/"
+path: /freedevtools/tldr/linux/mashtree
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mashtree/"
 description: "Create genome tree structures with mashtree. Generate phylogenetic trees efficiently from genomic data. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- genome tree generation
-- phylogenetic tree creation
-- fast tree construction
-- genomic distance estimation
-- fasta tree builder
-- fastq tree builder
-- mashtree genome analysis
-- command line genomics
-- microbial phylogeny
-- sequence alignment alternative
+  - genome tree generation
+  - phylogenetic tree creation
+  - fast tree construction
+  - genomic distance estimation
+  - fasta tree builder
+  - fastq tree builder
+  - mashtree genome analysis
+  - command line genomics
+  - microbial phylogeny
+  - sequence alignment alternative
 features:
-- Generates trees from FASTA or FASTQ files
-- Supports multi-threading for faster processing
-- Offers configurable depth options for accuracy
-- Creates Newick format output files
-- Estimates genetic distance between genomes
+  - Generates trees from FASTA or FASTQ files
+  - Supports multi-threading for faster processing
+  - Offers configurable depth options for accuracy
+  - Creates Newick format output files
+  - Estimates genetic distance between genomes
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Disk Space Usage - View Filesystem Usage with df | Free DevTools"
+name: df
+path: /freedevtools/tldr/linux/df
+canonical: "https://hexmos.com/freedevtools/tldr/linux/df/"
+description: "View filesystem disk space usage with the df command.  Analyze disk space, identify storage issues, and manage files efficiently. Free online tool, no registration required."
+category: linux
+keywords:
+  - disk space analyzer
+  - filesystem usage checker
+  - df command linux
+  - df command overview
+  - linux disk space
+  - file system analysis
+  - disk usage monitor
+  - command line disk space
+  - inodes checker
+  - filesystem type displayer
+features:
+  - Display overall disk space usage for all filesystems.
+  - Show disk space usage for a specific file or directory.
+  - Provide human-readable output of disk space usage.
+  - Include statistics on the number of free inodes.
+  - Exclude specific filesystem types from the output.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # df
 
 > Display an overview of the filesystem disk space usage.

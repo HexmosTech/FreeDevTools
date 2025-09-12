@@ -1,3 +1,31 @@
+---
+title: "UUID Parser - Parse UUIDs with uuidparse | Free DevTools"
+name: uuidparse
+path: /freedevtools/tldr/linux/uuidparse
+canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidparse/"
+description: "Parse UUIDs efficiently with the uuidparse command-line tool.  Format, validate, and output UUID data in various formats. Free online tool, no registration required."
+category: linux
+keywords:
+  - uuid parser
+  - uuid formatting
+  - uuid validation
+  - uuid command line
+  - uuid output formats
+  - uuid json output
+  - uuid parsing tool
+  - command line uuid
+  - uuid terminal
+  - linux uuid
+features:
+  - Parses multiple UUIDs simultaneously.
+  - Supports various output formats (tabular, JSON, raw).
+  - Allows for flexible column selection.
+  - Accepts input from stdin for piped data.
+  - Provides detailed help and usage instructions.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # uuidparse
 
 > Parse universally unique identifiers.

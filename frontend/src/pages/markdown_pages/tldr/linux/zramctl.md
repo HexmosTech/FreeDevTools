@@ -1,3 +1,31 @@
+---
+title: "zramctl - Control zRAM Devices | Free DevTools"
+name: zramctl
+path: /freedevtools/tldr/linux/zramctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/zramctl/"
+description: "Control and manage zRAM devices with zramctl.  Initialize, configure, and monitor zRAM devices for improved system performance. Free online tool, no registration required."
+category: linux
+keywords:
+  - zram device control
+  - zram device management
+  - linux zram setup
+  - zram configuration commands
+  - initialize zram devices
+  - zram size configuration
+  - zram compression algorithm
+  - monitor zram usage
+  - zramctl commands linux
+  - manage zram partitions
+features:
+  - Initialize zRAM devices with specified size and compression algorithm.
+  - Manage and control the number of active zRAM devices.
+  - Monitor the status and usage of currently initialized zRAM devices.
+  - Configure compression algorithms for optimal performance.
+  - Format zRAM devices using mkfs or mkswap.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # zramctl
 
 > Setup and control zram devices.

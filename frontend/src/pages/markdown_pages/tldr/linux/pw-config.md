@@ -1,27 +1,27 @@
 ---
 title: "PipeWire Config - List Configuration Paths | Free DevTools"
 name: pw-config
-path: /freedevtools/tldr/unknown/pw-config
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/pw-config/"
+path: /freedevtools/tldr/linux/pw-config
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-config/"
 description: "List configuration paths with PipeWire Config. Inspect configuration files and sections for PipeWire server and clients. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- pipewire configuration
-- pipewire config list
-- pw-config command
-- pipewire pulse configuration
-- linux pipewire
-- pipewire server config
-- pipewire client config
-- audio configuration
-- pipewire modules
-- pipewire context properties
+  - pipewire configuration
+  - pipewire config list
+  - pw-config command
+  - pipewire pulse configuration
+  - linux pipewire
+  - pipewire server config
+  - pipewire client config
+  - audio configuration
+  - pipewire modules
+  - pipewire context properties
 features:
-- List available PipeWire configuration files
-- Inspect PipeWire PulseAudio server configuration
-- Display configuration sections used by PipeWire
-- Show context properties fragments
-- Merge and reformat context modules
+  - List available PipeWire configuration files
+  - Inspect PipeWire PulseAudio server configuration
+  - Display configuration sections used by PipeWire
+  - Show context properties fragments
+  - Merge and reformat context modules
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

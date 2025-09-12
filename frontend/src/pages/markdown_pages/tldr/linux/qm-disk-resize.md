@@ -1,27 +1,27 @@
 ---
 title: "Disk Resize - Manage Proxmox Virtual Disks | Free DevTools"
 name: qm-disk-resize
-path: /freedevtools/tldr/unknown/qm-disk-resize
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/qm-disk-resize/"
+path: /freedevtools/tldr/linux/qm-disk-resize
+canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk-resize/"
 description: "Resize virtual machine disks easily with Disk Resize. Increase disk space in Proxmox VE using command line for efficient server management. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- proxmox disk resize
-- pve disk resize command
-- qm disk resize
-- linux virtual disk resize
-- kvm disk resize
-- proxmox virtual environment disk
-- proxmox command line disk resize
-- virtual machine disk space
-- disk space management
-- proxmox storage management
+  - proxmox disk resize
+  - pve disk resize command
+  - qm disk resize
+  - linux virtual disk resize
+  - kvm disk resize
+  - proxmox virtual environment disk
+  - proxmox command line disk resize
+  - virtual machine disk space
+  - disk space management
+  - proxmox storage management
 features:
-- Resize virtual machine disks in Proxmox VE
-- Add space to existing VM disks
-- Manage disk size using command line
-- Increase disk capacity for virtual machines
-- Modify virtual disk size within Proxmox environment
+  - Resize virtual machine disks in Proxmox VE
+  - Add space to existing VM disks
+  - Manage disk size using command line
+  - Increase disk capacity for virtual machines
+  - Modify virtual disk size within Proxmox environment
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

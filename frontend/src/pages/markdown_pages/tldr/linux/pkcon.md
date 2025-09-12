@@ -1,3 +1,31 @@
+---
+title: "Pkcon Package Manager - Manage Linux Packages | Free DevTools"
+name: pkcon
+path: /freedevtools/tldr/linux/pkcon
+canonical: "https://hexmos.com/freedevtools/tldr/linux/pkcon/"
+description: "Manage Linux packages efficiently with Pkcon Package Manager. Install, remove, update, and search for packages easily via command line. Free online tool, no registration required."
+category: linux
+keywords:
+  - linux package manager
+  - pkcon command
+  - linux package installation
+  - linux package removal
+  - linux package update
+  - linux software management
+  - pkcon search
+  - packagekit client
+  - gnome software management
+  - linux system administration
+features:
+  - Install Linux packages from repositories
+  - Remove unwanted Linux packages
+  - Refresh the local package cache
+  - Update existing installed packages
+  - Search for available packages by name
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # pkcon
 
 > PackageKit client used by Discover and Gnome software and alternative to `apt`.

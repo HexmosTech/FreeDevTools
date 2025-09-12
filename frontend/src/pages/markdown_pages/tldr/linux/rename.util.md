@@ -1,27 +1,27 @@
 ---
 title: "Rename Files - Control Filenames with Rename Util | Free DevTools"
 name: rename.util
-path: /freedevtools/tldr/unknown/rename.util
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/rename.util/"
+path: /freedevtools/tldr/linux/rename.util
+canonical: "https://hexmos.com/freedevtools/tldr/linux/rename.util/"
 description: "Control filenames with Rename Files Util. Easily rename multiple files using substitutions, change extensions, and prepend names. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- filename renamer
-- batch rename files
-- mass rename files
-- file name changer
-- file rename utility
-- linux rename command
-- util-linux rename
-- command line file rename
-- bulk file renaming
-- rename util linux
+  - filename renamer
+  - batch rename files
+  - mass rename files
+  - file name changer
+  - file rename utility
+  - linux rename command
+  - util-linux rename
+  - command line file rename
+  - bulk file renaming
+  - rename util linux
 features:
-- Rename multiple files with substitutions
-- Dry-run renames to preview changes
-- Prevent overwriting existing files
-- Change file extensions quickly
-- Prepend text to multiple filenames
+  - Rename multiple files with substitutions
+  - Dry-run renames to preview changes
+  - Prevent overwriting existing files
+  - Change file extensions quickly
+  - Prepend text to multiple filenames
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

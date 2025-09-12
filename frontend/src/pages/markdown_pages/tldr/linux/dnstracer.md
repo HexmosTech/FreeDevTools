@@ -1,27 +1,27 @@
 ---
 title: "DNSTracer - Trace DNS Path | Free DevTools"
 name: dnstracer
-path: /freedevtools/tldr/unknown/dnstracer
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/dnstracer/"
+path: /freedevtools/tldr/linux/dnstracer
+canonical: "https://hexmos.com/freedevtools/tldr/linux/dnstracer/"
 description: "Trace DNS path with DNSTracer. Discover the DNS servers a query traverses to resolve a domain. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- DNS trace command
-- DNS lookup path
-- DNS resolver trace
-- DNS server path
-- DNSTracer online
-- DNS query tracer
-- DNS information tool
-- Domain name resolution
-- DNS troubleshooting
-- DNS debug tool
+  - DNS trace command
+  - DNS lookup path
+  - DNS resolver trace
+  - DNS server path
+  - DNSTracer online
+  - DNS query tracer
+  - DNS information tool
+  - Domain name resolution
+  - DNS troubleshooting
+  - DNS debug tool
 features:
-- Trace the path of DNS queries
-- Identify the DNS servers involved in resolving a domain
-- Start tracing from a specific DNS server
-- Display all steps during DNS resolution
-- Show an overview of received DNS answers
+  - Trace the path of DNS queries
+  - Identify the DNS servers involved in resolving a domain
+  - Start tracing from a specific DNS server
+  - Display all steps during DNS resolution
+  - Show an overview of received DNS answers
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

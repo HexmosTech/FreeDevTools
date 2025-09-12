@@ -1,3 +1,31 @@
+---
+title: "Create XFS Filesystem - Format Partitions with mkfs.xfs | Free DevTools"
+name: mkfs.xfs
+path: /freedevtools/tldr/linux/mkfs.xfs
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.xfs/"
+description: "Format partitions with mkfs.xfs to create XFS filesystems quickly and easily.  Manage disk space and optimize storage with this powerful command-line tool. Free online tool, no registration required."
+category: linux
+keywords:
+  - XFS filesystem creation
+  - XFS partition formatting
+  - mkfs.xfs command
+  - Linux filesystem creation
+  - XFS volume label
+  - command-line filesystem tool
+  - disk formatting linux
+  - partition management linux
+  - create XFS
+  - format XFS
+features:
+  - Creates a new XFS filesystem on a specified partition.
+  - Allows assigning a volume label to the new filesystem.
+  - Supports various XFS filesystem options for advanced configuration.
+  - Enables efficient storage management through XFS features.
+  - Provides a command-line interface for easy integration into scripts.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mkfs.xfs
 
 > Create an XFS filesystem inside a partition.

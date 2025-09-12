@@ -1,3 +1,31 @@
+---
+title: "Mesg Command - Control Terminal Messages | Free DevTools"
+name: mesg
+path: /freedevtools/tldr/linux/mesg
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mesg/"
+description: "Control terminal message reception with the mesg command.  Manage incoming messages from other users using simple options. Free online tool, no registration required."
+category: linux
+keywords:
+  - terminal message control
+  - mesg command linux
+  - unix message control
+  - linux terminal settings
+  - command line message
+  - mesg command options
+  - write command alternative
+  - terminal communication
+  - disable terminal messages
+  - enable terminal messages
+features:
+  - Check current message reception status
+  - Enable message reception from other users
+  - Disable message reception from other users
+  - Provide verbose output for non-terminal executions
+  - Integrate seamlessly with the `write` command
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # mesg
 
 > Check or set a terminal's ability to receive messages from other users, usually from the `write` command.

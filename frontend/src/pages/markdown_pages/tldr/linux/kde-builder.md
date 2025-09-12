@@ -1,27 +1,27 @@
 ---
 title: "KDE Builder - Build KDE Components from Source | Free DevTools"
 name: kde-builder
-path: /freedevtools/tldr/unknown/kde-builder
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/kde-builder/"
+path: /freedevtools/tldr/linux/kde-builder
+canonical: "https://hexmos.com/freedevtools/tldr/linux/kde-builder/"
 description: "Build KDE components from source with KDE Builder. Compile Plasma desktop, manage dependencies, and refresh build directories using command line. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- kde build
-- kde component build
-- kde plasma build
-- qt build manager
-- linux kde builder
-- kde source compiler
-- kde development tool
-- kde dependency manager
-- kde module builder
-- command line kde build
+  - kde build
+  - kde component build
+  - kde plasma build
+  - qt build manager
+  - linux kde builder
+  - kde source compiler
+  - kde development tool
+  - kde dependency manager
+  - kde module builder
+  - command line kde build
 features:
-- Compile KDE components and their dependencies
-- Refresh build directories before compilation
-- Resume compilation from a specific dependency
-- Run components with specified executables
-- Install login sessions with ease
+  - Compile KDE components and their dependencies
+  - Refresh build directories before compilation
+  - Resume compilation from a specific dependency
+  - Run components with specified executables
+  - Install login sessions with ease
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

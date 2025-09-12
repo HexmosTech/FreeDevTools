@@ -1,3 +1,31 @@
+---
+title: "fuser Command - Identify Process File Usage | Free DevTools"
+name: fuser
+path: /freedevtools/tldr/linux/fuser
+canonical: "https://hexmos.com/freedevtools/tldr/linux/fuser/"
+description: "Identify process file usage with the fuser command.  Find and kill processes accessing files, directories, or sockets. Free online tool, no registration required."
+category: linux
+keywords:
+  - process file identifier
+  - linux process finder
+  - file usage monitor
+  - socket process viewer
+  - process killer command
+  - fuser command linux
+  - identify process by file
+  - find process by port
+  - command line process tool
+  - system process management
+features:
+  - Identify processes using files or directories.
+  - Display detailed process information (PID, USER, etc.).
+  - Locate processes using TCP or UDP sockets by port.
+  - Forcefully terminate processes using the SIGKILL signal.
+  - Detect processes accessing specific mount points.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # fuser
 
 > Display process IDs currently using files or sockets.

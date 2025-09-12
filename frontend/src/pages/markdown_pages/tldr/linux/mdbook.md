@@ -1,27 +1,27 @@
 ---
 title: "Create Online Books - With Mdbook | Free DevTools"
 name: mdbook
-path: /freedevtools/tldr/unknown/mdbook
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/mdbook/"
+path: /freedevtools/tldr/linux/mdbook
+canonical: "https://hexmos.com/freedevtools/tldr/linux/mdbook/"
 description: "Create online books easily with Mdbook. Build, serve, and watch Markdown files for automatic book generation. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- markdown book creator
-- online book generator
-- mdbook markdown compiler
-- rust mdbook tool
-- markdown to book converter
-- static site generator
-- documentation generator
-- command line book builder
-- markdown documentation tool
-- mdbook serve localhost
+  - markdown book creator
+  - online book generator
+  - mdbook markdown compiler
+  - rust mdbook tool
+  - markdown to book converter
+  - static site generator
+  - documentation generator
+  - command line book builder
+  - markdown documentation tool
+  - mdbook serve localhost
 features:
-- Initialize a new mdbook project
-- Build an mdbook project from Markdown files
-- Serve an mdbook project locally for testing
-- Watch for changes and automatically rebuild
-- Clean the generated book directory
+  - Initialize a new mdbook project
+  - Build an mdbook project from Markdown files
+  - Serve an mdbook project locally for testing
+  - Watch for changes and automatically rebuild
+  - Clean the generated book directory
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

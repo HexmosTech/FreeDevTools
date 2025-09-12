@@ -1,27 +1,27 @@
 ---
 title: "Format Text - Columnar Formatting | Free DevTools"
 name: column
-path: /freedevtools/tldr/unknown/column
-canonical: "https://hexmos.com/freedevtools/tldr/unknown/column/"
+path: /freedevtools/tldr/linux/column
+canonical: "https://hexmos.com/freedevtools/tldr/linux/column/"
 description: "Format text into columns with Column command-line tool. Easily create tabular output and control text alignment for enhanced readability. Free online tool, no registration required."
-category: unknown
+category: linux
 keywords:
-- text columnar formatting
-- format text columns
-- command-line text formatter
-- linux column utility
-- macos column command
-- stdin text formatting
-- tabular output generator
-- fixed width text format
-- delimited text formatter
-- text alignment tool
+  - text columnar formatting
+  - format text columns
+  - command-line text formatter
+  - linux column utility
+  - macos column command
+  - stdin text formatting
+  - tabular output generator
+  - fixed width text format
+  - delimited text formatter
+  - text alignment tool
 features:
-- Format stdin or files into columns
-- Auto-align text in tabular format
-- Specify custom column delimiters
-- Fill rows before filling columns
-- Control output width for text columns
+  - Format stdin or files into columns
+  - Auto-align text in tabular format
+  - Specify custom column delimiters
+  - Fill rows before filling columns
+  - Control output width for text columns
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

@@ -1,3 +1,31 @@
+---
+title: "Manage Projects - proctl License & Language Control | Free DevTools"
+name: proctl
+path: /freedevtools/tldr/linux/proctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/proctl/"
+description: "Control project licenses and languages with proctl.  Manage templates, pick from menus, and streamline your workflow. Free online tool, no registration required."
+category: linux
+keywords:
+  - project license manager
+  - project language selector
+  - license template manager
+  - command-line license tool
+  - fzf license picker
+  - fzf language picker
+  - license template creator
+  - license remover
+  - project configuration tool
+  - CLI project management
+features:
+  - List and select licenses from a FZF menu.
+  - List and select languages from a FZF menu.
+  - Create and manage license templates.
+  - Remove licenses from a project.
+  - Delete license templates.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # proctl
 
 > Manage projects licenses and languages, switch between templated licenses.

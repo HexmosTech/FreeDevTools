@@ -1,3 +1,31 @@
+---
+title: "xfreerdp Remote Desktop - Connect to Servers | Free DevTools"
+name: xfreerdp
+path: /freedevtools/tldr/linux/xfreerdp
+canonical: "https://hexmos.com/freedevtools/tldr/linux/xfreerdp/"
+description: "Connect to remote servers with xfreerdp.  Manage remote desktops securely and efficiently using command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - remote desktop connection
+  - xfreerdp command line
+  - freeRDP client
+  - remote server access
+  - RDP client linux
+  - Windows remote connection
+  - xfreerdp tutorial
+  - remote desktop protocol
+  - command line RDP
+  - secure remote access
+features:
+  - Connect to remote servers using username, password and IP address.
+  - Enable audio output redirection for enhanced multimedia experience.
+  - Support dynamic resolution adjustment for optimized viewing.
+  - Enable clipboard sharing between local and remote machines.
+  - Override certificate checks for easier connection to untrusted servers.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # xfreerdp
 
 > Free Remote Desktop Protocol implementation.

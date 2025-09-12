@@ -1,3 +1,31 @@
+---
+title: "Manage WirePlumber - Control PipeWire with wpctl | Free DevTools"
+name: wpctl
+path: /freedevtools/tldr/linux/wpctl
+canonical: "https://hexmos.com/freedevtools/tldr/linux/wpctl/"
+description: "Control PipeWire audio sessions and policies with wpctl.  Manage sinks, volumes, and mute states efficiently using command-line interface. Free online tool, no registration required."
+category: linux
+keywords:
+  - PipeWire manager
+  - WirePlumber control
+  - Linux audio control
+  - wpctl commands
+  - audio sink management
+  - volume control command
+  - mute unmute command
+  - session management tool
+  - policy manager command
+  - PipeWire CLI
+features:
+  - List all WirePlumber objects
+  - Inspect object properties
+  - Set default objects
+  - Get and set sink volume
+  - Mute and unmute audio sinks
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # wpctl
 
 > Manage WirePlumber, a session and policy manager for PipeWire.
