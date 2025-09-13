@@ -291,7 +291,7 @@ function updateToolsConfig(toolKey, toolName) {
       "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
-    datePublished: ${new Date().toISOString()},
+    datePublished: "${new Date().toISOString().split('T')[0]}",
     softwareVersion: "1.0.0",
   }`;
 
