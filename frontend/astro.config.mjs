@@ -20,9 +20,9 @@ export default defineConfig({
       lastmod: new Date()
     })
   ],
-  // cacheDir: ".astro/cache",
+  cacheDir: ".astro/cache",
   build: {
-    concurrency: 8
+    concurrency: 32
   },
   vite: {
     resolve: {
