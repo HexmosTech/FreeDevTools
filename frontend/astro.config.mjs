@@ -6,6 +6,8 @@ import path from "path";
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://hexmos.com/freedevtools',
+  output: 'static',
   base: "/freedevtools",
   integrations: [react(), tailwind()],
   // cacheDir: ".astro/cache",
