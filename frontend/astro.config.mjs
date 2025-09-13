@@ -8,6 +8,10 @@ import path from "path";
 export default defineConfig({
   base: "/freedevtools",
   integrations: [react(), tailwind()],
+  // cacheDir: ".astro/cache",
+  build: {
+    concurrency: 8
+  },
   vite: {
     resolve: {
       alias: {
