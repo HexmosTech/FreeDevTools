@@ -936,6 +936,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "css-units-converter": {
+    title:
+      "CSS Units Converter - Convert px, rem, vw, vh Online | Free DevTools",
+    name: "CSS Units Converter",
+    path: "/freedevtools/t/css-units-converter/",
+    description:
+      "Convert CSS units instantly with our free online converter. Transform pixels to rem, viewport units (vw, vh, vmin, vmax), and more with real-time conversion and responsive design calculations.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/css-units-converter/",
+    keywords: [
+      "css units converter",
+      "px to rem converter",
+      "viewport units converter",
+      "css unit calculator",
+      "responsive design converter",
+      "px to vw converter",
+      "rem to px converter",
+      "css measurement converter",
+      "web design units",
+      "css length units",
+    ],
+    features: [
+      "Convert between px, rem, vw, vh, vmin, vmax units",
+      "Real-time conversion with instant results",
+      "Responsive design calculations",
+      "Container dimension inputs for viewport units",
+      "Bidirectional unit conversion",
+      "Copy results to clipboard",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
