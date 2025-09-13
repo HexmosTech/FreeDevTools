@@ -9,7 +9,7 @@ import path from "path";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://hexmos.com/freedevtools',
-  output: 'server',
+  output: 'static',
   base: "/freedevtools",
   adapter: node({
     mode: 'standalone'
