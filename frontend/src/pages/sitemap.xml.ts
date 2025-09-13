@@ -1,9 +1,8 @@
 import type { APIRoute } from "astro";
-import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
 async function getAllCommands() {
-  const tldrEntries: CollectionEntry<"tldr">[] = await getCollection("tldr");
+  const tldrEntries = (await getCollection("tldr")) as any[];
 
   const commandsByPlatform: Record<
     string,

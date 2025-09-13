@@ -1,4 +1,5 @@
 // @ts-check
+import node from "@astrojs/node";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
@@ -8,8 +9,11 @@ import path from "path";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://hexmos.com/freedevtools',
-  output: 'static',
+  output: 'server',
   base: "/freedevtools",
+  adapter: node({
+    mode: 'standalone'
+  }),
   integrations: [
     react(),
     tailwind(),
