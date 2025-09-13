@@ -634,6 +634,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "regex-tester": {
+    title: "Regex Tester - Test Regular Expressions Online | Free DevTools",
+    name: "Regex Tester",
+    path: "/freedevtools/t/regex-tester/",
+    description:
+      "Test regular expressions instantly with our free online regex tester. Validate patterns, find matches, and debug regex with real-time highlighting and detailed match information. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "🔍",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/regex-tester/",
+    keywords: [
+      "regex tester",
+      "regular expression tester",
+      "regex validator",
+      "pattern matcher",
+      "regex debugger",
+      "online regex tool",
+      "regex pattern tester",
+      "javascript regex tester",
+    ],
+    features: [
+      "Test regex patterns instantly with real-time validation",
+      "Visual match highlighting in test strings",
+      "Support for all JavaScript regex flags (g, i, m, s, u, y)",
+      "Detailed match information and capture groups",
+      "Error detection and validation feedback",
+      "Sample regex patterns for learning",
+      "Browser-based processing - patterns never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
