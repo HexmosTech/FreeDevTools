@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promtail Relabeling: Stdout to Info Logs</title>
+    <meta name="description" content="Learn how to configure Promtail to relabel stdout logs to the 'info' level and stderr logs to the 'error' level using pipeline stages. Optimize your log management.">
+    <meta name="keywords" content="promtail, loki, log management, relabeling, stdout, stderr, info, error, pipeline stages, configuration, logging">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourdomain.com/loki/relabel-stdout-to-info-promtail.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourdomain.com/loki/relabel-stdout-to-info-promtail.html">
+    <meta property="og:title" content="Promtail Relabeling: Stdout to Info Logs">
+    <meta property="og:description" content="Learn how to configure Promtail to relabel stdout logs to the 'info' level and stderr logs to the 'error' level using pipeline stages. Optimize your log management.">
+    <meta property="og:image" content="https://yourdomain.com/path/to/your/og-image.png"> 
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://yourdomain.com/loki/relabel-stdout-to-info-promtail.html">
+    <meta name="twitter:title" content="Promtail Relabeling: Stdout to Info Logs">
+    <meta name="twitter:description" content="Learn how to configure Promtail to relabel stdout logs to the 'info' level and stderr logs to the 'error' level using pipeline stages. Optimize your log management.">
+    <meta name="twitter:image" content="https://yourdomain.com/path/to/your/twitter-image.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Promtail Relabeling: Stdout to Info Logs</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+                <p>This document provides a configuration example for Promtail to relabel log levels. Specifically, it demonstrates how to capture standard output (stdout) and standard error (stderr) streams and map them to the 'info' and 'error' log levels, respectively, within Loki.</p>
+
+                <h2>Promtail Configuration for Log Level Relabeling</h2>
+                <p>The following Promtail configuration snippet utilizes pipeline stages to achieve this relabeling. This is crucial for organizing and filtering logs effectively in Loki.</p>
+
+                <pre><code class="language-yaml">server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+positions:
+  filename: /var/lib/promtail/positions.yaml
+clients:
+  - url: https://&lt;LOKI_USERNAME&gt;:&lt;LOKI_PASSWORD&gt;@&lt;LOKI_FQDN&gt;/loki/api/v1/push
+
+scrape_configs:
+  - job_name: nginx-info
+    static_configs:
+    - targets:
+        - localhost
+      labels:
+        job: prod/nginx
+        environment: production
+        host: demo-app-prod
+        level: info
+        service_name: demo-app-prod
+        __path__: /var/log/nginx/access.log
+
+    pipeline_stages:
+    # capture stdout|stderr to level
+    - regex:
+        expression: '(?P&lt;level&gt;(stdout|stderr))'
+    # rename stdout to info, stderr to error
+    - template:
+        source: level
+        template: '{{ if eq .Value "stdout" }}{{ Replace .Value "stdout" "info" -1 }}{{ else if eq .Value "stderr" }}{{ Replace .Value "stderr" "error" -1 }}{{ else if eq .Value "errorstderr" }}{{ Replace .Value "errorstderr" "error" -1 }}{{ .Value }}{{ end }}'
+    # set the renamed values to level label
+    - labels:
+        level:    
+</code></pre>
+
+                <h2>Understanding the Pipeline Stages</h2>
+                
+                <h3>1. Regex Stage: Capturing Log Streams</h3>
+                <p>The first pipeline stage uses a regular expression to identify and capture the log stream type. The expression <code>'(?P&lt;level&gt;(stdout|stderr))'</code> looks for either "stdout" or "stderr" within the log line and assigns it to a temporary field named <code>level</code>.</p>
+
+                <h3>2. Template Stage: Renaming Log Levels</h3>
+                <p>The second stage, a <code>template</code> stage, takes the captured <code>level</code> value. It uses Go templating to conditionally rename the values:
+                    <ul>
+                        <li>If the value is "stdout", it's replaced with "info".</li>
+                        <li>If the value is "stderr", it's replaced with "error".</li>
+                        <li>It also includes a condition for "errorstderr" to be mapped to "error".</li>
+                    </ul>
+                    This ensures that logs originating from stdout are treated as informational, and those from stderr are treated as errors.
+                </p>
+
+                <h3>3. Labels Stage: Applying Relabeled Values</h3>
+                <p>Finally, the <code>labels</code> stage applies the relabeled value from the <code>level</code> field to the actual log label named <code>level</code>. This makes the relabeled information available for filtering and querying in Loki.</p>
+
+                <h2>Benefits of Relabeling Log Levels</h2>
+                <ul>
+                    <li><strong>Improved Log Filtering:</strong> Easily filter logs by 'info' or 'error' levels, making it simpler to find relevant information.</li>
+                    <li><strong>Structured Logging:</strong> Enforces a consistent log level structure across different applications and services.</li>
+                    <li><strong>Efficient Monitoring:</strong> Enables more effective alerting and dashboarding based on critical error logs.</li>
+                </ul>
+
+                <h2>Further Resources</h2>
+                <ul>
+                    <li><a href="https://grafana.com/docs/loki/latest/clients/promtail/configuration/" target="_blank">Promtail Official Documentation</a></li>
+                    <li><a href="https://grafana.com/docs/loki/latest/logql/" target="_blank">Loki Query Language (LogQL)</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

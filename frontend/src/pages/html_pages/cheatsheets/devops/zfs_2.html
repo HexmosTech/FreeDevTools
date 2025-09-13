@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFS Commands - Manage Pools and File Systems</title>
+    <meta name="description" content="Learn essential ZFS commands for managing pools, file systems, and volumes. This guide covers creating, importing, exporting, listing, and verifying ZFS pools, along with snapshot creation and backup strategies.">
+    <meta name="keywords" content="ZFS, ZFS commands, ZFS pools, ZFS file systems, ZFS volumes, ZFS snapshots, ZFS backup, raidz, mirror, zpool, zfs create, zfs list, zfs send, zfs receive, Linux storage">
+    <link rel="canonical" href="https://yourwebsite.com/devops/zfs_2.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="ZFS Commands - Manage Pools and File Systems">
+    <meta property="og:description" content="Learn essential ZFS commands for managing pools, file systems, and volumes. This guide covers creating, importing, exporting, listing, and verifying ZFS pools, along with snapshot creation and backup strategies.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/devops/zfs_2.html">
+    <meta property="og:image" content="https://yourwebsite.com/images/zfs-og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ZFS Commands - Manage Pools and File Systems">
+    <meta name="twitter:description" content="Learn essential ZFS commands for managing pools, file systems, and volumes. This guide covers creating, importing, exporting, listing, and verifying ZFS pools, along with snapshot creation and backup strategies.">
+    <meta name="twitter:image" content="https://yourwebsite.com/images/zfs-twitter-image.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ZFS Commands Reference</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+                <p>This document provides a comprehensive reference for essential ZFS commands, focusing on managing storage pools and file systems. It's crucial to use immutable device IDs (e.g., <code>/dev/disk/by-id/*</code>) instead of dynamic block device names (e.g., <code>/dev/{sd,nvme}*</code>) to prevent issues when hardware is re-enumerated.</p>
+
+                <h2>ZFS Pool Management</h2>
+                <p>Managing ZFS pools involves creating, importing, exporting, and monitoring their status and integrity. Understanding pool configuration is key to robust storage solutions.</p>
+
+                <h3>Pool Creation and Configuration</h3>
+                <pre><code class="language-bash"># Create a new "RAID-5" (raidz1) pool
+# Recommended: use entire devices rather than partitions
+zpool create ${pool} raidz1 ${device} ${device} ${device} [...]
+
+# Add 2nd-level "RAID-1" (mirror) ZFS Intent Log (ZIL; synchronous write cache):
+# Recommended: use separate, fast, low-latency devices (e.g. NVMe)
+zpool add ${pool} log mirror ${part} ${part}
+
+# Add 2nd-level "RAID-0" Adaptive Replacement Cache (ARC; read cache):
+# Recommended: use separate, fast, low-latency devices (e.g. NVMe)
+zpool add ${pool} cache ${part} ${part} [...]
+
+# Remove log or cache components:
+zpool remove zfs ${part} [...]
+</code></pre>
+
+                <h3>Pool Import and Export</h3>
+                <pre><code class="language-bash"># Import (enable) existing pool from newly connected devices:
+# Note: this will create the /etc/zfs/zpool.cache devices cache
+zpool import -d /dev/disk/by-id -aN
+
+# Import (enable) existing pool using the devices cache:
+zpool import -c /etc/zfs/zpool.cache -aN
+
+# Export (disable) pool (e.g. before shutdown):
+zpool export -a
+</code></pre>
+
+                <h3>Pool Monitoring and Maintenance</h3>
+                <pre><code class="language-bash"># List all (imported) pools:
+zpool list
+
+# See pool status:
+zpool status ${pool}
+
+# See detailed pool I/O statistics:
+zpool iostat ${pool} -v
+
+# Verify pool integrity (data checksums):
+# (watch progress with 'zpool status')
+zpool scrub ${pool}
+
+# Remove a failing device from a pool:
+# Note: redundant pools (mirror, raidz) will continue working in degraded state
+zpool detach ${pool} ${device}
+
+# Replace a failed device in a pool:
+# Note: new device will be "resilvered" automatically (parity reconstruction)
+#       (watch progress with 'zpool status')
+zpool replace ${pool} ${failed-device} ${new-device}
+
+# Erase zpool labels ("superblock") from a device/partition:
+# WARNING: MUST do before reusing a device/partition for other purposes
+zpool labelclear ${device}
+</code></pre>
+
+                <h3>Querying and Setting Pool Properties</h3>
+                <pre><code class="language-bash"># Query pool configuration (properties):
+zpool get all ${pool}
+
+# Change pool configuration (property):
+zpool set &lt;property&gt;=&lt;value&gt; ${pool}
+
+# Dump the entire pool (commands) history:
+zpool history ${pool}
+
+# More...
+man zpool
+</code></pre>
+
+                <h2>ZFS File Systems and Volumes</h2>
+                <p>ZFS allows for the creation and management of file systems and block devices (volumes) with advanced features like snapshots and efficient data transfer.</p>
+
+                <h3>File System and Volume Creation</h3>
+                <pre><code class="language-bash"># Create a new file system:
+zfs create ${pool}/${fs_vol}
+
+# Create a new volume ("block device"):
+# Note: look for it in /dev/zvol/${pool}/${fs_vol}
+zfs create -V &lt;size&gt; ${pool}/${fs_vol}
+</code></pre>
+
+                <h3>Listing and Mounting</h3>
+                <pre><code class="language-bash"># List all file systems / volumes:
+zfs list
+
+# Mount all file systems:
+# Note: see 'zfs get mountpoint ${pool}' for mountpoint root path
+zfs mount -a
+</code></pre>
+
+                <h3>Snapshots and Data Transfer</h3>
+                <pre><code class="language-bash"># Create a snapshot:
+zfs snapshot ${pool}/${fs_vol}@${snapshot}
+
+# Delete a snapshot:
+zfs destroy ${pool}/${fs_vol}@${snapshot}
+
+# Delete a range of snapshots:
+zfs destroy ${pool}/${fs_vol}@${first-snapshot}%${last-snapshot}
+
+# Full backup:
+# Note: pipe (|) source to destination through netcat, SSH, etc.
+# ... on source:
+zfs send -p -R ${pool}/${fs_vol}@${snapshot}
+# ... on destination:
+zfs receive -F ${pool}/${fs_vol}
+
+# Incremental backup:
+# Note: pipe (|) source to destination through netcat, SSH, etc.
+# ... on source:
+zfs send -p -R -i ${pool}/${fs_vol}@${snapshot-previous} ${pool}/${fs_vol}@${snapshot}
+# ... on destination:
+zfs receive -F ${pool}/${fs_vol}
+</code></pre>
+
+                <h3>Querying and Setting File System/Volume Properties</h3>
+                <pre><code class="language-bash"># Query file system / volume configuration (properties):
+zfs get all ${pool}
+zfs get all ${pool}/${fs_vol}
+
+# Change file system / volume configuration (property):
+zfs set &lt;property&gt;=&lt;value&gt; ${pool}/${fs_vol}
+
+# More...
+man zfs
+</code></pre>
+
+                <h3>External Resources</h3>
+                <ul>
+                    <li><a href="https://openzfs.github.io/openzfs-docs/man/zpool.8.html" target="_blank" rel="noopener noreferrer">ZFS zpool(8) Manual Page</a></li>
+                    <li><a href="https://openzfs.github.io/openzfs-docs/man/zfs.8.html" target="_blank" rel="noopener noreferrer">ZFS zfs(8) Manual Page</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/ZFS" target="_blank" rel="noopener noreferrer">ZFS on Wikipedia</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

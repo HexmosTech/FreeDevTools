@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeDeploy AppSpec Before Install Script - Deployment Preparation</title>
+    <meta name="description" content="Learn how to prepare your CodeDeploy environment with a 'before_install' script. This guide covers essential steps like user/group checks, backups, and environment debugging for seamless deployments.">
+    <meta name="keywords" content="CodeDeploy, AppSpec, before_install, deployment script, bash script, server setup, backup, environment variables, staging deployment">
+    <link rel="canonical" href="https://your-website.com/codedeploy/appspec_versioned_before_install.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="CodeDeploy AppSpec Before Install Script - Deployment Preparation">
+    <meta property="og:description" content="Learn how to prepare your CodeDeploy environment with a 'before_install' script. This guide covers essential steps like user/group checks, backups, and environment debugging for seamless deployments.">
+    <meta property="og:image" content="https://your-website.com/path/to/your/og-image.jpg">
+    <meta property="og:url" content="https://your-website.com/codedeploy/appspec_versioned_before_install.html">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CodeDeploy AppSpec Before Install Script - Deployment Preparation">
+    <meta name="twitter:description" content="Learn how to prepare your CodeDeploy environment with a 'before_install' script. This guide covers essential steps like user/group checks, backups, and environment debugging for seamless deployments.">
+    <meta name="twitter:image" content="https://your-website.com/path/to/your/twitter-image.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CodeDeploy AppSpec Before Install Script</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+                <p>This document details a bash script designed for the <code>before_install</code> hook in an AWS CodeDeploy AppSpec file. This script is crucial for preparing the environment before the main application deployment begins, ensuring a clean and correctly configured setup.</p>
+
+                <h2>Understanding the Before Install Script</h2>
+                <p>The <code>before_install</code> phase in CodeDeploy is executed on the instance before the application is copied to the destination. It's the ideal place to perform system-level configurations, such as creating necessary users and groups, setting up directories, and backing up existing application data.</p>
+
+                <h2>Script Breakdown and Functionality</h2>
+                <pre><code class="language-bash">#!/usr/bin/env bash
+set -ex
+
+# global variables
+APP_USER=snake
+APP_GROUP=snake
+DATESTAMP="$(date +%F)"
+TIMESTAMP="$(date +%s)"
+
+function detect_previous_version(){
+  if [ -f /opt/codedeploy-agent/deployment-root/${DEPLOYMENT_GROUP_ID}/.version ]
+  then
+    PREVIOUS_VERSION="$(cat /opt/codedeploy-agent/deployment-root/${DEPLOYMENT_GROUP_ID}/.version)"
+  else
+    PREVIOUS_VERSION="initial"
+  fi
+}
+
+function debug_env(){
+  echo "LIFECYCLE_EVENT=${LIFECYCLE_EVENT}" &gt; /tmp/codedeploy.env
+  echo "DEPLOYMENT_ID=${DEPLOYMENT_ID}" &gt;&gt; /tmp/codedeploy.env
+  echo "APPLICATION_NAME=${APPLICATION_NAME}" &gt;&gt; /tmp/codedeploy.env
+  echo "DEPLOYMENT_GROUP_NAME=${DEPLOYMENT_GROUP_NAME}" &gt;&gt; /tmp/codedeploy.env
+  echo "DEPLOYMENT_GROUP_ID=${DEPLOYMENT_GROUP_ID}" &gt;&gt; /tmp/codedeploy.env
+}
+
+# functions
+function user_and_group_check(){
+  id -u ${APP_USER} &gt; /dev/null && EXIT_CODE=${?} || EXIT_CODE=${?}
+  if [ ${EXIT_CODE} == 1 ]
+    then
+      sudo groupadd --gid 1002 ${APP_GROUP}
+      sudo useradd --create-home --gid 1002 --shell /bin/bash ${APP_USER}
+  fi
+}
+
+function create_backup() {
+  sudo mkdir -p "/opt/backups/${DATESTAMP}"
+  # on initial deploy skip backups
+  if [ -d "/home/snake/app/current" ]
+  then
+    TARGET_DIR=$(readlink -f /home/snake/app/current)
+    sudo tar -zcf "/opt/backups/${DATESTAMP}/app-backup_${PREVIOUS_VERSION}.tar.gz ${TARGET_DIR}/"
+  fi
+}
+
+function log_status(){
+  echo "[${DATESTAMP}] before install step completed"
+}
+
+if [ "$DEPLOYMENT_GROUP_NAME" == "Staging" ]
+then
+    echo "Staging Environment"
+fi
+
+# detect previous version
+detect_previous_version
+# debug env vars for codedeploy
+debug_env
+# ensure the user exists
+user_and_group_check
+# create a backup
+#create_backup
+# log status
+log_status
+</code></pre>
+
+                <h2>Key Script Components Explained</h2>
+                <h3>Global Variables</h3>
+                <ul>
+                    <li><code>APP_USER</code> and <code>APP_GROUP</code>: Define the user and group for the application.</li>
+                    <li><code>DATESTAMP</code> and <code>TIMESTAMP</code>: Used for creating dated backups and logs.</li>
+                </ul>
+
+                <h3>Core Functions</h3>
+                <ul>
+                    <li><code>detect_previous_version()</code>: Reads the previously deployed version from a file, essential for version tracking and rollback strategies.</li>
+                    <li><code>debug_env()</code>: Logs important CodeDeploy environment variables to a temporary file for debugging purposes.</li>
+                    <li><code>user_and_group_check()</code>: Ensures the specified application user and group exist on the instance. If not, it creates them.</li>
+                    <li><code>create_backup()</code>: Creates a compressed tarball of the current application directory before a new deployment, safeguarding against data loss. This is skipped on the initial deployment.</li>
+                    <li><code>log_status()</code>: Records the completion of the 'before install' step in the logs.</li>
+                </ul>
+
+                <h2>Conditional Logic</h2>
+                <p>The script includes a conditional check for the <code>Staging</code> deployment group, allowing for environment-specific actions or logging.</p>
+
+                <h2>Execution Flow</h2>
+                <p>The script first detects the previous version, then logs environment variables, ensures the application user and group are present, attempts to create a backup (if not the initial deployment), and finally logs the completion of the <code>before_install</code> phase.</p>
+
+                <h2>Best Practices and Considerations</h2>
+                <ul>
+                    <li><strong>Idempotency:</strong> Ensure functions like <code>user_and_group_check</code> are idempotent, meaning they can be run multiple times without causing unintended side effects.</li>
+                    <li><strong>Error Handling:</strong> The <code>set -ex</code> command ensures that the script exits immediately if any command fails and prints the commands as they are executed, aiding in debugging.</li>
+                    <li><strong>Permissions:</strong> Ensure the CodeDeploy service role has the necessary permissions to create users, groups, directories, and write to backup locations.</li>
+                    <li><strong>Backup Strategy:</strong> Regularly review and test your backup and restore procedures. Consider offloading backups to a more persistent storage solution like S3.</li>
+                    <li><strong>Environment Variables:</strong> Leverage CodeDeploy's built-in environment variables for dynamic configuration.</li>
+                </ul>
+
+                <h2>Further Resources</h2>
+                <ul>
+                    <li><a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/appspec-file.html" target="_blank" rel="noopener noreferrer">AWS CodeDeploy AppSpec File Documentation</a></li>
+                    <li><a href="https://www.gnu.org/software/bash/manual/bash.html" target="_blank" rel="noopener noreferrer">Bash Reference Manual</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

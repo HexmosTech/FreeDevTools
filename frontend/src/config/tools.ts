@@ -523,6 +523,459 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "sql-minifier": {
+    title: "SQL Minifier - Optimize SQL Queries Online | Free DevTools",
+    name: "SQL Minifier",
+    path: "/freedevtools/t/sql-minifier/",
+    description:
+      "Minify SQL queries instantly with our free online SQL minifier. Remove comments, extra spaces, and optimize SQL formatting for better performance and smaller file sizes. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/sql-minifier/",
+    keywords: [
+      "sql minifier",
+      "sql optimizer",
+      "minify sql online",
+      "sql code minifier",
+      "compress sql queries",
+      "sql formatter",
+      "optimize sql code",
+      "remove sql comments",
+    ],
+    features: [
+      "Minify SQL queries instantly with real-time processing",
+      "Remove comments and extra whitespace from SQL code",
+      "Preserve or strip SQL comments based on preferences",
+      "Calculate compression ratio and size savings",
+      "Support for all SQL dialects and database systems",
+      "Browser-based processing - queries never leave your device",
+      "Copy minified SQL to clipboard with one click",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "rgb-to-hex": {
+    title: "RGB to HEX Converter - Convert RGB Colors Online | Free DevTools",
+    name: "RGB to HEX Converter",
+    path: "/freedevtools/t/rgb-to-hex/",
+    description:
+      "Convert RGB color values to HEX format instantly with our free online RGB to HEX converter. Transform red, green, blue values to hexadecimal color codes with real-time preview and multiple format outputs.",
+    category: "Developer Tools",
+    icon: "🎨",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/rgb-to-hex/",
+    keywords: [
+      "rgb to hex converter",
+      "rgb hex converter",
+      "convert rgb to hex",
+      "color converter online",
+      "rgb to hexadecimal",
+      "css color converter",
+      "rgb hex color tool",
+      "hex color generator",
+    ],
+    features: [
+      "Real-time RGB to HEX conversion",
+      "Interactive color preview",
+      "Multiple format outputs (CSS, HSL, Swift, Android)",
+      "Bidirectional conversion (RGB ↔ HEX)",
+      "Copy to clipboard functionality",
+      "Mobile development color codes",
+      "Browser-based processing - no server uploads",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "diff-checker": {
+    title: "Diff Checker - Compare Text & Code Online | Free DevTools",
+    name: "Diff Checker",
+    path: "/freedevtools/t/diff-checker/",
+    description:
+      "Compare text and code differences instantly with our free online diff checker. Visualize changes character by character, word by word, or line by line with advanced comparison options and unified diff export.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/diff-checker/",
+    keywords: [
+      "diff checker",
+      "text comparison tool",
+      "code diff online",
+      "compare text files",
+      "difference checker",
+      "file comparison tool",
+      "online diff tool",
+      "text diff viewer",
+    ],
+    features: [
+      "Real-time text and code comparison",
+      "Multiple comparison modes (character, word, line, sentence)",
+      "Ignore case and whitespace options",
+      "Visual diff highlighting with color coding",
+      "Unified diff export for version control",
+      "Statistical analysis of changes",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "regex-tester": {
+    title: "Regex Tester - Test Regular Expressions Online | Free DevTools",
+    name: "Regex Tester",
+    path: "/freedevtools/t/regex-tester/",
+    description:
+      "Test regular expressions instantly with our free online regex tester. Validate patterns, find matches, and debug regex with real-time highlighting and detailed match information. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "🔍",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/regex-tester/",
+    keywords: [
+      "regex tester",
+      "regular expression tester",
+      "regex validator",
+      "pattern matcher",
+      "regex debugger",
+      "online regex tool",
+      "regex pattern tester",
+      "javascript regex tester",
+    ],
+    features: [
+      "Test regex patterns instantly with real-time validation",
+      "Visual match highlighting in test strings",
+      "Support for all JavaScript regex flags (g, i, m, s, u, y)",
+      "Detailed match information and capture groups",
+      "Error detection and validation feedback",
+      "Sample regex patterns for learning",
+      "Browser-based processing - patterns never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+    datePublished: "2025-09-11",
+    softwareVersion: "1.0.0",
+  },
+
+  "query-params-to-json": {
+    title:
+      "Query Params to JSON Converter - Parse URL Parameters | Free DevTools",
+    name: "Query Params To JSON",
+    path: "/freedevtools/t/query-params-to-json/",
+    description:
+      "Convert URL query parameters to JSON format instantly with our free online converter. Parse query strings from URLs, form data, and API endpoints into structured JSON objects with real-time validation.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/query-params-to-json/",
+    keywords: [
+      "query params to json converter",
+      "url parameters to json",
+      "query string parser",
+      "url query converter",
+      "parse query parameters",
+      "query string to json online",
+      "url parameter parser",
+      "query params decoder",
+    ],
+    features: [
+      "Convert URL query parameters to JSON format",
+      "Parse complex nested query structures",
+      "Handle arrays and special characters in URLs",
+      "Real-time conversion with validation",
+      "Support for encoded and decoded URLs",
+      "Copy JSON output to clipboard",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+    datePublished: "2025-09-13",
+    softwareVersion: "1.0.0",
+  },
+
+  "lorem-ipsum-generator": {
+    title: "Lorem Ipsum Generator - Create Placeholder Text | Free Online Tool",
+    name: "Lorem Ipsum Generator",
+    path: "/freedevtools/t/lorem-ipsum-generator/",
+    description:
+      "Generate random Lorem Ipsum placeholder text instantly with our free online generator. Create words, sentences, or paragraphs for design mockups, layouts, and content testing. Fast, customizable, and ad-free.",
+    category: "Developer Tools",
+    icon: "📝",
+    themeColor: "#8b5cf6",
+    canonical: "https://hexmos.com/freedevtools/t/lorem-ipsum-generator/",
+    keywords: [
+      "lorem ipsum generator",
+      "placeholder text generator",
+      "dummy text generator",
+      "fake text generator",
+      "lorem ipsum online",
+    ],
+    features: [
+      "Generate words, sentences, or paragraphs",
+      "HTML format output option",
+      "Start with classic Lorem Ipsum text",
+      "Customizable amount (1-99 units)",
+      "Instant copy to clipboard",
+      "Mobile responsive interface",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/lorem-ipsum-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/lorem-ipsum-generator-banner.png",
+    datePublished: "2025-09-13",
+    softwareVersion: "1.0.0",
+  },
+
+  "json-to-yaml": {
+    title: "JSON to YAML Converter - Transform JSON Online | Free DevTools",
+    name: "JSON to YAML Converter",
+    path: "/freedevtools/t/json-to-yaml/",
+    description:
+      "Convert JSON to YAML format instantly with our free online converter. Transform JSON configuration files to YAML with real-time validation and formatting. Secure browser-based processing.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/json-to-yaml/",
+    keywords: [
+      "json to yaml converter",
+      "convert json to yaml online",
+      "json yaml converter free",
+      "json to yaml online tool",
+      "transform json data yaml",
+      "json configuration converter",
+      "online json parser",
+    ],
+    features: [
+      "Real-time JSON to YAML conversion",
+      "Support for nested JSON objects and arrays",
+      "Comprehensive error handling and validation",
+      "Sample JSON data for testing",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+      "Support for all JSON syntax features",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-to-yaml-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/json-to-yaml-banner.png",
+    datePublished: "2025-09-13",
+    softwareVersion: "1.0.0",
+  },
+
+  "hash-generator": {
+    title: "Hash Generator - Generate Secure Hashes Online | Free DevTools",
+    name: "Hash Generator",
+    path: "/freedevtools/t/hash-generator/",
+    description:
+      "Generate secure hashes instantly with our free online hash generator. Create SHA-256, SHA-512, MD5, PBKDF2, and HMAC hashes with customizable options for security and development needs.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/hash-generator/",
+    keywords: [
+      "hash generator",
+      "sha256 generator",
+      "sha512 generator",
+      "md5 generator",
+      "pbkdf2 generator",
+      "hmac generator",
+      "cryptographic hash",
+      "secure hash online",
+      "password hash generator",
+      "data integrity hash",
+    ],
+    features: [
+      "Multiple hash algorithms (SHA-256, SHA-512, MD5, PBKDF2, HMAC)",
+      "Customizable encoding options (Hex, Base64, Latin1)",
+      "PBKDF2 with configurable iterations and salt",
+      "HMAC with custom secret keys",
+      "Real-time hash generation",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
+
+  "har-file-viewer": {
+    title:
+      "HAR File Viewer - Analyze HTTP Archive Files Online | Free DevTools",
+    name: "HAR File Viewer",
+    path: "/freedevtools/t/har-file-viewer/",
+    description:
+      "Analyze HTTP Archive (HAR) files instantly with our free online HAR viewer. Debug network traffic, analyze web performance, and examine HTTP requests with detailed waterfall charts and table views.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/har-file-viewer/",
+    keywords: [
+      "har file viewer",
+      "http archive viewer",
+      "har analyzer",
+      "network traffic analyzer",
+      "web performance analyzer",
+      "har file parser",
+      "http request analyzer",
+      "waterfall chart viewer",
+      "network debugging tool",
+      "web developer tools",
+    ],
+    features: [
+      "Upload and analyze HAR files instantly",
+      "Interactive waterfall charts for performance analysis",
+      "Detailed table view with sorting and filtering",
+      "Filter by content type (XHR, JS, CSS, Images, etc.)",
+      "Status code filtering and error highlighting",
+      "Request/response headers inspection",
+      "Browser-based processing - files never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
+
+  "env-to-netlify-toml": {
+    title:
+      "Env to Netlify TOML Converter - Transform Environment Variables | Free DevTools",
+    name: "Env to Netlify TOML Converter",
+    path: "/freedevtools/t/env-to-netlify-toml/",
+    description:
+      "Convert .env files to Netlify TOML format instantly with our free online converter. Transform environment variables for Netlify deployment configuration with proper TOML syntax and validation.",
+    category: "Developer Tools",
+    icon: "⚙️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/env-to-netlify-toml/",
+    keywords: [
+      "env to netlify toml converter",
+      "environment variables converter",
+      "netlify toml generator",
+      "env file converter",
+      "netlify deployment config",
+      "toml converter online",
+      "netlify environment variables",
+      "env to toml converter",
+      "netlify config generator",
+      "deployment environment setup",
+    ],
+    features: [
+      "Real-time .env to netlify.toml conversion",
+      "Support for environment-specific variables",
+      "Proper TOML syntax formatting",
+      "Handle quoted and unquoted values",
+      "Context-specific variable organization",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
+
+  "csv-to-json": {
+    title: "CSV to JSON Converter - Transform CSV Data Online | Free DevTools",
+    name: "CSV to JSON Converter",
+    path: "/freedevtools/t/csv-to-json/",
+    description:
+      "Convert CSV files to JSON format instantly with our free online converter. Upload CSV files or paste CSV data to transform into structured JSON objects with customizable formatting options.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/csv-to-json/",
+    keywords: [
+      "csv to json converter",
+      "convert csv to json online",
+      "csv json converter free",
+      "csv to json online tool",
+      "transform csv data json",
+      "csv file converter",
+      "online csv parser",
+      "csv json transformation",
+      "data conversion tool",
+      "spreadsheet to json",
+    ],
+    features: [
+      "Real-time CSV to JSON conversion",
+      "Upload CSV files or paste CSV data",
+      "Customizable key formatting (lowercase option)",
+      "Drag and drop file upload support",
+      "Handle different CSV delimiters and formats",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
+
+  "css-units-converter": {
+    title:
+      "CSS Units Converter - Convert px, rem, vw, vh Online | Free DevTools",
+    name: "CSS Units Converter",
+    path: "/freedevtools/t/css-units-converter/",
+    description:
+      "Convert CSS units instantly with our free online converter. Transform pixels to rem, viewport units (vw, vh, vmin, vmax), and more with real-time conversion and responsive design calculations.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/css-units-converter/",
+    keywords: [
+      "css units converter",
+      "px to rem converter",
+      "viewport units converter",
+      "css unit calculator",
+      "responsive design converter",
+      "px to vw converter",
+      "rem to px converter",
+      "css measurement converter",
+      "web design units",
+      "css length units",
+    ],
+    features: [
+      "Convert between px, rem, vw, vh, vmin, vmax units",
+      "Real-time conversion with instant results",
+      "Responsive design calculations",
+      "Container dimension inputs for viewport units",
+      "Bidirectional unit conversion",
+      "Copy results to clipboard",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {

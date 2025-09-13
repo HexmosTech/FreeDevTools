@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Docker-in-Docker Sidecar Deployment Guide</title>
+    <meta name="description" content="Learn how to deploy a Docker-in-Docker (dind) sidecar container in Kubernetes for CI/CD pipelines. This guide provides a comprehensive YAML example for a robust deployment.">
+    <meta name="keywords" content="kubernetes, docker-in-docker, dind, sidecar, deployment, ci/cd, kubernetes deployment, docker, container, kubernetes yaml, docker image, privileged container">
+    <link rel="canonical" href="https://your-domain.com/kubernetes/dockerd-sidecar-deployment.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Kubernetes Docker-in-Docker Sidecar Deployment Guide">
+    <meta property="og:description" content="Learn how to deploy a Docker-in-Docker (dind) sidecar container in Kubernetes for CI/CD pipelines. This guide provides a comprehensive YAML example for a robust deployment.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://your-domain.com/kubernetes/dockerd-sidecar-deployment.html">
+    <meta property="og:image" content="https://your-domain.com/path/to/your/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kubernetes Docker-in-Docker Sidecar Deployment Guide">
+    <meta name="twitter:description" content="Learn how to deploy a Docker-in-Docker (dind) sidecar container in Kubernetes for CI/CD pipelines. This guide provides a comprehensive YAML example for a robust deployment.">
+    <meta name="twitter:image" content="https://your-domain.com/path/to/your/twitter-image.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        .content {
+            padding: 30px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+            margin-top: 20px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kubernetes Docker-in-Docker Sidecar Deployment</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+                <p>This document outlines a Kubernetes Deployment configuration for running a Docker-in-Docker (dind) service as a sidecar container. This setup is commonly used in Continuous Integration and Continuous Deployment (CI/CD) pipelines within Kubernetes environments, allowing you to build and manage Docker images directly inside your cluster.</p>
+
+                <h2>Understanding the Docker-in-Docker Sidecar Deployment</h2>
+                <p>The provided YAML defines a Kubernetes Deployment that includes two containers within a single Pod:</p>
+                <ul>
+                    <li><code>docker-cmds</code>: This container uses the standard <code>docker</code> image and is configured to run a command that keeps it alive indefinitely (<code>tail -f /dev/null</code>). It's essential for interacting with the Docker daemon. It mounts the Docker socket and sets necessary environment variables.</li>
+                    <li><code>dind-daemon</code>: This container uses the <code>docker:stable-dind</code> image, specifically designed for running Docker daemon inside a container. It requires privileged access and mounts the Docker graph storage and the Docker socket.</li>
+                </ul>
+                <p>Both containers share access to the Docker daemon via the mounted <code>/var/run/docker.sock</code>. The <code>privileged: true</code> setting is crucial for the Docker daemon to function correctly within the Kubernetes environment.</p>
+
+                <h2>Kubernetes Deployment YAML for DIND Sidecar</h2>
+                <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dind
+  labels:
+    app: dind
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dind
+  template:
+    metadata:
+      labels:
+        app: dind
+    spec:
+      containers:
+      - name: docker-cmds
+        image: docker:19.03.14
+        command: ['docker', 'run', 'alpine', 'tail', '-f', '/dev/null']
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "256Mi"
+        env:
+          - name: DOCKER_HOST
+            value: unix:///var/run/docker.sock
+          - name: DOCKER_TLS_CERTDIR
+            value: ""
+        volumeMounts:
+          - name: docker-socket-dir
+            mountPath: /var/run
+      - name: dind-daemon
+        image: docker:stable-dind
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: 500m
+            memory: "128Mi"
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: docker-graph-storage
+            mountPath: /var/lib/docker
+          - name: docker-socket-dir
+            mountPath: /var/run
+      volumes:
+        - name: docker-graph-storage
+          emptyDir: {}
+        - name: docker-socket-dir
+          emptyDir: {}
+</code></pre>
+
+                <h3>Key Configuration Details</h3>
+                <ul>
+                    <li><strong>Privileged Containers:</strong> Both containers are marked as <code>privileged: true</code>. This is a security-sensitive setting and should be used with caution, typically only in CI/CD contexts where necessary.</li>
+                    <li><strong>Resource Requests and Limits:</strong> The YAML includes basic resource requests and limits for CPU and memory to help Kubernetes manage the Pod's resources effectively.</li>
+                    <li><strong>Volume Mounts:</strong>
+                        <ul>
+                            <li><code>/var/run</code>: Mounted via <code>docker-socket-dir</code> (an <code>emptyDir</code> volume) to share the Docker socket between containers.</li>
+                            <li><code>/var/lib/docker</code>: Mounted via <code>docker-graph-storage</code> (an <code>emptyDir</code> volume) to store Docker images, containers, and volumes.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Environment Variables:</strong> <code>DOCKER_HOST</code> is set to point to the Unix socket, and <code>DOCKER_TLS_CERTDIR</code> is unset to disable TLS for simplicity in this example.</li>
+                </ul>
+
+                <h2>Best Practices and Considerations</h2>
+                <p>When deploying Docker-in-Docker in Kubernetes, consider the following:</p>
+                <ul>
+                    <li><strong>Security:</strong> Running privileged containers poses security risks. Ensure your Kubernetes cluster is secured and access to these Pods is restricted. Consider alternatives like Kaniko or Buildah if privileged containers are not feasible.</li>
+                    <li><strong>Resource Management:</strong> Carefully tune resource requests and limits based on your build workloads to prevent resource starvation or excessive consumption.</li>
+                    <li><strong>Storage:</strong> For production environments, consider using persistent volumes (e.g., <code>PersistentVolumeClaim</code>) instead of <code>emptyDir</code> for <code>/var/lib/docker</code> to retain Docker data across Pod restarts.</li>
+                    <li><strong>Image Versions:</strong> Pinning to specific Docker image versions (e.g., <code>docker:19.03.14</code>) is recommended for reproducibility.</li>
+                </ul>
+
+                <h2>Further Reading</h2>
+                <ul>
+                    <li><a href="https://docs.docker.com/engine/docker-overview/" target="_blank" rel="noopener noreferrer">Docker Overview</a></li>
+                    <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/" target="_blank" rel="noopener noreferrer">Kubernetes Sidecar Containers Documentation</a></li>
+                    <li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/design/docker-in-docker.md" target="_blank" rel="noopener noreferrer">Kubernetes Docker-in-Docker Design (Archived)</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

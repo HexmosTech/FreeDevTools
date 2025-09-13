@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS CLI Autoscaling Cheatsheet - Automate EC2 Scaling</title>
+    <meta name="description" content="Automate EC2 instance scaling with AWS CLI Autoscaling Cheatsheet. Configure launch configurations and auto scaling groups for efficient resource management.">
+    <meta name="keywords" content="AWS CLI, Autoscaling, EC2, Launch Configuration, Auto Scaling Group, Cloud Automation, Infrastructure as Code">
+    <meta name="canonical" href="https://example.com/aws-cli/autoscaling.html">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://example.com/aws-cli/autoscaling.html">
+    <meta property="og:title" content="AWS CLI Autoscaling Cheatsheet - Automate EC2 Scaling">
+    <meta property="og:description" content="Automate EC2 instance scaling with AWS CLI Autoscaling Cheatsheet. Configure launch configurations and auto scaling groups for efficient resource management.">
+    <meta property="og:image" content="https://example.com/images/aws-autoscaling-banner.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/aws-cli/autoscaling.html">
+    <meta property="twitter:title" content="AWS CLI Autoscaling Cheatsheet - Automate EC2 Scaling">
+    <meta property="twitter:description" content="Automate EC2 instance scaling with AWS CLI Autoscaling Cheatsheet. Configure launch configurations and auto scaling groups for efficient resource management.">
+    <meta property="twitter:image" content="https://example.com/images/aws-autoscaling-banner.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS CLI Autoscaling Cheatsheet</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+<h2>AWS CLI Autoscaling Configuration</h2>
+<p>Userdata:</p>
+<pre class="codehilite"><code>$ cat userdata.txt
+#!/bin/bash
+CLUSTER_NAME=&quot;aws-qa-ecs&quot;
+ENVIRONMENT_NAME=&quot;qa&quot;
+MY_HOSTNAME=&quot;$(curl -s http://169.254.169.254/latest/meta-data/local-hostname)&quot;
+INSTANCE_ID=&quot;$(curl -s http://instance-data/latest/meta-data/instance-id)&quot;
+INSTANCE_LIFECYCLE=&quot;$(curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle)&quot;
+REGION=&quot;$(curl -s http://instance-data/latest/meta-data/placement/availability-zone | rev | cut -c 2- | rev)&quot;
+
+echo &quot;ECS_CLUSTER=${CLUSTER_NAME}&quot; &gt;&gt; /etc/ecs/ecs.config
+echo &quot;ECS_AVAILABLE_LOGGING_DRIVERS=[\&quot;json-file\&quot;,\&quot;awslogs\&quot;]&quot; &gt;&gt; /etc/ecs/ecs.config
+echo &quot;ECS_INSTANCE_ATTRIBUTES={\&quot;environment\&quot;:\&quot;${ENVIRONMENT_NAME}\&quot;}&quot; &gt;&gt; /etc/ecs/ecs.config
+</code></pre>
+
+<p>I am multiplying the current spot price with 2 to set my maximum bid price, so alter according to your needs:</p>
+<h2>Create Launch Configuration</h2>
+<pre class="codehilite"><code>#!/usr/bin/env bash
+
+launch_config_name=&quot;ecs-dev-cap-spot-lc.v1&quot;
+instance_type=&quot;t2.medium&quot;
+ssh_key_name=&quot;infra&quot;
+userdata=&quot;userdata.txt&quot;
+security_group=&quot;sg-00000000000000000&quot;
+instance_profile=&quot;ecs-instance-role&quot;
+
+ecs_ami_id=&quot;$(aws --profile dev ssm get-parameter --name '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id' | jq -r '.Parameter.Value')&quot;
+spot_price=$(aws --profile dev ec2 describe-spot-price-history --instance-types ${instance_type} --product-descriptions &quot;Linux/UNIX&quot; --max-items 1 | jq -r '.SpotPriceHistory[].SpotPrice')
+
+get_bid_price(){
+    spot_price=$(aws --profile dev ec2 describe-spot-price-history --instance-types ${instance_type} --product-descriptions &quot;Linux/UNIX&quot; --max-items 1 | jq -r '.SpotPriceHistory[].SpotPrice')
+    echo ${spot_price} 2 | awk '{printf &quot;%4.3f\n&quot;,$1*$2}'
+}
+
+aws --profile dev autoscaling create-launch-configuration \
+  --launch-configuration-name ${launch_config_name} \
+  --image-id ${ecs_ami_id} \
+  --instance-type ${instance_type} \
+  --key-name ${ssh_key_name} \
+  --user-data file://${userdata} \
+  --security-groups ${security_group} \
+  --instance-monitoring Enabled=true \
+  --iam-instance-profile ${instance_profile} \
+  --spot-price &quot;$(get_bid_price)&quot;
+</code></pre>
+
+<h2>Create Auto Scaling Group</h2>
+<p>Create the Auto Scaling Group:</p>
+<pre class="codehilite"><code>asg_name=&quot;ecs-dev-cap-spot&quot;
+subnets=&quot;subnet-00000000000000000,subnet-11111111111111111,subnet-22222222222222222&quot;
+
+aws --profile dev autoscaling create-auto-scaling-group \
+  --auto-scaling-group-name ${asg_name} \
+  --launch-configuration-name ${launch_config_name} \
+  --min-size 0 \
+  --max-size 3 \
+  --vpc-zone-identifier &quot;${subnets}&quot;
+</code></pre>
+<h2>Further Reading</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/AutoScalingGroup.html">AWS Auto Scaling Documentation</a></li>
+<li><a href="https://aws.amazon.com/ec2/">Amazon EC2</a></li>
+<li><a href="https://github.com/aws/aws-cli">AWS CLI GitHub Repository</a></li>
+</ul>
+</div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

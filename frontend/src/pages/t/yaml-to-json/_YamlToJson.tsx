@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "../../../components/tool/ToolContainer";
-import ToolHead from "../../../components/tool/ToolHead";
-import ToolBody from "../../../components/tool/ToolBody";
-import ToolCardWrapper from "../../../components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "../../../components/tool/ToolContentCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import YamlToJsonSkeleton from "./_YamlToJsonSkeleton";
-import CopyButton from "../../../components/ui/copy-button";
-import { toast } from "../../../components/ToastProvider";
-import { Button } from "../../../components/ui/button";
+import CopyButton from "@/components/ui/copy-button";
+import { toast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { Textarea } from "../../../components/ui/textarea";
-import { Label } from "../../../components/ui/label";
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 // YAML to JSON conversion utility using js-yaml
 const convertYamlToJson = async (yamlString: string): Promise<string> => {

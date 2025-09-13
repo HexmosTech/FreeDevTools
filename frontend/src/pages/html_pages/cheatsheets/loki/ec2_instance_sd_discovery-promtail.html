@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promtail EC2 Instance Service Discovery - Configure Promtail for AWS EC2 Log Collection</title>
+    <meta name="description" content="Learn how to configure Promtail for EC2 instance service discovery to automatically discover and scrape logs from AWS EC2 instances. This guide covers Promtail setup for dynamic log collection.">
+    <meta name="keywords" content="promtail, ec2, service discovery, aws, log collection, logging, grafana, loki, cloudwatch, ec2 tags, relabeling, configuration, yaml">
+    <link rel="canonical" href="https://yourdomain.com/loki/ec2_instance_sd_discovery-promtail.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Promtail EC2 Instance Service Discovery - Configure Promtail for AWS EC2 Log Collection">
+    <meta property="og:description" content="Learn how to configure Promtail for EC2 instance service discovery to automatically discover and scrape logs from AWS EC2 instances. This guide covers Promtail setup for dynamic log collection.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://yourdomain.com/loki/ec2_instance_sd_discovery-promtail.html">
+    <meta property="og:image" content="https://yourdomain.com/images/promtail-ec2-sd.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Promtail EC2 Instance Service Discovery - Configure Promtail for AWS EC2 Log Collection">
+    <meta name="twitter:description" content="Learn how to configure Promtail for EC2 instance service discovery to automatically discover and scrape logs from AWS EC2 instances. This guide covers Promtail setup for dynamic log collection.">
+    <meta name="twitter:image" content="https://yourdomain.com/images/promtail-ec2-sd.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+        .markdown-content {
+            line-height: 1.7;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        .markdown-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        .markdown-content code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Promtail EC2 Instance Service Discovery</h1>
+        </div>
+        <div class="content">
+            <div class="markdown-content">
+                <p>This document outlines the configuration for Promtail to leverage AWS EC2 Service Discovery for dynamic log collection. By integrating Promtail with EC2's metadata, you can automatically discover and scrape logs from your EC2 instances without manual configuration updates.</p>
+
+                <h2>Promtail EC2 Service Discovery Configuration</h2>
+                <p>The following YAML configuration demonstrates how to set up Promtail for EC2 service discovery. This setup allows Promtail to dynamically find EC2 instances based on their tags and metadata, and then scrape logs from specified paths.</p>
+
+                <pre><code class="language-yaml"># https://grafana.com/docs/loki/latest/clients/promtail/scraping/
+# https://grafana.com/blog/2020/07/13/loki-tutorial-how-to-set-up-promtail-on-aws-ec2-to-find-and-analyze-your-logs/
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 0
+
+clients:
+  - url: https://user:pass@loki.domain.com/loki/api/v1/push
+
+positions:
+  filename: /opt/promtail/positions.yaml
+
+scrape_configs:
+  - job_name: prod/ec2-logs
+    ec2_sd_configs:
+      - region: eu-west-1
+        #access_key: REDACTED
+        #secret_key: REDACTED
+        #role_arn: arn:aws:iam::000000000000:role/PrometheusEC2DynamicScrapeRole
+    relabel_configs:
+      - source_labels: [__meta_ec2_architecture]
+        regex: "(.*)"
+        replacement: "prod/server-logs"
+        target_label: job
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: name
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance
+        action: replace
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: zone
+        action: replace
+      - action: replace
+        replacement: /var/log/**.log
+        target_label: __path__
+      - source_labels: [__meta_ec2_private_dns_name]
+        regex: "(.*)\\.(.*)\\.compute\\.internal"
+        replacement: '${1}'
+        target_label: __host__
+
+  - job_name: prod/journal
+    journal:
+      json: false
+      max_age: 12h
+      path: /var/log/journal
+      labels:
+        job: prod/systemd-journal
+        name: my-ec2-instance
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'
+      - source_labels: ['__journal__hostname']
+        target_label: __host__
+      - source_labels: ['__journal_syslog_identifier']
+        target_label: syslog_identifier
+
+# prod/ec2-logs produces:
+#  job="prod/server-logs"
+#  instance="i-00000000000"
+#  name="my-ec2-instance"
+#  zone="eu-west-1a"
+#  filename="/var/log/auth.log"
+
+# prod/journal produces:
+#  job="prod/systemd-journal"
+#  name="my-ec2-instance"
+#  syslog_identifier="promtail"
+#  unit="promtail.service"
+</code></pre>
+
+                <h2>Understanding EC2 Service Discovery</h2>
+                <p>The <code>ec2_sd_configs</code> section enables Promtail to query AWS EC2 for instance information. It uses the specified AWS region to discover instances. For security, it's recommended to use IAM roles (<code>role_arn</code>) rather than hardcoding access keys.</p>
+
+                <h2>Relabeling for Log Identification</h2>
+                <p>The <code>relabel_configs</code> are crucial for transforming the discovered EC2 metadata into labels that Promtail uses to identify and route logs. This includes setting the <code>job</code> name based on instance architecture, adding <code>name</code> and <code>instance</code> labels from EC2 tags and IDs, and defining the log file path (<code>__path__</code>).</p>
+
+                <h2>Journald Log Collection</h2>
+                <p>In addition to EC2 instance logs, the configuration includes a separate job for collecting logs from systemd-journald. This ensures that system-level logs are also captured and sent to Loki.</p>
+
+                <h2>External Resources</h2>
+                <ul>
+                    <li><a href="https://grafana.com/docs/loki/latest/clients/promtail/configuration/" target="_blank" rel="noopener noreferrer">Promtail Official Documentation</a></li>
+                    <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html" target="_blank" rel="noopener noreferrer">AWS EC2 Tagging Documentation</a></li>
+                    <li><a href="https://grafana.com/docs/loki/latest/operations/configuration/relabeling/" target="_blank" rel="noopener noreferrer">Loki Relabeling Documentation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
