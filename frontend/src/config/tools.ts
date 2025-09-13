@@ -817,6 +817,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "har-file-viewer": {
+    title:
+      "HAR File Viewer - Analyze HTTP Archive Files Online | Free DevTools",
+    name: "HAR File Viewer",
+    path: "/freedevtools/t/har-file-viewer/",
+    description:
+      "Analyze HTTP Archive (HAR) files instantly with our free online HAR viewer. Debug network traffic, analyze web performance, and examine HTTP requests with detailed waterfall charts and table views.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/har-file-viewer/",
+    keywords: [
+      "har file viewer",
+      "http archive viewer",
+      "har analyzer",
+      "network traffic analyzer",
+      "web performance analyzer",
+      "har file parser",
+      "http request analyzer",
+      "waterfall chart viewer",
+      "network debugging tool",
+      "web developer tools",
+    ],
+    features: [
+      "Upload and analyze HAR files instantly",
+      "Interactive waterfall charts for performance analysis",
+      "Detailed table view with sorting and filtering",
+      "Filter by content type (XHR, JS, CSS, Images, etc.)",
+      "Status code filtering and error highlighting",
+      "Request/response headers inspection",
+      "Browser-based processing - files never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
