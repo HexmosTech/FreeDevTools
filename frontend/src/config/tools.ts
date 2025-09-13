@@ -778,6 +778,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-13",
     softwareVersion: "1.0.0",
   },
+
+  "hash-generator": {
+    title: "Hash Generator - Generate Secure Hashes Online | Free DevTools",
+    name: "Hash Generator",
+    path: "/freedevtools/t/hash-generator/",
+    description:
+      "Generate secure hashes instantly with our free online hash generator. Create SHA-256, SHA-512, MD5, PBKDF2, and HMAC hashes with customizable options for security and development needs.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/hash-generator/",
+    keywords: [
+      "hash generator",
+      "sha256 generator",
+      "sha512 generator",
+      "md5 generator",
+      "pbkdf2 generator",
+      "hmac generator",
+      "cryptographic hash",
+      "secure hash online",
+      "password hash generator",
+      "data integrity hash",
+    ],
+    features: [
+      "Multiple hash algorithms (SHA-256, SHA-512, MD5, PBKDF2, HMAC)",
+      "Customizable encoding options (Hex, Base64, Latin1)",
+      "PBKDF2 with configurable iterations and salt",
+      "HMAC with custom secret keys",
+      "Real-time hash generation",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
