@@ -35,7 +35,6 @@ TWITTER_IMAGE = (
     "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 )
 
-FRONTMATTER_FILE = "frontmatter.json"
 
 
 def validate_seo_compliance(yaml_content, platform, command_name):
@@ -368,21 +367,9 @@ def update_markdown_file(file_path, frontmatter_yaml):
         print(f"Error updating file {file_path}: {e}")
 
 
-def load_frontmatter():
-    if os.path.exists(FRONTMATTER_FILE):
-        with open(FRONTMATTER_FILE, "r") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                print("Warning: frontmatter.json is corrupted. Starting fresh.")
-                return []
-    return []
+ 
 
-
-def save_frontmatter(data):
-    with open(FRONTMATTER_FILE, "w") as f:
-        json.dump(data, f, indent=2)
-
+ 
 
 def already_processed(entries, name, path):
     for entry in entries:
