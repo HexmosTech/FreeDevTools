@@ -709,6 +709,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-15",
     softwareVersion: "1.0.0",
   },
+
+  "lorem-ipsum-generator": {
+    key: "lorem-ipsum-generator",
+    name: "Lorem Ipsum Generator",
+    title: "Lorem Ipsum Generator - Create Placeholder Text | Free DevTools",
+    path: "/freedevtools/t/lorem-ipsum-generator/",
+    description:
+      "Generate Lorem Ipsum placeholder text instantly for your design projects. Create customizable words, sentences, or paragraphs with HTML format options. Free online tool, no registration required.",
+    canonical: "https://hexmos.com/freedevtools/t/lorem-ipsum-generator/",
+    themeColor: "#8B5CF6",
+    keywords: [
+      "lorem ipsum generator",
+      "placeholder text generator",
+      "dummy text generator",
+      "lorem ipsum text",
+      "design placeholder",
+      "text filler generator",
+      "lorem ipsum maker",
+      "random text generator",
+      "latin text generator",
+      "content placeholder",
+    ],
+    ogImage: "/freedevtools/t/lorem-ipsum-generator/og-image.png",
+    twitterImage: "/freedevtools/t/lorem-ipsum-generator/twitter-image.png",
+    datePublished: "2025-01-15",
+    softwareVersion: "1.0.0",
+    features: [
+      "Generate 1-100 words, sentences, or paragraphs",
+      "Classic Lorem Ipsum starting text option",
+      "HTML format output with proper tags",
+      "Real-time text statistics and counts",
+      "Download as text or HTML file",
+      "Quick preset templates",
+      "Copy to clipboard functionality",
+      "Mobile responsive interface",
+    ],
+  },
 };
 
 // tldr: {
