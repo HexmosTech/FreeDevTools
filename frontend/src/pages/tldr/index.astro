@@ -1,10 +1,65 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getAllCommands } from '../../lib/commands';
-import CommandSearch from '../../components/CommandSearch';
 import AdBanner from '../../components/banner/AdBanner';
 
-const commands = await getAllCommands();
+
+async function getAllCommands() {
+  const commandFiles = import.meta.glob(
+    "/src/pages/markdown_pages/tldr/**/*.md"
+  );
+
+  const commandsByPlatform: Record<
+    string,
+    Array<{
+      name: string;
+      url: string;
+      description?: string;
+      category?: string;
+    }>
+  > = {};
+
+  for (const [path, file] of Object.entries(commandFiles)) {
+    // Extract platform and command name from path
+    const pathParts = path.split("/");
+    const platform = pathParts[pathParts.length - 2]; // e.g., 'android'
+    const fileName = pathParts[pathParts.length - 1]; // e.g., 'am.md'
+    const commandName = fileName.replace(".md", ""); // e.g., 'am'
+
+    if (!commandsByPlatform[platform]) {
+      commandsByPlatform[platform] = [];
+    }
+
+    // Get description from frontmatter if available
+    const description =
+      (file as any).frontmatter?.description ||
+      (file as any).frontmatter?.title ||
+      `Documentation for ${commandName} command`;
+
+    // Get additional frontmatter data
+    const frontmatter = (file as any).frontmatter || {};
+
+    const commandName_final = frontmatter.name || commandName;
+
+    // Debug logging
+    if (!frontmatter.name) {
+      console.log(
+        `❌ Missing name field: ${path} -> using fallback: ${commandName}`
+      );
+    }
+    if (frontmatter.name === "") {
+      console.log(`❌ Empty name field: ${path}`);
+    }
+
+    commandsByPlatform[platform].push({
+      name: commandName_final,
+      url: frontmatter.path || `/freedevtools/tldr/${platform}/${commandName}`,
+      description,
+      category: frontmatter.category,
+    });
+  }
+
+  return commandsByPlatform;
+}
 
 const platformIconMap = {
   "linux": "https://raw.githubusercontent.com/github/explore/eb40fa94e4b686db568094600bb30065acce30c3/topics/linux/linux.png",
@@ -19,10 +74,8 @@ const platformIconMap = {
   "windows": "https://www.freeiconspng.com/thumbs/windows-icon-png/cute-ball-windows-icon-png-16.png",
 };
 
-// Flatten all commands for search
-const allCommands = Object.entries(commands).flatMap(([platform, platformCommands]) =>
-  platformCommands.map(command => ({ ...command, platform }))
-);
+const commands = await getAllCommands();
+
 ---
 
 <BaseLayout 
@@ -52,13 +105,6 @@ const allCommands = Object.entries(commands).flatMap(([platform, platformCommand
       <p class="text-lg text-slate-600 dark:text-slate-400 mb-6">
         Comprehensive documentation for command-line tools across different platforms.
       </p>
-      
-      <div class="max-w-md">
-        <CommandSearch 
-          commands={allCommands}
-          client:load
-        />
-      </div>
     </div>
 
     <script>
