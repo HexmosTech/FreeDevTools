@@ -1,8 +1,8 @@
 ---
 title: "Info - Read Info Documentation | Free DevTools"
 name: info
-path: "/freedevtools/tldr/common/info"
-canonical: "https://hexmos.com/freedevtools/tldr/common/info/"
+path: "/freedevtools/tldr/in/info"
+canonical: "https://hexmos.com/freedevtools/tldr/in/info/"
 description: "Read info documentation with info. Access and navigate GNU info manuals. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Sui Move - Create and Build Move Projects | Free DevTools"
 name: sui-move
-path: /freedevtools/tldr/common/sui-move
-canonical: "https://hexmos.com/freedevtools/tldr/common/sui-move/"
+path: /freedevtools/tldr/sui/sui-move
+canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-move/"
 description: "Create Move projects instantly with Sui Move. Build, test, migrate and manage your Sui Move projects using the CLI. Free online tool, no registration required."
 category: common
 keywords:

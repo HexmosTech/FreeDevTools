@@ -1,8 +1,8 @@
 ---
 title: "Cradle Package Manager - Control Packages | Free DevTools"
 name: cradle-package
-path: /freedevtools/tldr/common/cradle-package
-canonical: "https://hexmos.com/freedevtools/tldr/common/cradle-package/"
+path: /freedevtools/tldr/cradle/cradle-package
+canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-package/"
 description: "Control packages with Cradle Package Manager. Easily install, update, and remove packages for your Cradle instance. Free online tool, no registration required."
 category: common
 keywords:

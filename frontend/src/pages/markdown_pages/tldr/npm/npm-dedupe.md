@@ -1,8 +1,8 @@
 ---
 title: "Dedupe NPM Packages - Reduce Node Modules Duplicates | Free DevTools"
 name: npm-dedupe
-path: /freedevtools/tldr/common/npm-dedupe
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-dedupe/"
+path: /freedevtools/tldr/npm/npm-dedupe
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-dedupe/"
 description: "Reduce NPM package duplicates with npm-dedupe. Optimize your node_modules directory and shrink bundle sizes. Free online tool, no registration required."
 category: common
 keywords:

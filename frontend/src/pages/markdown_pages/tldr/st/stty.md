@@ -1,8 +1,8 @@
 ---
 title: "Control Terminal - Set Options | Free DevTools"
 name: stty
-path: /freedevtools/tldr/common/stty
-canonical: "https://hexmos.com/freedevtools/tldr/common/stty/"
+path: /freedevtools/tldr/st/stty
+canonical: "https://hexmos.com/freedevtools/tldr/st/stty/"
 description: "Control terminal settings with stty. Set terminal size, echoing, and modes, instantly using command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create PNM Montage - Compose Images | Free DevTools"
 name: pnmmontage
-path: /freedevtools/tldr/common/pnmmontage
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmmontage/"
+path: /freedevtools/tldr/pnm/pnmmontage
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmontage/"
 description: "Create a PNM montage with pnmmontage. Easily compose multiple PNM images into a single image. Free online tool, no registration required."
 category: common
 keywords:

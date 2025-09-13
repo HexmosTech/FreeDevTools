@@ -1,8 +1,8 @@
 ---
 title: "List Go Packages - Discover Dependencies | Free DevTools"
 name: go-list
-path: /freedevtools/tldr/common/go-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-list/"
+path: /freedevtools/tldr/go/go-list
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-list/"
 description: "List Go packages and module dependencies with go-list. Find available updates and dependencies for your Go projects. Free online tool, no registration required."
 category: common
 keywords:

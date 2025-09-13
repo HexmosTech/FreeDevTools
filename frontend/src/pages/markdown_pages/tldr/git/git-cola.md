@@ -1,8 +1,8 @@
 ---
 title: "Git GUI - Control Git Repositories with Git Cola | Free DevTools"
 name: git-cola
-path: /freedevtools/tldr/common/git-cola
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-cola/"
+path: /freedevtools/tldr/git/git-cola
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-cola/"
 description: "Control Git repositories efficiently with Git Cola. Visualize commit history, manage branches, and stage changes with this powerful Git GUI. Free online tool, no registration required."
 category: common
 keywords:

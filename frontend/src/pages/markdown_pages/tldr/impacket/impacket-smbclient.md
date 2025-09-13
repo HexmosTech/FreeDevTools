@@ -1,8 +1,8 @@
 ---
 title: "Control SMB Shares - Impacket SMBClient | Free DevTools"
 name: impacket-smbclient
-path: /freedevtools/tldr/common/impacket-smbclient
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-smbclient/"
+path: /freedevtools/tldr/impacket/impacket-smbclient
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-smbclient/"
 description: "Control SMB shares with Impacket SMBClient. Enumerate shares, upload/download files, and execute commands on remote systems. Free online tool, no registration required."
 category: common
 keywords:

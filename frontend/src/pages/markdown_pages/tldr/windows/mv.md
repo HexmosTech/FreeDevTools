@@ -1,8 +1,8 @@
 ---
 title: "MV - Move Files and Directories | Free DevTools"
 name: mv
-path: /freedevtools/tldr/widows/mv
-canonical: "https://hexmos.com/freedevtools/tldr/widows/mv/"
+path: /freedevtools/tldr/windows/mv
+canonical: "https://hexmos.com/freedevtools/tldr/windows/mv/"
 description: "Move files and directories with MV. Easily relocate files, rename items, and manage your file system from the command line. Free online tool, no registration required."
 category: windows
 keywords:

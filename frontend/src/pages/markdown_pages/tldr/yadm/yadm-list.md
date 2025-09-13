@@ -1,8 +1,8 @@
 ---
 title: "Yadm - List Managed Files | Free DevTools"
 name: yadm-list
-path: /freedevtools/tldr/common/yadm-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-list/"
+path: /freedevtools/tldr/yadm/yadm-list
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-list/"
 description: "List files managed by Yadm for dotfile management with this command line tool. Easily track, update, and manage your configuration files. Free online tool, no registration required."
 category: common
 keywords:

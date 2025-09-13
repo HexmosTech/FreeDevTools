@@ -1,8 +1,8 @@
 ---
 title: "Redis Control - Manage Redis Server Connections | Free DevTools"
 name: redis-cli
-path: /freedevtools/tldr/common/redis-cli
-canonical: "https://hexmos.com/freedevtools/tldr/common/redis-cli/"
+path: /freedevtools/tldr/redis/redis-cli
+canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-cli/"
 description: "Control Redis server connections using redis-cli. Manage local and remote connections, execute commands, and handle authentication. Free online tool, no registration required."
 category: common
 keywords:

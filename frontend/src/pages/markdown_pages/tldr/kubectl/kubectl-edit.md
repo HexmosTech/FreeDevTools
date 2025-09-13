@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Edit - Edit Kubernetes Resources | Free DevTools"
 name: kubectl-edit
-path: /freedevtools/tldr/common/kubectl-edit
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-edit/"
+path: /freedevtools/tldr/kubectl/kubectl-edit
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-edit/"
 description: "Edit Kubernetes resources instantly with Kubectl Edit. Update pods, deployments, services, and more with this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

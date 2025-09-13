@@ -1,8 +1,8 @@
 ---
 title: "Rust Toolchain Run - Execute Commands | Free DevTools"
 name: rustup-run
-path: /freedevtools/tldr/common/rustup-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-run/"
+path: /freedevtools/tldr/rustup/rustup-run
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-run/"
 description: "Execute commands with Rust toolchains using Rustup Run. Manage Rust versions and build environments instantly using command line tools. Free online tool, no registration required."
 category: common
 keywords:

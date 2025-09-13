@@ -1,8 +1,8 @@
 ---
 title: "ADB Pair - Connect Android Devices | Free DevTools"
 name: adb-pair
-path: /freedevtools/tldr/common/adb-pair
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb-pair/"
+path: /freedevtools/tldr/adb/adb-pair
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-pair/"
 description: "Pair Android devices with ADB for seamless debugging and file transfer. Quickly establish a secure connection using command line. Free online tool, no registration required."
 category: common
 keywords:

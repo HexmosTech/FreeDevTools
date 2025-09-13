@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM Images - Mercator Projection | Free DevTools"
 name: pnmmercator
-path: "/freedevtools/tldr/common/pnmmercator"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmmercator/"
+path: "/freedevtools/tldr/pnm/pnmmercator"
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmercator/"
 description: "Convert PNM images with pnmmercator for Mercator projections. Transform and manipulate Netpbm image formats effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Tailscale Set - Control Network Preferences | Free DevTools"
 name: tailscale-set
-path: /freedevtools/tldr/common/tailscale-set
-canonical: "https://hexmos.com/freedevtools/tldr/common/tailscale-set/"
+path: /freedevtools/tldr/tailscale/tailscale-set
+canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-set/"
 description: "Control network configurations with Tailscale Set. Manage Tailscale preferences and adjust network settings directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

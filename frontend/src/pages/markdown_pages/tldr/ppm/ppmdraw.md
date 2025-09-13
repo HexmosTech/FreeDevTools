@@ -1,8 +1,8 @@
 ---
 title: "PPM Image Draw - Create Images with Script | Free DevTools"
 name: ppmdraw
-path: /freedevtools/tldr/common/ppmdraw
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmdraw/"
+path: /freedevtools/tldr/ppm/ppmdraw
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmdraw/"
 description: "Create images with PPM Image Draw using custom scripts to add lines, text and shapes. Generate customized images using scripting. Free online tool, no registration required."
 category: common
 keywords:

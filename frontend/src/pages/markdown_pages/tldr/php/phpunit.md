@@ -1,8 +1,8 @@
 ---
 title: "PHPUnit Test Runner - Execute Tests | Free DevTools"
 name: phpunit
-path: /freedevtools/tldr/common/phpunit
-canonical: "https://hexmos.com/freedevtools/tldr/common/phpunit/"
+path: /freedevtools/tldr/php/phpunit
+canonical: "https://hexmos.com/freedevtools/tldr/php/phpunit/"
 description: "Execute PHPUnit tests with PHPUnit Test Runner. Generate code coverage reports and run tests by group for efficient software testing. Free online tool, no registration required."
 category: common
 keywords:

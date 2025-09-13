@@ -1,8 +1,8 @@
 ---
 title: "Encrypt Files - Create GPG Archive with gpg-zip | Free DevTools"
 name: gpg-zip
-path: /freedevtools/tldr/common/gpg-zip
-canonical: "https://hexmos.com/freedevtools/tldr/common/gpg-zip/"
+path: /freedevtools/tldr/gpg/gpg-zip
+canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-zip/"
 description: "Encrypt files with gpg-zip and create secure GPG archives. Protect sensitive data using encryption and decryption. Free online tool, no registration required."
 category: common
 keywords:

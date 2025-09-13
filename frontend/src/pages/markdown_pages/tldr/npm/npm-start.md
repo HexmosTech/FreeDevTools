@@ -1,8 +1,8 @@
 ---
 title: "Start NPM Script - Run Package Scripts | Free DevTools"
 name: npm-start
-path: /freedevtools/tldr/common/npm-start
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-start/"
+path: /freedevtools/tldr/npm/npm-start
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-start/"
 description: "Start NPM scripts quickly with NPM Start. Execute defined scripts, manage dependencies, and automate tasks effortlessly. Free online tool, no registration required."
 category: common
 keywords:

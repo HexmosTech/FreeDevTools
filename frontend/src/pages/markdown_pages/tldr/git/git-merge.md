@@ -1,8 +1,8 @@
 ---
 title: "Git Merge - Merge Branches | Free DevTools"
 name: git-merge
-path: /freedevtools/tldr/common/git-merge
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-merge/"
+path: /freedevtools/tldr/git/git-merge
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge/"
 description: "Merge branches effortlessly with Git Merge. Resolve conflicts, edit merge messages, and control your git history. Free online tool, no registration required."
 category: common
 keywords:

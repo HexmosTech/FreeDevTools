@@ -1,8 +1,8 @@
 ---
 title: "Docker Load - Import Docker Images from Files | Free DevTools"
 name: docker-load
-path: /freedevtools/tldr/common/docker-load
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-load/"
+path: /freedevtools/tldr/docker/docker-load
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-load/"
 description: "Load Docker images easily with Docker Load. Import images from tar files or stdin. Simplify container deployment with this free online tool, no registration required."
 category: common
 keywords:

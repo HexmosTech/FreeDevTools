@@ -1,8 +1,8 @@
 ---
 title: "Git Bisect - Find Bug-Inducing Commits | Free DevTools"
 name: git-bisect
-path: /freedevtools/tldr/common/git-bisect
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-bisect/"
+path: /freedevtools/tldr/git/git-bisect
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-bisect/"
 description: "Find bug-inducing commits with Git Bisect. Use binary search in Git to identify faulty commits efficiently. Free online tool, no registration required."
 category: common
 keywords:

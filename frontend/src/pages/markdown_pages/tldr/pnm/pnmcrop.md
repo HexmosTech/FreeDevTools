@@ -1,8 +1,8 @@
 ---
 title: "PNM Crop - Crop PNM Images | Free DevTools"
 name: pnmcrop
-path: /freedevtools/tldr/common/pnmcrop
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmcrop/"
+path: /freedevtools/tldr/pnm/pnmcrop
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcrop/"
 description: "Crop images instantly with PNM Crop. Easily remove borders, adjust margins, and customize background colors in PNM images. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Diff Tool - Compare File Revisions with jj-diff | Free DevTools"
 name: jj-diff
-path: /freedevtools/tldr/common/jj-diff
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-diff/"
+path: /freedevtools/tldr/jj/jj-diff
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-diff/"
 description: "Compare file revisions easily with the jj-diff tool. Inspect differences between commits and track changes effectively. Free online tool, no registration required."
 category: common
 keywords:

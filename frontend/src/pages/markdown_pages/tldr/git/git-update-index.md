@@ -1,8 +1,8 @@
 ---
 title: "Git Update Index - Control File Tracking | Free DevTools"
 name: git-update-index
-path: /freedevtools/tldr/common/git-update-index
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-update-index/"
+path: /freedevtools/tldr/git/git-update-index
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-update-index/"
 description: "Control file tracking with Git Update Index. Stage changes, skip worktree, and manage file states in your Git repository. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Remove Item - Delete Files Easily with Remove-Item | Free DevTools"
 name: rm
-path: /freedevtools/tldr/widows/rm
-canonical: "https://hexmos.com/freedevtools/tldr/widows/rm/"
+path: /freedevtools/tldr/windows/rm
+canonical: "https://hexmos.com/freedevtools/tldr/windows/rm/"
 description: "Remove items easily with Remove-Item, a powerful command alias for deleting files and folders. Free online tool, no registration required."
 category: windows
 keywords:

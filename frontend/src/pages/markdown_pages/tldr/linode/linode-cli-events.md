@@ -1,8 +1,8 @@
 ---
 title: "Linode Events - Manage Linode Cloud Events | Free DevTools"
 name: linode-cli-events
-path: /freedevtools/tldr/common/linode-cli-events
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-events/"
+path: /freedevtools/tldr/linode/linode-cli-events
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-events/"
 description: "Manage Linode events effortlessly with linode-cli. Monitor cloud events, view details, and acknowledge actions directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

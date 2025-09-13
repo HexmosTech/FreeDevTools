@@ -1,8 +1,8 @@
 ---
 title: "Nxc MSSQL Exploit - Pentest MSSQL Servers | Free DevTools"
 name: nxc-mssql
-path: /freedevtools/tldr/common/nxc-mssql
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-mssql/"
+path: /freedevtools/tldr/nxc/nxc-mssql
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-mssql/"
 description: "Pentest MSSQL servers with nxc MSSQL. Find credentials, execute queries, and run commands with this network exploitation tool. Free online tool, no registration required."
 category: common
 keywords:

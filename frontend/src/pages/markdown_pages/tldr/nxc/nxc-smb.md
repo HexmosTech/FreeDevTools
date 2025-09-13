@@ -1,8 +1,8 @@
 ---
 title: "Control NXC SMB - Exploit SMB Servers | Free DevTools"
 name: nxc-smb
-path: /freedevtools/tldr/common/nxc-smb
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-smb/"
+path: /freedevtools/tldr/nxc/nxc-smb
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-smb/"
 description: "Control NXC SMB with NetExec to pentest SMB servers, enumerate shares, and exploit vulnerabilities. Free online tool, no registration required."
 category: common
 keywords:

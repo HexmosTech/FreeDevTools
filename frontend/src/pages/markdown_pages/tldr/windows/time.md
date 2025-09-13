@@ -1,8 +1,8 @@
 ---
 title: "Time - Control System Time | Free DevTools"
 name: time
-path: /freedevtools/tldr/widows/time
-canonical: "https://hexmos.com/freedevtools/tldr/widows/time/"
+path: /freedevtools/tldr/windows/time
+canonical: "https://hexmos.com/freedevtools/tldr/windows/time/"
 description: "Control system time settings with Time command. Display current time and set a new time with this simple command-line tool. Free online tool, no registration required."
 category: windows
 keywords:

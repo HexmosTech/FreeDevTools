@@ -1,8 +1,8 @@
 ---
 title: "Control i3 Windows - Send i3 Messages | Free DevTools"
 name: i3-msg
-path: /freedevtools/tldr/common/i3-msg
-canonical: "https://hexmos.com/freedevtools/tldr/common/i3-msg/"
+path: /freedevtools/tldr/i3/i3-msg
+canonical: "https://hexmos.com/freedevtools/tldr/i3/i3-msg/"
 description: "Control i3 windows with i3-msg. Send commands to i3, manage workspaces, and query layout trees. Free online tool, no registration required."
 category: common
 keywords:

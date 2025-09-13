@@ -1,8 +1,8 @@
 ---
 title: "uv - Manage uv Executable | Free DevTools"
 name: uv-self
-path: /freedevtools/tldr/common/uv-self
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-self/"
+path: /freedevtools/tldr/uv/uv-self
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-self/"
 description: "Manage uv executable with uv-self. Update, check version, and control the uv package installer. Free online tool, no registration required."
 category: common
 keywords:

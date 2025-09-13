@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to SIR - Format Images | Free DevTools"
 name: pnmtosir
-path: "/freedevtools/tldr/common/pnmtosir"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtosir/"
+path: "/freedevtools/tldr/pnm/pnmtosir"
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtosir/"
 description: "Convert PNM images to SIR format with pnmtosir. Efficiently transform Portable Network Maps to Solitaire Image Recorder files. Free online tool, no registration required."
 category: common
 keywords:

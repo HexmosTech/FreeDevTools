@@ -1,8 +1,8 @@
 ---
 title: "Git Lock - Control File Changes in Git | Free DevTools"
 name: git-lock
-path: /freedevtools/tldr/common/git-lock
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-lock/"
+path: /freedevtools/tldr/git/git-lock
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-lock/"
 description: "Control file changes with Git Lock. Prevent accidental commits and maintain file integrity with this essential Git extension. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Cargo Login - Save API Token | Free DevTools"
 name: cargo-login
-path: /freedevtools/tldr/common/cargo-login
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-login/"
+path: /freedevtools/tldr/cargo/cargo-login
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-login/"
 description: "Save API token for Rust packages with Cargo Login. Securely store credentials and authenticate with registries. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Browse Git Repo - View Upstream Repositories | Free DevTools"
 name: git-browse
-path: /freedevtools/tldr/common/git-browse
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-browse/"
+path: /freedevtools/tldr/git/git-browse
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-browse/"
 description: "Browse Git repositories effortlessly with git-browse. Open upstream repositories in your default browser for easy access. Free online tool, no registration required."
 category: common
 keywords:

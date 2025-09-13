@@ -1,8 +1,8 @@
 ---
 title: "PPM Shadow - Generate Image Shadows | Free DevTools"
 name: ppmshadow
-path: /freedevtools/tldr/common/ppmshadow
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmshadow/"
+path: /freedevtools/tldr/ppm/ppmshadow
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmshadow/"
 description: "Generate image shadows with PPM Shadow. Create realistic shadow effects for your images using command-line options. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Commit Graph - Track Repository History | Free DevTools"
 name: git-commit-graph
-path: /freedevtools/tldr/common/git-commit-graph
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-commit-graph/"
+path: /freedevtools/tldr/git/git-commit-graph
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit-graph/"
 description: "Generate Git commit graphs with git-commit-graph. Visualize repository history and optimize Git performance using advanced graph features. Free online tool, no registration required."
 category: common
 keywords:

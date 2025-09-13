@@ -1,8 +1,8 @@
 ---
 title: "Control npm Package Owners - Manage Access | Free DevTools"
 name: npm-owner
-path: /freedevtools/tldr/common/npm-owner
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-owner/"
+path: /freedevtools/tldr/npm/npm-owner
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-owner/"
 description: "Control npm package owners effortlessly with npm Owner. Manage access rights, add/remove maintainers, and list existing owners. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Puppet Apply - Execute Manifests Locally | Free DevTools"
 name: puppet-apply
-path: /freedevtools/tldr/common/puppet-apply
-canonical: "https://hexmos.com/freedevtools/tldr/common/puppet-apply/"
+path: /freedevtools/tldr/puppet/puppet-apply
+canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet-apply/"
 description: "Apply Puppet manifests locally with Puppet Apply. Automate system configuration and manage infrastructure as code. Free online tool, no registration required."
 category: common
 keywords:

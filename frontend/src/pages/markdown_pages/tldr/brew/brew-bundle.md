@@ -1,8 +1,8 @@
 ---
 title: "Brew Bundle - Manage Homebrew Packages | Free DevTools"
 name: brew-bundle
-path: /freedevtools/tldr/common/brew-bundle
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-bundle/"
+path: /freedevtools/tldr/brew/brew-bundle
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-bundle/"
 description: "Manage Homebrew packages easily with Brew Bundle. Install, update, and cleanup your Homebrew environment using a Brewfile. Free online tool, no registration required."
 category: common
 keywords:

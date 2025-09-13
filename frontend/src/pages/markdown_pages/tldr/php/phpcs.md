@@ -1,8 +1,8 @@
 ---
 title: "Validate PHP Code - Detect Coding Standards with phpcs | Free DevTools"
 name: phpcs
-path: /freedevtools/tldr/common/phpcs
-canonical: "https://hexmos.com/freedevtools/tldr/common/phpcs/"
+path: /freedevtools/tldr/php/phpcs
+canonical: "https://hexmos.com/freedevtools/tldr/php/phpcs/"
 description: "Validate PHP code against coding standards with phpcs. Detect coding style violations and improve code quality. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to XPM - Create XPM Images | Free DevTools"
 name: ppmtoxpm
-path: /freedevtools/tldr/common/ppmtoxpm
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoxpm/"
+path: /freedevtools/tldr/ppm/ppmtoxpm
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoxpm/"
 description: "Convert PPM images to XPM format with ppmtoxpm. Generate XPM files from PPM input, specifying prefixes, color encoding, and transparency masks. Free online tool, no registration required."
 category: common
 keywords:

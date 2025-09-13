@@ -1,8 +1,8 @@
 ---
 title: "Generate GitHub Skyline - Visualize Contributions | Free DevTools"
 name: gh-skyline
-path: /freedevtools/tldr/common/gh-skyline
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-skyline/"
+path: /freedevtools/tldr/gh/gh-skyline
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-skyline/"
 description: "Generate GitHub contribution skyline with gh-skyline. Visualize your GitHub activity in 3D and create STL files for 3D printing. Free online tool, no registration required."
 category: common
 keywords:

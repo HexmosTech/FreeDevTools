@@ -1,8 +1,8 @@
 ---
 title: "OpenSSL Prime - Generate Prime Numbers | Free DevTools"
 name: openssl-prime
-path: /freedevtools/tldr/common/openssl-prime
-canonical: "https://hexmos.com/freedevtools/tldr/common/openssl-prime/"
+path: /freedevtools/tldr/openssl/openssl-prime
+canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-prime/"
 description: "Generate prime numbers with OpenSSL Prime. Validate prime numbers using various algorithms. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "List VM Block Devices - Virsh Domblklist | Free DevTools"
 name: virsh-domblklist
-path: /freedevtools/tldr/common/virsh-domblklist
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-domblklist/"
+path: /freedevtools/tldr/virsh/virsh-domblklist
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-domblklist/"
 description: "List virtual machine block devices with Virsh Domblklist. Inspect disk details and paths for VMs. Free online tool, no registration required."
 category: common
 keywords:

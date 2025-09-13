@@ -1,8 +1,8 @@
 ---
 title: "Manage SSH Keys - Control GitHub Keys | Free DevTools"
 name: gh-ssh-key
-path: /freedevtools/tldr/common/gh-ssh-key
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-ssh-key/"
+path: /freedevtools/tldr/gh/gh-ssh-key
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-ssh-key/"
 description: "Manage SSH keys with gh-ssh-key, enabling secure GitHub access. Add, list, and control your SSH keys for seamless development workflows. Free online tool, no registration required."
 category: common
 keywords:

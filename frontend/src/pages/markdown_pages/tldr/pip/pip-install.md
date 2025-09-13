@@ -1,8 +1,8 @@
 ---
 title: "Install Python Packages - Manage Dependencies | Free DevTools"
 name: pip-install
-path: /freedevtools/tldr/common/pip-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/pip-install/"
+path: /freedevtools/tldr/pip/pip-install
+canonical: "https://hexmos.com/freedevtools/tldr/pip/pip-install/"
 description: "Install Python packages effortlessly with pip. Manage dependencies, specify versions, and install from requirements files using this simple command. Free online tool, no registration required."
 category: common
 keywords:

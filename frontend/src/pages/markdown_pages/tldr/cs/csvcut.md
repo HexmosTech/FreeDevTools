@@ -1,8 +1,8 @@
 ---
 title: "Extract CSV Data - Filter Columns with csvcut | Free DevTools"
 name: csvcut
-path: /freedevtools/tldr/common/csvcut
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvcut/"
+path: /freedevtools/tldr/cs/csvcut
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvcut/"
 description: "Extract CSV data efficiently with csvcut, a powerful command-line tool for filtering and truncating CSV files. Streamline data manipulation. Free online tool, no registration required."
 category: common
 keywords:

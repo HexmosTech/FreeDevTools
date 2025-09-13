@@ -1,8 +1,8 @@
 ---
 title: "Get AD Users - Extract Active Directory Users | Free DevTools"
 name: getadusers.py
-path: /freedevtools/tldr/common/getadusers.py
-canonical: "https://hexmos.com/freedevtools/tldr/common/getadusers.py/"
+path: /freedevtools/tldr/get/getadusers.py
+canonical: "https://hexmos.com/freedevtools/tldr/get/getadusers.py/"
 description: "Extract Active Directory users with GetADUsers. Retrieve user attributes like last logon time, email, and more. Free online tool, no registration required."
 category: common
 keywords:

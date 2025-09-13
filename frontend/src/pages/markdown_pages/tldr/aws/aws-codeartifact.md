@@ -1,8 +1,8 @@
 ---
 title: "CodeArtifact - Manage AWS Artifact Repositories | Free DevTools"
 name: aws-codeartifact
-path: /freedevtools/tldr/common/aws-codeartifact
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-codeartifact/"
+path: /freedevtools/tldr/aws/aws-codeartifact
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-codeartifact/"
 description: "Manage AWS artifacts with CodeArtifact. Generate credentials and repository endpoints. Securely store and share software packages. Free online tool, no registration required."
 category: common
 keywords:

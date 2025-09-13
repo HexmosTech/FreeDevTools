@@ -1,8 +1,8 @@
 ---
 title: "Azure Login - Authenticate Azure Accounts | Free DevTools"
 name: az-login
-path: /freedevtools/tldr/common/az-login
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-login/"
+path: /freedevtools/tldr/az/az-login
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-login/"
 description: "Authenticate Azure accounts securely with Az Login. Manage Azure subscriptions and resources through the command line. Free online tool, no registration required."
 category: common
 keywords:

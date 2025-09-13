@@ -1,8 +1,8 @@
 ---
 title: "FTP Exploitation - Pentest FTP Servers | Free DevTools"
 name: nxc-ftp
-path: /freedevtools/tldr/common/nxc-ftp
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-ftp/"
+path: /freedevtools/tldr/nxc/nxc-ftp
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ftp/"
 description: "Pentest FTP servers with nxc-ftp. Exploit vulnerabilities and gain access using credential brute-forcing and file manipulation. Free online tool, no registration required."
 category: common
 keywords:

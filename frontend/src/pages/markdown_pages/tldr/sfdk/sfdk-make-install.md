@@ -1,8 +1,8 @@
 ---
 title: "SFDK Make Install - Create SailfishOS Packages | Free DevTools"
 name: sfdk-make-install
-path: /freedevtools/tldr/common/sfdk-make-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-make-install/"
+path: /freedevtools/tldr/sfdk/sfdk-make-install
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-make-install/"
 description: "Create SailfishOS packages with SFDK Make Install. Build and install your Sailfish OS applications from RPM SPEC files. Free online tool, no registration required."
 category: common
 keywords:

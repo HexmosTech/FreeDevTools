@@ -1,8 +1,8 @@
 ---
 title: "Dolt Merge - Join Development Histories | Free DevTools"
 name: dolt-merge
-path: /freedevtools/tldr/common/dolt-merge
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-merge/"
+path: /freedevtools/tldr/dolt/dolt-merge
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-merge/"
 description: "Merge branches with Dolt. Join two development histories together using Dolt merge. Resolve conflicts and manage commit history. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Podman Image - Manage Docker Images Easily | Free DevTools"
 name: podman-image
-path: /freedevtools/tldr/common/podman-image
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-image/"
+path: /freedevtools/tldr/podman/podman-image
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-image/"
 description: "Manage Docker images efficiently with Podman Image. Delete unused images, view image history, and list local images using this CLI tool. Free online tool, no registration required."
 category: common
 keywords:

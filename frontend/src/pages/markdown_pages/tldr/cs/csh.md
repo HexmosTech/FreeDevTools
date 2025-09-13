@@ -1,8 +1,8 @@
 ---
 title: "Csh Shell - Control Shell Sessions | Free DevTools"
 name: csh
-path: /freedevtools/tldr/common/csh
-canonical: "https://hexmos.com/freedevtools/tldr/common/csh/"
+path: /freedevtools/tldr/cs/csh
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csh/"
 description: "Control shell sessions with Csh Shell, a command interpreter with C-like syntax. Execute commands, scripts, and manage your terminal easily. Free online tool, no registration required."
 category: common
 keywords:

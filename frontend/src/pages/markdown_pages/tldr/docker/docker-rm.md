@@ -1,8 +1,8 @@
 ---
 title: "Docker Remove - Delete Containers | Free DevTools"
 name: docker-rm
-path: /freedevtools/tldr/common/docker-rm
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-rm/"
+path: /freedevtools/tldr/docker/docker-rm
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rm/"
 description: "Remove Docker containers instantly with Docker Remove. Force remove, delete volumes and manage containers using the command line. Free online tool, no registration required."
 category: common
 keywords:

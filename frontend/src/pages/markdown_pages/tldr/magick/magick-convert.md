@@ -1,8 +1,8 @@
 ---
 title: "Convert Images - Magick Convert Image Formats | Free DevTools"
 name: magick-convert
-path: /freedevtools/tldr/common/magick-convert
-canonical: "https://hexmos.com/freedevtools/tldr/common/magick-convert/"
+path: /freedevtools/tldr/magick/magick-convert
+canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-convert/"
 description: "Convert images with Magick Convert. Scale, join, and create images between various formats quickly and easily. Free online tool, no registration required."
 category: common
 keywords:

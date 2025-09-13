@@ -1,8 +1,8 @@
 ---
 title: "Rust Toolchain Installer - Install Rust with rustup | Free DevTools"
 name: rustup-init.sh
-path: /freedevtools/tldr/common/rustup-init.sh
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-init.sh/"
+path: /freedevtools/tldr/rustup/rustup-init.sh
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-init.sh/"
 description: "Install Rust toolchains easily with rustup-init. Manage Rust versions, components, and targets. Quick rustup installer. Free online tool, no registration required."
 category: common
 keywords:

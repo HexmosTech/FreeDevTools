@@ -1,8 +1,8 @@
 ---
 title: "Quantize PPM Images - Reduce Colors | Free DevTools"
 name: ppmquant
-path: /freedevtools/tldr/common/ppmquant
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmquant/"
+path: /freedevtools/tldr/ppm/ppmquant
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmquant/"
 description: "Reduce image color depth with ppmquant, a command for quantizing PPM images. Optimize images for web or storage. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "RabbitMQ User Control - Manage Permissions | Free DevTools"
 name: rabbitmqctl-users
-path: /freedevtools/tldr/common/rabbitmqctl-users
-canonical: "https://hexmos.com/freedevtools/tldr/common/rabbitmqctl-users/"
+path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl-users
+canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-users/"
 description: "Manage RabbitMQ users with RabbitMQctl Users command. Control user permissions, set tags, and manage credentials for secure messaging. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "XMLStarlet - Query & Transform XML Documents | Free DevTools"
 name: xml
-path: /freedevtools/tldr/common/xml
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml/"
+path: /freedevtools/tldr/xml/xml
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml/"
 description: "Transform XML documents with XMLStarlet. Query, edit, validate, and convert XML files efficiently. Free online tool, no registration required."
 category: common
 keywords:

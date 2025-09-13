@@ -1,8 +1,8 @@
 ---
 title: "Generate Code with llvm-g++ | Free DevTools"
 name: llvm-g++
-path: /freedevtools/tldr/common/llvm-g++
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-g++/"
+path: /freedevtools/tldr/llvm/llvm-g++
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-g++/"
 description: "Generate executable code with llvm-g++. Alias for clang++, create optimized binaries and link libraries. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Blend PPM Images - Mix Image Content | Free DevTools"
 name: ppmmix
-path: /freedevtools/tldr/common/ppmmix
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmmix/"
+path: /freedevtools/tldr/ppm/ppmmix
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmmix/"
 description: "Blend image content with ppmmix. Create visual effects and combine PPM images using fade factors. Free online tool, no registration required."
 category: common
 keywords:

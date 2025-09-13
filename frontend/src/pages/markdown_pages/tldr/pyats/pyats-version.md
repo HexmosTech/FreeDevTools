@@ -1,8 +1,8 @@
 ---
 title: "Control pyATS Version - Manage pyATS Packages | Free DevTools"
 name: pyats-version
-path: /freedevtools/tldr/common/pyats-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/pyats-version/"
+path: /freedevtools/tldr/pyats/pyats-version
+canonical: "https://hexmos.com/freedevtools/tldr/pyats/pyats-version/"
 description: "Control pyATS package version with pyATS Version Checker. Upgrade, downgrade, and manage your pyATS installation. Free online tool, no registration required."
 category: common
 keywords:

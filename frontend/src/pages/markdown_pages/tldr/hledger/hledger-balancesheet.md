@@ -1,8 +1,8 @@
 ---
 title: "Generate Hledger Balancesheet - Financial Summary | Free DevTools"
 name: hledger-balancesheet
-path: /freedevtools/tldr/common/hledger-balancesheet
-canonical: "https://hexmos.com/freedevtools/tldr/common/hledger-balancesheet/"
+path: /freedevtools/tldr/hledger/hledger-balancesheet
+canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-balancesheet/"
 description: "Generate financial summaries with Hledger Balancesheet. Analyze assets and liabilities using command line. Free online tool, no registration required."
 category: common
 keywords:

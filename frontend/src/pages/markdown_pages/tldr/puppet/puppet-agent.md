@@ -1,8 +1,8 @@
 ---
 title: "Control Puppet Agent - Apply Configurations | Free DevTools"
 name: puppet-agent
-path: /freedevtools/tldr/common/puppet-agent
-canonical: "https://hexmos.com/freedevtools/tldr/common/puppet-agent/"
+path: /freedevtools/tldr/puppet/puppet-agent
+canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet-agent/"
 description: "Control Puppet agent configurations with this free online tool. Manage node registrations, apply catalogs, and run agents in dry-mode. Free online tool, no registration required."
 category: common
 keywords:

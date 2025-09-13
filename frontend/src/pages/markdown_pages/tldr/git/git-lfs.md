@@ -1,8 +1,8 @@
 ---
 title: "Git LFS - Manage Large Files in Git | Free DevTools"
 name: git-lfs
-path: /freedevtools/tldr/common/git-lfs
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-lfs/"
+path: /freedevtools/tldr/git/git-lfs
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-lfs/"
 description: "Manage large files with Git LFS. Track, store, and collaborate on large assets efficiently using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

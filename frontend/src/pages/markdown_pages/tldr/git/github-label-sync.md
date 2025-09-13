@@ -1,8 +1,8 @@
 ---
 title: "Sync GitHub Labels - Control Repository Labels | Free DevTools"
 name: github-label-sync
-path: /freedevtools/tldr/common/github-label-sync
-canonical: "https://hexmos.com/freedevtools/tldr/common/github-label-sync/"
+path: /freedevtools/tldr/git/github-label-sync
+canonical: "https://hexmos.com/freedevtools/tldr/git/github-label-sync/"
 description: "Control GitHub repository labels efficiently with GitHub Label Sync. Synchronize labels, manage inconsistencies, and ensure organization. Free online tool, no registration required."
 category: common
 keywords:

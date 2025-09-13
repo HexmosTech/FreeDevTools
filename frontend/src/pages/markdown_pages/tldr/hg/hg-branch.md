@@ -1,8 +1,8 @@
 ---
 title: "Hg Branch - Create Branch Names | Free DevTools"
 name: hg-branch
-path: /freedevtools/tldr/common/hg-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-branch/"
+path: /freedevtools/tldr/hg/hg-branch
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-branch/"
 description: "Create branch names with Hg Branch. Easily manage multiple development lines with this Mercurial command. Free online tool, no registration required."
 category: common
 keywords:

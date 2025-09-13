@@ -1,8 +1,8 @@
 ---
 title: "FTP File Transfer - Control Remote Files Interactively | Free DevTools"
 name: ftp
-path: /freedevtools/tldr/widows/ftp
-canonical: "https://hexmos.com/freedevtools/tldr/widows/ftp/"
+path: /freedevtools/tldr/windows/ftp
+canonical: "https://hexmos.com/freedevtools/tldr/windows/ftp/"
 description: "Control remote files with FTP File Transfer, interactively connecting to servers and managing files with ease. Free online tool, no registration required."
 category: windows
 keywords:

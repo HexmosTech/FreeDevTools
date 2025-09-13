@@ -1,8 +1,8 @@
 ---
 title: "Arthas Diagnostic Tool - Java Debugging | Free DevTools"
 name: arthas
-path: /freedevtools/tldr/common/arthas
-canonical: "https://hexmos.com/freedevtools/tldr/common/arthas/"
+path: /freedevtools/tldr/arthas/arthas
+canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas/"
 description: "Java debugging with Arthas Diagnostic Tool. Inspect application behavior, diagnose performance bottlenecks, and troubleshoot runtime issues with ease. Free online tool, no registration required."
 category: common
 keywords:

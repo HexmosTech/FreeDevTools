@@ -1,8 +1,8 @@
 ---
 title: "Run Cargo Package - Execute Rust Code | Free DevTools"
 name: cargo-run
-path: /freedevtools/tldr/common/cargo-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-run/"
+path: /freedevtools/tldr/cargo/cargo-run
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-run/"
 description: "Execute Rust code with Cargo Run. Build and run your Cargo packages quickly. Manage features and profiles with this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

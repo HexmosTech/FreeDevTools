@@ -1,8 +1,8 @@
 ---
 title: "Create GitHub Repo - Manage Repositories | Free DevTools"
 name: gh-repo-create
-path: /freedevtools/tldr/common/gh-repo-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-repo-create/"
+path: /freedevtools/tldr/gh/gh-repo-create
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-repo-create/"
 description: "Create GitHub repositories with gh-repo-create. Initialize new projects, manage existing repositories, and automate repository creation. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Ignore - Create .gitignore Files | Free DevTools"
 name: git-ignore-io
-path: /freedevtools/tldr/common/git-ignore-io
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-ignore-io/"
+path: /freedevtools/tldr/git/git-ignore-io
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-ignore-io/"
 description: "Generate Git ignore files instantly with Git Ignore-io. Create and customize .gitignore templates for your projects. Free online tool, no registration required."
 category: common
 keywords:

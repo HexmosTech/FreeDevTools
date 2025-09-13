@@ -1,8 +1,8 @@
 ---
 title: "Git Delta - List File Differences | Free DevTools"
 name: git-delta
-path: /freedevtools/tldr/common/git-delta
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-delta/"
+path: /freedevtools/tldr/git/git-delta
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-delta/"
 description: "List file differences with Git Delta. Compare files across branches and identify modifications easily. Free online tool, no registration required."
 category: common
 keywords:

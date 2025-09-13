@@ -1,8 +1,8 @@
 ---
 title: "SSH Agent - Control SSH Key Management | Free DevTools"
 name: ssh-agent
-path: /freedevtools/tldr/common/ssh-agent
-canonical: "https://hexmos.com/freedevtools/tldr/common/ssh-agent/"
+path: /freedevtools/tldr/ssh/ssh-agent
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-agent/"
 description: "Control SSH key management with SSH Agent. Securely store and manage SSH keys in memory, enabling secure remote access. Free online tool, no registration required."
 category: common
 keywords:

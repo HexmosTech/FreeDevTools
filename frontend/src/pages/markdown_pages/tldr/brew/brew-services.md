@@ -1,8 +1,8 @@
 ---
 title: "Control Brew Services - Manage Daemons on macOS | Free DevTools"
 name: brew-services
-path: /freedevtools/tldr/common/brew-services
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-services/"
+path: /freedevtools/tldr/brew/brew-services
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-services/"
 description: "Control brew services with this tool. Manage, start, stop, and restart background processes using launchctl and systemctl. Free online tool, no registration required."
 category: common
 keywords:

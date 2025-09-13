@@ -1,8 +1,8 @@
 ---
 title: "Control Directory - Navigate Filesystems with CD | Free DevTools"
 name: cd
-path: /freedevtools/tldr/widows/cd
-canonical: "https://hexmos.com/freedevtools/tldr/widows/cd/"
+path: /freedevtools/tldr/windows/cd
+canonical: "https://hexmos.com/freedevtools/tldr/windows/cd/"
 description: "Control file system navigation with CD command. Change directories, access parent folders, and manage paths efficiently. Free online tool, no registration required."
 category: windows
 keywords:

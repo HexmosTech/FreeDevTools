@@ -1,8 +1,8 @@
 ---
 title: "Pg_restore - Restore PostgreSQL Databases | Free DevTools"
 name: pg_restore
-path: /freedevtools/tldr/common/pg_restore
-canonical: "https://hexmos.com/freedevtools/tldr/common/pg_restore/"
+path: /freedevtools/tldr/postgres/pg_restore
+canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_restore/"
 description: "Restore PostgreSQL databases instantly with pg_restore. Recover data from backups and manage database objects easily. Free online tool, no registration required."
 category: common
 keywords:

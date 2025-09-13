@@ -1,8 +1,8 @@
 ---
 title: "Git Move - Rename Files & Directories | Free DevTools"
 name: git-mv
-path: /freedevtools/tldr/common/git-mv
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-mv/"
+path: /freedevtools/tldr/git/git-mv
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-mv/"
 description: "Rename files easily with Git Move command. Update the Git index when moving files, ensuring accurate tracking of changes. Free online tool, no registration required."
 category: common
 keywords:

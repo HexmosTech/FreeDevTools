@@ -1,8 +1,8 @@
 ---
 title: "Git Browse CI - Open CI Website | Free DevTools"
 name: git-browse-ci
-path: /freedevtools/tldr/common/git-browse-ci
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-browse-ci/"
+path: /freedevtools/tldr/git/git-browse-ci
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-browse-ci/"
 description: "Open Git CI website directly with Git Browse CI. Quickly access your project's CI configuration from the command line. Free online tool, no registration required."
 category: common
 keywords:

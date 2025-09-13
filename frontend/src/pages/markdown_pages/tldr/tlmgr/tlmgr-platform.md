@@ -1,8 +1,8 @@
 ---
 title: "Manage TeX Live Platforms - Tlmgr Platform | Free DevTools"
 name: tlmgr-platform
-path: /freedevtools/tldr/common/tlmgr-platform
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-platform/"
+path: /freedevtools/tldr/tlmgr/tlmgr-platform
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-platform/"
 description: "Manage TeX Live platforms effortlessly with Tlmgr Platform. Add, remove, and set platforms for your TeX Live distribution. Free online tool, no registration required."
 category: common
 keywords:

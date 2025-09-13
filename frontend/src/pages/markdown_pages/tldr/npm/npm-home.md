@@ -1,8 +1,8 @@
 ---
 title: "npm-home - Open Package Pages | Free DevTools"
 name: npm-home
-path: /freedevtools/tldr/common/npm-home
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-home/"
+path: /freedevtools/tldr/npm/npm-home
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-home/"
 description: "Open npm package pages easily with npm-home. Access npm, Yarn, or GitHub repositories directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

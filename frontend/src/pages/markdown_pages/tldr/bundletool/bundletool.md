@@ -1,8 +1,8 @@
 ---
 title: "Bundletool - Generate Android APKs | Free DevTools"
 name: bundletool
-path: /freedevtools/tldr/common/bundletool
-canonical: "https://hexmos.com/freedevtools/tldr/common/bundletool/"
+path: /freedevtools/tldr/bundletool/bundletool
+canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool/"
 description: "Generate Android APKs with Bundletool. Build application bundles, estimate download sizes, and validate bundles using command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "AZ Tag - Manage Azure Resource Tags | Free DevTools"
 name: az-tag
-path: /freedevtools/tldr/common/az-tag
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-tag/"
+path: /freedevtools/tldr/az/az-tag
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-tag/"
 description: "Manage Azure resource tags with AZ Tag. Create, delete, list, and modify tags on Azure subscriptions and resources. Free online tool, no registration required."
 category: common
 keywords:

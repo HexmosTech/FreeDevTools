@@ -1,8 +1,8 @@
 ---
 title: "Pueue Follow - Monitor Task Output | Free DevTools"
 name: pueue-follow
-path: /freedevtools/tldr/common/pueue-follow
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-follow/"
+path: /freedevtools/tldr/pueue/pueue-follow
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-follow/"
 description: "Monitor task output with Pueue Follow. Stream stdout and stderr of running tasks for real-time debugging. Free online tool, no registration required."
 category: common
 keywords:

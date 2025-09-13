@@ -1,8 +1,8 @@
 ---
 title: "Show Git Commits - View Unpushed Changes | Free DevTools"
 name: git-local-commits
-path: /freedevtools/tldr/common/git-local-commits
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-local-commits/"
+path: /freedevtools/tldr/git/git-local-commits
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-local-commits/"
 description: "Show git commits that haven't been pushed with git-local-commits. Quickly identify local changes and ensure your remote repository is up-to-date. Free online tool, no registration required."
 category: common
 keywords:

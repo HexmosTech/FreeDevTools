@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to YUV - Split Image Files | Free DevTools"
 name: ppmtoyuvsplit
-path: /freedevtools/tldr/common/ppmtoyuvsplit
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoyuvsplit/"
+path: /freedevtools/tldr/ppm/ppmtoyuvsplit
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoyuvsplit/"
 description: "Convert PPM images with ppmtoyuvsplit. Split PPM into three Abekas YUV files for professional video editing. Free online tool, no registration required."
 category: common
 keywords:

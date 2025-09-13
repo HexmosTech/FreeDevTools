@@ -1,8 +1,8 @@
 ---
 title: "Delete Git Tag - Remove Tags Locally & Remotely | Free DevTools"
 name: git-delete-tag
-path: /freedevtools/tldr/common/git-delete-tag
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-delete-tag/"
+path: /freedevtools/tldr/git/git-delete-tag
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-tag/"
 description: "Delete Git tags with Git Delete Tag. Remove local and remote tags easily using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

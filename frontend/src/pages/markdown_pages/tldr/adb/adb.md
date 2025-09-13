@@ -1,8 +1,8 @@
 ---
 title: "Android Debug Bridge - Control Devices with ADB | Free DevTools"
 name: adb
-path: /freedevtools/tldr/common/adb
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb/"
+path: /freedevtools/tldr/adb/adb
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb/"
 description: "Control Android devices with ADB Debug Bridge. Execute commands, transfer files, and debug apps. Free online tool, no registration required."
 category: common
 keywords:

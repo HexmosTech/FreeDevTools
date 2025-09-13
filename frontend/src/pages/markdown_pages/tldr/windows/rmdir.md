@@ -1,8 +1,8 @@
 ---
 title: "Remove Directory - Erase Folders with Rmdir | Free DevTools"
 name: rmdir
-path: /freedevtools/tldr/widows/rmdir
-canonical: "https://hexmos.com/freedevtools/tldr/widows/rmdir/"
+path: /freedevtools/tldr/windows/rmdir
+canonical: "https://hexmos.com/freedevtools/tldr/windows/rmdir/"
 description: "Remove directories easily with Rmdir. Delete empty or non-empty folders recursively and suppress prompts for quicker directory management. Free online tool, no registration required."
 category: windows
 keywords:

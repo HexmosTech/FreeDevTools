@@ -1,8 +1,8 @@
 ---
 title: "Docker RMI - Remove Docker Images Easily | Free DevTools"
 name: docker-rmi
-path: /freedevtools/tldr/common/docker-rmi
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-rmi/"
+path: /freedevtools/tldr/docker/docker-rmi
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rmi/"
 description: "Remove Docker images efficiently with Docker RMI. Delete unused images, reclaim disk space and manage container environments. Free online tool, no registration required."
 category: common
 keywords:

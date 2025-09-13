@@ -1,8 +1,8 @@
 ---
 title: "Generate Package List - pip freeze | Free DevTools"
 name: pip-freeze
-path: /freedevtools/tldr/common/pip-freeze
-canonical: "https://hexmos.com/freedevtools/tldr/common/pip-freeze/"
+path: /freedevtools/tldr/pip/pip-freeze
+canonical: "https://hexmos.com/freedevtools/tldr/pip/pip-freeze/"
 description: "Generate a package list with pip freeze. Discover installed Python packages and create requirements files effortlessly. Free online tool, no registration required."
 category: common
 keywords:

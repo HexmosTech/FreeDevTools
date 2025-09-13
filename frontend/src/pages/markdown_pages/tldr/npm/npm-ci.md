@@ -1,8 +1,8 @@
 ---
 title: "Install NPM Dependencies - Clean Install with npm ci | Free DevTools"
 name: npm-ci
-path: /freedevtools/tldr/common/npm-ci
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-ci/"
+path: /freedevtools/tldr/npm/npm-ci
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-ci/"
 description: "Install NPM dependencies cleanly with npm ci. Ensure consistent builds by installing packages based on package-lock.json. Free online tool, no registration required."
 category: common
 keywords:

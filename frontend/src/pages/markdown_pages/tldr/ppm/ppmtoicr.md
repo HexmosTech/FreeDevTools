@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to ICR - Image Format Conversion | Free DevTools"
 name: ppmtoicr
-path: /freedevtools/tldr/common/ppmtoicr
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoicr/"
+path: /freedevtools/tldr/ppm/ppmtoicr
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoicr/"
 description: "Convert PPM images to ICR format with ppmtoicr. Fast image format conversion using command line. Free online tool, no registration required."
 category: common
 keywords:

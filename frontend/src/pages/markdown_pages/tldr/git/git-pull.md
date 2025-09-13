@@ -1,8 +1,8 @@
 ---
 title: "Git Pull - Fetch and Merge Branch | Free DevTools"
 name: git-pull
-path: /freedevtools/tldr/common/git-pull
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-pull/"
+path: /freedevtools/tldr/git/git-pull
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-pull/"
 description: "Fetch and merge branches using Git Pull with this command-line tool. Download updates from remote repositories effortlessly. Free online tool, no registration required."
 category: common
 keywords:

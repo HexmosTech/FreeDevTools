@@ -1,8 +1,8 @@
 ---
 title: "TLMGR Restore - Manage TeX Live Backups | Free DevTools"
 name: tlmgr-restore
-path: /freedevtools/tldr/common/tlmgr-restore
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-restore/"
+path: /freedevtools/tldr/tlmgr/tlmgr-restore
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-restore/"
 description: "Manage TeX Live backups with TLMGR Restore. Effortlessly recover package versions and configurations. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Control Chromium Browser - Open URLs with Flags | Free DevTools"
 name: chromium
-path: /freedevtools/tldr/widows/chromium
-canonical: "https://hexmos.com/freedevtools/tldr/widows/chromium/"
+path: /freedevtools/tldr/windows/chromium
+canonical: "https://hexmos.com/freedevtools/tldr/windows/chromium/"
 description: "Control Chromium browser tabs and windows with command-line flags. Launch in incognito mode, set proxies, disable CORS, and more. Free online tool, no registration required."
 category: windows
 keywords:

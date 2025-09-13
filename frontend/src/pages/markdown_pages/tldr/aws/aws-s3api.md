@@ -1,8 +1,8 @@
 ---
 title: "Create S3 Buckets - Manage AWS S3 Buckets | Free DevTools"
 name: aws-s3api
-path: /freedevtools/tldr/common/aws-s3api
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3api/"
+path: /freedevtools/tldr/aws/aws-s3api
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3api/"
 description: "Create S3 buckets and manage your Amazon S3 storage effectively with aws-s3api. Control bucket properties, upload objects, and configure policies effortlessly. Free online tool, no registration required."
 category: common
 keywords:

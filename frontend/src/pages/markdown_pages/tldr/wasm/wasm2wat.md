@@ -1,8 +1,8 @@
 ---
 title: "WASM to WAT - Convert WebAssembly to Text | Free DevTools"
 name: wasm2wat
-path: /freedevtools/tldr/common/wasm2wat
-canonical: "https://hexmos.com/freedevtools/tldr/common/wasm2wat/"
+path: /freedevtools/tldr/wasm/wasm2wat
+canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm2wat/"
 description: "Convert WASM binary to WAT text format with wasm2wat.  Debug and analyze WebAssembly code easily.  Free online tool, no registration required."
 category: common
 keywords:

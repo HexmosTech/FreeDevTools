@@ -1,8 +1,8 @@
 ---
 title: "Mercurial Add - Stage Changes for Commit | Free DevTools"
 name: hg-add
-path: /freedevtools/tldr/common/hg-add
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-add/"
+path: /freedevtools/tldr/hg/hg-add
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-add/"
 description: "Stage files for commit with Mercurial Add. Track changes, include/exclude patterns and manage sub-repositories using the command line. Free online tool, no registration required."
 category: common
 keywords:

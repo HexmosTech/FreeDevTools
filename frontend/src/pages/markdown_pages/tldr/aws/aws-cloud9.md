@@ -1,8 +1,8 @@
 ---
 title: "Control AWS Cloud9 Environments | Free DevTools"
 name: aws-cloud9
-path: /freedevtools/tldr/common/aws-cloud9
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-cloud9/"
+path: /freedevtools/tldr/aws/aws-cloud9
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloud9/"
 description: "Control your AWS Cloud9 development environments with this tool. Manage environments, members, and statuses easily. Free online tool, no registration required."
 category: common
 keywords:

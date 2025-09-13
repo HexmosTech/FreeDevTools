@@ -1,8 +1,8 @@
 ---
 title: "Generate Fractals with ppmforge - Image Creation | Free DevTools"
 name: ppmforge
-path: /freedevtools/tldr/common/ppmforge
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmforge/"
+path: /freedevtools/tldr/ppm/ppmforge
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmforge/"
 description: "Generate fractal images instantly with ppmforge. Craft clouds, planets, and starry skies using command line options for image creation. Free online tool, no registration required."
 category: common
 keywords:

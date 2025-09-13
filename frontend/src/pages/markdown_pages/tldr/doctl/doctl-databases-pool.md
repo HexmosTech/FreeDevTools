@@ -1,8 +1,8 @@
 ---
 title: "Doctl Databases Pool - Manage Database Pools | Free DevTools"
 name: doctl-databases-pool
-path: /freedevtools/tldr/common/doctl-databases-pool
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-pool/"
+path: /freedevtools/tldr/doctl/doctl-databases-pool
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-pool/"
 description: "Manage database pools with Doctl databases pool. Create, list, and delete database connection pools for optimal performance. Free online tool, no registration required."
 category: common
 keywords:

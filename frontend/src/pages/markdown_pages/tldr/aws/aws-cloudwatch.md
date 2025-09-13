@@ -1,8 +1,8 @@
 ---
 title: "AWS CloudWatch - Monitor AWS Resources | Free DevTools"
 name: aws-cloudwatch
-path: /freedevtools/tldr/common/aws-cloudwatch
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-cloudwatch/"
+path: /freedevtools/tldr/aws/aws-cloudwatch
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloudwatch/"
 description: "Monitor AWS resources with AWS CloudWatch. Gain system-wide visibility and optimize application performance. Free online tool, no registration required."
 category: common
 keywords:

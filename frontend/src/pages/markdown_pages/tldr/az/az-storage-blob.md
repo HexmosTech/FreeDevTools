@@ -1,8 +1,8 @@
 ---
 title: "Storage Blob - Manage Azure Blobs | Free DevTools"
 name: az-storage-blob
-path: /freedevtools/tldr/common/az-storage-blob
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-storage-blob/"
+path: /freedevtools/tldr/az/az-storage-blob
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-blob/"
 description: "Manage Azure storage blobs with az-storage-blob. Upload, download, delete, and generate SAS tokens for your blobs. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Yadm Bootstrap - Execute Yadm Bootstrap File | Free DevTools"
 name: yadm-bootstrap
-path: /freedevtools/tldr/common/yadm-bootstrap
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-bootstrap/"
+path: /freedevtools/tldr/yadm/yadm-bootstrap
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-bootstrap/"
 description: "Execute Yadm bootstrap scripts with Yadm Bootstrap. Automate system configuration and personalize your Yadm environment seamlessly. Free online tool, no registration required."
 category: common
 keywords:

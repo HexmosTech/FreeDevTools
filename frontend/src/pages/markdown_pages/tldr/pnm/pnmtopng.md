@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to PNG - Transform Image Formats | Free DevTools"
 name: pnmtopng
-path: /freedevtools/tldr/common/pnmtopng
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtopng/"
+path: /freedevtools/tldr/pnm/pnmtopng
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopng/"
 description: "Convert PNM images to PNG format with pnmtopng. Streamline image transformations and optimize for web use. Free online tool, no registration required."
 category: common
 keywords:

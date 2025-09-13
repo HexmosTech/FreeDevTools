@@ -1,8 +1,8 @@
 ---
 title: "PIO Debug - Debug PlatformIO Projects | Free DevTools"
 name: pio-debug
-path: /freedevtools/tldr/common/pio-debug
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-debug/"
+path: /freedevtools/tldr/pio/pio-debug
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-debug/"
 description: "Debug projects with PIO Debug. Analyze code, set breakpoints, and step through execution in PlatformIO IDE. Free online tool, no registration required."
 category: common
 keywords:

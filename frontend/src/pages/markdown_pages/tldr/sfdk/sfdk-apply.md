@@ -1,8 +1,8 @@
 ---
 title: "SFDK Apply - Apply Patches Easily | Free DevTools"
 name: sfdk-apply
-path: /freedevtools/tldr/common/sfdk-apply
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-apply/"
+path: /freedevtools/tldr/sfdk/sfdk-apply
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-apply/"
 description: "Apply RPM patches with SFDK Apply. Effortlessly manage software updates and reverse patch applications. Free online tool, no registration required."
 category: common
 keywords:

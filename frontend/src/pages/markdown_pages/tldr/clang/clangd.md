@@ -1,8 +1,8 @@
 ---
 title: "clangd - Generate Code Insights | Free DevTools"
 name: clangd
-path: /freedevtools/tldr/common/clangd
-canonical: "https://hexmos.com/freedevtools/tldr/common/clangd/"
+path: /freedevtools/tldr/clang/clangd
+canonical: "https://hexmos.com/freedevtools/tldr/clang/clangd/"
 description: "Generate code insights with clangd language server. Enhance your coding experience with real-time diagnostics and auto-completion using clangd. Free online tool, no registration required."
 category: common
 keywords:

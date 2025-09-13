@@ -1,8 +1,8 @@
 ---
 title: "Impacket Ping - Network Diagnostics | Free DevTools"
 name: impacket-ping
-path: /freedevtools/tldr/common/impacket-ping
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-ping/"
+path: /freedevtools/tldr/impacket/impacket-ping
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-ping/"
 description: "Diagnose network connectivity with Impacket Ping. Verify network reachability and troubleshoot issues using advanced packet crafting. Free online tool, no registration required."
 category: common
 keywords:

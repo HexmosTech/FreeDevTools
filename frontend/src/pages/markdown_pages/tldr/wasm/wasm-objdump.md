@@ -1,8 +1,8 @@
 ---
 title: "Wasm Objdump - Inspect WebAssembly Binaries | Free DevTools"
 name: wasm-objdump
-path: /freedevtools/tldr/common/wasm-objdump
-canonical: "https://hexmos.com/freedevtools/tldr/common/wasm-objdump/"
+path: /freedevtools/tldr/wasm/wasm-objdump
+canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm-objdump/"
 description: "Inspect WebAssembly binaries with Wasm Objdump. Analyze code, display headers, and examine sections of .wasm files using this free online tool, no registration required."
 category: common
 keywords:

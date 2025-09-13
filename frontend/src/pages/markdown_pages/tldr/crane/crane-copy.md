@@ -1,8 +1,8 @@
 ---
 title: "Copy Image - Transfer Container Images with Crane | Free DevTools"
 name: crane-copy
-path: /freedevtools/tldr/common/crane-copy
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-copy/"
+path: /freedevtools/tldr/crane/crane-copy
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-copy/"
 description: "Copy container images easily with Crane. Transfer images between registries, retain digests, and manage tags efficiently. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage Torrents - Control Transmission Downloads | Free DevTools"
 name: transmission
-path: /freedevtools/tldr/common/transmission
-canonical: "https://hexmos.com/freedevtools/tldr/common/transmission/"
+path: /freedevtools/tldr/transmission/transmission
+canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission/"
 description: "Manage torrent downloads efficiently with Transmission. Control torrent sessions and manage files with this command line tool. Free online tool, no registration required."
 category: common
 keywords:

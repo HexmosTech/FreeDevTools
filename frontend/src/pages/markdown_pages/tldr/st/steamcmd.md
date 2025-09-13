@@ -1,8 +1,8 @@
 ---
 title: "SteamCMD - Control Steam Applications | Free DevTools"
 name: steamcmd
-path: /freedevtools/tldr/common/steamcmd
-canonical: "https://hexmos.com/freedevtools/tldr/common/steamcmd/"
+path: /freedevtools/tldr/st/steamcmd
+canonical: "https://hexmos.com/freedevtools/tldr/st/steamcmd/"
 description: "Control Steam applications with SteamCMD. Install, update, and manage games using command line interface. Free online tool, no registration required."
 category: common
 keywords:

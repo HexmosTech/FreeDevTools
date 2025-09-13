@@ -1,8 +1,8 @@
 ---
 title: "Phpspec BDD - Create PHP Specifications | Free DevTools"
 name: phpspec
-path: /freedevtools/tldr/common/phpspec
-canonical: "https://hexmos.com/freedevtools/tldr/common/phpspec/"
+path: /freedevtools/tldr/php/phpspec
+canonical: "https://hexmos.com/freedevtools/tldr/php/phpspec/"
 description: "Generate PHP specifications with Phpspec BDD. Define behavior-driven tests and ensure code quality. Free online tool, no registration required."
 category: common
 keywords:

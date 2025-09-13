@@ -1,8 +1,8 @@
 ---
 title: "Cargo Owner - Manage Rust Crate Owners | Free DevTools"
 name: cargo-owner
-path: /freedevtools/tldr/common/cargo-owner
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-owner/"
+path: /freedevtools/tldr/cargo/cargo-owner
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-owner/"
 description: "Manage Rust crate owners effectively with Cargo Owner. Control access, add or remove owners and list current contributors. Free online tool, no registration required."
 category: common
 keywords:

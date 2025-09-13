@@ -1,8 +1,8 @@
 ---
 title: "Pueue - Pause Tasks and Groups | Free DevTools"
 name: pueue-pause
-path: /freedevtools/tldr/common/pueue-pause
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-pause/"
+path: /freedevtools/tldr/pueue/pueue-pause
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-pause/"
 description: "Pause tasks with Pueue and manage task execution within groups. Control task flow with this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

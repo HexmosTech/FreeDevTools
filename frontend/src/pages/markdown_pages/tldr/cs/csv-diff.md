@@ -1,8 +1,8 @@
 ---
 title: "CSV Diff - View Differences in CSV Files | Free DevTools"
 name: csv-diff
-path: /freedevtools/tldr/common/csv-diff
-canonical: "https://hexmos.com/freedevtools/tldr/common/csv-diff/"
+path: /freedevtools/tldr/cs/csv-diff
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csv-diff/"
 description: "View differences with CSV Diff. Compare CSV files online, identify changed rows, and generate diff summaries. Free online tool, no registration required."
 category: common
 keywords:

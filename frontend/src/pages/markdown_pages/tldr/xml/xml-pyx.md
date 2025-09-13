@@ -1,8 +1,8 @@
 ---
 title: "Format XML to PYX - Convert XML Documents | Free DevTools"
 name: xml-pyx
-path: /freedevtools/tldr/common/xml-pyx
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-pyx/"
+path: /freedevtools/tldr/xml/xml-pyx
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-pyx/"
 description: "Format XML with xml-pyx, converting documents to PYX (ESIS) format. Efficiently transform XML data using this free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Run NPM Script - Execute Package Scripts | Free DevTools"
 name: npm-run-script
-path: /freedevtools/tldr/common/npm-run-script
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-run-script/"
+path: /freedevtools/tldr/npm/npm-run-script
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-run-script/"
 description: "Execute NPM scripts instantly with NPM Run Script. Manage package tasks, build processes, and automate workflows using the command line. Free online tool, no registration required."
 category: common
 keywords:

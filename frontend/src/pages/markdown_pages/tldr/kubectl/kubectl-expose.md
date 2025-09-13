@@ -1,8 +1,8 @@
 ---
 title: "Create Kubernetes Service - Expose Resources | Free DevTools"
 name: kubectl-expose
-path: /freedevtools/tldr/common/kubectl-expose
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-expose/"
+path: /freedevtools/tldr/kubectl/kubectl-expose
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-expose/"
 description: "Create Kubernetes service easily with kubectl-expose. Expose your applications and manage network access with simple commands. Free online tool, no registration required."
 category: common
 keywords:

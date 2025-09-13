@@ -1,8 +1,8 @@
 ---
 title: "Speedtest CLI - Test Internet Bandwidth | Free DevTools"
 name: speedtest-cli
-path: /freedevtools/tldr/common/speedtest-cli
-canonical: "https://hexmos.com/freedevtools/tldr/common/speedtest-cli/"
+path: /freedevtools/tldr/speedtest/speedtest-cli
+canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest-cli/"
 description: "Test internet bandwidth with Speedtest CLI. Measure download speed, upload speed and latency using the command line. Free online tool, no registration required."
 category: common
 keywords:

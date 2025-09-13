@@ -1,8 +1,8 @@
 ---
 title: "Manage Python Packages - Control pip Commands | Free DevTools"
 name: pip
-path: /freedevtools/tldr/common/pip
-canonical: "https://hexmos.com/freedevtools/tldr/common/pip/"
+path: /freedevtools/tldr/pip/pip
+canonical: "https://hexmos.com/freedevtools/tldr/pip/pip/"
 description: "Manage Python packages effortlessly with pip. Install, upgrade, and uninstall packages using command line. Free online tool, no registration required."
 category: common
 keywords:

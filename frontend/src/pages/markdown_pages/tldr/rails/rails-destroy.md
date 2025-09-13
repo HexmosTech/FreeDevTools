@@ -1,8 +1,8 @@
 ---
 title: "Rails Destroy - Remove Rails Resources | Free DevTools"
 name: rails-destroy
-path: /freedevtools/tldr/common/rails-destroy
-canonical: "https://hexmos.com/freedevtools/tldr/common/rails-destroy/"
+path: /freedevtools/tldr/rails/rails-destroy
+canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-destroy/"
 description: "Destroy Rails resources with Rails Destroy. Quickly remove models, controllers, migrations, and scaffolds from your Rails application. Free online tool, no registration required."
 category: common
 keywords:

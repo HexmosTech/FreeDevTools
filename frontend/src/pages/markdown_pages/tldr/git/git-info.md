@@ -1,8 +1,8 @@
 ---
 title: "Display Git Info - Inspect Repository Details | Free DevTools"
 name: git-info
-path: /freedevtools/tldr/common/git-info
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-info/"
+path: /freedevtools/tldr/git/git-info
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-info/"
 description: "Display git info with Git Info. Inspect repository details and configurations easily, including branches, remotes, and commit history. Free online tool, no registration required."
 category: common
 keywords:

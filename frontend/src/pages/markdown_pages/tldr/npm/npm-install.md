@@ -1,8 +1,8 @@
 ---
 title: "NPM Install - Manage Node Packages | Free DevTools"
 name: npm-install
-path: /freedevtools/tldr/common/npm-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-install/"
+path: /freedevtools/tldr/npm/npm-install
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-install/"
 description: "Install Node packages efficiently with NPM Install. Manage project dependencies, download specific versions, and update global packages. Free online tool, no registration required."
 category: common
 keywords:

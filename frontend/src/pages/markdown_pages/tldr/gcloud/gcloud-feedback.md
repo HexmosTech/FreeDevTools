@@ -1,8 +1,8 @@
 ---
 title: "Provide Gcloud Feedback - Send Cloud Team Input | Free DevTools"
 name: gcloud-feedback
-path: /freedevtools/tldr/common/gcloud-feedback
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-feedback/"
+path: /freedevtools/tldr/gcloud/gcloud-feedback
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-feedback/"
 description: "Provide Gcloud feedback with this command-line tool. Submit suggestions, bug reports, and opinions directly to the Google Cloud team. Free online tool, no registration required."
 category: common
 keywords:

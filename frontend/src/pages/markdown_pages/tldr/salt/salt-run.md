@@ -1,8 +1,8 @@
 ---
 title: "Salt-Run - Control Salt Runners on Minions | Free DevTools"
 name: salt-run
-path: /freedevtools/tldr/common/salt-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/salt-run/"
+path: /freedevtools/tldr/salt/salt-run
+canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-run/"
 description: "Control Salt runners instantly with Salt-Run. Execute commands on minions, manage their status, and automate tasks. Free online tool, no registration required."
 category: common
 keywords:

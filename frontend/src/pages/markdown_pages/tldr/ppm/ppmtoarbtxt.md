@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to Text - Generate Text from PPM Images | Free DevTools"
 name: ppmtoarbtxt
-path: /freedevtools/tldr/common/ppmtoarbtxt
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoarbtxt/"
+path: /freedevtools/tldr/ppm/ppmtoarbtxt
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoarbtxt/"
 description: "Generate text from PPM images with ppmtoarbtxt. Use templates to customize the text output, including head and tail templates for complex formatting. Free online tool, no registration required."
 category: common
 keywords:

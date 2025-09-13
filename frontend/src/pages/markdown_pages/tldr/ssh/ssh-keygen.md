@@ -1,8 +1,8 @@
 ---
 title: "Generate SSH Keys - Secure Authentication | Free DevTools"
 name: ssh-keygen
-path: /freedevtools/tldr/common/ssh-keygen
-canonical: "https://hexmos.com/freedevtools/tldr/common/ssh-keygen/"
+path: /freedevtools/tldr/ssh/ssh-keygen
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-keygen/"
 description: "Generate SSH keys for secure authentication with ssh-keygen. Create RSA and ED25519 keys, manage known hosts and more. Free online tool, no registration required."
 category: common
 keywords:

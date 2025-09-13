@@ -1,8 +1,8 @@
 ---
 title: "SFDK Package - Create Sailfish OS Packages | Free DevTools"
 name: sfdk-package
-path: /freedevtools/tldr/common/sfdk-package
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-package/"
+path: /freedevtools/tldr/sfdk/sfdk-package
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-package/"
 description: "Create Sailfish OS application packages with SFDK Package. Streamline your Sailfish OS development process by building and signing packages easily. Free online tool, no registration required."
 category: common
 keywords:

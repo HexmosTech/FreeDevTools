@@ -1,8 +1,8 @@
 ---
 title: "Cargo Clean - Remove Build Artifacts | Free DevTools"
 name: cargo-clean
-path: /freedevtools/tldr/common/cargo-clean
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-clean/"
+path: /freedevtools/tldr/cargo/cargo-clean
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-clean/"
 description: "Clean Rust build artifacts with Cargo Clean. Remove target directories, documentation, and release builds for cleaner builds. Free online tool, no registration required."
 category: common
 keywords:

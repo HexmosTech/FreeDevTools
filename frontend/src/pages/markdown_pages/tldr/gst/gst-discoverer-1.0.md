@@ -1,8 +1,8 @@
 ---
 title: "Discover Metadata - Analyze Media Files | Free DevTools"
 name: gst-discoverer-1.0
-path: /freedevtools/tldr/common/gst-discoverer-1.0
-canonical: "https://hexmos.com/freedevtools/tldr/common/gst-discoverer-1.0/"
+path: /freedevtools/tldr/gst/gst-discoverer-1.0
+canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-discoverer-1.0/"
 description: "Analyze media files with gst-discoverer-1.0. Extract metadata and stream information. Examine file properties and codec details. Free online tool, no registration required."
 category: common
 keywords:

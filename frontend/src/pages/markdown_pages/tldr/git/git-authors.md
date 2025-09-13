@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Authors List - Find Repository Committers | Free DevTools"
 name: git-authors
-path: /freedevtools/tldr/common/git-authors
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-authors/"
+path: /freedevtools/tldr/git/git-authors
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-authors/"
 description: "Generate Git authors list with git-authors. Identify contributors and manage authorship easily in your repository using this free online tool, no registration required."
 category: common
 keywords:

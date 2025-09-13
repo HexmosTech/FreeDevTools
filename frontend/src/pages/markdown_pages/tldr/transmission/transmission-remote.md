@@ -1,8 +1,8 @@
 ---
 title: "Control Transmission Remotely - Manage Torrents | Free DevTools"
 name: transmission-remote
-path: /freedevtools/tldr/common/transmission-remote
-canonical: "https://hexmos.com/freedevtools/tldr/common/transmission-remote/"
+path: /freedevtools/tldr/transmission/transmission-remote
+canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-remote/"
 description: "Control torrent downloads remotely with Transmission-Remote. Manage torrents, add files, and change settings quickly. Free online tool, no registration required."
 category: common
 keywords:

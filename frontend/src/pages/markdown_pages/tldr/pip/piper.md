@@ -1,8 +1,8 @@
 ---
 title: "Generate Speech - Piper TTS | Free DevTools"
 name: piper
-path: "/freedevtools/tldr/common/piper"
-canonical: "https://hexmos.com/freedevtools/tldr/common/piper/"
+path: "/freedevtools/tldr/pip/piper"
+canonical: "https://hexmos.com/freedevtools/tldr/pip/piper/"
 description: "Generate speech with Piper TTS, a fast local neural text-to-speech system. Create audio files from text effortlessly. Free online tool, no registration required."
 category: common
 keywords:

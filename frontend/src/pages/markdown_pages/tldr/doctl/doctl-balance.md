@@ -1,8 +1,8 @@
 ---
 title: "doctl Balance - Show Account Balance | Free DevTools"
 name: doctl-balance
-path: /freedevtools/tldr/common/doctl-balance
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-balance/"
+path: /freedevtools/tldr/doctl/doctl-balance
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-balance/"
 description: "Show account balance with doctl Balance. Get DigitalOcean account balance and manage billing information with ease using the command line tool. Free online tool, no registration required."
 category: common
 keywords:

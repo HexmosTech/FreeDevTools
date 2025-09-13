@@ -1,8 +1,8 @@
 ---
 title: "Crane Config - Get Image Configuration | Free DevTools"
 name: crane-config
-path: /freedevtools/tldr/common/crane-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-config/"
+path: /freedevtools/tldr/crane/crane-config
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-config/"
 description: "Get image configuration with Crane Config. Inspect container images, analyze metadata, and extract image details with ease. Free online tool, no registration required."
 category: common
 keywords:

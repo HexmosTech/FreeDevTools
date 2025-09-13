@@ -1,8 +1,8 @@
 ---
 title: "GLab MR Create - Manage GitLab Merge Requests | Free DevTools"
 name: glab-mr-create
-path: /freedevtools/tldr/common/glab-mr-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-mr-create/"
+path: /freedevtools/tldr/glab/glab-mr-create
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr-create/"
 description: "Create GitLab merge requests with GLab, the GitLab CLI. Simplify your workflow and manage code reviews efficiently using command-line. Free online tool, no registration required."
 category: common
 keywords:

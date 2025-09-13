@@ -1,8 +1,8 @@
 ---
 title: "Control Stolon Clusters - Manage HA PostgreSQL | Free DevTools"
 name: stolonctl
-path: /freedevtools/tldr/common/stolonctl
-canonical: "https://hexmos.com/freedevtools/tldr/common/stolonctl/"
+path: /freedevtools/tldr/st/stolonctl
+canonical: "https://hexmos.com/freedevtools/tldr/st/stolonctl/"
 description: "Control Stolon clusters with stolonctl. Manage PostgreSQL high availability, get cluster status, and update specifications using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

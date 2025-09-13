@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Apply - Create K8s Resources | Free DevTools"
 name: kubectl-apply
-path: /freedevtools/tldr/common/kubectl-apply
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-apply/"
+path: /freedevtools/tldr/kubectl/kubectl-apply
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-apply/"
 description: "Create and update Kubernetes resources with Kubectl Apply. Manage configurations, apply manifests, and automate deployments effortlessly. Free online tool, no registration required."
 category: common
 keywords:

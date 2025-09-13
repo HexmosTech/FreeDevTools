@@ -1,8 +1,8 @@
 ---
 title: "Manage Azure Accounts - Set Subscriptions | Free DevTools"
 name: az-account
-path: /freedevtools/tldr/common/az-account
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-account/"
+path: /freedevtools/tldr/az/az-account
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-account/"
 description: "Manage Azure accounts with az-account. Set subscriptions, list locations, and get access tokens for Azure resources. Free online tool, no registration required."
 category: common
 keywords:

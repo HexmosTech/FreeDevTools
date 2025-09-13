@@ -1,8 +1,8 @@
 ---
 title: "Merge Requests - Merge with glab | Free DevTools"
 name: glab-mr-merge
-path: /freedevtools/tldr/common/glab-mr-merge
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-mr-merge/"
+path: /freedevtools/tldr/glab/glab-mr-merge
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr-merge/"
 description: "Merge requests seamlessly with glab. Improve code review workflows by removing branches and managing commit messages. Free online tool, no registration required."
 category: common
 keywords:

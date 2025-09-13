@@ -1,8 +1,8 @@
 ---
 title: "Doppler Secrets - Manage Secrets Securely | Free DevTools"
 name: doppler-secrets
-path: /freedevtools/tldr/common/doppler-secrets
-canonical: "https://hexmos.com/freedevtools/tldr/common/doppler-secrets/"
+path: /freedevtools/tldr/doppler/doppler-secrets
+canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-secrets/"
 description: "Manage secrets securely with Doppler Secrets. Upload, download, and delete secrets efficiently. Secure secrets management with a free online tool, no registration required."
 category: common
 keywords:

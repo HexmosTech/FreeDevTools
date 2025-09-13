@@ -1,8 +1,8 @@
 ---
 title: "Shell Iteration - Iterate with `in` Command | Free DevTools"
 name: in
-path: /freedevtools/tldr/common/in
-canonical: "https://hexmos.com/freedevtools/tldr/common/in/"
+path: /freedevtools/tldr/in/in
+canonical: "https://hexmos.com/freedevtools/tldr/in/in/"
 description: "Iterate with the `in` shell keyword to loop through items. Use with `for` command in Bash, Zsh and other shells. Free online tool, no registration required."
 category: common
 keywords:

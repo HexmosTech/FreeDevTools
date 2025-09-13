@@ -1,8 +1,8 @@
 ---
 title: "Create GitHub Issues - Manage Repository Issues | Free DevTools"
 name: gh-issue-create
-path: /freedevtools/tldr/common/gh-issue-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-issue-create/"
+path: /freedevtools/tldr/gh/gh-issue-create
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-issue-create/"
 description: "Create GitHub issues efficiently with gh-issue-create. Assign users, add labels, and manage issue content directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

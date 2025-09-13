@@ -1,8 +1,8 @@
 ---
 title: "Go Mod - Manage Go Modules | Free DevTools"
 name: go-mod
-path: /freedevtools/tldr/common/go-mod
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-mod/"
+path: /freedevtools/tldr/go/go-mod
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-mod/"
 description: "Manage Go modules efficiently with Go Mod. Download, tidy, verify, and vendor your Go dependencies easily. Free online tool, no registration required."
 category: common
 keywords:

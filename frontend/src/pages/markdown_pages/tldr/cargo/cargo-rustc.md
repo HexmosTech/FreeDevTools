@@ -1,8 +1,8 @@
 ---
 title: "Cargo Rustc - Compile Rust Packages | Free DevTools"
 name: cargo-rustc
-path: /freedevtools/tldr/common/cargo-rustc
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-rustc/"
+path: /freedevtools/tldr/cargo/cargo-rustc
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-rustc/"
 description: "Compile Rust packages efficiently with Cargo Rustc. Customize build options and optimize for size or speed. Free online tool, no registration required."
 category: common
 keywords:

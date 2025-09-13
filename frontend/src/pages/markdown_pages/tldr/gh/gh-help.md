@@ -1,8 +1,8 @@
 ---
 title: "GitHub CLI - Display Help | Free DevTools"
 name: gh-help
-path: /freedevtools/tldr/common/gh-help
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-help/"
+path: /freedevtools/tldr/gh/gh-help
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-help/"
 description: "Display help information with GitHub CLI. Get command usage, environment variables and markdown reference. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Diff Index - Compare Git Index to Commit | Free DevTools"
 name: git-diff-index
-path: /freedevtools/tldr/common/git-diff-index
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-diff-index/"
+path: /freedevtools/tldr/git/git-diff-index
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff-index/"
 description: "Compare Git index to commit with Git Diff Index. Identify changes between working directory and staging area. Free online tool, no registration required."
 category: common
 keywords:

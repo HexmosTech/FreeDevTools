@@ -1,8 +1,8 @@
 ---
 title: "InfluxDB Client - Control InfluxDB Instances | Free DevTools"
 name: influx
-path: /freedevtools/tldr/common/influx
-canonical: "https://hexmos.com/freedevtools/tldr/common/influx/"
+path: /freedevtools/tldr/in/influx
+canonical: "https://hexmos.com/freedevtools/tldr/in/influx/"
 description: "Control InfluxDB instances with the InfluxDB client. Connect to databases, execute queries, and format output. Free online tool, no registration required."
 category: common
 keywords:

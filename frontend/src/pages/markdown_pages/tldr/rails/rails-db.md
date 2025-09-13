@@ -1,8 +1,8 @@
 ---
 title: "Rails DB - Create Databases | Free DevTools"
 name: rails-db
-path: /freedevtools/tldr/common/rails-db
-canonical: "https://hexmos.com/freedevtools/tldr/common/rails-db/"
+path: /freedevtools/tldr/rails/rails-db
+canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-db/"
 description: "Create databases with Rails DB, manage migrations, and seed your development environment. Optimize your database workflows with this free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Docker Top - Control Container Processes | Free DevTools"
 name: docker-container-top
-path: /freedevtools/tldr/common/docker-container-top
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-container-top/"
+path: /freedevtools/tldr/docker/docker-container-top
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-container-top/"
 description: "Control container processes with Docker Top. Monitor CPU usage and memory allocation within containers for efficient resource management. Free online tool, no registration required."
 category: common
 keywords:

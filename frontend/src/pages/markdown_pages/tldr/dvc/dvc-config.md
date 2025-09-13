@@ -1,8 +1,8 @@
 ---
 title: "DVC Config - Manage DVC Repository Configurations | Free DevTools"
 name: dvc-config
-path: /freedevtools/tldr/common/dvc-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-config/"
+path: /freedevtools/tldr/dvc/dvc-config
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-config/"
 description: "Manage DVC repository configurations with DVC Config. Configure project settings, remotes and parameters via command line. Free online tool, no registration required."
 category: common
 keywords:

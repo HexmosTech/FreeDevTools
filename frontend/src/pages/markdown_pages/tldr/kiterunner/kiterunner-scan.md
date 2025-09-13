@@ -1,8 +1,8 @@
 ---
 title: "Kiterunner Scan - Discover API Endpoints | Free DevTools"
 name: kiterunner-scan
-path: /freedevtools/tldr/common/kiterunner-scan
-canonical: "https://hexmos.com/freedevtools/tldr/common/kiterunner-scan/"
+path: /freedevtools/tldr/kiterunner/kiterunner-scan
+canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-scan/"
 description: "Discover API endpoints with Kiterunner Scan. Uncover hidden routes and potential vulnerabilities through contextual web scanning. Free online tool, no registration required."
 category: common
 keywords:

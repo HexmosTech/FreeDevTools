@@ -1,8 +1,8 @@
 ---
 title: "GCloud Projects - Manage Cloud Resources | Free DevTools"
 name: gcloud-projects
-path: /freedevtools/tldr/common/gcloud-projects
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-projects/"
+path: /freedevtools/tldr/gcloud/gcloud-projects
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-projects/"
 description: "Manage Google Cloud projects easily with GCloud Projects. Control access policies, create, delete, and list projects. Free online tool, no registration required."
 category: common
 keywords:

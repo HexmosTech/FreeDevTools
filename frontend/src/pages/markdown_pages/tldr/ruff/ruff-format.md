@@ -1,8 +1,8 @@
 ---
 title: "Ruff Format - Format Python Code | Free DevTools"
 name: ruff-format
-path: /freedevtools/tldr/common/ruff-format
-canonical: "https://hexmos.com/freedevtools/tldr/common/ruff-format/"
+path: /freedevtools/tldr/ruff/ruff-format
+canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-format/"
 description: "Format Python code with Ruff Format. Quickly reformat files or check for formatting issues.  Free online tool, no registration required."
 category: common
 keywords:

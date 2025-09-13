@@ -1,8 +1,8 @@
 ---
 title: "NPM Update - Upgrade Packages with NPM | Free DevTools"
 name: npm-update
-path: /freedevtools/tldr/common/npm-update
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-update/"
+path: /freedevtools/tldr/npm/npm-update
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-update/"
 description: "Upgrade NPM packages instantly with NPM Update. Manage dependencies, update global packages and resolve conflicts easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "GNMIC Subscribe - Control Network Device State Updates | Free DevTools"
 name: gnmic-subscribe
-path: /freedevtools/tldr/common/gnmic-subscribe
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnmic-subscribe/"
+path: /freedevtools/tldr/gnmic/gnmic-subscribe
+canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-subscribe/"
 description: "Control network device state updates with GNMIC Subscribe. Monitor real-time data streams and manage subscriptions using command line. Free online tool, no registration required."
 category: common
 keywords:

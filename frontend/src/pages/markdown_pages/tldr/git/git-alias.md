@@ -1,8 +1,8 @@
 ---
 title: "Create Git Alias - Command Shortcuts | Free DevTools"
 name: git-alias
-path: /freedevtools/tldr/common/git-alias
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-alias/"
+path: /freedevtools/tldr/git/git-alias
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-alias/"
 description: "Create Git aliases with this tool for shortcutting repetitive commands. Enhance workflow and boost productivity through command-line efficiency. Free online tool, no registration required."
 category: common
 keywords:

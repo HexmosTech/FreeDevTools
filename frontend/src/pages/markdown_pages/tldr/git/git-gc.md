@@ -1,8 +1,8 @@
 ---
 title: "Git Repository - Optimize Repository with Git GC | Free DevTools"
 name: git-gc
-path: /freedevtools/tldr/common/git-gc
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-gc/"
+path: /freedevtools/tldr/git/git-gc
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-gc/"
 description: "Optimize your Git repository with Git GC. Clean unnecessary files and improve repository performance. Free online tool, no registration required."
 category: common
 keywords:

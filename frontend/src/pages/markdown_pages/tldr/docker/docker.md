@@ -1,8 +1,8 @@
 ---
 title: "Docker - Manage Containers & Images | Free DevTools"
 name: docker
-path: /freedevtools/tldr/common/docker
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker/"
+path: /freedevtools/tldr/docker/docker
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker/"
 description: "Manage Docker containers and images efficiently with Docker command. Pull images, run containers, and execute commands effortlessly. Free online tool, no registration required."
 category: common
 keywords:

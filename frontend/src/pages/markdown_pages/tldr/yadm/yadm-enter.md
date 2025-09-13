@@ -1,8 +1,8 @@
 ---
 title: "Yadm Enter - Manage Git Environments | Free DevTools"
 name: yadm-enter
-path: /freedevtools/tldr/common/yadm-enter
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-enter/"
+path: /freedevtools/tldr/yadm/yadm-enter
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-enter/"
 description: "Manage Git environments with Yadm Enter. Run isolated sub-shells with Git variables for simplified Git command interaction. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create PNM Index - Generate Visual Image Grids | Free DevTools"
 name: pnmindex
-path: /freedevtools/tldr/common/pnmindex
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmindex/"
+path: /freedevtools/tldr/pnm/pnmindex
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmindex/"
 description: "Generate visual indexes with PNM Index. Create image grids from PNM files using command line options. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Maintenance - Optimize Repository Data | Free DevTools"
 name: git-maintenance
-path: "/freedevtools/tldr/common/git-maintenance"
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-maintenance/"
+path: "/freedevtools/tldr/git/git-maintenance"
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-maintenance/"
 description: "Optimize Git repository data with Git Maintenance. Run tasks to improve repository performance, reduce size, and ensure data integrity. Free online tool, no registration required."
 category: common
 keywords:

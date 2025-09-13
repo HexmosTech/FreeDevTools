@@ -1,8 +1,8 @@
 ---
 title: "Git Config - Manage Git Configurations | Free DevTools"
 name: git-config
-path: /freedevtools/tldr/common/git-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-config/"
+path: /freedevtools/tldr/git/git-config
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-config/"
 description: "Manage Git configurations easily with Git Config. Set global and local repository options, edit configurations, and revert to defaults. Free online tool, no registration required."
 category: common
 keywords:

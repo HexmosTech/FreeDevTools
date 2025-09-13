@@ -1,8 +1,8 @@
 ---
 title: "Create Git Branch - Version Control | Free DevTools"
 name: git-create-branch
-path: /freedevtools/tldr/common/git-create-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-create-branch/"
+path: /freedevtools/tldr/git/git-create-branch
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-create-branch/"
 description: "Create Git branch quickly with git-create-branch. Simplify version control and manage your code effectively. Free online tool, no registration required."
 category: common
 keywords:

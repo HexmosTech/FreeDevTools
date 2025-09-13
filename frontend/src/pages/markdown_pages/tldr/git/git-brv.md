@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Branches View - Sort Branches by Date | Free DevTools"
 name: git-brv
-path: /freedevtools/tldr/common/git-brv
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-brv/"
+path: /freedevtools/tldr/git/git-brv
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-brv/"
 description: "Generate a Git branches view with git-brv, sorted by last commit date. Improve branch management and track activity across your repository. Free online tool, no registration required."
 category: common
 keywords:

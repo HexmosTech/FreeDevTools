@@ -1,8 +1,8 @@
 ---
 title: "AWS Amplify - Manage Web and Mobile Apps | Free DevTools"
 name: aws-amplify
-path: /freedevtools/tldr/common/aws-amplify
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-amplify/"
+path: /freedevtools/tldr/aws/aws-amplify
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-amplify/"
 description: "Manage web and mobile apps effortlessly with AWS Amplify. Deploy secure and scalable applications using command line. Free online tool, no registration required."
 category: common
 keywords:

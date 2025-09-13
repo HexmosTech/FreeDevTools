@@ -1,8 +1,8 @@
 ---
 title: "Pueue Start - Resume Tasks | Free DevTools"
 name: pueue-start
-path: /freedevtools/tldr/common/pueue-start
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-start/"
+path: /freedevtools/tldr/pueue/pueue-start
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-start/"
 description: "Resume tasks with Pueue. Manage task execution and control task groups efficiently. Free online tool, no registration required."
 category: common
 keywords:

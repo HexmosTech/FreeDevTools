@@ -1,8 +1,8 @@
 ---
 title: "Manage Vagrant Boxes - Create VMs | Free DevTools"
 name: vagrant-box
-path: /freedevtools/tldr/common/vagrant-box
-canonical: "https://hexmos.com/freedevtools/tldr/common/vagrant-box/"
+path: /freedevtools/tldr/vagrant/vagrant-box
+canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-box/"
 description: "Manage Vagrant boxes with Vagrant-Box. Create, update, and remove virtual machine images easily. Free online tool, no registration required."
 category: common
 keywords:

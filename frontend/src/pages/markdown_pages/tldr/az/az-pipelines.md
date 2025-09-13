@@ -1,8 +1,8 @@
 ---
 title: "Manage Azure Pipelines - Control CI/CD Flows | Free DevTools"
 name: az-pipelines
-path: /freedevtools/tldr/common/az-pipelines
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-pipelines/"
+path: /freedevtools/tldr/az/az-pipelines
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-pipelines/"
 description: "Manage Azure Pipelines to control CI/CD flows with az-pipelines. Automate deployments and manage agent pools using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

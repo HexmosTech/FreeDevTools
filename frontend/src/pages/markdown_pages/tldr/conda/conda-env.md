@@ -1,8 +1,8 @@
 ---
 title: "Conda Env - Manage Environments | Free DevTools"
 name: conda-env
-path: /freedevtools/tldr/common/conda-env
-canonical: "https://hexmos.com/freedevtools/tldr/common/conda-env/"
+path: /freedevtools/tldr/conda/conda-env
+canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-env/"
 description: "Manage Conda environments with Conda Env. Create, update, remove and list environments efficiently. Free online tool, no registration required."
 category: common
 keywords:

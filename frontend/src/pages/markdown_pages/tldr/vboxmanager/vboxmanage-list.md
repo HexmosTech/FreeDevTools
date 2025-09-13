@@ -1,8 +1,8 @@
 ---
 title: "VBoxManage List - Control Virtual Machines | Free DevTools"
 name: vboxmanage-list
-path: /freedevtools/tldr/common/vboxmanage-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-list/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-list
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-list/"
 description: "Control virtual machines with VBoxManage List. Manage VMs, networks, and extensions. View virtual disk settings with this free online tool, no registration required."
 category: common
 keywords:

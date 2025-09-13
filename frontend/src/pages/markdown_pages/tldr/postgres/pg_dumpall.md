@@ -1,8 +1,8 @@
 ---
 title: "pg_dumpall - Extract PostgreSQL Databases | Free DevTools"
 name: pg_dumpall
-path: /freedevtools/tldr/common/pg_dumpall
-canonical: "https://hexmos.com/freedevtools/tldr/common/pg_dumpall/"
+path: /freedevtools/tldr/postgres/pg_dumpall
+canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dumpall/"
 description: "Extract PostgreSQL databases with pg_dumpall. Back up entire database clusters and save them as SQL scripts for restoration or migration. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Push - Control Git Remote with jj | Free DevTools"
 name: jj-git-push
-path: /freedevtools/tldr/common/jj-git-push
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-git-push/"
+path: /freedevtools/tldr/jj/jj-git-push
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-push/"
 description: "Control Git remotes effortlessly with jj Git Push. Manage bookmarks and revisions efficiently. Free online tool, no registration required."
 category: common
 keywords:

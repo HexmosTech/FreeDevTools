@@ -1,8 +1,8 @@
 ---
 title: "Freeze DVC Stages - Control Pipeline Execution | Free DevTools"
 name: dvc-freeze
-path: /freedevtools/tldr/common/dvc-freeze
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-freeze/"
+path: /freedevtools/tldr/dvc/dvc-freeze
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-freeze/"
 description: "Control DVC pipeline execution by freezing stages with DVC Freeze. Prevent unwanted re-execution and manage dependencies effectively. Free online tool, no registration required."
 category: common
 keywords:

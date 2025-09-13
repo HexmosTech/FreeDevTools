@@ -1,8 +1,8 @@
 ---
 title: "AWS Help - Display CLI Information | Free DevTools"
 name: aws-help
-path: /freedevtools/tldr/common/aws-help
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-help/"
+path: /freedevtools/tldr/aws/aws-help
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-help/"
 description: "Display AWS CLI help information with AWS Help. Easily access command details, options, and topics. Free online tool, no registration required."
 category: common
 keywords:

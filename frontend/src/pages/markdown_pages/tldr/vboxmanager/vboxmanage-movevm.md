@@ -1,8 +1,8 @@
 ---
 title: "VBoxManage Move VM - Relocate Virtual Machines | Free DevTools"
 name: vboxmanage-movevm
-path: /freedevtools/tldr/common/vboxmanage-movevm
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-movevm/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-movevm
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-movevm/"
 description: "Relocate virtual machines with VBoxManage movevm, ensuring data integrity during transfers. Effectively manage storage and configurations. Free online tool, no registration required."
 category: common
 keywords:

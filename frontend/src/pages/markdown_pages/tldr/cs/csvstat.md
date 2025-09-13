@@ -1,8 +1,8 @@
 ---
 title: "Analyze CSV Data - Descriptive Statistics | Free DevTools"
 name: csvstat
-path: /freedevtools/tldr/common/csvstat
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvstat/"
+path: /freedevtools/tldr/cs/csvstat
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvstat/"
 description: "Analyze CSV data quickly with csvstat, a command-line tool for generating descriptive statistics. Get insights into your data structure and values effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Delete - Remove Kubernetes Resources | Free DevTools"
 name: kubectl-delete
-path: /freedevtools/tldr/common/kubectl-delete
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-delete/"
+path: /freedevtools/tldr/kubectl/kubectl-delete
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-delete/"
 description: "Delete Kubernetes resources efficiently with Kubectl Delete. Manage pods, deployments, nodes, and more using command-line interface. Free online tool, no registration required."
 category: common
 keywords:

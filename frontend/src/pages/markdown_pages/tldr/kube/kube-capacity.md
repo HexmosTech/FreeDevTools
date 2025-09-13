@@ -1,8 +1,8 @@
 ---
 title: "Kube-Capacity - Control Kubernetes Resources | Free DevTools"
 name: kube-capacity
-path: /freedevtools/tldr/common/kube-capacity
-canonical: "https://hexmos.com/freedevtools/tldr/common/kube-capacity/"
+path: /freedevtools/tldr/kube/kube-capacity
+canonical: "https://hexmos.com/freedevtools/tldr/kube/kube-capacity/"
 description: "Control Kubernetes resources with Kube-Capacity. Monitor resource requests, limits and utilization in your Kubernetes cluster. Free online tool, no registration required."
 category: common
 keywords:

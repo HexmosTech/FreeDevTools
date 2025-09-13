@@ -1,8 +1,8 @@
 ---
 title: "Font Cache - Generate Font Cache Files | Free DevTools"
 name: fc-cache
-path: /freedevtools/tldr/common/fc-cache
-canonical: "https://hexmos.com/freedevtools/tldr/common/fc-cache/"
+path: /freedevtools/tldr/fc/fc-cache
+canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-cache/"
 description: "Generate font cache files efficiently with fc-cache. Improve font loading and application performance by rebuilding font caches. Free online tool, no registration required."
 category: common
 keywords:

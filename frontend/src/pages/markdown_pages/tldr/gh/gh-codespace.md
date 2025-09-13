@@ -1,8 +1,8 @@
 ---
 title: "GitHub Codespace - Manage Cloud Dev Environments | Free DevTools"
 name: gh-codespace
-path: /freedevtools/tldr/common/gh-codespace
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-codespace/"
+path: /freedevtools/tldr/gh/gh-codespace
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-codespace/"
 description: "Manage cloud development environments with GitHub Codespace.  Connect, list, and delete codespaces seamlessly. Free online tool, no registration required."
 category: common
 keywords:

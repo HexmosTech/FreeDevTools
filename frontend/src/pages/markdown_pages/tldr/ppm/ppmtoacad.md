@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to AutoCAD - Image Converter | Free DevTools"
 name: ppmtoacad
-path: /freedevtools/tldr/common/ppmtoacad
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoacad/"
+path: /freedevtools/tldr/ppm/ppmtoacad
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoacad/"
 description: "Convert PPM images to AutoCAD files with ppmtoacad. Supports slide and binary database formats. Free online tool, no registration required. Leverage image conversion."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "AWS EC2 - Manage Instances & Volumes | Free DevTools"
 name: aws-ec2
-path: /freedevtools/tldr/common/aws-ec2
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-ec2/"
+path: /freedevtools/tldr/aws/aws-ec2
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ec2/"
 description: "Manage AWS EC2 instances and volumes easily with AWS EC2 Command. Control EC2 resources, create snapshots, and list available AMIs. Free online tool, no registration required."
 category: common
 keywords:

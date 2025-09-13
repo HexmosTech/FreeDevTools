@@ -1,8 +1,8 @@
 ---
 title: "Sort CSV Files - Control CSV Sorting with csvsort | Free DevTools"
 name: csvsort
-path: /freedevtools/tldr/common/csvsort
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvsort/"
+path: /freedevtools/tldr/cs/csvsort
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvsort/"
 description: "Control CSV sorting with csvsort. Sort data, reorder columns, and refine CSV files. Free online tool, no registration required."
 category: common
 keywords:

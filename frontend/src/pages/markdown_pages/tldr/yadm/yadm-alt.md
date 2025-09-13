@@ -1,8 +1,8 @@
 ---
 title: "Create yadm Alternates - Manage Files with yadm | Free DevTools"
 name: yadm-alt
-path: /freedevtools/tldr/common/yadm-alt
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-alt/"
+path: /freedevtools/tldr/yadm/yadm-alt
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-alt/"
 description: "Create yadm alternates easily with yadm. Control configuration files and manage symbolic links for different environments. Free online tool, no registration required."
 category: common
 keywords:

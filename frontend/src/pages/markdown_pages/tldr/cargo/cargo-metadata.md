@@ -1,8 +1,8 @@
 ---
 title: "Generate Cargo Metadata - Inspect Rust Packages | Free DevTools"
 name: cargo-metadata
-path: /freedevtools/tldr/common/cargo-metadata
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-metadata/"
+path: /freedevtools/tldr/cargo/cargo-metadata
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-metadata/"
 description: "Generate Cargo metadata to inspect Rust packages and dependencies. Analyze workspace members, resolve dependencies, and customize output formats. Free online tool, no registration required."
 category: common
 keywords:

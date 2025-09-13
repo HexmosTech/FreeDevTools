@@ -1,8 +1,8 @@
 ---
 title: "Report NPM Bugs - Package Bug Reporting | Free DevTools"
 name: npm-bugs
-path: /freedevtools/tldr/common/npm-bugs
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-bugs/"
+path: /freedevtools/tldr/npm/npm-bugs
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-bugs/"
 description: "Report NPM bugs quickly with npm-bugs. Instantly open bug trackers for your packages directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

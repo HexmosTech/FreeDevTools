@@ -1,8 +1,8 @@
 ---
 title: "Brew Autoremove - Remove Unused Packages | Free DevTools"
 name: brew-autoremove
-path: /freedevtools/tldr/common/brew-autoremove
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-autoremove/"
+path: /freedevtools/tldr/brew/brew-autoremove
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-autoremove/"
 description: "Remove unused brew packages with Brew Autoremove. Clean up your system and free up disk space after uninstalling software. Free online tool, no registration required."
 category: common
 keywords:

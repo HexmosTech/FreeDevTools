@@ -1,8 +1,8 @@
 ---
 title: "Ansible Pull - Execute Playbooks Locally | Free DevTools"
 name: ansible-pull
-path: /freedevtools/tldr/common/ansible-pull
-canonical: "https://hexmos.com/freedevtools/tldr/common/ansible-pull/"
+path: /freedevtools/tldr/ansible/ansible-pull
+canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-pull/"
 description: "Execute Ansible playbooks locally with Ansible Pull. Automate configuration management and deployment tasks from a VCS repository. Free online tool, no registration required."
 category: common
 keywords:

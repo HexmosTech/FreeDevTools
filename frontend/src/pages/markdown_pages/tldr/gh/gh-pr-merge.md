@@ -1,8 +1,8 @@
 ---
 title: "GitHub PR Merge - Manage Pull Requests | Free DevTools"
 name: gh-pr-merge
-path: /freedevtools/tldr/common/gh-pr-merge
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-pr-merge/"
+path: /freedevtools/tldr/gh/gh-pr-merge
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr-merge/"
 description: "Manage GitHub pull requests with gh-pr-merge. Streamline your code review workflow and merge changes seamlessly. Free online tool, no registration required."
 category: common
 keywords:

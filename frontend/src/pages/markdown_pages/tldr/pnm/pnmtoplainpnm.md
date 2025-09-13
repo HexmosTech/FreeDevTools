@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to Plain PNM - Format Images | Free DevTools"
 name: pnmtoplainpnm
-path: /freedevtools/tldr/common/pnmtoplainpnm
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtoplainpnm/"
+path: /freedevtools/tldr/pnm/pnmtoplainpnm
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoplainpnm/"
 description: "Format images with PNM to Plain PNM. Convert PNM image files to a simpler plain PNM format. Free online tool, no registration required."
 category: common
 keywords:

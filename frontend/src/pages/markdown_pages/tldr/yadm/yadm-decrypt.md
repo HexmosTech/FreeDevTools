@@ -1,8 +1,8 @@
 ---
 title: "Yadm Decrypt - Decrypt Files Securely | Free DevTools"
 name: yadm-decrypt
-path: /freedevtools/tldr/common/yadm-decrypt
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-decrypt/"
+path: /freedevtools/tldr/yadm/yadm-decrypt
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-decrypt/"
 description: "Decrypt files easily with Yadm Decrypt, ensuring your secrets are safe. Secure file management and simplified encryption process. Free online tool, no registration required."
 category: common
 keywords:

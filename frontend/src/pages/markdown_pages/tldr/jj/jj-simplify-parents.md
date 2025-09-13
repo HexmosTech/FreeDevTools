@@ -1,8 +1,8 @@
 ---
 title: "Simplify Parents - Control JJ Revisions | Free DevTools"
 name: jj-simplify-parents
-path: /freedevtools/tldr/common/jj-simplify-parents
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-simplify-parents/"
+path: /freedevtools/tldr/jj/jj-simplify-parents
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-simplify-parents/"
 description: "Control JJ revisions with Simplify Parents. Effortlessly manage parent edges and optimize your repository history. Free online tool, no registration required."
 category: common
 keywords:

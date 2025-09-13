@@ -1,8 +1,8 @@
 ---
 title: "Verify Cargo Project - Validate Cargo.toml Manifest | Free DevTools"
 name: cargo-verify-project
-path: /freedevtools/tldr/common/cargo-verify-project
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-verify-project/"
+path: /freedevtools/tldr/cargo/cargo-verify-project
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-verify-project/"
 description: "Verify Cargo projects accurately with Cargo Verify Project. Validate `Cargo.toml` manifests and ensure project integrity quickly. Free online tool, no registration required."
 category: common
 keywords:

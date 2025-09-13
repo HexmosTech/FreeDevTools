@@ -1,8 +1,8 @@
 ---
 title: "Hub Create - Create GitHub Repositories | Free DevTools"
 name: hub-create
-path: /freedevtools/tldr/common/hub-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub-create/"
+path: /freedevtools/tldr/hub/hub-create
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-create/"
 description: "Create GitHub repositories instantly with Hub Create. Quickly initialize new projects, set visibility, and push local repositories online. Free online tool, no registration required."
 category: common
 keywords:

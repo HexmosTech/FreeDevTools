@@ -1,8 +1,8 @@
 ---
 title: "Delete Git Branches - Clean Up Merged Branches | Free DevTools"
 name: git-delete-merged-branches
-path: /freedevtools/tldr/common/git-delete-merged-branches
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-delete-merged-branches/"
+path: /freedevtools/tldr/git/git-delete-merged-branches
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-merged-branches/"
 description: "Delete Git branches effortlessly with Git Delete Merged Branches. Quickly remove merged branches, excluding master, to streamline your repository. Free online tool, no registration required."
 category: common
 keywords:

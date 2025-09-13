@@ -1,8 +1,8 @@
 ---
 title: "Validate npm Environment - npm Doctor Tool | Free DevTools"
 name: npm-doctor
-path: /freedevtools/tldr/common/npm-doctor
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-doctor/"
+path: /freedevtools/tldr/npm/npm-doctor
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-doctor/"
 description: "Validate npm environment with npm Doctor, identify issues, and resolve problems. Check versions and permissions effortlessly. Free online tool, no registration required."
 category: common
 keywords:

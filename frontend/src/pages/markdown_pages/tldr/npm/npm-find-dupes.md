@@ -1,8 +1,8 @@
 ---
 title: "Find Duplicates - Analyze npm Dependencies | Free DevTools"
 name: npm-find-dupes
-path: /freedevtools/tldr/common/npm-find-dupes
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-find-dupes/"
+path: /freedevtools/tldr/npm/npm-find-dupes
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-find-dupes/"
 description: "Analyze npm dependencies with npm-find-dupes. Quickly identify duplicate packages in your node_modules folder and optimize your project. Free online tool, no registration required."
 category: common
 keywords:

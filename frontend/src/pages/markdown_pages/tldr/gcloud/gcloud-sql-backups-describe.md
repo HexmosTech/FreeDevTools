@@ -1,8 +1,8 @@
 ---
 title: "SQL Backups - Describe SQL Backups with gcloud | Free DevTools"
 name: gcloud-sql-backups-describe
-path: /freedevtools/tldr/common/gcloud-sql-backups-describe
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-sql-backups-describe/"
+path: /freedevtools/tldr/gcloud/gcloud-sql-backups-describe
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-sql-backups-describe/"
 description: "Describe SQL backups with gcloud SQL Backups Describe. Retrieve information about existing backups and manage your database instances. Free online tool, no registration required."
 category: common
 keywords:

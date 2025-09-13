@@ -1,8 +1,8 @@
 ---
 title: "Docker System - Control Data | Free DevTools"
 name: docker-system
-path: /freedevtools/tldr/common/docker-system
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-system/"
+path: /freedevtools/tldr/docker/docker-system
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-system/"
 description: "Control Docker system data with Docker System. Monitor disk usage, prune unused resources, and manage Docker events efficiently. Free online tool, no registration required."
 category: common
 keywords:

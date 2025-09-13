@@ -1,8 +1,8 @@
 ---
 title: "Create Directory - Organize Files | Free DevTools"
 name: mkdir
-path: "/freedevtools/tldr/widows/mkdir"
-canonical: "https://hexmos.com/freedevtools/tldr/widows/mkdir/"
+path: "/freedevtools/tldr/windows/mkdir"
+canonical: "https://hexmos.com/freedevtools/tldr/windows/mkdir/"
 description: "Create directories easily with mkdir. Organize your files and manage your file system efficiently. Free online tool, no registration required."
 category: windows
 keywords:

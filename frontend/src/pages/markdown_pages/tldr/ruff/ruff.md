@@ -1,8 +1,8 @@
 ---
 title: "Ruff Linter - Format Python Code with Ruff | Free DevTools"
 name: ruff
-path: /freedevtools/tldr/common/ruff
-canonical: "https://hexmos.com/freedevtools/tldr/common/ruff/"
+path: /freedevtools/tldr/ruff/ruff
+canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff/"
 description: "Format Python code with Ruff linter, an extremely fast code formatter written in Rust. Improve code quality and consistency instantly. Free online tool, no registration required."
 category: common
 keywords:

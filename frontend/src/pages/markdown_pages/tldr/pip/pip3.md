@@ -1,8 +1,8 @@
 ---
 title: "Install Python Packages - Manage with pip3 | Free DevTools"
 name: pip3
-path: /freedevtools/tldr/common/pip3
-canonical: "https://hexmos.com/freedevtools/tldr/common/pip3/"
+path: /freedevtools/tldr/pip/pip3
+canonical: "https://hexmos.com/freedevtools/tldr/pip/pip3/"
 description: "Install Python packages easily with pip3, the Python package manager. Manage dependencies, upgrade packages, and create requirements files effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Request Pull - Create Pull Requests | Free DevTools"
 name: git-request-pull
-path: /freedevtools/tldr/common/git-request-pull
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-request-pull/"
+path: /freedevtools/tldr/git/git-request-pull
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-request-pull/"
 description: "Generate Git request pull commands with Git Request Pull. Create pull requests for Git repositories and collaborate effectively. Free online tool, no registration required."
 category: common
 keywords:

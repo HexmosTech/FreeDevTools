@@ -1,8 +1,8 @@
 ---
 title: "UV Init - Create Python Projects | Free DevTools"
 name: uv-init
-path: /freedevtools/tldr/common/uv-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-init/"
+path: /freedevtools/tldr/uv/uv-init
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-init/"
 description: "Create Python projects quickly with UV Init. Easily initialize projects, manage build systems, and generate pyproject.toml files. Free online tool, no registration required."
 category: common
 keywords:

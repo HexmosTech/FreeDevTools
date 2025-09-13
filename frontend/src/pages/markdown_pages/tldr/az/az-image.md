@@ -1,8 +1,8 @@
 ---
 title: "Create Azure Image - Manage VM Images with CLI | Free DevTools"
 name: az-image
-path: /freedevtools/tldr/common/az-image
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-image/"
+path: /freedevtools/tldr/az/az-image
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-image/"
 description: "Create custom Azure images easily with az image. Manage, list, delete, and update Virtual Machine images in Azure CLI. Free online tool, no registration required."
 category: common
 keywords:

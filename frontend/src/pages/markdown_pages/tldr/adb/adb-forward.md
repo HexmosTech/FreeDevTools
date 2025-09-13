@@ -1,8 +1,8 @@
 ---
 title: "ADB Forward - Connect Android Devices Wirelessly | Free DevTools"
 name: adb-forward
-path: /freedevtools/tldr/common/adb-forward
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb-forward/"
+path: /freedevtools/tldr/adb/adb-forward
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-forward/"
 description: "Connect Android devices wirelessly with ADB Forward. Establish TCP connections and manage port forwardings effortlessly. Free online tool, no registration required."
 category: common
 keywords:

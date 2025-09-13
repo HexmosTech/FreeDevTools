@@ -1,8 +1,8 @@
 ---
 title: "Azure Quantum - Manage Workspaces & Submit Jobs | Free DevTools"
 name: az-quantum
-path: /freedevtools/tldr/common/az-quantum
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-quantum/"
+path: /freedevtools/tldr/az/az-quantum
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-quantum/"
 description: "Manage Azure Quantum workspaces and submit quantum jobs with az quantum. Streamline quantum computing workflows and optimize job execution. Free online tool, no registration required."
 category: common
 keywords:

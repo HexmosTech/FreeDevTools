@@ -1,8 +1,8 @@
 ---
 title: "Yadm Transcrypt - Encrypt Files | Free DevTools"
 name: yadm-transcrypt
-path: /freedevtools/tldr/common/yadm-transcrypt
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-transcrypt/"
+path: /freedevtools/tldr/yadm/yadm-transcrypt
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-transcrypt/"
 description: "Encrypt files with Yadm Transcrypt. Securely manage encrypted files within your Git repository using transparent encryption/decryption. Free online tool, no registration required."
 category: common
 keywords:

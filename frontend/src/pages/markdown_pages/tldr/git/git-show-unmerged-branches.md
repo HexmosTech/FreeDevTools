@@ -1,8 +1,8 @@
 ---
 title: "Show Unmerged Branches - Identify Git Branches | Free DevTools"
 name: git-show-unmerged-branches
-path: /freedevtools/tldr/common/git-show-unmerged-branches
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show-unmerged-branches/"
+path: /freedevtools/tldr/git/git-show-unmerged-branches
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-unmerged-branches/"
 description: "Identify unmerged branches with Git Show Unmerged Branches. Find all branches not merged into HEAD and streamline Git workflows. Free online tool, no registration required."
 category: common
 keywords:

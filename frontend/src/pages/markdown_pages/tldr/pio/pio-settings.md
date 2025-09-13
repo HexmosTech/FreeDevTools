@@ -1,8 +1,8 @@
 ---
 title: "PIO Settings - Control PlatformIO Configuration | Free DevTools"
 name: pio-settings
-path: /freedevtools/tldr/common/pio-settings
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-settings/"
+path: /freedevtools/tldr/pio/pio-settings
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-settings/"
 description: "Control PlatformIO settings with PIO Settings. Manage PlatformIO configuration, display settings, and reset defaults using the command line. Free online tool, no registration required."
 category: common
 keywords:

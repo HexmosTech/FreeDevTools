@@ -1,8 +1,8 @@
 ---
 title: "Inspect GStreamer Plugins - Analyze Media Codecs | Free DevTools"
 name: gst-inspect-1.0
-path: /freedevtools/tldr/common/gst-inspect-1.0
-canonical: "https://hexmos.com/freedevtools/tldr/common/gst-inspect-1.0/"
+path: /freedevtools/tldr/gst/gst-inspect-1.0
+canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-inspect-1.0/"
 description: "Analyze GStreamer plugins with gst-inspect-1.0. Discover available media codecs and hardware capabilities. Free online tool, no registration required."
 category: common
 keywords:

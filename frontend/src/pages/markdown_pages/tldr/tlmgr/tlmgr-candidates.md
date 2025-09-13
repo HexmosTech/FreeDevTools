@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Candidates - Get Package Repositories | Free DevTools"
 name: tlmgr-candidates
-path: /freedevtools/tldr/common/tlmgr-candidates
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-candidates/"
+path: /freedevtools/tldr/tlmgr/tlmgr-candidates
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-candidates/"
 description: "Get TeX Live package repositories with tlmgr candidates. Discover available sources to install or update packages using the command line. Free online tool, no registration required."
 category: common
 keywords:

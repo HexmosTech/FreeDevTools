@@ -1,8 +1,8 @@
 ---
 title: "HTTP Server Upload - Create a Simple File Upload Server | Free DevTools"
 name: http-server-upload
-path: /freedevtools/tldr/common/http-server-upload
-canonical: "https://hexmos.com/freedevtools/tldr/common/http-server-upload/"
+path: /freedevtools/tldr/http/http-server-upload
+canonical: "https://hexmos.com/freedevtools/tldr/http/http-server-upload/"
 description: "Create a simple file upload server with HTTP Server Upload. Quickly share files through a lightweight interface. Free online tool, no registration required."
 category: common
 keywords:

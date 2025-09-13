@@ -1,8 +1,8 @@
 ---
 title: "PostgreSQL Ready Check - Control Connection Status | Free DevTools"
 name: pg_isready
-path: /freedevtools/tldr/common/pg_isready
-canonical: "https://hexmos.com/freedevtools/tldr/common/pg_isready/"
+path: /freedevtools/tldr/postgres/pg_isready
+canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_isready/"
 description: "Check PostgreSQL connection status with pg_isready. Monitor database availability and troubleshoot connection issues effectively. Free online tool, no registration required."
 category: common
 keywords:

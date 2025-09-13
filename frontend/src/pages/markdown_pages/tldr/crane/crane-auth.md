@@ -1,8 +1,8 @@
 ---
 title: "Crane Auth - Manage Container Registry Credentials | Free DevTools"
 name: crane-auth
-path: /freedevtools/tldr/common/crane-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-auth/"
+path: /freedevtools/tldr/crane/crane-auth
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-auth/"
 description: "Manage container registry credentials with Crane Auth. Log in, log out, and retrieve tokens for secure container management. Free online tool, no registration required."
 category: common
 keywords:

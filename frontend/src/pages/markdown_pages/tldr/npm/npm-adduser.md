@@ -1,8 +1,8 @@
 ---
 title: "NPM Add User - Create Accounts | Free DevTools"
 name: npm-adduser
-path: /freedevtools/tldr/common/npm-adduser
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-adduser/"
+path: /freedevtools/tldr/npm/npm-adduser
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-adduser/"
 description: "Create NPM user accounts with npm adduser. Manage registry credentials and scope access easily. Free online tool, no registration required."
 category: common
 keywords:

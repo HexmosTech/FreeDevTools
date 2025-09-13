@@ -1,8 +1,8 @@
 ---
 title: "Create GitHub Labels - Manage repository labels | Free DevTools"
 name: gh-label
-path: /freedevtools/tldr/common/gh-label
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-label/"
+path: /freedevtools/tldr/gh/gh-label
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-label/"
 description: "Create GitHub labels easily with gh-label. Manage repository labels, clone labels and apply consistent labeling for open source projects. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Nix Profile - Manage Packages | Free DevTools"
 name: nix-profile
-path: /freedevtools/tldr/common/nix-profile
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-profile/"
+path: /freedevtools/tldr/nix/nix-profile
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-profile/"
 description: "Manage packages with Nix Profile. Install, update, and remove software packages using the Nix package manager. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "SFDK Scrape - Create Patches from Source Changes | Free DevTools"
 name: sfdk-scrape
-path: /freedevtools/tldr/common/sfdk-scrape
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-scrape/"
+path: /freedevtools/tldr/sfdk/sfdk-scrape
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-scrape/"
 description: "Create patches easily with SFDK Scrape. Convert source code modifications into patch files for seamless code management and collaboration. Free online tool, no registration required."
 category: common
 keywords:

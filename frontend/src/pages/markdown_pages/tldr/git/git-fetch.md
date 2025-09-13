@@ -1,8 +1,8 @@
 ---
 title: "Git Fetch - Download Objects | Free DevTools"
 name: git-fetch
-path: /freedevtools/tldr/common/git-fetch
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-fetch/"
+path: /freedevtools/tldr/git/git-fetch
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-fetch/"
 description: "Download Git objects with Git Fetch. Manage remote branches, prune deleted references, and deepen shallow clones. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "JJ Absorb - Split Changes | Free DevTools"
 name: jj-absorb
-path: /freedevtools/tldr/common/jj-absorb
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-absorb/"
+path: /freedevtools/tldr/jj/jj-absorb
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-absorb/"
 description: "Split changes with JJ Absorb. Refactor your code effortlessly by moving changes to suitable ancestors. Free online tool, no registration required."
 category: common
 keywords:

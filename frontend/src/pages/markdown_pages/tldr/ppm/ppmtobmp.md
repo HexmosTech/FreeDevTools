@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to BMP - Image Conversion | Free DevTools"
 name: ppmtobmp
-path: /freedevtools/tldr/common/ppmtobmp
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtobmp/"
+path: /freedevtools/tldr/ppm/ppmtobmp
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtobmp/"
 description: "Convert PPM images to BMP files instantly with ppmtobmp. Optimize image conversion processes and handle different BMP formats using the command line. Free online tool, no registration required."
 category: common
 keywords:

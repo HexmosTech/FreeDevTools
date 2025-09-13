@@ -1,8 +1,8 @@
 ---
 title: "Git Commit - Create Repository Commits | Free DevTools"
 name: git-commit
-path: /freedevtools/tldr/common/git-commit
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-commit/"
+path: /freedevtools/tldr/git/git-commit
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit/"
 description: "Create repository commits with Git Commit. Stage files, add messages, and amend commits for efficient version control. Free online tool, no registration required."
 category: common
 keywords:

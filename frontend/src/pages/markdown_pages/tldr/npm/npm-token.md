@@ -1,8 +1,8 @@
 ---
 title: "Generate npm Tokens - Manage npm Authentication | Free DevTools"
 name: npm-token
-path: /freedevtools/tldr/common/npm-token
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-token/"
+path: /freedevtools/tldr/npm/npm-token
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-token/"
 description: "Generate npm tokens for secure package publishing with npm-token. Easily manage authentication, create read-only tokens, and revoke access. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Brew Package Manager - Control Packages on macOS/Linux | Free DevTools"
 name: brew
-path: /freedevtools/tldr/common/brew
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew/"
+path: /freedevtools/tldr/brew/brew
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew/"
 description: "Control packages on macOS and Linux with Brew Package Manager. Install, upgrade, search, and manage software effortlessly using command line. Free online tool, no registration required."
 category: common
 keywords:

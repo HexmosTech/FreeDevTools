@@ -1,8 +1,8 @@
 ---
 title: "Cradle Deploy - Manage Cradle Deployments | Free DevTools"
 name: cradle-deploy
-path: /freedevtools/tldr/common/cradle-deploy
-canonical: "https://hexmos.com/freedevtools/tldr/common/cradle-deploy/"
+path: /freedevtools/tldr/cradle/cradle-deploy
+canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-deploy/"
 description: "Manage Cradle deployments easily with Cradle Deploy. Automate deployments, deploy static assets, and streamline your development workflow. Free online tool, no registration required."
 category: common
 keywords:

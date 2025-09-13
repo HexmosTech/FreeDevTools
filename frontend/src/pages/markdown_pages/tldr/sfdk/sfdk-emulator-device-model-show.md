@@ -1,8 +1,8 @@
 ---
 title: "Emulator Device Model - Show Device Properties | Free DevTools"
 name: sfdk-emulator-device-model-show
-path: /freedevtools/tldr/common/sfdk-emulator-device-model-show
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-emulator-device-model-show/"
+path: /freedevtools/tldr/sfdk/sfdk-emulator-device-model-show
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/"
 description: "Show emulator device properties with SFDK emulator device-model-show. Inspect device configurations, and debug emulator settings easily. Free online tool, no registration required."
 category: common
 keywords:

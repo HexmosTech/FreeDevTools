@@ -1,8 +1,8 @@
 ---
 title: "Show Nix Dependencies - Find Dependency Reasons | Free DevTools"
 name: nix-why-depends
-path: /freedevtools/tldr/common/nix-why-depends
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-why-depends/"
+path: /freedevtools/tldr/nix/nix-why-depends
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-why-depends/"
 description: "Show Nix dependencies with nix-why-depends. Identify the reasons a package depends on another, even build-time dependencies. Free online tool, no registration required."
 category: common
 keywords:

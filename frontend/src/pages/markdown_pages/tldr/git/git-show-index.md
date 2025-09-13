@@ -1,8 +1,8 @@
 ---
 title: "Show Git Index - Inspect Packfile Archives | Free DevTools"
 name: git-show-index
-path: /freedevtools/tldr/common/git-show-index
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show-index/"
+path: /freedevtools/tldr/git/git-show-index
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-index/"
 description: "Inspect Git archive indexes with Git Show-Index. Display packfile contents and verify integrity. Free online tool, no registration required."
 category: common
 keywords:

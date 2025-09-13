@@ -1,8 +1,8 @@
 ---
 title: "PyATS - Automate Network Tests | Free DevTools"
 name: pyats
-path: /freedevtools/tldr/common/pyats
-canonical: "https://hexmos.com/freedevtools/tldr/common/pyats/"
+path: /freedevtools/tldr/pyats/pyats
+canonical: "https://hexmos.com/freedevtools/tldr/pyats/pyats/"
 description: "Automate network tests with PyATS. Execute commands, display help, and check versions. Streamline network automation testing with this free online tool, no registration required."
 category: common
 keywords:

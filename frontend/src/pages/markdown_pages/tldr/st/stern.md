@@ -1,8 +1,8 @@
 ---
 title: "Stern - Tail Kubernetes Pod Logs | Free DevTools"
 name: stern
-path: "/freedevtools/tldr/common/stern"
-canonical: "https://hexmos.com/freedevtools/tldr/common/stern/"
+path: "/freedevtools/tldr/st/stern"
+canonical: "https://hexmos.com/freedevtools/tldr/st/stern/"
 description: "Tail Kubernetes pod logs with Stern, a powerful command-line tool for monitoring multiple pods and containers. Quickly debug applications and filter logs using regular expressions. Free online tool, no registration required."
 category: common
 keywords:

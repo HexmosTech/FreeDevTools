@@ -1,8 +1,8 @@
 ---
 title: "ImageMagick Capture - Screen Capture | Free DevTools"
 name: magick-import
-path: /freedevtools/tldr/common/magick-import
-canonical: "https://hexmos.com/freedevtools/tldr/common/magick-import/"
+path: /freedevtools/tldr/magick/magick-import
+canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-import/"
 description: "Capture screens with ImageMagick Import! Grab screenshots of your X server with specific window selection. Free online tool, no registration required."
 category: common
 keywords:

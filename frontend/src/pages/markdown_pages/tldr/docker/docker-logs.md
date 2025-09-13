@@ -1,8 +1,8 @@
 ---
 title: "Docker Logs - Control Container Logs | Free DevTools"
 name: docker-logs
-path: /freedevtools/tldr/common/docker-logs
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-logs/"
+path: /freedevtools/tldr/docker/docker-logs
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-logs/"
 description: "Control Docker container logs instantly with Docker Logs. Tail logs, filter by time, and view timestamps with ease. Free online tool, no registration required."
 category: common
 keywords:

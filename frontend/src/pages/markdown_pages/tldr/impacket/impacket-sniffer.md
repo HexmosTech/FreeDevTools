@@ -1,8 +1,8 @@
 ---
 title: "Sniffer - Capture Network Packets | Free DevTools"
 name: impacket-sniffer
-path: /freedevtools/tldr/common/impacket-sniffer
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-sniffer/"
+path: /freedevtools/tldr/impacket/impacket-sniffer
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sniffer/"
 description: "Capture network packets with Impacket Sniffer, analyzing network traffic for security vulnerabilities and performance issues. Free online tool, no registration required."
 category: common
 keywords:

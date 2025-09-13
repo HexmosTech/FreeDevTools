@@ -1,8 +1,8 @@
 ---
 title: "RabbitMQ Control - Manage Servers | Free DevTools"
 name: rabbitmqctl
-path: /freedevtools/tldr/common/rabbitmqctl
-canonical: "https://hexmos.com/freedevtools/tldr/common/rabbitmqctl/"
+path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl
+canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl/"
 description: "Control RabbitMQ servers with RabbitMQctl, a command-line tool for managing message queues. Inspect status, configure vhosts, and manage users efficiently. Free online tool, no registration required."
 category: common
 keywords:

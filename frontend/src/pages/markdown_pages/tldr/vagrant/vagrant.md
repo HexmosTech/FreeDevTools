@@ -1,8 +1,8 @@
 ---
 title: "Create Vagrant Environments - Manage VMs | Free DevTools"
 name: vagrant
-path: /freedevtools/tldr/common/vagrant
-canonical: "https://hexmos.com/freedevtools/tldr/common/vagrant/"
+path: /freedevtools/tldr/vagrant/vagrant
+canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant/"
 description: "Create and manage virtual machines with Vagrant. Define, configure, and reproduce development environments using code. Free online tool, no registration required."
 category: common
 keywords:

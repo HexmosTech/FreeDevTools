@@ -1,8 +1,8 @@
 ---
 title: "Git Shortlog - Summarize Git Log Output | Free DevTools"
 name: git-shortlog
-path: /freedevtools/tldr/common/git-shortlog
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-shortlog/"
+path: /freedevtools/tldr/git/git-shortlog
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-shortlog/"
 description: "Summarize Git log output with Git Shortlog. Analyze commit history and author contributions using the command line. Free online tool, no registration required."
 category: common
 keywords:

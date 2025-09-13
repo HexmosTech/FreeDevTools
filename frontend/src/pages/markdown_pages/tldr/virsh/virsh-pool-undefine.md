@@ -1,8 +1,8 @@
 ---
 title: "Virsh Pool Undefine - Delete Storage Pool | Free DevTools"
 name: virsh-pool-undefine
-path: /freedevtools/tldr/common/virsh-pool-undefine
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-undefine/"
+path: /freedevtools/tldr/virsh/virsh-pool-undefine
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-undefine/"
 description: "Delete virsh storage pool configurations with Virsh Pool Undefine. Manage storage virtualization, remove pool definitions and clean up unused storage. Free online tool, no registration required."
 category: common
 keywords:

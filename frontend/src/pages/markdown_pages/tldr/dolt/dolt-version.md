@@ -1,8 +1,8 @@
 ---
 title: "Control Dolt Version - Display Current Version | Free DevTools"
 name: dolt-version
-path: /freedevtools/tldr/common/dolt-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-version/"
+path: /freedevtools/tldr/dolt/dolt-version
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-version/"
 description: "Control Dolt version instantly with this CLI tool. Display the current Dolt CLI version and related build information. Free online tool, no registration required."
 category: common
 keywords:

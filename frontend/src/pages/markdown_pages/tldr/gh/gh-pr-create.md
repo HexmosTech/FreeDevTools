@@ -1,8 +1,8 @@
 ---
 title: "Create GitHub PR - Manage Pull Requests | Free DevTools"
 name: gh-pr-create
-path: /freedevtools/tldr/common/gh-pr-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-pr-create/"
+path: /freedevtools/tldr/gh/gh-pr-create
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr-create/"
 description: "Create GitHub pull requests with gh-pr-create. Streamline your development workflow and collaborate efficiently. Free online tool, no registration required."
 category: common
 keywords:

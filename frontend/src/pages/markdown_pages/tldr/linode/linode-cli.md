@@ -1,8 +1,8 @@
 ---
 title: "Linode CLI - Manage Cloud Services | Free DevTools"
 name: linode-cli
-path: /freedevtools/tldr/common/linode-cli
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli/"
+path: /freedevtools/tldr/linode/linode-cli
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli/"
 description: "Manage Linode cloud services instantly with Linode CLI. Control Linodes, manage domains, and configure DNS settings. Free online tool, no registration required."
 category: common
 keywords:

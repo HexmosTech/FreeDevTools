@@ -1,8 +1,8 @@
 ---
 title: "Git Rebase - Reapply Commits | Free DevTools"
 name: git-rebase
-path: /freedevtools/tldr/common/git-rebase
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-rebase/"
+path: /freedevtools/tldr/git/git-rebase
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-rebase/"
 description: "Reapply commits with Git Rebase. Move branches to a new base and resolve merge conflicts easily with Git Rebase commands. Free online tool, no registration required."
 category: common
 keywords:

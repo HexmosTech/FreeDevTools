@@ -1,8 +1,8 @@
 ---
 title: "Delete Git Submodule - Manage Repository Submodules | Free DevTools"
 name: git-delete-submodule
-path: /freedevtools/tldr/common/git-delete-submodule
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-delete-submodule/"
+path: /freedevtools/tldr/git/git-delete-submodule
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-submodule/"
 description: "Delete Git submodule paths with Git Delete Submodule. Remove submodule configurations and clean up repository. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage Exoscale DBaaS - Control Cloud Databases | Free DevTools"
 name: exo-dbaas
-path: /freedevtools/tldr/common/exo-dbaas
-canonical: "https://hexmos.com/freedevtools/tldr/common/exo-dbaas/"
+path: /freedevtools/tldr/exo/exo-dbaas
+canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-dbaas/"
 description: "Manage Exoscale DBaaS instances with this tool. Control database service types, create new databases, and update maintenance schedules. Free online tool, no registration required."
 category: common
 keywords:

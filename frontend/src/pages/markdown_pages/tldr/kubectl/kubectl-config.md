@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Config - Manage Kubernetes Configuration | Free DevTools"
 name: kubectl-config
-path: /freedevtools/tldr/common/kubectl-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-config/"
+path: /freedevtools/tldr/kubectl/kubectl-config
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-config/"
 description: "Manage Kubernetes cluster access instantly with Kubectl Config. Configure contexts, switch namespaces, and add custom kubeconfig files. Free online tool, no registration required."
 category: common
 keywords:

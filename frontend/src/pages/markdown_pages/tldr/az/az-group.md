@@ -1,8 +1,8 @@
 ---
 title: "Create Azure Group - Manage Resources | Free DevTools"
 name: az-group
-path: /freedevtools/tldr/common/az-group
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-group/"
+path: /freedevtools/tldr/az/az-group
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-group/"
 description: "Create Azure resource groups with Az Group. Easily manage deployments and templates using Azure CLI. Free online tool, no registration required."
 category: common
 keywords:

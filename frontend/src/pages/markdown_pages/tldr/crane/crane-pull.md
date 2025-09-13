@@ -1,8 +1,8 @@
 ---
 title: "Crane Pull - Retrieve Container Images | Free DevTools"
 name: crane-pull
-path: /freedevtools/tldr/common/crane-pull
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-pull/"
+path: /freedevtools/tldr/crane/crane-pull
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-pull/"
 description: "Retrieve container images locally with Crane Pull. Download and store container images by reference. Free online tool, no registration required."
 category: common
 keywords:

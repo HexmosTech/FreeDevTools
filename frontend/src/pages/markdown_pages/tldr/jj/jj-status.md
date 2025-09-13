@@ -1,8 +1,8 @@
 ---
 title: "JJ Status - Show Repository Status | Free DevTools"
 name: jj-status
-path: /freedevtools/tldr/common/jj-status
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-status/"
+path: /freedevtools/tldr/jj/jj-status
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-status/"
 description: "Show repository status with JJ. Inspect working copy changes and identify conflicts using the command line. Free online tool, no registration required."
 category: common
 keywords:

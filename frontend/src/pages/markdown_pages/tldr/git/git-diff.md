@@ -1,8 +1,8 @@
 ---
 title: "Git Diff - Show File Changes | Free DevTools"
 name: git-diff
-path: /freedevtools/tldr/common/git-diff
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-diff/"
+path: /freedevtools/tldr/git/git-diff
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff/"
 description: "Show tracked file changes with Git Diff. Compare staged, unstaged, and committed modifications. Free online tool, no registration required."
 category: common
 keywords:

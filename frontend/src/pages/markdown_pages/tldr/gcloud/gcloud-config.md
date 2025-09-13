@@ -1,8 +1,8 @@
 ---
 title: "Gcloud Config - Manage Configurations | Free DevTools"
 name: gcloud-config
-path: /freedevtools/tldr/common/gcloud-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-config/"
+path: /freedevtools/tldr/gcloud/gcloud-config
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config/"
 description: "Manage Google Cloud SDK configurations with Gcloud Config. Quickly switch between environments and set properties with this free online tool, no registration required."
 category: common
 keywords:

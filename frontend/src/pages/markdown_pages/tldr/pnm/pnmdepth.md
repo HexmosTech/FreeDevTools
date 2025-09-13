@@ -1,8 +1,8 @@
 ---
 title: "PAM Depth - Display Image Depth Values | Free DevTools"
 name: pnmdepth
-path: /freedevtools/tldr/common/pnmdepth
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmdepth/"
+path: /freedevtools/tldr/pnm/pnmdepth
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmdepth/"
 description: "Display image depth values with PAM Depth (pnmdepth). Analyze PAM/PNM image formats and extract precise depth information. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "NPM Restart - Execute Package Restart Script | Free DevTools"
 name: npm-restart
-path: /freedevtools/tldr/common/npm-restart
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-restart/"
+path: /freedevtools/tldr/npm/npm-restart
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-restart/"
 description: "Execute restart scripts with NPM Restart. Quickly restart your Node.js application and run custom scripts defined in package.json. Free online tool, no registration required."
 category: common
 keywords:

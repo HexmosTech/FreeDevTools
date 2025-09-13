@@ -1,8 +1,8 @@
 ---
 title: "Docker Compose - Control Multi-Container Apps | Free DevTools"
 name: docker-compose
-path: /freedevtools/tldr/common/docker-compose
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-compose/"
+path: /freedevtools/tldr/docker/docker-compose
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-compose/"
 description: "Control multi-container apps with Docker Compose. Easily manage and orchestrate Docker applications with this powerful command-line tool. Free online tool, no registration required."
 category: common
 keywords:

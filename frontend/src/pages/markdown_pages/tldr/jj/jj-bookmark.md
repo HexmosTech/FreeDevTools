@@ -1,8 +1,8 @@
 ---
 title: "Create jj Bookmarks - Manage Repository Bookmarks | Free DevTools"
 name: jj-bookmark
-path: /freedevtools/tldr/common/jj-bookmark
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-bookmark/"
+path: /freedevtools/tldr/jj/jj-bookmark
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-bookmark/"
 description: "Create bookmarks with jj for effective repository management. Track, move, and delete bookmarks in your jj repositories. Free online tool, no registration required."
 category: common
 keywords:

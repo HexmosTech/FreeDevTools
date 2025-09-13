@@ -1,8 +1,8 @@
 ---
 title: "Mongoexport - Export MongoDB Data to JSON or CSV | Free DevTools"
 name: mongoexport
-path: /freedevtools/tldr/common/mongoexport
-canonical: "https://hexmos.com/freedevtools/tldr/common/mongoexport/"
+path: /freedevtools/tldr/mongo/mongoexport
+canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongoexport/"
 description: "Export MongoDB data with Mongoexport. Convert MongoDB collections to JSON or CSV format for data analysis and migration. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Repack Git - Optimize Repository Storage | Free DevTools"
 name: git-repack
-path: /freedevtools/tldr/common/git-repack
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-repack/"
+path: /freedevtools/tldr/git/git-repack
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-repack/"
 description: "Optimize Git repository storage with Git Repack. Reduce repository size and improve performance using command line. Free online tool, no registration required."
 category: common
 keywords:

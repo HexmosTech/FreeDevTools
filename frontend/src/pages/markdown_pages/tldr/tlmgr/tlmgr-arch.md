@@ -1,8 +1,8 @@
 ---
 title: "TLMGR Arch - Manage TeX Live Platforms | Free DevTools"
 name: tlmgr-arch
-path: /freedevtools/tldr/common/tlmgr-arch
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-arch/"
+path: /freedevtools/tldr/tlmgr/tlmgr-arch
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-arch/"
 description: "Manage TeX Live platforms with TLMGR Arch. View available platforms, switch architectures, and ensure compatibility across systems. Free online tool, no registration required."
 category: common
 keywords:

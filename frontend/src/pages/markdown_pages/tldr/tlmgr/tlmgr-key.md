@@ -1,8 +1,8 @@
 ---
 title: "TLmgr Key - Manage TeX Live GPG Keys | Free DevTools"
 name: tlmgr-key
-path: /freedevtools/tldr/common/tlmgr-key
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-key/"
+path: /freedevtools/tldr/tlmgr/tlmgr-key
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-key/"
 description: "Manage TeX Live GPG keys with Tlmgr Key. Secure your TeX Live installation by adding, removing, and listing trusted keys. Free online tool, no registration required."
 category: common
 keywords:

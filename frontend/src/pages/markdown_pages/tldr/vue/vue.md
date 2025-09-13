@@ -1,8 +1,8 @@
 ---
 title: "Create Vue Projects - Generate Vue CLI Apps | Free DevTools"
 name: vue
-path: /freedevtools/tldr/common/vue
-canonical: "https://hexmos.com/freedevtools/tldr/common/vue/"
+path: /freedevtools/tldr/vue/vue
+canonical: "https://hexmos.com/freedevtools/tldr/vue/vue/"
 description: "Create Vue projects effortlessly with Vue CLI. Quickly scaffold new Vue applications, manage dependencies, and build production-ready apps. Free online tool, no registration required."
 category: common
 keywords:

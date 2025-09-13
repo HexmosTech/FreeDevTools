@@ -1,8 +1,8 @@
 ---
 title: "Storage Container - Manage Azure Blobs | Free DevTools"
 name: az-storage-container
-path: /freedevtools/tldr/common/az-storage-container
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-storage-container/"
+path: /freedevtools/tldr/az/az-storage-container
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-container/"
 description: "Manage Azure blob storage containers with az-storage-container. Generate SAS tokens and control access levels. Free online tool, no registration required."
 category: common
 keywords:

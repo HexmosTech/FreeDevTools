@@ -1,8 +1,8 @@
 ---
 title: "Git Switch - Switch Branches | Free DevTools"
 name: git-switch
-path: /freedevtools/tldr/common/git-switch
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-switch/"
+path: /freedevtools/tldr/git/git-switch
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-switch/"
 description: "Switch branches with Git Switch. Quickly navigate between different versions, create new branches, and manage changes. Free online tool, no registration required."
 category: common
 keywords:

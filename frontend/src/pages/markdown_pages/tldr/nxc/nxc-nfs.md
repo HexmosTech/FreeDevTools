@@ -1,8 +1,8 @@
 ---
 title: "NFS Pentesting - Exploit NFS Servers | Free DevTools"
 name: nxc-nfs
-path: /freedevtools/tldr/common/nxc-nfs
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-nfs/"
+path: /freedevtools/tldr/nxc/nxc-nfs
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-nfs/"
 description: "Exploit NFS servers with NXC NFS. Pentest network file systems, enumerate shares, and transfer files securely. Free online tool, no registration required."
 category: common
 keywords:

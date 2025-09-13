@@ -1,8 +1,8 @@
 ---
 title: "DVC Unfreeze - Restore DVC Stage Tracking | Free DevTools"
 name: dvc-unfreeze
-path: /freedevtools/tldr/common/dvc-unfreeze
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-unfreeze/"
+path: /freedevtools/tldr/dvc/dvc-unfreeze
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-unfreeze/"
 description: "Unfreeze DVC stages to restore dependency tracking with DVC Unfreeze. Manage pipeline stages and resume monitoring changes. Free online tool, no registration required."
 category: common
 keywords:

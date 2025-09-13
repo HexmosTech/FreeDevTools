@@ -1,8 +1,8 @@
 ---
 title: "Manage Files with Git Annex - Version Control | Free DevTools"
 name: git-annex
-path: /freedevtools/tldr/common/git-annex
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-annex/"
+path: /freedevtools/tldr/git/git-annex
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-annex/"
 description: "Manage files with Git Annex efficiently. Streamline version control and reduce repository size using symlinks and key-value stores. Free online tool, no registration required."
 category: common
 keywords:

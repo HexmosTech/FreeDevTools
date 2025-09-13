@@ -1,8 +1,8 @@
 ---
 title: "AWS Batch - Run Compute Workloads | Free DevTools"
 name: aws-batch
-path: /freedevtools/tldr/common/aws-batch
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-batch/"
+path: /freedevtools/tldr/aws/aws-batch
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-batch/"
 description: "Run compute workloads with AWS Batch. Easily manage batch jobs, create compute environments and job queues for efficient processing. Free online tool, no registration required."
 category: common
 keywords:

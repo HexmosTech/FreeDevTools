@@ -1,8 +1,8 @@
 ---
 title: "GDM Restart - Safely Restart GNOME Display Manager | Free DevTools"
 name: gdm-safe-restart
-path: /freedevtools/tldr/common/gdm-safe-restart
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdm-safe-restart/"
+path: /freedevtools/tldr/gdm/gdm-safe-restart
+canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-safe-restart/"
 description: "Safely restart GDM (GNOME Display Manager) when all users have logged out, preventing data loss or interruption. Free online tool, no registration required."
 category: common
 keywords:

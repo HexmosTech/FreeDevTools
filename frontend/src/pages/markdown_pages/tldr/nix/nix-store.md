@@ -1,8 +1,8 @@
 ---
 title: "Nix-Store - Manage Package Store | Free DevTools"
 name: nix-store
-path: /freedevtools/tldr/common/nix-store
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-store/"
+path: /freedevtools/tldr/nix/nix-store
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-store/"
 description: "Manage your Nix package store with Nix-Store. Optimize disk usage, repair corrupted stores, and query package information efficiently. Free online tool, no registration required."
 category: common
 keywords:

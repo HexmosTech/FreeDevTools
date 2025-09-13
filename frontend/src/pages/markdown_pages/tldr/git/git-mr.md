@@ -1,8 +1,8 @@
 ---
 title: "Git Merge Request - Checkout Branches Locally | Free DevTools"
 name: git-mr
-path: /freedevtools/tldr/common/git-mr
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-mr/"
+path: /freedevtools/tldr/git/git-mr
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-mr/"
 description: "Checkout Git merge requests locally with git-mr. Easily manage remote branches and clean up old requests from the command line. Free online tool, no registration required."
 category: common
 keywords:

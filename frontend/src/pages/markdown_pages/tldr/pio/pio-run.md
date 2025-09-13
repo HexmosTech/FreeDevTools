@@ -1,8 +1,8 @@
 ---
 title: "Run PlatformIO - Build Project Targets | Free DevTools"
 name: pio-run
-path: /freedevtools/tldr/common/pio-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-run/"
+path: /freedevtools/tldr/pio/pio-run
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-run/"
 description: "Build project targets instantly with PlatformIO Run. Compile, link, and upload firmware to various embedded platforms. Free online tool, no registration required."
 category: common
 keywords:

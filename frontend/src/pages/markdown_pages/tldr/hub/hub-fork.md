@@ -1,8 +1,8 @@
 ---
 title: "Hub Fork - Create GitHub Repository Forks | Free DevTools"
 name: hub-fork
-path: /freedevtools/tldr/common/hub-fork
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub-fork/"
+path: /freedevtools/tldr/hub/hub-fork
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-fork/"
 description: "Create GitHub repository forks efficiently with Hub Fork. Manage remote repositories and streamline your workflow. Free online tool, no registration required."
 category: common
 keywords:

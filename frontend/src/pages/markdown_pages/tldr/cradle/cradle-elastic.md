@@ -1,8 +1,8 @@
 ---
 title: "Control Elasticsearch - Manage Cradle Indices | Free DevTools"
 name: cradle-elastic
-path: /freedevtools/tldr/common/cradle-elastic
-canonical: "https://hexmos.com/freedevtools/tldr/common/cradle-elastic/"
+path: /freedevtools/tldr/cradle/cradle-elastic
+canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-elastic/"
 description: "Manage Elasticsearch indices for Cradle instances with Cradle Elastic. Flush indices, submit schemas, and populate data quickly and easily. Free online tool, no registration required."
 category: common
 keywords:

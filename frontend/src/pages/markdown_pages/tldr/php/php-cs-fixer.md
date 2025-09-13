@@ -1,8 +1,8 @@
 ---
 title: "PHP Code Style Fixer - Format PHP Code | Free DevTools"
 name: php-cs-fixer
-path: /freedevtools/tldr/common/php-cs-fixer
-canonical: "https://hexmos.com/freedevtools/tldr/common/php-cs-fixer/"
+path: /freedevtools/tldr/php/php-cs-fixer
+canonical: "https://hexmos.com/freedevtools/tldr/php/php-cs-fixer/"
 description: "Format PHP code automatically with php-cs-fixer. Enforce coding standards, improve code readability and maintainability. Free online tool, no registration required."
 category: common
 keywords:

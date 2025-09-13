@@ -1,8 +1,8 @@
 ---
 title: "Get Architecture - Determine Target Architecture | Free DevTools"
 name: impacket-getarch
-path: /freedevtools/tldr/common/impacket-getarch
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-getarch/"
+path: /freedevtools/tldr/impacket/impacket-getarch
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getarch/"
 description: "Determine the target architecture with Impacket getArch. Identify the processor type and operating system for compatibility analysis. Free online tool, no registration required."
 category: common
 keywords:

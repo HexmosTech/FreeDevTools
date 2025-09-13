@@ -1,8 +1,8 @@
 ---
 title: "Encrypt Files - Secure Data with yadm-encrypt | Free DevTools"
 name: yadm-encrypt
-path: /freedevtools/tldr/common/yadm-encrypt
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-encrypt/"
+path: /freedevtools/tldr/yadm/yadm-encrypt
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-encrypt/"
 description: "Encrypt files easily with yadm-encrypt, protecting sensitive data using archive folder storage. Free online tool, no registration required."
 category: common
 keywords:

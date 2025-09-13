@@ -1,8 +1,8 @@
 ---
 title: "GNMI Get - Snapshot Device Data | Free DevTools"
 name: gnmic-get
-path: /freedevtools/tldr/common/gnmic-get
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnmic-get/"
+path: /freedevtools/tldr/gnmic/gnmic-get
+canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-get/"
 description: "Snapshot device data with GNMI Get. Retrieve real-time network device state using gNMI protocol for efficient monitoring and diagnostics. Free online tool, no registration required."
 category: common
 keywords:

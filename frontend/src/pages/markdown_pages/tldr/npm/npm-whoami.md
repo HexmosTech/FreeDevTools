@@ -1,8 +1,8 @@
 ---
 title: "NPM Username - Display NPM Username | Free DevTools"
 name: npm-whoami
-path: /freedevtools/tldr/common/npm-whoami
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-whoami/"
+path: /freedevtools/tldr/npm/npm-whoami
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-whoami/"
 description: "Display your NPM username with NPM Whoami. Check login status and manage registry access. Free online tool, no registration required."
 category: common
 keywords:

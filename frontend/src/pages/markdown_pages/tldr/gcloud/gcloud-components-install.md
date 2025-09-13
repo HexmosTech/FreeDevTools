@@ -1,8 +1,8 @@
 ---
 title: "Gcloud Install - Manage CLI Components | Free DevTools"
 name: gcloud-components-install
-path: /freedevtools/tldr/common/gcloud-components-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-components-install/"
+path: /freedevtools/tldr/gcloud/gcloud-components-install
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-components-install/"
 description: "Manage Google Cloud CLI components easily with Gcloud Install. Update, install, and list available components for streamlined development. Free online tool, no registration required."
 category: common
 keywords:

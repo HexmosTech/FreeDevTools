@@ -1,8 +1,8 @@
 ---
 title: "Create VM Clones - VBoxManage Clone VM | Free DevTools"
 name: vboxmanage-clonevm
-path: /freedevtools/tldr/common/vboxmanage-clonevm
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-clonevm/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-clonevm
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/"
 description: "Create virtual machine clones with VBoxManage. Easily duplicate VMs with custom settings and configurations. Free online tool, no registration required."
 category: common
 keywords:

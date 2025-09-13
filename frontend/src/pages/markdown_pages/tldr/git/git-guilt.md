@@ -1,8 +1,8 @@
 ---
 title: "Calculate Git Blame - Analyze Code Ownership | Free DevTools"
 name: git-guilt
-path: /freedevtools/tldr/common/git-guilt
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-guilt/"
+path: /freedevtools/tldr/git/git-guilt
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-guilt/"
 description: "Analyze code ownership with Git Guilt. Determine blame count and track changes between revisions easily. Free online tool, no registration required."
 category: common
 keywords:

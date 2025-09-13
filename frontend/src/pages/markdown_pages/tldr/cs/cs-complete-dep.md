@@ -1,8 +1,8 @@
 ---
 title: "Complete Dependency - Search Maven Artifacts | Free DevTools"
 name: cs-complete-dep
-path: /freedevtools/tldr/common/cs-complete-dep
-canonical: "https://hexmos.com/freedevtools/tldr/common/cs-complete-dep/"
+path: /freedevtools/tldr/cs/cs-complete-dep
+canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-complete-dep/"
 description: "Search Maven artifacts with Complete Dependency tool. Quickly find library versions and group identifiers without web browsing. Free online tool, no registration required."
 category: common
 keywords:

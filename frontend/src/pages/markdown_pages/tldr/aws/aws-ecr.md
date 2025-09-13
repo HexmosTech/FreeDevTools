@@ -1,8 +1,8 @@
 ---
 title: "Manage AWS ECR - Push & Pull Images | Free DevTools"
 name: aws-ecr
-path: /freedevtools/tldr/common/aws-ecr
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-ecr/"
+path: /freedevtools/tldr/aws/aws-ecr
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ecr/"
 description: "Manage container images with AWS ECR. Push, pull, create, and delete images and repositories. Free online tool, no registration required."
 category: common
 keywords:

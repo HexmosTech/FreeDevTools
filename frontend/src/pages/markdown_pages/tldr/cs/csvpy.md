@@ -1,8 +1,8 @@
 ---
 title: "Load CSV - Execute CSV Files in Python | Free DevTools"
 name: csvpy
-path: /freedevtools/tldr/common/csvpy
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvpy/"
+path: /freedevtools/tldr/cs/csvpy
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvpy/"
 description: "Load CSV files with csvpy, executing them in a Python shell for analysis and manipulation. Free online tool, no registration required."
 category: common
 keywords:

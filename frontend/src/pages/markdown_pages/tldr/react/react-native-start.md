@@ -1,8 +1,8 @@
 ---
 title: "React Native Start - Run Development Server | Free DevTools"
 name: react-native-start
-path: /freedevtools/tldr/common/react-native-start
-canonical: "https://hexmos.com/freedevtools/tldr/common/react-native-start/"
+path: /freedevtools/tldr/react/react-native-start
+canonical: "https://hexmos.com/freedevtools/tldr/react/react-native-start/"
 description: "Run React Native development server with React Native Start. Quickly start the Metro bundler, reset cache, and specify custom ports for app development. Free online tool, no registration required."
 category: common
 keywords:

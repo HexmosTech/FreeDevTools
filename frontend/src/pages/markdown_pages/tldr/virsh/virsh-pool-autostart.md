@@ -1,8 +1,8 @@
 ---
 title: "Virsh Autostart - Control Storage Pools | Free DevTools"
 name: virsh-pool-autostart
-path: /freedevtools/tldr/common/virsh-pool-autostart
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-autostart/"
+path: /freedevtools/tldr/virsh/virsh-pool-autostart
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-autostart/"
 description: "Control storage pool autostart with Virsh. Enable or disable autostart for virtual machine storage pools, managing resources effectively. Free online tool, no registration required."
 category: common
 keywords:

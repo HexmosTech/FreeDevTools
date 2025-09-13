@@ -1,8 +1,8 @@
 ---
 title: "Create Git Jujutsu Repo - Initialize JJ Repo | Free DevTools"
 name: jj-git-init
-path: /freedevtools/tldr/common/jj-git-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-git-init/"
+path: /freedevtools/tldr/jj/jj-git-init
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-init/"
 description: "Create Git Jujutsu repository with jj-git-init. Initialize new repos, colocate with existing Git repos & manage version control. Free online tool, no registration required."
 category: common
 keywords:

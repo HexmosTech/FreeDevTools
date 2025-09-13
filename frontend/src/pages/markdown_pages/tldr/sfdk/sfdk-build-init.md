@@ -1,8 +1,8 @@
 ---
 title: "SFDK Build Init - Initialize Build Directory | Free DevTools"
 name: sfdk-build-init
-path: /freedevtools/tldr/common/sfdk-build-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-build-init/"
+path: /freedevtools/tldr/sfdk/sfdk-build-init
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-init/"
 description: "Initialize build directories easily with SFDK Build Init. Quickly set up your Sailfish OS development environment for app creation. Free online tool, no registration required."
 category: common
 keywords:

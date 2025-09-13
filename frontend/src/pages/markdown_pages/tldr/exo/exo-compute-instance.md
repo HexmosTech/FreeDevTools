@@ -1,8 +1,8 @@
 ---
 title: "Create Exoscale Instance - Manage Cloud VMs | Free DevTools"
 name: exo-compute-instance
-path: /freedevtools/tldr/common/exo-compute-instance
-canonical: "https://hexmos.com/freedevtools/tldr/common/exo-compute-instance/"
+path: /freedevtools/tldr/exo/exo-compute-instance
+canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-instance/"
 description: "Create Exoscale instance with this command-line tool. Manage cloud VMs and virtual machines on Exoscale infrastructure. Free online tool, no registration required."
 category: common
 keywords:

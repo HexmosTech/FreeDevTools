@@ -1,8 +1,8 @@
 ---
 title: "Create JJ Commits - Update Changes with Ease | Free DevTools"
 name: jj-commit
-path: /freedevtools/tldr/common/jj-commit
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-commit/"
+path: /freedevtools/tldr/jj/jj-commit
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-commit/"
 description: "Create JJ commits to update changes with ease using this online tool. Manage your commit messages interactively or add them directly. Free online tool, no registration required."
 category: common
 keywords:

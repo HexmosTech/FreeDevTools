@@ -1,8 +1,8 @@
 ---
 title: "NPM Star - Mark Packages as Favorites | Free DevTools"
 name: npm-star
-path: /freedevtools/tldr/common/npm-star
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-star/"
+path: /freedevtools/tldr/npm/npm-star
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-star/"
 description: "Mark packages as favorites with NPM Star. Effortlessly manage your preferred NPM packages and discover new ones within the NPM ecosystem. Free online tool, no registration required."
 category: common
 keywords:

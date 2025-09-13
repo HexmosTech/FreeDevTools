@@ -1,8 +1,8 @@
 ---
 title: "LLVM Bitcode Concatenator - Merge BC Files | Free DevTools"
 name: llvm-cat
-path: /freedevtools/tldr/common/llvm-cat
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-cat/"
+path: /freedevtools/tldr/llvm/llvm-cat
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-cat/"
 description: "Merge LLVM Bitcode files effortlessly with LLVM-Cat. Combine multiple .bc files into a single output file for streamlined compilation. Free online tool, no registration required."
 category: common
 keywords:

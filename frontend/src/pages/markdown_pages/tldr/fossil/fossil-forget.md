@@ -1,8 +1,8 @@
 ---
 title: "Fossil Forget - Remove Files from Repository | Free DevTools"
 name: fossil-forget
-path: /freedevtools/tldr/common/fossil-forget
-canonical: "https://hexmos.com/freedevtools/tldr/common/fossil-forget/"
+path: /freedevtools/tldr/fossil/fossil-forget
+canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-forget/"
 description: "Remove files from your repository with Fossil Forget. Safely manage version control, track changes, and maintain project history with ease. Free online tool, no registration required."
 category: common
 keywords:

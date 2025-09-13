@@ -1,8 +1,8 @@
 ---
 title: "GitLab Repo - Manage Repositories | Free DevTools"
 name: glab-repo
-path: /freedevtools/tldr/common/glab-repo
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-repo/"
+path: /freedevtools/tldr/glab/glab-repo
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-repo/"
 description: "Manage GitLab repositories easily with glab-repo. Create, clone, fork, and view repos from the command line. Free online tool, no registration required."
 category: common
 keywords:

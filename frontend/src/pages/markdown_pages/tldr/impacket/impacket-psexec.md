@@ -1,8 +1,8 @@
 ---
 title: "Impacket psexec - Control Remote Processes | Free DevTools"
 name: impacket-psexec
-path: /freedevtools/tldr/common/impacket-psexec
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-psexec/"
+path: /freedevtools/tldr/impacket/impacket-psexec
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-psexec/"
 description: "Control remote processes with Impacket psexec. Execute commands, transfer files, and manage services on Windows systems remotely. Free online tool, no registration required."
 category: common
 keywords:

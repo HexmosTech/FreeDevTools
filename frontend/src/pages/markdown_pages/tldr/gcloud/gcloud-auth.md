@@ -1,8 +1,8 @@
 ---
 title: "Gcloud Auth - Manage Credentials | Free DevTools"
 name: gcloud-auth
-path: /freedevtools/tldr/common/gcloud-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-auth/"
+path: /freedevtools/tldr/gcloud/gcloud-auth
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-auth/"
 description: "Manage Gcloud Auth credentials with this online tool. Authenticate, list accounts, and revoke access easily. Free online tool, no registration required."
 category: common
 keywords:

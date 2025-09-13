@@ -1,8 +1,8 @@
 ---
 title: "Generate Rust Reports - Cargo Report | Free DevTools"
 name: cargo-report
-path: /freedevtools/tldr/common/cargo-report
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-report/"
+path: /freedevtools/tldr/cargo/cargo-report
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-report/"
 description: "Generate comprehensive Rust reports with Cargo Report. Analyze future incompatibilities and package dependencies with this powerful command-line tool. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "List Cloud Logging Logs - Analyze Logs | Free DevTools"
 name: gcloud-logging-logs-list
-path: /freedevtools/tldr/common/gcloud-logging-logs-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-logging-logs-list/"
+path: /freedevtools/tldr/gcloud/gcloud-logging-logs-list
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-logging-logs-list/"
 description: "List cloud logging logs with gcloud. Analyze log data and troubleshoot issues using advanced filtering options. Free online tool, no registration required."
 category: common
 keywords:

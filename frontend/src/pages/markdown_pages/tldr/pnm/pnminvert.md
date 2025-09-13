@@ -1,8 +1,8 @@
 ---
 title: "Invert PNM Image - Transform Colors | Free DevTools"
 name: pnminvert
-path: /freedevtools/tldr/common/pnminvert
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnminvert/"
+path: /freedevtools/tldr/pnm/pnminvert
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnminvert/"
 description: "Invert colors within PNM images with pnminvert. Adjust greyscale values and create visually altered images effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Conda Environment Manager - Create and Control Environments | Free DevTools"
 name: conda
-path: /freedevtools/tldr/common/conda
-canonical: "https://hexmos.com/freedevtools/tldr/common/conda/"
+path: /freedevtools/tldr/conda/conda
+canonical: "https://hexmos.com/freedevtools/tldr/conda/conda/"
 description: "Manage Conda environments with ease. Create, activate, deactivate, and delete environments for Python and other languages. Free online tool, no registration required."
 category: common
 keywords:

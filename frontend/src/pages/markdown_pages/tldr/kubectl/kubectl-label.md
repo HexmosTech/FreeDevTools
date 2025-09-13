@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Label - Manage Kubernetes Labels | Free DevTools"
 name: kubectl-label
-path: /freedevtools/tldr/common/kubectl-label
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-label/"
+path: /freedevtools/tldr/kubectl/kubectl-label
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-label/"
 description: "Manage Kubernetes labels effortlessly with Kubectl Label. Tag pods, nodes, and other resources for organized management. Free online tool, no registration required."
 category: common
 keywords:

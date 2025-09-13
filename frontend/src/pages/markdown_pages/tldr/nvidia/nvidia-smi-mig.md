@@ -1,8 +1,8 @@
 ---
 title: "Nvidia-smi MIG - Manage GPUs | Free DevTools"
 name: nvidia-smi-mig
-path: /freedevtools/tldr/common/nvidia-smi-mig
-canonical: "https://hexmos.com/freedevtools/tldr/common/nvidia-smi-mig/"
+path: /freedevtools/tldr/nvidia/nvidia-smi-mig
+canonical: "https://hexmos.com/freedevtools/tldr/nvidia/nvidia-smi-mig/"
 description: "Manage Nvidia Multi-Instance GPUs with nvidia-smi mig. Control GPU instances and create compute instances using the command line. Free online tool, no registration required."
 category: common
 keywords:

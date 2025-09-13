@@ -1,8 +1,8 @@
 ---
 title: "SFDK Build-Shell - Execute Build Steps | Free DevTools"
 name: sfdk-build-shell
-path: /freedevtools/tldr/common/sfdk-build-shell
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-build-shell/"
+path: /freedevtools/tldr/sfdk/sfdk-build-shell
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-shell/"
 description: "Execute build steps with SFDK Build-Shell, enabling custom actions within the Sailfish OS build engine. Customize your build process effortlessly. Free online tool, no registration required."
 category: common
 keywords:

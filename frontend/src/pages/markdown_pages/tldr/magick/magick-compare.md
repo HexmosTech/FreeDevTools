@@ -1,8 +1,8 @@
 ---
 title: "Create Image Comparison - Magick Compare | Free DevTools"
 name: magick-compare
-path: /freedevtools/tldr/common/magick-compare
-canonical: "https://hexmos.com/freedevtools/tldr/common/magick-compare/"
+path: /freedevtools/tldr/magick/magick-compare
+canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-compare/"
 description: "Create image comparisons with Magick Compare. Identify visual differences between images and generate difference images. Free online tool, no registration required."
 category: common
 keywords:

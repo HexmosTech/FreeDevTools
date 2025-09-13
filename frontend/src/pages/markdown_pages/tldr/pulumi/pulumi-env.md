@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Env - Manage Environments | Free DevTools"
 name: pulumi-env
-path: /freedevtools/tldr/common/pulumi-env
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-env/"
+path: /freedevtools/tldr/pulumi/pulumi-env
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-env/"
 description: "Manage Pulumi environments effortlessly with Pulumi Env. Create, set, edit, and delete environment configurations with ease. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Linode Domains - Manage DNS | Free DevTools"
 name: linode-cli-domains
-path: /freedevtools/tldr/common/linode-cli-domains
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-domains/"
+path: /freedevtools/tldr/linode/linode-cli-domains
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-domains/"
 description: "Manage Linode domains and DNS configurations with Linode CLI. Easily create, update, and delete domain records. Free online tool, no registration required."
 category: common
 keywords:

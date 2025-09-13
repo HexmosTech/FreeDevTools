@@ -1,8 +1,8 @@
 ---
 title: "GNMI Set - Modify Network Configuration | Free DevTools"
 name: gnmic-set
-path: /freedevtools/tldr/common/gnmic-set
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnmic-set/"
+path: /freedevtools/tldr/gnmic/gnmic-set
+canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-set/"
 description: "Modify network configurations with GNMI Set. Update, replace, and delete network device settings using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

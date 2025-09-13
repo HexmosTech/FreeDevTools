@@ -1,8 +1,8 @@
 ---
 title: "HTTP Server - Serve Static Files | Free DevTools"
 name: http-server
-path: /freedevtools/tldr/common/http-server
-canonical: "https://hexmos.com/freedevtools/tldr/common/http-server/"
+path: /freedevtools/tldr/http/http-server
+canonical: "https://hexmos.com/freedevtools/tldr/http/http-server/"
 description: "Serve static files with HTTP Server. Quickly deploy and test web applications locally with this simple static server. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Build Python Packages - Create Wheels & SDists | Free DevTools"
 name: uv-build
-path: /freedevtools/tldr/common/uv-build
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-build/"
+path: /freedevtools/tldr/uv/uv-build
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-build/"
 description: "Build Python packages efficiently with uv-build. Create source distributions (SDists) and wheels from your Python projects. Free online tool, no registration required."
 category: common
 keywords:

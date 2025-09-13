@@ -1,8 +1,8 @@
 ---
 title: "Git Summary - Analyze Repository Activity | Free DevTools"
 name: git-summary
-path: /freedevtools/tldr/common/git-summary
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-summary/"
+path: /freedevtools/tldr/git/git-summary
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-summary/"
 description: "Analyze Git repository activity with Git Summary. Get contributor statistics, line changes, and commit history. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Show Git Tree - Visualize Branches with Git Show-Tree | Free DevTools"
 name: git-show-tree
-path: /freedevtools/tldr/common/git-show-tree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show-tree/"
+path: /freedevtools/tldr/git/git-show-tree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-tree/"
 description: "Visualize Git branches with Git Show-Tree, a powerful command to understand repository structure. Analyze commit history with annotations. Free online tool, no registration required."
 category: common
 keywords:

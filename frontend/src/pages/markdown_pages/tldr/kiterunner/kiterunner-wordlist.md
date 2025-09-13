@@ -1,8 +1,8 @@
 ---
 title: "Manage Wordlists - Kiterunner Wordlist | Free DevTools"
 name: kiterunner-wordlist
-path: /freedevtools/tldr/common/kiterunner-wordlist
-canonical: "https://hexmos.com/freedevtools/tldr/common/kiterunner-wordlist/"
+path: /freedevtools/tldr/kiterunner/kiterunner-wordlist
+canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-wordlist/"
 description: "Manage wordlists with Kiterunner. Save and list wordlists for web vulnerability scanning and API discovery using command line. Free online tool, no registration required."
 category: common
 keywords:

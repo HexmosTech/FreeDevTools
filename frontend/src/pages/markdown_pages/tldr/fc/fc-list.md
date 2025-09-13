@@ -1,8 +1,8 @@
 ---
 title: "List Fonts - View Installed Fonts with fc-list | Free DevTools"
 name: fc-list
-path: /freedevtools/tldr/common/fc-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/fc-list/"
+path: /freedevtools/tldr/fc/fc-list
+canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-list/"
 description: "List fonts installed on your system with fc-list. Quickly identify available fonts and their properties. Free online tool, no registration required."
 category: common
 keywords:

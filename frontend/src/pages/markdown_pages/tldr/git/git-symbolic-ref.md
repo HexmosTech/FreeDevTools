@@ -1,8 +1,8 @@
 ---
 title: "Control Git References - Git Symbolic-Ref | Free DevTools"
 name: git-symbolic-ref
-path: /freedevtools/tldr/common/git-symbolic-ref
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-symbolic-ref/"
+path: /freedevtools/tldr/git/git-symbolic-ref
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-symbolic-ref/"
 description: "Control Git references with Git Symbolic-Ref. Manage symbolic references, update branch pointers and streamline repository maintenance. Free online tool, no registration required."
 category: common
 keywords:

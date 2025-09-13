@@ -1,8 +1,8 @@
 ---
 title: "Count Git Commits - Generate Commit Statistics | Free DevTools"
 name: git-count
-path: /freedevtools/tldr/common/git-count
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-count/"
+path: /freedevtools/tldr/git/git-count
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-count/"
 description: "Generate commit statistics with git-count. Analyze commit history and contributor activity using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Filter CSV Data - csvgrep | Free DevTools"
 name: csvgrep
-path: /freedevtools/tldr/common/csvgrep
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvgrep/"
+path: /freedevtools/tldr/cs/csvgrep
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvgrep/"
 description: "Filter CSV data with csvgrep, a command-line tool for pattern matching and data extraction. Quickly find and extract relevant information. Free online tool, no registration required."
 category: common
 keywords:

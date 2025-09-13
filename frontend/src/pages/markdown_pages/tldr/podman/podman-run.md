@@ -1,8 +1,8 @@
 ---
 title: "Podman Run - Create Containers Easily | Free DevTools"
 name: podman-run
-path: /freedevtools/tldr/common/podman-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-run/"
+path: /freedevtools/tldr/podman/podman-run
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-run/"
 description: "Create containers instantly with Podman Run. Manage images, execute commands, and isolate applications using the command line. Free online tool, no registration required."
 category: common
 keywords:

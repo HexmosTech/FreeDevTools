@@ -1,8 +1,8 @@
 ---
 title: "Equalize PNM Image - Enhance Contrast | Free DevTools"
 name: pnmhisteq
-path: /freedevtools/tldr/common/pnmhisteq
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmhisteq/"
+path: /freedevtools/tldr/pnm/pnmhisteq
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmhisteq/"
 description: "Enhance PNM image contrast with pnmhisteq. Improve image quality using histogram equalization and adjust grey levels. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Control Git Repos - Run Commands on Multiple Repos | Free DevTools"
 name: git-for-each-repo
-path: /freedevtools/tldr/common/git-for-each-repo
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-for-each-repo/"
+path: /freedevtools/tldr/git/git-for-each-repo
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-for-each-repo/"
 description: "Control Git repositories efficiently with git-for-each-repo. Execute commands across multiple repos simultaneously. Streamline Git workflows with this free online tool, no registration required."
 category: common
 keywords:

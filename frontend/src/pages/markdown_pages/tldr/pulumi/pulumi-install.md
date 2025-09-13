@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Install - Manage Packages and Plugins | Free DevTools"
 name: pulumi-install
-path: /freedevtools/tldr/common/pulumi-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-install/"
+path: /freedevtools/tldr/pulumi/pulumi-install
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-install/"
 description: "Manage Pulumi packages and plugins easily with Pulumi Install. Install missing dependencies, reinstall existing plugins, and skip dependency checks. Free online tool, no registration required."
 category: common
 keywords:

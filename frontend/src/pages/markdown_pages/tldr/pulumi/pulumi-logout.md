@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Logout - Secure Cloud Logouts | Free DevTools"
 name: pulumi-logout
-path: /freedevtools/tldr/common/pulumi-logout
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-logout/"
+path: /freedevtools/tldr/pulumi/pulumi-logout
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-logout/"
 description: "Secure cloud logouts with Pulumi Logout. Manage cloud sessions and control access to your Pulumi resources. Free online tool, no registration required."
 category: common
 keywords:

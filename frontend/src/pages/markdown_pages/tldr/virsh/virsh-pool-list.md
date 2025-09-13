@@ -1,8 +1,8 @@
 ---
 title: "Virsh Pool List - Manage Storage Pools | Free DevTools"
 name: virsh-pool-list
-path: /freedevtools/tldr/common/virsh-pool-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-list/"
+path: /freedevtools/tldr/virsh/virsh-pool-list
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-list/"
 description: "Manage virtual machine storage pools with Virsh Pool List. Quickly view, filter, and detail storage pool information on Linux. Free online tool, no registration required."
 category: common
 keywords:

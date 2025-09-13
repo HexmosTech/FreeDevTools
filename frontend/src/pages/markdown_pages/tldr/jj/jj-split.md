@@ -1,8 +1,8 @@
 ---
 title: "Split Revision - Edit History with jj-split | Free DevTools"
 name: jj-split
-path: /freedevtools/tldr/common/jj-split
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-split/"
+path: /freedevtools/tldr/jj/jj-split
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-split/"
 description: "Edit revision history with jj-split. Divide commits, isolate changes, and restructure your project effortlessly. Free online tool, no registration required."
 category: common
 keywords:

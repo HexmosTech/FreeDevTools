@@ -1,8 +1,8 @@
 ---
 title: "DVC Diff - Show DVC Changes | Free DevTools"
 name: dvc-diff
-path: /freedevtools/tldr/common/dvc-diff
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-diff/"
+path: /freedevtools/tldr/dvc/dvc-diff
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-diff/"
 description: "Show DVC changes with DVC Diff. Compare tracked files across commits, tags, and branches with this command line tool. Free online tool, no registration required."
 category: common
 keywords:

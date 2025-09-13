@@ -1,8 +1,8 @@
 ---
 title: "Git Revision Control - Display Metadata | Free DevTools"
 name: git-rev-parse
-path: /freedevtools/tldr/common/git-rev-parse
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-rev-parse/"
+path: /freedevtools/tldr/git/git-rev-parse
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-rev-parse/"
 description: "Control Git revisions instantly with Git Rev-Parse. Display commit hashes, branch names, and repository paths. Free online tool, no registration required."
 category: common
 keywords:

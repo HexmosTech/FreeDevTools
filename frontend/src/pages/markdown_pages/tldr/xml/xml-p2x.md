@@ -1,8 +1,8 @@
 ---
 title: "XML Format - Convert XML to P2X Format | Free DevTools"
 name: xml-p2x
-path: /freedevtools/tldr/common/xml-p2x
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-p2x/"
+path: /freedevtools/tldr/xml/xml-p2x
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-p2x/"
 description: "Convert XML format to P2X format with XML-P2X. Transform and restructure XML documents easily using command line conversion. Free online tool, no registration required."
 category: common
 keywords:

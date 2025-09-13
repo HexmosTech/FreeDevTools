@@ -1,8 +1,8 @@
 ---
 title: "Launch Steam - Control Gaming Platform | Free DevTools"
 name: steam
-path: /freedevtools/tldr/common/steam
-canonical: "https://hexmos.com/freedevtools/tldr/common/steam/"
+path: /freedevtools/tldr/st/steam
+canonical: "https://hexmos.com/freedevtools/tldr/st/steam/"
 description: "Launch Steam and manage your games with Steam Command Line. Control application debugging, login credentials, and start in Big Picture Mode. Free online tool, no registration required."
 category: common
 keywords:

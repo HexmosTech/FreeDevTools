@@ -1,8 +1,8 @@
 ---
 title: "Hg Clone - Create Repository Copies | Free DevTools"
 name: hg-clone
-path: /freedevtools/tldr/common/hg-clone
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-clone/"
+path: /freedevtools/tldr/hg/hg-clone
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-clone/"
 description: "Create repository copies with Hg Clone. Quickly clone Mercurial repositories locally or from remote sources. Free online tool, no registration required."
 category: common
 keywords:

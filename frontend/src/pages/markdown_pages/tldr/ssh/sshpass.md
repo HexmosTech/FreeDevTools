@@ -1,8 +1,8 @@
 ---
 title: "SSH Password Provider - Automate SSH Logins | Free DevTools"
 name: sshpass
-path: /freedevtools/tldr/common/sshpass
-canonical: "https://hexmos.com/freedevtools/tldr/common/sshpass/"
+path: /freedevtools/tldr/ssh/sshpass
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshpass/"
 description: "Automate SSH logins with SSH Password Provider. Securely provide passwords and connect to remote servers from the command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Starship Init - Shell Integration | Free DevTools"
 name: starship-init
-path: /freedevtools/tldr/common/starship-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/starship-init/"
+path: /freedevtools/tldr/st/starship-init
+canonical: "https://hexmos.com/freedevtools/tldr/st/starship-init/"
 description: "Generate shell integration code with Starship Init. Customize your terminal prompt and enhance your command-line experience. Free online tool, no registration required."
 category: common
 keywords:

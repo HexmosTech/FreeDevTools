@@ -1,8 +1,8 @@
 ---
 title: "PlatformIO Test - Run Project Tests | Free DevTools"
 name: pio-test
-path: "/freedevtools/tldr/common/pio-test"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-test/"
+path: "/freedevtools/tldr/pio/pio-test"
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-test/"
 description: "Run PlatformIO tests easily with PlatformIO Test command. Automate testing, debug firmware, and manage environments efficiently. Free online tool, no registration required."
 category: common
 keywords:

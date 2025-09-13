@@ -1,8 +1,8 @@
 ---
 title: "Secure AWS Credentials - Manage with aws-vault | Free DevTools"
 name: aws-vault
-path: /freedevtools/tldr/common/aws-vault
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-vault/"
+path: /freedevtools/tldr/aws/aws-vault
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-vault/"
 description: "Secure AWS credentials management with aws-vault. Store, access, and rotate AWS keys securely in development environments. Free online tool, no registration required."
 category: common
 keywords:

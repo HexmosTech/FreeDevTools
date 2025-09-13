@@ -1,8 +1,8 @@
 ---
 title: "Customize VM Images - virt-sysprep | Free DevTools"
 name: virt-sysprep
-path: /freedevtools/tldr/common/virt-sysprep
-canonical: "https://hexmos.com/freedevtools/tldr/common/virt-sysprep/"
+path: /freedevtools/tldr/virt/virt-sysprep
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-sysprep/"
 description: "Customize VM images with virt-sysprep. Easily reset virtual machines, unconfigure systems, and apply changes. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Docker Network - Create & Manage Networks | Free DevTools"
 name: docker-network
-path: "/freedevtools/tldr/common/docker-network"
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-network/"
+path: "/freedevtools/tldr/docker/docker-network"
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-network/"
 description: "Create Docker networks easily with Docker Network tool. Manage, inspect, connect, and disconnect containers. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Checkout Index - Restore Git Files | Free DevTools"
 name: git-checkout-index
-path: /freedevtools/tldr/common/git-checkout-index
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-checkout-index/"
+path: /freedevtools/tldr/git/git-checkout-index
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-checkout-index/"
 description: "Restore files with Git Checkout Index, recover deleted or modified files from the Git index effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Compare Git Ranges - Diff Commit Ranges | Free DevTools"
 name: git-range-diff
-path: /freedevtools/tldr/common/git-range-diff
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-range-diff/"
+path: /freedevtools/tldr/git/git-range-diff
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-range-diff/"
 description: "Compare Git ranges with git-range-diff. Visualize differences between commit ranges and identify changesets easily. Free online tool, no registration required."
 category: common
 keywords:

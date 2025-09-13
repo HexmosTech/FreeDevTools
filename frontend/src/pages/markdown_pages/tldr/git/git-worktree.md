@@ -1,8 +1,8 @@
 ---
 title: "Create Git Worktrees - Manage Branches | Free DevTools"
 name: git-worktree
-path: /freedevtools/tldr/common/git-worktree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-worktree/"
+path: /freedevtools/tldr/git/git-worktree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-worktree/"
 description: "Create Git worktrees to manage multiple branches simultaneously. Easily switch between different versions without committing. Free online tool, no registration required."
 category: common
 keywords:

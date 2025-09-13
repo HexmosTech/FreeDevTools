@@ -1,8 +1,8 @@
 ---
 title: "Git List Tree - List Tree Contents | Free DevTools"
 name: git-ls-tree
-path: /freedevtools/tldr/common/git-ls-tree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-ls-tree/"
+path: /freedevtools/tldr/git/git-ls-tree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-tree/"
 description: "List tree contents with Git ls-tree. Inspect file structures and commit history using Git commands. Free online tool, no registration required."
 category: common
 keywords:

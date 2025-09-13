@@ -1,8 +1,8 @@
 ---
 title: "uv - Publish Python Packages | Free DevTools"
 name: uv-publish
-path: /freedevtools/tldr/common/uv-publish
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-publish/"
+path: /freedevtools/tldr/uv/uv-publish
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-publish/"
 description: "Publish Python packages easily with uv. Distribute your Python projects to PyPI or other package indexes. Free online tool, no registration required."
 category: common
 keywords:

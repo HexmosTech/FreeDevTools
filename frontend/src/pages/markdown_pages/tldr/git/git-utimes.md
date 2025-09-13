@@ -1,8 +1,8 @@
 ---
 title: "Control Git Timestamps - Change File Dates | Free DevTools"
 name: git-utimes
-path: /freedevtools/tldr/common/git-utimes
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-utimes/"
+path: /freedevtools/tldr/git/git-utimes
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-utimes/"
 description: "Control file timestamps with git-utimes. Synchronize file modification times to commit dates, preserving local changes. Free online tool, no registration required."
 category: common
 keywords:

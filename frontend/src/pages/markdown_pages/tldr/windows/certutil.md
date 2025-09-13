@@ -1,8 +1,8 @@
 ---
 title: "CertUtil - Manage Certificate Information | Free DevTools"
 name: certutil
-path: "/freedevtools/tldr/widows/certutil"
-canonical: "https://hexmos.com/freedevtools/tldr/widows/certutil/"
+path: "/freedevtools/tldr/windows/certutil"
+canonical: "https://hexmos.com/freedevtools/tldr/windows/certutil/"
 description: "Manage certificate information with CertUtil. Encode, decode, and hash files for secure data handling using this command-line tool. Free online tool, no registration required."
 category: windows
 keywords:

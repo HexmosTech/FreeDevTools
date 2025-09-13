@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Backup - Manage Package Backups | Free DevTools"
 name: tlmgr-backup
-path: "/freedevtools/tldr/common/tlmgr-backup"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-backup/"
+path: "/freedevtools/tldr/tlmgr/tlmgr-backup"
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-backup/"
 description: "Manage TeX Live package backups with tlmgr backup. Create, clean, and restore packages. Free online tool, no registration required."
 category: common
 keywords:

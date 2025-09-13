@@ -1,8 +1,8 @@
 ---
 title: "Create TeX Live Database - tlmgr recreate-tlpdb | Free DevTools"
 name: tlmgr-recreate-tlpdb
-path: /freedevtools/tldr/common/tlmgr-recreate-tlpdb
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-recreate-tlpdb/"
+path: /freedevtools/tldr/tlmgr/tlmgr-recreate-tlpdb
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-recreate-tlpdb/"
 description: "Create TeX Live package database with tlmgr recreate-tlpdb. Rebuild your TeX distribution's package database efficiently and resolve package issues. Free online tool, no registration required."
 category: common
 keywords:

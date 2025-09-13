@@ -1,8 +1,8 @@
 ---
 title: "Unpublish NPM Package - Remove Packages from NPM Registry | Free DevTools"
 name: npm-unpublish
-path: /freedevtools/tldr/common/npm-unpublish
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-unpublish/"
+path: /freedevtools/tldr/npm/npm-unpublish
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-unpublish/"
 description: "Remove NPM packages easily with NPM Unpublish. Delete specific versions or entire packages from the NPM registry. Free online tool, no registration required."
 category: common
 keywords:

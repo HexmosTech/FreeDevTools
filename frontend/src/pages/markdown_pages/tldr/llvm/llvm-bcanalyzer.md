@@ -1,8 +1,8 @@
 ---
 title: "Bitcode Analyzer - Analyze LLVM .bc Files | Free DevTools"
 name: llvm-bcanalyzer
-path: /freedevtools/tldr/common/llvm-bcanalyzer
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-bcanalyzer/"
+path: /freedevtools/tldr/llvm/llvm-bcanalyzer
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-bcanalyzer/"
 description: "Analyze bitcode files with LLVM-bcanalyzer. Inspect LLVM bitcode for errors and optimize compilation. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to PCLXL - Generate Printer Streams | Free DevTools"
 name: pnmtopclxl
-path: /freedevtools/tldr/common/pnmtopclxl
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtopclxl/"
+path: /freedevtools/tldr/pnm/pnmtopclxl
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopclxl/"
 description: "Convert PNM files to PCLXL printer streams with pnmtopclxl. Create print-ready documents and specify resolution easily. Free online tool, no registration required."
 category: common
 keywords:

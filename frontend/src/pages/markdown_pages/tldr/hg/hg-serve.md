@@ -1,8 +1,8 @@
 ---
 title: "Start Mercurial Server - Browse Repositories | Free DevTools"
 name: hg-serve
-path: /freedevtools/tldr/common/hg-serve
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-serve/"
+path: /freedevtools/tldr/hg/hg-serve
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-serve/"
 description: "Start Mercurial server to browse repositories with hg-serve. Access and manage your Mercurial repositories easily. Free online tool, no registration required."
 category: common
 keywords:

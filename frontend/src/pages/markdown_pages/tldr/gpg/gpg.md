@@ -1,8 +1,8 @@
 ---
 title: "GPG - Create Encryption Keys and Sign Files | Free DevTools"
 name: gpg
-path: /freedevtools/tldr/common/gpg
-canonical: "https://hexmos.com/freedevtools/tldr/common/gpg/"
+path: /freedevtools/tldr/gpg/gpg
+canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg/"
 description: "Create GPG encryption keys with GPG. Secure your communications and sign documents using this powerful command-line tool. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Manager - Control TeX Configuration | Free DevTools"
 name: tlmgr-conf
-path: /freedevtools/tldr/common/tlmgr-conf
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-conf/"
+path: /freedevtools/tldr/tlmgr/tlmgr-conf
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-conf/"
 description: "Control TeX Live configuration with TeX Live Manager (tlmgr). Customize texmf trees, updmap settings, and manage shell escapes effortlessly. Free online tool, no registration required."
 category: common
 keywords:

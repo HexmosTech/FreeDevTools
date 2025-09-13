@@ -1,8 +1,8 @@
 ---
 title: "Generate EF Core Migrations - dotnet-ef | Free DevTools"
 name: dotnet-ef
-path: /freedevtools/tldr/common/dotnet-ef
-canonical: "https://hexmos.com/freedevtools/tldr/common/dotnet-ef/"
+path: /freedevtools/tldr/dotnet/dotnet-ef
+canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-ef/"
 description: "Generate Entity Framework Core migrations with dotnet-ef. Scaffold database contexts and update databases using the command-line interface. Free online tool, no registration required."
 category: common
 keywords:

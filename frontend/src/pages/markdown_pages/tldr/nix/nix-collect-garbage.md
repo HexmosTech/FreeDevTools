@@ -1,8 +1,8 @@
 ---
 title: "Delete Nix Garbage - Reclaim Disk Space | Free DevTools"
 name: nix-collect-garbage
-path: /freedevtools/tldr/common/nix-collect-garbage
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-collect-garbage/"
+path: /freedevtools/tldr/nix/nix-collect-garbage
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-collect-garbage/"
 description: "Delete Nix garbage and reclaim valuable disk space using nix-collect-garbage command. Remove unused store paths and manage Nix generations efficiently. Free online tool, no registration required."
 category: common
 keywords:

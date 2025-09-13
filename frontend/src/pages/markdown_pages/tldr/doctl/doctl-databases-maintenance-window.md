@@ -1,8 +1,8 @@
 ---
 title: "Manage Database Maintenance Windows with doctl | Free DevTools"
 name: doctl-databases-maintenance-window
-path: /freedevtools/tldr/common/doctl-databases-maintenance-window
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-maintenance-window/"
+path: /freedevtools/tldr/doctl/doctl-databases-maintenance-window
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-maintenance-window/"
 description: "Manage database maintenance windows with doctl. Schedule updates, retrieve schedules and ensure optimal database performance. Free online tool, no registration required."
 category: common
 keywords:

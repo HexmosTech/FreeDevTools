@@ -1,8 +1,8 @@
 ---
 title: "Git Flow - Manage Git Repositories | Free DevTools"
 name: git-flow
-path: /freedevtools/tldr/common/git-flow
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-flow/"
+path: /freedevtools/tldr/git/git-flow
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-flow/"
 description: "Manage Git repositories with Git Flow extensions for simplified branching and releases. Automate complex Git workflows efficiently. Free online tool, no registration required."
 category: common
 keywords:

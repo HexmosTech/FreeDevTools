@@ -1,8 +1,8 @@
 ---
 title: "Create Virtual Environments - Control Python Environments | Free DevTools"
 name: virtualenvwrapper
-path: /freedevtools/tldr/common/virtualenvwrapper
-canonical: "https://hexmos.com/freedevtools/tldr/common/virtualenvwrapper/"
+path: /freedevtools/tldr/virt/virtualenvwrapper
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virtualenvwrapper/"
 description: "Create Python virtual environments with Virtualenvwrapper. Manage multiple Python versions and dependencies. Free online tool, no registration required."
 category: common
 keywords:

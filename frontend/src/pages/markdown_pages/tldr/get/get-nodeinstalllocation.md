@@ -1,8 +1,8 @@
 ---
 title: "Get Node Install Location - Determine Path | Free DevTools"
 name: get-nodeinstalllocation
-path: /freedevtools/tldr/common/get-nodeinstalllocation
-canonical: "https://hexmos.com/freedevtools/tldr/common/get-nodeinstalllocation/"
+path: /freedevtools/tldr/get/get-nodeinstalllocation
+canonical: "https://hexmos.com/freedevtools/tldr/get/get-nodeinstalllocation/"
 description: "Get Node install location with Get-NodeInstallLocation. Determine the current Node.js installation path for ps-nvm. Free online tool, no registration required."
 category: common
 keywords:

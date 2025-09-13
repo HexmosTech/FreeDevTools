@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Org - Manage Cloud Organization Settings | Free DevTools"
 name: pulumi-org
-path: /freedevtools/tldr/common/pulumi-org
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-org/"
+path: /freedevtools/tldr/pulumi/pulumi-org
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-org/"
 description: "Manage cloud organization configurations with Pulumi Org. Set default organizations and search resources using AI powered queries. Free online tool, no registration required."
 category: common
 keywords:

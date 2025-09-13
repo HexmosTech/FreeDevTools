@@ -1,8 +1,8 @@
 ---
 title: "KubeTail - Tail Kubernetes Logs | Free DevTools"
 name: kubetail
-path: /freedevtools/tldr/common/kubetail
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubetail/"
+path: /freedevtools/tldr/kube/kubetail
+canonical: "https://hexmos.com/freedevtools/tldr/kube/kubetail/"
 description: "Tail Kubernetes pod logs with KubeTail. Monitor multiple containers simultaneously and troubleshoot issues quickly. Free online tool, no registration required."
 category: common
 keywords:

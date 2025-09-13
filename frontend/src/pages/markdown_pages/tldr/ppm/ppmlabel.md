@@ -1,8 +1,8 @@
 ---
 title: "PPM Label - Add Text to PPM Images | Free DevTools"
 name: ppmlabel
-path: /freedevtools/tldr/common/ppmlabel
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmlabel/"
+path: /freedevtools/tldr/ppm/ppmlabel
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmlabel/"
 description: "Add text to PPM images with PPM Label. Customize text position, color, angle, and size. Free online tool, no registration required."
 category: common
 keywords:

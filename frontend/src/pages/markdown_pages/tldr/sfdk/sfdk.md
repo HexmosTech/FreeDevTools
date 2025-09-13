@@ -1,8 +1,8 @@
 ---
 title: "Sailfish SDK - Control Sailfish OS Apps | Free DevTools"
 name: sfdk
-path: /freedevtools/tldr/common/sfdk
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk/"
+path: /freedevtools/tldr/sfdk/sfdk
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk/"
 description: "Control Sailfish OS applications with Sailfish SDK command-line tool. Manage development, testing, and building on Sailfish. Free online tool, no registration required."
 category: common
 keywords:

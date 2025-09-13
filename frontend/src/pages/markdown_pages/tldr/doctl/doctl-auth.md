@@ -1,8 +1,8 @@
 ---
 title: "Doctl Auth - Control API Tokens with DigitalOcean | Free DevTools"
 name: doctl-auth
-path: /freedevtools/tldr/common/doctl-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-auth/"
+path: /freedevtools/tldr/doctl/doctl-auth
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-auth/"
 description: "Control API tokens easily with Doctl Auth. Manage DigitalOcean authentication contexts securely and efficiently using command line. Free online tool, no registration required."
 category: common
 keywords:

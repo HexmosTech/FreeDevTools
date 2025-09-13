@@ -1,8 +1,8 @@
 ---
 title: "Generate Elasticsearch Certificates - Secure Data | Free DevTools"
 name: elasticsearch-certutil
-path: /freedevtools/tldr/common/elasticsearch-certutil
-canonical: "https://hexmos.com/freedevtools/tldr/common/elasticsearch-certutil/"
+path: /freedevtools/tldr/elasticsearch/elasticsearch-certutil
+canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-certutil/"
 description: "Generate SSL certificates with Elasticsearch-certutil for securing data transmissions. Create CAs, CSRs, and keystores for enhanced security. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "APIM Manager - Manage Azure APIs | Free DevTools"
 name: az-apim
-path: /freedevtools/tldr/common/az-apim
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-apim/"
+path: /freedevtools/tldr/az/az-apim
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-apim/"
 description: "Manage Azure APIs with APIM Manager. Create, update, and delete API Management service instances using the command line. Free online tool, no registration required."
 category: common
 keywords:

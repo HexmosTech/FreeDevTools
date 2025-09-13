@@ -1,8 +1,8 @@
 ---
 title: "Azure Feedback - Send CLI Feedback | Free DevTools"
 name: az-feedback
-path: /freedevtools/tldr/common/az-feedback
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-feedback/"
+path: /freedevtools/tldr/az/az-feedback
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-feedback/"
 description: "Send Azure CLI feedback instantly. Submit bug reports, feature requests, and general comments to the Azure CLI team. Free online tool, no registration required."
 category: common
 keywords:

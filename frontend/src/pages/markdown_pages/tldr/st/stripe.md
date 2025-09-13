@@ -1,8 +1,8 @@
 ---
 title: "Stripe CLI - Manage Stripe Accounts | Free DevTools"
 name: stripe
-path: /freedevtools/tldr/common/stripe
-canonical: "https://hexmos.com/freedevtools/tldr/common/stripe/"
+path: /freedevtools/tldr/st/stripe
+canonical: "https://hexmos.com/freedevtools/tldr/st/stripe/"
 description: "Manage Stripe accounts with Stripe CLI. Interact with Stripe API, listen for events, and trigger test webhooks. Free online tool, no registration required."
 category: common
 keywords:

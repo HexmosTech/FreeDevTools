@@ -1,8 +1,8 @@
 ---
 title: "Manage GitLab Issues - View & Create Issues | Free DevTools"
 name: glab-issue
-path: /freedevtools/tldr/common/glab-issue
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-issue/"
+path: /freedevtools/tldr/glab/glab-issue
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-issue/"
 description: "Manage GitLab issues effectively with Glab Issue manager. Create, view, and list issues seamlessly using command line. Free online tool, no registration required."
 category: common
 keywords:

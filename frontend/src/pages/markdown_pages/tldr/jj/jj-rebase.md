@@ -1,8 +1,8 @@
 ---
 title: "JJ Rebase - Move Revisions Effortlessly | Free DevTools"
 name: jj-rebase
-path: /freedevtools/tldr/common/jj-rebase
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-rebase/"
+path: /freedevtools/tldr/jj/jj-rebase
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-rebase/"
 description: "Rebase revisions with JJ effortlessly. Shift commits, branches, and history in your projects using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

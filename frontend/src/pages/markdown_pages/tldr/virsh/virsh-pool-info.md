@@ -1,8 +1,8 @@
 ---
 title: "Virsh Pool Info - List VM Storage | Free DevTools"
 name: virsh-pool-info
-path: /freedevtools/tldr/common/virsh-pool-info
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-info/"
+path: /freedevtools/tldr/virsh/virsh-pool-info
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-info/"
 description: "List virtual machine storage pool info with Virsh Pool Info. Manage your VMs, get storage details, and monitor resource utilization. Free online tool, no registration required."
 category: common
 keywords:

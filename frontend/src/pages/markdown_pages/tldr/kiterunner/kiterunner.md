@@ -1,8 +1,8 @@
 ---
 title: "Scan API Paths - kiterunner Tool | Free DevTools"
 name: kiterunner
-path: /freedevtools/tldr/common/kiterunner
-canonical: "https://hexmos.com/freedevtools/tldr/common/kiterunner/"
+path: /freedevtools/tldr/kiterunner/kiterunner
+canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner/"
 description: "Scan API paths with kiterunner, a powerful web scanner for API endpoint discovery. Use wordlists and kitebuilder schemas for comprehensive discovery. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Brew Update - Fetch Homebrew Formulae | Free DevTools"
 name: brew-update
-path: /freedevtools/tldr/common/brew-update
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-update/"
+path: /freedevtools/tldr/brew/brew-update
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-update/"
 description: "Fetch the newest Homebrew formulae with Brew Update. Update local package repositories from GitHub and perform necessary migrations. Free online tool, no registration required."
 category: common
 keywords:

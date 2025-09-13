@@ -1,8 +1,8 @@
 ---
 title: "Nix Develop - Generate Shell Environments | Free DevTools"
 name: nix-develop
-path: /freedevtools/tldr/common/nix-develop
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-develop/"
+path: /freedevtools/tldr/nix/nix-develop
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-develop/"
 description: "Generate development shell environments with Nix Develop. Quickly build and configure software using dependency isolation for reproducible builds. Free online tool, no registration required."
 category: common
 keywords:

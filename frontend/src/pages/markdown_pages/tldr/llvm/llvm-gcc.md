@@ -1,8 +1,8 @@
 ---
 title: "LLVM-GCC - Compile C/C++ Code | Free DevTools"
 name: llvm-gcc
-path: /freedevtools/tldr/common/llvm-gcc
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-gcc/"
+path: /freedevtools/tldr/llvm/llvm-gcc
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-gcc/"
 description: "Compile C/C++ code with LLVM-GCC compiler. Alias of clang with powerful optimization features. Get started with our free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate PNM Histogram - Visualize Image Data | Free DevTools"
 name: pnmhistmap
-path: /freedevtools/tldr/common/pnmhistmap
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmhistmap/"
+path: /freedevtools/tldr/pnm/pnmhistmap
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmhistmap/"
 description: "Generate PNM histogram data with pnmhistmap. Analyze image color distribution and intensity values. Free online tool, no registration required."
 category: common
 keywords:

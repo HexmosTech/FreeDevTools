@@ -1,8 +1,8 @@
 ---
 title: "Docker Images - Manage Docker Images | Free DevTools"
 name: docker-images
-path: /freedevtools/tldr/common/docker-images
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-images/"
+path: /freedevtools/tldr/docker/docker-images
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-images/"
 description: "Manage Docker images effortlessly with Docker Images. List, filter, and sort Docker images to optimize container resources. Free online tool, no registration required."
 category: common
 keywords:

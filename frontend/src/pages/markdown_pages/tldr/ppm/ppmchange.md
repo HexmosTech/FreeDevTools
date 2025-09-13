@@ -1,8 +1,8 @@
 ---
 title: "PPM Change - Modify PPM Image Colors | Free DevTools"
 name: ppmchange
-path: /freedevtools/tldr/common/ppmchange
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmchange/"
+path: /freedevtools/tldr/ppm/ppmchange
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmchange/"
 description: "Modify PPM image colors with PPM Change. Replace specific colors or the remainder of an image based on a percentage of similarity. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Pulumi Completion - Enhance CLI Experience | Free DevTools"
 name: pulumi-gen-completion
-path: /freedevtools/tldr/common/pulumi-gen-completion
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-gen-completion/"
+path: /freedevtools/tldr/pulumi/pulumi-gen-completion
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-gen-completion/"
 description: "Generate Pulumi completion scripts with Pulumi Gen Completion for enhanced CLI usage. Improve workflow efficiency and reduce errors. Free online tool, no registration required."
 category: common
 keywords:

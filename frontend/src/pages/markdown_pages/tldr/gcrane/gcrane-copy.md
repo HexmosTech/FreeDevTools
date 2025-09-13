@@ -1,8 +1,8 @@
 ---
 title: "Gcrane Copy - Copy Container Images Efficiently | Free DevTools"
 name: gcrane-copy
-path: /freedevtools/tldr/common/gcrane-copy
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcrane-copy/"
+path: /freedevtools/tldr/gcrane/gcrane-copy
+canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane-copy/"
 description: "Copy container images efficiently with Gcrane Copy. Transfer images between registries while preserving digests, streamlining deployments. Free online tool, no registration required."
 category: common
 keywords:

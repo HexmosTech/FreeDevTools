@@ -1,8 +1,8 @@
 ---
 title: "Deploy App - Manage Google App Engine with gcloud | Free DevTools"
 name: gcloud-app
-path: /freedevtools/tldr/common/gcloud-app
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-app/"
+path: /freedevtools/tldr/gcloud/gcloud-app
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-app/"
 description: "Deploy and manage apps with gcloud app. Easily deploy code, list versions, and browse your App Engine application. Free online tool, no registration required."
 category: common
 keywords:

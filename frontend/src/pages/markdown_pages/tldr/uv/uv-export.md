@@ -1,8 +1,8 @@
 ---
 title: "UV Export - Generate Lockfiles | Free DevTools"
 name: uv-export
-path: /freedevtools/tldr/common/uv-export
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-export/"
+path: /freedevtools/tldr/uv/uv-export
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-export/"
 description: "Generate project lockfiles with UV, converting dependencies to requirements.txt or pylock.toml. Exclude dev dependencies and manage groups. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to Term - Create ANSI Images | Free DevTools"
 name: ppmtoterm
-path: /freedevtools/tldr/common/ppmtoterm
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoterm/"
+path: /freedevtools/tldr/ppm/ppmtoterm
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoterm/"
 description: "Convert PPM images to ANSI art with ppmtoterm, creating terminal-based art. Transform pictures into ASCII format effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Init - Create New Git Repository | Free DevTools"
 name: git-init
-path: /freedevtools/tldr/common/git-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-init/"
+path: /freedevtools/tldr/git/git-init
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-init/"
 description: "Create a new Git repository with Git Init. Manage version control and track changes with this simple command. Free online tool, no registration required."
 category: common
 keywords:

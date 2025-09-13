@@ -1,8 +1,8 @@
 ---
 title: "Change Git Committer - Blame Someone Else | Free DevTools"
 name: git-blame-someone-else
-path: /freedevtools/tldr/common/git-blame-someone-else
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-blame-someone-else/"
+path: /freedevtools/tldr/git/git-blame-someone-else
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-blame-someone-else/"
 description: "Change Git committer details with Git Blame-Someone-Else. Modify author and committer information in your Git history. Free online tool, no registration required."
 category: common
 keywords:

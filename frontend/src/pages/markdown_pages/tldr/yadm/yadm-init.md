@@ -1,8 +1,8 @@
 ---
 title: "Create Dotfile Repository - Init Yadm for Config Management | Free DevTools"
 name: yadm-init
-path: /freedevtools/tldr/common/yadm-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-init/"
+path: /freedevtools/tldr/yadm/yadm-init
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-init/"
 description: "Create a new dotfile repository with Yadm for automated config management. Track and manage dotfiles across multiple systems. Free online tool, no registration required."
 category: common
 keywords:

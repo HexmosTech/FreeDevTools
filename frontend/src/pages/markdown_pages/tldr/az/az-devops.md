@@ -1,8 +1,8 @@
 ---
 title: "Manage Azure DevOps - Control Organizations | Free DevTools"
 name: az-devops
-path: /freedevtools/tldr/common/az-devops
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-devops/"
+path: /freedevtools/tldr/az/az-devops
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-devops/"
 description: "Manage Azure DevOps organizations easily with az devops. Configure projects, manage teams, and streamline your development workflow with Azure CLI. Free online tool, no registration required."
 category: common
 keywords:

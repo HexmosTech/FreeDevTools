@@ -1,8 +1,8 @@
 ---
 title: "LLVM-ar Archiver - Create Archive Libraries | Free DevTools"
 name: llvm-ar
-path: /freedevtools/tldr/common/llvm-ar
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-ar/"
+path: /freedevtools/tldr/llvm/llvm-ar
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-ar/"
 description: "Create archive libraries with LLVM-ar archiver.  Manage object code collections and build static libraries efficiently. Free online tool, no registration required."
 category: common
 keywords:

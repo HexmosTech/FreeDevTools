@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Policy - Manage Cloud Resource Policies | Free DevTools"
 name: pulumi-policy
-path: /freedevtools/tldr/common/pulumi-policy
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-policy/"
+path: /freedevtools/tldr/pulumi/pulumi-policy
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-policy/"
 description: "Manage Pulumi cloud resource policies effectively with Pulumi Policy. Validate configurations, publish policies, and enforce governance. Free online tool, no registration required."
 category: common
 keywords:

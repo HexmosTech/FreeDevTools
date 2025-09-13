@@ -1,8 +1,8 @@
 ---
 title: "Create Zapier Integration - Initialize with Zapier CLI | Free DevTools"
 name: zapier-init
-path: /freedevtools/tldr/common/zapier-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/zapier-init/"
+path: /freedevtools/tldr/zapier/zapier-init
+canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-init/"
 description: "Create a Zapier integration with Zapier init command. Quickly bootstrap new integrations using templates for authentication and data handling. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Manager - Control TeX Settings | Free DevTools"
 name: tlmgr-option
-path: /freedevtools/tldr/common/tlmgr-option
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-option/"
+path: /freedevtools/tldr/tlmgr/tlmgr-option
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-option/"
 description: "Control TeX Live settings easily with TeX Live Manager. Configure repositories, update packages, and manage installations through the command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Rust Documentation - Generate Offline Docs | Free DevTools"
 name: rustup-doc
-path: /freedevtools/tldr/common/rustup-doc
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-doc/"
+path: /freedevtools/tldr/rustup/rustup-doc
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-doc/"
 description: "Generate offline Rust documentation with Rustup Doc. Quickly access Rust's standard library, books, and references. Free online tool, no registration required."
 category: common
 keywords:

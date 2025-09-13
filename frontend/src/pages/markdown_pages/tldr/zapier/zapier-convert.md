@@ -1,8 +1,8 @@
 ---
 title: "Zapier Convert - Generate CLI Integration | Free DevTools"
 name: zapier-convert
-path: /freedevtools/tldr/common/zapier-convert
-canonical: "https://hexmos.com/freedevtools/tldr/common/zapier-convert/"
+path: /freedevtools/tldr/zapier/zapier-convert
+canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-convert/"
 description: "Convert Visual Builder integrations to CLI with Zapier Convert. Simplify integration development and debugging with a streamlined command-line tool. Free online tool, no registration required."
 category: common
 keywords:

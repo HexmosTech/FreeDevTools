@@ -1,8 +1,8 @@
 ---
 title: "Control VirtualBox - Control VM State | Free DevTools"
 name: vboxmanage-controlvm
-path: /freedevtools/tldr/common/vboxmanage-controlvm
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-controlvm/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-controlvm
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/"
 description: "Control VirtualBox virtual machine state with VBoxManage controlvm. Manage power, pausing, resuming and save current VM state. Free online tool, no registration required."
 category: common
 keywords:

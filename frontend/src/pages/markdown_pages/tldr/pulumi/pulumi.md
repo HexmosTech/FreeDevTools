@@ -1,8 +1,8 @@
 ---
 title: "Create Infrastructure - Pulumi Cloud Deployment | Free DevTools"
 name: pulumi
-path: /freedevtools/tldr/common/pulumi
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi/"
+path: /freedevtools/tldr/pulumi/pulumi
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi/"
 description: "Create infrastructure with Pulumi, define cloud resources using code. Provision, deploy, and manage infrastructure on any cloud platform. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "NPM Login - Manage User Accounts | Free DevTools"
 name: npm-login
-path: /freedevtools/tldr/common/npm-login
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-login/"
+path: /freedevtools/tldr/npm/npm-login
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-login/"
 description: "Manage NPM user accounts with NPM Login. Authenticate to registries and securely store credentials. Free online tool, no registration required."
 category: common
 keywords:

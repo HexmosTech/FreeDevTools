@@ -1,8 +1,8 @@
 ---
 title: "Control Linode NodeBalancers - Manage Load Balancers | Free DevTools"
 name: linode-cli-nodebalancers
-path: /freedevtools/tldr/common/linode-cli-nodebalancers
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-nodebalancers/"
+path: /freedevtools/tldr/linode/linode-cli-nodebalancers
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-nodebalancers/"
 description: "Control Linode NodeBalancers with linode-cli. Manage load balancing configurations, update instances, and ensure high availability. Free online tool, no registration required."
 category: common
 keywords:

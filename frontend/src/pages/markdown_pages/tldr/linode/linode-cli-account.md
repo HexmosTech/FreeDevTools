@@ -1,8 +1,8 @@
 ---
 title: "Linode Account - Manage Linode Accounts | Free DevTools"
 name: linode-cli-account
-path: /freedevtools/tldr/common/linode-cli-account
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-account/"
+path: /freedevtools/tldr/linode/linode-cli-account
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-account/"
 description: "Manage Linode accounts with Linode CLI Account tool. Control account settings, make payments, and monitor notifications. Free online tool, no registration required."
 category: common
 keywords:

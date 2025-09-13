@@ -1,8 +1,8 @@
 ---
 title: "Remove Cargo Dependencies - Manage Rust Crates | Free DevTools"
 name: cargo-remove
-path: /freedevtools/tldr/common/cargo-remove
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-remove/"
+path: /freedevtools/tldr/cargo/cargo-remove
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-remove/"
 description: "Remove Cargo dependencies effortlessly with Cargo Remove. Clean up your Rust projects by removing unused crates and manage your Cargo.toml. Free online tool, no registration required."
 category: common
 keywords:

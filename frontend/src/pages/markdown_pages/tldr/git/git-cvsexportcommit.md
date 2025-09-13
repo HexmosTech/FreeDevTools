@@ -1,8 +1,8 @@
 ---
 title: "Generate Git CVS Export - Commit to CVS | Free DevTools"
 name: git-cvsexportcommit
-path: /freedevtools/tldr/common/git-cvsexportcommit
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-cvsexportcommit/"
+path: /freedevtools/tldr/git/git-cvsexportcommit
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-cvsexportcommit/"
 description: "Generate Git CVS export with git-cvsexportcommit. Integrate Git commits into CVS repositories seamlessly using command line. Free online tool, no registration required."
 category: common
 keywords:

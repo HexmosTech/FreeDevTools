@@ -1,8 +1,8 @@
 ---
 title: "Control Directory Stack - popd Command | Free DevTools"
 name: popd
-path: /freedevtools/tldr/widows/popd
-canonical: "https://hexmos.com/freedevtools/tldr/widows/popd/"
+path: /freedevtools/tldr/windows/popd
+canonical: "https://hexmos.com/freedevtools/tldr/windows/popd/"
 description: "Control your directory stack with the popd command. Easily navigate file systems and manage directory history. Free online tool, no registration required."
 category: windows
 keywords:

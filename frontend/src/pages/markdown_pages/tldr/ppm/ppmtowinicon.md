@@ -1,8 +1,8 @@
 ---
 title: "PPM to Winicon - Format Image Files | Free DevTools"
 name: ppmtowinicon
-path: /freedevtools/tldr/common/ppmtowinicon
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtowinicon/"
+path: /freedevtools/tldr/ppm/ppmtowinicon
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtowinicon/"
 description: "Format PPM image files to Windows icon format with ppmtowinicon. Convert images for Windows applications. Free online tool, no registration required."
 category: common
 keywords:

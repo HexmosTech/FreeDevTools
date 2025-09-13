@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to SPU - Create Atari Images | Free DevTools"
 name: ppmtospu
-path: /freedevtools/tldr/common/ppmtospu
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtospu/"
+path: /freedevtools/tldr/ppm/ppmtospu
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtospu/"
 description: "Convert PPM to SPU instantly with ppmtospu. Create Atari Spectrum 512 images from PPM files using command-line. Free online tool, no registration required."
 category: common
 keywords:

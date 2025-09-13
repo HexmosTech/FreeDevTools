@@ -1,8 +1,8 @@
 ---
 title: "React Native - Create Native Apps with React | Free DevTools"
 name: react-native
-path: /freedevtools/tldr/common/react-native
-canonical: "https://hexmos.com/freedevtools/tldr/common/react-native/"
+path: /freedevtools/tldr/react/react-native
+canonical: "https://hexmos.com/freedevtools/tldr/react/react-native/"
 description: "Create native apps instantly with React Native. Build cross-platform mobile applications for iOS and Android using a single JavaScript codebase. Free online tool, no registration required."
 category: common
 keywords:

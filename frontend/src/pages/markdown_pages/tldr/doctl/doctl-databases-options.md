@@ -1,8 +1,8 @@
 ---
 title: "Doctl Databases Options - Manage DigitalOcean Databases | Free DevTools"
 name: doctl-databases-options
-path: /freedevtools/tldr/common/doctl-databases-options
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-options/"
+path: /freedevtools/tldr/doctl/doctl-databases-options
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-options/"
 description: "Manage DigitalOcean databases options with doctl. Explore database engines, regions, slugs, and versions effortlessly. Free online tool, no registration required."
 category: common
 keywords:

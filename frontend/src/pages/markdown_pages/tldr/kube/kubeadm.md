@@ -1,8 +1,8 @@
 ---
 title: "Kubeadm - Manage Kubernetes Clusters | Free DevTools"
 name: kubeadm
-path: /freedevtools/tldr/common/kubeadm
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubeadm/"
+path: /freedevtools/tldr/kube/kubeadm
+canonical: "https://hexmos.com/freedevtools/tldr/kube/kubeadm/"
 description: "Manage Kubernetes clusters easily with Kubeadm. Streamline cluster creation, upgrading, and configuration management with this essential command-line tool. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage AWS Secrets - Secrets Manager | Free DevTools"
 name: aws-secretsmanager
-path: /freedevtools/tldr/common/aws-secretsmanager
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-secretsmanager/"
+path: /freedevtools/tldr/aws/aws-secretsmanager
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-secretsmanager/"
 description: "Manage your AWS secrets securely with AWS Secrets Manager. Store, retrieve, and rotate secrets efficiently. Free online tool, no registration required."
 category: common
 keywords:

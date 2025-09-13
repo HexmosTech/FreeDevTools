@@ -1,8 +1,8 @@
 ---
 title: "Create Sparse Images - virt-sparsify | Free DevTools"
 name: virt-sparsify
-path: /freedevtools/tldr/common/virt-sparsify
-canonical: "https://hexmos.com/freedevtools/tldr/common/virt-sparsify/"
+path: /freedevtools/tldr/virt/virt-sparsify
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-sparsify/"
 description: "Create sparse virtual machine images with virt-sparsify. Recover disk space and optimize image size. Free online tool, no registration required."
 category: common
 keywords:

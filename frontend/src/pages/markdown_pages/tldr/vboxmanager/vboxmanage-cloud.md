@@ -1,8 +1,8 @@
 ---
 title: "Cloud Instance Control - Manage VirtualBox Cloud Instances | Free DevTools"
 name: vboxmanage-cloud
-path: /freedevtools/tldr/common/vboxmanage-cloud
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-cloud/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-cloud
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-cloud/"
 description: "Control VirtualBox Cloud instances with VBoxManage Cloud. Manage images, instances, and cloud resources easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Antialias PNM Image - Enhance PNM Graphics | Free DevTools"
 name: pnmalias
-path: /freedevtools/tldr/common/pnmalias
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmalias/"
+path: /freedevtools/tldr/pnm/pnmalias
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmalias/"
 description: "Antialias PNM images with pnmalias. Improve graphic quality by smoothing pixelated edges and specify foreground/background colors. Free online tool, no registration required."
 category: common
 keywords:

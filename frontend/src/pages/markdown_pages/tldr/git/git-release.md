@@ -1,8 +1,8 @@
 ---
 title: "Create Git Release - Tag Releases with Command Line | Free DevTools"
 name: git-release
-path: /freedevtools/tldr/common/git-release
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-release/"
+path: /freedevtools/tldr/git/git-release
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-release/"
 description: "Create Git releases effortlessly with git-release command. Tag your commits, manage release versions and push to remote repositories. Free online tool, no registration required."
 category: common
 keywords:

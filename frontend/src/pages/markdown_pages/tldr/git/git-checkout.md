@@ -1,8 +1,8 @@
 ---
 title: "Git Checkout - Switch Branches and Restore Files | Free DevTools"
 name: git-checkout
-path: /freedevtools/tldr/common/git-checkout
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-checkout/"
+path: /freedevtools/tldr/git/git-checkout
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-checkout/"
 description: "Switch Git branches effortlessly with Git Checkout. Restore files, create new branches, and discard unstaged changes with ease. Free online tool, no registration required."
 category: common
 keywords:

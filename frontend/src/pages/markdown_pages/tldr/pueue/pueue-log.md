@@ -1,8 +1,8 @@
 ---
 title: "Pueue Log - Display Task Logs | Free DevTools"
 name: pueue-log
-path: /freedevtools/tldr/common/pueue-log
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-log/"
+path: /freedevtools/tldr/pueue/pueue-log
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-log/"
 description: "Display task logs easily with Pueue Log. Inspect command output and debug background processes with this handy command. Free online tool, no registration required."
 category: common
 keywords:

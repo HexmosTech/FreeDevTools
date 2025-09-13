@@ -1,8 +1,8 @@
 ---
 title: "UV Sync - Update Project Dependencies | Free DevTools"
 name: uv-sync
-path: /freedevtools/tldr/common/uv-sync
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-sync/"
+path: /freedevtools/tldr/uv/uv-sync
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-sync/"
 description: "Sync dependencies effortlessly with UV. Update your project environment to match the lockfile, resolving conflicts quickly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Reset - Undo Commits and Changes | Free DevTools"
 name: git-reset
-path: /freedevtools/tldr/common/git-reset
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-reset/"
+path: /freedevtools/tldr/git/git-reset
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-reset/"
 description: "Undo commits with Git Reset and unstage changes efficiently. Revert to previous states, keeping or discarding changes. Free online tool, no registration required."
 category: common
 keywords:

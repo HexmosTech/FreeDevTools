@@ -1,8 +1,8 @@
 ---
 title: "CodeCommit - Control Git Repositories | Free DevTools"
 name: aws-codecommit
-path: /freedevtools/tldr/common/aws-codecommit
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-codecommit/"
+path: /freedevtools/tldr/aws/aws-codecommit
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-codecommit/"
 description: "Control Git repositories with AWS CodeCommit. Manage your source code securely and collaborate effectively with a managed service. Free online tool, no registration required."
 category: common
 keywords:

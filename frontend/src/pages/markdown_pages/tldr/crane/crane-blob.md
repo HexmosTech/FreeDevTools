@@ -1,8 +1,8 @@
 ---
 title: "Crane Blob - Read Registry Blobs | Free DevTools"
 name: crane-blob
-path: /freedevtools/tldr/common/crane-blob
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-blob/"
+path: /freedevtools/tldr/crane/crane-blob
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-blob/"
 description: "Read container registry blobs with Crane Blob. Inspect layers, fetch content, and manage container images. Free online tool, no registration required."
 category: common
 keywords:

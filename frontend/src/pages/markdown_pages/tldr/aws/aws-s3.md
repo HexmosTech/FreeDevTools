@@ -1,8 +1,8 @@
 ---
 title: "AWS S3 Control - Manage Cloud Storage | Free DevTools"
 name: aws-s3
-path: /freedevtools/tldr/common/aws-s3
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3/"
+path: /freedevtools/tldr/aws/aws-s3
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3/"
 description: "Control AWS S3 cloud storage with this command line interface. Manage files, sync directories, and administer cloud resources effortlessly. Free online tool, no registration required."
 category: common
 keywords:

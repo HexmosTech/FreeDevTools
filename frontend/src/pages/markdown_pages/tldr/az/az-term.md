@@ -1,8 +1,8 @@
 ---
 title: "Azure Term - Manage Marketplace Agreements | Free DevTools"
 name: az-term
-path: /freedevtools/tldr/common/az-term
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-term/"
+path: /freedevtools/tldr/az/az-term
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-term/"
 description: "Manage Azure marketplace agreements efficiently with Azure Term. Accept terms, show product details, and automate deployments via the CLI. Free online tool, no registration required."
 category: common
 keywords:

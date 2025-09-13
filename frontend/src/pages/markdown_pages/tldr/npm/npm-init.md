@@ -1,8 +1,8 @@
 ---
 title: "Create npm Package - Initialize Projects | Free DevTools"
 name: npm-init
-path: /freedevtools/tldr/common/npm-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-init/"
+path: /freedevtools/tldr/npm/npm-init
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-init/"
 description: "Create npm packages instantly with npm init. Scaffold new Node.js projects and configure package.json with ease. Free online tool, no registration required."
 category: common
 keywords:

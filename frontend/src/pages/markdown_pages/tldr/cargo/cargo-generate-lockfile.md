@@ -1,8 +1,8 @@
 ---
 title: "Generate Cargo Lockfile - Package Dependency Management | Free DevTools"
 name: cargo-generate-lockfile
-path: /freedevtools/tldr/common/cargo-generate-lockfile
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-generate-lockfile/"
+path: /freedevtools/tldr/cargo/cargo-generate-lockfile
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-generate-lockfile/"
 description: "Generate Cargo.lock files with Cargo Generate Lockfile for managing Rust package dependencies efficiently. Ensure reproducible builds with this free online tool, no registration required."
 category: common
 keywords:

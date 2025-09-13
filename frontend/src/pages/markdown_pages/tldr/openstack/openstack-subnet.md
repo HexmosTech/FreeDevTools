@@ -1,8 +1,8 @@
 ---
 title: "OpenStack Subnet - Manage Network Subnets | Free DevTools"
 name: openstack-subnet
-path: /freedevtools/tldr/common/openstack-subnet
-canonical: "https://hexmos.com/freedevtools/tldr/common/openstack-subnet/"
+path: /freedevtools/tldr/openstack/openstack-subnet
+canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-subnet/"
 description: "Manage OpenStack network subnets with OpenStack Subnet command. Configure IP address blocks and network settings with ease. Free online tool, no registration required."
 category: common
 keywords:

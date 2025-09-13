@@ -1,8 +1,8 @@
 ---
 title: "XML Format Tool - Convert XML with XSLT | Free DevTools"
 name: xmlto
-path: /freedevtools/tldr/common/xmlto
-canonical: "https://hexmos.com/freedevtools/tldr/common/xmlto/"
+path: /freedevtools/tldr/xml/xmlto
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xmlto/"
 description: "Convert XML files with XSLT using xmlto. Apply stylesheets to XML documents for various output formats. Free online tool, no registration required."
 category: common
 keywords:

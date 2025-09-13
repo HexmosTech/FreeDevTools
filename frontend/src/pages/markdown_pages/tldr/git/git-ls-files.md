@@ -1,8 +1,8 @@
 ---
 title: "List Git Files - Control Index and Tree | Free DevTools"
 name: git-ls-files
-path: /freedevtools/tldr/common/git-ls-files
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-ls-files/"
+path: /freedevtools/tldr/git/git-ls-files
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-files/"
 description: "Control Git files in index and working tree with Git ls-files. Track file changes, view deleted files, and identify untracked files. Free online tool, no registration required."
 category: common
 keywords:

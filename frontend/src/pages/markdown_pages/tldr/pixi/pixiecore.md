@@ -1,8 +1,8 @@
 ---
 title: "Manage PXE Boot - Control Network Booting with Pixiecore | Free DevTools"
 name: pixiecore
-path: /freedevtools/tldr/common/pixiecore
-canonical: "https://hexmos.com/freedevtools/tldr/common/pixiecore/"
+path: /freedevtools/tldr/pixi/pixiecore
+canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixiecore/"
 description: "Manage PXE boot images with Pixiecore. Easily control network booting of machines using command line. Free online tool, no registration required."
 category: common
 keywords:

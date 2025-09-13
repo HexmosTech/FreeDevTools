@@ -1,8 +1,8 @@
 ---
 title: "Generate in-toto Link Metadata | Free DevTools"
 name: in-toto-run
-path: /freedevtools/tldr/common/in-toto-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/in-toto-run/"
+path: /freedevtools/tldr/in/in-toto-run
+canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-run/"
 description: "Generate in-toto link metadata with in-toto-run, securing your software supply chain. Digitally sign and verify steps, ensuring integrity. Free online tool, no registration required."
 category: common
 keywords:

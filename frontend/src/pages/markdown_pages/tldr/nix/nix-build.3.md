@@ -1,8 +1,8 @@
 ---
 title: "Nix Build - Generate Packages Effortlessly | Free DevTools"
 name: nix-build.3
-path: /freedevtools/tldr/common/nix-build.3
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-build.3/"
+path: /freedevtools/tldr/nix/nix-build.3
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-build.3/"
 description: "Generate packages easily with Nix Build, utilizing Nix expressions and flake support. Manage builds, print paths, and avoid symlinks. Free online tool, no registration required."
 category: common
 keywords:

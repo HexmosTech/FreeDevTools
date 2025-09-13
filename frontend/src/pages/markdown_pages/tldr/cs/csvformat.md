@@ -1,8 +1,8 @@
 ---
 title: "CSV Format - Convert CSV to Custom Format | Free DevTools"
 name: csvformat
-path: /freedevtools/tldr/common/csvformat
-canonical: "https://hexmos.com/freedevtools/tldr/common/csvformat/"
+path: /freedevtools/tldr/cs/csvformat
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csvformat/"
 description: "Format CSV data easily with CSVFormat. Convert delimiters and line endings to create custom CSV outputs. Free online tool, no registration required."
 category: common
 keywords:

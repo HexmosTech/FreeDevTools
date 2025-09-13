@@ -1,8 +1,8 @@
 ---
 title: "Hg Root - Display Repository Root Location | Free DevTools"
 name: hg-root
-path: /freedevtools/tldr/common/hg-root
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-root/"
+path: /freedevtools/tldr/hg/hg-root
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-root/"
 description: "Display Hg repository root locations with Hg Root command. Locate the root directory of your Mercurial repository easily. Free online tool, no registration required."
 category: common
 keywords:

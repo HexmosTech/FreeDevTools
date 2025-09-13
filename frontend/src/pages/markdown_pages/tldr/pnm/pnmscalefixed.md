@@ -1,8 +1,8 @@
 ---
 title: "Scale PNM Images - Resize Image with pnmscalefixed | Free DevTools"
 name: pnmscalefixed
-path: /freedevtools/tldr/common/pnmscalefixed
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmscalefixed/"
+path: /freedevtools/tldr/pnm/pnmscalefixed
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmscalefixed/"
 description: "Resize PNM images quickly with pnmscalefixed. Scale image dimensions and aspect ratio efficiently. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate PPM Relief - Image Relief Creation | Free DevTools"
 name: ppmrelief
-path: /freedevtools/tldr/common/ppmrelief
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmrelief/"
+path: /freedevtools/tldr/ppm/ppmrelief
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmrelief/"
 description: "Generate image relief with ppmrelief. Convert PPM images into visual reliefs. Free online tool, no registration required."
 category: common
 keywords:

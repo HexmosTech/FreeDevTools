@@ -1,8 +1,8 @@
 ---
 title: "pg_dump - Extract PostgreSQL Databases | Free DevTools"
 name: pg_dump
-path: /freedevtools/tldr/common/pg_dump
-canonical: "https://hexmos.com/freedevtools/tldr/common/pg_dump/"
+path: /freedevtools/tldr/postgres/pg_dump
+canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dump/"
 description: "Extract PostgreSQL databases with pg_dump. Backup, restore, and migrate your databases easily. Free online tool, no registration required."
 category: common
 keywords:

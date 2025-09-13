@@ -1,8 +1,8 @@
 ---
 title: "Rustup Show - Manage Rust Toolchains | Free DevTools"
 name: rustup-show
-path: /freedevtools/tldr/common/rustup-show
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-show/"
+path: /freedevtools/tldr/rustup/rustup-show
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-show/"
 description: "Manage Rust toolchains efficiently with Rustup Show. Check installed versions, target architectures and set active toolchains easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Open PHP Files - Edit Code with PHPStorm | Free DevTools"
 name: phpstorm
-path: /freedevtools/tldr/common/phpstorm
-canonical: "https://hexmos.com/freedevtools/tldr/common/phpstorm/"
+path: /freedevtools/tldr/php/phpstorm
+canonical: "https://hexmos.com/freedevtools/tldr/php/phpstorm/"
 description: "Edit PHP files efficiently with PHPStorm. Open files, view differences, and navigate to specific lines for debugging. Free online tool, no registration required."
 category: common
 keywords:

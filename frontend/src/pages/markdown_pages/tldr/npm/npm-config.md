@@ -1,8 +1,8 @@
 ---
 title: "NPM Config - Manage NPM Configuration | Free DevTools"
 name: npm-config
-path: /freedevtools/tldr/common/npm-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-config/"
+path: /freedevtools/tldr/npm/npm-config
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-config/"
 description: "Manage NPM configurations effectively with NPM Config. Control settings, retrieve values, and update configurations. Free online tool, no registration required."
 category: common
 keywords:

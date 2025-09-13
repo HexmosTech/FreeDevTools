@@ -1,8 +1,8 @@
 ---
 title: "AWS S3 Sync - Control S3 Data | Free DevTools"
 name: aws-s3-sync
-path: /freedevtools/tldr/common/aws-s3-sync
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3-sync/"
+path: /freedevtools/tldr/aws/aws-s3-sync
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-sync/"
 description: "Control S3 data with AWS S3 Sync. Recursively sync files, directories, and objects between local systems and S3 buckets. Free online tool, no registration required."
 category: common
 keywords:

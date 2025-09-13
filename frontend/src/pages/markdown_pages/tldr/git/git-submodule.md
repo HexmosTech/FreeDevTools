@@ -1,8 +1,8 @@
 ---
 title: "Manage Git Submodules - Update & Add Repos | Free DevTools"
 name: git-submodule
-path: /freedevtools/tldr/common/git-submodule
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-submodule/"
+path: /freedevtools/tldr/git/git-submodule
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-submodule/"
 description: "Manage Git submodules with Git Submodule. Add repositories, update submodules, and keep dependencies current. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Control Salt Minion - Invoke Salt Commands Locally | Free DevTools"
 name: salt-call
-path: /freedevtools/tldr/common/salt-call
-canonical: "https://hexmos.com/freedevtools/tldr/common/salt-call/"
+path: /freedevtools/tldr/salt/salt-call
+canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-call/"
 description: "Control Salt minions locally with salt-call. Execute highstate, manage grains, and debug with command-line options. Free online tool, no registration required."
 category: common
 keywords:

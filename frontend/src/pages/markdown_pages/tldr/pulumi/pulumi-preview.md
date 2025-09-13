@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Preview - Show Infrastructure Updates | Free DevTools"
 name: pulumi-preview
-path: /freedevtools/tldr/common/pulumi-preview
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-preview/"
+path: /freedevtools/tldr/pulumi/pulumi-preview
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-preview/"
 description: "Show infrastructure updates with Pulumi Preview. Inspect changes, identify potential issues, and ensure safe deployments. Free online tool, no registration required."
 category: common
 keywords:

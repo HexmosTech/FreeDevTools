@@ -1,8 +1,8 @@
 ---
 title: "Fetch JARs - Resolve Dependencies with cs-fetch | Free DevTools"
 name: cs-fetch
-path: /freedevtools/tldr/common/cs-fetch
-canonical: "https://hexmos.com/freedevtools/tldr/common/cs-fetch/"
+path: /freedevtools/tldr/cs/cs-fetch
+canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-fetch/"
 description: "Resolve dependencies with cs-fetch. Download JAR files, source code, and Javadoc effortlessly. Free online tool, no registration required."
 category: common
 keywords:

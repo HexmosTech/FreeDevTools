@@ -1,8 +1,8 @@
 ---
 title: "Git Credential Cache - Store Passwords Temporarily | Free DevTools"
 name: git-credential-cache
-path: /freedevtools/tldr/common/git-credential-cache
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-credential-cache/"
+path: /freedevtools/tldr/git/git-credential-cache
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-credential-cache/"
 description: "Store Git credentials securely with Git Credential Cache. Manage password storage duration and automate Git authentication. Free online tool, no registration required."
 category: common
 keywords:

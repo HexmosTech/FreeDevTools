@@ -1,8 +1,8 @@
 ---
 title: "AWS Cost Explorer - Manage AWS Costs | Free DevTools"
 name: aws-ce
-path: /freedevtools/tldr/common/aws-ce
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-ce/"
+path: /freedevtools/tldr/aws/aws-ce
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ce/"
 description: "Manage AWS costs effectively with AWS Cost Explorer. Analyze usage, forecast expenses and optimize spending using command line. Free online tool, no registration required."
 category: common
 keywords:

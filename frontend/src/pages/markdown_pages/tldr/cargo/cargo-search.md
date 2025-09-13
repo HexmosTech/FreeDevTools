@@ -1,8 +1,8 @@
 ---
 title: "Cargo Search - Find Rust Packages | Free DevTools"
 name: cargo-search
-path: /freedevtools/tldr/common/cargo-search
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-search/"
+path: /freedevtools/tldr/cargo/cargo-search
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-search/"
 description: "Find Rust packages easily with Cargo Search. Discover crates and their descriptions in TOML format for seamless Cargo.toml integration. Free online tool, no registration required."
 category: common
 keywords:

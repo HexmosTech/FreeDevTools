@@ -1,8 +1,8 @@
 ---
 title: "Go Clean - Remove Go Object Files | Free DevTools"
 name: go-clean
-path: /freedevtools/tldr/common/go-clean
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-clean/"
+path: /freedevtools/tldr/go/go-clean
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-clean/"
 description: "Clean Go object files and cached data with Go Clean. Streamline your Go development workflow and optimize build processes. Free online tool, no registration required."
 category: common
 keywords:

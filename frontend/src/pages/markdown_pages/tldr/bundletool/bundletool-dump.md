@@ -1,8 +1,8 @@
 ---
 title: "Bundletool Dump - Inspect Android App Bundles | Free DevTools"
 name: bundletool-dump
-path: /freedevtools/tldr/common/bundletool-dump
-canonical: "https://hexmos.com/freedevtools/tldr/common/bundletool-dump/"
+path: /freedevtools/tldr/bundletool/bundletool-dump
+canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool-dump/"
 description: "Inspect Android app bundles with Bundletool Dump. Analyze manifests, resources, and configurations within .aab files. Free online tool, no registration required."
 category: common
 keywords:

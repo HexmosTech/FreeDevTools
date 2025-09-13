@@ -1,8 +1,8 @@
 ---
 title: "List Container Tags - gcrane ls | Free DevTools"
 name: gcrane-ls
-path: /freedevtools/tldr/common/gcrane-ls
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcrane-ls/"
+path: /freedevtools/tldr/gcrane/gcrane-ls
+canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane-ls/"
 description: "List container registry tags with gcrane ls. Explore container images, filter repositories, and format output in JSON. Free online tool, no registration required."
 category: common
 keywords:

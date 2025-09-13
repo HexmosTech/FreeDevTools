@@ -1,8 +1,8 @@
 ---
 title: "Query CloudWatch Logs - Analyze AWS Logs with awslogs | Free DevTools"
 name: awslogs
-path: /freedevtools/tldr/common/awslogs
-canonical: "https://hexmos.com/freedevtools/tldr/common/awslogs/"
+path: /freedevtools/tldr/aws/awslogs
+canonical: "https://hexmos.com/freedevtools/tldr/aws/awslogs/"
 description: "Analyze AWS CloudWatch logs efficiently with awslogs. Query log groups, streams, and events to troubleshoot issues. Free online tool, no registration required."
 category: common
 keywords:

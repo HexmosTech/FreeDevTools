@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Destroy - Remove Cloud Resources with Pulumi | Free DevTools"
 name: pulumi-destroy
-path: /freedevtools/tldr/common/pulumi-destroy
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-destroy/"
+path: /freedevtools/tldr/pulumi/pulumi-destroy
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-destroy/"
 description: "Destroy cloud resources efficiently with Pulumi Destroy. Safely delete stacks, manage deployments, and clean up infrastructure as code. Free online tool, no registration required."
 category: common
 keywords:

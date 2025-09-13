@@ -1,8 +1,8 @@
 ---
 title: "Create Virtual Machines - Using Virt-install | Free DevTools"
 name: virt-install
-path: /freedevtools/tldr/common/virt-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/virt-install/"
+path: /freedevtools/tldr/virt/virt-install
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-install/"
 description: "Create virtual machines easily with Virt-install. Quickly set up and manage virtualized environments using command line. Free online tool, no registration required."
 category: common
 keywords:

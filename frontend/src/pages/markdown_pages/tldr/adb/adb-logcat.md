@@ -1,8 +1,8 @@
 ---
 title: "ADB Logcat - Display System Logs | Free DevTools"
 name: adb-logcat
-path: /freedevtools/tldr/common/adb-logcat
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb-logcat/"
+path: /freedevtools/tldr/adb/adb-logcat
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-logcat/"
 description: "Display system logs with ADB Logcat, filter by tag, PID, or priority. Quickly debug Android applications and devices with advanced filtering options. Free online tool, no registration required."
 category: common
 keywords:

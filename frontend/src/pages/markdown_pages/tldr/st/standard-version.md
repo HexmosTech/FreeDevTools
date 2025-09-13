@@ -1,8 +1,8 @@
 ---
 title: "Generate Changelog - standard-version for Automated Releases | Free DevTools"
 name: standard-version
-path: /freedevtools/tldr/common/standard-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/standard-version/"
+path: /freedevtools/tldr/st/standard-version
+canonical: "https://hexmos.com/freedevtools/tldr/st/standard-version/"
 description: "Automate changelog generation with standard-version, leveraging SemVer for automated releases. Enhance workflow with Conventional Commits. Free online tool, no registration required."
 category: common
 keywords:

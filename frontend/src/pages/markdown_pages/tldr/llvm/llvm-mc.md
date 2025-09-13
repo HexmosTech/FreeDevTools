@@ -1,8 +1,8 @@
 ---
 title: "Assemble Machine Code - with llvm-mc | Free DevTools"
 name: llvm-mc
-path: /freedevtools/tldr/common/llvm-mc
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-mc/"
+path: /freedevtools/tldr/llvm/llvm-mc
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-mc/"
 description: "Assemble machine code with llvm-mc. Convert assembly to machine code and disassemble object files with this command-line utility. Free online tool, no registration required."
 category: common
 keywords:

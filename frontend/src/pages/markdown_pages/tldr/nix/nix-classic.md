@@ -1,8 +1,8 @@
 ---
 title: "Control Packages - Nix Package Manager with CLI | Free DevTools"
 name: nix-classic
-path: /freedevtools/tldr/common/nix-classic
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-classic/"
+path: /freedevtools/tldr/nix/nix-classic
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-classic/"
 description: "Control packages reliably with Nix Package Manager, a powerful command-line tool. Build, install, and manage software declaratively. Free online tool, no registration required."
 category: common
 keywords:

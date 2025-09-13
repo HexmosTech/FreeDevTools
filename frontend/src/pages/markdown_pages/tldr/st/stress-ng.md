@@ -1,8 +1,8 @@
 ---
 title: "Stress Linux System - Load Test with stress-ng | Free DevTools"
 name: stress-ng
-path: "/freedevtools/tldr/common/stress-ng"
-canonical: "https://hexmos.com/freedevtools/tldr/common/stress-ng/"
+path: "/freedevtools/tldr/st/stress-ng"
+canonical: "https://hexmos.com/freedevtools/tldr/st/stress-ng/"
 description: "Load test with stress-ng! Stress your Linux system's CPU, memory, and I/O. A free online tool for hardware validation and system stability testing, no registration required."
 category: common
 keywords:

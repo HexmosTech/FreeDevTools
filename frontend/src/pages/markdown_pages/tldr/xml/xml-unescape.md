@@ -1,8 +1,8 @@
 ---
 title: "XML Unescape - Convert Special XML Characters | Free DevTools"
 name: xml-unescape
-path: /freedevtools/tldr/common/xml-unescape
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-unescape/"
+path: /freedevtools/tldr/xml/xml-unescape
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-unescape/"
 description: "Unescape XML characters with XML Unescape tool. Convert encoded XML entities to readable text with this simple command. Free online tool, no registration required."
 category: common
 keywords:

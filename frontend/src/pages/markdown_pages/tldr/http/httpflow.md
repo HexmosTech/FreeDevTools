@@ -1,8 +1,8 @@
 ---
 title: "Capture HTTP Streams - Analyze Network Traffic | Free DevTools"
 name: httpflow
-path: /freedevtools/tldr/common/httpflow
-canonical: "https://hexmos.com/freedevtools/tldr/common/httpflow/"
+path: /freedevtools/tldr/http/httpflow
+canonical: "https://hexmos.com/freedevtools/tldr/http/httpflow/"
 description: "Capture network traffic with HTTPflow. Analyze HTTP streams and debug network communication using command line. Free online tool, no registration required."
 category: common
 keywords:

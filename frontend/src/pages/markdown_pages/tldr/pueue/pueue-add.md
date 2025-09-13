@@ -1,8 +1,8 @@
 ---
 title: "Pueue Add - Enqueue Tasks | Free DevTools"
 name: pueue-add
-path: /freedevtools/tldr/common/pueue-add
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-add/"
+path: /freedevtools/tldr/pueue/pueue-add
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-add/"
 description: "Enqueue tasks efficiently with Pueue Add. Manage task dependencies and execution order easily using command line. Free online tool, no registration required."
 category: common
 keywords:

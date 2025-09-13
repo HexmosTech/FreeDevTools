@@ -1,8 +1,8 @@
 ---
 title: "Dir - List Directory Contents | Free DevTools"
 name: dir
-path: /freedevtools/tldr/widows/dir
-canonical: "https://hexmos.com/freedevtools/tldr/widows/dir/"
+path: /freedevtools/tldr/windows/dir
+canonical: "https://hexmos.com/freedevtools/tldr/windows/dir/"
 description: "List directory contents easily with Dir. Quickly explore files and folders, sort results and view hidden items using command line. Free online tool, no registration required."
 category: windows
 keywords:

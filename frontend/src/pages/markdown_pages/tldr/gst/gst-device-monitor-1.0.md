@@ -1,8 +1,8 @@
 ---
 title: "List Devices - Monitor GStreamer Devices | Free DevTools"
 name: gst-device-monitor-1.0
-path: /freedevtools/tldr/common/gst-device-monitor-1.0
-canonical: "https://hexmos.com/freedevtools/tldr/common/gst-device-monitor-1.0/"
+path: /freedevtools/tldr/gst/gst-device-monitor-1.0
+canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-device-monitor-1.0/"
 description: "List devices with gst-device-monitor-1.0, a GStreamer tool for monitoring audio and video sources/sinks. Identify and track device changes easily. Free online tool, no registration required."
 category: common
 keywords:

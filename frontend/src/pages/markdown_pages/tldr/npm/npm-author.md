@@ -1,8 +1,8 @@
 ---
 title: "NPM Author - Manage Package Owners | Free DevTools"
 name: npm-author
-path: /freedevtools/tldr/common/npm-author
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-author/"
+path: /freedevtools/tldr/npm/npm-author
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-author/"
 description: "Manage NPM package ownership with NPM Author. Transfer, add, or remove package maintainers. Free online tool, no registration required."
 category: common
 keywords:

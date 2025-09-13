@@ -1,8 +1,8 @@
 ---
 title: "Optimize WebAssembly - Optimize WASM Binary Files | Free DevTools"
 name: wasm-opt
-path: /freedevtools/tldr/common/wasm-opt
-canonical: "https://hexmos.com/freedevtools/tldr/common/wasm-opt/"
+path: /freedevtools/tldr/wasm/wasm-opt
+canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm-opt/"
 description: "Optimize WebAssembly binary files with wasm-opt. Reduce file sizes and improve performance of WASM applications. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Taint - Control Node Taints | Free DevTools"
 name: kubectl-taint
-path: /freedevtools/tldr/common/kubectl-taint
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-taint/"
+path: /freedevtools/tldr/kubectl/kubectl-taint
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-taint/"
 description: "Control Kubernetes node taints with Kubectl Taint. Manage node scheduling, and evict pods based on taints and tolerations. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "NetExec Database - Interact with Data | Free DevTools"
 name: nxcdb
-path: /freedevtools/tldr/common/nxcdb
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxcdb/"
+path: /freedevtools/tldr/nxc/nxcdb
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxcdb/"
 description: "Interact with the NetExec database using nxcdb. Manage workspaces, create new databases, and control your NetExec environment. Free online tool, no registration required."
 category: common
 keywords:

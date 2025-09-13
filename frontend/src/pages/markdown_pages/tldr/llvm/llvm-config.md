@@ -1,8 +1,8 @@
 ---
 title: "LLVM Config - Generate Compiler Flags | Free DevTools"
 name: llvm-config
-path: /freedevtools/tldr/common/llvm-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-config/"
+path: /freedevtools/tldr/llvm/llvm-config
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-config/"
 description: "Generate compiler flags with LLVM Config. Retrieve configuration information, link LLVM based programs, and manage LLVM installations. Free online tool, no registration required."
 category: common
 keywords:

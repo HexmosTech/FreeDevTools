@@ -1,8 +1,8 @@
 ---
 title: "Create ODPS Authorities - Manage User Access | Free DevTools"
 name: odps-auth
-path: /freedevtools/tldr/common/odps-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/odps-auth/"
+path: /freedevtools/tldr/odps/odps-auth
+canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-auth/"
 description: "Create ODPS authorities with this command. Manage user access and permissions in Alibaba Cloud's Open Data Processing Service (ODPS). Free online tool, no registration required."
 category: common
 keywords:

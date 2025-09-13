@@ -1,8 +1,8 @@
 ---
 title: "Azure Provider - Manage Resource Providers | Free DevTools"
 name: az-provider
-path: /freedevtools/tldr/common/az-provider
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-provider/"
+path: /freedevtools/tldr/az/az-provider
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-provider/"
 description: "Manage Azure resource providers with Az Provider. Register, unregister, list and show information. Free online tool, no registration required."
 category: common
 keywords:

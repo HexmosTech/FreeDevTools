@@ -1,8 +1,8 @@
 ---
 title: "Docker Node - Manage Swarm Nodes | Free DevTools"
 name: docker-node
-path: /freedevtools/tldr/common/docker-node
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-node/"
+path: /freedevtools/tldr/docker/docker-node
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-node/"
 description: "Manage Docker Swarm nodes effectively with Docker Node commands. Inspect node details, promote/demote managers, and update node metadata. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Impacket RPCMap - Discover RPC Services | Free DevTools"
 name: impacket-rpcmap
-path: /freedevtools/tldr/common/impacket-rpcmap
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-rpcmap/"
+path: /freedevtools/tldr/impacket/impacket-rpcmap
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-rpcmap/"
 description: "Discover RPC services with Impacket RPCMap. Enumerate services, protocols, and endpoints using this powerful network analysis tool. Free online tool, no registration required."
 category: common
 keywords:

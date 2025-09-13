@@ -1,8 +1,8 @@
 ---
 title: "Docker Update - Control Container Configuration | Free DevTools"
 name: docker-update
-path: /freedevtools/tldr/common/docker-update
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-update/"
+path: /freedevtools/tldr/docker/docker-update
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-update/"
 description: "Control Docker container settings easily with Docker Update. Modify restart policies, CPU limits, and memory allocation. Free online tool, no registration required."
 category: common
 keywords:

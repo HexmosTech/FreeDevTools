@@ -1,8 +1,8 @@
 ---
 title: "Git Send Email - Send Patches as Emails | Free DevTools"
 name: git-send-email
-path: /freedevtools/tldr/common/git-send-email
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-send-email/"
+path: /freedevtools/tldr/git/git-send-email
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-send-email/"
 description: "Send Git patches as emails with Git Send Email. Review, annotate, and compose patches efficiently. Free online tool, no registration required."
 category: common
 keywords:

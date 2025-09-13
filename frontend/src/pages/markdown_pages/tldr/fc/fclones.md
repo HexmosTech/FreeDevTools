@@ -1,8 +1,8 @@
 ---
 title: "Find Duplicate Files - fclones | Free DevTools"
 name: fclones
-path: /freedevtools/tldr/common/fclones
-canonical: "https://hexmos.com/freedevtools/tldr/common/fclones/"
+path: /freedevtools/tldr/fc/fclones
+canonical: "https://hexmos.com/freedevtools/tldr/fc/fclones/"
 description: "Find duplicate files with fclones, an efficient file comparison tool. Quickly identify and manage redundant files on your system. Free online tool, no registration required."
 category: common
 keywords:

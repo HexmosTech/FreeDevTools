@@ -1,8 +1,8 @@
 ---
 title: "RDP Exploitation - Pentest RDP Servers | Free DevTools"
 name: nxc-rdp
-path: /freedevtools/tldr/common/nxc-rdp
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-rdp/"
+path: /freedevtools/tldr/nxc/nxc-rdp
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-rdp/"
 description: "Pentest RDP servers with nxc-rdp. Exploit remote desktop protocol for security audits and vulnerability assessment. Free online tool, no registration required."
 category: common
 keywords:

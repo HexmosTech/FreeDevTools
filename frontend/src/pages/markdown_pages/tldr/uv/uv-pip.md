@@ -1,8 +1,8 @@
 ---
 title: "UV Pip - Manage Python Packages | Free DevTools"
 name: uv-pip
-path: /freedevtools/tldr/common/uv-pip
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-pip/"
+path: /freedevtools/tldr/uv/uv-pip
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-pip/"
 description: "Manage Python packages effectively with UV Pip. Install, uninstall, and freeze dependencies for streamlined project management. Free online tool, no registration required."
 category: common
 keywords:

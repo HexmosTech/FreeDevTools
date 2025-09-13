@@ -1,8 +1,8 @@
 ---
 title: "PNM Remap - Replace Image Colors | Free DevTools"
 name: pnmremap
-path: /freedevtools/tldr/common/pnmremap
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmremap/"
+path: /freedevtools/tldr/pnm/pnmremap
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmremap/"
 description: "Replace image colors with PNM Remap. Convert image palettes and apply dithering techniques. Free online tool, no registration required."
 category: common
 keywords:

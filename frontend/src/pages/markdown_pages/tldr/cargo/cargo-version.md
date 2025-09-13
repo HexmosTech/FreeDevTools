@@ -1,8 +1,8 @@
 ---
 title: "Cargo Version - Display Rust Version Information | Free DevTools"
 name: cargo-version
-path: /freedevtools/tldr/common/cargo-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-version/"
+path: /freedevtools/tldr/cargo/cargo-version
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-version/"
 description: "Display Rust version information with Cargo Version command. Get detailed build information for your Rust projects. Free online tool, no registration required."
 category: common
 keywords:

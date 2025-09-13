@@ -1,8 +1,8 @@
 ---
 title: "XML Linter - Validate & Format XML with xmllint | Free DevTools"
 name: xmllint
-path: /freedevtools/tldr/common/xmllint
-canonical: "https://hexmos.com/freedevtools/tldr/common/xmllint/"
+path: /freedevtools/tldr/xml/xmllint
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xmllint/"
 description: "Validate XML with xmllint, a powerful command-line XML linter.  Check syntax, format XML, and validate against DTDs, easily. Free online tool, no registration required."
 category: common
 keywords:

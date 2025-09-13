@@ -1,8 +1,8 @@
 ---
 title: "Rotate PNM Image - Transform Images | Free DevTools"
 name: pnmrotate
-path: /freedevtools/tldr/common/pnmrotate
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmrotate/"
+path: /freedevtools/tldr/pnm/pnmrotate
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmrotate/"
 description: "Transform images with PNM Rotate. Rotate PNM images easily and specify background colors. Free online tool, no registration required."
 category: common
 keywords:

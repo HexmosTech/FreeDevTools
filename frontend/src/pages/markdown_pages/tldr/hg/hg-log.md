@@ -1,8 +1,8 @@
 ---
 title: "Hg Log - Display Repository History | Free DevTools"
 name: hg-log
-path: /freedevtools/tldr/common/hg-log
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-log/"
+path: /freedevtools/tldr/hg/hg-log
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-log/"
 description: "Display repository history with Hg Log. Review commit logs, view diffs, and analyze code changes efficiently. Free online tool, no registration required."
 category: common
 keywords:

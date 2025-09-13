@@ -1,8 +1,8 @@
 ---
 title: "DynamoDB Control - Manage AWS NoSQL Database | Free DevTools"
 name: aws-dynamodb
-path: /freedevtools/tldr/common/aws-dynamodb
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-dynamodb/"
+path: /freedevtools/tldr/aws/aws-dynamodb
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-dynamodb/"
 description: "Control DynamoDB database instances with AWS DynamoDB command. Manage tables, add items, and retrieve data in your AWS NoSQL database. Free online tool, no registration required."
 category: common
 keywords:

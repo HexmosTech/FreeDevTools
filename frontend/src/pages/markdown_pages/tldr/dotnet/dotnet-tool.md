@@ -1,8 +1,8 @@
 ---
 title: "Dotnet Tool - Manage .NET Tools | Free DevTools"
 name: dotnet-tool
-path: /freedevtools/tldr/common/dotnet-tool
-canonical: "https://hexmos.com/freedevtools/tldr/common/dotnet-tool/"
+path: /freedevtools/tldr/dotnet/dotnet-tool
+canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-tool/"
 description: "Manage .NET tools quickly with Dotnet Tool. Install, update, and search .NET tools in NuGet using command line. Free online tool, no registration required."
 category: common
 keywords:

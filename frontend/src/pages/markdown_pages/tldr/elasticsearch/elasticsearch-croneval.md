@@ -1,8 +1,8 @@
 ---
 title: "Validate Cron Expression - Elasticsearch Cron Validation | Free DevTools"
 name: elasticsearch-croneval
-path: /freedevtools/tldr/common/elasticsearch-croneval
-canonical: "https://hexmos.com/freedevtools/tldr/common/elasticsearch-croneval/"
+path: /freedevtools/tldr/elasticsearch/elasticsearch-croneval
+canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-croneval/"
 description: "Validate cron expressions with Elasticsearch Croneval. Verify Elasticsearch cron schedules and display trigger times, including future intervals. Free online tool, no registration required."
 category: common
 keywords:

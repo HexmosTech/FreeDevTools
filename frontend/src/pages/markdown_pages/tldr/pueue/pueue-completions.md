@@ -1,8 +1,8 @@
 ---
 title: "Pueue Completions - Generate Shell Completions | Free DevTools"
 name: pueue-completions
-path: /freedevtools/tldr/common/pueue-completions
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-completions/"
+path: /freedevtools/tldr/pueue/pueue-completions
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-completions/"
 description: "Generate shell completions with Pueue for Bash, Zsh, and Fish. Automate command-line tasks and improve workflow. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Diff Tree - Compare Git Trees | Free DevTools"
 name: git-diff-tree
-path: /freedevtools/tldr/common/git-diff-tree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-diff-tree/"
+path: /freedevtools/tldr/git/git-diff-tree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff-tree/"
 description: "Compare Git trees with Diff Tree, identify changes between commits and explore modifications in your repository. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "GitHub Terminal - Control GitHub from Command Line | Free DevTools"
 name: gitsome
-path: /freedevtools/tldr/common/gitsome
-canonical: "https://hexmos.com/freedevtools/tldr/common/gitsome/"
+path: /freedevtools/tldr/git/gitsome
+canonical: "https://hexmos.com/freedevtools/tldr/git/gitsome/"
 description: "Control GitHub from your terminal with Gitsome, the command line interface. Manage notifications, repos, and activity feeds directly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Clang C++ - Compile C++ Code | Free DevTools"
 name: clang-cpp
-path: /freedevtools/tldr/common/clang-cpp
-canonical: "https://hexmos.com/freedevtools/tldr/common/clang-cpp/"
+path: /freedevtools/tldr/clang/clang-cpp
+canonical: "https://hexmos.com/freedevtools/tldr/clang/clang-cpp/"
 description: "Compile C++ code with Clang C++. Streamline your software development using this efficient and versatile compiler. Free online tool, no registration required."
 category: common
 keywords:

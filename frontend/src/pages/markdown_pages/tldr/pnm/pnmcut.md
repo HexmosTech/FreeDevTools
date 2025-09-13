@@ -1,8 +1,8 @@
 ---
 title: "PNM Cut - Crop PNM Images | Free DevTools"
 name: pnmcut
-path: /freedevtools/tldr/common/pnmcut
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmcut/"
+path: /freedevtools/tldr/pnm/pnmcut
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcut/"
 description: "Crop PNM images easily with PNMCut. Extract specific regions and manipulate image dimensions. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "OpenSSL Toolkit - Generate Certificates | Free DevTools"
 name: openssl
-path: /freedevtools/tldr/common/openssl
-canonical: "https://hexmos.com/freedevtools/tldr/common/openssl/"
+path: /freedevtools/tldr/openssl/openssl
+canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl/"
 description: "Generate secure certificates with OpenSSL cryptographic toolkit. Manage keys and encrypt data for web servers, email clients, and more. Free online tool, no registration required."
 category: common
 keywords:

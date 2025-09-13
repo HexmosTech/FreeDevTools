@@ -1,8 +1,8 @@
 ---
 title: "OpenStack Help - Get CLI Help | Free DevTools"
 name: openstack-help
-path: /freedevtools/tldr/common/openstack-help
-canonical: "https://hexmos.com/freedevtools/tldr/common/openstack-help/"
+path: /freedevtools/tldr/openstack/openstack-help
+canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-help/"
 description: "Get OpenStack help with OpenStack Help tool. Display command descriptions and understand CLI usage. Free online tool, no registration required."
 category: common
 keywords:

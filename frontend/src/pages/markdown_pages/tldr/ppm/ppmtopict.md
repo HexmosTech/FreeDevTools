@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to PICT - Format Image Files | Free DevTools"
 name: ppmtopict
-path: /freedevtools/tldr/common/ppmtopict
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtopict/"
+path: /freedevtools/tldr/ppm/ppmtopict
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopict/"
 description: "Convert PPM to PICT with ppmtopict. Easily transform PPM images into Macintosh PICT files using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

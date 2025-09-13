@@ -1,8 +1,8 @@
 ---
 title: "npm-why - Explain npm Package Installation | Free DevTools"
 name: npm-why
-path: /freedevtools/tldr/common/npm-why
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-why/"
+path: /freedevtools/tldr/npm/npm-why
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-why/"
 description: "Explain npm package installations with npm-why. Determine why a specific npm package was installed as a dependency. Free online tool, no registration required."
 category: common
 keywords:

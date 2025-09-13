@@ -1,8 +1,8 @@
 ---
 title: "Linode Tickets - Manage Support Tickets | Free DevTools"
 name: linode-cli-tickets
-path: /freedevtools/tldr/common/linode-cli-tickets
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-tickets/"
+path: /freedevtools/tldr/linode/linode-cli-tickets
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-tickets/"
 description: "Manage Linode support tickets effortlessly with Linode CLI. Create, list, and reply to tickets. Free online tool, no registration required."
 category: common
 keywords:

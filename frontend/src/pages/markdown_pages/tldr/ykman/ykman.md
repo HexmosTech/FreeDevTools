@@ -1,8 +1,8 @@
 ---
 title: "YubiKey Manager - Configure YubiKeys | Free DevTools"
 name: ykman
-path: /freedevtools/tldr/common/ykman
-canonical: "https://hexmos.com/freedevtools/tldr/common/ykman/"
+path: /freedevtools/tldr/ykman/ykman
+canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman/"
 description: "Configure YubiKeys with YubiKey Manager. Manage FIDO, OATH, and OpenPGP applications effortlessly using this command line tool. Free online tool, no registration required."
 category: common
 keywords:

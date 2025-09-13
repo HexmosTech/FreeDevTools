@@ -1,8 +1,8 @@
 ---
 title: "Manage Linode Object Storage - CLI | Free DevTools"
 name: linode-cli-object-storage
-path: /freedevtools/tldr/common/linode-cli-object-storage
-canonical: "https://hexmos.com/freedevtools/tldr/common/linode-cli-object-storage/"
+path: /freedevtools/tldr/linode/linode-cli-object-storage
+canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-object-storage/"
 description: "Manage Linode Object Storage with linode-cli-object-storage. Create buckets, manage keys, and list clusters for efficient cloud storage management. Free online tool, no registration required."
 category: common
 keywords:

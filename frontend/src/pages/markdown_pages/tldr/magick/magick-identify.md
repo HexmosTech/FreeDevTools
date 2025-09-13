@@ -1,8 +1,8 @@
 ---
 title: "Image Identify - Format Image Files | Free DevTools"
 name: magick-identify
-path: /freedevtools/tldr/common/magick-identify
-canonical: "https://hexmos.com/freedevtools/tldr/common/magick-identify/"
+path: /freedevtools/tldr/magick/magick-identify
+canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-identify/"
 description: "Format image files with Image Identify using ImageMagick. Extract image metadata, analyze image characteristics, and automate image processing tasks. Free online tool, no registration required."
 category: common
 keywords:

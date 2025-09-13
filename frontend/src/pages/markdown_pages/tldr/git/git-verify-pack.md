@@ -1,8 +1,8 @@
 ---
 title: "Verify Git Pack - Validate Archive Files | Free DevTools"
 name: git-verify-pack
-path: /freedevtools/tldr/common/git-verify-pack
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-verify-pack/"
+path: /freedevtools/tldr/git/git-verify-pack
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-pack/"
 description: "Validate Git archive files with git-verify-pack. Inspect packfile integrity and statistics for repository optimization. Free online tool, no registration required."
 category: common
 keywords:

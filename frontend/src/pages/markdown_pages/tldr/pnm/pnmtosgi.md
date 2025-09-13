@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to SGI - Image Conversion | Free DevTools"
 name: pnmtosgi
-path: /freedevtools/tldr/common/pnmtosgi
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtosgi/"
+path: /freedevtools/tldr/pnm/pnmtosgi
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtosgi/"
 description: "Convert PNM images to SGI format instantly with pnmtosgi. Optimize images for SGI systems and manage image headers easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage Nix Channels - Update Software Packages | Free DevTools"
 name: nix-channel
-path: /freedevtools/tldr/common/nix-channel
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-channel/"
+path: /freedevtools/tldr/nix/nix-channel
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-channel/"
 description: "Manage Nix software channels with nix-channel. Update package lists, add new channels, and control software sources effortlessly. Free online tool, no registration required."
 category: common
 keywords:

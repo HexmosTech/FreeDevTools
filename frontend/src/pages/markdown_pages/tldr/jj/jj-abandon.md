@@ -1,8 +1,8 @@
 ---
 title: "JJ Abandon - Control Revision History | Free DevTools"
 name: jj-abandon
-path: /freedevtools/tldr/common/jj-abandon
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-abandon/"
+path: /freedevtools/tldr/jj/jj-abandon
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-abandon/"
 description: "Control revision history with JJ Abandon. Abandon revisions, rebase descendants, and manage change IDs effectively. Free online tool, no registration required."
 category: common
 keywords:

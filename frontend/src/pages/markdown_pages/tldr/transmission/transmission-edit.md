@@ -1,8 +1,8 @@
 ---
 title: "Transmission Edit - Modify Torrent Announce URLs | Free DevTools"
 name: transmission-edit
-path: /freedevtools/tldr/common/transmission-edit
-canonical: "https://hexmos.com/freedevtools/tldr/common/transmission-edit/"
+path: /freedevtools/tldr/transmission/transmission-edit
+canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-edit/"
 description: "Modify torrent announce URLs with Transmission Edit. Update tracker lists and passcodes with this command line tool. Free online tool, no registration required."
 category: common
 keywords:

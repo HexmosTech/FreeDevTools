@@ -1,8 +1,8 @@
 ---
 title: "PG_CTL - Control PostgreSQL Server | Free DevTools"
 name: pg_ctl
-path: /freedevtools/tldr/common/pg_ctl
-canonical: "https://hexmos.com/freedevtools/tldr/common/pg_ctl/"
+path: /freedevtools/tldr/postgres/pg_ctl
+canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_ctl/"
 description: "Control PostgreSQL server instances with PG_CTL. Easily start, stop, restart, and reload your PostgreSQL database cluster. Free online tool, no registration required."
 category: common
 keywords:

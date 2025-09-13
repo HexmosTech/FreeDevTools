@@ -1,8 +1,8 @@
 ---
 title: "Elasticsearch Keystore - Manage Secure Settings | Free DevTools"
 name: elasticsearch-keystore
-path: /freedevtools/tldr/common/elasticsearch-keystore
-canonical: "https://hexmos.com/freedevtools/tldr/common/elasticsearch-keystore/"
+path: /freedevtools/tldr/elasticsearch/elasticsearch-keystore
+canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-keystore/"
 description: "Manage secure settings with Elasticsearch Keystore. Secure passwords and credentials with this free online tool, no registration required."
 category: common
 keywords:

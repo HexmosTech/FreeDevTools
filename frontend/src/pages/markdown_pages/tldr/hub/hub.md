@@ -1,8 +1,8 @@
 ---
 title: "GitHub Hub - Manage GitHub Repositories | Free DevTools"
 name: hub
-path: /freedevtools/tldr/common/hub
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub/"
+path: /freedevtools/tldr/hub/hub
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub/"
 description: "Manage GitHub repositories with Hub, a Git wrapper. Easily clone, fork, push, and create pull requests from the command line. Free online tool, no registration required."
 category: common
 keywords:

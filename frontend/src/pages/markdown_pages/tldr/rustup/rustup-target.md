@@ -1,8 +1,8 @@
 ---
 title: "Rustup Target - Modify Rust Toolchain Targets | Free DevTools"
 name: rustup-target
-path: /freedevtools/tldr/common/rustup-target
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-target/"
+path: /freedevtools/tldr/rustup/rustup-target
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-target/"
 description: "Modify Rust toolchain targets instantly with Rustup Target. Add, remove, and list targets to customize your Rust development environment. Free online tool, no registration required."
 category: common
 keywords:

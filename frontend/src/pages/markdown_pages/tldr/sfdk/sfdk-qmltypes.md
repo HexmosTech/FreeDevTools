@@ -1,8 +1,8 @@
 ---
 title: "Generate QML Types - Create QML Definitions | Free DevTools"
 name: sfdk-qmltypes
-path: /freedevtools/tldr/common/sfdk-qmltypes
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-qmltypes/"
+path: /freedevtools/tldr/sfdk/sfdk-qmltypes
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmltypes/"
 description: "Generate QML types with sfdk-qmltypes, simplifying QML application development for Sailfish OS. Streamline your workflow. Free online tool, no registration required."
 category: common
 keywords:

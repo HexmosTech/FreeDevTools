@@ -1,8 +1,8 @@
 ---
 title: "Manage Pulumi Stacks - View & Control State | Free DevTools"
 name: pulumi-stack
-path: /freedevtools/tldr/common/pulumi-stack
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-stack/"
+path: /freedevtools/tldr/pulumi/pulumi-stack
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-stack/"
 description: "Manage Pulumi stacks efficiently with this online Pulumi Stack tool. View state, create, list, select and delete stacks. Free online tool, no registration required."
 category: common
 keywords:

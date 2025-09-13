@@ -1,8 +1,8 @@
 ---
 title: "Git Log - Show Commit History | Free DevTools"
 name: git-log
-path: /freedevtools/tldr/common/git-log
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-log/"
+path: /freedevtools/tldr/git/git-log
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-log/"
 description: "Show commit history with Git Log. Inspect your Git repository's commit history and track changes effectively. Free online tool, no registration required."
 category: common
 keywords:

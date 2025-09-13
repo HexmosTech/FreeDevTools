@@ -1,8 +1,8 @@
 ---
 title: "Control Databases User - Manage Users with doctl | Free DevTools"
 name: doctl-databases-user
-path: /freedevtools/tldr/common/doctl-databases-user
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-user/"
+path: /freedevtools/tldr/doctl/doctl-databases-user
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-user/"
 description: "Manage database users with doctl. Create, list, reset passwords, and delete database users easily. Streamline your DigitalOcean database management. Free online tool, no registration required."
 category: common
 keywords:

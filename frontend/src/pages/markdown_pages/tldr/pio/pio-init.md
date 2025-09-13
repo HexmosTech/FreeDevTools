@@ -1,8 +1,8 @@
 ---
 title: "PIO Init - Create PlatformIO Project | Free DevTools"
 name: pio-init
-path: /freedevtools/tldr/common/pio-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-init/"
+path: /freedevtools/tldr/pio/pio-init
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-init/"
 description: "Create PlatformIO project with PIO Init, configuring environments and dependencies. Quickly set up embedded projects and start coding. Free online tool, no registration required."
 category: common
 keywords:

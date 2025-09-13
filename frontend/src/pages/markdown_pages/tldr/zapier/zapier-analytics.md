@@ -1,8 +1,8 @@
 ---
 title: "Zapier Analytics - Control Data Collection | Free DevTools"
 name: zapier-analytics
-path: /freedevtools/tldr/common/zapier-analytics
-canonical: "https://hexmos.com/freedevtools/tldr/common/zapier-analytics/"
+path: /freedevtools/tldr/zapier/zapier-analytics
+canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-analytics/"
 description: "Control Zapier analytics data collection with Zapier Analytics command.  Configure data tracking modes to optimize privacy settings. Free online tool, no registration required."
 category: common
 keywords:

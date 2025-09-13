@@ -1,8 +1,8 @@
 ---
 title: "Create Git Tree - Manage Index | Free DevTools"
 name: git-write-tree
-path: /freedevtools/tldr/common/git-write-tree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-write-tree/"
+path: /freedevtools/tldr/git/git-write-tree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-write-tree/"
 description: "Create Git Tree objects with git-write-tree. Manage Git index contents to build file system snapshots efficiently. Free online tool, no registration required."
 category: common
 keywords:

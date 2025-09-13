@@ -1,8 +1,8 @@
 ---
 title: "Control SambaPipe - Execute Commands | Free DevTools"
 name: impacket-sambapipe
-path: /freedevtools/tldr/common/impacket-sambapipe
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-sambapipe/"
+path: /freedevtools/tldr/impacket/impacket-sambapipe
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sambapipe/"
 description: "Control remote systems with SambaPipe using impacket. Execute commands and manage file shares. Free online tool, no registration required."
 category: common
 keywords:

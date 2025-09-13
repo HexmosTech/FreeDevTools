@@ -1,8 +1,8 @@
 ---
 title: "Git Squash - Combine Commits | Free DevTools"
 name: git-squash
-path: /freedevtools/tldr/common/git-squash
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-squash/"
+path: /freedevtools/tldr/git/git-squash
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-squash/"
 description: "Combine git commits efficiently with Git Squash. Merge multiple commits into a single commit and simplify your git history. Free online tool, no registration required."
 category: common
 keywords:

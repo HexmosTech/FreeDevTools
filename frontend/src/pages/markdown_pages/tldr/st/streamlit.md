@@ -1,8 +1,8 @@
 ---
 title: "Streamlit App Builder - Create Web Apps in Python | Free DevTools"
 name: streamlit
-path: /freedevtools/tldr/common/streamlit
-canonical: "https://hexmos.com/freedevtools/tldr/common/streamlit/"
+path: /freedevtools/tldr/st/streamlit
+canonical: "https://hexmos.com/freedevtools/tldr/st/streamlit/"
 description: "Create interactive data-driven web applications with Streamlit App Builder. Rapidly prototype and deploy Python web apps. Free online tool, no registration required."
 category: common
 keywords:

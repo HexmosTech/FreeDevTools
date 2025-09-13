@@ -1,8 +1,8 @@
 ---
 title: "Remove Podman Images - Manage Container Images | Free DevTools"
 name: podman-rmi
-path: /freedevtools/tldr/common/podman-rmi
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-rmi/"
+path: /freedevtools/tldr/podman/podman-rmi
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-rmi/"
 description: "Remove Podman images to free up disk space with Podman RMI. Manage container images efficiently and forcefully. Free online tool, no registration required."
 category: common
 keywords:

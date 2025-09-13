@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Standup - Track Commits | Free DevTools"
 name: git-standup
-path: /freedevtools/tldr/common/git-standup
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-standup/"
+path: /freedevtools/tldr/git/git-standup
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-standup/"
 description: "Generate Git Standup reports to track commit activity. Analyze code contributions and monitor developer productivity. Free online tool, no registration required."
 category: common
 keywords:

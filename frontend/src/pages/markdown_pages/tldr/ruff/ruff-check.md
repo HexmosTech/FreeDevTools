@@ -1,8 +1,8 @@
 ---
 title: "Ruff Linter - Check Python Code | Free DevTools"
 name: ruff-check
-path: /freedevtools/tldr/common/ruff-check
-canonical: "https://hexmos.com/freedevtools/tldr/common/ruff-check/"
+path: /freedevtools/tldr/ruff/ruff-check
+canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-check/"
 description: "Lint Python code efficiently with Ruff Linter. Find and fix errors to improve code quality using a fast, modern tool. Free online tool, no registration required."
 category: common
 keywords:

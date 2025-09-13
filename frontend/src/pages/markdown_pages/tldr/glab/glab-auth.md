@@ -1,8 +1,8 @@
 ---
 title: "GLab Auth - Authenticate GitLab Hosts | Free DevTools"
 name: glab-auth
-path: /freedevtools/tldr/common/glab-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-auth/"
+path: /freedevtools/tldr/glab/glab-auth
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-auth/"
 description: "Authenticate with GitLab hosts instantly with GLab Auth. Manage authentication tokens, check status and connect to specific instances with this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

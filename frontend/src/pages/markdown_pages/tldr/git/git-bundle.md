@@ -1,8 +1,8 @@
 ---
 title: "Git Bundle - Package Git Objects into Archives | Free DevTools"
 name: git-bundle
-path: /freedevtools/tldr/common/git-bundle
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-bundle/"
+path: /freedevtools/tldr/git/git-bundle
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-bundle/"
 description: "Package Git objects into archives with Git Bundle. Create, verify, and unbundle Git repositories for offline transfer and backup. Free online tool, no registration required."
 category: common
 keywords:

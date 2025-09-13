@@ -1,8 +1,8 @@
 ---
 title: "Control Curl Requests - Manage Web Transfers | Free DevTools"
 name: curl
-path: /freedevtools/tldr/widows/curl
-canonical: "https://hexmos.com/freedevtools/tldr/widows/curl/"
+path: /freedevtools/tldr/windows/curl
+canonical: "https://hexmos.com/freedevtools/tldr/windows/curl/"
 description: "Control web transfers with Curl. Manage HTTP requests, download files, and interact with APIs effortlessly. Free online tool, no registration required."
 category: windows
 keywords:

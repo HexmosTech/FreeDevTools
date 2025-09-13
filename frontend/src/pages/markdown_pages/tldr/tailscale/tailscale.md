@@ -1,8 +1,8 @@
 ---
 title: "Tailscale Control - Manage WireGuard Networks | Free DevTools"
 name: tailscale
-path: /freedevtools/tldr/common/tailscale
-canonical: "https://hexmos.com/freedevtools/tldr/common/tailscale/"
+path: /freedevtools/tldr/tailscale/tailscale
+canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale/"
 description: "Control WireGuard network connections with Tailscale. Configure private networks, check network conditions, and diagnose issues. Free online tool, no registration required."
 category: common
 keywords:

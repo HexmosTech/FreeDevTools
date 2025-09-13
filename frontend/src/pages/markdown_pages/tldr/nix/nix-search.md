@@ -1,8 +1,8 @@
 ---
 title: "Nix Search - Find Nix Packages | Free DevTools"
 name: nix-search
-path: /freedevtools/tldr/common/nix-search
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-search/"
+path: /freedevtools/tldr/nix/nix-search
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-search/"
 description: "Find Nix packages effortlessly with Nix Search. Explore package details, search nixpkgs and GitHub repositories, all through command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage Yadm Permissions - Update Configuration | Free DevTools"
 name: yadm-perms
-path: /freedevtools/tldr/common/yadm-perms
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-perms/"
+path: /freedevtools/tldr/yadm/yadm-perms
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-perms/"
 description: "Manage Yadm permissions effectively with this tool. Update configuration settings and control file access for your repositories automatically. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create Elasticsearch Token - Enroll Nodes & Kibana | Free DevTools"
 name: elasticsearch-create-enrollment-token
-path: /freedevtools/tldr/common/elasticsearch-create-enrollment-token
-canonical: "https://hexmos.com/freedevtools/tldr/common/elasticsearch-create-enrollment-token/"
+path: /freedevtools/tldr/elasticsearch/elasticsearch-create-enrollment-token
+canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-create-enrollment-token/"
 description: "Create Elasticsearch enrollment tokens with elasticsearch-create-enrollment-token. Securely enroll new Elasticsearch nodes and Kibana instances. Free online tool, no registration required."
 category: common
 keywords:

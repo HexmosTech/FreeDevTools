@@ -1,8 +1,8 @@
 ---
 title: "Cargo Logout - Remove API Token | Free DevTools"
 name: cargo-logout
-path: /freedevtools/tldr/common/cargo-logout
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-logout/"
+path: /freedevtools/tldr/cargo/cargo-logout
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-logout/"
 description: "Remove Cargo API tokens easily with Cargo Logout. Securely manage your Rust package registry credentials from the command line. Free online tool, no registration required."
 category: common
 keywords:

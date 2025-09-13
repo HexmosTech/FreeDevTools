@@ -1,8 +1,8 @@
 ---
 title: "Prowler AWS - Assess Cloud Security | Free DevTools"
 name: prowler-aws
-path: /freedevtools/tldr/common/prowler-aws
-canonical: "https://hexmos.com/freedevtools/tldr/common/prowler-aws/"
+path: /freedevtools/tldr/prowler/prowler-aws
+canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-aws/"
 description: "Assess cloud security with Prowler AWS. Perform AWS audits, compliance checks, and generate security reports. Free online tool, no registration required."
 category: common
 keywords:

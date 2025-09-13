@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Scale - Control Deployment Size | Free DevTools"
 name: kubectl-scale
-path: /freedevtools/tldr/common/kubectl-scale
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-scale/"
+path: /freedevtools/tldr/kubectl/kubectl-scale
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-scale/"
 description: "Control deployment size with Kubectl Scale. Easily adjust the number of replicas for deployments, replica sets, and stateful sets. Free online tool, no registration required."
 category: common
 keywords:

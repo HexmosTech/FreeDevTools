@@ -1,8 +1,8 @@
 ---
 title: "Fossil Commit - Create Repository Versions | Free DevTools"
 name: fossil-commit
-path: /freedevtools/tldr/common/fossil-commit
-canonical: "https://hexmos.com/freedevtools/tldr/common/fossil-commit/"
+path: /freedevtools/tldr/fossil/fossil-commit
+canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-commit/"
 description: "Create Fossil repository versions with Fossil Commit. Manage changesets, add comments, and specify files for commit. Free online tool, no registration required."
 category: common
 keywords:

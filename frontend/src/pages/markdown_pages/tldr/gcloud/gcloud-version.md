@@ -1,8 +1,8 @@
 ---
 title: "GCloud Version - Generate CLI Info | Free DevTools"
 name: gcloud-version
-path: /freedevtools/tldr/common/gcloud-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-version/"
+path: /freedevtools/tldr/gcloud/gcloud-version
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-version/"
 description: "Generate Google Cloud CLI version information with GCloud Version. Check installed components, updates, and dependencies. Free online tool, no registration required."
 category: common
 keywords:

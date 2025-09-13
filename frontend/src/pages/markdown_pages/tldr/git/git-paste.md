@@ -1,8 +1,8 @@
 ---
 title: "Send Git Paste - Share Commits via Pastebin | Free DevTools"
 name: git-paste
-path: /freedevtools/tldr/common/git-paste
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-paste/"
+path: /freedevtools/tldr/git/git-paste
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-paste/"
 description: "Send Git paste with this command to share commits and patches via pastebin services. Simplify code sharing and collaboration. Free online tool, no registration required."
 category: common
 keywords:

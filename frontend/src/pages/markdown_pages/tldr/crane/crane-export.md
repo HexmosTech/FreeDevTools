@@ -1,8 +1,8 @@
 ---
 title: "Export Container Image - Create Tarballs | Free DevTools"
 name: crane-export
-path: /freedevtools/tldr/common/crane-export
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-export/"
+path: /freedevtools/tldr/crane/crane-export
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-export/"
 description: "Export container images to tarballs with Crane. Easily create container archives for backup, transfer, or offline use. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Fossil Delete - Remove Files with Fossil | Free DevTools"
 name: fossil-rm
-path: /freedevtools/tldr/common/fossil-rm
-canonical: "https://hexmos.com/freedevtools/tldr/common/fossil-rm/"
+path: /freedevtools/tldr/fossil/fossil-rm
+canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-rm/"
 description: "Delete files easily with Fossil version control. Remove unwanted files from your Fossil repository effortlessly using this command alias. Free online tool, no registration required."
 category: common
 keywords:

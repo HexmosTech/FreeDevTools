@@ -1,8 +1,8 @@
 ---
 title: "Create Git Branch - Empty Local Branch | Free DevTools"
 name: git-fresh-branch
-path: /freedevtools/tldr/common/git-fresh-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-fresh-branch/"
+path: /freedevtools/tldr/git/git-fresh-branch
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-fresh-branch/"
 description: "Create Git branch with the git fresh-branch command. Initialize empty local branches for clean development workflows. Free online tool, no registration required."
 category: common
 keywords:

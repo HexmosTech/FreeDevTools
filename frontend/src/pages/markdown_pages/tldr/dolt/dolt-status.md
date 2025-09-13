@@ -1,8 +1,8 @@
 ---
 title: "Control Dolt Status - Database Session | Free DevTools"
 name: dolt-status
-path: /freedevtools/tldr/common/dolt-status
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-status/"
+path: /freedevtools/tldr/dolt/dolt-status
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-status/"
 description: "Control database session status with Dolt Status. Track changes, view staged files, and check branch information with this free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Nix Build - Create Nix Expressions | Free DevTools"
 name: nix-build.2
-path: /freedevtools/tldr/common/nix-build.2
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-build.2/"
+path: /freedevtools/tldr/nix/nix-build.2
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-build.2/"
 description: "Create Nix expressions with Nix Build. Easily build software packages, and manage dependencies. Free online tool, no registration required."
 category: common
 keywords:

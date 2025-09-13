@@ -1,8 +1,8 @@
 ---
 title: "Enumerate AD Users - Find Roasting Targets | Free DevTools"
 name: getnpusers.py
-path: /freedevtools/tldr/common/getnpusers.py
-canonical: "https://hexmos.com/freedevtools/tldr/common/getnpusers.py/"
+path: /freedevtools/tldr/get/getnpusers.py
+canonical: "https://hexmos.com/freedevtools/tldr/get/getnpusers.py/"
 description: "Enumerate Active Directory users with GetNPUsers.py to identify potential AS-REP roasting targets, enabling penetration testers to uncover security vulnerabilities. Free online tool, no registration required."
 category: common
 keywords:

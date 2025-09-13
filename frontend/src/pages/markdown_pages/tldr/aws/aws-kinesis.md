@@ -1,8 +1,8 @@
 ---
 title: "Kinesis Data Streams - Control Streaming Data | Free DevTools"
 name: aws-kinesis
-path: /freedevtools/tldr/common/aws-kinesis
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-kinesis/"
+path: /freedevtools/tldr/aws/aws-kinesis
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kinesis/"
 description: "Control streaming data with AWS Kinesis Data Streams. Manage Kinesis streams, write records, and process real-time data efficiently. Free online tool, no registration required."
 category: common
 keywords:

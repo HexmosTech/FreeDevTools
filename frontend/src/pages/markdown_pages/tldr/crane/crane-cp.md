@@ -1,8 +1,8 @@
 ---
 title: "Crane Cp - Copy Files | Free DevTools"
 name: crane-cp
-path: /freedevtools/tldr/common/crane-cp
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-cp/"
+path: /freedevtools/tldr/crane/crane-cp
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-cp/"
 description: "Copy files with Crane Cp - Quickly move files and directories. Easily mirror file structures. Free online tool, no registration required."
 category: common
 keywords:

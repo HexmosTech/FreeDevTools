@@ -1,8 +1,8 @@
 ---
 title: "GitHub Browser - Open Repositories in Browser | Free DevTools"
 name: hub-browse
-path: /freedevtools/tldr/common/hub-browse
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub-browse/"
+path: /freedevtools/tldr/hub/hub-browse
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-browse/"
 description: "Open GitHub repositories with GitHub Browser. Browse project homepages, subpages, and specific commits instantly. Free online tool, no registration required."
 category: common
 keywords:

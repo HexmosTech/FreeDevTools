@@ -1,8 +1,8 @@
 ---
 title: "Mutation Testing - Analyze PHP Code with Infection | Free DevTools"
 name: infection
-path: /freedevtools/tldr/common/infection
-canonical: "https://hexmos.com/freedevtools/tldr/common/infection/"
+path: /freedevtools/tldr/in/infection
+canonical: "https://hexmos.com/freedevtools/tldr/in/infection/"
 description: "Analyze PHP code for mutation testing with Infection, a PHP mutation testing framework. Improve code quality and detect weaknesses. Free online tool, no registration required."
 category: common
 keywords:

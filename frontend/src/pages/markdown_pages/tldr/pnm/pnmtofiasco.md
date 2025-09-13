@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to FIASCO - Compress Images | Free DevTools"
 name: pnmtofiasco
-path: /freedevtools/tldr/common/pnmtofiasco
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtofiasco/"
+path: /freedevtools/tldr/pnm/pnmtofiasco
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtofiasco/"
 description: "Convert PNM images to compressed FIASCO files with pnmtofiasco. Optimize image storage using quality compression. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "AWS SSO - Manage AWS Credentials | Free DevTools"
 name: aws-sso
-path: /freedevtools/tldr/common/aws-sso
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-sso/"
+path: /freedevtools/tldr/aws/aws-sso
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sso/"
 description: "Manage AWS Single Sign-On credentials with AWS SSO. Secure access to AWS resources and simplify identity management. Free online tool, no registration required."
 category: common
 keywords:

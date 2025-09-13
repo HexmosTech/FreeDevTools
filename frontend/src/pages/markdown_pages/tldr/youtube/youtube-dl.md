@@ -1,8 +1,8 @@
 ---
 title: "Download YouTube Videos - youtube-dl | Free DevTools"
 name: youtube-dl
-path: /freedevtools/tldr/common/youtube-dl
-canonical: "https://hexmos.com/freedevtools/tldr/common/youtube-dl/"
+path: /freedevtools/tldr/youtube/youtube-dl
+canonical: "https://hexmos.com/freedevtools/tldr/youtube/youtube-dl/"
 description: "Download YouTube videos instantly with youtube-dl. Extract audio, download subtitles, and customize video quality. Free online tool, no registration required."
 category: common
 keywords:

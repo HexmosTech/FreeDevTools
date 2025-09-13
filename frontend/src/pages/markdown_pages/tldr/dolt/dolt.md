@@ -1,8 +1,8 @@
 ---
 title: "Dolt Version Control - Manage SQL Databases | Free DevTools"
 name: dolt
-path: /freedevtools/tldr/common/dolt
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt/"
+path: /freedevtools/tldr/dolt/dolt
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt/"
 description: "Manage SQL databases with Dolt Version Control. Fork, clone, branch and merge your data like a Git repository. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "OpenStack Flavor - Manage Instance Flavors | Free DevTools"
 name: openstack-flavor
-path: /freedevtools/tldr/common/openstack-flavor
-canonical: "https://hexmos.com/freedevtools/tldr/common/openstack-flavor/"
+path: /freedevtools/tldr/openstack/openstack-flavor
+canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-flavor/"
 description: "Manage OpenStack instance flavors effortlessly with OpenStack Flavor. Create, list, and delete virtual hardware templates for your cloud instances. Free online tool, no registration required."
 category: common
 keywords:

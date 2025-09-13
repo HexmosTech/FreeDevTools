@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to LEAF - Image Format Conversion | Free DevTools"
 name: ppmtoleaf
-path: /freedevtools/tldr/common/ppmtoleaf
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoleaf/"
+path: /freedevtools/tldr/ppm/ppmtoleaf
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoleaf/"
 description: "Convert PPM image files to LEAF format with ppmtoleaf. A command-line image conversion tool for diverse applications. Free online tool, no registration required."
 category: common
 keywords:

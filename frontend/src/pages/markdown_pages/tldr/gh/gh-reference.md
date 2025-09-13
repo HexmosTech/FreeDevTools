@@ -1,8 +1,8 @@
 ---
 title: "GitHub Reference - Generate Command Help | Free DevTools"
 name: gh-reference
-path: /freedevtools/tldr/common/gh-reference
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-reference/"
+path: /freedevtools/tldr/gh/gh-reference
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-reference/"
 description: "Generate GitHub CLI command reference with gh-reference. Get detailed help and documentation instantly. View all available commands. Free online tool, no registration required."
 category: common
 keywords:

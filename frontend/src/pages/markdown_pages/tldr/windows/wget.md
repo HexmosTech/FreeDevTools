@@ -1,8 +1,8 @@
 ---
 title: "Wget - Download Files via Command Line | Free DevTools"
 name: wget
-path: /freedevtools/tldr/widows/wget
-canonical: "https://hexmos.com/freedevtools/tldr/widows/wget/"
+path: /freedevtools/tldr/windows/wget
+canonical: "https://hexmos.com/freedevtools/tldr/windows/wget/"
 description: "Download files easily with Wget. Retrieve web content using the command line. Access web servers, automate downloads, and mirror websites. Free online tool, no registration required."
 category: windows
 keywords:

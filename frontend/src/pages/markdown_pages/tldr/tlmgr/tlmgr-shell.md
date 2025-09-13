@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Manager - Control TeX Live with tlmgr | Free DevTools"
 name: tlmgr-shell
-path: /freedevtools/tldr/common/tlmgr-shell
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-shell/"
+path: /freedevtools/tldr/tlmgr/tlmgr-shell
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-shell/"
 description: "Control TeX Live installations instantly with TeX Live Manager (tlmgr). Manage packages, update configurations, and troubleshoot installations effortlessly. Free online tool, no registration required."
 category: common
 keywords:

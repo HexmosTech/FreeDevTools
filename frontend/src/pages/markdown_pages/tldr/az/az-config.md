@@ -1,8 +1,8 @@
 ---
 title: "Azure Config - Manage CLI Configuration | Free DevTools"
 name: az-config
-path: /freedevtools/tldr/common/az-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-config/"
+path: /freedevtools/tldr/az/az-config
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-config/"
 description: "Manage Azure CLI configurations with Az Config. Set, get, and unset configurations to customize your Azure CLI environment. Free online tool, no registration required."
 category: common
 keywords:

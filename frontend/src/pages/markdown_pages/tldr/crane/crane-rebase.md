@@ -1,8 +1,8 @@
 ---
 title: "Rebase Image - Modify Container Images | Free DevTools"
 name: crane-rebase
-path: /freedevtools/tldr/common/crane-rebase
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-rebase/"
+path: /freedevtools/tldr/crane/crane-rebase
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-rebase/"
 description: "Rebase container images with Crane. Modify image layers and change base images, enhancing security and efficiency. Free online tool, no registration required."
 category: common
 keywords:

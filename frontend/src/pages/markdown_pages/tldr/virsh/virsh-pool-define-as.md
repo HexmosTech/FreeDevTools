@@ -1,8 +1,8 @@
 ---
 title: "Create Virsh Pool - Define Storage Pools | Free DevTools"
 name: virsh-pool-define-as
-path: /freedevtools/tldr/common/virsh-pool-define-as
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-define-as/"
+path: /freedevtools/tldr/virsh/virsh-pool-define-as
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-define-as/"
 description: "Create virsh pool configurations with Virsh Pool Define. Define storage pool settings for virtual machines on Linux systems. Free online tool, no registration required."
 category: common
 keywords:

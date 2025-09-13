@@ -1,8 +1,8 @@
 ---
 title: "HTTP Client - Interact with APIs & HTTP Servers | Free DevTools"
 name: http
-path: /freedevtools/tldr/common/http
-canonical: "https://hexmos.com/freedevtools/tldr/common/http/"
+path: /freedevtools/tldr/http/http
+canonical: "https://hexmos.com/freedevtools/tldr/http/http/"
 description: "Interact with APIs easily with HTTPie, the HTTP client. Test, debug and send HTTP requests with a simple command line interface. Free online tool, no registration required."
 category: common
 keywords:

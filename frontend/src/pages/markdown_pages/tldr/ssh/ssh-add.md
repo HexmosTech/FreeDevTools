@@ -1,8 +1,8 @@
 ---
 title: "SSH-Add - Manage SSH Keys | Free DevTools"
 name: ssh-add
-path: "/freedevtools/tldr/common/ssh-add"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ssh-add/"
+path: "/freedevtools/tldr/ssh/ssh-add"
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-add/"
 description: "Manage SSH keys with SSH-Add. Add, delete, and list SSH keys in ssh-agent, enhancing security and streamlining authentication. Free online tool, no registration required."
 category: common
 keywords:

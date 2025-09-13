@@ -1,8 +1,8 @@
 ---
 title: "Generate LLVM IR - Disassemble Bitcode | Free DevTools"
 name: llvm-dis
-path: /freedevtools/tldr/common/llvm-dis
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-dis/"
+path: /freedevtools/tldr/llvm/llvm-dis
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-dis/"
 description: "Generate LLVM Intermediate Representation (IR) with llvm-dis. Disassemble LLVM bitcode into human-readable format. Free online tool, no registration required."
 category: common
 keywords:

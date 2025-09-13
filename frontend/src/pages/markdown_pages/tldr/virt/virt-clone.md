@@ -1,8 +1,8 @@
 ---
 title: "Clone Virtual Machine - Create VMs with virt-clone | Free DevTools"
 name: virt-clone
-path: /freedevtools/tldr/common/virt-clone
-canonical: "https://hexmos.com/freedevtools/tldr/common/virt-clone/"
+path: /freedevtools/tldr/virt/virt-clone
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-clone/"
 description: "Create virtual machines easily with virt-clone. Automate VM cloning, specify storage paths, and manage MAC addresses. Free online tool, no registration required."
 category: common
 keywords:

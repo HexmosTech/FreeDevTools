@@ -1,8 +1,8 @@
 ---
 title: "Quantize PNM Colors - Generate PNM Color Palettes | Free DevTools"
 name: pnmquant
-path: /freedevtools/tldr/common/pnmquant
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmquant/"
+path: /freedevtools/tldr/pnm/pnmquant
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmquant/"
 description: "Quantize images with Pnmquant. Generate PNM color palettes and reduce the number of colors in PNM images. Free online tool, no registration required."
 category: common
 keywords:

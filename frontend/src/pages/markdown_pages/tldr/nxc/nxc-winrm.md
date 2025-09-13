@@ -1,8 +1,8 @@
 ---
 title: "Control WinRM - Pentest Windows Remote Management | Free DevTools"
 name: nxc-winrm
-path: /freedevtools/tldr/common/nxc-winrm
-canonical: "https://hexmos.com/freedevtools/tldr/common/nxc-winrm/"
+path: /freedevtools/tldr/nxc/nxc-winrm
+canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-winrm/"
 description: "Control Windows Remote Management with nxc-winrm, a powerful penetration testing tool.  Exploit winrm vulnerabilities and manage remote systems securely. Free online tool, no registration required."
 category: common
 keywords:

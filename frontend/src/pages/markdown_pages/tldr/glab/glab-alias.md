@@ -1,8 +1,8 @@
 ---
 title: "GLab Alias - Manage GitLab CLI Aliases | Free DevTools"
 name: glab-alias
-path: /freedevtools/tldr/common/glab-alias
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-alias/"
+path: /freedevtools/tldr/glab/glab-alias
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-alias/"
 description: "Manage GitLab CLI aliases with Glab. Create shortcuts for common GitLab commands, simplify workflows, and increase efficiency. Free online tool, no registration required."
 category: common
 keywords:

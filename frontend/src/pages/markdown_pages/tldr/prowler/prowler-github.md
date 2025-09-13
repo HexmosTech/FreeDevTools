@@ -1,8 +1,8 @@
 ---
 title: "Assess GitHub Security - Prowler GitHub Security Audit | Free DevTools"
 name: prowler-github
-path: /freedevtools/tldr/common/prowler-github
-canonical: "https://hexmos.com/freedevtools/tldr/common/prowler-github/"
+path: /freedevtools/tldr/prowler/prowler-github
+canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-github/"
 description: "Assess GitHub security with Prowler GitHub. Audit accounts, repositories, and organizations for best practices and vulnerabilities. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "XMLStarlet - Format XML Documents | Free DevTools"
 name: xmlstarlet
-path: /freedevtools/tldr/common/xmlstarlet
-canonical: "https://hexmos.com/freedevtools/tldr/common/xmlstarlet/"
+path: /freedevtools/tldr/xml/xmlstarlet
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xmlstarlet/"
 description: "Format XML with XMLStarlet. Edit, select, and transform XML documents via command-line, offering powerful XSLT capabilities. Free online tool, no registration required."
 category: common
 keywords:

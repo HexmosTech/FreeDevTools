@@ -1,8 +1,8 @@
 ---
 title: "Create Azure Disk - Manage Virtual Disks | Free DevTools"
 name: az-disk
-path: /freedevtools/tldr/common/az-disk
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-disk/"
+path: /freedevtools/tldr/az/az-disk
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-disk/"
 description: "Create and manage Azure disks with az-disk. Control virtual disk size, grant access, and list existing disks. Free online tool, no registration required."
 category: common
 keywords:

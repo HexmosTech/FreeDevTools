@@ -1,8 +1,8 @@
 ---
 title: "GStreamer Launch - Build Pipelines | Free DevTools"
 name: gst-launch-1.0
-path: /freedevtools/tldr/common/gst-launch-1.0
-canonical: "https://hexmos.com/freedevtools/tldr/common/gst-launch-1.0/"
+path: /freedevtools/tldr/gst/gst-launch-1.0
+canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-launch-1.0/"
 description: "Build GStreamer pipelines with gst-launch-1.0. Create multimedia processing workflows and stream media easily. Free online tool, no registration required."
 category: common
 keywords:

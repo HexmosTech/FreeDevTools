@@ -1,8 +1,8 @@
 ---
 title: "PIO Access - Control Resource Permissions | Free DevTools"
 name: pio-access
-path: /freedevtools/tldr/common/pio-access
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-access/"
+path: /freedevtools/tldr/pio/pio-access
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-access/"
 description: "Control PlatformIO resource access levels with PIO Access. Manage user permissions and restrict access to packages with this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

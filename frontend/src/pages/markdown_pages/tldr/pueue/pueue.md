@@ -1,8 +1,8 @@
 ---
 title: "Pueue - Control Task Execution | Free DevTools"
 name: pueue
-path: /freedevtools/tldr/common/pueue
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue/"
+path: /freedevtools/tldr/pueue/pueue
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue/"
 description: "Control task execution with Pueue. Manage long-running processes and execute them sequentially or in parallel. Free online tool, no registration required."
 category: common
 keywords:

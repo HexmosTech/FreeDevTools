@@ -1,8 +1,8 @@
 ---
 title: "PIO Manager - Manage Embedded Development with PIO | Free DevTools"
 name: pio
-path: /freedevtools/tldr/common/pio
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio/"
+path: /freedevtools/tldr/pio/pio
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio/"
 description: "Manage embedded development environments easily with PIO Manager. Build, test, and deploy embedded software projects quickly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Timestamp - OpenSSL TS | Free DevTools"
 name: openssl-ts
-path: /freedevtools/tldr/common/openssl-ts
-canonical: "https://hexmos.com/freedevtools/tldr/common/openssl-ts/"
+path: /freedevtools/tldr/openssl/openssl-ts
+canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-ts/"
 description: "Generate and verify timestamps with OpenSSL TS. Create timestamp requests, check response data, and secure your files. Free online tool, no registration required."
 category: common
 keywords:

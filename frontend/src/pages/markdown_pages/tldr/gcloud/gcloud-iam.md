@@ -1,8 +1,8 @@
 ---
 title: "Manage IAM - Configure Access with gcloud-iam | Free DevTools"
 name: gcloud-iam
-path: /freedevtools/tldr/common/gcloud-iam
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-iam/"
+path: /freedevtools/tldr/gcloud/gcloud-iam
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-iam/"
 description: "Configure Identity and Access Management (IAM) with gcloud-iam. Create service accounts, manage roles, and control permissions effortlessly. Free online tool, no registration required."
 category: common
 keywords:

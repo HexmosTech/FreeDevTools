@@ -1,8 +1,8 @@
 ---
 title: "doctl Databases Firewalls - Manage Cluster Access | Free DevTools"
 name: doctl-databases-firewalls
-path: /freedevtools/tldr/common/doctl-databases-firewalls
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-firewalls/"
+path: /freedevtools/tldr/doctl/doctl-databases-firewalls
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-firewalls/"
 description: "Manage database cluster firewalls with doctl. Control access rules and secure your DigitalOcean databases. Free online tool, no registration required."
 category: common
 keywords:

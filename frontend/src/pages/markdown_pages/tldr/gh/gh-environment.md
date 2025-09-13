@@ -1,8 +1,8 @@
 ---
 title: "GitHub Environment - Display Variables | Free DevTools"
 name: gh-environment
-path: /freedevtools/tldr/common/gh-environment
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-environment/"
+path: /freedevtools/tldr/gh/gh-environment
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-environment/"
 description: "Display GitHub environment variables with gh-environment. Quickly understand available environment settings for GitHub CLI commands. Free online tool, no registration required."
 category: common
 keywords:

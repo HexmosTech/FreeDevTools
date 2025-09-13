@@ -1,8 +1,8 @@
 ---
 title: "Container Image Manager - Control gcrane Images | Free DevTools"
 name: gcrane
-path: /freedevtools/tldr/common/gcrane
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcrane/"
+path: /freedevtools/tldr/gcrane/gcrane
+canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane/"
 description: "Control container images effortlessly with gcrane, a comprehensive container image management tool. Manage registries and perform image operations. Free online tool, no registration required."
 category: common
 keywords:

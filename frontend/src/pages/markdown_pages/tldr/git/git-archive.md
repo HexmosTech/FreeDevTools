@@ -1,8 +1,8 @@
 ---
 title: "Git Archive - Create File Archives from Git Repositories | Free DevTools"
 name: git-archive
-path: /freedevtools/tldr/common/git-archive
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-archive/"
+path: /freedevtools/tldr/git/git-archive
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-archive/"
 description: "Create file archives with Git Archive. Generate tarballs and zip files from Git repositories. Free online tool, no registration required."
 category: common
 keywords:

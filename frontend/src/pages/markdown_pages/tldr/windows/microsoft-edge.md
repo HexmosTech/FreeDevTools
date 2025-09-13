@@ -1,8 +1,8 @@
 ---
 title: "Control Microsoft Edge Browser - Command Line | Free DevTools"
 name: microsoft-edge
-path: /freedevtools/tldr/widows/microsoft-edge
-canonical: "https://hexmos.com/freedevtools/tldr/widows/microsoft-edge/"
+path: /freedevtools/tldr/windows/microsoft-edge
+canonical: "https://hexmos.com/freedevtools/tldr/windows/microsoft-edge/"
 description: "Control Microsoft Edge browser with command-line interface. Automate tasks, manage profiles, and debug websites effortlessly. Free online tool, no registration required."
 category: windows
 keywords:

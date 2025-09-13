@@ -1,8 +1,8 @@
 ---
 title: "ADB Reverse - Forward Ports from Android Device | Free DevTools"
 name: adb-reverse
-path: /freedevtools/tldr/common/adb-reverse
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb-reverse/"
+path: /freedevtools/tldr/adb/adb-reverse
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-reverse/"
 description: "Forward ports with ADB Reverse to debug Android applications remotely. Easily create reverse connections and manage sockets on your device. Free online tool, no registration required."
 category: common
 keywords:

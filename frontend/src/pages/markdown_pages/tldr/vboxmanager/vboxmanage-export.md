@@ -1,8 +1,8 @@
 ---
 title: "VBoxManage Export - Export Virtual Machines | Free DevTools"
 name: vboxmanage-export
-path: /freedevtools/tldr/common/vboxmanage-export
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-export/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-export
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-export/"
 description: "Export Virtual Machines with VBoxManage. Create virtual appliances (OVA) for backup and portability. Free online tool, no registration required."
 category: common
 keywords:

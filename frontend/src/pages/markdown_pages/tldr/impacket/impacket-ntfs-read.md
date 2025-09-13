@@ -1,8 +1,8 @@
 ---
 title: "NTFS Read - Extract Files from NTFS | Free DevTools"
 name: impacket-ntfs-read
-path: /freedevtools/tldr/common/impacket-ntfs-read
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-ntfs-read/"
+path: /freedevtools/tldr/impacket/impacket-ntfs-read
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-ntfs-read/"
 description: "Extract files with NTFS Read, a command-line tool for accessing NTFS volumes. Analyze disk images and recover data. Free online tool, no registration required."
 category: common
 keywords:

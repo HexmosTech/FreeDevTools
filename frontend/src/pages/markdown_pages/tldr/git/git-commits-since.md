@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Commits - View Commits Since Date | Free DevTools"
 name: git-commits-since
-path: /freedevtools/tldr/common/git-commits-since
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-commits-since/"
+path: /freedevtools/tldr/git/git-commits-since
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-commits-since/"
 description: "Generate git commits list with git-commits-since. Display commits since a specific date or time. Quick history filtering. Free online tool, no registration required."
 category: common
 keywords:

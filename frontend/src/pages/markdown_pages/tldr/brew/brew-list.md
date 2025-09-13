@@ -1,8 +1,8 @@
 ---
 title: "Brew List - Control Package Installations | Free DevTools"
 name: brew-list
-path: /freedevtools/tldr/common/brew-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-list/"
+path: /freedevtools/tldr/brew/brew-list
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-list/"
 description: "Control package installations with Brew List. Manage formulae and casks on macOS using command line. View installed packages and dependencies. Free online tool, no registration required."
 category: common
 keywords:

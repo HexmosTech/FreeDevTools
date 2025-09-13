@@ -1,8 +1,8 @@
 ---
 title: "Git Reflog - Track Reference Changes | Free DevTools"
 name: git-reflog
-path: /freedevtools/tldr/common/git-reflog
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-reflog/"
+path: /freedevtools/tldr/git/git-reflog
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-reflog/"
 description: "Track git reference changes with Git Reflog. Recover lost commits, explore historical branch states, and revert to previous states with ease. Free online tool, no registration required."
 category: common
 keywords:

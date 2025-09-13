@@ -1,8 +1,8 @@
 ---
 title: "Docker Exec - Execute Commands in Running Containers | Free DevTools"
 name: docker-exec
-path: /freedevtools/tldr/common/docker-exec
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-exec/"
+path: /freedevtools/tldr/docker/docker-exec
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-exec/"
 description: "Execute commands in running containers with Docker Exec. Manage processes, debug applications, and interact with Dockerized environments. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Rev-List - List Commits in Reverse Order | Free DevTools"
 name: git-rev-list
-path: /freedevtools/tldr/common/git-rev-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-rev-list/"
+path: /freedevtools/tldr/git/git-rev-list
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-rev-list/"
 description: "List commits easily with Git Rev-List. Inspect commit history and track changes in your repository. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "GitHub Repo - Manage Repositories | Free DevTools"
 name: gh-repo
-path: /freedevtools/tldr/common/gh-repo
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-repo/"
+path: /freedevtools/tldr/gh/gh-repo
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-repo/"
 description: "Manage GitHub repositories with gh-repo. Create, clone, fork, view and list your repositories. Free online tool, no registration required."
 category: common
 keywords:

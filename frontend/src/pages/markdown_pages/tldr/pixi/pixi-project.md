@@ -1,8 +1,8 @@
 ---
 title: "Pixi Project - Modify Project Config | Free DevTools"
 name: pixi-project
-path: /freedevtools/tldr/common/pixi-project
-canonical: "https://hexmos.com/freedevtools/tldr/common/pixi-project/"
+path: /freedevtools/tldr/pixi/pixi-project
+canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-project/"
 description: "Modify your Pixi project configuration with Pixi Project. Manage channels, description, platform, version, and environment. Free online tool, no registration required."
 category: common
 keywords:

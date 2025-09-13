@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Cancel - Stop Stack Updates | Free DevTools"
 name: pulumi-cancel
-path: /freedevtools/tldr/common/pulumi-cancel
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-cancel/"
+path: /freedevtools/tldr/pulumi/pulumi-cancel
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-cancel/"
 description: "Stop running Pulumi stack updates with Pulumi Cancel. Cancel deployments and rollbacks efficiently for infrastructure as code. Free online tool, no registration required."
 category: common
 keywords:

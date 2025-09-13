@@ -1,8 +1,8 @@
 ---
 title: "LLVM NM - Inspect Symbol Tables | Free DevTools"
 name: llvm-nm
-path: /freedevtools/tldr/common/llvm-nm
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvm-nm/"
+path: /freedevtools/tldr/llvm/llvm-nm
+canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-nm/"
 description: "Inspect symbol tables with LLVM NM, a powerful object file analyzer. Uncover function names, object sizes, and debug information. Free online tool, no registration required."
 category: common
 keywords:

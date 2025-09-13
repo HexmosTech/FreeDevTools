@@ -1,8 +1,8 @@
 ---
 title: "Hledger-ui TUI - Manage Plain Text Accounting | Free DevTools"
 name: hledger-ui
-path: /freedevtools/tldr/common/hledger-ui
-canonical: "https://hexmos.com/freedevtools/tldr/common/hledger-ui/"
+path: /freedevtools/tldr/hledger/hledger-ui
+canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-ui/"
 description: "Manage plain text accounting with Hledger-ui TUI. Analyze journal files, create balance sheets, and track transactions with this terminal interface. Free online tool, no registration required."
 category: common
 keywords:

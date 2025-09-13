@@ -1,8 +1,8 @@
 ---
 title: "PNM Split - Divide PNM Images | Free DevTools"
 name: pnmsplit
-path: /freedevtools/tldr/common/pnmsplit
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmsplit/"
+path: /freedevtools/tldr/pnm/pnmsplit
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmsplit/"
 description: "Divide PNM images easily with PNM Split. Decompose portable anymap format files into smaller parts. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Redis Benchmark - Measure Redis Server Performance | Free DevTools"
 name: redis-benchmark
-path: /freedevtools/tldr/common/redis-benchmark
-canonical: "https://hexmos.com/freedevtools/tldr/common/redis-benchmark/"
+path: /freedevtools/tldr/redis/redis-benchmark
+canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-benchmark/"
 description: "Benchmark Redis performance with Redis Benchmark. Measure server speed and identify bottlenecks. Free online tool, no registration required."
 category: common
 keywords:

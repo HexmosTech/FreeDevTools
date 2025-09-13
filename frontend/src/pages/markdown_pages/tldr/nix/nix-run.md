@@ -1,8 +1,8 @@
 ---
 title: "Nix Run - Execute Applications from Flakes | Free DevTools"
 name: nix-run
-path: /freedevtools/tldr/common/nix-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-run/"
+path: /freedevtools/tldr/nix/nix-run
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-run/"
 description: "Execute applications seamlessly with Nix Run. Effortlessly run applications from Nix flakes, manage dependencies, and reproduce environments. Free online tool, no registration required."
 category: common
 keywords:

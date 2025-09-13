@@ -1,8 +1,8 @@
 ---
 title: "Cherry-Pick Git - Apply Commit Changes | Free DevTools"
 name: git-cherry-pick
-path: /freedevtools/tldr/common/git-cherry-pick
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-cherry-pick/"
+path: /freedevtools/tldr/git/git-cherry-pick
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-cherry-pick/"
 description: "Apply git commit changes with Git Cherry-Pick. Easily integrate specific commits into current branch for focused updates. Free online tool, no registration required."
 category: common
 keywords:

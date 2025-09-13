@@ -1,8 +1,8 @@
 ---
 title: "Zapier Build - Create Integration Package | Free DevTools"
 name: zapier-build
-path: /freedevtools/tldr/common/zapier-build
-canonical: "https://hexmos.com/freedevtools/tldr/common/zapier-build/"
+path: /freedevtools/tldr/zapier/zapier-build
+canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-build/"
 description: "Create Zapier integration packages with Zapier Build. Optimize your integration deployment and manage dependencies efficiently. Free online tool, no registration required."
 category: common
 keywords:

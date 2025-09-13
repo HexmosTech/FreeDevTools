@@ -1,8 +1,8 @@
 ---
 title: "XML Edit - Edit XML Documents | Free DevTools"
 name: xml-edit
-path: /freedevtools/tldr/common/xml-edit
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-edit/"
+path: /freedevtools/tldr/xml/xml-edit
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-edit/"
 description: "Edit XML documents easily with XML Edit. Modify, rename, delete, and update XML elements and attributes using XPATH expressions. Free online tool, no registration required."
 category: common
 keywords:

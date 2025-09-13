@@ -1,8 +1,8 @@
 ---
 title: "Qmake Builder - Execute Qmake Builds | Free DevTools"
 name: sfdk-qmake
-path: /freedevtools/tldr/common/sfdk-qmake
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-qmake/"
+path: /freedevtools/tldr/sfdk/sfdk-qmake
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmake/"
 description: "Execute qmake builds quickly with sfdk-qmake. Streamline Sailfish OS development with shadow building and custom arguments. Free online tool, no registration required."
 category: common
 keywords:

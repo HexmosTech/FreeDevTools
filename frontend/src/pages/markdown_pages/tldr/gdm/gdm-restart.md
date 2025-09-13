@@ -1,8 +1,8 @@
 ---
 title: "Restart GDM - Control Display Manager | Free DevTools"
 name: gdm-restart
-path: /freedevtools/tldr/common/gdm-restart
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdm-restart/"
+path: /freedevtools/tldr/gdm/gdm-restart
+canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-restart/"
 description: "Restart GDM easily with this free online tool. Control GNOME Display Manager processes for troubleshooting or configuration. Free online tool, no registration required."
 category: common
 keywords:

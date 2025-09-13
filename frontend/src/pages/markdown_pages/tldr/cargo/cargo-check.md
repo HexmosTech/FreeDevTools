@@ -1,8 +1,8 @@
 ---
 title: "Check Rust Code - Find Errors with Cargo Check | Free DevTools"
 name: cargo-check
-path: /freedevtools/tldr/common/cargo-check
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-check/"
+path: /freedevtools/tldr/cargo/cargo-check
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-check/"
 description: "Check Rust code for errors instantly with Cargo Check. Analyze dependencies and ensure code quality using the command line. Free online tool, no registration required."
 category: common
 keywords:

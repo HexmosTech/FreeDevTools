@@ -1,8 +1,8 @@
 ---
 title: "Filter Repo - Rewrite Git History | Free DevTools"
 name: git-filter-repo
-path: /freedevtools/tldr/common/git-filter-repo
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-filter-repo/"
+path: /freedevtools/tldr/git/git-filter-repo
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-filter-repo/"
 description: "Rewrite Git history with Filter Repo. Remove sensitive data, extract subfolders, and restructure repositories using this powerful command-line tool. Free online tool, no registration required."
 category: common
 keywords:

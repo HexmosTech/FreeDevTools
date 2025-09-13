@@ -1,8 +1,8 @@
 ---
 title: "Initialize DVC - Manage Data Versions | Free DevTools"
 name: dvc-init
-path: /freedevtools/tldr/common/dvc-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-init/"
+path: /freedevtools/tldr/dvc/dvc-init
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-init/"
 description: "Initialize data versioning with DVC. Track and manage datasets, experiments, and models. Free online tool, no registration required."
 category: common
 keywords:

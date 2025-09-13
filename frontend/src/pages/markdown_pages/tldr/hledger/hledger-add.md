@@ -1,8 +1,8 @@
 ---
 title: "Record hledger Transactions - Add Transactions Interactively | Free DevTools"
 name: hledger-add
-path: /freedevtools/tldr/common/hledger-add
-canonical: "https://hexmos.com/freedevtools/tldr/common/hledger-add/"
+path: /freedevtools/tldr/hledger/hledger-add
+canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-add/"
 description: "Record hledger transactions easily with hledger-add. Create and manage financial transactions interactively in the console. Free online tool, no registration required."
 category: common
 keywords:

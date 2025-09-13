@@ -1,8 +1,8 @@
 ---
 title: "Salt - Control Remote Systems | Free DevTools"
 name: salt
-path: /freedevtools/tldr/common/salt
-canonical: "https://hexmos.com/freedevtools/tldr/common/salt/"
+path: /freedevtools/tldr/salt/salt
+canonical: "https://hexmos.com/freedevtools/tldr/salt/salt/"
 description: "Control remote systems efficiently with Salt. Manage configurations, execute commands, and automate infrastructure tasks. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Run GitHub Screensavers - Animate Your Terminal | Free DevTools"
 name: gh-screensaver
-path: /freedevtools/tldr/common/gh-screensaver
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-screensaver/"
+path: /freedevtools/tldr/gh/gh-screensaver
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-screensaver/"
 description: "Run GitHub screensavers with gh-screensaver. Animate your terminal with customizable screensavers like fireworks, marquee, and starfield. Free online tool, no registration required."
 category: common
 keywords:

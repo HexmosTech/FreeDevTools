@@ -1,8 +1,8 @@
 ---
 title: "Set Node Version - Manage Node.js Versions | Free DevTools"
 name: set-nodeversion
-path: /freedevtools/tldr/common/set-nodeversion
-canonical: "https://hexmos.com/freedevtools/tldr/common/set-nodeversion/"
+path: /freedevtools/tldr/set/set-nodeversion
+canonical: "https://hexmos.com/freedevtools/tldr/set/set-nodeversion/"
 description: "Manage Node.js versions easily with Set-NodeVersion. Control your Node.js environment and streamline development workflow. Free online tool, no registration required."
 category: common
 keywords:

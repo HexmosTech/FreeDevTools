@@ -1,8 +1,8 @@
 ---
 title: "GitHub Workflow - Manage Actions | Free DevTools"
 name: gh-workflow
-path: /freedevtools/tldr/common/gh-workflow
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-workflow/"
+path: /freedevtools/tldr/gh/gh-workflow
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-workflow/"
 description: "Manage GitHub Actions workflows with gh-workflow. View, run, and control workflow executions. Free online tool, no registration required."
 category: common
 keywords:

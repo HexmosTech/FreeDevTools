@@ -1,8 +1,8 @@
 ---
 title: "Index Filter - Modify Container Index with Crane | Free DevTools"
 name: crane-index-filter
-path: /freedevtools/tldr/common/crane-index-filter
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-index-filter/"
+path: /freedevtools/tldr/crane/crane-index-filter
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index-filter/"
 description: "Modify container index effortlessly with Crane Index Filter. Filter by platform, tag images, and streamline your container registry. Free online tool, no registration required."
 category: common
 keywords:

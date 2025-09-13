@@ -1,8 +1,8 @@
 ---
 title: "Resolve Conflicts - Control JJ Merge Tool | Free DevTools"
 name: jj-resolve
-path: /freedevtools/tldr/common/jj-resolve
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-resolve/"
+path: /freedevtools/tldr/jj/jj-resolve
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-resolve/"
 description: "Resolve conflicts efficiently with JJ Merge Tool, handling file merge issues. Manage revision conflicts easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Docker Remove - Control Containers | Free DevTools"
 name: docker-container-remove
-path: /freedevtools/tldr/common/docker-container-remove
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-container-remove/"
+path: /freedevtools/tldr/docker/docker-container-remove
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-container-remove/"
 description: "Control Docker containers easily with Docker Remove. Manage and delete containers efficiently using the command line. Free online tool, no registration required."
 category: common
 keywords:

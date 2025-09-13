@@ -1,8 +1,8 @@
 ---
 title: "Standard Lint - Validate JavaScript Code Style | Free DevTools"
 name: standard
-path: /freedevtools/tldr/common/standard
-canonical: "https://hexmos.com/freedevtools/tldr/common/standard/"
+path: /freedevtools/tldr/st/standard
+canonical: "https://hexmos.com/freedevtools/tldr/st/standard/"
 description: "Validate JavaScript code style with Standard Linter. Automatically fix code inconsistencies and maintain code quality using command line. Free online tool, no registration required."
 category: common
 keywords:

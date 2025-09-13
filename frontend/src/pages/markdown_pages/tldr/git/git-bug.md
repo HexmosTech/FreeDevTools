@@ -1,8 +1,8 @@
 ---
 title: "Git Bug Tracker - Manage Bugs in Git | Free DevTools"
 name: git-bug
-path: /freedevtools/tldr/common/git-bug
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-bug/"
+path: /freedevtools/tldr/git/git-bug
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-bug/"
 description: "Manage bugs within Git using Git Bug Tracker, a distributed bug tracking system integrated directly into your Git repository. Collaborate efficiently. Free online tool, no registration required."
 category: common
 keywords:

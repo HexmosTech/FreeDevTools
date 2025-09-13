@@ -1,8 +1,8 @@
 ---
 title: "Pueue Enqueue - Stash Task Enqueuing | Free DevTools"
 name: pueue-enqueue
-path: /freedevtools/tldr/common/pueue-enqueue
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-enqueue/"
+path: /freedevtools/tldr/pueue/pueue-enqueue
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-enqueue/"
 description: "Enqueue stashed tasks efficiently with Pueue Enqueue. Schedule task execution with delays and specific dates. Free online tool, no registration required."
 category: common
 keywords:

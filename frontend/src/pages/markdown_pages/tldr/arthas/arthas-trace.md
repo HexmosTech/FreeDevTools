@@ -1,8 +1,8 @@
 ---
 title: "Arthas Trace - Trace Method Calls | Free DevTools"
 name: arthas-trace
-path: /freedevtools/tldr/common/arthas-trace
-canonical: "https://hexmos.com/freedevtools/tldr/common/arthas-trace/"
+path: /freedevtools/tldr/arthas/arthas-trace
+canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas-trace/"
 description: "Trace method calls with Arthas Trace, debug Java applications, and identify performance bottlenecks with detailed invocation chain analysis. Free online tool, no registration required."
 category: common
 keywords:

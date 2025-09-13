@@ -1,8 +1,8 @@
 ---
 title: "Transmission Daemon - Control Torrents | Free DevTools"
 name: transmission-daemon
-path: /freedevtools/tldr/common/transmission-daemon
-canonical: "https://hexmos.com/freedevtools/tldr/common/transmission-daemon/"
+path: /freedevtools/tldr/transmission/transmission-daemon
+canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-daemon/"
 description: "Control torrent downloads with Transmission Daemon, a lightweight and efficient BitTorrent client. Manage downloads remotely and automate torrent handling. Free online tool, no registration required."
 category: common
 keywords:

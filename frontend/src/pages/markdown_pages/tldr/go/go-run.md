@@ -1,8 +1,8 @@
 ---
 title: "Go Run - Compile & Run Go Code | Free DevTools"
 name: go-run
-path: /freedevtools/tldr/common/go-run
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-run/"
+path: /freedevtools/tldr/go/go-run
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-run/"
 description: "Run Go code instantly with Go Run. Compile and execute Go programs without creating a binary file. Free online tool, no registration required."
 category: common
 keywords:

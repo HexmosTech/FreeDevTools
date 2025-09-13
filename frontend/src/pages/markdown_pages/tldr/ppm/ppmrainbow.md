@@ -1,8 +1,8 @@
 ---
 title: "Generate Rainbow Images - ppmrainbow | Free DevTools"
 name: ppmrainbow
-path: /freedevtools/tldr/common/ppmrainbow
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmrainbow/"
+path: /freedevtools/tldr/ppm/ppmrainbow
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmrainbow/"
 description: "Generate rainbow images easily with ppmrainbow. Control color gradients and image dimensions for custom PPM files. Free online tool, no registration required."
 category: common
 keywords:

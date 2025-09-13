@@ -1,8 +1,8 @@
 ---
 title: "Pipes Terminal Generator - Create Animated Pipes | Free DevTools"
 name: pipes.sh
-path: /freedevtools/tldr/common/pipes.sh
-canonical: "https://hexmos.com/freedevtools/tldr/common/pipes.sh/"
+path: /freedevtools/tldr/pip/pipes.sh
+canonical: "https://hexmos.com/freedevtools/tldr/pip/pipes.sh/"
 description: "Generate terminal pipes animations with pipes.sh. Customize color, pattern, and framerate using this Bash script. Free online tool, no registration required."
 category: common
 keywords:

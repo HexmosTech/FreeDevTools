@@ -1,8 +1,8 @@
 ---
 title: "Paste PNM Images - Control PNM Image Pasting | Free DevTools"
 name: pnmpaste
-path: /freedevtools/tldr/common/pnmpaste
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmpaste/"
+path: /freedevtools/tldr/pnm/pnmpaste
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpaste/"
 description: "Control PNM image pasting with pnmpaste. Paste images, combine pixels with boolean operations, and create complex compositions. Free online tool, no registration required."
 category: common
 keywords:

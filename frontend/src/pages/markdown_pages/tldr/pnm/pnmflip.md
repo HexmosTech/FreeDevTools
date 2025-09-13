@@ -1,8 +1,8 @@
 ---
 title: "Flip PNM Image - Control Image Orientation | Free DevTools"
 name: pnmflip
-path: /freedevtools/tldr/common/pnmflip
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmflip/"
+path: /freedevtools/tldr/pnm/pnmflip
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmflip/"
 description: "Flip PNM images with pnmflip. Control image orientation (horizontally or vertically) using the command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Set Shell Options - Control Bash Behavior | Free DevTools"
 name: set
-path: /freedevtools/tldr/common/set
-canonical: "https://hexmos.com/freedevtools/tldr/common/set/"
+path: /freedevtools/tldr/set/set
+canonical: "https://hexmos.com/freedevtools/tldr/set/set/"
 description: "Control Bash shell options instantly with the Set command. Customize shell behavior, manage variables, and debug scripts. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Nix-Shell - Launch Development Environments | Free DevTools"
 name: nix-shell
-path: /freedevtools/tldr/common/nix-shell
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-shell/"
+path: /freedevtools/tldr/nix/nix-shell
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-shell/"
 description: "Launch development environments quickly with Nix-Shell, isolating dependencies for reproducible builds and consistent software environments. Free online tool, no registration required."
 category: common
 keywords:

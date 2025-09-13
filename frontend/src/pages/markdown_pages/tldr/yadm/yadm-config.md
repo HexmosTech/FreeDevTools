@@ -1,8 +1,8 @@
 ---
 title: "Yadm Config - Manage Git Configurations | Free DevTools"
 name: yadm-config
-path: /freedevtools/tldr/common/yadm-config
-canonical: "https://hexmos.com/freedevtools/tldr/common/yadm-config/"
+path: /freedevtools/tldr/yadm/yadm-config
+canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-config/"
 description: "Manage Git configurations with Yadm Config. Set, get, unset, and list Yadm's Git configuration values effortlessly. Free online tool, no registration required."
 category: common
 keywords:

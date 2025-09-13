@@ -1,8 +1,8 @@
 ---
 title: "Create ODPS Functions - Manage Data Processing | Free DevTools"
 name: odps-func
-path: /freedevtools/tldr/common/odps-func
-canonical: "https://hexmos.com/freedevtools/tldr/common/odps-func/"
+path: /freedevtools/tldr/odps/odps-func
+canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-func/"
 description: "Create ODPS functions instantly with ODPS Func. Manage data processing jobs and resources, and define custom logic using Java or Python scripts. Free online tool, no registration required."
 category: common
 keywords:

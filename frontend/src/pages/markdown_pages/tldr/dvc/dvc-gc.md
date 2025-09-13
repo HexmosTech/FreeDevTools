@@ -1,8 +1,8 @@
 ---
 title: "DVC Garbage Collect - Remove Unused Files | Free DevTools"
 name: dvc-gc
-path: /freedevtools/tldr/common/dvc-gc
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-gc/"
+path: /freedevtools/tldr/dvc/dvc-gc
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-gc/"
 description: "Garbage collect files with DVC and remove unused data from cache and remote storage. Clean up your DVC project efficiently. Free online tool, no registration required."
 category: common
 keywords:

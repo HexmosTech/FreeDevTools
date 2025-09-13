@@ -1,8 +1,8 @@
 ---
 title: "Docker Save - Export Docker Images to Tar Archives | Free DevTools"
 name: docker-save
-path: /freedevtools/tldr/common/docker-save
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-save/"
+path: /freedevtools/tldr/docker/docker-save
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-save/"
 description: "Export Docker images effortlessly with Docker Save. Archive images to tar files for easy sharing and backup. Free online tool, no registration required."
 category: common
 keywords:

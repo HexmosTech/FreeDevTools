@@ -1,8 +1,8 @@
 ---
 title: "Git Reset File - Revert File Changes in Git | Free DevTools"
 name: git-reset-file
-path: /freedevtools/tldr/common/git-reset-file
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-reset-file/"
+path: /freedevtools/tldr/git/git-reset-file
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-reset-file/"
 description: "Revert file changes easily with Git Reset File. Undo modifications to a file from HEAD or a specific commit. Free online tool, no registration required."
 category: common
 keywords:

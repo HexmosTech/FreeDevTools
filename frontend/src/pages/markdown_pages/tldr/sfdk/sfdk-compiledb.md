@@ -1,8 +1,8 @@
 ---
 title: "Generate Compilation Database - sfdk compiledb | Free DevTools"
 name: sfdk-compiledb
-path: /freedevtools/tldr/common/sfdk-compiledb
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-compiledb/"
+path: /freedevtools/tldr/sfdk/sfdk-compiledb
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-compiledb/"
 description: "Generate compilation database files with sfdk compiledb. Build projects efficiently with enhanced debugging support. Free online tool, no registration required."
 category: common
 keywords:

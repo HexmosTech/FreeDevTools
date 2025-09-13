@@ -1,8 +1,8 @@
 ---
 title: "Git Merge Base - Find Common Ancestor | Free DevTools"
 name: git-merge-base
-path: /freedevtools/tldr/common/git-merge-base
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-merge-base/"
+path: /freedevtools/tldr/git/git-merge-base
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge-base/"
 description: "Find common ancestor commits with Git Merge Base. Trace commit history and streamline branching strategies. Free online tool, no registration required."
 category: common
 keywords:

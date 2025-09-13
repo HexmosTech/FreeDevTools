@@ -1,8 +1,8 @@
 ---
 title: "Hub Branch - Create Git Branch | Free DevTools"
 name: hub-branch
-path: /freedevtools/tldr/common/hub-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub-branch/"
+path: /freedevtools/tldr/hub/hub-branch
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-branch/"
 description: "Create Git branches effortlessly with Hub Branch. Manage repositories, track changes, and collaborate efficiently. Free online tool, no registration required."
 category: common
 keywords:

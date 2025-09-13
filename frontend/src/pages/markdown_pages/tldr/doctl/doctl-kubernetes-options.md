@@ -1,8 +1,8 @@
 ---
 title: "Doctl Kubernetes Options - Manage Clusters | Free DevTools"
 name: doctl-kubernetes-options
-path: /freedevtools/tldr/common/doctl-kubernetes-options
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-kubernetes-options/"
+path: /freedevtools/tldr/doctl/doctl-kubernetes-options
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-options/"
 description: "Manage DigitalOcean Kubernetes clusters with Doctly Kubernetes Options.  View supported regions, machine sizes, and versions to create and configure clusters. Free online tool, no registration required."
 category: common
 keywords:

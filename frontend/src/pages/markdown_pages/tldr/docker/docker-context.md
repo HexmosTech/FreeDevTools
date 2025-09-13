@@ -1,8 +1,8 @@
 ---
 title: "Docker Context - Control Docker Environments | Free DevTools"
 name: docker-context
-path: /freedevtools/tldr/common/docker-context
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-context/"
+path: /freedevtools/tldr/docker/docker-context
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-context/"
 description: "Control Docker environments with Docker Context. Manage multiple Docker instances and switch between them effortlessly. Free online tool, no registration required."
 category: common
 keywords:

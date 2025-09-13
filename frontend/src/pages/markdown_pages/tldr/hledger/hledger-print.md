@@ -1,8 +1,8 @@
 ---
 title: "Hledger Print - Show Journal Entries | Free DevTools"
 name: hledger-print
-path: /freedevtools/tldr/common/hledger-print
-canonical: "https://hexmos.com/freedevtools/tldr/common/hledger-print/"
+path: /freedevtools/tldr/hledger/hledger-print
+canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-print/"
 description: "Show journal entries with Hledger Print. Display transactions, control output format, and filter by criteria. Free online tool, no registration required."
 category: common
 keywords:

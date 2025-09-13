@@ -1,8 +1,8 @@
 ---
 title: "Git SVN - Control Subversion with Git | Free DevTools"
 name: git-svn
-path: /freedevtools/tldr/common/git-svn
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-svn/"
+path: /freedevtools/tldr/git/git-svn
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-svn/"
 description: "Control Subversion repositories with Git SVN. Bidirectional operation and seamless integration between Git and Subversion. Free online tool, no registration required."
 category: common
 keywords:

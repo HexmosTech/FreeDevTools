@@ -1,8 +1,8 @@
 ---
 title: "UV Package Manager - Generate UV Help Documentation | Free DevTools"
 name: uv-help
-path: /freedevtools/tldr/common/uv-help
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-help/"
+path: /freedevtools/tldr/uv/uv-help
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-help/"
 description: "Generate UV help documentation with UV Package Manager. Access command details, subcommands, and flags for efficient package management. Free online tool, no registration required."
 category: common
 keywords:

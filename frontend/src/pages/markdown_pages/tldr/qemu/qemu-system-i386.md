@@ -1,8 +1,8 @@
 ---
 title: "Emulate i386 - Run Virtual Machines | Free DevTools"
 name: qemu-system-i386
-path: /freedevtools/tldr/common/qemu-system-i386
-canonical: "https://hexmos.com/freedevtools/tldr/common/qemu-system-i386/"
+path: /freedevtools/tldr/qemu/qemu-system-i386
+canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-system-i386/"
 description: "Emulate i386 architecture with QEMU system emulator. Run virtual machines, boot from ISO images, and test bootable media efficiently. Free online tool, no registration required."
 category: common
 keywords:

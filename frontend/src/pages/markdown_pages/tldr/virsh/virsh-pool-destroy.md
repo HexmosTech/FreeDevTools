@@ -1,8 +1,8 @@
 ---
 title: "Virsh Pool Control - Stop Storage Pools | Free DevTools"
 name: virsh-pool-destroy
-path: /freedevtools/tldr/common/virsh-pool-destroy
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-pool-destroy/"
+path: /freedevtools/tldr/virsh/virsh-pool-destroy
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-destroy/"
 description: "Control Virsh storage pools with virsh-pool-destroy. Stop active virtual machine storage pools instantly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Analyze Git Size - Control Repository Metrics | Free DevTools"
 name: git-sizer
-path: /freedevtools/tldr/common/git-sizer
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-sizer/"
+path: /freedevtools/tldr/git/git-sizer
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-sizer/"
 description: "Analyze Git repository size with Git Sizer, a command-line tool to identify potential size-related issues and improve repository health. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "TeX Live Install - Install Packages | Free DevTools"
 name: tlmgr-install
-path: /freedevtools/tldr/common/tlmgr-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/tlmgr-install/"
+path: /freedevtools/tldr/tlmgr/tlmgr-install
+canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-install/"
 description: "Install TeX Live packages efficiently with tlmgr-install. Manage your TeX Live environment by installing and reinstalling packages. Free online tool, no registration required."
 category: common
 keywords:

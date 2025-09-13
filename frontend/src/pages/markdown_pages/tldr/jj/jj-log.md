@@ -1,8 +1,8 @@
 ---
 title: "JJ Log - Control Revision History Graph | Free DevTools"
 name: jj-log
-path: /freedevtools/tldr/common/jj-log
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-log/"
+path: /freedevtools/tldr/jj/jj-log
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-log/"
 description: "Control revision history with JJ Log. Visualize commit graphs, filter revisions, and customize output templates for efficient version control. Free online tool, no registration required."
 category: common
 keywords:

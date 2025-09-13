@@ -1,8 +1,8 @@
 ---
 title: "SSHFS Mount - Access Remote Files Securely | Free DevTools"
 name: sshfs
-path: /freedevtools/tldr/common/sshfs
-canonical: "https://hexmos.com/freedevtools/tldr/common/sshfs/"
+path: /freedevtools/tldr/ssh/sshfs
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshfs/"
 description: "Mount remote files securely with SSHFS. Access remote directories, transfer files, and manage remote systems efficiently. Free online tool, no registration required."
 category: common
 keywords:

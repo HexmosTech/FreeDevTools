@@ -1,8 +1,8 @@
 ---
 title: "Unregister VM - Remove Virtual Machines | Free DevTools"
 name: vboxmanage-unregistervm
-path: /freedevtools/tldr/common/vboxmanage-unregistervm
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-unregistervm/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-unregistervm
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/"
 description: "Unregister a virtual machine with VBoxManage. Permanently remove VMs, delete associated files, and reclaim storage space. Free online tool, no registration required."
 category: common
 keywords:

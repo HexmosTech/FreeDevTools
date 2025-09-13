@@ -1,8 +1,8 @@
 ---
 title: "VMInfo - Show Virtual Machine Info | Free DevTools"
 name: vboxmanage-showvminfo
-path: /freedevtools/tldr/common/vboxmanage-showvminfo
-canonical: "https://hexmos.com/freedevtools/tldr/common/vboxmanage-showvminfo/"
+path: /freedevtools/tldr/vboxmanager/vboxmanage-showvminfo
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/"
 description: "Show VM information with VBoxManage, get details and logs of virtual machines. Analyze configurations with a simple command. Free online tool, no registration required."
 category: common
 keywords:

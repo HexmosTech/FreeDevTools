@@ -1,8 +1,8 @@
 ---
 title: "Create Rust Package - Cargo New | Free DevTools"
 name: cargo-new
-path: /freedevtools/tldr/common/cargo-new
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-new/"
+path: /freedevtools/tldr/cargo/cargo-new
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-new/"
 description: "Create Rust packages instantly with Cargo New. Generate new Rust projects with binary or library targets using the command line. Free online tool, no registration required."
 category: common
 keywords:

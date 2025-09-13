@@ -1,8 +1,8 @@
 ---
 title: "Zapier Scaffold - Generate Integration Templates | Free DevTools"
 name: zapier-scaffold
-path: /freedevtools/tldr/common/zapier-scaffold
-canonical: "https://hexmos.com/freedevtools/tldr/common/zapier-scaffold/"
+path: /freedevtools/tldr/zapier/zapier-scaffold
+canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-scaffold/"
 description: "Generate Zapier integration templates with Zapier Scaffold. Quickly create triggers, searches, creates, and resources for your Zapier apps. Free online tool, no registration required."
 category: common
 keywords:

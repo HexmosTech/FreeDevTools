@@ -1,8 +1,8 @@
 ---
 title: "Generate PPM Image - Create Pattern Images | Free DevTools"
 name: ppmpat
-path: /freedevtools/tldr/common/ppmpat
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmpat/"
+path: /freedevtools/tldr/ppm/ppmpat
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmpat/"
 description: "Generate PPM image with ppmpat to create pattern images using the command line. Control image dimensions and patterns. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Pueue Edit - Modify Queued Tasks | Free DevTools"
 name: pueue-edit
-path: /freedevtools/tldr/common/pueue-edit
-canonical: "https://hexmos.com/freedevtools/tldr/common/pueue-edit/"
+path: /freedevtools/tldr/pueue/pueue-edit
+canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-edit/"
 description: "Modify queued tasks with Pueue Edit, a task management tool. Edit commands, paths, and configurations easily. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Elasticsearch SAML Metadata - Configure IDP | Free DevTools"
 name: elasticsearch-saml-metadata
-path: /freedevtools/tldr/common/elasticsearch-saml-metadata
-canonical: "https://hexmos.com/freedevtools/tldr/common/elasticsearch-saml-metadata/"
+path: /freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata
+canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/"
 description: "Generate Elasticsearch SAML metadata with elasticsearch-saml-metadata. Create SP metadata for configuring a SAML Identity Provider. Free online tool, no registration required."
 category: common
 keywords:

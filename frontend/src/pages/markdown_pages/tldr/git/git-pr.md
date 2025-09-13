@@ -1,8 +1,8 @@
 ---
 title: "Checkout Git PR - Review Pull Requests Easily | Free DevTools"
 name: git-pr
-path: /freedevtools/tldr/common/git-pr
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-pr/"
+path: /freedevtools/tldr/git/git-pr
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-pr/"
 description: "Checkout Git PRs effortlessly with git-pr. Review pull requests locally, switch between branches, and clean up old PRs. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Clear Git Directory - Soft Reset Working Tree | Free DevTools"
 name: git-clear-soft
-path: /freedevtools/tldr/common/git-clear-soft
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-clear-soft/"
+path: /freedevtools/tldr/git/git-clear-soft
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-clear-soft/"
 description: "Clear a Git directory with git-clear-soft. Revert changes and remove untracked files. Free online tool, no registration required."
 category: common
 keywords:

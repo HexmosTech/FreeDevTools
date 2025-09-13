@@ -1,8 +1,8 @@
 ---
 title: "Go Get - Manage Go Packages and Dependencies | Free DevTools"
 name: go-get
-path: /freedevtools/tldr/common/go-get
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-get/"
+path: /freedevtools/tldr/go/go-get
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-get/"
 description: "Manage Go packages and dependencies with Go Get. Easily add, update, and remove packages in module-aware or GOPATH mode. Free online tool, no registration required."
 category: common
 keywords:

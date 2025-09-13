@@ -1,8 +1,8 @@
 ---
 title: "Docker Login - Authenticate to Docker Registry | Free DevTools"
 name: docker-login
-path: /freedevtools/tldr/common/docker-login
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-login/"
+path: /freedevtools/tldr/docker/docker-login
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-login/"
 description: "Authenticate with Docker using Docker Login. Securely access private repositories and images. Free online tool, no registration required."
 category: common
 keywords:

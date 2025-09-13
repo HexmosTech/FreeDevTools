@@ -1,8 +1,8 @@
 ---
 title: "GitHub API - Execute Authenticated API Requests | Free DevTools"
 name: gh-api
-path: /freedevtools/tldr/common/gh-api
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-api/"
+path: /freedevtools/tldr/gh/gh-api
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-api/"
 description: "Execute GitHub API requests seamlessly with gh-api. Authenticate requests, retrieve data, and manage your GitHub resources efficiently. Free online tool, no registration required."
 category: common
 keywords:

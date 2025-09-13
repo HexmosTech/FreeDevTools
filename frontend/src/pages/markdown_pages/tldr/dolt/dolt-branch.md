@@ -1,8 +1,8 @@
 ---
 title: "Dolt Branch - Manage Database Branches | Free DevTools"
 name: dolt-branch
-path: /freedevtools/tldr/common/dolt-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-branch/"
+path: /freedevtools/tldr/dolt/dolt-branch
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-branch/"
 description: "Manage database branches with Dolt Branch. Create, rename, and delete branches with ease, improving database version control workflows. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "PNM Converter - Format Images with PNMtoPNM | Free DevTools"
 name: pnmtopnm
-path: /freedevtools/tldr/common/pnmtopnm
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtopnm/"
+path: /freedevtools/tldr/pnm/pnmtopnm
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopnm/"
 description: "Format images with PNMtoPNM, a powerful PNM converter. Transform Portable Pixmap, Graymap, and Bitmap formats effortlessly. Free online tool, no registration required."
 category: common
 keywords:

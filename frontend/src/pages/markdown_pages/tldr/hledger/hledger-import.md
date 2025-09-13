@@ -1,8 +1,8 @@
 ---
 title: "Hledger Import - Import Transactions | Free DevTools"
 name: hledger-import
-path: /freedevtools/tldr/common/hledger-import
-canonical: "https://hexmos.com/freedevtools/tldr/common/hledger-import/"
+path: /freedevtools/tldr/hledger/hledger-import
+canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-import/"
 description: "Import transactions instantly with Hledger Import. Convert financial data and manage your journal. Free online tool, no registration required."
 category: common
 keywords:

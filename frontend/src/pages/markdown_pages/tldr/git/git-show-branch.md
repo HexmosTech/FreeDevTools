@@ -1,8 +1,8 @@
 ---
 title: "Git Show-Branch - Show Branch Commits | Free DevTools"
 name: git-show-branch
-path: /freedevtools/tldr/common/git-show-branch
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show-branch/"
+path: /freedevtools/tldr/git/git-show-branch
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-branch/"
 description: "Show branch commits with Git Show-Branch. Compare branch history, identify divergent points, and visualize commit relationships. Free online tool, no registration required."
 category: common
 keywords:

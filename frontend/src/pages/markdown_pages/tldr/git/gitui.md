@@ -1,8 +1,8 @@
 ---
 title: "Control Git Repositories - Gitui Keyboard TUI | Free DevTools"
 name: gitui
-path: /freedevtools/tldr/common/gitui
-canonical: "https://hexmos.com/freedevtools/tldr/common/gitui/"
+path: /freedevtools/tldr/git/gitui
+canonical: "https://hexmos.com/freedevtools/tldr/git/gitui/"
 description: "Control Git repositories efficiently with Gitui, a lightweight TUI. Navigate branches, stage changes, and commit quickly using only your keyboard. Free online tool, no registration required."
 category: common
 keywords:

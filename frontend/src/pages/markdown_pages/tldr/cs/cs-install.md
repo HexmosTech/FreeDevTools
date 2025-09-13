@@ -1,8 +1,8 @@
 ---
 title: "Coursier Install - Install Applications | Free DevTools"
 name: cs-install
-path: /freedevtools/tldr/common/cs-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/cs-install/"
+path: /freedevtools/tldr/cs/cs-install
+canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-install/"
 description: "Install applications easily with Coursier Install. Manage dependencies and streamline software installation process. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "GetUserSPNs - Extract Service Principal Names | Free DevTools"
 name: impacket-getuserspns
-path: /freedevtools/tldr/common/impacket-getuserspns
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-getuserspns/"
+path: /freedevtools/tldr/impacket/impacket-getuserspns
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getuserspns/"
 description: "Extract Service Principal Names (SPNs) with GetUserSPNs from Active Directory. Quickly identify accounts with SPNs set for Kerberos attacks. Free online tool, no registration required."
 category: common
 keywords:

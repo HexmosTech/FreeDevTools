@@ -1,8 +1,8 @@
 ---
 title: "Git Fame - Analyze Code Contributions | Free DevTools"
 name: git-fame
-path: /freedevtools/tldr/common/git-fame
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-fame/"
+path: /freedevtools/tldr/git/git-fame
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-fame/"
 description: "Analyze code contributions with Git Fame, providing insights into developer activity and effort within your Git repository. Free online tool, no registration required."
 category: common
 keywords:

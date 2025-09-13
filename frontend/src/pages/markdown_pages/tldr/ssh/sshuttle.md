@@ -1,8 +1,8 @@
 ---
 title: "Tunnel Traffic - Control SSH Tunnels with sshuttle | Free DevTools"
 name: sshuttle
-path: /freedevtools/tldr/common/sshuttle
-canonical: "https://hexmos.com/freedevtools/tldr/common/sshuttle/"
+path: /freedevtools/tldr/ssh/sshuttle
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshuttle/"
 description: "Control network traffic with sshuttle, creating secure SSH tunnels effortlessly. Forward TCP, DNS, and other protocols. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Open File Descriptor - Manage File Access | Free DevTools"
 name: less-than-more-than
-path: /freedevtools/tldr/common/less-than-more-than
-canonical: "https://hexmos.com/freedevtools/tldr/common/less-than-more-than/"
+path: /freedevtools/tldr/less/less-than-more-than
+canonical: "https://hexmos.com/freedevtools/tldr/less/less-than-more-than/"
 description: "Open file descriptors for read and write with this command. Manage file access and network connections directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

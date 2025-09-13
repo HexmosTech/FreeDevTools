@@ -1,8 +1,8 @@
 ---
 title: "Uninstall Homebrew - Remove Packages Easily | Free DevTools"
 name: brew-uninstall
-path: /freedevtools/tldr/common/brew-uninstall
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-uninstall/"
+path: /freedevtools/tldr/brew/brew-uninstall
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-uninstall/"
 description: "Uninstall Homebrew packages with this quick tool. Easily remove formulas and casks and cleanup unused dependencies. Free online tool, no registration required."
 category: common
 keywords:

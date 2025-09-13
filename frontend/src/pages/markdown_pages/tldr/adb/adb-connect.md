@@ -1,8 +1,8 @@
 ---
 title: "ADB Connect - Connect to Android Devices | Free DevTools"
 name: adb-connect
-path: /freedevtools/tldr/common/adb-connect
-canonical: "https://hexmos.com/freedevtools/tldr/common/adb-connect/"
+path: /freedevtools/tldr/adb/adb-connect
+canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-connect/"
 description: "Connect to Android devices wirelessly with ADB Connect. Easily pair and manage device connections via the command line. Free online tool, no registration required."
 category: common
 keywords:

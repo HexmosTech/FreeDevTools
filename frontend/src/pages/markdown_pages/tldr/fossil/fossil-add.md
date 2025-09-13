@@ -1,8 +1,8 @@
 ---
 title: "Fossil Control - Add Files Under Version Control | Free DevTools"
 name: fossil-add
-path: /freedevtools/tldr/common/fossil-add
-canonical: "https://hexmos.com/freedevtools/tldr/common/fossil-add/"
+path: /freedevtools/tldr/fossil/fossil-add
+canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-add/"
 description: "Control files under Fossil version control with fossil-add. Manage repository changes and track file history. Free online tool, no registration required."
 category: common
 keywords:

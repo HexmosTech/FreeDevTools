@@ -1,8 +1,8 @@
 ---
 title: "Brew Search - Find Packages and Casks | Free DevTools"
 name: brew-search
-path: /freedevtools/tldr/common/brew-search
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-search/"
+path: /freedevtools/tldr/brew/brew-search
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-search/"
 description: "Find packages and casks quickly with Brew Search. Discover Homebrew formulae, locate specific software, and manage dependencies easily. Free online tool, no registration required."
 category: common
 keywords:

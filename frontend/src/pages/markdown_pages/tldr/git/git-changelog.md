@@ -1,8 +1,8 @@
 ---
 title: "Generate Git Changelog - Track Repository Changes | Free DevTools"
 name: git-changelog
-path: /freedevtools/tldr/common/git-changelog
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-changelog/"
+path: /freedevtools/tldr/git/git-changelog
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-changelog/"
 description: "Generate Git changelog files easily with git-changelog. Track repository commits and tags for release notes creation. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create Git Reverts - Undo Changes | Free DevTools"
 name: git-revert
-path: /freedevtools/tldr/common/git-revert
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-revert/"
+path: /freedevtools/tldr/git/git-revert
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-revert/"
 description: "Create Git reverts with git-revert to undo changes in your repository. Easily reverse commits and manage your project history. Free online tool, no registration required."
 category: common
 keywords:

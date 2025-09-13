@@ -1,8 +1,8 @@
 ---
 title: "Control PlatformIO Devices - Monitor and Manage | Free DevTools"
 name: pio-device
-path: /freedevtools/tldr/common/pio-device
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-device/"
+path: /freedevtools/tldr/pio/pio-device
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-device/"
 description: "Control PlatformIO devices with ease using this tool. Manage ports, monitor serial communication and debug embedded systems. Free online tool, no registration required."
 category: common
 keywords:

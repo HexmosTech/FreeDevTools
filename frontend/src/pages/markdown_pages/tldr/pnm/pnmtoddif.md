@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to DDIF - Image Conversion | Free DevTools"
 name: pnmtoddif
-path: /freedevtools/tldr/common/pnmtoddif
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtoddif/"
+path: /freedevtools/tldr/pnm/pnmtoddif
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoddif/"
 description: "Convert PNM images to DDIF format with pnmtoddif. A powerful image converter for batch processing and resolution adjustments. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Manage Podman Images - Control Container Images | Free DevTools"
 name: podman-images
-path: /freedevtools/tldr/common/podman-images
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-images/"
+path: /freedevtools/tldr/podman/podman-images
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-images/"
 description: "Control Podman images instantly with Podman Image Manager. List, filter and manage container images effectively with command line. Free online tool, no registration required."
 category: common
 keywords:

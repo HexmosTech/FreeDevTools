@@ -1,8 +1,8 @@
 ---
 title: "Commit Changes - Track File Changes with gitwatch | Free DevTools"
 name: gitwatch
-path: /freedevtools/tldr/common/gitwatch
-canonical: "https://hexmos.com/freedevtools/tldr/common/gitwatch/"
+path: /freedevtools/tldr/git/gitwatch
+canonical: "https://hexmos.com/freedevtools/tldr/git/gitwatch/"
 description: "Track file changes with gitwatch. Automate commits and pushes to Git repositories for efficient version control. Free online tool, no registration required."
 category: common
 keywords:

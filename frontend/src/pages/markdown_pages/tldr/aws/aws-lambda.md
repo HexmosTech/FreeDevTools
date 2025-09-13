@@ -1,8 +1,8 @@
 ---
 title: "AWS Lambda - Run Serverless Functions | Free DevTools"
 name: aws-lambda
-path: /freedevtools/tldr/common/aws-lambda
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-lambda/"
+path: /freedevtools/tldr/aws/aws-lambda
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-lambda/"
 description: "Run serverless functions easily with AWS Lambda. Deploy and manage compute services without servers. Free online tool, no registration required."
 category: common
 keywords:

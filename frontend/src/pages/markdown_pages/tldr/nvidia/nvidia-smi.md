@@ -1,8 +1,8 @@
 ---
 title: "Control NVIDIA GPUs - Monitor and Manage | Free DevTools"
 name: nvidia-smi
-path: /freedevtools/tldr/common/nvidia-smi
-canonical: "https://hexmos.com/freedevtools/tldr/common/nvidia-smi/"
+path: /freedevtools/tldr/nvidia/nvidia-smi
+canonical: "https://hexmos.com/freedevtools/tldr/nvidia/nvidia-smi/"
 description: "Control NVIDIA GPUs with nvidia-smi. Monitor performance, manage processes, and get detailed GPU information. Free online tool, no registration required."
 category: common
 keywords:

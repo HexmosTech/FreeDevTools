@@ -1,8 +1,8 @@
 ---
 title: "Date - Display System Date | Free DevTools"
 name: date
-path: /freedevtools/tldr/widows/date
-canonical: "https://hexmos.com/freedevtools/tldr/widows/date/"
+path: /freedevtools/tldr/windows/date
+canonical: "https://hexmos.com/freedevtools/tldr/windows/date/"
 description: "Display the system date with Date. Control date formatting and update the system date using command-line interface. Free online tool, no registration required."
 category: windows
 keywords:

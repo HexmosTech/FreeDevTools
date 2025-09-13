@@ -1,8 +1,8 @@
 ---
 title: "Doctl Databases DB - Manage Database Clusters | Free DevTools"
 name: doctl-databases-db
-path: /freedevtools/tldr/common/doctl-databases-db
-canonical: "https://hexmos.com/freedevtools/tldr/common/doctl-databases-db/"
+path: /freedevtools/tldr/doctl/doctl-databases-db
+canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-db/"
 description: "Manage database clusters with doctl databases db. Easily create, delete, list, and get databases within DigitalOcean. Free online tool, no registration required."
 category: common
 keywords:

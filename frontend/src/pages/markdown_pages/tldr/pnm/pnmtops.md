@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to PS - Generate PostScript Files | Free DevTools"
 name: pnmtops
-path: /freedevtools/tldr/common/pnmtops
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtops/"
+path: /freedevtools/tldr/pnm/pnmtops
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtops/"
 description: "Convert PNM images to PostScript files with pnmtops. Generate high-quality PS documents and control image dimensions. Free online tool, no registration required."
 category: common
 keywords:

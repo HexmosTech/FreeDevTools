@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM Image - Create Apple Volume Labels | Free DevTools"
 name: ppmtoapplevol
-path: /freedevtools/tldr/common/ppmtoapplevol
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtoapplevol/"
+path: /freedevtools/tldr/ppm/ppmtoapplevol
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoapplevol/"
 description: "Convert PPM image files with ppmtoapplevol to create Apple volume labels. Generate compatible disk images effortlessly. Free online tool, no registration required."
 category: common
 keywords:

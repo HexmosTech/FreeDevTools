@@ -1,8 +1,8 @@
 ---
 title: "Generate Tofu Plans - Automate Infrastructure with OpenTofu | Free DevTools"
 name: tofu-plan
-path: /freedevtools/tldr/common/tofu-plan
-canonical: "https://hexmos.com/freedevtools/tldr/common/tofu-plan/"
+path: /freedevtools/tldr/tofu/tofu-plan
+canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-plan/"
 description: "Generate Tofu plans with OpenTofu to automate infrastructure deployments. Preview changes, target resources, and manage your infrastructure efficiently. Free online tool, no registration required."
 category: common
 keywords:

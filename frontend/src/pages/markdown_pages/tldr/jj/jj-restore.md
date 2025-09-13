@@ -1,8 +1,8 @@
 ---
 title: "Restore Files - Restore JJ Files from Revisions | Free DevTools"
 name: jj-restore
-path: /freedevtools/tldr/common/jj-restore
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-restore/"
+path: /freedevtools/tldr/jj/jj-restore
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-restore/"
 description: "Restore JJ files with JJ Restore. Recover previous versions of files, revert changes and interactively restore parts of revisions. Free online tool, no registration required."
 category: common
 keywords:

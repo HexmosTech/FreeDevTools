@@ -1,8 +1,8 @@
 ---
 title: "Generate PPM Globe - Create Spherical Images | Free DevTools"
 name: ppmglobe
-path: /freedevtools/tldr/common/ppmglobe
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmglobe/"
+path: /freedevtools/tldr/ppm/ppmglobe
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmglobe/"
 description: "Generate PPM Globe images with ppmglobe. Transform images into strips for spherical mapping using this command line tool. Free online tool, no registration required."
 category: common
 keywords:

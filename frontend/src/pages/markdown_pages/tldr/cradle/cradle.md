@@ -1,8 +1,8 @@
 ---
 title: "Cradle Framework - Manage PHP Projects | Free DevTools"
 name: cradle
-path: /freedevtools/tldr/common/cradle
-canonical: "https://hexmos.com/freedevtools/tldr/common/cradle/"
+path: /freedevtools/tldr/cradle/cradle
+canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle/"
 description: "Manage PHP projects easily with Cradle Framework. Quickly connect to servers and execute commands. Free online tool, no registration required."
 category: common
 keywords:

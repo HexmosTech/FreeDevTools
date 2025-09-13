@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Refresh - Update Infrastructure State | Free DevTools"
 name: pulumi-refresh
-path: /freedevtools/tldr/common/pulumi-refresh
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-refresh/"
+path: /freedevtools/tldr/pulumi/pulumi-refresh
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-refresh/"
 description: "Update infrastructure state with Pulumi Refresh. Synchronize your stack's resources with the actual cloud provider state. Free online tool, no registration required."
 category: common
 keywords:

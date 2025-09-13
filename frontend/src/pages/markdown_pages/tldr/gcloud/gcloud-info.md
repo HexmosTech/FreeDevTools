@@ -1,8 +1,8 @@
 ---
 title: "Gcloud Info - Display Environment Details | Free DevTools"
 name: gcloud-info
-path: /freedevtools/tldr/common/gcloud-info
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-info/"
+path: /freedevtools/tldr/gcloud/gcloud-info
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-info/"
 description: "Display Gcloud environment information with Gcloud Info. Diagnose network connectivity and view recent log files for debugging. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create PNM Colormap - Quantize Images | Free DevTools"
 name: pnmcolormap
-path: "/freedevtools/tldr/common/pnmcolormap"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmcolormap/"
+path: "/freedevtools/tldr/pnm/pnmcolormap"
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcolormap/"
 description: "Create PNM colormaps with pnmcolormap, optimizing image colors using quantization. Enhance images and reduce color palette size. Free online tool, no registration required."
 category: common
 keywords:

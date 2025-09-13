@@ -1,8 +1,8 @@
 ---
 title: "AWS Kafka - Manage MSK Clusters | Free DevTools"
 name: aws-kafka
-path: /freedevtools/tldr/common/aws-kafka
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-kafka/"
+path: /freedevtools/tldr/aws/aws-kafka
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kafka/"
 description: "Manage Amazon MSK clusters with AWS Kafka CLI commands. Deploy, monitor, and configure Kafka resources efficiently. Free online tool, no registration required."
 category: common
 keywords:

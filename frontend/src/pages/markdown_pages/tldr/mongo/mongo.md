@@ -1,8 +1,8 @@
 ---
 title: "Connect to MongoDB - Manage Databases | Free DevTools"
 name: mongo
-path: /freedevtools/tldr/common/mongo
-canonical: "https://hexmos.com/freedevtools/tldr/common/mongo/"
+path: /freedevtools/tldr/mongo/mongo
+canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongo/"
 description: "Connect to MongoDB databases with the `mongo` shell. Execute queries, authenticate users, and manage your data. Free online tool, no registration required."
 category: common
 keywords:

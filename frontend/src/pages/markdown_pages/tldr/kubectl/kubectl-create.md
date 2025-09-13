@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Create - Generate Kubernetes Resources | Free DevTools"
 name: kubectl-create
-path: /freedevtools/tldr/common/kubectl-create
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-create/"
+path: /freedevtools/tldr/kubectl/kubectl-create
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-create/"
 description: "Kubectl create and manage Kubernetes resources with ease. Automate deployment, services, and namespaces creation for efficient application management. Free online tool, no registration required."
 category: common
 keywords:

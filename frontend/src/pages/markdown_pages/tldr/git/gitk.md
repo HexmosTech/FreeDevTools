@@ -1,8 +1,8 @@
 ---
 title: "Git Browser - Browse Git Repos Graphically | Free DevTools"
 name: gitk
-path: /freedevtools/tldr/common/gitk
-canonical: "https://hexmos.com/freedevtools/tldr/common/gitk/"
+path: /freedevtools/tldr/git/gitk
+canonical: "https://hexmos.com/freedevtools/tldr/git/gitk/"
 description: "Browse Git repositories graphically with Gitk, a visual Git history browser. Examine commit history, branches, and file changes effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Convert CSV to TSV - Format Text Files | Free DevTools"
 name: csv2tsv
-path: /freedevtools/tldr/common/csv2tsv
-canonical: "https://hexmos.com/freedevtools/tldr/common/csv2tsv/"
+path: /freedevtools/tldr/cs/csv2tsv
+canonical: "https://hexmos.com/freedevtools/tldr/cs/csv2tsv/"
 description: "Format CSV files to TSV easily with csv2tsv. Quickly convert comma-separated values to tab-separated values. Free online tool, no registration required."
 category: common
 keywords:

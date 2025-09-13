@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to FITS - Format Images | Free DevTools"
 name: pnmtofits
-path: /freedevtools/tldr/common/pnmtofits
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtofits/"
+path: /freedevtools/tldr/pnm/pnmtofits
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtofits/"
 description: "Format images with Pnmtofits, converting PNM image files to FITS astronomical image format. Efficient image conversion for astronomy. Free online tool, no registration required."
 category: common
 keywords:

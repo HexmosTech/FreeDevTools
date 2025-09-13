@@ -1,8 +1,8 @@
 ---
 title: "Git Effort - Track File Activity | Free DevTools"
 name: git-effort
-path: /freedevtools/tldr/common/git-effort
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-effort/"
+path: /freedevtools/tldr/git/git-effort
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-effort/"
 description: "Track file activity with Git Effort. Analyze commits per file and identify active days. Improve code understanding and collaboration. Free online tool, no registration required."
 category: common
 keywords:

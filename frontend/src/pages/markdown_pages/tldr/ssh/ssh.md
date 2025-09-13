@@ -1,8 +1,8 @@
 ---
 title: "SSH Command - Securely Connect to Remote Servers | Free DevTools"
 name: ssh
-path: /freedevtools/tldr/common/ssh
-canonical: "https://hexmos.com/freedevtools/tldr/common/ssh/"
+path: /freedevtools/tldr/ssh/ssh
+canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh/"
 description: "Securely connect to remote servers with SSH Command. Use advanced options like port forwarding and jumping to manage connections. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Git Blame - Track Code Authorship | Free DevTools"
 name: git-blame
-path: /freedevtools/tldr/common/git-blame
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-blame/"
+path: /freedevtools/tldr/git/git-blame
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-blame/"
 description: "Track code authorship with Git Blame. Identify commit hash and last author of each line in a file. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to JPEG - Image Conversion | Free DevTools"
 name: pnmtojpeg
-path: /freedevtools/tldr/common/pnmtojpeg
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtojpeg/"
+path: /freedevtools/tldr/pnm/pnmtojpeg
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtojpeg/"
 description: "Convert PNM images to JPEG format with pnmtojpeg. Effortlessly transform image files between formats using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

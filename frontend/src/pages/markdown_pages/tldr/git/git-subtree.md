@@ -1,8 +1,8 @@
 ---
 title: "Manage Git Subtrees - Dependency Management | Free DevTools"
 name: git-subtree
-path: /freedevtools/tldr/common/git-subtree
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-subtree/"
+path: /freedevtools/tldr/git/git-subtree
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-subtree/"
 description: "Manage Git subtrees efficiently with git-subtree. Integrate, update, and push project dependencies easily. Free online tool, no registration required."
 category: common
 keywords:

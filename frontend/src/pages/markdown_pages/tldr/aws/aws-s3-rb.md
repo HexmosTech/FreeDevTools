@@ -1,8 +1,8 @@
 ---
 title: "AWS S3 Delete - Remove Empty S3 Buckets | Free DevTools"
 name: aws-s3-rb
-path: /freedevtools/tldr/common/aws-s3-rb
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3-rb/"
+path: /freedevtools/tldr/aws/aws-s3-rb
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-rb/"
 description: "Delete empty AWS S3 buckets quickly with AWS S3 RB. Force delete buckets and objects using the command line interface. Free online tool, no registration required."
 category: common
 keywords:

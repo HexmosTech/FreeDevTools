@@ -1,8 +1,8 @@
 ---
 title: "Data Version Control - Manage Data with DVC | Free DevTools"
 name: dvc
-path: /freedevtools/tldr/common/dvc
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc/"
+path: /freedevtools/tldr/dvc/dvc
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc/"
 description: "Manage data versions effectively with DVC. Track changes, reproduce experiments, and collaborate on data science projects seamlessly. Free online tool, no registration required."
 category: common
 keywords:

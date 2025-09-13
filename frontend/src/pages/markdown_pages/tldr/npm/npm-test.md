@@ -1,8 +1,8 @@
 ---
 title: "NPM Test - Execute Project Tests | Free DevTools"
 name: npm-test
-path: /freedevtools/tldr/common/npm-test
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-test/"
+path: /freedevtools/tldr/npm/npm-test
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-test/"
 description: "Execute NPM project tests with NPM Test. Streamline your testing workflow and ensure code quality directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

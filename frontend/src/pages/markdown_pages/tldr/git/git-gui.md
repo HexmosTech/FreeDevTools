@@ -1,8 +1,8 @@
 ---
 title: "Manage Git Branches - Control Commits with Git GUI | Free DevTools"
 name: git-gui
-path: /freedevtools/tldr/common/git-gui
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-gui/"
+path: /freedevtools/tldr/git/git-gui
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-gui/"
 description: "Manage Git branches with Git GUI, a visual tool for managing commits, remotes, and merges. Simplify version control using a graphical interface. Free online tool, no registration required."
 category: common
 keywords:

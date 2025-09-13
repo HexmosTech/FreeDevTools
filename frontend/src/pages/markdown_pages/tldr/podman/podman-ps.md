@@ -1,8 +1,8 @@
 ---
 title: "Podman List - Control Podman Containers | Free DevTools"
 name: podman-ps
-path: /freedevtools/tldr/common/podman-ps
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-ps/"
+path: /freedevtools/tldr/podman/podman-ps
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-ps/"
 description: "Control Podman containers instantly with Podman List. Filter, manage, and view running and stopped containers using command line. Free online tool, no registration required."
 category: common
 keywords:

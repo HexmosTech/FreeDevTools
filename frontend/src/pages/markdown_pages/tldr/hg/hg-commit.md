@@ -1,8 +1,8 @@
 ---
 title: "Hg Commit - Control Repository Changes | Free DevTools"
 name: hg-commit
-path: /freedevtools/tldr/common/hg-commit
-canonical: "https://hexmos.com/freedevtools/tldr/common/hg-commit/"
+path: /freedevtools/tldr/hg/hg-commit
+canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-commit/"
 description: "Control repository changes with Hg Commit. Manage staged files, specify commit messages, and interactively select changes. Free online tool, no registration required."
 category: common
 keywords:

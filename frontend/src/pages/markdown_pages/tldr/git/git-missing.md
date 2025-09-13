@@ -1,8 +1,8 @@
 ---
 title: "Find Git Missing Commits - Compare Branches | Free DevTools"
 name: git-missing
-path: /freedevtools/tldr/common/git-missing
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-missing/"
+path: /freedevtools/tldr/git/git-missing
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-missing/"
 description: "Find Git missing commits efficiently with git-missing. Compare branches, identify unique changes, and streamline workflows. Free online tool, no registration required."
 category: common
 keywords:

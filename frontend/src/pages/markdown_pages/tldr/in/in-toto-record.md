@@ -1,8 +1,8 @@
 ---
 title: "Create Signed Link - in-toto-record | Free DevTools"
 name: in-toto-record
-path: /freedevtools/tldr/common/in-toto-record
-canonical: "https://hexmos.com/freedevtools/tldr/common/in-toto-record/"
+path: /freedevtools/tldr/in/in-toto-record
+canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-record/"
 description: "Create signed link metadata with in-toto-record. Verify software supply chain integrity and prevent tampering. Free online tool, no registration required."
 category: common
 keywords:

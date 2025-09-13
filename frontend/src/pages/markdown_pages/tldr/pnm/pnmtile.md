@@ -1,8 +1,8 @@
 ---
 title: "Generate Image Tiles - PNMTILE Image Replication | Free DevTools"
 name: pnmtile
-path: /freedevtools/tldr/common/pnmtile
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtile/"
+path: /freedevtools/tldr/pnm/pnmtile
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtile/"
 description: "Generate image tiles with PNMTILE, replicating images to specified dimensions. Efficient image manipulation for various applications. Free online tool, no registration required."
 category: common
 keywords:

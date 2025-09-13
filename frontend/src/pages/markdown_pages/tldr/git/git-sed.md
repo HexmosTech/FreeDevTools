@@ -1,8 +1,8 @@
 ---
 title: "Replace Text with git-sed - Edit Files | Free DevTools"
 name: git-sed
-path: /freedevtools/tldr/common/git-sed
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-sed/"
+path: /freedevtools/tldr/git/git-sed
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-sed/"
 description: "Replace text effortlessly with git-sed. Edit files within your Git repository directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

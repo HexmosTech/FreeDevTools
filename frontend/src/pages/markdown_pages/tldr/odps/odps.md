@@ -1,8 +1,8 @@
 ---
 title: "ODPS Command - Manage Aliyun Data Processing | Free DevTools"
 name: odps
-path: /freedevtools/tldr/common/odps
-canonical: "https://hexmos.com/freedevtools/tldr/common/odps/"
+path: /freedevtools/tldr/odps/odps
+canonical: "https://hexmos.com/freedevtools/tldr/odps/odps/"
 description: "Manage Aliyun data processing with ODPS Command, a powerful command-line tool. Execute queries, manage tables, and control data workflows seamlessly. Free online tool, no registration required."
 category: common
 keywords:

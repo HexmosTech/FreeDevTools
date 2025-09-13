@@ -1,8 +1,8 @@
 ---
 title: "Expand - Uncompress Cabinet Files | Free DevTools"
 name: expand
-path: /freedevtools/tldr/widows/expand
-canonical: "https://hexmos.com/freedevtools/tldr/widows/expand/"
+path: /freedevtools/tldr/windows/expand
+canonical: "https://hexmos.com/freedevtools/tldr/windows/expand/"
 description: "Uncompress Cabinet (CAB) files with Expand. Extract individual files, list contents, or unpack entire archives easily. Free online tool, no registration required."
 category: windows
 keywords:

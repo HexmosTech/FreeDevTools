@@ -1,8 +1,8 @@
 ---
 title: "Node Version Manager - List Node.js Versions | Free DevTools"
 name: get-nodeversions
-path: /freedevtools/tldr/common/get-nodeversions
-canonical: "https://hexmos.com/freedevtools/tldr/common/get-nodeversions/"
+path: /freedevtools/tldr/get/get-nodeversions
+canonical: "https://hexmos.com/freedevtools/tldr/get/get-nodeversions/"
 description: "List Node.js versions with ps-nvm, a PowerShell Node Version Manager. Manage your Node.js environments easily. Free online tool, no registration required."
 category: common
 keywords:

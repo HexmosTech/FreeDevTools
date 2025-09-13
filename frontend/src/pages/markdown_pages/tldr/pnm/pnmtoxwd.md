@@ -1,8 +1,8 @@
 ---
 title: "Convert PNM to XWD - Generate X11 Window Dumps | Free DevTools"
 name: pnmtoxwd
-path: /freedevtools/tldr/common/pnmtoxwd
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmtoxwd/"
+path: /freedevtools/tldr/pnm/pnmtoxwd
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoxwd/"
 description: "Convert PNM images to XWD format with pnmtoxwd. Create X11 Window Dump files for graphics processing. Free online tool, no registration required."
 category: common
 keywords:

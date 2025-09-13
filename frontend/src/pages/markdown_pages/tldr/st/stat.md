@@ -1,8 +1,8 @@
 ---
 title: "Stat - Display File Information | Free DevTools"
 name: stat
-path: /freedevtools/tldr/common/stat
-canonical: "https://hexmos.com/freedevtools/tldr/common/stat/"
+path: /freedevtools/tldr/st/stat
+canonical: "https://hexmos.com/freedevtools/tldr/st/stat/"
 description: "Display file information with Stat command. Inspect file size, permissions, and access dates with this powerful utility. Free online tool, no registration required."
 category: common
 keywords:

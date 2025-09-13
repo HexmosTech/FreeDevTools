@@ -1,8 +1,8 @@
 ---
 title: "Virsh List - Control Virtual Machines | Free DevTools"
 name: virsh-list
-path: /freedevtools/tldr/common/virsh-list
-canonical: "https://hexmos.com/freedevtools/tldr/common/virsh-list/"
+path: /freedevtools/tldr/virsh/virsh-list
+canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-list/"
 description: "Control virtual machines with Virsh List. Manage VMs across different states and configurations effortlessly. Free online tool, no registration required."
 category: common
 keywords:

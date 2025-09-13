@@ -1,8 +1,8 @@
 ---
 title: "Convert PPM to PI1 - Create Atari Images | Free DevTools"
 name: ppmtopi1
-path: /freedevtools/tldr/common/ppmtopi1
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmtopi1/"
+path: /freedevtools/tldr/ppm/ppmtopi1
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopi1/"
 description: "Convert PPM images to Atari Degas PI1 format with ppmtopi1. Generate retro-style graphics effortlessly. Free online tool, no registration required."
 category: common
 keywords:

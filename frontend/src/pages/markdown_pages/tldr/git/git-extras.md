@@ -1,8 +1,8 @@
 ---
 title: "Git Extras - Extend Git Functionality | Free DevTools"
 name: git-extras
-path: /freedevtools/tldr/common/git-extras
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-extras/"
+path: /freedevtools/tldr/git/git-extras
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-extras/"
 description: "Extend Git functionality with Git Extras. Install extra commands, display help and version information seamlessly. Free online tool, no registration required."
 category: common
 keywords:

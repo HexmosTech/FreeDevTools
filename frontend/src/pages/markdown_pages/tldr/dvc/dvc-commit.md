@@ -1,8 +1,8 @@
 ---
 title: "DVC Commit - Record Data Changes | Free DevTools"
 name: dvc-commit
-path: /freedevtools/tldr/common/dvc-commit
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-commit/"
+path: /freedevtools/tldr/dvc/dvc-commit
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-commit/"
 description: "Record data changes instantly with DVC Commit. Track versions of your data, reproduce experiments and collaborate efficiently. Free online tool, no registration required."
 category: common
 keywords:

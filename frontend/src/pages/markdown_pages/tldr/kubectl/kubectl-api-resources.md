@@ -1,8 +1,8 @@
 ---
 title: "Kubectl API Resources - Generate Server Resources | Free DevTools"
 name: kubectl-api-resources
-path: /freedevtools/tldr/common/kubectl-api-resources
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-api-resources/"
+path: /freedevtools/tldr/kubectl/kubectl-api-resources
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-api-resources/"
 description: "Generate Kubernetes API resources with Kubectl API Resources. Quickly list supported resources, filter by namespace, and sort output. Free online tool, no registration required."
 category: common
 keywords:

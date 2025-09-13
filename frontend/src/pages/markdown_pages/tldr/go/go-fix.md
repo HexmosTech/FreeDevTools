@@ -1,8 +1,8 @@
 ---
 title: "Go Fix - Update Go Packages | Free DevTools"
 name: go-fix
-path: /freedevtools/tldr/common/go-fix
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-fix/"
+path: /freedevtools/tldr/go/go-fix
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-fix/"
 description: "Update Go packages with Go Fix. Modernize legacy code and adopt new APIs for improved performance. Free online tool, no registration required."
 category: common
 keywords:

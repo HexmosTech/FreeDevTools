@@ -1,8 +1,8 @@
 ---
 title: "Pad PNM Image - Add Borders | Free DevTools"
 name: pnmpad
-path: "/freedevtools/tldr/common/pnmpad"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmpad/"
+path: "/freedevtools/tldr/pnm/pnmpad"
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpad/"
 description: "Add borders to PNM image with pnmpad. Pad images to specified dimensions and control border colors for image editing. Free online tool, no registration required."
 category: common
 keywords:

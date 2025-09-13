@@ -1,8 +1,8 @@
 ---
 title: "Starship Prompt - Customize Shell Prompts | Free DevTools"
 name: starship
-path: /freedevtools/tldr/common/starship
-canonical: "https://hexmos.com/freedevtools/tldr/common/starship/"
+path: /freedevtools/tldr/st/starship
+canonical: "https://hexmos.com/freedevtools/tldr/st/starship/"
 description: "Customize shell prompts with Starship. Configure shell prompts, integrate across multiple shells, and enhance terminal experience with this blazing-fast tool. Free online tool, no registration required."
 category: common
 keywords:

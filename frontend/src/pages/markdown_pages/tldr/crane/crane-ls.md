@@ -1,8 +1,8 @@
 ---
 title: "Crane List - List Container Repository Tags | Free DevTools"
 name: crane-ls
-path: /freedevtools/tldr/common/crane-ls
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-ls/"
+path: /freedevtools/tldr/crane/crane-ls
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-ls/"
 description: "List container repository tags instantly with Crane List. Inspect your container images quickly and efficiently using command line. Free online tool, no registration required."
 category: common
 keywords:

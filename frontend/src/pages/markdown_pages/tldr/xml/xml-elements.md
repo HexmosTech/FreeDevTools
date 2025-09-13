@@ -1,8 +1,8 @@
 ---
 title: "Extract XML Elements - Analyze XML Structure | Free DevTools"
 name: xml-elements
-path: /freedevtools/tldr/common/xml-elements
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-elements/"
+path: /freedevtools/tldr/xml/xml-elements
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-elements/"
 description: "Extract XML elements easily with XML Elements tool. Analyze XML structure, attributes, and values effortlessly. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "AWS S3 Copy - Transfer Files | Free DevTools"
 name: aws-s3-cp
-path: /freedevtools/tldr/common/aws-s3-cp
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3-cp/"
+path: /freedevtools/tldr/aws/aws-s3-cp
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-cp/"
 description: "Transfer files easily with AWS S3 Copy. Manage S3 objects, copy to/from buckets, and sync directories using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:

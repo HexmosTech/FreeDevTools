@@ -1,8 +1,8 @@
 ---
 title: "Crane Delete - Remove Image Reference | Free DevTools"
 name: crane-delete
-path: /freedevtools/tldr/common/crane-delete
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-delete/"
+path: /freedevtools/tldr/crane/crane-delete
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-delete/"
 description: "Delete image references with Crane. Easily remove container images from registries using this powerful command-line tool. Free online tool, no registration required."
 category: common
 keywords:

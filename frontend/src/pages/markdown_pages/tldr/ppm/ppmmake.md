@@ -1,8 +1,8 @@
 ---
 title: "Create PPM Image - Generate Pixmap Images | Free DevTools"
 name: ppmmake
-path: /freedevtools/tldr/common/ppmmake
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmmake/"
+path: /freedevtools/tldr/ppm/ppmmake
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmmake/"
 description: "Create PPM images with ppmmake. Easily generate portable pixmap images with specified colors and dimensions. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "JJ Evolog - Track Change Evolution | Free DevTools"
 name: jj-evolog
-path: /freedevtools/tldr/common/jj-evolog
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-evolog/"
+path: /freedevtools/tldr/jj/jj-evolog
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-evolog/"
 description: "Track change evolution with JJ Evolog. Visualize commit history and understand the evolution of your code. Free online tool, no registration required."
 category: common
 keywords:

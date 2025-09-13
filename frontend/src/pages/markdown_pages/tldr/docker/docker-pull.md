@@ -1,8 +1,8 @@
 ---
 title: "Docker Pull - Download Docker Images | Free DevTools"
 name: docker-pull
-path: /freedevtools/tldr/common/docker-pull
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-pull/"
+path: /freedevtools/tldr/docker/docker-pull
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-pull/"
 description: "Pull Docker images with Docker Pull. Download images from registries, manage tags, and specify platforms. Free online tool, no registration required."
 category: common
 keywords:

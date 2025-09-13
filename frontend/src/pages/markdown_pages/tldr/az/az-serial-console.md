@@ -1,8 +1,8 @@
 ---
 title: "Serial Console - Connect to Azure VMs | Free DevTools"
 name: az-serial-console
-path: /freedevtools/tldr/common/az-serial-console
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-serial-console/"
+path: /freedevtools/tldr/az/az-serial-console
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-serial-console/"
 description: "Connect to Azure Virtual Machines with Serial Console. Debug, troubleshoot, and manage VMs remotely using command line. Free online tool, no registration required."
 category: common
 keywords:

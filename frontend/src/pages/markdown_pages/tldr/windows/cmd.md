@@ -1,8 +1,8 @@
 ---
 title: "Control Windows CMD - Command Interpreter | Free DevTools"
 name: cmd
-path: /freedevtools/tldr/widows/cmd
-canonical: "https://hexmos.com/freedevtools/tldr/widows/cmd/"
+path: /freedevtools/tldr/windows/cmd
+canonical: "https://hexmos.com/freedevtools/tldr/windows/cmd/"
 description: "Control Windows CMD commands with this command interpreter. Execute batch scripts, run specific commands, and manage system processes. Free online tool, no registration required."
 category: windows
 keywords:

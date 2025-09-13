@@ -1,8 +1,8 @@
 ---
 title: "MSSQL Client - Execute Queries | Free DevTools"
 name: impacket-mssqlclient
-path: /freedevtools/tldr/common/impacket-mssqlclient
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-mssqlclient/"
+path: /freedevtools/tldr/impacket/impacket-mssqlclient
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-mssqlclient/"
 description: "Execute MSSQL queries easily with MSSQL Client. Connect to SQL Server, run commands, and manage databases quickly. Free online tool, no registration required."
 category: common
 keywords:

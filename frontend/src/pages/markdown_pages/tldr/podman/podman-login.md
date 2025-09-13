@@ -1,8 +1,8 @@
 ---
 title: "Podman Login - Access Container Registries | Free DevTools"
 name: podman-login
-path: /freedevtools/tldr/common/podman-login
-canonical: "https://hexmos.com/freedevtools/tldr/common/podman-login/"
+path: /freedevtools/tldr/podman/podman-login
+canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-login/"
 description: "Access container registries easily with Podman Login. Authenticate to container registries and manage images. Free online tool, no registration required."
 category: common
 keywords:

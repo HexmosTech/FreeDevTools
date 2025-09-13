@@ -1,8 +1,8 @@
 ---
 title: "SFDK Emulator - Remove AVD | Free DevTools"
 name: sfdk-emulator-remove
-path: /freedevtools/tldr/common/sfdk-emulator-remove
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-emulator-remove/"
+path: /freedevtools/tldr/sfdk/sfdk-emulator-remove
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-remove/"
 description: "Remove AVD with SFDK Emulator command, previously available but now integrated into sfdk emulator install. Streamline your Android Virtual Device management. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate PPM Histogram - Analyze Image Colors | Free DevTools"
 name: ppmhist
-path: /freedevtools/tldr/common/ppmhist
-canonical: "https://hexmos.com/freedevtools/tldr/common/ppmhist/"
+path: /freedevtools/tldr/ppm/ppmhist
+canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmhist/"
 description: "Analyze image colors with PPM Histogram. Create PPM color maps and generate color distribution reports from PPM images. Free online tool, no registration required."
 category: common
 keywords:

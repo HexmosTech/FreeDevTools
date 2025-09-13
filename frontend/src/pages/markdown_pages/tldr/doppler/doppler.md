@@ -1,8 +1,8 @@
 ---
 title: "Doppler Secrets Manager - Manage Environment Variables | Free DevTools"
 name: doppler
-path: /freedevtools/tldr/common/doppler
-canonical: "https://hexmos.com/freedevtools/tldr/common/doppler/"
+path: /freedevtools/tldr/doppler/doppler
+canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler/"
 description: "Manage environment variables with Doppler Secrets Manager, securely injecting secrets into your application environment. Streamline configuration management easily. Free online tool, no registration required."
 category: common
 keywords:

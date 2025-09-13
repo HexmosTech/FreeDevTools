@@ -1,8 +1,8 @@
 ---
 title: "PlatformIO Upgrade - Update Core | Free DevTools"
 name: pio-upgrade
-path: /freedevtools/tldr/common/pio-upgrade
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-upgrade/"
+path: /freedevtools/tldr/pio/pio-upgrade
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-upgrade/"
 description: "Upgrade PlatformIO core quickly with pio-upgrade. Update to the latest stable or development version. Enhance your PlatformIO environment. Free online tool, no registration required."
 category: common
 keywords:

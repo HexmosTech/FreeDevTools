@@ -1,8 +1,8 @@
 ---
 title: "Git Stage - Add Files to Index | Free DevTools"
 name: git-stage
-path: /freedevtools/tldr/common/git-stage
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-stage/"
+path: /freedevtools/tldr/git/git-stage
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-stage/"
 description: "Add files to staging area with Git Stage, an alias for Git Add. Prepare your changes for commit with this simple command. Free online tool, no registration required."
 category: common
 keywords:

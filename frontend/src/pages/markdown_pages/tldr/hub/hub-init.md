@@ -1,8 +1,8 @@
 ---
 title: "Git Init - Create New Repositories with Hub | Free DevTools"
 name: hub-init
-path: /freedevtools/tldr/common/hub-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/hub-init/"
+path: /freedevtools/tldr/hub/hub-init
+canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-init/"
 description: "Create Git repositories quickly with Hub Init. Initialize new projects, collaborate on GitHub, and manage version control easily. Free online tool, no registration required."
 category: common
 keywords:

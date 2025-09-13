@@ -1,8 +1,8 @@
 ---
 title: "List NPM Packages - View Installed Packages | Free DevTools"
 name: npm-ls
-path: /freedevtools/tldr/common/npm-ls
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-ls/"
+path: /freedevtools/tldr/npm/npm-ls
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-ls/"
 description: "List NPM packages instantly with NPM LS. View dependencies, versions, and global installations using the command line. Free online tool, no registration required."
 category: common
 keywords:

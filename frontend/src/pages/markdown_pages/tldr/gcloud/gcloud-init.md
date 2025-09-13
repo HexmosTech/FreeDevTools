@@ -1,8 +1,8 @@
 ---
 title: "Gcloud Init - Create Google Cloud Configurations | Free DevTools"
 name: gcloud-init
-path: /freedevtools/tldr/common/gcloud-init
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcloud-init/"
+path: /freedevtools/tldr/gcloud/gcloud-init
+canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-init/"
 description: "Create Google Cloud configurations with Gcloud Init. Quickly initialize or reinitialize gcloud settings and authenticate your account. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Add PNM Border - Control Image Margins | Free DevTools"
 name: pnmmargin
-path: /freedevtools/tldr/common/pnmmargin
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnmmargin/"
+path: /freedevtools/tldr/pnm/pnmmargin
+canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmargin/"
 description: "Add PNM border with pnmmargin. Control image margins by specifying size and color for visually appealing results. Free online tool, no registration required."
 category: common
 keywords:

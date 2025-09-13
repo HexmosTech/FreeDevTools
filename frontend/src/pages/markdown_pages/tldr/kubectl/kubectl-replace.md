@@ -1,8 +1,8 @@
 ---
 title: "Kubectl Replace - Update Kubernetes Resources | Free DevTools"
 name: kubectl-replace
-path: /freedevtools/tldr/common/kubectl-replace
-canonical: "https://hexmos.com/freedevtools/tldr/common/kubectl-replace/"
+path: /freedevtools/tldr/kubectl/kubectl-replace
+canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-replace/"
 description: "Replace Kubernetes resources effortlessly with Kubectl Replace.  Update existing deployments, services and pods using YAML or stdin. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Generate Cargo Package ID - Find Package Specifier | Free DevTools"
 name: cargo-pkgid
-path: /freedevtools/tldr/common/cargo-pkgid
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-pkgid/"
+path: /freedevtools/tldr/cargo/cargo-pkgid
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-pkgid/"
 description: "Generate package identifiers with Cargo Pkgid. Get fully qualified package specifications for Rust projects and dependencies. Free online tool, no registration required."
 category: common
 keywords:

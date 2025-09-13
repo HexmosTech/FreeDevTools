@@ -1,8 +1,8 @@
 ---
 title: "Edit Revision - Control Jujutsu Version History | Free DevTools"
 name: jj-edit
-path: /freedevtools/tldr/common/jj-edit
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj-edit/"
+path: /freedevtools/tldr/jj/jj-edit
+canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-edit/"
 description: "Edit revisions with Jujutsu (jj) to manage version history and set the working-copy. Control your codebase history easily. Free online tool, no registration required."
 category: common
 keywords:

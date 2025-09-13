@@ -1,8 +1,8 @@
 ---
 title: "Format Go - Format Go Source Files | Free DevTools"
 name: go-fmt
-path: /freedevtools/tldr/common/go-fmt
-canonical: "https://hexmos.com/freedevtools/tldr/common/go-fmt/"
+path: /freedevtools/tldr/go/go-fmt
+canonical: "https://hexmos.com/freedevtools/tldr/go/go-fmt/"
 description: "Format Go source files with Go fmt. Improve code readability with automated formatting. Free online tool, no registration required."
 category: common
 keywords:

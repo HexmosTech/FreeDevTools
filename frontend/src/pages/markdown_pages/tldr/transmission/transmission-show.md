@@ -1,8 +1,8 @@
 ---
 title: "Transmission Show - Get Torrent Info | Free DevTools"
 name: transmission-show
-path: /freedevtools/tldr/common/transmission-show
-canonical: "https://hexmos.com/freedevtools/tldr/common/transmission-show/"
+path: /freedevtools/tldr/transmission/transmission-show
+canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-show/"
 description: "Get torrent information with Transmission Show. Generate magnet links and scrape tracker data using the command line. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Dolt Checkout - Manage Branches & Tables | Free DevTools"
 name: dolt-checkout
-path: /freedevtools/tldr/common/dolt-checkout
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-checkout/"
+path: /freedevtools/tldr/dolt/dolt-checkout
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-checkout/"
 description: "Manage database branches and tables with Dolt Checkout. Revert changes, switch branches, and create new branches with ease. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Pulumi Down - Destroy Infrastructure | Free DevTools"
 name: pulumi-down
-path: /freedevtools/tldr/common/pulumi-down
-canonical: "https://hexmos.com/freedevtools/tldr/common/pulumi-down/"
+path: /freedevtools/tldr/pulumi/pulumi-down
+canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-down/"
 description: "Destroy infrastructure with Pulumi Down. Quickly teardown and manage your cloud resources using Pulumi's command-line interface. Free online tool, no registration required."
 category: common
 keywords:

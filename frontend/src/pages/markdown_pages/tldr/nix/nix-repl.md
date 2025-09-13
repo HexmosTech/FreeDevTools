@@ -1,8 +1,8 @@
 ---
 title: "Nix Repl - Evaluate Nix Expressions | Free DevTools"
 name: nix-repl
-path: /freedevtools/tldr/common/nix-repl
-canonical: "https://hexmos.com/freedevtools/tldr/common/nix-repl/"
+path: /freedevtools/tldr/nix/nix-repl
+canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-repl/"
 description: "Evaluate Nix expressions effortlessly with Nix Repl. Start interactive Nix environments to build packages and manage dependencies. Free online tool, no registration required."
 category: common
 keywords:

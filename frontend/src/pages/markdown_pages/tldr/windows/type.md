@@ -1,8 +1,8 @@
 ---
 title: "Display File Content - Read Files with Type | Free DevTools"
 name: type
-path: /freedevtools/tldr/widows/type
-canonical: "https://hexmos.com/freedevtools/tldr/widows/type/"
+path: /freedevtools/tldr/windows/type
+canonical: "https://hexmos.com/freedevtools/tldr/windows/type/"
 description: "Display file content instantly with Type command. Inspect text files, code, and configurations. Free online tool, no registration required."
 category: windows
 keywords:

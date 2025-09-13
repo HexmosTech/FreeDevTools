@@ -1,8 +1,8 @@
 ---
 title: "GLab Release - Manage GitLab Releases | Free DevTools"
 name: glab-release
-path: /freedevtools/tldr/common/glab-release
-canonical: "https://hexmos.com/freedevtools/tldr/common/glab-release/"
+path: /freedevtools/tldr/glab/glab-release
+canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-release/"
 description: "Manage GitLab releases effortlessly with GLab Release. Automate your release process, upload assets and control releases from the command line. Free online tool, no registration required."
 category: common
 keywords:

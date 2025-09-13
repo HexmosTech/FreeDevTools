@@ -1,8 +1,8 @@
 ---
 title: "List Brew Outdated - Upgrade Packages | Free DevTools"
 name: brew-outdated
-path: /freedevtools/tldr/common/brew-outdated
-canonical: "https://hexmos.com/freedevtools/tldr/common/brew-outdated/"
+path: /freedevtools/tldr/brew/brew-outdated
+canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-outdated/"
 description: "List outdated packages with Brew Outdated. Easily identify and upgrade outdated formulae and casks. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "ODPS Instance Manager - Control ODPS Instances | Free DevTools"
 name: odps-inst
-path: /freedevtools/tldr/common/odps-inst
-canonical: "https://hexmos.com/freedevtools/tldr/common/odps-inst/"
+path: /freedevtools/tldr/odps/odps-inst
+canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-inst/"
 description: "Manage ODPS instances easily with ODPS Instance Manager. Check instance status, kill tasks, and monitor progress within Alibaba Cloud's ODPS. Free online tool, no registration required."
 category: common
 keywords:

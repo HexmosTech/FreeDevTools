@@ -1,8 +1,8 @@
 ---
 title: "Match Fonts - Identify Available Fonts with fc-match | Free DevTools"
 name: fc-match
-path: /freedevtools/tldr/common/fc-match
-canonical: "https://hexmos.com/freedevtools/tldr/common/fc-match/"
+path: /freedevtools/tldr/fc/fc-match
+canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-match/"
 description: "Identify fonts quickly with fc-match. Find best matching fonts for your system and design projects. Free online tool, no registration required."
 category: common
 keywords:

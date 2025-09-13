@@ -1,8 +1,8 @@
 ---
 title: "Docker Inspect - Return Container Information | Free DevTools"
 name: docker-inspect
-path: /freedevtools/tldr/common/docker-inspect
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-inspect/"
+path: /freedevtools/tldr/docker/docker-inspect
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-inspect/"
 description: "Inspect Docker objects with Docker Inspect. Retrieve low-level information on containers, images, and volumes. Free online tool, no registration required."
 category: common
 keywords:

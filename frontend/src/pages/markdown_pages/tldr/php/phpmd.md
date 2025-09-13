@@ -1,8 +1,8 @@
 ---
 title: "Validate PHP Code - Detect Messes with phpmd | Free DevTools"
 name: phpmd
-path: /freedevtools/tldr/common/phpmd
-canonical: "https://hexmos.com/freedevtools/tldr/common/phpmd/"
+path: /freedevtools/tldr/php/phpmd
+canonical: "https://hexmos.com/freedevtools/tldr/php/phpmd/"
 description: "Validate PHP code quality with phpmd and detect potential messes in your codebase. Identify issues with code style, complexity, and more with this free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "OpenStack Network - Manage Cloud Networks | Free DevTools"
 name: openstack-network
-path: /freedevtools/tldr/common/openstack-network
-canonical: "https://hexmos.com/freedevtools/tldr/common/openstack-network/"
+path: /freedevtools/tldr/openstack/openstack-network
+canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-network/"
 description: "Manage OpenStack networks efficiently with OpenStack Network tool. Create, delete, enable, and disable cloud networks effortlessly. Free online tool, no registration required."
 category: common
 keywords:

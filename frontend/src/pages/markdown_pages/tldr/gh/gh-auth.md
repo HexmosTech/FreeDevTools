@@ -1,8 +1,8 @@
 ---
 title: "GitHub Auth - Authenticate GitHub Hosts | Free DevTools"
 name: gh-auth
-path: /freedevtools/tldr/common/gh-auth
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-auth/"
+path: /freedevtools/tldr/gh/gh-auth
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-auth/"
 description: "Authenticate with GitHub hosts using GitHub Auth. Manage GitHub authentication, tokens, and scopes from the command line. Free online tool, no registration required."
 category: common
 keywords:

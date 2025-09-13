@@ -1,8 +1,8 @@
 ---
 title: "Cargo Fix - Auto-Fix Rust Code with Cargo | Free DevTools"
 name: cargo-fix
-path: /freedevtools/tldr/common/cargo-fix
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-fix/"
+path: /freedevtools/tldr/cargo/cargo-fix
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-fix/"
 description: "Auto-fix Rust code instantly with Cargo Fix. Resolve lint warnings and migrate Rust editions effortlessly using cargo command. Free online tool, no registration required."
 category: common
 keywords:

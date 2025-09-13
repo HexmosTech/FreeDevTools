@@ -1,8 +1,8 @@
 ---
 title: "Rustup Install - Manage Rust Toolchains | Free DevTools"
 name: rustup-install
-path: /freedevtools/tldr/common/rustup-install
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustup-install/"
+path: /freedevtools/tldr/rustup/rustup-install
+canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-install/"
 description: "Install Rust toolchains easily with Rustup Install. Manage, update, and configure Rust versions on your system. Free online tool, no registration required."
 category: common
 keywords:

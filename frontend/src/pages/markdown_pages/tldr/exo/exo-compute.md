@@ -1,8 +1,8 @@
 ---
 title: "Manage Compute Resources - Exoscale Compute | Free DevTools"
 name: exo-compute
-path: /freedevtools/tldr/common/exo-compute
-canonical: "https://hexmos.com/freedevtools/tldr/common/exo-compute/"
+path: /freedevtools/tldr/exo/exo-compute
+canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute/"
 description: "Manage Exoscale compute resources with Exoscale Compute. Deploy instances, configure security groups, and manage load balancers easily. Free online tool, no registration required."
 category: common
 keywords:

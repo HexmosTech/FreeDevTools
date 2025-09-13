@@ -1,8 +1,8 @@
 ---
 title: "PHP Script Execute - Run PHP Code | Free DevTools"
 name: php
-path: /freedevtools/tldr/common/php
-canonical: "https://hexmos.com/freedevtools/tldr/common/php/"
+path: /freedevtools/tldr/php/php
+canonical: "https://hexmos.com/freedevtools/tldr/php/php/"
 description: "Execute PHP scripts efficiently with PHP Script Runner. Easily test syntax, run code snippets, and manage built-in web servers. Free online tool, no registration required."
 category: common
 keywords:

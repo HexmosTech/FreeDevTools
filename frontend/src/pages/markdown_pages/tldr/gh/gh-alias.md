@@ -1,8 +1,8 @@
 ---
 title: "GH Alias - Create CLI Aliases for GitHub Commands | Free DevTools"
 name: gh-alias
-path: /freedevtools/tldr/common/gh-alias
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-alias/"
+path: /freedevtools/tldr/gh/gh-alias
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-alias/"
 description: "Create custom command aliases with GH Alias for enhanced GitHub CLI efficiency. Streamline workflows and improve productivity using this free online tool, no registration required."
 category: common
 keywords:

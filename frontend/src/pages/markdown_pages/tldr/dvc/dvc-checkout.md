@@ -1,8 +1,8 @@
 ---
 title: "DVC Checkout - Manage Data Versions | Free DevTools"
 name: dvc-checkout
-path: /freedevtools/tldr/common/dvc-checkout
-canonical: "https://hexmos.com/freedevtools/tldr/common/dvc-checkout/"
+path: /freedevtools/tldr/dvc/dvc-checkout
+canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-checkout/"
 description: "Manage data versions easily with DVC Checkout. Retrieve specific file versions from cache. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Create ACR Registry - Manage Azure Containers | Free DevTools"
 name: az-acr
-path: /freedevtools/tldr/common/az-acr
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-acr/"
+path: /freedevtools/tldr/az/az-acr
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-acr/"
 description: "Create ACR registry with az-acr. Manage, store and retrieve container images in Azure. Streamline your DevOps workflow. Free online tool, no registration required."
 category: common
 keywords:

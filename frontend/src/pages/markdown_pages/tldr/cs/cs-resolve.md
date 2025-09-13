@@ -1,8 +1,8 @@
 ---
 title: "Resolve Dependencies - List Transitive Deps with Coursier | Free DevTools"
 name: cs-resolve
-path: /freedevtools/tldr/common/cs-resolve
-canonical: "https://hexmos.com/freedevtools/tldr/common/cs-resolve/"
+path: /freedevtools/tldr/cs/cs-resolve
+canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-resolve/"
 description: "Resolve dependencies effortlessly with Coursier. List transitive dependencies and pinpoint conflicts in your Java/Scala projects. Free online tool, no registration required."
 category: common
 keywords:

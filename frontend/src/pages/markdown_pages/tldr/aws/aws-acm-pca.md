@@ -1,8 +1,8 @@
 ---
 title: "ACM PCA - Manage AWS Private Certificates | Free DevTools"
 name: aws-acm-pca
-path: /freedevtools/tldr/common/aws-acm-pca
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-acm-pca/"
+path: /freedevtools/tldr/aws/aws-acm-pca
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-acm-pca/"
 description: "Manage AWS Private Certificates with ACM PCA. Create, describe, list, and revoke certificates using the AWS command line. Free online tool, no registration required."
 category: common
 keywords:

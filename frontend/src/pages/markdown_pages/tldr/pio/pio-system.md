@@ -1,8 +1,8 @@
 ---
 title: "PlatformIO System - Control PlatformIO | Free DevTools"
 name: pio-system
-path: /freedevtools/tldr/common/pio-system
-canonical: "https://hexmos.com/freedevtools/tldr/common/pio-system/"
+path: /freedevtools/tldr/pio/pio-system
+canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-system/"
 description: "Control PlatformIO system configurations with pio system. Manage PlatformIO installations, completions, and data with ease. Free online tool, no registration required."
 category: common
 keywords:

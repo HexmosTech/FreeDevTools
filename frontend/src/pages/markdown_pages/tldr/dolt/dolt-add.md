@@ -1,8 +1,8 @@
 ---
 title: "Dolt Add - Stage Dolt Tables | Free DevTools"
 name: dolt-add
-path: /freedevtools/tldr/common/dolt-add
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-add/"
+path: /freedevtools/tldr/dolt/dolt-add
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-add/"
 description: "Stage Dolt tables effortlessly with Dolt Add. Manage database changes, version control your data, and prepare commits quickly. Free online tool, no registration required."
 category: common
 keywords:

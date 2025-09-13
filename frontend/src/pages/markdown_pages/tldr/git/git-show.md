@@ -1,8 +1,8 @@
 ---
 title: "Git Show - Display Commit Details | Free DevTools"
 name: git-show
-path: /freedevtools/tldr/common/git-show
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show/"
+path: /freedevtools/tldr/git/git-show
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show/"
 description: "Display Git commit details with Git Show. Inspect commit messages, diffs, and file changes efficiently. Free online tool, no registration required."
 category: common
 keywords:

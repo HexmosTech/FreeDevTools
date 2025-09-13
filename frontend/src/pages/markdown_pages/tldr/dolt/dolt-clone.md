@@ -1,8 +1,8 @@
 ---
 title: "Dolt Clone - Copy Databases Locally | Free DevTools"
 name: dolt-clone
-path: /freedevtools/tldr/common/dolt-clone
-canonical: "https://hexmos.com/freedevtools/tldr/common/dolt-clone/"
+path: /freedevtools/tldr/dolt/dolt-clone
+canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-clone/"
 description: "Clone Dolt repositories locally with Dolt Clone. Quickly copy databases, specify branches, and manage AWS credentials for seamless data replication. Free online tool, no registration required."
 category: common
 keywords:

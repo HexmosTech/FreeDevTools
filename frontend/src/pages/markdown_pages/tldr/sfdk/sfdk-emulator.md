@@ -1,8 +1,8 @@
 ---
 title: "SFDK Emulator - Control Sailfish OS Emulators | Free DevTools"
 name: sfdk-emulator
-path: /freedevtools/tldr/common/sfdk-emulator
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdk-emulator/"
+path: /freedevtools/tldr/sfdk/sfdk-emulator
+canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator/"
 description: "Control Sailfish OS emulators with SFDK Emulator. Manage emulator states, execute commands, and set properties for easy application testing. Free online tool, no registration required."
 category: common
 keywords:

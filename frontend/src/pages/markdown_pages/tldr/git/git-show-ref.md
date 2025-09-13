@@ -1,8 +1,8 @@
 ---
 title: "List Git References - Show Repository Refs | Free DevTools"
 name: git-show-ref
-path: /freedevtools/tldr/common/git-show-ref
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-show-ref/"
+path: /freedevtools/tldr/git/git-show-ref
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-ref/"
 description: "List Git references with git-show-ref. Verify ref existence and show heads or tags. Free online tool, no registration required."
 category: common
 keywords:

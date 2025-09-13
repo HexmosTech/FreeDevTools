@@ -1,8 +1,8 @@
 ---
 title: "Sniff Network Packets - Control Network Traffic | Free DevTools"
 name: impacket-sniff
-path: /freedevtools/tldr/common/impacket-sniff
-canonical: "https://hexmos.com/freedevtools/tldr/common/impacket-sniff/"
+path: /freedevtools/tldr/impacket/impacket-sniff
+canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sniff/"
 description: "Control network packets instantly with Impacket Sniff. Capture, analyze, and filter network traffic for security analysis and troubleshooting. Free online tool, no registration required."
 category: common
 keywords:

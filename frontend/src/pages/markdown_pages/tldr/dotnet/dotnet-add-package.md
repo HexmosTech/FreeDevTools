@@ -1,8 +1,8 @@
 ---
 title: "Add .NET Package - Manage Dependencies | Free DevTools"
 name: dotnet-add-package
-path: /freedevtools/tldr/common/dotnet-add-package
-canonical: "https://hexmos.com/freedevtools/tldr/common/dotnet-add-package/"
+path: /freedevtools/tldr/dotnet/dotnet-add-package
+canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-add-package/"
 description: "Add .NET package dependencies easily with dotnet-add-package. Manage NuGet packages, specify versions, and configure sources for efficient .NET development. Free online tool, no registration required."
 category: common
 keywords:

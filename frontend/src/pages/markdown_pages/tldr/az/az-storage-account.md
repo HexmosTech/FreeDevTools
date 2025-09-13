@@ -1,8 +1,8 @@
 ---
 title: "Storage Account - Manage Azure Storage Accounts | Free DevTools"
 name: az-storage-account
-path: /freedevtools/tldr/common/az-storage-account
-canonical: "https://hexmos.com/freedevtools/tldr/common/az-storage-account/"
+path: /freedevtools/tldr/az/az-storage-account
+canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-account/"
 description: "Manage Azure storage accounts with az-storage-account. Easily create, delete, and generate SAS tokens for your Azure storage. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Docker Build - Create Images from Dockerfile | Free DevTools"
 name: docker-build
-path: /freedevtools/tldr/common/docker-build
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-build/"
+path: /freedevtools/tldr/docker/docker-build
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-build/"
 description: "Create Docker images instantly with Docker Build. Customize build arguments, disable cache, and specify Dockerfile locations. Free online tool, no registration required."
 category: common
 keywords:

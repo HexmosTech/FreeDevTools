@@ -1,8 +1,8 @@
 ---
 title: "Display UV Dependencies - Analyze Project Tree | Free DevTools"
 name: uv-tree
-path: /freedevtools/tldr/common/uv-tree
-canonical: "https://hexmos.com/freedevtools/tldr/common/uv-tree/"
+path: /freedevtools/tldr/uv/uv-tree
+canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-tree/"
 description: "Analyze project dependencies with UV Tree. Inspect your Python project's dependency graph to understand relationships and identify potential issues. Free online tool, no registration required."
 category: common
 keywords:

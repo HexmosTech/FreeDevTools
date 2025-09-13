@@ -1,8 +1,8 @@
 ---
 title: "Create Virtual Environments - Isolate Python Projects | Free DevTools"
 name: virtualenv
-path: /freedevtools/tldr/common/virtualenv
-canonical: "https://hexmos.com/freedevtools/tldr/common/virtualenv/"
+path: /freedevtools/tldr/virt/virtualenv
+canonical: "https://hexmos.com/freedevtools/tldr/virt/virtualenv/"
 description: "Create virtual environments with Virtualenv. Isolate Python project dependencies and manage different Python versions. Free online tool, no registration required."
 category: common
 keywords:

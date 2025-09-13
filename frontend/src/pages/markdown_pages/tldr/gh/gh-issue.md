@@ -1,8 +1,8 @@
 ---
 title: "GitHub Issue Manager - Manage Issues | Free DevTools"
 name: gh-issue
-path: /freedevtools/tldr/common/gh-issue
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh-issue/"
+path: /freedevtools/tldr/gh/gh-issue
+canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-issue/"
 description: "Manage GitHub issues efficiently with GitHub Issue Manager. View, create, list, and reopen issues directly from the command line. Free online tool, no registration required."
 category: common
 keywords:

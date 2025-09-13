@@ -1,8 +1,8 @@
 ---
 title: "Whoami - Display User Details | Free DevTools"
 name: whoami
-path: /freedevtools/tldr/widows/whoami
-canonical: "https://hexmos.com/freedevtools/tldr/widows/whoami/"
+path: /freedevtools/tldr/windows/whoami
+canonical: "https://hexmos.com/freedevtools/tldr/windows/whoami/"
 description: "Display user details with Whoami. Show username, groups, privileges, and logon ID. A comprehensive user information retrieval tool. Free online tool, no registration required."
 category: windows
 keywords:

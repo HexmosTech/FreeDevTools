@@ -1,8 +1,8 @@
 ---
 title: "Clippy - Improve Rust Code with cargo clippy | Free DevTools"
 name: cargo-clippy
-path: /freedevtools/tldr/common/cargo-clippy
-canonical: "https://hexmos.com/freedevtools/tldr/common/cargo-clippy/"
+path: /freedevtools/tldr/cargo/cargo-clippy
+canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-clippy/"
 description: "Improve your Rust code with cargo clippy. Analyze code, catch mistakes and enhance code quality easily. Free online tool, no registration required."
 category: common
 keywords:

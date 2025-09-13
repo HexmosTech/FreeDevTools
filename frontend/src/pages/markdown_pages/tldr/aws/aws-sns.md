@@ -1,8 +1,8 @@
 ---
 title: "AWS SNS - Manage Notifications & Topics | Free DevTools"
 name: aws-sns
-path: /freedevtools/tldr/common/aws-sns
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-sns/"
+path: /freedevtools/tldr/aws/aws-sns
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sns/"
 description: "Manage AWS SNS topics with AWS SNS Command. Create topics, publish messages, and manage subscriptions using command line. Free online tool, no registration required."
 category: common
 keywords:

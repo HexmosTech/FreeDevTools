@@ -1,8 +1,8 @@
 ---
 title: "Crane Manifest - Generate Image Manifest | Free DevTools"
 name: crane-manifest
-path: /freedevtools/tldr/common/crane-manifest
-canonical: "https://hexmos.com/freedevtools/tldr/common/crane-manifest/"
+path: /freedevtools/tldr/crane/crane-manifest
+canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-manifest/"
 description: "Generate image manifest files with Crane Manifest. Inspect container image layers and configuration details. Free online tool, no registration required."
 category: common
 keywords:

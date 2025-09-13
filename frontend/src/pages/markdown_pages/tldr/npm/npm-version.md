@@ -1,8 +1,8 @@
 ---
 title: "NPM Version - Bump Package Versions Easily | Free DevTools"
 name: npm-version
-path: /freedevtools/tldr/common/npm-version
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-version/"
+path: /freedevtools/tldr/npm/npm-version
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-version/"
 description: "Bump node package versions easily with NPM Version. Manage your project versions, create tags, and customize commit messages. Free online tool, no registration required."
 category: common
 keywords:

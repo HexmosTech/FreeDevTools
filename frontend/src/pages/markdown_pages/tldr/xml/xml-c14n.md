@@ -1,8 +1,8 @@
 ---
 title: "XML C14N - Canonicalize XML Files | Free DevTools"
 name: xml-c14n
-path: /freedevtools/tldr/common/xml-c14n
-canonical: "https://hexmos.com/freedevtools/tldr/common/xml-c14n/"
+path: /freedevtools/tldr/xml/xml-c14n
+canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-c14n/"
 description: "Canonicalize XML with XML C14N for consistent representations. Format XML documents and ensure compatibility. Free online tool, no registration required."
 category: common
 keywords:

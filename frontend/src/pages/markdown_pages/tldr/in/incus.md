@@ -1,8 +1,8 @@
 ---
 title: "Incus - Manage Containers & VMs | Free DevTools"
 name: incus
-path: /freedevtools/tldr/common/incus
-canonical: "https://hexmos.com/freedevtools/tldr/common/incus/"
+path: /freedevtools/tldr/in/incus
+canonical: "https://hexmos.com/freedevtools/tldr/in/incus/"
 description: "Manage containers and virtual machines with Incus. Quickly create, start, stop, and delete containers with ease. Free online tool, no registration required."
 category: common
 keywords:

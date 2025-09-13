@@ -1,8 +1,8 @@
 ---
 title: "Launch Git Daemon - Share Repositories | Free DevTools"
 name: git-daemon
-path: /freedevtools/tldr/common/git-daemon
-canonical: "https://hexmos.com/freedevtools/tldr/common/git-daemon/"
+path: /freedevtools/tldr/git/git-daemon
+canonical: "https://hexmos.com/freedevtools/tldr/git/git-daemon/"
 description: "Launch Git daemon with Git repository hosting, allowing sharing and access control. Securely manage Git access using command line. Free online tool, no registration required."
 category: common
 keywords:

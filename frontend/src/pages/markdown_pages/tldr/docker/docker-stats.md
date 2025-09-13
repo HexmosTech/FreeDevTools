@@ -1,8 +1,8 @@
 ---
 title: "Docker Stats - Monitor Container Resource Usage | Free DevTools"
 name: docker-stats
-path: /freedevtools/tldr/common/docker-stats
-canonical: "https://hexmos.com/freedevtools/tldr/common/docker-stats/"
+path: /freedevtools/tldr/docker/docker-stats
+canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-stats/"
 description: "Monitor Docker container resources with Docker Stats. Track CPU, memory, network I/O usage in real-time. Free online tool, no registration required."
 category: common
 keywords:

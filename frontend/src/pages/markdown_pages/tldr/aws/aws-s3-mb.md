@@ -1,8 +1,8 @@
 ---
 title: "AWS S3 Create Bucket - Manage Cloud Storage | Free DevTools"
 name: aws-s3-mb
-path: /freedevtools/tldr/common/aws-s3-mb
-canonical: "https://hexmos.com/freedevtools/tldr/common/aws-s3-mb/"
+path: /freedevtools/tldr/aws/aws-s3-mb
+canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-mb/"
 description: "Create AWS S3 buckets with aws s3 mb. Manage cloud storage effortlessly and define specific regions for your buckets. Free online tool, no registration required."
 category: common
 keywords:

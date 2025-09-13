@@ -1,8 +1,8 @@
 ---
 title: "Analyze NPM Packages - Check Dependencies | Free DevTools"
 name: npm-check
-path: /freedevtools/tldr/common/npm-check
-canonical: "https://hexmos.com/freedevtools/tldr/common/npm-check/"
+path: /freedevtools/tldr/npm/npm-check
+canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-check/"
 description: "Analyze NPM packages effortlessly with npm-check. Identify outdated dependencies and manage your project's package versions. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "GDM Setup - Configure GNOME Display Manager | Free DevTools"
 name: gdmsetup
-path: /freedevtools/tldr/common/gdmsetup
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdmsetup/"
+path: /freedevtools/tldr/gdm/gdmsetup
+canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdmsetup/"
 description: "Configure GNOME Display Manager (GDM) with GDM Setup. Customize login screen settings and manage display configurations easily. Free online tool, no registration required."
 category: common
 keywords:

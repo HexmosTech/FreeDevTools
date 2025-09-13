@@ -1,8 +1,8 @@
 ---
 title: "Tailscale Up - Connect to Tailscale Network | Free DevTools"
 name: tailscale-up
-path: /freedevtools/tldr/common/tailscale-up
-canonical: "https://hexmos.com/freedevtools/tldr/common/tailscale-up/"
+path: /freedevtools/tldr/tailscale/tailscale-up
+canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-up/"
 description: "Connect to Tailscale network with Tailscale Up. Securely extend your private network using subnet router configurations. Free online tool, no registration required."
 category: common
 keywords:

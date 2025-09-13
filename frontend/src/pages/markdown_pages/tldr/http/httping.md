@@ -1,8 +1,8 @@
 ---
 title: "Measure Web Latency - HTTPing Network Performance | Free DevTools"
 name: httping
-path: /freedevtools/tldr/common/httping
-canonical: "https://hexmos.com/freedevtools/tldr/common/httping/"
+path: /freedevtools/tldr/http/httping
+canonical: "https://hexmos.com/freedevtools/tldr/http/httping/"
 description: "Measure web latency with HTTPing. Analyze server response times and throughput using this network debugging tool. Free online tool, no registration required."
 category: common
 keywords:

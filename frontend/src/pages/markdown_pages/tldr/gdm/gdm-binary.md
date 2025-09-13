@@ -1,8 +1,8 @@
 ---
 title: "GDM Binary - Control Display Manager | Free DevTools"
 name: gdm-binary
-path: /freedevtools/tldr/common/gdm-binary
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdm-binary/"
+path: /freedevtools/tldr/gdm/gdm-binary
+canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-binary/"
 description: "Control display manager services instantly with GDM Binary. Manage login screens, user sessions, and graphical environments efficiently. Free online tool, no registration required."
 category: common
 keywords:

@@ -1,8 +1,8 @@
 ---
 title: "Locate Files - Find Files with Where Command | Free DevTools"
 name: where
-path: /freedevtools/tldr/widows/where
-canonical: "https://hexmos.com/freedevtools/tldr/widows/where/"
+path: /freedevtools/tldr/windows/where
+canonical: "https://hexmos.com/freedevtools/tldr/windows/where/"
 description: "Find files instantly with Where Command. Locate files by pattern, search recursively, and verify file existence using command line. Free online tool, no registration required."
 category: windows
 keywords:

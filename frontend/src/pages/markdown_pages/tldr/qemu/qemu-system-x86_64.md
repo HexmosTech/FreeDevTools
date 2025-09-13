@@ -1,8 +1,8 @@
 ---
 title: "QEMU x86_64 Emulator - Run Virtual Machines | Free DevTools"
 name: qemu-system-x86_64
-path: /freedevtools/tldr/common/qemu-system-x86_64
-canonical: "https://hexmos.com/freedevtools/tldr/common/qemu-system-x86_64/"
+path: /freedevtools/tldr/qemu/qemu-system-x86_64
+canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-system-x86_64/"
 description: "Run virtual machines with QEMU x86_64 emulator. Emulate x86_64 architecture, boot from images, and test operating systems. Free online tool, no registration required."
 category: common
 keywords:

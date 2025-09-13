@@ -1,8 +1,8 @@
 ---
 title: "MongoDB Shell - Execute Commands | Free DevTools"
 name: mongosh
-path: /freedevtools/tldr/common/mongosh
-canonical: "https://hexmos.com/freedevtools/tldr/common/mongosh/"
+path: /freedevtools/tldr/mongo/mongosh
+canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongosh/"
 description: "Execute MongoDB commands with Mongosh. Connect to databases, authenticate users, and evaluate JavaScript expressions easily. Free online tool, no registration required."
 category: common
 keywords:
