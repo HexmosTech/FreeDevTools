@@ -1,5 +1,49 @@
 import type { APIRoute } from "astro";
-import { getAllCommands } from "../lib/commands";
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+
+async function getAllCommands() {
+  const tldrEntries: CollectionEntry<"tldr">[] = await getCollection("tldr");
+
+  const commandsByPlatform: Record<
+    string,
+    Array<{
+      name: string;
+      url: string;
+      description?: string;
+      category?: string;
+    }>
+  > = {};
+
+  for (const entry of tldrEntries) {
+    // Extract platform and command name from path
+    const pathParts = entry.id.split("/");
+    const platform = pathParts[pathParts.length - 2]; // e.g., 'android'
+    const fileName = pathParts[pathParts.length - 1]; // e.g., 'am.md'
+    const commandName = fileName.replace(".md", ""); // e.g., 'am'
+
+    if (!commandsByPlatform[platform]) {
+      commandsByPlatform[platform] = [];
+    }
+
+    // Get description from frontmatter if available
+    const description =
+      entry.data.description ||
+      entry.data.title ||
+      `Documentation for ${commandName} command`;
+
+    const commandName_final = entry.data.name || commandName;
+
+    commandsByPlatform[platform].push({
+      name: commandName_final,
+      url: entry.data.path || `/freedevtools/tldr/${platform}/${commandName}`,
+      description,
+      category: entry.data.category,
+    });
+  }
+
+  return commandsByPlatform;
+}
 
 export const GET: APIRoute = async ({ site }) => {
   const commands = await getAllCommands();
