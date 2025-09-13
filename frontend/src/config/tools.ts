@@ -897,6 +897,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "csv-to-json": {
+    title: "CSV to JSON Converter - Transform CSV Data Online | Free DevTools",
+    name: "CSV to JSON Converter",
+    path: "/freedevtools/t/csv-to-json/",
+    description:
+      "Convert CSV files to JSON format instantly with our free online converter. Upload CSV files or paste CSV data to transform into structured JSON objects with customizable formatting options.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/csv-to-json/",
+    keywords: [
+      "csv to json converter",
+      "convert csv to json online",
+      "csv json converter free",
+      "csv to json online tool",
+      "transform csv data json",
+      "csv file converter",
+      "online csv parser",
+      "csv json transformation",
+      "data conversion tool",
+      "spreadsheet to json",
+    ],
+    features: [
+      "Real-time CSV to JSON conversion",
+      "Upload CSV files or paste CSV data",
+      "Customizable key formatting (lowercase option)",
+      "Drag and drop file upload support",
+      "Handle different CSV delimiters and formats",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
