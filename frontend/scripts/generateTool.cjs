@@ -247,7 +247,7 @@ function generateAstroPage(toolKey, componentName) {
 import type { Tool } from '@/config/tools';
 import { getToolByKey } from '@/config/tools';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import SvgViewer from './_${componentName}';
+import ${componentName} from './_${componentName}';
 
 const tool = getToolByKey('${toolKey}') as Tool;
 ---
@@ -277,6 +277,7 @@ function updateToolsConfig(toolKey, toolName) {
 
   // Add new tool to TOOLS_CONFIG
   const newToolEntry = `  '${toolKey}': {
+    title: '${toolName} | Online Free DevTools',
     name: '${toolName}',
     path: '/freedevtools/t/${toolKey}/',
     description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
@@ -286,6 +287,12 @@ function updateToolsConfig(toolKey, toolName) {
     canonical: 'https://hexmos.com/freedevtools/t/${toolKey}/',
     keywords: ['${toolKey}', 'developer tools', 'TODO: add more keywords'],
     features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
+    datePublished: ${new Date().toISOString()},
+    softwareVersion: "1.0.0",
   }`;
 
   // Find the position to insert the new tool (before the closing brace of TOOLS_CONFIG)

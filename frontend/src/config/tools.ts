@@ -671,6 +671,44 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
+
+  "query-params-to-json": {
+    title:
+      "Query Params to JSON Converter - Parse URL Parameters | Free DevTools",
+    name: "Query Params To JSON",
+    path: "/freedevtools/t/query-params-to-json/",
+    description:
+      "Convert URL query parameters to JSON format instantly with our free online converter. Parse query strings from URLs, form data, and API endpoints into structured JSON objects with real-time validation.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/query-params-to-json/",
+    keywords: [
+      "query params to json converter",
+      "url parameters to json",
+      "query string parser",
+      "url query converter",
+      "parse query parameters",
+      "query string to json online",
+      "url parameter parser",
+      "query params decoder",
+    ],
+    features: [
+      "Convert URL query parameters to JSON format",
+      "Parse complex nested query structures",
+      "Handle arrays and special characters in URLs",
+      "Real-time conversion with validation",
+      "Support for encoded and decoded URLs",
+      "Copy JSON output to clipboard",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+    datePublished: "2025-01-15",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
