@@ -857,6 +857,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "env-to-netlify-toml": {
+    title:
+      "Env to Netlify TOML Converter - Transform Environment Variables | Free DevTools",
+    name: "Env to Netlify TOML Converter",
+    path: "/freedevtools/t/env-to-netlify-toml/",
+    description:
+      "Convert .env files to Netlify TOML format instantly with our free online converter. Transform environment variables for Netlify deployment configuration with proper TOML syntax and validation.",
+    category: "Developer Tools",
+    icon: "⚙️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/env-to-netlify-toml/",
+    keywords: [
+      "env to netlify toml converter",
+      "environment variables converter",
+      "netlify toml generator",
+      "env file converter",
+      "netlify deployment config",
+      "toml converter online",
+      "netlify environment variables",
+      "env to toml converter",
+      "netlify config generator",
+      "deployment environment setup",
+    ],
+    features: [
+      "Real-time .env to netlify.toml conversion",
+      "Support for environment-specific variables",
+      "Proper TOML syntax formatting",
+      "Handle quoted and unquoted values",
+      "Context-specific variable organization",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
