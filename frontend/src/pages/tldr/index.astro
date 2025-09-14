@@ -4,8 +4,10 @@ import AdBanner from '../../components/banner/AdBanner';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
+const ITEMS_PER_PAGE = 20;
+
 async function getAllCommands() {
-  const tldrEntries: CollectionEntry<'tldr'>[] = await getCollection('tldr');
+  const tldrEntries = await (getCollection as any)('tldr');
 
   const commandsByPlatform: Record<
     string,
@@ -19,7 +21,7 @@ async function getAllCommands() {
 
   for (const entry of tldrEntries) {
     // Extract platform and command name from path
-    const pathParts = entry.id.split("/");
+    const pathParts = (entry as any).id.split("/");
     const platform = pathParts[pathParts.length - 2]; // e.g., 'android'
     const fileName = pathParts[pathParts.length - 1]; // e.g., 'am.md'
     const commandName = fileName.replace(".md", ""); // e.g., 'am'
@@ -30,22 +32,28 @@ async function getAllCommands() {
 
     // Get description from frontmatter if available
     const description =
-      entry.data.description ||
-      entry.data.title ||
+      (entry as any).data?.description ||
+      (entry as any).data?.title ||
       `Documentation for ${commandName} command`;
 
-    const commandName_final = entry.data.name || commandName;
+    const commandName_final = (entry as any).data?.name || commandName;
 
     commandsByPlatform[platform].push({
       name: commandName_final,
-      url: entry.data.path || `/freedevtools/tldr/${platform}/${commandName}`,
+      url: (entry as any).data?.path || `/freedevtools/tldr/${platform}/${commandName}`,
       description,
-      category: entry.data.category,
+      category: (entry as any).data?.category,
     });
   }
 
   return commandsByPlatform;
 }
+
+// Get all commands data for client-side pagination
+const allCommands = await getAllCommands();
+const allPlatforms = Object.keys(allCommands).sort();
+const totalPlatforms = allPlatforms.length;
+const totalPages = Math.ceil(totalPlatforms / ITEMS_PER_PAGE);
 
 const platformIconMap = {
   "linux": "https://raw.githubusercontent.com/github/explore/eb40fa94e4b686db568094600bb30065acce30c3/topics/linux/linux.png",
@@ -59,8 +67,6 @@ const platformIconMap = {
   "osx": "https://cdn-icons-png.flaticon.com/512/2/2235.png",
   "windows": "https://www.freeiconspng.com/thumbs/windows-icon-png/cute-ball-windows-icon-png-16.png",
 };
-
-const commands = await getAllCommands();
 
 ---
 
@@ -91,68 +97,72 @@ const commands = await getAllCommands();
       <p class="text-lg text-slate-600 dark:text-slate-400 mb-6">
         Comprehensive documentation for command-line tools across different platforms.
       </p>
-    </div>
-
-    <script>
-      // Handle command search navigation
-      document.addEventListener('commandSelected', (event) => {
-        const customEvent = event as CustomEvent;
-        const command = customEvent.detail;
-        window.location.href = command.url;
-      });
-    </script>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 lg:gap-8 mb-8">
-      {Object.entries(commands).map(([platform, platformCommands]) => (
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-xl p-4 md:p-4 lg:p-8 transition-all duration-300 ease-in-out shadow-sm hover:-translate-y-1 hover:shadow-xl hover:border-border">
-          <div class="flex items-center mb-4">
-            <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center mr-3 border border-slate-200 dark:border-slate-700">
-              <img 
-                src={platformIconMap[platform as keyof typeof platformIconMap] || `https://cdn-icons-png.flaticon.com/512/5515/5515389.png`}
-                alt={`${platform} logo`}
-                class="w-8 h-8 object-contain"
-                onerror="this.src='https://via.placeholder.com/40x40/3b82f6/ffffff?text=' + this.alt.split(' ')[0].charAt(0).toUpperCase()"
-              />
-            </div>
-            <a 
-              href={`/freedevtools/tldr/${platform}`}
-              class="text-xl font-semibold text-black dark:text-neon-light capitalize hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              {platform.replace('-', ' ')}
-            </a>
-          </div>
-          
-          <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
-            {platformCommands.length} commands available
-          </p>
-          
-          <div class="space-y-2">
-            {platformCommands.slice(0, 5).map((command) => (
-              <a 
-                href={`/freedevtools/tldr/${platform}/${command.name}`}
-                class="block text-sm text-blue-600 dark:text-blue-300 hover:text-black dark:hover:text-white hover:font-bold"
-              >
-                {command.name}
-              </a>
-            ))}
-            {platformCommands.length > 5 && (
-              <p class="text-xs text-slate-500 dark:text-slate-400">
-                +{platformCommands.length - 5} more commands
-              </p>
-            )}
-          </div>
-          
-          <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-900">
-            <a 
-              href={`/freedevtools/tldr/${platform}`}
-              class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-            >
-              View all {platform} commands →
-            </a>
-          </div>
+      
+      <!-- Pagination Info -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+        <div id="pagination-info" class="text-sm text-slate-900 dark:text-slate-400 mb-2 sm:mb-0">
+          Loading...
         </div>
-      ))}
+        
+        <!-- Pagination Controls -->
+        <div class="flex items-center space-x-2">
+          <button 
+            id="prev-btn"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
+            >
+              ← Previous
+          </button>
+          
+          <span id="page-info" class="text-sm text-slate-500 dark:text-slate-400">
+            1 / {totalPages}
+          </span>
+          
+          <button 
+            id="next-btn"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
+            >
+              Next →
+          </button>
+        </div>
+      </div>
     </div>
+
+    <div id="platforms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 lg:gap-8 mb-8">
+      <!-- Platforms will be loaded dynamically -->
+    </div>
+    
+    <!-- Bottom Pagination -->
+    <div id="bottom-pagination" class="mt-8 flex flex-col items-center" style="display: none;">
+        <div class="flex items-center space-x-1">
+        <button 
+          id="bottom-prev-btn"
+          class="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+            >
+              ← Previous
+        </button>
+          
+          <!-- Page Numbers -->
+        <div id="page-numbers" class="flex items-center space-x-1">
+          <!-- Page numbers will be generated dynamically -->
+        </div>
+        
+        <button 
+          id="bottom-next-btn"
+          class="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          Next →
+        </button>
+        </div>
+      
+      <div id="bottom-page-info" class="mt-4 text-sm text-slate-500 dark:text-slate-400">
+        Page 1 of {totalPages} • {totalPlatforms} total platforms
+      </div>
+    </div>
+    
     <!-- Credits Section -->
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
@@ -172,3 +182,243 @@ const commands = await getAllCommands();
     </div>
   </div>
 </BaseLayout>
+
+<script define:vars={{ allCommands, allPlatforms, totalPlatforms, totalPages, ITEMS_PER_PAGE, platformIconMap }}>
+  // Platform icon mapping
+  const platformIcons = platformIconMap;
+  
+  // Pagination state
+  let currentPage = 1;
+  const itemsPerPage = ITEMS_PER_PAGE;
+  
+  // Get current page from URL
+  function getCurrentPageFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = parseInt(urlParams.get('page') || '1', 10);
+    return Math.max(1, Math.min(page, totalPages));
+  }
+  
+  // Update URL without page reload
+  function updateURL(page) {
+    const url = new URL(window.location);
+    if (page === 1) {
+      url.searchParams.delete('page');
+    } else {
+      url.searchParams.set('page', page.toString());
+    }
+    window.history.pushState({}, '', url);
+  }
+  
+  // Generate page numbers for pagination
+  function getPageNumbers(currentPage, totalPages) {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= maxVisible; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+  
+  // Render platform card
+  function renderPlatformCard(platform, platformCommands) {
+    const iconUrl = platformIcons[platform] || 'https://cdn-icons-png.flaticon.com/512/5515/5515389.png';
+    
+    const commandsHtml = platformCommands.slice(0, 5).map(command => 
+      `<a href="/freedevtools/tldr/${platform}/${command.name}" class="block text-sm text-blue-600 dark:text-blue-300 hover:text-black dark:hover:text-white hover:font-bold">${command.name}</a>`
+    ).join('');
+    
+    const moreCommandsHtml = platformCommands.length > 5 ? 
+      `<p class="text-xs text-slate-500 dark:text-slate-400">+${platformCommands.length - 5} more commands</p>` : '';
+    
+    return `
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-xl p-4 md:p-4 lg:p-8 transition-all duration-300 ease-in-out shadow-sm hover:-translate-y-1 hover:shadow-xl hover:border-border">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center mr-3 border border-slate-200 dark:border-slate-700">
+            <img 
+              src="${iconUrl}"
+              alt="${platform} logo"
+              class="w-8 h-8 object-contain"
+              onerror="this.src='https://via.placeholder.com/40x40/3b82f6/ffffff?text=' + this.alt.split(' ')[0].charAt(0).toUpperCase()"
+            />
+          </div>
+          <a 
+            href="/freedevtools/tldr/${platform}"
+            class="text-xl font-semibold text-black dark:text-neon-light capitalize hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            ${platform.replace('-', ' ')}
+          </a>
+        </div>
+        
+        <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
+          ${platformCommands.length} commands available
+        </p>
+        
+        <div class="space-y-2">
+          ${commandsHtml}
+          ${moreCommandsHtml}
+        </div>
+        
+        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-900">
+          <a 
+            href="/freedevtools/tldr/${platform}"
+            class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+          >
+            View all ${platform} commands →
+          </a>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Render pagination
+  function renderPagination() {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedPlatforms = allPlatforms.slice(startIndex, endIndex);
+    
+    // Update pagination info
+    document.getElementById('pagination-info').textContent = 
+      `Showing ${paginatedPlatforms.length} of ${totalPlatforms} items (Page ${currentPage} of ${totalPages})`;
+    
+    document.getElementById('page-info').textContent = `${currentPage} / ${totalPages}`;
+    document.getElementById('bottom-page-info').textContent = 
+      `Page ${currentPage} of ${totalPages} • ${totalPlatforms} total platforms`;
+    
+    // Update button states
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const bottomPrevBtn = document.getElementById('bottom-prev-btn');
+    const bottomNextBtn = document.getElementById('bottom-next-btn');
+    
+    const hasPrev = currentPage > 1;
+    const hasNext = currentPage < totalPages;
+    
+    [prevBtn, bottomPrevBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = !hasPrev;
+      }
+    });
+    
+    [nextBtn, bottomNextBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = !hasNext;
+      }
+    });
+    
+    // Render platforms
+    const platformsGrid = document.getElementById('platforms-grid');
+    platformsGrid.innerHTML = paginatedPlatforms.map(platform => 
+      renderPlatformCard(platform, allCommands[platform])
+    ).join('');
+    
+    // Render page numbers
+    const pageNumbers = getPageNumbers(currentPage, totalPages);
+    const pageNumbersContainer = document.getElementById('page-numbers');
+    pageNumbersContainer.innerHTML = pageNumbers.map(pageNum => {
+      const isCurrentPage = pageNum === currentPage;
+      const buttonClass = isCurrentPage 
+        ? 'bg-blue-600 text-white' 
+        : 'text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600';
+      
+      return `<button data-page="${pageNum}" class="page-number-btn inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${buttonClass}">${pageNum}</button>`;
+    }).join('');
+    
+    // Show bottom pagination if there are multiple pages
+    const bottomPagination = document.getElementById('bottom-pagination');
+    bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+  }
+  
+  // Navigate to page
+  function goToPage(page) {
+    if (page < 1 || page > totalPages || page === currentPage) {
+      return;
+    }
+    
+    currentPage = page;
+    updateURL(page);
+    renderPagination();
+    
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  // Event listeners - use event delegation to avoid re-attaching listeners
+  function setupEventListeners() {
+    // Use event delegation on the document to handle all clicks
+    document.addEventListener('click', (e) => {
+      // Handle previous buttons
+      if (e.target.id === 'prev-btn' || e.target.id === 'bottom-prev-btn') {
+        e.preventDefault();
+        goToPage(currentPage - 1);
+        return;
+      }
+      
+      // Handle next buttons
+      if (e.target.id === 'next-btn' || e.target.id === 'bottom-next-btn') {
+        e.preventDefault();
+        goToPage(currentPage + 1);
+        return;
+      }
+      
+      // Handle page number buttons
+      if (e.target.classList.contains('page-number-btn')) {
+        e.preventDefault();
+        const page = parseInt(e.target.dataset.page, 10);
+        goToPage(page);
+        return;
+      }
+    });
+  }
+  
+  // Handle browser back/forward (only add once)
+  if (!window.paginationInitialized) {
+    window.addEventListener('popstate', () => {
+      currentPage = getCurrentPageFromURL();
+      renderPagination();
+    });
+    window.paginationInitialized = true;
+  }
+  
+  // Initialize pagination
+  function init() {
+    currentPage = getCurrentPageFromURL();
+    renderPagination();
+  }
+  
+  // Set up event listeners only once
+  if (!window.paginationEventListenersSet) {
+    setupEventListeners();
+    window.paginationEventListenersSet = true;
+  }
+  
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    // Small delay to ensure DOM is fully ready
+    setTimeout(init, 100);
+  }
+  
+  // Handle command search navigation
+  document.addEventListener('commandSelected', (event) => {
+    const customEvent = event;
+    const command = customEvent.detail;
+    window.location.href = command.url;
+  });
+</script>
