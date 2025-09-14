@@ -1096,6 +1096,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "webp-converter": {
+    title: "WebP Converter - Convert Images to WebP Format | Free DevTools",
+    name: "WebP Converter",
+    path: "/freedevtools/t/webp-converter/",
+    description:
+      "Convert images to WebP format instantly with our free online converter. Upload JPG, PNG, GIF images and convert to WebP with adjustable quality settings. Batch processing and download support included.",
+    category: "Developer Tools",
+    icon: "�️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/webp-converter/",
+    keywords: [
+      "webp converter",
+      "image to webp",
+      "convert to webp",
+      "webp image converter",
+      "jpg to webp",
+      "png to webp",
+      "gif to webp",
+      "webp format converter",
+      "image compression webp",
+      "batch webp converter",
+    ],
+    features: [
+      "Convert images to WebP format instantly",
+      "Support for JPG, PNG, GIF, and other image formats",
+      "Adjustable quality settings for optimal compression",
+      "Batch processing for multiple images",
+      "Real-time file size comparison",
+      "Download converted images individually or as ZIP",
+      "Browser-based processing - images never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/webp-converter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/webp-converter-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
