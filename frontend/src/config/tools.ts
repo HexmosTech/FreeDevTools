@@ -1321,6 +1321,49 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+  "xml-formatter": {
+    title: "XML Formatter - Format & Beautify XML Online | Free DevTools",
+    name: "XML Formatter",
+    path: "/freedevtools/t/xml-formatter/",
+    description:
+      "Format and beautify XML documents instantly with our free online XML formatter. Validate XML syntax, customize indentation, and fix malformed XML with real-time formatting and error detection.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#f97316",
+    canonical: "https://hexmos.com/freedevtools/t/xml-formatter/",
+    keywords: [
+      "xml formatter",
+      "xml beautifier",
+      "xml prettifier",
+      "format xml online",
+      "xml validator",
+      "xml syntax checker",
+      "xml minifier",
+      "xml parser",
+      "beautify xml",
+      "xml code formatter",
+      "xml pretty print",
+      "fix xml format",
+      "xml indentation tool",
+      "online xml editor",
+      "xml structure formatter",
+    ],
+    features: [
+      "Format and beautify XML documents instantly",
+      "Real-time XML validation and syntax checking",
+      "Customizable indentation options (spaces or tabs)",
+      "XML minification for optimized file sizes",
+      "Error detection with detailed error messages",
+      "Copy formatted XML to clipboard",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/xml-formatter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/xml-formatter-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
