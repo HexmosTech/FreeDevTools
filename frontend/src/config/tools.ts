@@ -1364,6 +1364,51 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  "chmod-calculator": {
+    title:
+      "Chmod Calculator - Unix File Permissions Calculator | Free DevTools",
+    name: "Chmod Calculator",
+    path: "/freedevtools/t/chmod-calculator/",
+    description:
+      "Calculate Unix file permissions instantly with our free online chmod calculator. Convert between octal, symbolic, and human-readable formats with real-time permission preview and command generation.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#059669",
+    canonical: "https://hexmos.com/freedevtools/t/chmod-calculator/",
+    keywords: [
+      "chmod calculator",
+      "unix permissions calculator",
+      "file permissions calculator",
+      "chmod octal calculator",
+      "chmod symbolic calculator",
+      "linux permissions",
+      "unix file permissions",
+      "chmod command generator",
+      "file permission converter",
+      "octal to symbolic permissions",
+      "chmod 755 calculator",
+      "unix security calculator",
+      "file mode calculator",
+      "linux chmod tool",
+      "permission bits calculator",
+    ],
+    features: [
+      "Interactive permission matrix with checkboxes",
+      "Real-time octal and symbolic notation conversion",
+      "Generate ready-to-use chmod commands",
+      "Visual permission representation for owner, group, and public",
+      "Copy chmod commands to clipboard",
+      "Mobile-responsive permission interface",
+      "Browser-based calculation - no server required",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/chmod-calculator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/chmod-calculator-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
