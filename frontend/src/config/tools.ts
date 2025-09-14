@@ -1205,6 +1205,44 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "qrcode-generator": {
+    title: "QR Code Generator - Create QR Codes Online | Free DevTools",
+    name: "QR Code Generator",
+    path: "/freedevtools/t/qrcode-generator/",
+    description:
+      "Generate QR codes instantly with our free online QR code generator. Create customizable QR codes for URLs, text, contact info, and more with adjustable error correction and scale settings.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/qrcode-generator/",
+    keywords: [
+      "qr code generator",
+      "qr code maker",
+      "qr code creator",
+      "generate qr code",
+      "free qr code generator",
+      "online qr code",
+      "qr code tool",
+      "qr scanner code",
+      "custom qr code",
+      "qr code download",
+    ],
+    features: [
+      "Generate QR codes for text, URLs, and contact information",
+      "Adjustable error correction levels (Low, Medium, Quartile, High)",
+      "Customizable scale and size options",
+      "Download QR codes as PNG images",
+      "Real-time QR code preview",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/qrcode-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/qrcode-generator-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
