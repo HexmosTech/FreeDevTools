@@ -977,18 +977,20 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     softwareVersion: "1.0.0",
   },
 
-  "base64-encoder": {
+  "base64-utilities": {
     title:
       "Base64 Encoder/Decoder - Encode & Decode Text Online | Free DevTools",
-    name: "Base64 Encoder",
-    path: "/freedevtools/t/base64-encoder/",
+    name: "Base64 Utilities",
+    path: "/freedevtools/t/base64-utilities/",
     description:
       "Encode and decode text to/from Base64 format instantly with our free online Base64 encoder/decoder. Perfect for data transmission, storage, and web development with real-time conversion.",
     category: "Developer Tools",
-    icon: "�",
+    icon: "🔒",
     themeColor: "#3b82f6",
     canonical: "https://hexmos.com/freedevtools/t/base64-encoder/",
     keywords: [
+      "base64 utilities",
+      "base64 tools",
       "base64 encoder",
       "base64 decoder",
       "base64 converter",
@@ -1015,6 +1017,74 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/base64-encoder-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
+  },
+
+  "base64-encoder": {
+    title: "Base64 Encoder - Encode Text to Base64 Online | Free DevTools",
+    name: "Base64 Encoder",
+    path: "/freedevtools/t/base64-encode/",
+    description:
+      "Encode text to Base64 format instantly with our free online Base64 encoder. Perfect for data transmission, storage, and web development with real-time encoding.",
+    category: "Developer Tools",
+    icon: "📤",
+    themeColor: "#10b981",
+    canonical: "https://hexmos.com/freedevtools/t/base64-encode/",
+    keywords: [
+      "base64 encoder",
+      "encode to base64",
+      "text to base64",
+      "base64 encoding online",
+      "data encoder",
+      "text encoder",
+      "base64 converter",
+    ],
+    features: [
+      "Real-time Base64 encoding",
+      "Support for text and binary data",
+      "Instant encoding results",
+      "Copy to clipboard functionality",
+      "Mobile responsive interface",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-encode-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-encode-banner.png",
+    variationOf: "base64-utilities",
+  },
+
+  "base64-decoder": {
+    title: "Base64 Decoder - Decode Base64 to Text Online | Free DevTools",
+    name: "Base64 Decoder",
+    path: "/freedevtools/t/base64-decode/",
+    description:
+      "Decode Base64 to text format instantly with our free online Base64 decoder. Perfect for data retrieval and web development with real-time decoding and error detection.",
+    category: "Developer Tools",
+    icon: "📥",
+    themeColor: "#f59e0b",
+    canonical: "https://hexmos.com/freedevtools/t/base64-decode/",
+    keywords: [
+      "base64 decoder",
+      "decode base64",
+      "base64 to text",
+      "base64 decoding online",
+      "data decoder",
+      "text decoder",
+      "base64 converter",
+    ],
+    features: [
+      "Real-time Base64 decoding",
+      "Instant error detection for invalid Base64",
+      "Support for various Base64 formats",
+      "Copy to clipboard functionality",
+      "Mobile responsive interface",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-decode-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-decode-banner.png",
+    variationOf: "base64-utilities",
   },
 
   "css-inliner-for-email": {
