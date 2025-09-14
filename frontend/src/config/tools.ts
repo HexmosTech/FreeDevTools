@@ -1243,6 +1243,44 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  faker: {
+    title: "Fake Data Generator - Generate Mock Data Online | Free DevTools",
+    name: "Fake Data Generator",
+    path: "/freedevtools/t/faker/",
+    description:
+      "Generate realistic fake data instantly with our free online fake data generator. Create mock JSON, CSV, SQL data with customizable fields for testing, development, and prototyping.",
+    category: "Developer Tools",
+    icon: "🎲",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/faker/",
+    keywords: [
+      "fake data generator",
+      "mock data generator",
+      "test data generator",
+      "fake json generator",
+      "mock csv data",
+      "fake sql data",
+      "dummy data generator",
+      "test data creation",
+      "mock api data",
+      "faker js online",
+    ],
+    features: [
+      "Generate realistic fake data with Faker.js",
+      "Support for JSON, CSV, SQL, and YAML formats",
+      "Customizable field types and categories",
+      "Bulk data generation with adjustable row counts",
+      "Real-time data preview and generation",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/faker-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/faker-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
