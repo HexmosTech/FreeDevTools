@@ -46,8 +46,8 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
   const [loaded, setLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState<OperationType>("encode");
 
-  // Set initial tab based on tool and determine if tabs should be shown
-  const shouldShowTabs = tool === "base64-utilities";
+  // Always show tabs, but set initial tab based on tool
+  const shouldShowTabs = true;
 
   useEffect(() => {
     if (tool === "base64-decoder") {
@@ -142,154 +142,79 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
             <Card className="tool-card-bg">
               <CardHeader></CardHeader>
               <CardContent className="space-y-6">
-                {/* Conditional rendering based on tool type */}
-                {shouldShowTabs ? (
-                  /* Full utilities version with tabs */
-                  <>
-                    {/* Tab Selection */}
-                    <Tabs value={activeTab} onValueChange={handleTabChange}>
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="encode">Encode</TabsTrigger>
-                        <TabsTrigger value="decode">Decode</TabsTrigger>
-                      </TabsList>
+                {/* Always show tabs with appropriate default selection */}
+                <Tabs value={activeTab} onValueChange={handleTabChange}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="encode">Encode</TabsTrigger>
+                    <TabsTrigger value="decode">Decode</TabsTrigger>
+                  </TabsList>
 
-                      <TabsContent value="encode" className="mt-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          {/* Text Input - Left Side */}
-                          <div className="space-y-3">
-                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                              Text to Encode
-                            </Label>
-                            <Textarea
-                              value={input}
-                              onChange={(e) =>
-                                handleInputChange(e.target.value)
-                              }
-                              placeholder="Enter text to encode to Base64..."
-                              className="min-h-[200px] font-mono text-sm"
-                            />
-                          </div>
+                  <TabsContent value="encode" className="mt-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Text Input - Left Side */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Text to Encode
+                        </Label>
+                        <Textarea
+                          value={input}
+                          onChange={(e) => handleInputChange(e.target.value)}
+                          placeholder="Enter text to encode to Base64..."
+                          className="min-h-[200px] font-mono text-sm"
+                        />
+                      </div>
 
-                          {/* Base64 Output - Right Side */}
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Base64 Output
-                              </Label>
-                              <CopyButton text={output} disabled={!output} />
-                            </div>
-                            <Textarea
-                              value={output}
-                              readOnly
-                              placeholder="Base64 encoded text will appear here..."
-                              className="min-h-[200px] font-mono text-sm bg-muted/50"
-                            />
-                          </div>
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="decode" className="mt-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          {/* Base64 Input - Left Side */}
-                          <div className="space-y-3">
-                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                              Base64 to Decode
-                            </Label>
-                            <Textarea
-                              value={input}
-                              onChange={(e) =>
-                                handleInputChange(e.target.value)
-                              }
-                              placeholder="Enter Base64 string to decode..."
-                              className="min-h-[200px] font-mono text-sm"
-                            />
-                          </div>
-
-                          {/* Text Output - Right Side */}
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Decoded Text
-                              </Label>
-                              <CopyButton text={output} disabled={!output} />
-                            </div>
-                            <Textarea
-                              value={output}
-                              readOnly
-                              placeholder="Decoded text will appear here..."
-                              className="min-h-[200px] font-mono text-sm bg-muted/50"
-                            />
-                          </div>
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-                  </>
-                ) : (
-                  /* Focused tool version without tabs */
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {activeTab === "encode" ? (
-                      <>
-                        {/* Encoder Layout */}
-                        <div className="space-y-3">
+                      {/* Base64 Output - Right Side */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
                           <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Text to Encode
+                            Base64 Output
                           </Label>
-                          <Textarea
-                            value={input}
-                            onChange={(e) => handleInputChange(e.target.value)}
-                            placeholder="Enter text to encode to Base64..."
-                            className="min-h-[200px] font-mono text-sm"
-                          />
+                          <CopyButton text={output} disabled={!output} />
                         </div>
+                        <Textarea
+                          value={output}
+                          readOnly
+                          placeholder="Base64 encoded text will appear here..."
+                          className="min-h-[200px] font-mono text-sm bg-muted/50"
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
 
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                              Base64 Output
-                            </Label>
-                            <CopyButton text={output} disabled={!output} />
-                          </div>
-                          <Textarea
-                            value={output}
-                            readOnly
-                            placeholder="Base64 encoded text will appear here..."
-                            className="min-h-[200px] font-mono text-sm bg-muted/50"
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        {/* Decoder Layout */}
-                        <div className="space-y-3">
+                  <TabsContent value="decode" className="mt-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Base64 Input - Left Side */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Base64 to Decode
+                        </Label>
+                        <Textarea
+                          value={input}
+                          onChange={(e) => handleInputChange(e.target.value)}
+                          placeholder="Enter Base64 string to decode..."
+                          className="min-h-[200px] font-mono text-sm"
+                        />
+                      </div>
+
+                      {/* Text Output - Right Side */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
                           <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Base64 to Decode
+                            Decoded Text
                           </Label>
-                          <Textarea
-                            value={input}
-                            onChange={(e) => handleInputChange(e.target.value)}
-                            placeholder="Enter Base64 string to decode..."
-                            className="min-h-[200px] font-mono text-sm"
-                          />
+                          <CopyButton text={output} disabled={!output} />
                         </div>
-
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                              Decoded Text
-                            </Label>
-                            <CopyButton text={output} disabled={!output} />
-                          </div>
-                          <Textarea
-                            value={output}
-                            readOnly
-                            placeholder="Decoded text will appear here..."
-                            className="min-h-[200px] font-mono text-sm bg-muted/50"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
+                        <Textarea
+                          value={output}
+                          readOnly
+                          placeholder="Decoded text will appear here..."
+                          className="min-h-[200px] font-mono text-sm bg-muted/50"
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
 
                 {/* Actions */}
                 <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">

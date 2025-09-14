@@ -1409,6 +1409,50 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  "user-agent-parser": {
+    title: "User Agent Parser - Analyze Browser & Device Info | Free DevTools",
+    name: "User Agent Parser",
+    path: "/freedevtools/t/user-agent-parser/",
+    description:
+      "Parse and analyze user agent strings instantly with our free online user agent parser. Extract browser, operating system, device, engine, and CPU architecture information with detailed breakdown and real-time analysis.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#8b5cf6",
+    canonical: "https://hexmos.com/freedevtools/t/user-agent-parser/",
+    keywords: [
+      "user agent parser",
+      "user agent analyzer",
+      "browser detection",
+      "device detection",
+      "operating system detection",
+      "user agent string parser",
+      "browser identification",
+      "mobile device detection",
+      "user agent decoder",
+      "browser fingerprinting",
+      "web analytics tool",
+      "http user agent",
+      "ua parser online",
+      "browser version detector",
+      "device type analyzer",
+    ],
+    features: [
+      "Parse user agent strings with detailed breakdown",
+      "Extract browser name, version, and engine information",
+      "Detect operating system and version details",
+      "Identify device type, model, and vendor",
+      "Analyze CPU architecture information",
+      "Auto-populate with current browser user agent",
+      "Browser-based parsing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/user-agent-parser-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/user-agent-parser-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
