@@ -1281,6 +1281,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "cron-tester": {
+    title:
+      "Cron Expression Tester - Test & Validate Cron Jobs Online | Free DevTools",
+    name: "Cron Expression Tester",
+    path: "/freedevtools/t/cron-tester/",
+    description:
+      "Test and validate cron expressions instantly with our free online cron tester. Parse cron jobs, validate syntax, see next execution times, and understand cron patterns with real-time feedback.",
+    category: "Developer Tools",
+    icon: "⏰",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/cron-tester/",
+    keywords: [
+      "cron tester",
+      "cron expression validator",
+      "cron job tester",
+      "cron parser online",
+      "validate cron expression",
+      "cron schedule tester",
+      "cron syntax checker",
+      "cron calculator",
+      "test cron job",
+      "cron expression generator",
+    ],
+    features: [
+      "Test and validate cron expressions in real-time",
+      "Parse cron syntax with detailed explanations",
+      "Show next execution times with countdown",
+      "Generate random cron expressions for testing",
+      "Human-readable cron descriptions",
+      "Support for standard 5-field cron format",
+      "Browser-based processing - expressions never leave your device",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/cron-tester-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/cron-tester-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
