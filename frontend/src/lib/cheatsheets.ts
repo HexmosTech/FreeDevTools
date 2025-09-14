@@ -73,24 +73,27 @@ export async function getSheetsByCategory(
   return all[category] || [];
 }
 
-export async function getCheatsheet(category: string, name: string): Promise<CheatsheetResult | null> {
+export async function getCheatsheet(
+  category: string,
+  name: string
+): Promise<CheatsheetResult | null> {
   try {
     // Preload all cheatsheet HTML files as raw strings at build-time
     const rawFiles = import.meta.glob(
       "/src/pages/html_pages/cheatsheets/**/*.html",
-      { eager: true, as: "raw" }
+      { eager: true, query: "?raw", import: "default" }
     ) as Record<string, string>;
 
     const filePath = `/src/pages/html_pages/cheatsheets/${category}/${name}.html`;
     const htmlContent = rawFiles[filePath];
-    
+
     if (!htmlContent) {
       return null;
     }
 
     // Extract metatags from the head section
     const metatags: CheatsheetMetatags = {};
-    
+
     // Extract title
     const titleMatch = htmlContent.match(/<title[^>]*>([^<]*)<\/title>/i);
     if (titleMatch) {
@@ -99,48 +102,48 @@ export async function getCheatsheet(category: string, name: string): Promise<Che
 
     // Extract meta tags
     const metaTags = htmlContent.match(/<meta[^>]*>/gi) || [];
-    
+
     for (const metaTag of metaTags) {
       // Extract name attribute
       const nameMatch = metaTag.match(/name=["']([^"']*)["']/i);
       const propertyMatch = metaTag.match(/property=["']([^"']*)["']/i);
       const contentMatch = metaTag.match(/content=["']([^"']*)["']/i);
-      
+
       if (!contentMatch) continue;
-      
+
       const content = contentMatch[1];
       const name = nameMatch?.[1];
       const property = propertyMatch?.[1];
-      
+
       if (name) {
         switch (name.toLowerCase()) {
-          case 'description':
+          case "description":
             metatags.description = content;
             break;
-          case 'keywords':
+          case "keywords":
             metatags.keywords = content;
             break;
-          case 'robots':
+          case "robots":
             metatags.robots = content;
             break;
         }
       }
-      
+
       if (property) {
         switch (property.toLowerCase()) {
-          case 'og:title':
+          case "og:title":
             metatags.ogTitle = content;
             break;
-          case 'og:description':
+          case "og:description":
             metatags.ogDescription = content;
             break;
-          case 'og:image':
+          case "og:image":
             metatags.ogImage = content;
             break;
-          case 'og:url':
+          case "og:url":
             metatags.ogUrl = content;
             break;
-          case 'og:type':
+          case "og:type":
             metatags.ogType = content;
             break;
         }
@@ -148,55 +151,56 @@ export async function getCheatsheet(category: string, name: string): Promise<Che
     }
 
     // Extract Twitter meta tags
-    const twitterTags = htmlContent.match(/<meta[^>]*name=["']twitter:[^"']*["'][^>]*>/gi) || [];
+    const twitterTags =
+      htmlContent.match(/<meta[^>]*name=["']twitter:[^"']*["'][^>]*>/gi) || [];
     for (const twitterTag of twitterTags) {
       const nameMatch = twitterTag.match(/name=["']twitter:([^"']*)["']/i);
       const contentMatch = twitterTag.match(/content=["']([^"']*)["']/i);
-      
+
       if (!nameMatch || !contentMatch) continue;
-      
+
       const name = nameMatch[1].toLowerCase();
       const content = contentMatch[1];
-      
+
       switch (name) {
-        case 'title':
+        case "title":
           metatags.twitterTitle = content;
           break;
-        case 'description':
+        case "description":
           metatags.twitterDescription = content;
           break;
-        case 'image':
+        case "image":
           metatags.twitterImage = content;
           break;
-        case 'card':
+        case "card":
           metatags.twitterCard = content;
           break;
       }
     }
 
     // Extract canonical URL
-    const canonicalMatch = htmlContent.match(/<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
+    const canonicalMatch = htmlContent.match(
+      /<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i
+    );
     if (canonicalMatch) {
       metatags.canonical = canonicalMatch[1];
     }
 
     // Extract content from the body tag, removing the outer HTML structure
     const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    let bodyContent = '';
+    let bodyContent = "";
     if (bodyMatch) {
       bodyContent = bodyMatch[1].trim();
     } else {
       // If no body tag found, return the content as is
       bodyContent = htmlContent;
     }
-    
+
     return {
       htmlContent: bodyContent,
-      metatags
+      metatags,
     };
   } catch (error) {
     return null;
   }
 }
-
-
