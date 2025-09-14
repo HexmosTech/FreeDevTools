@@ -1056,6 +1056,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "curl-to-js-fetch": {
+    title:
+      "cURL to JavaScript Fetch Converter - Convert cURL Commands | Free DevTools",
+    name: "cURL to JavaScript Fetch",
+    path: "/freedevtools/t/curl-to-js-fetch/",
+    description:
+      "Convert cURL commands to JavaScript fetch API code instantly with our free online converter. Transform command-line HTTP requests into modern JavaScript fetch calls with real-time conversion.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/curl-to-js-fetch/",
+    keywords: [
+      "curl to javascript",
+      "curl to fetch converter",
+      "curl converter",
+      "javascript fetch generator",
+      "http request converter",
+      "api request converter",
+      "curl command converter",
+      "fetch api generator",
+      "javascript http client",
+      "curl to js fetch",
+    ],
+    features: [
+      "Convert cURL commands to JavaScript fetch API",
+      "Real-time conversion with instant results",
+      "Support for all HTTP methods (GET, POST, PUT, DELETE)",
+      "Handle headers, authentication, and request bodies",
+      "Parse complex cURL command structures",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/curl-to-js-fetch-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/curl-to-js-fetch-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
