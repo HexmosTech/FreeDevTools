@@ -286,7 +286,7 @@ function updateToolsConfig(toolKey, toolName) {
     themeColor: '#3b82f6',
     canonical: 'https://hexmos.com/freedevtools/t/${toolKey}/',
     keywords: ['${toolKey}', 'developer tools', 'TODO: add more keywords'],
-    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3']
+    features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3'],
     ogImage:
       "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
     twitterImage:

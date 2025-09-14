@@ -1016,6 +1016,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "css-inliner-for-email": {
+    title:
+      "CSS Inliner for Email - Convert CSS to Inline Styles | Free DevTools",
+    name: "CSS Inliner for Email",
+    path: "/freedevtools/t/css-inliner-for-email/",
+    description:
+      "Convert CSS styles to inline styles for email HTML instantly with our free CSS inliner. Perfect for email templates, newsletters, and ensuring cross-client compatibility with real-time conversion.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/css-inliner-for-email/",
+    keywords: [
+      "css inliner",
+      "email css inliner",
+      "css to inline styles",
+      "email template tool",
+      "inline css converter",
+      "email html optimizer",
+      "css email tool",
+      "newsletter css inliner",
+      "html email converter",
+      "email css generator",
+    ],
+    features: [
+      "Convert CSS styles to inline HTML attributes",
+      "Real-time CSS to inline conversion",
+      "Email client compatibility optimization",
+      "Support for complex CSS selectors",
+      "HTML and CSS validation",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-inliner-for-email-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/css-inliner-for-email-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
