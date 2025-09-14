@@ -976,6 +976,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
+
+  "base64-encoder": {
+    title:
+      "Base64 Encoder/Decoder - Encode & Decode Text Online | Free DevTools",
+    name: "Base64 Encoder",
+    path: "/freedevtools/t/base64-encoder/",
+    description:
+      "Encode and decode text to/from Base64 format instantly with our free online Base64 encoder/decoder. Perfect for data transmission, storage, and web development with real-time conversion.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/base64-encoder/",
+    keywords: [
+      "base64 encoder",
+      "base64 decoder",
+      "base64 converter",
+      "encode text to base64",
+      "decode base64 to text",
+      "base64 online tool",
+      "data encoding tool",
+      "text encoder decoder",
+      "base64 conversion",
+      "safe data transmission",
+    ],
+    features: [
+      "Real-time Base64 encoding and decoding",
+      "Bidirectional conversion (encode/decode)",
+      "Support for text and binary data encoding",
+      "Instant error detection for invalid Base64",
+      "Copy to clipboard functionality",
+      "Mobile responsive interface",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-encoder-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/base64-encoder-banner.png",
+    datePublished: "2025-01-16",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
