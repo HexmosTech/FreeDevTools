@@ -1,3 +1,31 @@
+---
+title: "Sed Stream Editor - Edit Text with Scripts | Free DevTools"
+name: sed
+path: /freedevtools/tldr/freebsd/sed
+canonical: "https://hexmos.com/freedevtools/tldr/freebsd/sed/"
+description: "Edit text streams powerfully using sed stream editor.  Perform complex text manipulations using regular expressions, scripting, and in-place file editing. Free online tool, no registration required."
+category: freebsd
+keywords:
+  - text stream editor
+  - sed command
+  - regex manipulation
+  - linux sed
+  - unix sed
+  - file editing command
+  - script based text editing
+  - in-place file modification
+  - command-line text processing
+  - sed scripting examples
+features:
+  - Perform in-place file editing with -i option
+  - Utilize regular expressions for powerful pattern matching
+  - Execute custom sed scripts for complex operations
+  - Streamline text manipulation via pipes and command chaining
+  - Supports both basic and extended regular expression syntax
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # sed
 
 > Edit text in a scriptable manner.

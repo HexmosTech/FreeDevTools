@@ -1,9 +1,9 @@
 ---
-title: "Android Input - Control Device Input via ADB | Free DevTools"
+title: "Android Input - Control Device via ADB | Free DevTools"
 name: input
 path: /freedevtools/tldr/android/input
 canonical: "https://hexmos.com/freedevtools/tldr/android/input/"
-description: "Control Android device input seamlessly with Android Input command. Simulate taps, swipes, and send key events using adb shell. Free online tool, no registration required."
+description: "Control Android device input seamlessly with ADB Input command. Simulate taps, swipes, and send key events using adb shell. Free online tool, no registration required."
 category: android
 keywords:
   - android input control
@@ -15,7 +15,7 @@ keywords:
   - send key events android
   - android remote control via adb
   - automating android testing
-  - android input keyevent command
+  - adb input keyevent command
 features:
   - send key events to android devices via adb
   - simulate single and multi-finger taps on android

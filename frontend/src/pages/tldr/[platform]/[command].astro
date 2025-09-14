@@ -1,14 +1,15 @@
 ---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import AdBanner from '../../../components/banner/AdBanner';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getCommand } from '../../../lib/commands';
 
 export async function getStaticPaths() {
-  const commandFiles = import.meta.glob('/src/pages/markdown_pages/tldr/**/*.md', { eager: true });
+  const tldrEntries = await getCollection('tldr');
   const paths: Array<{ params: { platform: string; command: string } }> = [];
   
-  for (const path of Object.keys(commandFiles)) {
-    const pathParts = path.split('/');
+  for (const entry of tldrEntries) {
+    // Extract platform and command from the id (which is the file path)
+    const pathParts = entry.id.split('/');
     const platform = pathParts[pathParts.length - 2];
     const fileName = pathParts[pathParts.length - 1];
     const command = fileName.replace('.md', '');
@@ -22,15 +23,24 @@ export async function getStaticPaths() {
 }
 
 const { platform, command } = Astro.params;
-const commandFile = await getCommand(platform!, command!);
 
-if (!commandFile) {
+// Find the entry by platform and command
+const tldrEntries: CollectionEntry<'tldr'>[] = await getCollection('tldr');
+const entry = tldrEntries.find(entry => {
+  const pathParts = entry.id.split('/');
+  const entryPlatform = pathParts[pathParts.length - 2];
+  const fileName = pathParts[pathParts.length - 1];
+  const entryCommand = fileName.replace('.md', '');
+  return entryPlatform === platform && entryCommand === command;
+});
+
+if (!entry) {
   return Astro.redirect('/404');
 }
 
-const { Content, frontmatter } = commandFile as any;
-const title = frontmatter?.title || command;
-const description = frontmatter?.description || `Documentation for ${command} command`;
+const { Content } = await render(entry);
+const title = entry.data.title || command;
+const description = entry.data.description || `Documentation for ${command} command`;
 ---
 
 <BaseLayout 
@@ -59,14 +69,14 @@ const description = frontmatter?.description || `Documentation for ${command} co
 
     <article class="max-w-none">
       <header class="mb-8">
-        {frontmatter?.description && (
+        {entry.data.description && (
           <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">
-            {frontmatter.description}
+            {entry.data.description}
           </p>
         )}
-        {frontmatter?.more_information && (
+        {entry.data.more_information && (
           <p class="text-sm text-slate-500 dark:text-slate-500">
-            More information: <a href={frontmatter.more_information} class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">{frontmatter.more_information}</a>
+            More information: <a href={entry.data.more_information} class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">{entry.data.more_information}</a>
           </p>
         )}
       </header>

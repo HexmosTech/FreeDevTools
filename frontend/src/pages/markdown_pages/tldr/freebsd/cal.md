@@ -1,3 +1,31 @@
+---
+title: "Display Calendar - View Dates with cal | Free DevTools"
+name: cal
+path: /freedevtools/tldr/freebsd/cal
+canonical: "https://hexmos.com/freedevtools/tldr/freebsd/cal/"
+description: "View and manage dates easily with the cal command. Display calendars for specific months, years, or ranges. Free online tool, no registration required."
+category: freebsd
+keywords:
+  - calendar display command
+  - date viewing command line
+  - linux calendar command
+  - unix calendar utility
+  - command line calendar
+  - terminal calendar display
+  - cal command options
+  - system calendar command
+  - date scheduling command
+  - month year calendar view
+features:
+  - Display the calendar for the current month.
+  - Show the calendar for a specific year.
+  - Display the calendar for a given month and year.
+  - View the entire calendar for the current year.
+  - Customize calendar display with options for highlighting and date ranges.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
 # cal
 
 > Display a calendar with the current day highlighted.

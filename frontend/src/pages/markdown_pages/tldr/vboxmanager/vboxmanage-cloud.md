@@ -1,0 +1,64 @@
+---
+title: "Cloud Instance Control - Manage VirtualBox Cloud Instances | Free DevTools"
+name: vboxmanage-cloud
+path: /freedevtools/tldr/vboxmanager/vboxmanage-cloud
+canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-cloud/"
+description: "Control VirtualBox Cloud instances with VBoxManage Cloud. Manage images, instances, and cloud resources easily. Free online tool, no registration required."
+category: common
+keywords:
+- VirtualBox cloud control
+- VBoxManage cloud instance management
+- Cloud resource management
+- VirtualBox image management
+- Command line cloud interface
+- Instance lifecycle management
+- Cloud image creation
+- VirtualBox cloud provider tools
+- Compartment resource management
+- VBoxManage cloud CLI
+features:
+- List cloud instances by state and compartment
+- Create and terminate VirtualBox cloud instances
+- Manage VirtualBox cloud images
+- Retrieve information about cloud instances and images
+- Create new VirtualBox cloud images from instances
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
+# VBoxManage cloud
+
+> VirtualBox command-line interface for managing cloud instances and images.
+> More information: <https://www.virtualbox.org/manual/ch08.html#vboxmanage-cloud>.
+
+- List the instances in the specified state belonging to the specified compartment:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} list instances --state={{running|terminated|paused}} --compartment-id={{compartment_id}}`
+
+- Create a new instance:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} instance create --domain-name={{domain_name}} --image-id={{image_id}}`
+
+- Gather information about a particular instance:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} instance info --id={{unique_id}}`
+
+- Terminate an instance:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} instance terminate --id={{unique_id}}`
+
+- List images within a specific compartment and state:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} list images --compartment-id={{compartment_id}} --state={{state_name}}`
+
+- Create a new image:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} image create --instance-id={{instance_id}} --display-name={{display_name}} --compartment-id={{compartment_id}}`
+
+- Retrieve information about a particular image:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} image info --id={{unique_id}}`
+
+- Delete an image:
+
+`VBoxManage cloud --provider={{provider_name}} --profile={{profile_name}} image delete --id={{unique_id}}`

@@ -7,22 +7,19 @@ const LearnMoreButton: React.FC<{ size?: "sm" | "md" }> = ({ size = "md" }) => {
 
   return (
     <button
-      className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${
-        isSmall ? "px-1 py-0.5" : "px-1 py-1"
-      } bg-yellow-100 hover:bg-yellow-600`}
+      className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${isSmall ? "px-1 py-0.5" : "px-1 py-1"
+        } bg-yellow-100 hover:bg-yellow-600`}
     >
       <div
-        className={`relative text-black flex justify-start items-center font-semibold ${
-          isSmall ? "text-[10px]" : "text-xs"
-        }`}
+        className={`relative text-black flex justify-start items-center font-semibold ${isSmall ? "text-[10px]" : "text-xs"
+          }`}
       >
         <span className="relative transition-all duration-250 mr-1">Learn</span>
         <span className="relative transition-all duration-250 mr-1">More</span>
       </div>
       <div
-        className={`border border-black rounded-full bg-red-200 group-hover:bg-red-600 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${
-          isSmall ? "p-0.5 mr-0.5" : "p-1 mr-1"
-        }`}
+        className={`border border-black rounded-full bg-red-200 group-hover:bg-red-600 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${isSmall ? "p-0.5 mr-0.5" : "p-1 mr-1"
+          }`}
       >
         <svg
           width={isSmall ? "8" : "12"}
@@ -53,7 +50,7 @@ const CloseButton: React.FC<{
     <button
       onClick={onClick}
       aria-label="Close"
-      className={`absolute top-2 right-2 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10 py-2 `}
+      className={`absolute top-2 right-2 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10 py-2 pr-2`}
     >
       <svg
         className={`${isSmall ? "w-4 h-4" : "w-5 h-5"}`}

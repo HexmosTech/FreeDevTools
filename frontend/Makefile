@@ -24,7 +24,7 @@ deploy:
 		$(MAKE) deploy-no-pagespeed; \
 	else \
 		$(MAKE) check-pagespeed banners build && \
-		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ nats03-do:/tools/; \
+		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ root@master-do:/tools/; \
 	fi
 
 # Run development server

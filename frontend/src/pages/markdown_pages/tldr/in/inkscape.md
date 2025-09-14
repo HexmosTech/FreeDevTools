@@ -1,0 +1,61 @@
+---
+title: "Inkscape - Generate SVG Graphics | Free DevTools"
+name: inkscape
+path: /freedevtools/tldr/in/inkscape
+canonical: "https://hexmos.com/freedevtools/tldr/in/inkscape/"
+description: "Generate SVG graphics with Inkscape. Convert SVG files to other formats, edit objects, and automate graphics tasks using command line. Free online tool, no registration required."
+category: common
+keywords:
+- SVG graphic generator
+- SVG file converter
+- Inkscape command line
+- Vector graphics editor
+- SVG to PNG conversion
+- SVG to PDF conversion
+- Inkscape scripting
+- Linux SVG editor
+- MacOS SVG editor
+- Scalable vector graphics
+features:
+- Convert SVG files to various bitmap formats
+- Export specific objects from an SVG file by ID
+- Automate SVG editing tasks with scripting
+- Convert text to paths for PDF export
+- Rotate and duplicate objects within SVG files
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+---
+
+# inkscape
+
+> An SVG (Scalable Vector Graphics) editing program.
+> For Inkscape versions up to 0.92.x, use -e instead of -o.
+> More information: <https://inkscape.org>.
+
+- Open an SVG file in the Inkscape GUI:
+
+`inkscape {{path/to/file.svg}}`
+
+- Export an SVG file into a bitmap with the default format (PNG) and the default resolution (96 DPI):
+
+`inkscape {{path/to/file.svg}} {{[-o|--export-filename]}} {{path/to/filename.png}}`
+
+- Export an SVG file into a bitmap of 600x400 pixels (aspect ratio distortion may occur):
+
+`inkscape {{path/to/file.svg}} {{[-o|--export-filename]}} {{path/to/filename.png}} {{[-w|--export-width]}} 600 {{[-h|--export-height]}} 400`
+
+- Export the drawing (bounding box of all objects) of an SVG file into a bitmap:
+
+`inkscape {{path/to/file.svg}} {{[-o|--export-filename]}} {{path/to/filename.png}} {{[-D|--export-area-drawing]}}`
+
+- Export a single object, given its ID, into a bitmap:
+
+`inkscape {{path/to/file.svg}} {{[-i|--export-id]}} {{id}} {{[-o|--export-filename]}} {{object.png}}`
+
+- Export an SVG document to PDF, converting all texts to paths:
+
+`inkscape {{path/to/file.svg}} {{[-o|--export-filename]}} {{path/to/filename.pdf}} {{[-T|--export-text-to-path]}}`
+
+- Duplicate the object with id="path123", rotate the duplicate 90 degrees, save the file, and quit Inkscape:
+
+`inkscape {{path/to/file.svg}} --select=path123 --verb="{{EditDuplicate;ObjectRotate90;FileSave;FileQuit}}"`
