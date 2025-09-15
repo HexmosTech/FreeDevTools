@@ -248,27 +248,42 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
           <div className="flex mb-6">
             <button
               onClick={() => setActiveTab('colors')}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${activeTab === 'colors'
+              className={`flex-1 px-3 py-2 text-sm font-medium rounded-l-lg transition-colors ${activeTab === 'colors'
                 ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
             >
               <div className="flex items-center justify-center">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
                 </svg>
                 Colors
               </div>
             </button>
             <button
-              onClick={() => setActiveTab('shapes')}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-r-lg transition-colors ${activeTab === 'shapes'
+              onClick={() => setActiveTab('display')}
+              className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${activeTab === 'display'
                 ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
             >
               <div className="flex items-center justify-center">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                Display
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('shapes')}
+              className={`flex-1 px-3 py-2 text-sm font-medium rounded-r-lg transition-colors ${activeTab === 'shapes'
+                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                }`}
+            >
+              <div className="flex items-center justify-center">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 Shapes
@@ -281,9 +296,7 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
             <div className="flex-1 space-y-6">
               {/* Select a color from the icon */}
               <div>
-                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">
-                  Select a color from the icon
-                </h3>
+                <h5 className="py-2">Select a color from the icon</h5>
                 <div className="grid grid-cols-4 gap-2">
                   {extractedColors.map((color, index) => (
                     <button
@@ -302,9 +315,7 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
               {/* Choose a new color */}
               <div>
-                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">
-                  Choose a new color
-                </h3>
+                <h5 className="py-2">Choose a new color</h5>
                 <div className="space-y-3">
                   <ChromePicker
                     color={customColor}
@@ -321,14 +332,71 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
             </div>
           )}
 
+          {/* Display Tab */}
+          {activeTab === 'display' && (
+            <div className="flex-1 space-y-6">
+              <div className="space-y-4">
+                {/* Scale */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-slate-200 dark:bg-slate-600 rounded flex items-center justify-center">
+                      <svg className="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">Scale</span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">coming soon</span>
+                </div>
+
+                {/* Move */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-slate-200 dark:bg-slate-600 rounded flex items-center justify-center">
+                      <svg className="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16l-4-4m0 0l4-4m-4 4h18m-4 4l4-4m0 0l-4-4m4 4H3"></path>
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">Move</span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">coming soon</span>
+                </div>
+
+                {/* Rotate */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-slate-200 dark:bg-slate-600 rounded flex items-center justify-center">
+                      <svg className="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">Rotate</span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">coming soon</span>
+                </div>
+
+                {/* Flip */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-slate-200 dark:bg-slate-600 rounded flex items-center justify-center">
+                      <svg className="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">Flip</span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">coming soon</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Shapes Tab */}
           {activeTab === 'shapes' && (
             <div className="flex-1 space-y-6">
               {/* Select a shape */}
               <div>
-                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">
-                  Select a shape
-                </h3>
+                <h5 className="py-2">Select a shape</h5>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { type: 'none', icon: 'X', label: 'None' },
@@ -362,9 +430,7 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
               {/* Size */}
               <div>
-                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">
-                  Size
-                </h3>
+                <h5 className="py-2">Size</h5>
                 <div className="space-y-2">
                   <input
                     type="range"
@@ -389,9 +455,7 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
               {/* Color */}
               <div>
-                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3">
-                  Color
-                </h3>
+                <h5 className="py-2">Color</h5>
                 <div className="space-y-3">
                   <ChromePicker
                     color={shapeConfig.color}
