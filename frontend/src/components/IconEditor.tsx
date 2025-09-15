@@ -38,10 +38,30 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
   // Extract colors from SVG
   useEffect(() => {
-    const colors = extractColorsFromSVG(svgContent);
+    console.log('🔍 DEBUG: Extracting colors from SVG:', svgContent);
+    let colors = extractColorsFromSVG(svgContent);
+    console.log('🔍 DEBUG: Extracted colors from string:', colors);
+
     setExtractedColors(colors);
     if (colors.length > 0) {
       setSelectedColor(colors[0]);
+    }
+
+    // If no colors found from string, try extracting from DOM after a delay
+    if (colors.length === 0) {
+      const timeoutId = setTimeout(() => {
+        if (svgRef.current) {
+          console.log('🔍 DEBUG: No colors from string, trying DOM extraction');
+          const domColors = extractColorsFromDOM(svgRef.current);
+          console.log('🔍 DEBUG: Extracted colors from DOM:', domColors);
+          if (domColors.length > 0) {
+            setExtractedColors(domColors);
+            setSelectedColor(domColors[0]);
+          }
+        }
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [svgContent]);
 
@@ -83,6 +103,11 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
     } else {
       setColorChanges(prev => [...prev, { originalColor, newColor, element: 'fill' }]);
     }
+
+    // Update extracted colors - replace the original color with the new color
+    setExtractedColors(prev =>
+      prev.map(color => color === originalColor ? newColor : color)
+    );
   };
 
   // Apply shape background
@@ -146,6 +171,11 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
       size: 100,
       color: '#4D99D5'
     });
+
+    // Re-extract colors from original SVG
+    const originalColors = extractColorsFromSVG(svgContent);
+    setExtractedColors(originalColors);
+    setSelectedColor(originalColors[0] || '#000000');
   };
 
   const getCurrentSvg = () => history[historyIndex];
@@ -556,31 +586,196 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
 // Helper function to extract colors from SVG
 function extractColorsFromSVG(svgContent: string): string[] {
+  console.log('🔍 DEBUG: extractColorsFromSVG called with:', svgContent);
   const colors = new Set<string>();
 
-  // Extract fill colors
-  const fillMatches = svgContent.match(/fill="([^"]+)"/g);
+  // Remove background shapes first to avoid extracting their colors
+  const cleanSvg = svgContent.replace(/<(rect|circle)[^>]*class="background-shape"[^>]*\/>/g, '');
+  console.log('🔍 DEBUG: Clean SVG:', cleanSvg);
+
+  // Extract fill colors from attributes
+  const fillMatches = cleanSvg.match(/fill="([^"]+)"/g);
+  console.log('🔍 DEBUG: Fill matches:', fillMatches);
   if (fillMatches) {
     fillMatches.forEach(match => {
       const color = match.match(/fill="([^"]+)"/)?.[1];
-      if (color && color !== 'none' && color !== 'currentColor') {
-        colors.add(color);
+      console.log('🔍 DEBUG: Found fill color:', color);
+      if (color && isValidColor(color)) {
+        const normalizedColor = normalizeColor(color);
+        console.log('🔍 DEBUG: Normalized color:', normalizedColor);
+        colors.add(normalizedColor);
       }
     });
   }
 
-  // Extract stroke colors
-  const strokeMatches = svgContent.match(/stroke="([^"]+)"/g);
+  // Extract stroke colors from attributes
+  const strokeMatches = cleanSvg.match(/stroke="([^"]+)"/g);
+  console.log('🔍 DEBUG: Stroke matches:', strokeMatches);
   if (strokeMatches) {
     strokeMatches.forEach(match => {
       const color = match.match(/stroke="([^"]+)"/)?.[1];
-      if (color && color !== 'none' && color !== 'currentColor') {
-        colors.add(color);
+      console.log('🔍 DEBUG: Found stroke color:', color);
+      if (color && isValidColor(color)) {
+        const normalizedColor = normalizeColor(color);
+        console.log('🔍 DEBUG: Normalized stroke color:', normalizedColor);
+        colors.add(normalizedColor);
       }
     });
   }
 
-  return Array.from(colors).slice(0, 8); // Limit to 8 colors
+  // Extract colors from CSS styles
+  const styleMatches = cleanSvg.match(/style="([^"]+)"/g);
+  if (styleMatches) {
+    styleMatches.forEach(match => {
+      const styleContent = match.match(/style="([^"]+)"/)?.[1];
+      if (styleContent) {
+        // Extract fill and stroke from CSS
+        const fillMatch = styleContent.match(/fill:\s*([^;]+)/);
+        if (fillMatch && isValidColor(fillMatch[1].trim())) {
+          colors.add(normalizeColor(fillMatch[1].trim()));
+        }
+
+        const strokeMatch = styleContent.match(/stroke:\s*([^;]+)/);
+        if (strokeMatch && isValidColor(strokeMatch[1].trim())) {
+          colors.add(normalizeColor(strokeMatch[1].trim()));
+        }
+      }
+    });
+  }
+
+  // Extract colors from stop elements (gradients)
+  const stopMatches = cleanSvg.match(/stop-color="([^"]+)"/g);
+  if (stopMatches) {
+    stopMatches.forEach(match => {
+      const color = match.match(/stop-color="([^"]+)"/)?.[1];
+      if (color && isValidColor(color)) {
+        colors.add(normalizeColor(color));
+      }
+    });
+  }
+
+  const result = Array.from(colors).slice(0, 8); // Limit to 8 colors
+  console.log('🔍 DEBUG: Final extracted colors:', result);
+  return result;
+}
+
+// Helper function to check if a color is valid
+function isValidColor(color: string): boolean {
+  if (!color) return false;
+
+  const cleanColor = color.trim();
+
+  // Skip transparent, none, currentColor, and empty values
+  if (cleanColor === 'none' ||
+    cleanColor === 'currentColor' ||
+    cleanColor === 'transparent' ||
+    cleanColor === '' ||
+    cleanColor.startsWith('url(')) {
+    return false;
+  }
+
+  return true;
+}
+
+// Helper function to normalize color format
+function normalizeColor(color: string): string {
+  const cleanColor = color.trim();
+
+  // Convert rgb() to hex
+  if (cleanColor.startsWith('rgb(')) {
+    const rgbMatch = cleanColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) {
+      const r = parseInt(rgbMatch[1]);
+      const g = parseInt(rgbMatch[2]);
+      const b = parseInt(rgbMatch[3]);
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    }
+  }
+
+  // Convert rgba() to hex (ignoring alpha)
+  if (cleanColor.startsWith('rgba(')) {
+    const rgbaMatch = cleanColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/);
+    if (rgbaMatch) {
+      const r = parseInt(rgbaMatch[1]);
+      const g = parseInt(rgbaMatch[2]);
+      const b = parseInt(rgbaMatch[3]);
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    }
+  }
+
+  // Convert hsl() to hex (simplified)
+  if (cleanColor.startsWith('hsl(')) {
+    const hslMatch = cleanColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (hslMatch) {
+      const h = parseInt(hslMatch[1]);
+      const s = parseInt(hslMatch[2]);
+      const l = parseInt(hslMatch[3]);
+      return hslToHex(h, s, l);
+    }
+  }
+
+  return cleanColor;
+}
+
+// Helper function to convert HSL to HEX
+function hslToHex(h: number, s: number, l: number): string {
+  const c = (1 - Math.abs(2 * l / 100 - 1)) * s / 100;
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const m = l / 100 - c / 2;
+
+  let r = 0, g = 0, b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
+  }
+
+  const rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
+  const gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
+  const bHex = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+
+  return `#${rHex}${gHex}${bHex}`;
+}
+
+// Helper function to extract colors from DOM elements
+function extractColorsFromDOM(container: HTMLElement): string[] {
+  const colors = new Set<string>();
+
+  // Find all SVG elements
+  const svgElements = container.querySelectorAll('svg *');
+
+  svgElements.forEach(element => {
+    const computedStyle = window.getComputedStyle(element);
+
+    // Get fill color
+    const fill = computedStyle.fill;
+    if (fill && fill !== 'none' && fill !== 'currentColor' && fill !== 'transparent') {
+      const normalizedFill = normalizeColor(fill);
+      if (isValidColor(normalizedFill)) {
+        colors.add(normalizedFill);
+      }
+    }
+
+    // Get stroke color
+    const stroke = computedStyle.stroke;
+    if (stroke && stroke !== 'none' && stroke !== 'currentColor' && stroke !== 'transparent') {
+      const normalizedStroke = normalizeColor(stroke);
+      if (isValidColor(normalizedStroke)) {
+        colors.add(normalizedStroke);
+      }
+    }
+  });
+
+  return Array.from(colors).slice(0, 8);
 }
 
 export default IconEditor;
