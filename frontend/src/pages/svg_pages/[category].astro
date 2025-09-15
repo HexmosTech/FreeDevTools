@@ -1,20 +1,33 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdBanner from '../../components/banner/AdBanner';
-import Pagination from '../../components/Pagination.astro';
-import BottomPagination from '../../components/BottomPagination.astro';
 import { getCollection } from 'astro:content';
 
-const ITEMS_PER_PAGE = 20;
 
 export async function getStaticPaths() {
-  const svgIcons = await (getCollection as any)('svgicons');
+  // Get all SVG files to determine categories
+  const { glob } = await import('glob');
+  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/icons' });
   
   const categories = new Set<string>();
-  svgIcons.forEach((entry: any) => {
-    const category = entry.data?.category || 'general';
+  
+  for (const file of svgFiles) {
+    const pathParts = file.split("/");
+    let category = 'general';
+    
+    if (pathParts.length > 1) {
+      const dirName = pathParts[pathParts.length - 2];
+      if (dirName === 'arcticons') {
+        category = 'technology';
+      } else if (dirName === 'free-icons') {
+        category = 'general';
+      } else {
+        category = dirName;
+      }
+    }
+    
     categories.add(category);
-  });
+  }
   
   return Array.from(categories).map(category => ({
     params: { category },
@@ -93,14 +106,13 @@ async function getCategoryIcons() {
         tags: entry.data?.tags || [],
         author: entry.data?.author || 'Free DevTools',
         license: entry.data?.license || 'MIT',
-        url: `/freedevtools/svg_pages/${iconName}`
+        url: `/freedevtools/svg_pages/${category}/${iconName}`
       };
     });
 }
 
 const categoryIcons = await getCategoryIcons();
 const totalIcons = categoryIcons.length;
-const totalPages = Math.ceil(totalIcons / ITEMS_PER_PAGE);
 
 const categoryIconMap = {
   "general": "https://cdn-icons-png.flaticon.com/512/5515/5515389.png",
@@ -198,27 +210,11 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
         </div>
       </div>
       
-      <!-- Pagination -->
-      <Pagination 
-        totalItems={totalIcons}
-        itemsPerPage={ITEMS_PER_PAGE}
-        currentPage={1}
-        totalPages={totalPages}
-        itemsLabel="icons"
-      />
     </div>
 
     <div id="icons-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 mb-8">
       <!-- Icons will be loaded dynamically -->
     </div>
-    
-    <!-- Bottom Pagination -->
-    <BottomPagination 
-      totalItems={totalIcons}
-      currentPage={1}
-      totalPages={totalPages}
-      itemsLabel="icons"
-    />
     
     <!-- Credits Section -->
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
@@ -250,74 +246,8 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
   }
 </style>
 
-<script define:vars={{ categoryIcons, totalIcons, totalPages, ITEMS_PER_PAGE, category }}>
-  // Pagination state
-  let currentPage = 1;
-  let itemsPerPage = ITEMS_PER_PAGE;
+<script define:vars={{ categoryIcons, totalIcons, category }}>
   let searchQuery = '';
-  
-  // Get current page and items per page from URL
-  function getCurrentPageFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const page = parseInt(urlParams.get('page') || '1', 10);
-    const items = parseInt(urlParams.get('items') || ITEMS_PER_PAGE.toString(), 10);
-    
-    // Update items per page if specified in URL
-    if (items !== itemsPerPage) {
-      itemsPerPage = items;
-      const dropdown = document.getElementById('items-per-page');
-      if (dropdown) {
-        dropdown.value = items.toString();
-      }
-    }
-    
-    return Math.max(1, Math.min(page, Math.ceil(totalIcons / itemsPerPage)));
-  }
-  
-  // Update URL without page reload
-  function updateURL(page, items = null) {
-    const url = new URL(window.location);
-    if (page === 1) {
-      url.searchParams.delete('page');
-    } else {
-      url.searchParams.set('page', page.toString());
-    }
-    
-    const currentItems = items || itemsPerPage;
-    if (currentItems !== ITEMS_PER_PAGE) {
-      url.searchParams.set('items', currentItems.toString());
-    } else {
-      url.searchParams.delete('items');
-    }
-    
-    window.history.pushState({}, '', url);
-  }
-  
-  // Generate page numbers for pagination
-  function getPageNumbers(currentPage, totalPages) {
-    const pages = [];
-    const maxVisible = 5;
-    
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else if (currentPage <= 3) {
-      for (let i = 1; i <= maxVisible; i++) {
-        pages.push(i);
-      }
-    } else if (currentPage >= totalPages - 2) {
-      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
-        pages.push(i);
-      }
-    }
-    
-    return pages;
-  }
   
   // Filter icons based on search query
   function filterIcons(icons, query) {
@@ -327,7 +257,7 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
     return icons.filter(icon => 
       icon.name.toLowerCase().includes(searchLower) ||
       icon.description?.toLowerCase().includes(searchLower) ||
-      icon.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      (icon.tags && icon.tags.some(tag => tag.toLowerCase().includes(searchLower)))
     );
   }
   
@@ -347,147 +277,33 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
     `;
   }
   
-  // Render pagination
-  function renderPagination() {
+  // Render all icons
+  function renderIcons() {
     const filteredIcons = filterIcons(categoryIcons, searchQuery);
-    const totalPages = Math.ceil(filteredIcons.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedIcons = filteredIcons.slice(startIndex, endIndex);
-    
-    // Update pagination info
-    document.getElementById('pagination-info').textContent = 
-      `Showing ${paginatedIcons.length} of ${filteredIcons.length} icons (Page ${currentPage} of ${totalPages})`;
-    
-    document.getElementById('page-info').textContent = `${currentPage} / ${totalPages}`;
-    document.getElementById('bottom-page-info').textContent = 
-      `Page ${currentPage} of ${totalPages} • ${filteredIcons.length} total icons`;
-    
-    // Update button states
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const bottomPrevBtn = document.getElementById('bottom-prev-btn');
-    const bottomNextBtn = document.getElementById('bottom-next-btn');
-    
-    const hasPrev = currentPage > 1;
-    const hasNext = currentPage < totalPages;
-    
-    [prevBtn, bottomPrevBtn].forEach(btn => {
-      if (btn) {
-        btn.disabled = !hasPrev;
-      }
-    });
-    
-    [nextBtn, bottomNextBtn].forEach(btn => {
-      if (btn) {
-        btn.disabled = !hasNext;
-      }
-    });
     
     // Render icons
     const iconsGrid = document.getElementById('icons-grid');
-    iconsGrid.innerHTML = paginatedIcons.map(icon => 
+    iconsGrid.innerHTML = filteredIcons.map(icon => 
       renderIconCard(icon)
     ).join('');
-    
-    // Render page numbers
-    const pageNumbers = getPageNumbers(currentPage, totalPages);
-    const pageNumbersContainer = document.getElementById('page-numbers');
-    pageNumbersContainer.innerHTML = pageNumbers.map(pageNum => {
-      const isCurrentPage = pageNum === currentPage;
-      const buttonClass = isCurrentPage 
-        ? 'bg-blue-600 text-white' 
-        : 'text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600';
-      
-      return `<button data-page="${pageNum}" class="page-number-btn inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${buttonClass}">${pageNum}</button>`;
-    }).join('');
-    
-    // Show bottom pagination if there are multiple pages
-    const bottomPagination = document.getElementById('bottom-pagination');
-    bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
-  }
-  
-  // Navigate to page
-  function goToPage(page) {
-    const filteredIcons = filterIcons(categoryIcons, searchQuery);
-    const totalPages = Math.ceil(filteredIcons.length / itemsPerPage);
-    
-    if (page < 1 || page > totalPages || page === currentPage) {
-      return;
-    }
-    
-    currentPage = page;
-    updateURL(page);
-    renderPagination();
-    
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  
-  // Handle items per page change
-  function handleItemsPerPageChange(newItemsPerPage) {
-    const filteredIcons = filterIcons(categoryIcons, searchQuery);
-    const newTotalPages = Math.ceil(filteredIcons.length / newItemsPerPage);
-    const newCurrentPage = Math.min(currentPage, newTotalPages);
-    
-    itemsPerPage = newItemsPerPage;
-    currentPage = newCurrentPage;
-    
-    updateURL(currentPage, itemsPerPage);
-    renderPagination();
-    
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
   // Handle search
   function handleSearch(query) {
     searchQuery = query;
-    currentPage = 1;
-    renderPagination();
+    renderIcons();
   }
   
-  // Event listeners - use event delegation to avoid re-attaching listeners
+  // Event listeners
   function setupEventListeners() {
-    // Use event delegation on the document to handle all clicks
+    // Handle icon card clicks
     document.addEventListener('click', (e) => {
-      // Handle previous buttons
-      if (e.target.id === 'prev-btn' || e.target.id === 'bottom-prev-btn') {
-        e.preventDefault();
-        goToPage(currentPage - 1);
-        return;
-      }
-      
-      // Handle next buttons
-      if (e.target.id === 'next-btn' || e.target.id === 'bottom-next-btn') {
-        e.preventDefault();
-        goToPage(currentPage + 1);
-        return;
-      }
-      
-      // Handle page number buttons
-      if (e.target.classList.contains('page-number-btn')) {
-        e.preventDefault();
-        const page = parseInt(e.target.dataset.page, 10);
-        goToPage(page);
-        return;
-      }
-      
-      // Handle icon card clicks
       if (e.target.closest('.icon-card')) {
         e.preventDefault();
         const iconCard = e.target.closest('.icon-card');
         const iconUrl = iconCard.dataset.iconUrl;
         window.location.href = iconUrl;
         return;
-      }
-    });
-    
-    // Handle items per page dropdown change
-    document.addEventListener('change', (e) => {
-      if (e.target.id === 'items-per-page') {
-        const newItemsPerPage = parseInt(e.target.value, 10);
-        handleItemsPerPageChange(newItemsPerPage);
       }
     });
     
@@ -499,25 +315,15 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
     });
   }
   
-  // Handle browser back/forward (only add once)
-  if (!window.paginationInitialized) {
-    window.addEventListener('popstate', () => {
-      currentPage = getCurrentPageFromURL();
-      renderPagination();
-    });
-    window.paginationInitialized = true;
-  }
-  
-  // Initialize pagination
+  // Initialize
   function init() {
-    currentPage = getCurrentPageFromURL();
-    renderPagination();
+    renderIcons();
   }
   
   // Set up event listeners only once
-  if (!window.paginationEventListenersSet) {
+  if (!window.categoryEventListenersSet) {
     setupEventListeners();
-    window.paginationEventListenersSet = true;
+    window.categoryEventListenersSet = true;
   }
   
   // Start when DOM is ready

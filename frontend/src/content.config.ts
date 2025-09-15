@@ -3,13 +3,13 @@ import { defineCollection, z } from "astro:content";
 
 // Check if we're in development mode
 // Astro sets NODE_ENV=production during build, and ASTRO_MODE=dev during dev
-const isDev = true;
+const forceTldrBuild = true;
 
 // Define the tldr collection schema based on the frontmatter structure
 const tldr = defineCollection({
   loader: glob({
     // In dev mode, only load specific categories; in build mode, load all files
-    pattern: isDev ? "{pnm,git}/**/*.md" : "**/*.md",
+    pattern: forceTldrBuild ? "**/*.md" : "{pnm,git}/**/*.md",
     base: "./src/pages/markdown_pages/tldr",
   }),
   schema: z.object({
