@@ -45,6 +45,21 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
     }
   }, [svgContent]);
 
+  // Handle shape reset when type is 'none'
+  useEffect(() => {
+    if (shapeConfig.type === 'none') {
+      const currentSvg = history[historyIndex];
+      const updatedSvg = currentSvg.replace(/<(rect|circle)[^>]*class="background-shape"[^>]*\/>/g, '');
+
+      if (updatedSvg !== currentSvg) {
+        const newHistory = history.slice(0, historyIndex + 1);
+        newHistory.push(updatedSvg);
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+      }
+    }
+  }, [shapeConfig.type, history, historyIndex]);
+
   // Apply color changes to SVG
   const applyColorChange = (originalColor: string, newColor: string) => {
     const currentSvg = history[historyIndex];
@@ -71,24 +86,25 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
   };
 
   // Apply shape background
-  const applyShapeBackground = () => {
+  const applyShapeBackground = (customColor?: string, customType?: string) => {
     const currentSvg = history[historyIndex];
     let updatedSvg = currentSvg;
 
     // Remove any existing background shapes (both rect and circle)
     updatedSvg = currentSvg.replace(/<(rect|circle)[^>]*class="background-shape"[^>]*\/>/g, '');
 
-    if (shapeConfig.type !== 'none') {
+    const shapeType = customType || shapeConfig.type;
+    if (shapeType !== 'none') {
       // Add new background
       const size = shapeConfig.size;
-      const color = shapeConfig.color;
+      const color = customColor || shapeConfig.color;
 
       let shapeElement = '';
-      if (shapeConfig.type === 'circle') {
+      if (shapeType === 'circle') {
         shapeElement = `<circle cx="50%" cy="50%" r="${size / 2}%" fill="${color}" stroke="none" class="background-shape"/>`;
-      } else if (shapeConfig.type === 'square') {
+      } else if (shapeType === 'square') {
         shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" fill="${color}" stroke="none" class="background-shape"/>`;
-      } else if (shapeConfig.type === 'rounded-square') {
+      } else if (shapeType === 'rounded-square') {
         const radius = size * 0.1; // 10% of size for rounded corners
         shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" rx="${radius}%" ry="${radius}%" fill="${color}" stroke="none" class="background-shape"/>`;
       }
@@ -130,11 +146,68 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
       size: 100,
       color: '#4D99D5'
     });
-    // Apply the reset to remove any background shapes
-    setTimeout(() => applyShapeBackground(), 0);
   };
 
   const getCurrentSvg = () => history[historyIndex];
+
+  // Copy functions
+  const copyAsPNG = () => {
+    const svgElement = svgRef.current?.querySelector('svg');
+    if (!svgElement) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const img = new Image();
+
+    canvas.width = 512;
+    canvas.height = 512;
+
+    img.onload = () => {
+      ctx?.drawImage(img, 0, 0, 512, 512);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          navigator.clipboard.write([
+            new ClipboardItem({
+              'image/png': blob
+            })
+          ]).then(() => {
+            showToast('PNG copied to clipboard!');
+          }).catch(() => {
+            showToast('Failed to copy PNG to clipboard');
+          });
+        }
+      }, 'image/png');
+    };
+
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+  };
+
+  const copyAsSVG = () => {
+    const svgElement = svgRef.current?.querySelector('svg');
+    if (!svgElement) return;
+
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    navigator.clipboard.writeText(svgData).then(() => {
+      showToast('SVG copied to clipboard!');
+    }).catch(() => {
+      showToast('Failed to copy SVG to clipboard');
+    });
+  };
+
+  const showToast = (message: string) => {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 3000);
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -213,18 +286,6 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                     }}
                     disableAlpha
                   />
-                  <input
-                    type="text"
-                    value={customColor}
-                    onChange={(e) => {
-                      setCustomColor(e.target.value);
-                      if (selectedColor) {
-                        applyColorChange(selectedColor, e.target.value);
-                      }
-                    }}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                    placeholder="#000000"
-                  />
                 </div>
               </div>
             </div>
@@ -248,9 +309,14 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                     <button
                       key={shape.type}
                       onClick={() => {
-                        setShapeConfig(prev => ({ ...prev, type: shape.type as any }));
-                        // Apply the change after state update
-                        setTimeout(() => applyShapeBackground(), 0);
+                        const newColor = shape.type !== 'none' ? '#d7c74c' : shapeConfig.color;
+                        setShapeConfig(prev => ({
+                          ...prev,
+                          type: shape.type as any,
+                          color: newColor
+                        }));
+                        // Apply the change immediately with the new color and type
+                        setTimeout(() => applyShapeBackground(newColor, shape.type as any), 0);
                       }}
                       className={`p-3 text-center rounded-lg border-2 transition-all ${shapeConfig.type === shape.type
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200 dark:ring-blue-800'
@@ -276,7 +342,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                     max="100"
                     value={shapeConfig.size}
                     onChange={(e) => {
-                      setShapeConfig(prev => ({ ...prev, size: parseInt(e.target.value) }));
+                      const newSize = parseInt(e.target.value);
+                      setShapeConfig(prev => ({ ...prev, size: newSize }));
                       // Apply the change after state update
                       setTimeout(() => applyShapeBackground(), 0);
                     }}
@@ -299,22 +366,12 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                   <ChromePicker
                     color={shapeConfig.color}
                     onChange={(color) => {
-                      setShapeConfig(prev => ({ ...prev, color: color.hex }));
+                      const newColor = color.hex;
+                      setShapeConfig(prev => ({ ...prev, color: newColor }));
                       // Apply the change after state update
                       setTimeout(() => applyShapeBackground(), 0);
                     }}
                     disableAlpha
-                  />
-                  <input
-                    type="text"
-                    value={shapeConfig.color}
-                    onChange={(e) => {
-                      setShapeConfig(prev => ({ ...prev, color: e.target.value }));
-                      // Apply the change after state update
-                      setTimeout(() => applyShapeBackground(), 0);
-                    }}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                    placeholder="#000000"
                   />
                 </div>
               </div>
@@ -346,7 +403,12 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" />
                 </svg>
               </button>
-              <span className="text-sm text-slate-600 dark:text-slate-400">Reset</span>
+              <button
+                onClick={reset}
+                className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+              >
+                Reset
+              </button>
             </div>
             <button
               onClick={onClose}
@@ -358,16 +420,49 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
           {/* Icon Preview */}
           <div className="flex-1 flex items-center justify-center p-8">
-            <div
-              className="relative"
-              style={{
-                backgroundImage: 'radial-gradient(circle, #ccc 1px, transparent 1px)',
-                backgroundSize: '20px 20px'
-              }}
-            >
+            <div className="relative w-64 h-64">
+              {/* Checkered background pattern */}
+              <svg
+                className="absolute inset-0 w-full h-full"
+                viewBox="0 0 100 100"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <pattern
+                    id="checkerboard-light"
+                    x="0"
+                    y="0"
+                    width="10"
+                    height="10"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect width="5" height="5" fill="#f0f0f0" />
+                    <rect x="5" y="5" width="5" height="5" fill="#f0f0f0" />
+                    <rect x="0" y="5" width="5" height="5" fill="#e0e0e0" />
+                    <rect x="5" y="0" width="5" height="5" fill="#e0e0e0" />
+                  </pattern>
+                  <pattern
+                    id="checkerboard-dark"
+                    x="0"
+                    y="0"
+                    width="10"
+                    height="10"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect width="5" height="5" fill="#2a2a2a" />
+                    <rect x="5" y="5" width="5" height="5" fill="#2a2a2a" />
+                    <rect x="0" y="5" width="5" height="5" fill="#1a1a1a" />
+                    <rect x="5" y="0" width="5" height="5" fill="#1a1a1a" />
+                  </pattern>
+                </defs>
+                <rect width="100" height="100" fill="url(#checkerboard-light)" className="dark:hidden" />
+                <rect width="100" height="100" fill="url(#checkerboard-dark)" className="hidden dark:block" />
+              </svg>
+
+              {/* Icon content */}
               <div
                 ref={svgRef}
-                className="w-64 h-64 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center"
                 dangerouslySetInnerHTML={{ __html: getCurrentSvg() }}
               />
             </div>
@@ -375,26 +470,81 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
           {/* Bottom Controls */}
           <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
-              <button
-                onClick={reset}
-                className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
-              >
-                Reset to Original
-              </button>
-              <div className="flex space-x-2">
+            <div className="space-y-4">
+              {/* Reset Button */}
+              <div className="flex justify-center">
                 <button
-                  onClick={() => onDownload(getCurrentSvg(), 'svg')}
-                  className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors"
+                  onClick={reset}
+                  className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
                 >
-                  Download SVG
+                  Reset to Original
                 </button>
-                <button
-                  onClick={() => onDownload(getCurrentSvg(), 'png', 512)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-                >
-                  Download PNG
-                </button>
+              </div>
+
+              {/* Download and Copy Buttons */}
+              <div className="space-y-4">
+                {/* Download Buttons Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* PNG Download with Size Selector */}
+                  <div className="inline-flex rounded-lg overflow-hidden w-full">
+                    <button
+                      onClick={() => onDownload(getCurrentSvg(), 'png', parseInt((document.getElementById('editor-png-size-select') as HTMLSelectElement)?.value || '512'))}
+                      className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+                    >
+                      Download PNG
+                    </button>
+                    <div className="relative">
+                      <select
+                        id="editor-png-size-select"
+                        className="px-3 py-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[80px]"
+                      >
+                        <option value="512">512px</option>
+                        <option value="256">256px</option>
+                        <option value="128">128px</option>
+                        <option value="64">64px</option>
+                        <option value="32">32px</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SVG Download */}
+                  <button
+                    onClick={() => onDownload(getCurrentSvg(), 'svg')}
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                    Download SVG
+                  </button>
+                </div>
+
+                {/* Copy Buttons Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Copy PNG */}
+                  <button
+                    onClick={() => copyAsPNG()}
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                  >
+                    Copy PNG
+                  </button>
+
+                  {/* Copy SVG */}
+                  <button
+                    onClick={() => copyAsSVG()}
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                    Copy SVG
+                  </button>
+                </div>
               </div>
             </div>
           </div>
