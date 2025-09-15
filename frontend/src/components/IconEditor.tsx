@@ -470,33 +470,55 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
 
           {/* Bottom Controls */}
           <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-            <div className="space-y-4">
-              {/* Reset Button */}
-              <div className="flex justify-center">
+            <div className="grid grid-cols-2 gap-6">
+              {/* First Column - Reset Button */}
+              <div className="flex items-start">
                 <button
                   onClick={reset}
-                  className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                  className="px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
                 >
                   Reset to Original
                 </button>
               </div>
 
-              {/* Download and Copy Buttons */}
+              {/* Second Column - Two Rows, Each with Two Sub-columns */}
               <div className="space-y-4">
-                {/* Download Buttons Row */}
+                {/* First Row - Copy Buttons */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Copy PNG */}
+                  <button
+                    onClick={() => copyAsPNG()}
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
+                  >
+                    Copy PNG
+                  </button>
+
+                  {/* Copy SVG */}
+                  <button
+                    onClick={() => copyAsSVG()}
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                    Copy SVG
+                  </button>
+                </div>
+
+                {/* Second Row - Download Buttons */}
                 <div className="grid grid-cols-2 gap-4">
                   {/* PNG Download with Size Selector */}
-                  <div className="inline-flex rounded-lg overflow-hidden w-full">
+                  <div className="flex rounded overflow-hidden h-[42px]">
                     <button
                       onClick={() => onDownload(getCurrentSvg(), 'png', parseInt((document.getElementById('editor-png-size-select') as HTMLSelectElement)?.value || '512'))}
-                      className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+                      className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors h-full flex items-center justify-center"
                     >
                       Download PNG
                     </button>
-                    <div className="relative">
+                    <div className="relative h-full">
                       <select
                         id="editor-png-size-select"
-                        className="px-3 py-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[80px]"
+                        className="h-full px-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[80px] focus:outline-none focus:ring-0 focus:border-green-500"
                       >
                         <option value="512">512px</option>
                         <option value="256">256px</option>
@@ -515,34 +537,12 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                   {/* SVG Download */}
                   <button
                     onClick={() => onDownload(getCurrentSvg(), 'svg')}
-                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded transition-colors"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                     </svg>
                     Download SVG
-                  </button>
-                </div>
-
-                {/* Copy Buttons Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Copy PNG */}
-                  <button
-                    onClick={() => copyAsPNG()}
-                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
-                  >
-                    Copy PNG
-                  </button>
-
-                  {/* Copy SVG */}
-                  <button
-                    onClick={() => copyAsSVG()}
-                    className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                    </svg>
-                    Copy SVG
                   </button>
                 </div>
               </div>
