@@ -1453,6 +1453,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  "mac-address-generator": {
+    title:
+      "MAC Address Generator - Generate Random MAC Addresses | Free DevTools",
+    name: "MAC Address Generator",
+    path: "/freedevtools/t/mac-address-generator/",
+    description:
+      "Generate random MAC addresses instantly with our free online MAC address generator. Create custom MAC addresses with prefix, separator, and case options for testing and development.",
+    category: "Developer Tools",
+    icon: "🌐",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/mac-address-generator/",
+    keywords: [
+      "mac address generator",
+      "random mac address",
+      "generate mac address",
+      "mac address creator",
+      "fake mac address",
+      "mac address maker",
+      "network mac generator",
+      "ethernet address generator",
+      "mac address tool",
+      "bulk mac generator",
+    ],
+    features: [
+      "Generate random MAC addresses with custom prefix",
+      "Bulk generation up to 100 MAC addresses",
+      "Multiple separator options (colon, dash, dot, none)",
+      "Uppercase and lowercase output formats",
+      "Real-time MAC address generation",
+      "Copy to clipboard functionality",
+      "Browser-based processing - data stays private",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-generator-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
