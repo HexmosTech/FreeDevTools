@@ -323,6 +323,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                       setCustomColor(color.hex);
                       if (selectedColor) {
                         applyColorChange(selectedColor, color.hex);
+                        // Update the selected color to the new color so it stays selected
+                        setSelectedColor(color.hex);
                       }
                     }}
                     disableAlpha
