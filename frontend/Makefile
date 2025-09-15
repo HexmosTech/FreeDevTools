@@ -20,6 +20,15 @@ deploy-no-pagespeed: banners build
 
 # Deploy: check PageSpeed, generate banners, build, then rsync to server
 deploy:
+	@if [ "$(SKIP_PAGESPEED)" = "1" ]; then \
+		$(MAKE) deploy-no-pagespeed; \
+	else \
+		$(MAKE) check-pagespeed banners build && \
+		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ root@master-do:/tools/; \
+	fi
+
+# Deploy: check PageSpeed, generate banners, build, then rsync to server
+deploy2: build
 		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ root@master-do:/tools/; \
 
 # Run development server
