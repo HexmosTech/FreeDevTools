@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ChromePicker } from 'react-color';
 
 interface IconEditorProps {
@@ -71,29 +71,26 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
   };
 
   // Apply shape background
-  const applyShapeBackground = () => {
+  const applyShapeBackground = useCallback(() => {
     const currentSvg = history[historyIndex];
     let updatedSvg = currentSvg;
 
-    if (shapeConfig.type === 'none') {
-      // Remove any existing background
-      updatedSvg = currentSvg.replace(/<rect[^>]*class="background-shape"[^>]*\/>/g, '');
-    } else {
-      // Remove existing background first
-      updatedSvg = currentSvg.replace(/<rect[^>]*class="background-shape"[^>]*\/>/g, '');
+    // Remove any existing background shapes (both rect and circle)
+    updatedSvg = currentSvg.replace(/<(rect|circle)[^>]*class="background-shape"[^>]*\/>/g, '');
 
+    if (shapeConfig.type !== 'none') {
       // Add new background
       const size = shapeConfig.size;
       const color = shapeConfig.color;
 
       let shapeElement = '';
       if (shapeConfig.type === 'circle') {
-        shapeElement = `<circle cx="50%" cy="50%" r="${size / 2}%" fill="${color}" class="background-shape"/>`;
+        shapeElement = `<circle cx="50%" cy="50%" r="${size / 2}%" fill="${color}" stroke="none" class="background-shape"/>`;
       } else if (shapeConfig.type === 'square') {
-        shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" fill="${color}" class="background-shape"/>`;
+        shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" fill="${color}" stroke="none" class="background-shape"/>`;
       } else if (shapeConfig.type === 'rounded-square') {
         const radius = size * 0.1; // 10% of size for rounded corners
-        shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" rx="${radius}%" ry="${radius}%" fill="${color}" class="background-shape"/>`;
+        shapeElement = `<rect x="${(100 - size) / 2}%" y="${(100 - size) / 2}%" width="${size}%" height="${size}%" rx="${radius}%" ry="${radius}%" fill="${color}" stroke="none" class="background-shape"/>`;
       }
 
       // Insert at the beginning of the SVG content
@@ -108,7 +105,12 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
     newHistory.push(updatedSvg);
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
-  };
+  }, [shapeConfig, history, historyIndex]);
+
+  // Apply shape changes automatically
+  useEffect(() => {
+    applyShapeBackground();
+  }, [applyShapeBackground]);
 
   // Undo/Redo functions
   const undo = () => {
@@ -146,8 +148,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
             <button
               onClick={() => setActiveTab('colors')}
               className={`flex-1 px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${activeTab === 'colors'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
             >
               <div className="flex items-center justify-center">
@@ -160,8 +162,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
             <button
               onClick={() => setActiveTab('shapes')}
               className={`flex-1 px-4 py-2 text-sm font-medium rounded-r-lg transition-colors ${activeTab === 'shapes'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
             >
               <div className="flex items-center justify-center">
@@ -187,8 +189,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                       key={index}
                       onClick={() => setSelectedColor(color)}
                       className={`w-8 h-8 rounded-lg border-2 transition-all ${selectedColor === color
-                          ? 'border-green-500 ring-2 ring-green-200'
-                          : 'border-slate-300 dark:border-slate-600 hover:border-slate-400'
+                        ? 'border-green-500 ring-2 ring-green-200'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-slate-400'
                         }`}
                       style={{ backgroundColor: color }}
                       title={color}
@@ -205,28 +207,26 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                 <div className="space-y-3">
                   <ChromePicker
                     color={customColor}
-                    onChange={(color) => setCustomColor(color.hex)}
+                    onChange={(color) => {
+                      setCustomColor(color.hex);
+                      if (selectedColor) {
+                        applyColorChange(selectedColor, color.hex);
+                      }
+                    }}
                     disableAlpha
                   />
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={customColor}
-                      onChange={(e) => setCustomColor(e.target.value)}
-                      className="flex-1 px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                      placeholder="#000000"
-                    />
-                    <button
-                      onClick={() => {
-                        if (selectedColor) {
-                          applyColorChange(selectedColor, customColor);
-                        }
-                      }}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-                    >
-                      Apply
-                    </button>
-                  </div>
+                  <input
+                    type="text"
+                    value={customColor}
+                    onChange={(e) => {
+                      setCustomColor(e.target.value);
+                      if (selectedColor) {
+                        applyColorChange(selectedColor, e.target.value);
+                      }
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                    placeholder="#000000"
+                  />
                 </div>
               </div>
             </div>
@@ -251,8 +251,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                       key={shape.type}
                       onClick={() => setShapeConfig(prev => ({ ...prev, type: shape.type as any }))}
                       className={`p-3 text-center rounded-lg border-2 transition-all ${shapeConfig.type === shape.type
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-slate-300 dark:border-slate-600 hover:border-slate-400'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200 dark:ring-blue-800'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500'
                         }`}
                     >
                       <div className="text-lg mb-1">{shape.icon}</div>
@@ -305,13 +305,6 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                 </div>
               </div>
 
-              {/* Apply Shape Button */}
-              <button
-                onClick={applyShapeBackground}
-                className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-              >
-                Apply Shape
-              </button>
             </div>
           )}
         </div>
