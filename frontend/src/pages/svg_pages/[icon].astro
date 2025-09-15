@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdBanner from '../../components/banner/AdBanner';
+import IconEditor from '../../components/IconEditor';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -284,6 +285,8 @@ const canonical = `https://hexmos.com/freedevtools/svg_pages/${icon}`;
     </div>
   </div>
 
+  <!-- Icon Editor Modal -->
+  <div id="icon-editor-container"></div>
   
   <!-- Hidden data for JavaScript -->
   <script type="application/json" data-icon-data set:html={JSON.stringify(iconData)}></script>
@@ -327,8 +330,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_pages/${icon}`;
         // Edit icon button
         if (target.id === 'edit-icon-btn') {
           console.log('🔍 DEBUG: Edit icon button clicked');
-          // TODO: Open edit mode
-          alert('Edit mode coming soon!');
+          openIconEditor();
           return;
         }
         
@@ -365,6 +367,72 @@ const canonical = `https://hexmos.com/freedevtools/svg_pages/${icon}`;
     
     // Setup event listeners
     setupEventListeners();
+    
+    // Icon Editor Functions
+    async function openIconEditor() {
+      const container = document.getElementById('icon-editor-container');
+      if (!container) return;
+      
+      try {
+        // Create React root and render IconEditor
+        const { createRoot } = await import('react-dom/client');
+        const { default: React } = await import('react');
+        const { default: IconEditor } = await import('../../components/IconEditor');
+        
+        const root = createRoot(container);
+        root.render(React.createElement(IconEditor, {
+          svgContent: iconData?.svgContent || '',
+          iconName: iconData?.name || 'icon',
+          onClose: () => {
+            root.unmount();
+            container.innerHTML = '';
+          },
+          onDownload: (svgContent, format, size) => {
+            if (format === 'svg') {
+              downloadSVGFromContent(svgContent);
+            } else if (format === 'png') {
+              downloadPNGFromContent(svgContent, size || 512);
+            }
+          }
+        }));
+      } catch (error) {
+        console.error('Failed to open icon editor:', error);
+        alert('Failed to open icon editor. Please try again.');
+      }
+    }
+    
+    function downloadSVGFromContent(svgContent: string) {
+      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.download = `${iconData?.name || 'icon'}-edited.svg`;
+      link.href = url;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+    }
+    
+    function downloadPNGFromContent(svgContent: string, size = 512) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      canvas.width = size;
+      canvas.height = size;
+      
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0, size, size);
+        const pngData = canvas.toDataURL('image/png');
+        
+        const link = document.createElement('a');
+        link.download = `${iconData?.name || 'icon'}-edited-${size}px.png`;
+        link.href = pngData;
+        link.click();
+      };
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgContent);
+    }
     
     // Functions
     function downloadAsPNG(size = 512) {
