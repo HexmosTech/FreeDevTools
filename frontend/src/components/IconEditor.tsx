@@ -297,14 +297,14 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
               {/* Select a color from the icon */}
               <div>
                 <h5 className="py-2">Select a color from the icon</h5>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="flex flex-row ">
                   {extractedColors.map((color, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedColor(color)}
-                      className={`w-8 h-8 rounded-lg border-2 transition-all ${selectedColor === color
-                        ? 'border-green-500 ring-2 ring-green-200'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-slate-400'
+                      className={`w-8 h-8 mx-1 rounded-xs border-2 transition-all ${selectedColor === color
+                        ? 'border-black dark:border-white ring-2 ring-white dark:ring-black'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-black dark:hover:border-white'
                         }`}
                       style={{ backgroundColor: color }}
                       title={color}
