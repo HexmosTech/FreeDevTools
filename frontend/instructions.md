@@ -1,54 +1,3 @@
-# **New tool Requirements: Free SVG Icon Repository**
-
-Create folder in pages svgicons
-
-### **Project Overview**
-
-You are building a static site that hosts thousands of free SVG icons to drive SEO and traffic for the main site, [Freedevtools](https://hexmos.com/freedevtools/). The site will be fully static, generated using Astro, and optimized for performance, responsiveness, and search engines.
-
-All SVG files will be stored in one folder and loaded dynamically at build time to create static pages for each icon.
-
----
-
-## **Folder Structure**
-
-- All SVG files will be placed in the following directory:
-
-  ```
-  hex/freedevtools/frontend/src/pages/svg_pages/icons/
-  ```
-
-- Each icon will have its own page generated based on this folder’s contents.
-
----
-
-## **Core Features**
-
-### ✅ **Static Generation**
-
-- A static page should be generated for every SVG in the folder.
-- Pages should include:
-  - The SVG image.
-  - Icon name and description (if available).
-  - SEO-friendly meta tags (title, description, structured data).
-
----
-
-### ✅ **Icon Display**
-
-- Icons should be displayed in a grid layout that adjusts to screen size.
-- Clicking on an icon should open a popup or overlay with:
-  - A larger view of the icon.
-  - Buttons for:
-    - Edit icon.
-    - Download as SVG.
-    - Download as PNG.
-    - Copy SVG.
-    - Copy PNG.
-    - Adjust size (small, medium, large).
-
----
-
 ### ✅ **Edit Mode**
 
 When the user clicks the **Edit** button, a new page or modal should open where they can:
@@ -85,123 +34,17 @@ When the user clicks the **Edit** button, a new page or modal should open where 
 
 ---
 
-## **Performance Considerations**
-
-- All pages should be statically generated at build time.
-- Metadata should be preprocessed and stored in JSON format for faster loading.
-- SVGs should be optimized to reduce file size without losing quality.
-
----
-
-## **SEO Requirements**
-
-- Each icon page should have:
-  - A unique URL based on the icon name.
-  - SEO-friendly meta tags including title, description, and keywords.
-  - Structured data markup to help search engines understand the content.
-
-- All pages should be discoverable via search and indexed appropriately.
-
----
-
-## **User Interaction Flow**
-
-1. The user lands on the home page showing a grid of icons.
-2. They can search by icon name to narrow results.
-3. Clicking an icon opens a detailed view with editing and download options.
-4. In edit mode, they can change colors, add shapes, and preview the result.
-5. The user can download or copy the icon in multiple formats.
-
----
-
-## **Additional Notes**
-
-- Accessibility should be considered with appropriate labels and keyboard navigation.
-- The UI should be intuitive and visually clean, avoiding unnecessary distractions.
-
-### ✅ **UI Breakdown – SVG Icon Popup Selecting a svg from the UI**
-
-**1. Popup Container**
-
-- A modal window appearing on top of the existing page when a user selects an icon.
-- Has a close button (`X`) at the top-right corner.
-
-**2. Icon Preview Area**
-
-- Shows the selected icon
-- Centered and large enough to give a clear view.
-- May have a subtle border or background to highlight the icon.
-
-**3. Icon Information**
-
-- Title/Name of the icon: _Beagle free icon_ is displayed near the preview.
-
 **4. Edit Option**
 
 - A button or link labeled **Edit icon** (likely allows editing the SVG like changing colors, shapes, etc.).
 
-**5. Download Options**
+### ✅ **UI Breakdown – Edit Icon )**
 
-- Two main formats are available:
-  1. **PNG**
-     - Green button
-     - Dropdown to choose size (512px, etc.)
-     - Copy option (“Copy PNG” button)
-
-  2. **SVG**
-     - Yellow button with crown icon (indicating premium feature or special option)
-     - Copy option (“Copy SVG” button)
-
-**6. Interaction Elements**
-
-- Buttons with hover effects
-- Dropdown for PNG size selection
-- Copy buttons to quickly copy the icon data
-- Possibly tooltips or confirmation on copying
-
-**7. Background UI**
-
-- Underlying page is darkened or blurred, focusing attention on the popup.
-
----
-
-### ✅ Features You Can Ask Cursor to Implement
-
-1. **Popup structure**
-   - Overlay background with blur/dark layer
-   - Centered modal with icon preview, buttons, and text
-
-2. **Icon preview**
-   - Display selected SVG dynamically
-
-3. **Edit icon functionality**
-   - Opens editor (color picker, shape adjustments)
-
-4. **Download buttons**
-   - PNG format with size selection
-   - SVG format with copy option
-
-5. **Copy functionality**
-   - Clipboard interaction to copy PNG or SVG data
-
-6. **Responsiveness**
-   - Looks good on desktop and mobile screens
-
-7. **Transitions**
-   - Smooth open/close animations for the popup
-
-### ✅ **UI Breakdown – Edit Icon (Within the Existing Popup)**
-
-**1. Popup Structure**
-
-- Opens when the user clicks **Edit icon** in the previous popup.
-- Displays a centered interface with:
-  - The selected icon preview on the right.
-  - Editing tools on the left.
+- Opens when the user clicks **Edit icon** in the page.
+- From left there should be one more container very thin like showing a sidbear outside the canvas on left.
 
 - Includes:
-  - A close button (`X`) at the top-right corner.
-  - A **Download** button at the top-right to save the edited icon.
+  - A close button (`X`) at the top-right corner instead of edit icon meaning edit canvas is activated
 
 ---
 
@@ -251,7 +94,7 @@ When the user clicks the **Edit** button, a new page or modal should open where 
 
 ---
 
-### ✅ **Right Panel – Icon Preview**
+### ✅ **Inside the canvas – Icon Preview**
 
 1. **Live Preview**
    - Displays the icon with all current edits applied.
@@ -265,18 +108,10 @@ When the user clicks the **Edit** button, a new page or modal should open where 
 
 ---
 
-### ✅ **Top Controls**
+### ✅ **Top Right Controls**
 
 1. **Exit editor**
    - Returns to the previous popup without saving changes.
-
-2. **Download**
-   - Allows the user to download the edited icon in the desired format.
-
-3. **Close**
-   - Closes the entire popup.
-
----
 
 ### ✅ **Key Features for Implementation**
 
