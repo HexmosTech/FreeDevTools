@@ -3,16 +3,13 @@ import { defineCollection, z } from "astro:content";
 
 // Check if we're in development mode
 // Astro sets NODE_ENV=production during build, and ASTRO_MODE=dev during dev
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.ASTRO_MODE === "dev" ||
-  process.env.NODE_ENV !== "production";
+const isDev = true;
 
 // Define the tldr collection schema based on the frontmatter structure
 const tldr = defineCollection({
   loader: glob({
     // In dev mode, only load specific categories; in build mode, load all files
-    pattern: isDev ? "{docker,linux,pnm,git}/**/*.md" : "**/*.md",
+    pattern: isDev ? "{pnm,git}/**/*.md" : "**/*.md",
     base: "./src/pages/markdown_pages/tldr",
   }),
   schema: z.object({
@@ -30,4 +27,13 @@ const tldr = defineCollection({
   }),
 });
 
-export const collections = { tldr };
+// Define the svgicons collection schema
+const svgicons = defineCollection({
+  loader: glob({
+    pattern: "**/*.svg",
+    base: "./src/pages/svg_icons/icons",
+  }),
+  schema: z.any(),
+});
+
+export const collections = { tldr, svgicons };

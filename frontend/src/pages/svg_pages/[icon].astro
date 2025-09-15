@@ -1,0 +1,468 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdBanner from '../../components/banner/AdBanner';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  // Use direct file loading instead of content collection
+  const { glob } = await import('glob');
+  const fs = await import('fs/promises');
+  const path = await import('path');
+  
+  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/icons' });
+  console.log('🔍 DEBUG: getStaticPaths found', svgFiles.length, 'SVG files');
+  
+  const svgIcons = await Promise.all(svgFiles.map(async file => {
+    const filePath = path.join('./src/pages/svg_icons/icons', file);
+    const content = await fs.readFile(filePath, 'utf-8');
+    return {
+      id: file,
+      data: {},
+      body: content
+    };
+  }));
+  
+  const paths = svgIcons.map((entry: any) => {
+    const pathParts = entry.id.split("/");
+    const fileName = pathParts[pathParts.length - 1];
+    const iconName = fileName.replace(".svg", "");
+    
+    // Determine category from directory structure or frontmatter
+    let category = 'general';
+    if (pathParts.length > 1) {
+      const dirName = pathParts[pathParts.length - 2];
+      if (dirName === 'arcticons') {
+        category = 'technology';
+      } else if (dirName === 'free-icons') {
+        category = 'general';
+      } else {
+        category = dirName;
+      }
+    }
+    
+    // Override with frontmatter if available
+    category = entry.data?.category || category;
+    
+    return {
+      params: { icon: iconName },
+      props: {
+        iconData: {
+          name: entry.data?.name || iconName,
+          description: entry.data?.description || `Free ${iconName} icon`,
+          category: category,
+          svgContent: entry.body,
+          tags: entry.data?.tags || [],
+          author: entry.data?.author || 'Free DevTools',
+          license: entry.data?.license || 'MIT'
+        }
+      }
+    };
+  });
+  
+  console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
+  console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));
+  
+  return paths;
+}
+
+const { icon } = Astro.params;
+const { iconData } = Astro.props as {
+  iconData: {
+    name: string;
+    description: string;
+    category: string;
+    svgContent: string;
+    tags: string[];
+    author: string;
+    license: string;
+  };
+};
+
+// Generate SEO-friendly title and description
+const seoTitle = `${iconData.name} - Free SVG Icon Download | Free DevTools`;
+const seoDescription = `Download ${iconData.name} SVG icon for free. Edit colors, add backgrounds, and customize this vector graphic for your projects. No registration required.`;
+const canonical = `https://hexmos.com/freedevtools/svg_pages/${icon}`;
+---
+
+<BaseLayout 
+  name={iconData.name}
+  path={`/svg_pages/${icon}`}
+  title={seoTitle}
+  description={seoDescription}
+  canonical={canonical}
+  themeColor="#1e40af"
+  showSidebar={false}
+  showHeader={true}
+>
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": iconData.name,
+    "description": iconData.description,
+    "url": canonical,
+    "contentUrl": canonical,
+    "encodingFormat": "image/svg+xml",
+    "author": {
+      "@type": "Organization",
+      "name": iconData.author
+    },
+    "license": iconData.license,
+    "keywords": iconData.tags.join(", "),
+    "category": iconData.category
+  })} />
+
+  <div class="max-w-6xl mx-auto px-2 md:px-6">
+    <div class="mb-16 mt-[74px]">
+      <AdBanner client:load />
+    </div>
+    
+    <div class="mb-8">
+      <nav class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+        <a href="/freedevtools/" class="hover:text-blue-600 dark:hover:text-blue-400">Free DevTools</a>
+        <span class="mx-2">/</span>
+        <a href="/freedevtools/svg_pages/" class="hover:text-blue-600 dark:hover:text-blue-400">SVG Icons</a>
+        <span class="mx-2">/</span>
+        <span>{iconData.name}</span>
+      </nav>
+      
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        {iconData.name}
+      </h1>
+    
+    </div>
+
+    <!-- Icon Display and Controls -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Big Canvas with Icon -->
+      <div class="rounded-xl relative min-h-[400px] flex items-center justify-center" style="background-color: #f7f7f7;">
+        <!-- Edit Button - Absolute positioned top right -->
+        <button 
+          id="edit-icon-btn"
+          class="absolute top-4 right-4 inline-flex items-center px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-lg transition-colors shadow-sm"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Edit icon
+        </button>
+        
+        <!-- Icon Display -->
+        <div id="icon-preview" class="w-32 h-32 text-slate-600 dark:text-slate-400" set:html={iconData.svgContent}></div>
+      </div>
+      
+      <!-- 2x2 Button Grid -->
+      <div class="flex flex-col justify-center">
+        <p class="text-lg text-slate-600 dark:text-slate-400 mb-6">
+          Free  {iconData.description} icon
+        </p>
+        
+
+        <div class="space-y-4">
+          <!-- Download Buttons Row -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- PNG Download with Size Selector -->
+            <div class="inline-flex rounded-lg overflow-hidden w-full">
+              <button 
+                id="download-png-btn"
+                class="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+              >
+                Download PNG
+              </button>
+              <div class="relative">
+                <select id="png-size-select" class="px-3 py-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[80px]">
+                  <option value="512">512px</option>
+                  <option value="256">256px</option>
+                  <option value="128">128px</option>
+                  <option value="64">64px</option>
+                  <option value="32">32px</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <!-- SVG Download -->
+            <button 
+              id="download-svg-btn"
+              class="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+              </svg>
+              Download SVG
+            </button>
+          </div>
+          
+          <!-- Copy Buttons Row -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Copy PNG -->
+            <button 
+              id="copy-png-btn"
+              class="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+            >
+              Copy PNG
+            </button>
+            
+            <!-- Copy SVG -->
+            <button 
+              id="copy-svg-btn"
+              class="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+              </svg>
+              Copy SVG
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icon Information -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-xl p-8 mb-8">
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+        Icon Information
+      </h3>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Name</label>
+          <p class="text-slate-900 dark:text-slate-100">{iconData.name}</p>
+        </div>
+        
+        <div>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category</label>
+          <p class="text-slate-900 dark:text-slate-100 capitalize">{iconData.category}</p>
+        </div>
+        
+        <div>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Author</label>
+          <p class="text-slate-900 dark:text-slate-100">{iconData.author}</p>
+        </div>
+        
+        <div>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">License</label>
+          <p class="text-slate-900 dark:text-slate-100">{iconData.license}</p>
+        </div>
+        
+        {iconData.tags.length > 0 && (
+          <div>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Tags</label>
+            <div class="flex flex-wrap gap-2 mt-1">
+              {iconData.tags.map((tag: string) => (
+                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+
+    <!-- Credits Section -->
+    <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+      <div class="flex flex-wrap gap-4">
+        <a 
+          href="/freedevtools/svg_pages/" 
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+        >
+          ←  Back to SVG Icons
+        </a>
+        <a 
+          href="/freedevtools/" 
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        >
+          Free DevTools Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Hidden data for JavaScript -->
+  <script type="application/json" data-icon-data set:html={JSON.stringify(iconData)}></script>
+</BaseLayout>
+
+<script>
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 DEBUG: SCRIPT STARTING - This should appear in console');
+    
+    // Get icon data from the page
+    const iconDataElement = document.querySelector('[data-icon-data]');
+    const iconData = iconDataElement ? JSON.parse(iconDataElement.textContent || '{}') : null;
+    
+    console.log('🔍 DEBUG: Script loaded, iconData:', iconData);
+    
+    // DOM elements
+    const editIconBtn = document.getElementById('edit-icon-btn');
+    const downloadPngBtn = document.getElementById('download-png-btn');
+    const downloadSvgBtn = document.getElementById('download-svg-btn');
+    const copyPngBtn = document.getElementById('copy-png-btn');
+    const copySvgBtn = document.getElementById('copy-svg-btn');
+    const pngSizeSelect = document.getElementById('png-size-select');
+    
+    // Debug: Check if elements exist
+    console.log('🔍 DEBUG: Button elements found:', {
+      editIconBtn: !!editIconBtn,
+      downloadPngBtn: !!downloadPngBtn,
+      downloadSvgBtn: !!downloadSvgBtn,
+      copyPngBtn: !!copyPngBtn,
+      copySvgBtn: !!copySvgBtn,
+      pngSizeSelect: !!pngSizeSelect
+    });
+    
+    // Event listeners using event delegation (same pattern as pagination)
+    function setupEventListeners() {
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target) return;
+        
+        // Edit icon button
+        if (target.id === 'edit-icon-btn') {
+          console.log('🔍 DEBUG: Edit icon button clicked');
+          // TODO: Open edit mode
+          alert('Edit mode coming soon!');
+          return;
+        }
+        
+        // Download PNG button
+        if (target.id === 'download-png-btn') {
+          console.log('🔍 DEBUG: Download PNG button clicked');
+          const size = parseInt((pngSizeSelect as HTMLSelectElement)?.value || '512');
+          downloadAsPNG(size);
+          return;
+        }
+        
+        // Download SVG button
+        if (target.id === 'download-svg-btn') {
+          console.log('🔍 DEBUG: Download SVG button clicked');
+          downloadAsSVG();
+          return;
+        }
+        
+        // Copy PNG button
+        if (target.id === 'copy-png-btn') {
+          console.log('🔍 DEBUG: Copy PNG button clicked');
+          copyAsPNG();
+          return;
+        }
+        
+        // Copy SVG button
+        if (target.id === 'copy-svg-btn') {
+          console.log('🔍 DEBUG: Copy SVG button clicked');
+          copyAsSVG();
+          return;
+        }
+      });
+    }
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+    // Functions
+    function downloadAsPNG(size = 512) {
+      const svgElement = document.querySelector('#icon-preview svg');
+      if (!svgElement) return;
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const img = new Image();
+      
+      canvas.width = size;
+      canvas.height = size;
+      
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0, size, size);
+        const pngData = canvas.toDataURL('image/png');
+        
+        const link = document.createElement('a');
+        link.download = `${iconData?.name || 'icon'}-${size}px.png`;
+        link.href = pngData;
+        link.click();
+      };
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    }
+    
+    function downloadAsSVG() {
+      const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
+      if (!svgElement) return;
+      
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.download = `${iconData?.name || 'icon'}.svg`;
+      link.href = url;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+    }
+    
+    function copyAsPNG() {
+      const svgElement = document.querySelector('#icon-preview svg');
+      if (!svgElement) return;
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const img = new Image();
+      
+      canvas.width = 512;
+      canvas.height = 512;
+      
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0, 512, 512);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            navigator.clipboard.write([
+              new ClipboardItem({
+                'image/png': blob
+              })
+            ]).then(() => {
+              showToast('PNG copied to clipboard!');
+            }).catch(() => {
+              showToast('Failed to copy PNG to clipboard');
+            });
+          }
+        }, 'image/png');
+      };
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    }
+    
+    function copyAsSVG() {
+      const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
+      if (!svgElement) return;
+      
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      navigator.clipboard.writeText(svgData).then(() => {
+        showToast('SVG copied to clipboard!');
+      }).catch(() => {
+        showToast('Failed to copy SVG to clipboard');
+      });
+    }
+    
+    function showToast(message: string) {
+      // Simple toast notification
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 3000);
+    }
+    
+  });
+</script>
