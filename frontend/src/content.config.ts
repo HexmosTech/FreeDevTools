@@ -27,13 +27,4 @@ const tldr = defineCollection({
   }),
 });
 
-// Define the svgicons collection schema
-const svgicons = defineCollection({
-  loader: glob({
-    pattern: "**/*.svg",
-    base: "./src/pages/svg_icons/icons",
-  }),
-  schema: z.any(),
-});
-
-export const collections = { tldr, svgicons };
+export const collections = { tldr };
