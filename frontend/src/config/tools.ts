@@ -1493,6 +1493,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  "mac-address-lookup": {
+    title: "MAC Address Lookup - Find Vendor & Device Info | Free DevTools",
+    name: "MAC Address Lookup",
+    path: "/freedevtools/t/mac-address-lookup/",
+    description:
+      "Lookup MAC address vendor information instantly with our free online MAC address lookup tool. Identify device manufacturer, organization, and network details from MAC addresses.",
+    category: "Developer Tools",
+    icon: "�",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/mac-address-lookup/",
+    keywords: [
+      "mac address lookup",
+      "mac address vendor lookup",
+      "mac address checker",
+      "device manufacturer lookup",
+      "oui lookup",
+      "ethernet address lookup",
+      "network device identifier",
+      "mac vendor database",
+      "device identification tool",
+      "hardware vendor lookup",
+    ],
+    features: [
+      "Lookup MAC address vendor information instantly",
+      "Identify device manufacturer and organization",
+      "Support for all MAC address formats (colon, dash, dot)",
+      "Real-time vendor database lookup",
+      "Copy vendor information to clipboard",
+      "Browser-based processing - data stays private",
+      "Support for partial MAC address lookup",
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-lookup-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-lookup-banner.png",
+    datePublished: "2025-01-17",
+    softwareVersion: "1.0.0",
+  },
 };
 
 // tldr: {
