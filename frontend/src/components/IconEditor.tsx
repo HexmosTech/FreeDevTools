@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChromePicker } from 'react-color';
 
 interface IconEditorProps {
@@ -71,7 +71,7 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
   };
 
   // Apply shape background
-  const applyShapeBackground = useCallback(() => {
+  const applyShapeBackground = () => {
     const currentSvg = history[historyIndex];
     let updatedSvg = currentSvg;
 
@@ -105,12 +105,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
     newHistory.push(updatedSvg);
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
-  }, [shapeConfig, history, historyIndex]);
+  };
 
-  // Apply shape changes automatically
-  useEffect(() => {
-    applyShapeBackground();
-  }, [applyShapeBackground]);
 
   // Undo/Redo functions
   const undo = () => {
@@ -134,6 +130,8 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
       size: 100,
       color: '#4D99D5'
     });
+    // Apply the reset to remove any background shapes
+    setTimeout(() => applyShapeBackground(), 0);
   };
 
   const getCurrentSvg = () => history[historyIndex];
@@ -249,7 +247,11 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                   ].map((shape) => (
                     <button
                       key={shape.type}
-                      onClick={() => setShapeConfig(prev => ({ ...prev, type: shape.type as any }))}
+                      onClick={() => {
+                        setShapeConfig(prev => ({ ...prev, type: shape.type as any }));
+                        // Apply the change after state update
+                        setTimeout(() => applyShapeBackground(), 0);
+                      }}
                       className={`p-3 text-center rounded-lg border-2 transition-all ${shapeConfig.type === shape.type
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200 dark:ring-blue-800'
                         : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500'
@@ -273,7 +275,11 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                     min="20"
                     max="100"
                     value={shapeConfig.size}
-                    onChange={(e) => setShapeConfig(prev => ({ ...prev, size: parseInt(e.target.value) }))}
+                    onChange={(e) => {
+                      setShapeConfig(prev => ({ ...prev, size: parseInt(e.target.value) }));
+                      // Apply the change after state update
+                      setTimeout(() => applyShapeBackground(), 0);
+                    }}
                     className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
@@ -292,13 +298,21 @@ const IconEditor: React.FC<IconEditorProps> = ({ svgContent, iconName, onClose, 
                 <div className="space-y-3">
                   <ChromePicker
                     color={shapeConfig.color}
-                    onChange={(color) => setShapeConfig(prev => ({ ...prev, color: color.hex }))}
+                    onChange={(color) => {
+                      setShapeConfig(prev => ({ ...prev, color: color.hex }));
+                      // Apply the change after state update
+                      setTimeout(() => applyShapeBackground(), 0);
+                    }}
                     disableAlpha
                   />
                   <input
                     type="text"
                     value={shapeConfig.color}
-                    onChange={(e) => setShapeConfig(prev => ({ ...prev, color: e.target.value }))}
+                    onChange={(e) => {
+                      setShapeConfig(prev => ({ ...prev, color: e.target.value }));
+                      // Apply the change after state update
+                      setTimeout(() => applyShapeBackground(), 0);
+                    }}
                     className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                     placeholder="#000000"
                   />
