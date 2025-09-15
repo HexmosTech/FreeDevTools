@@ -8,14 +8,10 @@ import JwtParserSkeleton from "./_JwtParserSkeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // JWT Parser Utility Functions
 interface JWTDecoded {
@@ -511,6 +507,12 @@ Example format: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What is JWT? JSON Web Token Explained"
+              description="This video gives a simple, clear explanation of what a JSON Web Token (JWT) is, how it works, and why it's used for authentication."
+              videoUrl="https://www.youtube.com/embed/p_sDlCyzUFU"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

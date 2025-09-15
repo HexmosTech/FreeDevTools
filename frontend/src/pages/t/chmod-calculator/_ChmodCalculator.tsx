@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Terminal, Shield, User, Users, Globe, RefreshCw } from "lucide-react";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Types for chmod calculator
 type Scope = "read" | "write" | "execute";
@@ -416,10 +417,7 @@ const ChmodCalculator: React.FC = () => {
                       rows={1}
                     />
                   </div>
-
                 </div>
-
-  
               </CardContent>
             </Card>
           </ToolCardWrapper>
@@ -626,6 +624,12 @@ const ChmodCalculator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: How to Calculate Magic numbers for chmod in Linux?"
+              description="This video simplifies the process of calculating chmod permissions by explaining the 'magic numbers' and their use in Linux file management."
+              videoUrl="https://www.youtube.com/embed/lynhdqu74y0"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

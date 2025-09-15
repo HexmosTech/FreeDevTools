@@ -22,6 +22,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Lorem Ipsum word bank
 const words = [
@@ -738,6 +739,12 @@ const LoremIpsumGenerator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: History of Lorem Ipsum and What It Means"
+              description="This video explains the origin and meaning of Lorem Ipsum placeholder text, and why it is so widely used in design and publishing."
+              videoUrl="https://www.youtube.com/embed/CmzKQ3PSrow"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

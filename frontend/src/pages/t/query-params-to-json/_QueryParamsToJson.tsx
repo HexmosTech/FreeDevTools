@@ -17,6 +17,7 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import QueryParamsToJsonSkeleton from "./_QueryParamsToJsonSkeleton";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 interface QueryParam {
   key: string;
@@ -193,19 +194,25 @@ export default function QueryParamsToJson() {
                 )}
               </CardContent>
             </Card>
-         
           </ToolCardWrapper>
 
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
             <Card>
               <CardHeader>
-                <CardTitle>Understanding Query Parameters in REST APIs</CardTitle>
+                <CardTitle>
+                  Understanding Query Parameters in REST APIs
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
-                    Query parameters are a fundamental part of REST API design and URL structure. They provide a way to pass data to web servers as key-value pairs appended to the URL after a question mark (?). Understanding how to work with query parameters is essential for API development and web application integration.
+                    Query parameters are a fundamental part of REST API design
+                    and URL structure. They provide a way to pass data to web
+                    servers as key-value pairs appended to the URL after a
+                    question mark (?). Understanding how to work with query
+                    parameters is essential for API development and web
+                    application integration.
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -217,25 +224,29 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>Basic Format:</strong> ?key=value&key2=value2
+                            <strong>Basic Format:</strong>{" "}
+                            ?key=value&key2=value2
                           </span>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>URL Encoding:</strong> Special characters are encoded (space = %20)
+                            <strong>URL Encoding:</strong> Special characters
+                            are encoded (space = %20)
                           </span>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>Arrays:</strong> colors[]=red&colors[]=blue or colors=red&colors=blue
+                            <strong>Arrays:</strong> colors[]=red&colors[]=blue
+                            or colors=red&colors=blue
                           </span>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>Empty Values:</strong> Optional parameters can have empty values
+                            <strong>Empty Values:</strong> Optional parameters
+                            can have empty values
                           </span>
                         </li>
                       </ul>
@@ -278,11 +289,15 @@ export default function QueryParamsToJson() {
                       <span className="text-blue-600 dark:text-blue-400">
                         GET
                       </span>
-                      <span className="text-slate-600 dark:text-slate-400"> </span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {" "}
+                      </span>
                       <span className="text-green-600 dark:text-green-400">
                         /api/products
                       </span>
-                      <span className="text-slate-600 dark:text-slate-400">?</span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        ?
+                      </span>
                       <span className="text-purple-600 dark:text-purple-400">
                         category=electronics&page=2&limit=20&sort=price
                       </span>
@@ -303,7 +318,9 @@ export default function QueryParamsToJson() {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-blue-600 dark:text-blue-400">🔧</span>
+                          <span className="text-blue-600 dark:text-blue-400">
+                            🔧
+                          </span>
                         </span>
                         API Design Patterns
                       </h4>
@@ -311,25 +328,29 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Pagination:</strong> Use limit, offset, page, or cursor-based parameters for large datasets
+                            <strong>Pagination:</strong> Use limit, offset,
+                            page, or cursor-based parameters for large datasets
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Filtering:</strong> Enable filtering with field names as parameters (status=active)
+                            <strong>Filtering:</strong> Enable filtering with
+                            field names as parameters (status=active)
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Sorting:</strong> Use sort or order_by parameters with field names and directions
+                            <strong>Sorting:</strong> Use sort or order_by
+                            parameters with field names and directions
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Field Selection:</strong> Allow clients to specify which fields to return (fields=name,email)
+                            <strong>Field Selection:</strong> Allow clients to
+                            specify which fields to return (fields=name,email)
                           </div>
                         </li>
                       </ul>
@@ -339,7 +360,9 @@ export default function QueryParamsToJson() {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-green-600 dark:text-green-400">⚙️</span>
+                          <span className="text-green-600 dark:text-green-400">
+                            ⚙️
+                          </span>
                         </span>
                         Data Processing
                       </h4>
@@ -347,25 +370,29 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>URL Decoding:</strong> Always decode URL-encoded parameters before processing
+                            <strong>URL Decoding:</strong> Always decode
+                            URL-encoded parameters before processing
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Type Conversion:</strong> Convert string parameters to appropriate data types
+                            <strong>Type Conversion:</strong> Convert string
+                            parameters to appropriate data types
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Validation:</strong> Validate parameter values and provide meaningful error messages
+                            <strong>Validation:</strong> Validate parameter
+                            values and provide meaningful error messages
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Default Values:</strong> Provide sensible defaults for optional parameters
+                            <strong>Default Values:</strong> Provide sensible
+                            defaults for optional parameters
                           </div>
                         </li>
                       </ul>
@@ -375,7 +402,9 @@ export default function QueryParamsToJson() {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-red-600 dark:text-red-400">🔒</span>
+                          <span className="text-red-600 dark:text-red-400">
+                            🔒
+                          </span>
                         </span>
                         Security & Performance
                       </h4>
@@ -383,25 +412,30 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Input Sanitization:</strong> Sanitize all query parameters to prevent injection attacks
+                            <strong>Input Sanitization:</strong> Sanitize all
+                            query parameters to prevent injection attacks
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Rate Limiting:</strong> Implement rate limiting to prevent abuse of parameter-heavy endpoints
+                            <strong>Rate Limiting:</strong> Implement rate
+                            limiting to prevent abuse of parameter-heavy
+                            endpoints
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Parameter Limits:</strong> Set reasonable limits on parameter length and count
+                            <strong>Parameter Limits:</strong> Set reasonable
+                            limits on parameter length and count
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Caching Strategy:</strong> Use query parameters in cache keys appropriately
+                            <strong>Caching Strategy:</strong> Use query
+                            parameters in cache keys appropriately
                           </div>
                         </li>
                       </ul>
@@ -411,7 +445,9 @@ export default function QueryParamsToJson() {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-purple-600 dark:text-purple-400">🛠️</span>
+                          <span className="text-purple-600 dark:text-purple-400">
+                            🛠️
+                          </span>
                         </span>
                         Development Tools
                       </h4>
@@ -419,25 +455,29 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>API Documentation:</strong> Document all query parameters with types and examples
+                            <strong>API Documentation:</strong> Document all
+                            query parameters with types and examples
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Testing:</strong> Write comprehensive tests for parameter combinations
+                            <strong>Testing:</strong> Write comprehensive tests
+                            for parameter combinations
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Debugging:</strong> Log parameter parsing errors for troubleshooting
+                            <strong>Debugging:</strong> Log parameter parsing
+                            errors for troubleshooting
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Schema Validation:</strong> Use schemas to validate parameter structure
+                            <strong>Schema Validation:</strong> Use schemas to
+                            validate parameter structure
                           </div>
                         </li>
                       </ul>
@@ -446,10 +486,29 @@ export default function QueryParamsToJson() {
 
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>💡 Pro Tip:</strong> When designing APIs, consider using JSON in request bodies for complex data structures instead of cramming everything into query parameters. Reserve query parameters for simple filtering, pagination, and configuration options.
+                      <strong>💡 Pro Tip:</strong> When designing APIs, consider
+                      using JSON in request bodies for complex data structures
+                      instead of cramming everything into query parameters.
+                      Reserve query parameters for simple filtering, pagination,
+                      and configuration options.
                     </p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Learn More: Query Parameters - Web Development
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ToolVideo
+                  title="Learn More: Query Parameters - Web Development"
+                  description="This video offers a brief but clear explanation of URL query parameters and how they are used in web development."
+                  videoUrl="https://www.youtube.com/embed/qv5XK91OhFo"
+                />
               </CardContent>
             </Card>
           </ToolContentCardWrapper>

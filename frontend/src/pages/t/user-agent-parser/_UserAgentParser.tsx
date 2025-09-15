@@ -23,6 +23,7 @@ import {
   Tablet,
   Server,
 } from "lucide-react";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // User Agent parsing logic based on reference implementation
 interface UAParserResult {
@@ -667,6 +668,12 @@ const UserAgentParser: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What Is User-Agent Parsing?"
+              description="This video explains what a User-Agent string is, how it's parsed, and why it's a critical component for websites to identify browsers and devices."
+              videoUrl="https://www.youtube.com/embed/tZ4ssSZCOio"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

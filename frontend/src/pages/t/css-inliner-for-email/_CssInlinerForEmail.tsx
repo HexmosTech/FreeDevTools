@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // CSS Inlining utility functions
 const convertCSSToInline = (
@@ -310,8 +311,7 @@ const CssInlinerForEmail: React.FC = () => {
           {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
-              <CardHeader>
-              </CardHeader>
+              <CardHeader></CardHeader>
               <CardContent className="space-y-6">
                 {/* Input and Output Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -750,6 +750,12 @@ const CssInlinerForEmail: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: How Does CSS Inlining Affect Specificity?"
+              description="This video explains the crucial role of CSS inlining in email design, ensuring consistent styling across different email clients."
+              videoUrl="https://www.youtube.com/embed/GI94QQqcfas"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

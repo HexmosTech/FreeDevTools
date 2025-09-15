@@ -8,12 +8,7 @@ import SvgViewerSkeleton from "./_SvgViewerSkeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -26,7 +21,7 @@ import {
   Maximize2,
   Minimize2,
 } from "lucide-react";
-
+import ToolVideo from "@/components/tool/ToolVideo";
 // SVG Upload Component
 interface SvgUploadProps {
   onSvgSelect: (content: string) => void;
@@ -498,6 +493,11 @@ Example:
 
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
+            <ToolVideo
+              title="Learn More: SVG Explained in 100 Seconds"
+              description="This short video provides a quick overview of what Scalable Vector Graphics (SVG) are and why they are useful for web design and development."
+              videoUrl="https://www.youtube.com/embed/emFMHH2Bfvo"
+            />
             {/* About SVG */}
             <Card>
               <CardHeader>

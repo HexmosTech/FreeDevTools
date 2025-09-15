@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Hash generation utilities using Web Crypto API
 type Algorithm =
@@ -218,8 +219,7 @@ const HashGenerator: React.FC = () => {
           {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
-              <CardHeader>
-              </CardHeader>
+              <CardHeader></CardHeader>
               <CardContent className="space-y-6">
                 {/* Input and Configuration */}
                 <div className="space-y-4">
@@ -717,6 +717,12 @@ const HashGenerator: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: Hashing Algorithms and Security - Computerphile"
+              description="This video provides a deep dive into hashing algorithms, explaining what a hash is and its role in data security."
+              videoUrl="https://www.youtube.com/embed/b4b8ktEV4Bg"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

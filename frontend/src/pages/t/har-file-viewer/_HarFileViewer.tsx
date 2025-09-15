@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // HAR file types and interfaces
 interface HarEntry {
@@ -526,9 +527,7 @@ const HarFileViewer: React.FC = () => {
           <ToolContentCardWrapper>
             <Card>
               <CardHeader>
-                <CardTitle>
-                  HAR Files and Network Analysis
-                </CardTitle>
+                <CardTitle>HAR Files and Network Analysis</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
@@ -837,6 +836,12 @@ const HarFileViewer: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What is HAR(HTTP Archive) File? | How to use HAR file for Debugging Issues?"
+              description="This video explains what an HTTP Archive (HAR) file is and demonstrates how to use it for debugging network issues."
+              videoUrl="https://www.youtube.com/embed/ogYtlRAKgwo"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

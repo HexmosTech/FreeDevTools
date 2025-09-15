@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getToolByKey, type Tool } from "@/config/tools";
-
+import ToolVideo from "@/components/tool/ToolVideo";
 // Base64 encoding/decoding utilities
 const toBase64 = (text: string): string => {
   try {
@@ -569,6 +569,12 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: Base64 Encoding Explained!"
+              description="This video provides a deep dive into Base64 encoding, explaining how it works and why it's a common data encoding scheme."
+              videoUrl="https://www.youtube.com/embed/8v4moossLXo"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}
