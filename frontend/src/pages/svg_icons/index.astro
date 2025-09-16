@@ -9,22 +9,12 @@ import type { CollectionEntry } from 'astro:content';
 const ITEMS_PER_PAGE = 20;
 
 async function getAllIcons() {
-  // Try direct file loading instead of content collection
-  const { glob } = await import('glob');
+  // Load the clustor.json file
   const fs = await import('fs/promises');
   const path = await import('path');
   
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
-  
-  const svgIcons = await Promise.all(svgFiles.map(async file => {
-    const filePath = path.join('./src/pages/svg_icons/_icons', file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return {
-      id: file,
-      data: {},
-      body: content
-    };
-  }));
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
   const iconsByCategory: Record<
     string,
@@ -37,47 +27,36 @@ async function getAllIcons() {
     }>
   > = {};
 
-  for (const entry of svgIcons) {
-    // Extract category and icon name from path
-    const pathParts = (entry as any).id.split("/");
-    const fileName = pathParts[pathParts.length - 1]; // e.g., 'beagle.svg'
-    const iconName = fileName.replace(".svg", ""); // e.g., 'beagle'
+  // Process each cluster (category)
+  for (const [clusterName, clusterData] of Object.entries(clustorData.clusters)) {
+    const cluster = clusterData as any;
     
-    // Determine category from directory structure or frontmatter
-    let category = 'general';
-    if (pathParts.length > 1) {
-      const dirName = pathParts[pathParts.length - 2];
-      if (dirName === 'arcticons') {
-        category = 'technology';
-      } else if (dirName === 'free-icons') {
-        category = 'general';
-      } else {
-        category = dirName;
+    if (!iconsByCategory[clusterName]) {
+      iconsByCategory[clusterName] = [];
+    }
+
+    // Process each file in the cluster
+    for (const fileName of cluster.fileNames) {
+      const iconName = fileName.replace(".svg", "");
+      
+      // Read the SVG file content
+      const filePath = path.join('./src/pages/svg_icons/_icons', fileName);
+      let svgContent = '';
+      try {
+        svgContent = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`Could not read file: ${fileName}`);
+        continue;
       }
+
+      iconsByCategory[clusterName].push({
+        name: iconName,
+        url: `/freedevtools/svg_icons/${clusterName}/${iconName}`,
+        description: `Free ${iconName} icon`,
+        category: clusterName,
+        svgContent: svgContent,
+      });
     }
-    
-    // Override with frontmatter if available
-    category = (entry as any).data?.category || category;
-
-    if (!iconsByCategory[category]) {
-      iconsByCategory[category] = [];
-    }
-
-    // Get description from frontmatter if available
-    const description =
-      (entry as any).data?.description ||
-      (entry as any).data?.name ||
-      `Free ${iconName} icon`;
-
-    const iconName_final = (entry as any).data?.name || iconName;
-
-    iconsByCategory[category].push({
-      name: iconName_final,
-      url: `/freedevtools/svg_icons/${category}/${iconName}`,
-      description,
-      category,
-      svgContent: entry.body,
-    });
   }
 
   return iconsByCategory;
@@ -295,14 +274,13 @@ const categoryIconMap = {
   // Render icon card
   function renderIconCard(icon) {
     return `
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-lg p-1.5 cursor-pointer icon-card hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200" data-icon-name="${icon.name}" data-icon-url="${icon.url}">
+      <div class="bg-transparent rounded-md p-2 cursor-pointer icon-card hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200" data-icon-name="${icon.name}" data-icon-url="${icon.url}">
         <div class="flex flex-col items-center text-center">
-          <div class="w-8 h-8 bg-slate-50 dark:bg-slate-800 rounded-md flex items-center justify-center mb-1">
-            <div class="w-5 h-5 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <div class="w-6 h-6 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
               ${icon.svgContent}
             </div>
           </div>
-          <p class="text-slate-900 dark:text-slate-100 leading-tight">${icon.name}</p>
         </div>
       </div>
     `;
@@ -310,53 +288,31 @@ const categoryIconMap = {
   
   // Render category card
   function renderCategoryCard(category, categoryIcons) {
-    const iconUrl = categoryIcons[category] || 'https://cdn-icons-png.flaticon.com/512/5515/5515389.png';
-    
-    const iconsHtml = categoryIcons.slice(0, 9).map(icon => 
-      renderIconCard(icon)
+    const iconsHtml = categoryIcons.slice(0, 6).map(icon => 
+      `<div class="w-10 h-10 flex items-center justify-center">
+        <div class="w-8 h-8 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
+          ${icon.svgContent}
+        </div>
+      </div>`
     ).join('');
     
-    const moreIconsHtml = categoryIcons.length > 9 ? 
-      `<p class="text-xs text-slate-500 dark:text-slate-400 text-center">+${categoryIcons.length - 9} more icons</p>` : '';
-    
     return `
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-xl p-4 md:p-4 lg:p-8 shadow-sm">
-        <div class="flex items-center mb-4">
-          <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center mr-3 border border-slate-200 dark:border-slate-700">
-            <img 
-              src="${iconUrl}"
-              alt="${category} logo"
-              class="w-8 h-8 object-contain"
-              onerror="this.src='https://via.placeholder.com/40x40/3b82f6/ffffff?text=' + this.alt.split(' ')[0].charAt(0).toUpperCase()"
-            />
+      <a href="/freedevtools/svg_icons/${category}" class="block">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 capitalize">
+              ${category.replace('-', ' ')}
+            </h3>
+            <span class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+              ${categoryIcons.length} ICONS
+            </span>
           </div>
-          <a 
-            href="/freedevtools/svg_icons/${category}"
-            class="text-xl font-semibold text-black dark:text-neon-light capitalize hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            ${category.replace('-', ' ')}
-          </a>
+          
+          <div class="grid grid-cols-3 gap-3">
+            ${iconsHtml}
+          </div>
         </div>
-        
-        <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
-          ${categoryIcons.length} icons available
-        </p>
-        
-        <div class="grid grid-cols-3 gap-1 mb-4">
-          ${iconsHtml}
-        </div>
-        
-        ${moreIconsHtml}
-        
-        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-900">
-          <a 
-            href="/freedevtools/svg_icons/${category}"
-            class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-          >
-            View all ${category} icons →
-          </a>
-        </div>
-      </div>
+      </a>
     `;
   }
   

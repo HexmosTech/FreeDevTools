@@ -5,60 +5,49 @@ import IconEditor from '../../../components/IconEditor';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  // Use direct file loading instead of content collection
-  const { glob } = await import('glob');
+  // Load the clustor.json file to get all icons
   const fs = await import('fs/promises');
   const path = await import('path');
   
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
-  console.log('🔍 DEBUG: getStaticPaths found', svgFiles.length, 'SVG files');
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
-  const svgIcons = await Promise.all(svgFiles.map(async file => {
-    const filePath = path.join('./src/pages/svg_icons/_icons', file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return {
-      id: file,
-      data: {},
-      body: content
-    };
-  }));
+  const paths = [];
   
-  const paths = svgIcons.map((entry: any) => {
-    const pathParts = entry.id.split("/");
-    const fileName = pathParts[pathParts.length - 1];
-    const iconName = fileName.replace(".svg", "");
+  // Process each cluster (category)
+  for (const [clusterName, clusterData] of Object.entries(clustorData.clusters)) {
+    const cluster = clusterData as any;
     
-    // Determine category from directory structure or frontmatter
-    let category = 'general';
-    if (pathParts.length > 1) {
-      const dirName = pathParts[pathParts.length - 2];
-      if (dirName === 'arcticons') {
-        category = 'technology';
-      } else if (dirName === 'free-icons') {
-        category = 'general';
-      } else {
-        category = dirName;
+    // Process each file in the cluster
+    for (const fileName of cluster.fileNames) {
+      const iconName = fileName.replace(".svg", "");
+      
+      // Read the SVG file content
+      const filePath = path.join('./src/pages/svg_icons/_icons', fileName);
+      let svgContent = '';
+      try {
+        svgContent = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`Could not read file: ${fileName}`);
+        continue;
       }
-    }
-    
-    // Override with frontmatter if available
-    category = entry.data?.category || category;
-    
-    return {
-      params: { category: category, icon: iconName },
-      props: {
-        iconData: {
-          name: entry.data?.name || iconName,
-          description: entry.data?.description || `Free ${iconName} icon`,
-          category: category,
-          svgContent: entry.body,
-          tags: entry.data?.tags || [],
-          author: entry.data?.author || 'Free DevTools',
-          license: entry.data?.license || 'MIT'
+      
+      paths.push({
+        params: { category: clusterName, icon: iconName },
+        props: {
+          iconData: {
+            name: iconName,
+            description: `Free ${iconName} icon`,
+            category: clusterName,
+            svgContent: svgContent,
+            tags: cluster.keywords || [],
+            author: 'Free DevTools',
+            license: 'MIT'
+          }
         }
-      }
-    };
-  });
+      });
+    }
+  }
   
   console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
   console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));

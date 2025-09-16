@@ -5,31 +5,16 @@ import { getCollection } from 'astro:content';
 
 
 export async function getStaticPaths() {
-  // Get all SVG files to determine categories
-  const { glob } = await import('glob');
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
+  // Load the clustor.json file to get all categories
+  const fs = await import('fs/promises');
+  const path = await import('path');
   
-  const categories = new Set<string>();
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
-  for (const file of svgFiles) {
-    const pathParts = file.split("/");
-    let category = 'general';
-    
-    if (pathParts.length > 1) {
-      const dirName = pathParts[pathParts.length - 2];
-      if (dirName === 'arcticons') {
-        category = 'technology';
-      } else if (dirName === 'free-icons') {
-        category = 'general';
-      } else {
-        category = dirName;
-      }
-    }
-    
-    categories.add(category);
-  }
+  const categories = Object.keys(clustorData.clusters);
   
-  return Array.from(categories).map(category => ({
+  return categories.map(category => ({
     params: { category },
     props: { category }
   }));
@@ -39,76 +24,47 @@ const { category } = Astro.params;
 const { category: categoryProp } = Astro.props;
 
 async function getCategoryIcons() {
-  // Use direct file loading instead of content collection
-  const { glob } = await import('glob');
+  // Load the clustor.json file
   const fs = await import('fs/promises');
   const path = await import('path');
   
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
-  const svgIcons = await Promise.all(svgFiles.map(async file => {
-    const filePath = path.join('./src/pages/svg_icons/_icons', file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return {
-      id: file,
-      data: {},
-      body: content
-    };
-  }));
+  const cluster = clustorData.clusters[category];
+  if (!cluster) {
+    return [];
+  }
   
-  return svgIcons
-    .filter((entry: any) => {
-      // Determine category from directory structure or frontmatter
-      let entryCategory = 'general';
-      const pathParts = entry.id.split("/");
-      if (pathParts.length > 1) {
-        const dirName = pathParts[pathParts.length - 2];
-        if (dirName === 'arcticons') {
-          entryCategory = 'technology';
-        } else if (dirName === 'free-icons') {
-          entryCategory = 'general';
-        } else {
-          entryCategory = dirName;
-        }
-      }
-      
-      // Override with frontmatter if available
-      entryCategory = entry.data?.category || entryCategory;
-      
-      return entryCategory === category;
-    })
-    .map((entry: any) => {
-      const pathParts = entry.id.split("/");
-      const fileName = pathParts[pathParts.length - 1];
-      const iconName = fileName.replace(".svg", "");
-      
-      // Determine category from directory structure or frontmatter
-      let entryCategory = 'general';
-      if (pathParts.length > 1) {
-        const dirName = pathParts[pathParts.length - 2];
-        if (dirName === 'arcticons') {
-          entryCategory = 'technology';
-        } else if (dirName === 'free-icons') {
-          entryCategory = 'general';
-        } else {
-          entryCategory = dirName;
-        }
-      }
-      
-      // Override with frontmatter if available
-      entryCategory = entry.data?.category || entryCategory;
-      
-      return {
-        name: entry.data?.name || iconName,
-        description: entry.data?.description || `Free ${iconName} icon`,
-        category: entryCategory,
-        svgContent: entry.body,
-        tags: entry.data?.tags || [],
-        author: entry.data?.author || 'Free DevTools',
-        license: entry.data?.license || 'MIT',
-        url: `/freedevtools/png_icons/${category}/${iconName}`
-      };
+  const icons = [];
+  
+  // Process each file in the cluster
+  for (const fileName of cluster.fileNames) {
+    const iconName = fileName.replace(".svg", "");
+    
+    // Read the SVG file content
+    const filePath = path.join('./src/pages/svg_icons/_icons', fileName);
+    let svgContent = '';
+    try {
+      svgContent = await fs.readFile(filePath, 'utf-8');
+    } catch (error) {
+      console.warn(`Could not read file: ${fileName}`);
+      continue;
+    }
+    
+    icons.push({
+      name: iconName,
+      description: `Free ${iconName} icon`,
+      category: category,
+      svgContent: svgContent,
+      tags: cluster.keywords || [],
+      author: 'Free DevTools',
+      license: 'MIT',
+      url: `/freedevtools/png_icons/${category}/${iconName}`
     });
+  }
+  
+  return icons;
 }
 
 const categoryIcons = await getCategoryIcons();
@@ -212,7 +168,7 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
       
     </div>
 
-    <div id="icons-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 mb-8">
+    <div id="icons-grid" class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-8 mb-8">
       <!-- Icons will be loaded dynamically -->
     </div>
     
@@ -240,8 +196,8 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
   .icon-preview svg {
     width: 100% !important;
     height: 100% !important;
-    max-width: 20px;
-    max-height: 20px;
+    max-width: 32px;
+    max-height: 32px;
     display: block;
   }
 </style>
@@ -264,14 +220,13 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
   // Render icon card
   function renderIconCard(icon) {
     return `
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-lg p-1.5 cursor-pointer icon-card hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200" data-icon-name="${icon.name}" data-icon-url="${icon.url}">
+      <div class="bg-transparent rounded-lg p-4 cursor-pointer icon-card hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 group" data-icon-name="${icon.name}" data-icon-url="${icon.url}">
         <div class="flex flex-col items-center text-center">
-          <div class="w-8 h-8 bg-slate-50 dark:bg-slate-800 rounded-md flex items-center justify-center mb-1">
-            <div class="w-5 h-5 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
+          <div class="w-8 h-8 flex items-center justify-center">
+            <div class="w-8 h-8 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
               ${icon.svgContent}
             </div>
           </div>
-          <p class="text-slate-900 dark:text-slate-100 leading-tight">${icon.name}</p>
         </div>
       </div>
     `;
