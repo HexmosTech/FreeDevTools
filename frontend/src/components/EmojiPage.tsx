@@ -10,6 +10,9 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedShortcode, setCopiedShortcode] = useState<string | null>(null);
 
+  // Prefer primary code, then Fluent UI glyph, then top-level glyph found in some sources
+  const emojiChar = emoji.code || emoji.fluentui_metadata?.glyph || (emoji as any).glyph || '';
+
   const copyToClipboard = async (text: string, type: 'code' | 'shortcode', shortcode?: string) => {
     const onSuccess = () => {
       if (type === 'code') {
@@ -122,7 +125,7 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           {/* Large Emoji Display */}
           <div className="text-8xl md:text-9xl flex-shrink-0">
-            {emoji.code}
+            {emojiChar}
           </div>
           
           {/* Emoji Info */}
@@ -140,14 +143,14 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             {/* Copy Buttons */}
             <div className="flex flex-wrap gap-3 mb-4">
               <button
-                onClick={() => copyToClipboard(emoji.code, 'code')}
+                onClick={() => copyToClipboard(emojiChar, 'code')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   copiedCode
                     ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                     : 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30'
                 }`}
               >
-                {copiedCode ? '✓ Copied!' : `Copy ${emoji.code}`}
+                {copiedCode ? '✓ Copied!' : `Copy ${emojiChar}`}
               </button>
               
               {emoji.shortcodes && emoji.shortcodes.length > 0 && (
