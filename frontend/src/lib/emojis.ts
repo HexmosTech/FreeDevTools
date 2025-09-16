@@ -203,15 +203,26 @@ export function getEmojiImages(slug: string): EmojiImageVariants {
     for (const file of files) {
       if (file.endsWith('.png') || file.endsWith('.svg')) {
         const baseName = file.replace(/\.(png|svg)$/, '');
-        // Support files named either `${slug}_variant.ext` or `variant.ext`
-        let variantKey = baseName.startsWith(`${slug}_`) ? baseName.replace(`${slug}_`, '') : baseName;
-        const variant = variantKey as keyof EmojiImageVariants;
-        
-        if (variant && ['3d', 'color', 'flat', 'high_contrast'].includes(variant)) {
-          images[variant] = match?.folderPath
-            ? `/freedevtools/emoji_data/${match.folderPath}/${file}`
-            : `/freedevtools/emoji_data/${slug}/${file}`;
-        }
+        const lower = baseName.toLowerCase();
+
+        const setImage = (variant: keyof EmojiImageVariants) => {
+          if (!images[variant]) {
+            images[variant] = match?.folderPath
+              ? `/freedevtools/emoji_data/${match.folderPath}/${file}`
+              : `/freedevtools/emoji_data/${slug}/${file}`;
+          }
+        };
+
+        // Flexible variant detection: allow extra suffixes like _dark, -medium-dark, etc.
+        const has3d = /(^|[\-_])3d([\-_]|$)/.test(lower);
+        const hasColor = /(^|[\-_])color([\-_]|$)/.test(lower);
+        const hasFlat = /(^|[\-_])flat([\-_]|$)/.test(lower);
+        const hasHighContrast = /high[\-_]?contrast/.test(lower);
+
+        if (has3d) setImage('3d');
+        if (hasColor) setImage('color');
+        if (hasFlat) setImage('flat');
+        if (hasHighContrast) setImage('high_contrast');
       }
     }
   } catch (error) {

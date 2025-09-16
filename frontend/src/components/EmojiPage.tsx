@@ -51,18 +51,60 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
     }
   };
 
-  const cleanDescription = (description?: string) => {
-    if (!description) return '';
-    return description
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
-      .replace(/&amp;/g, '&') // Replace &amp; with &
-      .replace(/&lt;/g, '<') // Replace &lt; with <
-      .replace(/&gt;/g, '>') // Replace &gt; with >
-      .replace(/&quot;/g, '"') // Replace &quot; with "
-      .replace(/&#39;/g, "'") // Replace &#39; with '
+  const cleanDescription = (text?: string) => {
+    if (!text) return '';
+    return text
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/[?]{2,}/g, '')
       .trim();
   };
+
+  // Recursively collect strings for a given key anywhere in a nested object
+  function collectNestedStrings(data: unknown, keys: string[]): string[] {
+    const results: string[] = [];
+    const visit = (node: unknown) => {
+      if (!node) return;
+      if (Array.isArray(node)) {
+        node.forEach(visit);
+      } else if (typeof node === 'object') {
+        const obj = node as Record<string, unknown>;
+        for (const k of Object.keys(obj)) {
+          if (keys.includes(k)) {
+            const val = obj[k];
+            if (Array.isArray(val)) {
+              // Array of strings or array of { id: [strings] }
+              (val as unknown[]).forEach((item) => {
+                if (typeof item === 'string') results.push(item);
+                else if (item && typeof item === 'object') {
+                  Object.values(item as Record<string, unknown>).forEach((v) => {
+                    if (Array.isArray(v)) (v as unknown[]).forEach((s) => { if (typeof s === 'string') results.push(s); });
+                    else if (typeof v === 'string') results.push(v);
+                  });
+                }
+              });
+            } else if (typeof val === 'string') {
+              results.push(val);
+            }
+          }
+          visit(obj[k]);
+        }
+      }
+    };
+    visit(data);
+    return Array.from(new Set(results));
+  }
+
+  // Find a nested definition anywhere in the emoji object
+  function findNestedDefinition(data: unknown): string | null {
+    const defs = collectNestedStrings(data, ['definition']);
+    return defs.length > 0 ? defs[0] : null;
+  }
 
   const getImageVariants = () => {
     const variants = [];
@@ -137,14 +179,14 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
         </div>
       </div>
 
-      {/* Description */}
-      {emoji.description && (
+      {/* Description (with fallback to definition) */}
+      {(emoji.description || findNestedDefinition(emoji)) && (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 mb-6 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             Description
           </h2>
           <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-            {cleanDescription(emoji.description)}
+            {cleanDescription(emoji.description || findNestedDefinition(emoji) || undefined)}
           </p>
         </div>
       )}
@@ -286,31 +328,31 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
               </div>
             )}
             {/* Parts of speech from senses */}
-            {emoji.emoji_net_data.senses?.adjectives && Array.isArray(emoji.emoji_net_data.senses.adjectives) && emoji.emoji_net_data.senses.adjectives.length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['adjectives']).length > 0 && (
               <div>
                 <span className="font-medium text-slate-600 dark:text-slate-400">Adjectives:</span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {emoji.emoji_net_data.senses.adjectives.flatMap((obj: Record<string, string[]>) => Object.values(obj)).flat().slice(0, 12).map((desc: string, idx: number) => (
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['adjectives']).slice(0, 12).map((desc: string, idx: number) => (
                     <li key={`adj-${idx}`}>{desc}</li>
                   ))}
                 </ul>
               </div>
             )}
-            {emoji.emoji_net_data.senses?.verbs && Array.isArray(emoji.emoji_net_data.senses.verbs) && emoji.emoji_net_data.senses.verbs.length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs']).length > 0 && (
               <div>
                 <span className="font-medium text-slate-600 dark:text-slate-400">Verbs:</span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {emoji.emoji_net_data.senses.verbs.flatMap((obj: Record<string, string[]>) => Object.values(obj)).flat().slice(0, 12).map((desc: string, idx: number) => (
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs']).slice(0, 12).map((desc: string, idx: number) => (
                     <li key={`verb-${idx}`}>{desc}</li>
                   ))}
                 </ul>
               </div>
             )}
-            {emoji.emoji_net_data.senses?.nouns && Array.isArray(emoji.emoji_net_data.senses.nouns) && emoji.emoji_net_data.senses.nouns.length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns']).length > 0 && (
               <div>
                 <span className="font-medium text-slate-600 dark:text-slate-400">Nouns:</span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {emoji.emoji_net_data.senses.nouns.flatMap((obj: Record<string, string[]>) => Object.values(obj)).flat().slice(0, 12).map((desc: string, idx: number) => (
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns']).slice(0, 12).map((desc: string, idx: number) => (
                     <li key={`noun-${idx}`}>{desc}</li>
                   ))}
                 </ul>
