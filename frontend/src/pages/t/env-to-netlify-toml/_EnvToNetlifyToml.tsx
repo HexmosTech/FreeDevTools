@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Environment context types for Netlify
 type ContextType = "production" | "deploy-preview" | "branch-deploy" | "dev";
@@ -572,6 +573,12 @@ NODE_ENV = "production"`}
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What are Environment Variables, and how do I use them?"
+              description="This video explains what environment variables are, how to set them, and their general use in application deployment and configuration."
+              videoUrl="https://www.youtube.com/embed/ADh_OFBfdEE"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

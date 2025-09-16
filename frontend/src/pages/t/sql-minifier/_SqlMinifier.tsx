@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // SQL Minification utility functions
 const minifySQL = (
@@ -704,6 +705,12 @@ WHERE u.status = 'active';`}
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What is Bundling and Minification in MVC?"
+              description="This video explains the concept of minification in the context of web development, a process that removes unnecessary characters from code."
+              videoUrl="https://www.youtube.com/embed/-Rj6h9B0Kzg"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

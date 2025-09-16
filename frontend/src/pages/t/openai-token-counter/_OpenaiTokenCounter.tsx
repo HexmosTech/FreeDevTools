@@ -21,6 +21,7 @@ import {
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Tiktoken } from "js-tiktoken";
 
 // OpenAI Models Configuration
@@ -340,6 +341,11 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
 
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
+            <ToolVideo
+              title="Learn More: What is an AI Token? | LLM Tokens explained in 2 minutes!"
+              description="This video explains what AI tokens are and how they are used by Large Language "
+              videoUrl="https://www.youtube.com/embed/OjrGu0L5K7M"
+            />
             {/* How OpenAI Models Calculate Tokens - Content Card */}
             <Card>
               <CardHeader>

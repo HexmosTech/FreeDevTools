@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Diff algorithm options
 const DIFF_MODES = {
@@ -621,6 +622,12 @@ automatically as you type."
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: Diff Algorithm Explained | The texts comparison algorithm"
+              description="This video provides a technical explanation of the diff algorithm, detailing how software compares and highlights differences between two text files."
+              videoUrl="https://www.youtube.com/embed/9n8jI2267MM"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

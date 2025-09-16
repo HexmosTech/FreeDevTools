@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCwIcon, CalendarIcon, XIcon } from "lucide-react";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Using reliable npm libraries for cron parsing
 interface CronResult {
@@ -922,6 +923,12 @@ const CronTester: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: Cron Expressions Explained"
+              description="This video provides a deep dive into cron expressions, showing you how to write and understand the syntax for scheduling jobs."
+              videoUrl="https://www.youtube.com/embed/MlNeVGC0GUs"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

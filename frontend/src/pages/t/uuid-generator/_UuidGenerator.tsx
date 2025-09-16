@@ -8,12 +8,7 @@ import UuidGeneratorSkeleton from "./_UuidGeneratorSkeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -25,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import ToolVideo from "@/components/tool/ToolVideo";
 // UUID Versions and their characteristics
 const UUID_VERSIONS = {
   v4: {
@@ -434,6 +429,12 @@ const UuidGenerator: React.FC = () => {
 
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
+            <ToolVideo
+              title="Learn More: What is a UUID? UUID vs. GUID"
+              description="This video explains what a Universally Unique Identifier (UUID) is, its purpose in computing, and the difference between UUID and GUID."
+              videoUrl="https://www.youtube.com/embed/w0VFcVYIfhg"
+            />
+
             {/* About UUIDs */}
             <Card>
               <CardHeader>

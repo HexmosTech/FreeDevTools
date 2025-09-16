@@ -8,16 +8,12 @@ import JsonToCsvConverterSkeleton from "./_JsonToCsvConverterSkeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Download } from "lucide-react";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // JSON to CSV conversion utility
 function convertJsonToCsv(
@@ -189,7 +185,7 @@ const JsonToCsvConverter: React.FC = () => {
     try {
       const blob = new Blob([output], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
-      
+
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
@@ -373,6 +369,12 @@ const JsonToCsvConverter: React.FC = () => {
 
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
+            <ToolVideo
+              title="Learn More: Which is Better: JSON or CSV? Let’s Find Out."
+              description="This video explains the differences between JSON and CSV data formats to help you understand which one is better for your needs."
+              videoUrl="https://www.youtube.com/embed/pGlRQpAHazE"
+            />
+
             {/* Benefits of JSON to CSV Conversion */}
             <Card>
               <CardHeader>
@@ -384,31 +386,55 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-3">
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-green-600 dark:text-green-400 text-sm">📊</span>
+                          <span className="text-green-600 dark:text-green-400 text-sm">
+                            📊
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Excel & Spreadsheet Compatibility</h4>
-                          <p className="text-sm">Open your JSON data directly in Excel, Google Sheets, or any spreadsheet application for advanced analysis and visualization.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Excel & Spreadsheet Compatibility
+                          </h4>
+                          <p className="text-sm">
+                            Open your JSON data directly in Excel, Google
+                            Sheets, or any spreadsheet application for advanced
+                            analysis and visualization.
+                          </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-blue-600 dark:text-blue-400 text-sm">⚡</span>
+                          <span className="text-blue-600 dark:text-blue-400 text-sm">
+                            ⚡
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Faster Data Processing</h4>
-                          <p className="text-sm">CSV files are lightweight and load faster than JSON, making them ideal for large datasets and quick data operations.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Faster Data Processing
+                          </h4>
+                          <p className="text-sm">
+                            CSV files are lightweight and load faster than JSON,
+                            making them ideal for large datasets and quick data
+                            operations.
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-purple-600 dark:text-purple-400 text-sm">🔄</span>
+                          <span className="text-purple-600 dark:text-purple-400 text-sm">
+                            🔄
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Universal Data Exchange</h4>
-                          <p className="text-sm">CSV is supported by virtually every data tool, database, and analytics platform, ensuring seamless data sharing and migration.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Universal Data Exchange
+                          </h4>
+                          <p className="text-sm">
+                            CSV is supported by virtually every data tool,
+                            database, and analytics platform, ensuring seamless
+                            data sharing and migration.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -416,31 +442,54 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-3">
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-orange-600 dark:text-orange-400 text-sm">📈</span>
+                          <span className="text-orange-600 dark:text-orange-400 text-sm">
+                            📈
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Enhanced Data Analysis</h4>
-                          <p className="text-sm">Leverage powerful spreadsheet functions, pivot tables, charts, and statistical analysis tools that work best with tabular CSV data.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Enhanced Data Analysis
+                          </h4>
+                          <p className="text-sm">
+                            Leverage powerful spreadsheet functions, pivot
+                            tables, charts, and statistical analysis tools that
+                            work best with tabular CSV data.
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-red-600 dark:text-red-400 text-sm">🎯</span>
+                          <span className="text-red-600 dark:text-red-400 text-sm">
+                            🎯
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Business Intelligence Integration</h4>
-                          <p className="text-sm">Import directly into BI tools like Tableau, Power BI, or Looker for creating dashboards and business reports.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Business Intelligence Integration
+                          </h4>
+                          <p className="text-sm">
+                            Import directly into BI tools like Tableau, Power
+                            BI, or Looker for creating dashboards and business
+                            reports.
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-indigo-100 dark:bg-indigo-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-indigo-600 dark:text-indigo-400 text-sm">💾</span>
+                          <span className="text-indigo-600 dark:text-indigo-400 text-sm">
+                            💾
+                          </span>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Database Import Optimization</h4>
-                          <p className="text-sm">Most databases offer optimized CSV import functions that are faster and more reliable than JSON imports.</p>
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                            Database Import Optimization
+                          </h4>
+                          <p className="text-sm">
+                            Most databases offer optimized CSV import functions
+                            that are faster and more reliable than JSON imports.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -461,7 +510,9 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-blue-600 dark:text-blue-400">🔧</span>
+                          <span className="text-blue-600 dark:text-blue-400">
+                            🔧
+                          </span>
                         </span>
                         Development & API Integration
                       </h4>
@@ -469,25 +520,33 @@ const JsonToCsvConverter: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>API Response Analysis:</strong> Convert REST API responses to CSV for performance monitoring, error tracking, and usage analytics.
+                            <strong>API Response Analysis:</strong> Convert REST
+                            API responses to CSV for performance monitoring,
+                            error tracking, and usage analytics.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Log Data Processing:</strong> Transform application logs from JSON format to CSV for better analysis in log management tools.
+                            <strong>Log Data Processing:</strong> Transform
+                            application logs from JSON format to CSV for better
+                            analysis in log management tools.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Database Migration:</strong> Export JSON documents from NoSQL databases and import them into relational databases via CSV.
+                            <strong>Database Migration:</strong> Export JSON
+                            documents from NoSQL databases and import them into
+                            relational databases via CSV.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Configuration Management:</strong> Convert complex JSON configuration files to CSV for bulk editing and validation.
+                            <strong>Configuration Management:</strong> Convert
+                            complex JSON configuration files to CSV for bulk
+                            editing and validation.
                           </div>
                         </li>
                       </ul>
@@ -497,7 +556,9 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-green-600 dark:text-green-400">📊</span>
+                          <span className="text-green-600 dark:text-green-400">
+                            📊
+                          </span>
                         </span>
                         Business & Analytics
                       </h4>
@@ -505,25 +566,34 @@ const JsonToCsvConverter: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>E-commerce Analytics:</strong> Convert product catalogs, order data, and customer information from JSON APIs to CSV for sales analysis.
+                            <strong>E-commerce Analytics:</strong> Convert
+                            product catalogs, order data, and customer
+                            information from JSON APIs to CSV for sales
+                            analysis.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Social Media Data:</strong> Transform social media API responses (Twitter, Facebook) to CSV for sentiment analysis and engagement tracking.
+                            <strong>Social Media Data:</strong> Transform social
+                            media API responses (Twitter, Facebook) to CSV for
+                            sentiment analysis and engagement tracking.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Financial Reporting:</strong> Convert financial data from accounting APIs to CSV for creating detailed financial reports and audits.
+                            <strong>Financial Reporting:</strong> Convert
+                            financial data from accounting APIs to CSV for
+                            creating detailed financial reports and audits.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Customer Survey Data:</strong> Transform survey responses from JSON format to CSV for statistical analysis and visualization.
+                            <strong>Customer Survey Data:</strong> Transform
+                            survey responses from JSON format to CSV for
+                            statistical analysis and visualization.
                           </div>
                         </li>
                       </ul>
@@ -533,7 +603,9 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-purple-600 dark:text-purple-400">🔬</span>
+                          <span className="text-purple-600 dark:text-purple-400">
+                            🔬
+                          </span>
                         </span>
                         Data Science & Research
                       </h4>
@@ -541,25 +613,33 @@ const JsonToCsvConverter: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Machine Learning Datasets:</strong> Prepare training data by converting JSON datasets to CSV format for ML frameworks like scikit-learn.
+                            <strong>Machine Learning Datasets:</strong> Prepare
+                            training data by converting JSON datasets to CSV
+                            format for ML frameworks like scikit-learn.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>IoT Sensor Data:</strong> Convert time-series JSON data from IoT devices to CSV for analysis in specialized analytics tools.
+                            <strong>IoT Sensor Data:</strong> Convert
+                            time-series JSON data from IoT devices to CSV for
+                            analysis in specialized analytics tools.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Academic Research:</strong> Transform research data from JSON format to CSV for statistical analysis in R, SPSS, or Python pandas.
+                            <strong>Academic Research:</strong> Transform
+                            research data from JSON format to CSV for
+                            statistical analysis in R, SPSS, or Python pandas.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Web Scraping Results:</strong> Convert scraped data from JSON to CSV for easier manipulation and analysis in data science workflows.
+                            <strong>Web Scraping Results:</strong> Convert
+                            scraped data from JSON to CSV for easier
+                            manipulation and analysis in data science workflows.
                           </div>
                         </li>
                       </ul>
@@ -569,7 +649,9 @@ const JsonToCsvConverter: React.FC = () => {
                     <div className="space-y-4">
                       <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg flex items-center">
                         <span className="w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-orange-600 dark:text-orange-400">🎨</span>
+                          <span className="text-orange-600 dark:text-orange-400">
+                            🎨
+                          </span>
                         </span>
                         Content & Media Management
                       </h4>
@@ -577,25 +659,33 @@ const JsonToCsvConverter: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Content Management Systems:</strong> Export blog posts, articles, and metadata from headless CMS JSON APIs to CSV for content audits.
+                            <strong>Content Management Systems:</strong> Export
+                            blog posts, articles, and metadata from headless CMS
+                            JSON APIs to CSV for content audits.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Media Asset Management:</strong> Convert image, video, and document metadata from JSON to CSV for asset inventory and organization.
+                            <strong>Media Asset Management:</strong> Convert
+                            image, video, and document metadata from JSON to CSV
+                            for asset inventory and organization.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>SEO Analytics:</strong> Transform search engine performance data from JSON APIs to CSV for comprehensive SEO reporting and analysis.
+                            <strong>SEO Analytics:</strong> Transform search
+                            engine performance data from JSON APIs to CSV for
+                            comprehensive SEO reporting and analysis.
                           </div>
                         </li>
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Event Management:</strong> Convert event registration and attendee data from JSON to CSV for event planning and follow-up activities.
+                            <strong>Event Management:</strong> Convert event
+                            registration and attendee data from JSON to CSV for
+                            event planning and follow-up activities.
                           </div>
                         </li>
                       </ul>
@@ -604,7 +694,13 @@ const JsonToCsvConverter: React.FC = () => {
 
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>💡 Pro Tip:</strong> Use the "Flatten nested objects" option when dealing with complex JSON structures to create more manageable CSV files for analysis. This converts nested objects like <code>{`{\"user\": {\"name\": \"John\", \"age\": 30}}"`}</code> into flat columns like <code>user.name</code> and <code>user.age</code>.
+                      <strong>💡 Pro Tip:</strong> Use the "Flatten nested
+                      objects" option when dealing with complex JSON structures
+                      to create more manageable CSV files for analysis. This
+                      converts nested objects like{" "}
+                      <code>{`{\"user\": {\"name\": \"John\", \"age\": 30}}"`}</code>{" "}
+                      into flat columns like <code>user.name</code> and{" "}
+                      <code>user.age</code>.
                     </p>
                   </div>
                 </div>

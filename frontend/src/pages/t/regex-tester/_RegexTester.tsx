@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Regex testing utility functions
 interface RegexMatch {
@@ -572,6 +573,12 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: Regular Expressions (RegEx) in 100 Seconds"
+              description="This short video is a crash course on regular expressions, explaining what they are and how they are used to search and manipulate strings."
+              videoUrl="https://www.youtube.com/embed/sXQxhojSdZM"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

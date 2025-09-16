@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // RGB to HEX conversion utility functions
 interface RGBValues {
@@ -635,6 +636,12 @@ const RgbToHex: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: RGB-HexColors-Explained"
+              description="This tutorial explains how RGB and Hex color codes work and how to convert between the two formats."
+              videoUrl="https://www.youtube.com/embed/hhI4x6hx21s"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // Anthropic Models Configuration
 const ANTHROPIC_MODELS = {
@@ -326,6 +327,12 @@ Try pasting:
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
             {/* How Claude Models Calculate Tokens - Content Card */}
+            <ToolVideo
+              title="Learn More: Anthropic's Claude Code Plus a Million Tokens"
+              description="This video explains how Anthropic's Claude model uses tokens and discusses the 1 million token context window."
+              videoUrl="https://www.youtube.com/embed/2qHxfwvIx-I"
+            />
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-slate-700 dark:text-slate-300">

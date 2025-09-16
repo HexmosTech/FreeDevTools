@@ -8,17 +8,12 @@ import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
-
+import ToolVideo from "@/components/tool/ToolVideo";
 // Image Upload Component
 interface ImageUploadProps {
   onFileSelect: (file: File) => void;
@@ -575,6 +570,12 @@ const ImageToBase64: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: What are Base64 Encoded Images and why are they used?"
+              description="This video explains the concept of Base64-encoded images and their use cases in web development, such as embedding images directly into HTML or CSS files."
+              videoUrl="https://www.youtube.com/embed/MI0W6FdDjTY"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

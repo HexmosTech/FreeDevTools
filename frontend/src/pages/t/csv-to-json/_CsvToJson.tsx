@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // CSV to JSON conversion utility
 const convertCsvToJson = (
@@ -229,8 +230,7 @@ David Wilson,32,Australia,david@example.com`;
           {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
-              <CardHeader>
-              </CardHeader>
+              <CardHeader></CardHeader>
               <CardContent className="space-y-6">
                 {/* Input and Output Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -657,6 +657,12 @@ Alice,30,Canada`}
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: How to convert a CSV file to JSON in 1 minute / CSV to JSON"
+              description="This video provides a quick tutorial on converting a CSV file to JSON, outlining the process and tools involved."
+              videoUrl="https://www.youtube.com/embed/hyV71RJeuOI"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

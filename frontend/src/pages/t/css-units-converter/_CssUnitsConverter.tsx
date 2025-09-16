@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // CSS Unit conversion utilities
 const pxToRem = (px: number, baseFontSize: number = 16): number => {
@@ -301,8 +302,7 @@ const CssUnitsConverter: React.FC = () => {
           {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
-              <CardHeader>
-              </CardHeader>
+              <CardHeader></CardHeader>
               <CardContent className="space-y-6">
                 {/* Input and Output Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -770,6 +770,12 @@ const CssUnitsConverter: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: CSS Units Explained for Responsive Web Design"
+              description="This video dives into CSS units, explaining the difference between absolute and relative units and their importance in creating responsive websites."
+              videoUrl="https://www.youtube.com/embed/8HkGwdUDOcc"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

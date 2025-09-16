@@ -8,14 +8,10 @@ import YamlToJsonSkeleton from "./_YamlToJsonSkeleton";
 import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 // YAML to JSON conversion utility using js-yaml
 const convertYamlToJson = async (yamlString: string): Promise<string> => {
@@ -651,6 +647,12 @@ prod:
                 </div>
               </CardContent>
             </Card>
+
+            <ToolVideo
+              title="Learn More: YAML Tutorial | Learn YAML in 10 Minutes"
+              description="This tutorial provides a quick and comprehensive introduction to YAML, covering its basic syntax and how it compares to other data formats like JSON."
+              videoUrl="https://www.youtube.com/embed/BEki_rsWu4E"
+            />
           </ToolContentCardWrapper>
         </ToolBody>
       )}

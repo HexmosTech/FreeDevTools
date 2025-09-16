@@ -25,6 +25,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import React, { useEffect, useState } from "react";
 import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
+import ToolVideo from "@/components/tool/ToolVideo";
 
 interface PasswordOptions {
   length: number;
@@ -454,17 +455,18 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${options.length === 16 &&
-                        options.includeUppercase &&
-                        options.includeLowercase &&
-                        options.includeNumbers &&
-                        options.includeSymbols &&
-                        !options.easyToRead &&
-                        !options.easyToSay &&
-                        !options.useWords
+                    className={`p-3 text-center ${
+                      options.length === 16 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      options.includeSymbols &&
+                      !options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                      }`}
+                    }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Strong
@@ -489,17 +491,18 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${options.length === 12 &&
-                        options.includeUppercase &&
-                        options.includeLowercase &&
-                        options.includeNumbers &&
-                        !options.includeSymbols &&
-                        options.easyToRead &&
-                        !options.easyToSay &&
-                        !options.useWords
+                    className={`p-3 text-center ${
+                      options.length === 12 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      !options.includeSymbols &&
+                      options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                      }`}
+                    }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Easy to Type
@@ -523,16 +526,17 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${options.wordCount === 3 &&
-                        options.includeUppercase &&
-                        options.includeLowercase &&
-                        options.includeNumbers &&
-                        !options.includeSymbols &&
-                        options.useWords &&
-                        options.separator === "-"
+                    className={`p-3 text-center ${
+                      options.wordCount === 3 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      !options.includeSymbols &&
+                      options.useWords &&
+                      options.separator === "-"
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                      }`}
+                    }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Memorable
@@ -557,17 +561,18 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${options.length === 32 &&
-                        options.includeUppercase &&
-                        options.includeLowercase &&
-                        options.includeNumbers &&
-                        options.includeSymbols &&
-                        !options.easyToRead &&
-                        !options.easyToSay &&
-                        !options.useWords
+                    className={`p-3 text-center ${
+                      options.length === 32 &&
+                      options.includeUppercase &&
+                      options.includeLowercase &&
+                      options.includeNumbers &&
+                      options.includeSymbols &&
+                      !options.easyToRead &&
+                      !options.easyToSay &&
+                      !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                      }`}
+                    }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Ultra Secure
@@ -593,10 +598,11 @@ const PasswordGenerator: React.FC = () => {
                     onClick={() => updateOption("useWords", false)}
                     variant="outline"
                     size="custom"
-                    className={`p-4 text-left whitespace-normal ${!options.useWords
+                    className={`p-4 text-left whitespace-normal ${
+                      !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950"
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                      }`}
+                    }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Character-Based
@@ -613,10 +619,11 @@ const PasswordGenerator: React.FC = () => {
                     onClick={() => updateOption("useWords", true)}
                     variant="outline"
                     size="custom"
-                    className={`p-4 text-left whitespace-normal ${options.useWords
+                    className={`p-4 text-left whitespace-normal ${
+                      options.useWords
                         ? "bg-blue-50 dark:bg-blue-950"
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                      }`}
+                    }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Word-Based
@@ -836,33 +843,11 @@ const PasswordGenerator: React.FC = () => {
           {/* CONTENT CARDS SECTION */}
           <ToolContentCardWrapper>
             {/* Educational Video - Content Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-slate-700 dark:text-slate-300">
-                  Learn More: Password Security Explained
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-slate-800 dark:text-slate-400 mb-4">
-                  Watch this educational video to understand the fundamentals of
-                  password security and why strong passwords matter for your
-                  digital safety.
-                </p>
-                <div
-                  className="relative w-full"
-                  style={{ paddingBottom: "56.25%" }}
-                >
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full rounded-lg"
-                    src="https://www.youtube.com/embed/vKPGZHoHX8k"
-                    title="Password Security Explained"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </CardContent>
-            </Card>
+            <ToolVideo
+              title="Password Security Explained"
+              description="Watch this educational video to understand the fundamentals of password security and why strong passwords matter for your digital safety."
+              videoUrl="https://www.youtube.com/embed/vKPGZHoHX8k"
+            />
 
             {/* Understanding Password Security - Content Card */}
             <Card>
