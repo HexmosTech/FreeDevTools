@@ -4,7 +4,7 @@ export const GET: APIRoute = ({ site }) => {
   const robotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: ${site}/freedevtools/sitemap.xml`;
+Sitemap: ${site}/sitemap.xml`;
 
   return new Response(robotsTxt, {
     headers: {
