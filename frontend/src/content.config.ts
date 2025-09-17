@@ -3,7 +3,7 @@ import { defineCollection, z } from "astro:content";
 
 // Check if we're in development mode
 // Astro sets NODE_ENV=production during build, and ASTRO_MODE=dev during dev
-const forceTldrBuild = true;
+const forceTldrBuild = false;
 
 // Define the tldr collection schema based on the frontmatter structure
 const tldr = defineCollection({
