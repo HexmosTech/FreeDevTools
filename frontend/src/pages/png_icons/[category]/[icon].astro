@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AdBanner from '../../../components/banner/AdBanner';
 import IconEditor from '../../../components/IconEditor';
 import { getCollection } from 'astro:content';
+import ToastProvider from '../../../components/ToastProvider';
 
 export async function getStaticPaths() {
   // Load the clustor.json file to get all icons
@@ -103,7 +104,8 @@ const canonical = `https://hexmos.com/freedevtools/png_icons/${category}/${icon}
     "category": iconData.category
   })} />
 
-  <div class="max-w-6xl mx-auto px-2 md:px-6">
+  <ToastProvider client:load>
+    <div class="max-w-6xl mx-auto px-2 md:px-6">
     <div class="mb-16 mt-[74px]">
       <AdBanner client:load />
     </div>
@@ -234,6 +236,7 @@ const canonical = `https://hexmos.com/freedevtools/png_icons/${category}/${icon}
       </div>
     </div>
   </div>
+  </ToastProvider>
 
   <!-- Icon Editor Modal -->
   <div id="icon-editor-container"></div>
@@ -426,61 +429,64 @@ const canonical = `https://hexmos.com/freedevtools/png_icons/${category}/${icon}
       URL.revokeObjectURL(url);
     }
     
-    function copyAsPNG() {
+    async function copyAsPNG() {
       const svgElement = document.querySelector('#icon-preview svg');
       if (!svgElement) return;
       
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const svgData = new XMLSerializer().serializeToString(svgElement);
-      const img = new Image();
-      
-      canvas.width = 512;
-      canvas.height = 512;
-      
-      img.onload = () => {
-        ctx?.drawImage(img, 0, 0, 512, 512);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            navigator.clipboard.write([
-              new ClipboardItem({
-                'image/png': blob
-              })
-            ]).then(() => {
-              showToast('PNG copied to clipboard!');
-            }).catch(() => {
-              showToast('Failed to copy PNG to clipboard');
-            });
-          }
-        }, 'image/png');
-      };
-      
-      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const img = new Image();
+        
+        canvas.width = 512;
+        canvas.height = 512;
+        
+        await new Promise((resolve, reject) => {
+          img.onload = () => {
+            ctx?.drawImage(img, 0, 0, 512, 512);
+            canvas.toBlob((blob) => {
+              if (blob) {
+                navigator.clipboard.write([
+                  new ClipboardItem({
+                    'image/png': blob
+                  })
+                ]).then(async () => {
+                  // Use react-toastify
+                  const { toast } = await import('react-toastify');
+                  toast.success('PNG copied to clipboard!');
+                }).catch(async () => {
+                  const { toast } = await import('react-toastify');
+                  toast.error('Failed to copy PNG to clipboard');
+                });
+              }
+              resolve();
+            }, 'image/png');
+          };
+          img.onerror = reject;
+          img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+        });
+      } catch (error) {
+        const { toast } = await import('react-toastify');
+        toast.error('Failed to copy PNG to clipboard');
+      }
     }
     
-    function copyAsSVG() {
+    async function copyAsSVG() {
       const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
       if (!svgElement) return;
       
-      const svgData = new XMLSerializer().serializeToString(svgElement);
-      navigator.clipboard.writeText(svgData).then(() => {
-        showToast('SVG copied to clipboard!');
-      }).catch(() => {
-        showToast('Failed to copy SVG to clipboard');
-      });
+      try {
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        await navigator.clipboard.writeText(svgData);
+        const { toast } = await import('react-toastify');
+        toast.success('SVG copied to clipboard!');
+      } catch (error) {
+        const { toast } = await import('react-toastify');
+        toast.error('Failed to copy SVG to clipboard');
+      }
     }
     
-    function showToast(message: string) {
-      // Simple toast notification
-      const toast = document.createElement('div');
-      toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 3000);
-    }
     
   });
 </script>
