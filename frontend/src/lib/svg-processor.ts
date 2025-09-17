@@ -119,15 +119,12 @@ export function processSVGContent(
   let processedSvg = svgContent;
 
   if (isIrregular) {
-    // Normalize dimensions for irregular SVGs
-    const normalized = normalizeSVGDimensions(dimensions);
+    // For irregular SVGs, use the original viewBox but add padding
+    const paddingX = dimensions.width * padding;
+    const paddingY = dimensions.height * padding;
+    const paddedViewBox = `${-paddingX} ${-paddingY} ${dimensions.width + paddingX * 2} ${dimensions.height + paddingY * 2}`;
 
-    // Calculate padding for the viewBox
-    const paddingX = normalized.width * padding;
-    const paddingY = normalized.height * padding;
-    const paddedViewBox = `${-paddingX} ${-paddingY} ${normalized.width + paddingX * 2} ${normalized.height + paddingY * 2}`;
-
-    // Replace the SVG tag with normalized attributes and padding
+    // Replace the SVG tag with proper attributes and padding
     processedSvg = processedSvg.replace(
       /<svg[^>]*>/,
       `<svg width="${targetSize}" height="${targetSize}" viewBox="${paddedViewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;">`
