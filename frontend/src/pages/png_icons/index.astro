@@ -6,25 +6,15 @@ import BottomPagination from '../../components/BottomPagination.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 30;
 
 async function getAllIcons() {
-  // Try direct file loading instead of content collection
-  const { glob } = await import('glob');
+  // Load the clustor.json file
   const fs = await import('fs/promises');
   const path = await import('path');
   
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
-  
-  const svgIcons = await Promise.all(svgFiles.map(async file => {
-    const filePath = path.join('./src/pages/svg_icons/_icons', file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return {
-      id: file,
-      data: {},
-      body: content
-    };
-  }));
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
   const iconsByCategory: Record<
     string,
@@ -37,47 +27,37 @@ async function getAllIcons() {
     }>
   > = {};
 
-  for (const entry of svgIcons) {
-    // Extract category and icon name from path
-    const pathParts = (entry as any).id.split("/");
-    const fileName = pathParts[pathParts.length - 1]; // e.g., 'beagle.svg'
-    const iconName = fileName.replace(".svg", ""); // e.g., 'beagle'
+  // Process each cluster (category)
+  for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
+    const cluster = clusterData as any;
+    const categoryName = cluster.name; // Use the name from the cluster data
     
-    // Determine category from directory structure or frontmatter
-    let category = 'general';
-    if (pathParts.length > 1) {
-      const dirName = pathParts[pathParts.length - 2];
-      if (dirName === 'arcticons') {
-        category = 'technology';
-      } else if (dirName === 'free-icons') {
-        category = 'general';
-      } else {
-        category = dirName;
+    if (!iconsByCategory[categoryName]) {
+      iconsByCategory[categoryName] = [];
+    }
+
+    // Process each file in the cluster
+    for (const fileName of cluster.fileNames) {
+      const iconName = fileName.replace(".svg", "");
+      
+      // Read the SVG file content from the category folder
+      const filePath = path.join('./src/pages/svg_icons/_icons', categoryName, fileName);
+      let svgContent = '';
+      try {
+        svgContent = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`Could not read file: ${categoryName}/${fileName}`);
+        continue;
       }
+
+      iconsByCategory[categoryName].push({
+        name: iconName,
+        url: `/freedevtools/png_icons/${categoryName}/${iconName}`,
+        description: `Free ${iconName} icon`,
+        category: categoryName,
+        svgContent: svgContent,
+      });
     }
-    
-    // Override with frontmatter if available
-    category = (entry as any).data?.category || category;
-
-    if (!iconsByCategory[category]) {
-      iconsByCategory[category] = [];
-    }
-
-    // Get description from frontmatter if available
-    const description =
-      (entry as any).data?.description ||
-      (entry as any).data?.name ||
-      `Free ${iconName} icon`;
-
-    const iconName_final = (entry as any).data?.name || iconName;
-
-    iconsByCategory[category].push({
-      name: iconName_final,
-      url: `/freedevtools/png_icons/${category}/${iconName}`,
-      description,
-      category,
-      svgContent: entry.body,
-    });
   }
 
   return iconsByCategory;
@@ -168,6 +148,21 @@ const categoryIconMap = {
       itemsLabel="categories"
     />
     
+    <!-- Letter Filter -->
+    <div class="mt-8 mb-6">
+      <div class="flex flex-wrap gap-2 justify-center">
+        <div id="letter-filters" class="flex flex-wrap gap-2">
+          <!-- Letters A-Z will be generated dynamically -->
+        </div>
+        <button 
+          id="filter-others"
+          class="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600"
+        >
+          Others
+        </button>
+      </div>
+    </div>
+    
     <!-- Credits Section -->
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
@@ -188,15 +183,6 @@ const categoryIconMap = {
   </div>
 </BaseLayout>
 
-<style>
-  .icon-preview svg {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 20px;
-    max-height: 20px;
-    display: block;
-  }
-</style>
 
 <script define:vars={{ allIcons, allCategories, totalCategories, totalPages, ITEMS_PER_PAGE, categoryIconMap }}>
   // Category icon mapping
@@ -206,6 +192,7 @@ const categoryIconMap = {
   let currentPage = 1;
   let itemsPerPage = ITEMS_PER_PAGE;
   let searchQuery = '';
+  let letterFilter = '';
   
   // Get current page and items per page from URL
   function getCurrentPageFromURL() {
@@ -270,12 +257,14 @@ const categoryIconMap = {
     return pages;
   }
   
-  // Filter icons based on search query
-  function filterIcons(categories, query) {
-    if (!query.trim()) return categories;
+  // Filter icons based on search query and letter filter
+  function filterIcons(categories, query, letter) {
+    let filtered = categories;
     
-    const filtered = {};
+    // Apply search filter
+    if (query.trim()) {
     const searchLower = query.toLowerCase();
+      const searchFiltered = {};
     
     Object.entries(categories).forEach(([category, icons]) => {
       const matchingIcons = icons.filter(icon => 
@@ -285,84 +274,85 @@ const categoryIconMap = {
       );
       
       if (matchingIcons.length > 0) {
-        filtered[category] = matchingIcons;
-      }
-    });
+          searchFiltered[category] = matchingIcons;
+        }
+      });
+      
+      filtered = searchFiltered;
+    }
+    
+    // Apply letter filter
+    if (letter) {
+      const letterFiltered = {};
+      
+      Object.entries(filtered).forEach(([category, icons]) => {
+        const firstChar = category.charAt(0).toLowerCase();
+        
+        if (letter === 'others') {
+          // Show categories that start with numbers or symbols
+          if (!/[a-z]/.test(firstChar)) {
+            letterFiltered[category] = icons;
+          }
+        } else {
+          // Show categories that start with the selected letter
+          if (firstChar === letter.toLowerCase()) {
+            letterFiltered[category] = icons;
+          }
+        }
+      });
+      
+      filtered = letterFiltered;
+    }
     
     return filtered;
   }
   
-  // Render icon card
-  function renderIconCard(icon) {
-    return `
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-lg p-1.5 cursor-pointer icon-card hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200" data-icon-name="${icon.name}" data-icon-url="${icon.url}">
-        <div class="flex flex-col items-center text-center">
-          <div class="w-8 h-8 bg-slate-50 dark:bg-slate-800 rounded-md flex items-center justify-center mb-1">
-            <div class="w-5 h-5 text-slate-600 dark:text-slate-400 icon-preview" style="display: flex; align-items: center; justify-content: center;">
-              ${icon.svgContent}
-            </div>
-          </div>
-          <p class="text-slate-900 dark:text-slate-100 leading-tight">${icon.name}</p>
-        </div>
-      </div>
-    `;
-  }
-  
   // Render category card
   function renderCategoryCard(category, categoryIcons) {
-    const iconUrl = categoryIcons[category] || 'https://cdn-icons-png.flaticon.com/512/5515/5515389.png';
+    // Always create 6 slots for consistent 2-row layout (3 columns x 2 rows)
+    const iconSlots = Array(6).fill(null);
     
-    const iconsHtml = categoryIcons.slice(0, 9).map(icon => 
-      renderIconCard(icon)
-    ).join('');
+    // Fill available slots with icons
+    categoryIcons.slice(0, 6).forEach((icon, index) => {
+      iconSlots[index] = `<div class="flex items-center justify-center p-1">
+        <div class="w-8 h-8 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
+          <div class="w-8 h-8 flex items-center justify-center">
+            ${icon.svgContent}
+          </div>
+        </div>
+      </div>`;
+    });
     
-    const moreIconsHtml = categoryIcons.length > 9 ? 
-      `<p class="text-xs text-slate-500 dark:text-slate-400 text-center">+${categoryIcons.length - 9} more icons</p>` : '';
+    // Fill empty slots with transparent placeholders that maintain the grid structure
+    const iconsHtml = iconSlots.map(slot => {
+      return slot || `<div class="flex items-center justify-center p-1">
+        <div class="w-8 h-8"></div>
+      </div>`;
+    }).join('');
     
     return `
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-900 rounded-xl p-4 md:p-4 lg:p-8 shadow-sm">
-        <div class="flex items-center mb-4">
-          <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center mr-3 border border-slate-200 dark:border-slate-700">
-            <img 
-              src="${iconUrl}"
-              alt="${category} logo"
-              class="w-8 h-8 object-contain"
-              onerror="this.src='https://via.placeholder.com/40x40/3b82f6/ffffff?text=' + this.alt.split(' ')[0].charAt(0).toUpperCase()"
-            />
-          </div>
-          <a 
-            href="/freedevtools/png_icons/${category}"
-            class="text-xl font-semibold text-black dark:text-neon-light capitalize hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
+      <a href="/freedevtools/png_icons/${category}" class="block">
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-900 capitalize">
             ${category.replace('-', ' ')}
-          </a>
+            </h3>
+            <span class="text-sm text-slate-500 font-medium">
+              ${categoryIcons.length} ICONS
+            </span>
         </div>
         
-        <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
-          ${categoryIcons.length} icons available
-        </p>
-        
-        <div class="grid grid-cols-3 gap-1 mb-4">
+          <div class="grid grid-cols-3 gap-2 gap-y-3 w-full h-20">
           ${iconsHtml}
         </div>
-        
-        ${moreIconsHtml}
-        
-        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-900">
-          <a 
-            href="/freedevtools/png_icons/${category}"
-            class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-          >
-            View all ${category} icons →
-          </a>
         </div>
-      </div>
+      </a>
     `;
   }
   
   // Render pagination
   function renderPagination() {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -419,11 +409,58 @@ const categoryIconMap = {
     // Show bottom pagination if there are multiple pages
     const bottomPagination = document.getElementById('bottom-pagination');
     bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+    
+    // Update letter filter buttons
+    updateLetterFilters(filteredCategories);
+  }
+  
+  // Generate and update letter filter buttons
+  function updateLetterFilters(categories) {
+    const letterFiltersContainer = document.getElementById('letter-filters');
+    if (!letterFiltersContainer) return;
+    
+    // Count categories for each letter (always use all categories, not filtered ones)
+    const letterCounts = {};
+    Object.keys(allIcons).forEach(category => {
+      const firstChar = category.charAt(0).toLowerCase();
+      if (/[a-z]/.test(firstChar)) {
+        letterCounts[firstChar] = (letterCounts[firstChar] || 0) + 1;
+      } else {
+        letterCounts['others'] = (letterCounts['others'] || 0) + 1;
+      }
+    });
+    
+    // Generate A-Z buttons
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const letterButtons = letters.map(letter => {
+      const count = letterCounts[letter] || 0;
+      const isActive = letterFilter === letter;
+      const buttonClass = isActive 
+        ? 'px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors border border-blue-600'
+        : 'px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600';
+      
+      return `<button class="letter-filter-btn ${buttonClass}" data-letter="${letter}">
+        ${letter.toUpperCase()} (${count})
+      </button>`;
+    }).join('');
+    
+    letterFiltersContainer.innerHTML = letterButtons;
+    
+    // Update Others button
+    const othersBtn = document.getElementById('filter-others');
+    if (othersBtn) {
+      const othersCount = letterCounts['others'] || 0;
+      const isActive = letterFilter === 'others';
+      othersBtn.className = isActive 
+        ? 'px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors border border-blue-600'
+        : 'px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600';
+      othersBtn.textContent = `Others (${othersCount})`;
+    }
   }
   
   // Navigate to page
   function goToPage(page) {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
     
@@ -441,7 +478,7 @@ const categoryIconMap = {
   
   // Handle items per page change
   function handleItemsPerPageChange(newItemsPerPage) {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const newTotalPages = Math.ceil(filteredCategories.length / newItemsPerPage);
     const newCurrentPage = Math.min(currentPage, newTotalPages);
@@ -459,6 +496,18 @@ const categoryIconMap = {
   // Handle search
   function handleSearch(query) {
     searchQuery = query;
+    currentPage = 1;
+    renderPagination();
+  }
+  
+  // Handle letter filter
+  function handleLetterFilter(letter) {
+    // Toggle: if same letter is clicked, clear filter
+    if (letterFilter === letter) {
+      letterFilter = '';
+    } else {
+      letterFilter = letter;
+    }
     currentPage = 1;
     renderPagination();
   }
@@ -495,6 +544,21 @@ const categoryIconMap = {
         const iconCard = e.target.closest('.icon-card');
         const iconUrl = iconCard.dataset.iconUrl;
         window.location.href = iconUrl;
+        return;
+      }
+      
+      // Handle letter filter clicks
+      if (e.target.classList.contains('letter-filter-btn')) {
+        e.preventDefault();
+        const letter = e.target.dataset.letter;
+        handleLetterFilter(letter);
+        return;
+      }
+      
+      // Handle Others filter click
+      if (e.target.id === 'filter-others') {
+        e.preventDefault();
+        handleLetterFilter('others');
         return;
       }
     });

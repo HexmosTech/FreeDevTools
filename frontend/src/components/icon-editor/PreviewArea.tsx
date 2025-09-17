@@ -34,15 +34,15 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({ svgContent, iconName, svgRef,
   }, [processedSvgContent]);
 
   return (
-    <div className="flex-1 bg-slate-50 dark:bg-slate-800 flex items-center justify-center p-8">
-      <div className="relative">
+    <div className="flex-1 bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-8">
+      <div className="relative bg-slate-50">
         {/* Checkered background pattern */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-20 ">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="checkerboard" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
+                <rect width="10" height="10" fill="currentColor" className="text-slate-300" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" className="text-slate-300" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#checkerboard)" />

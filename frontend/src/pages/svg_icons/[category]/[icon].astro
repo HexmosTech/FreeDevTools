@@ -3,62 +3,53 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AdBanner from '../../../components/banner/AdBanner';
 import IconEditor from '../../../components/IconEditor';
 import { getCollection } from 'astro:content';
+import ToastProvider from '../../../components/ToastProvider';
 
 export async function getStaticPaths() {
-  // Use direct file loading instead of content collection
-  const { glob } = await import('glob');
+  // Load the clustor.json file to get all icons
   const fs = await import('fs/promises');
   const path = await import('path');
   
-  const svgFiles = await glob('**/*.svg', { cwd: './src/pages/svg_icons/_icons' });
-  console.log('🔍 DEBUG: getStaticPaths found', svgFiles.length, 'SVG files');
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
   
-  const svgIcons = await Promise.all(svgFiles.map(async file => {
-    const filePath = path.join('./src/pages/svg_icons/_icons', file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return {
-      id: file,
-      data: {},
-      body: content
-    };
-  }));
+  const paths = [];
   
-  const paths = svgIcons.map((entry: any) => {
-    const pathParts = entry.id.split("/");
-    const fileName = pathParts[pathParts.length - 1];
-    const iconName = fileName.replace(".svg", "");
+  // Process each cluster (category)
+  for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
+    const cluster = clusterData as any;
+    const categoryName = cluster.name; // Use the name from the cluster data
     
-    // Determine category from directory structure or frontmatter
-    let category = 'general';
-    if (pathParts.length > 1) {
-      const dirName = pathParts[pathParts.length - 2];
-      if (dirName === 'arcticons') {
-        category = 'technology';
-      } else if (dirName === 'free-icons') {
-        category = 'general';
-      } else {
-        category = dirName;
+    // Process each file in the cluster
+    for (const fileName of cluster.fileNames) {
+      const iconName = fileName.replace(".svg", "");
+      
+      // Read the SVG file content from the category folder
+      const filePath = path.join('./src/pages/svg_icons/_icons', categoryName, fileName);
+      let svgContent = '';
+      try {
+        svgContent = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`Could not read file: ${categoryName}/${fileName}`);
+        continue;
       }
-    }
-    
-    // Override with frontmatter if available
-    category = entry.data?.category || category;
-    
-    return {
-      params: { category: category, icon: iconName },
-      props: {
-        iconData: {
-          name: entry.data?.name || iconName,
-          description: entry.data?.description || `Free ${iconName} icon`,
-          category: category,
-          svgContent: entry.body,
-          tags: entry.data?.tags || [],
-          author: entry.data?.author || 'Free DevTools',
-          license: entry.data?.license || 'MIT'
+      
+      paths.push({
+        params: { category: categoryName, icon: iconName },
+        props: {
+          iconData: {
+            name: iconName,
+            description: `Free ${iconName} icon`,
+            category: categoryName,
+            svgContent: svgContent,
+            tags: cluster.keywords || [],
+            author: 'Free DevTools',
+            license: 'MIT'
+          }
         }
-      }
-    };
-  });
+      });
+    }
+  }
   
   console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
   console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));
@@ -87,7 +78,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
 
 <BaseLayout 
   name={iconData.name}
-  path={`/svg_icons/${category}/${icon}`}
+  path={`/freedevtools/svg_icons/${category}/${icon}`}
   title={seoTitle}
   description={seoDescription}
   canonical={canonical}
@@ -113,7 +104,8 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     "category": iconData.category
   })} />
 
-  <div class="max-w-6xl mx-auto px-2 md:px-6">
+  <ToastProvider client:load>
+    <div class="max-w-6xl mx-auto px-2 md:px-6">
     <div class="mb-16 mt-[74px]">
       <AdBanner client:load />
     </div>
@@ -230,7 +222,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
         <a 
-          href="/freedevtools/svg_pages/" 
+          href="/freedevtools/svg_icons/" 
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
         >
           ←  Back to SVG Icons
@@ -244,6 +236,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
       </div>
     </div>
   </div>
+  </ToastProvider>
 
   <!-- Icon Editor Modal -->
   <div id="icon-editor-container"></div>
@@ -436,61 +429,64 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
       URL.revokeObjectURL(url);
     }
     
-    function copyAsPNG() {
+    async function copyAsPNG() {
       const svgElement = document.querySelector('#icon-preview svg');
       if (!svgElement) return;
       
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const svgData = new XMLSerializer().serializeToString(svgElement);
-      const img = new Image();
-      
-      canvas.width = 512;
-      canvas.height = 512;
-      
-      img.onload = () => {
-        ctx?.drawImage(img, 0, 0, 512, 512);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            navigator.clipboard.write([
-              new ClipboardItem({
-                'image/png': blob
-              })
-            ]).then(() => {
-              showToast('PNG copied to clipboard!');
-            }).catch(() => {
-              showToast('Failed to copy PNG to clipboard');
-            });
-          }
-        }, 'image/png');
-      };
-      
-      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const img = new Image();
+        
+        canvas.width = 512;
+        canvas.height = 512;
+        
+        await new Promise((resolve, reject) => {
+          img.onload = () => {
+            ctx?.drawImage(img, 0, 0, 512, 512);
+            canvas.toBlob((blob) => {
+              if (blob) {
+                navigator.clipboard.write([
+                  new ClipboardItem({
+                    'image/png': blob
+                  })
+                ]).then(async () => {
+                  // Use react-toastify
+                  const { toast } = await import('react-toastify');
+                  toast.success('PNG copied to clipboard!');
+                }).catch(async () => {
+                  const { toast } = await import('react-toastify');
+                  toast.error('Failed to copy PNG to clipboard');
+                });
+              }
+              resolve();
+            }, 'image/png');
+          };
+          img.onerror = reject;
+          img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+        });
+      } catch (error) {
+        const { toast } = await import('react-toastify');
+        toast.error('Failed to copy PNG to clipboard');
+      }
     }
     
-    function copyAsSVG() {
+    async function copyAsSVG() {
       const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
       if (!svgElement) return;
       
-      const svgData = new XMLSerializer().serializeToString(svgElement);
-      navigator.clipboard.writeText(svgData).then(() => {
-        showToast('SVG copied to clipboard!');
-      }).catch(() => {
-        showToast('Failed to copy SVG to clipboard');
-      });
+      try {
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        await navigator.clipboard.writeText(svgData);
+        const { toast } = await import('react-toastify');
+        toast.success('SVG copied to clipboard!');
+      } catch (error) {
+        const { toast } = await import('react-toastify');
+        toast.error('Failed to copy SVG to clipboard');
+      }
     }
     
-    function showToast(message: string) {
-      // Simple toast notification
-      const toast = document.createElement('div');
-      toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 3000);
-    }
     
   });
 </script>
