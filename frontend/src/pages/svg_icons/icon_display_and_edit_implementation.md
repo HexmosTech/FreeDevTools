@@ -39,6 +39,16 @@ This document outlines the complete implementation plan for the SVG icon display
 - **State management issues** - History/undo-redo system is incomplete
 - **Export pipeline broken** - PNG/SVG export doesn't work properly
 
+### Repo instruction
+
+One tthing for yo uto understand is this is astro
+You are working on svg_icons edit features
+
+if you need to import a js or tsx component in astro you need to do like this client:load
+<ThemeProvider client:load>
+<Header client:load />
+</ThemeProvider>
+
 ## Current Features Analysis
 
 ### ❌ BROKEN - Nothing is Working Properly
