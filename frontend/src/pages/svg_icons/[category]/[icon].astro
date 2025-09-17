@@ -4,6 +4,7 @@ import AdBanner from '../../../components/banner/AdBanner';
 import IconEditor from '../../../components/IconEditor';
 import { getCollection } from 'astro:content';
 import ToastProvider from '../../../components/ToastProvider';
+import { processSVGContent } from '../../../lib/svg-processor';
 
 export async function getStaticPaths() {
   // Load the clustor.json file to get all icons
@@ -34,6 +35,9 @@ export async function getStaticPaths() {
         continue;
       }
       
+      // Process SVG content to handle irregular dimensions
+      const processedSvgContent = processSVGContent(svgContent, 128);
+      
       paths.push({
         params: { category: categoryName, icon: iconName },
         props: {
@@ -41,7 +45,8 @@ export async function getStaticPaths() {
             name: iconName,
             description: `Free ${iconName} icon`,
             category: categoryName,
-            svgContent: svgContent,
+            svgContent: processedSvgContent,
+            originalSvgContent: svgContent, // Keep original for downloads
             tags: cluster.keywords || [],
             author: 'Free DevTools',
             license: 'MIT'
@@ -130,7 +135,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     <!-- Icon Display and Controls -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
       <!-- Big Canvas with Icon -->
-      <div class="rounded-xl relative min-h-[400px] flex items-center justify-center" style="background-color: #f7f7f7;">
+      <div class="rounded-xl relative icon-display-container" style="background-color: #f7f7f7;">
         <!-- Edit Button - Absolute positioned top right -->
         <button 
           id="edit-icon-btn"
@@ -143,7 +148,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
         </button>
         
         <!-- Icon Display -->
-        <div id="icon-preview" class="w-32 h-32 text-slate-600 dark:text-slate-400" set:html={iconData.svgContent}></div>
+        <div id="icon-preview" class="text-slate-600 dark:text-slate-400" set:html={iconData.svgContent}></div>
       </div>
       
       <!-- 2x2 Button Grid -->
@@ -389,12 +394,12 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     
     // Functions
     function downloadAsPNG(size = 512) {
-      const svgElement = document.querySelector('#icon-preview svg');
-      if (!svgElement) return;
+      // Use original SVG content for downloads to maintain quality
+      const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+      if (!svgData) return;
       
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const svgData = new XMLSerializer().serializeToString(svgElement);
       const img = new Image();
       
       canvas.width = size;
@@ -414,10 +419,10 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     }
     
     function downloadAsSVG() {
-      const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
-      if (!svgElement) return;
+      // Use original SVG content for downloads to maintain quality
+      const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+      if (!svgData) return;
       
-      const svgData = new XMLSerializer().serializeToString(svgElement);
       const blob = new Blob([svgData], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       
@@ -430,19 +435,19 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     }
     
     async function copyAsPNG() {
-      const svgElement = document.querySelector('#icon-preview svg');
-      if (!svgElement) return;
+      // Use original SVG content for copying to maintain quality
+      const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+      if (!svgData) return;
       
       try {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const svgData = new XMLSerializer().serializeToString(svgElement);
         const img = new Image();
         
         canvas.width = 512;
         canvas.height = 512;
         
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           img.onload = () => {
             ctx?.drawImage(img, 0, 0, 512, 512);
             canvas.toBlob((blob) => {
@@ -460,7 +465,7 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
                   toast.error('Failed to copy PNG to clipboard');
                 });
               }
-              resolve();
+              resolve(undefined);
             }, 'image/png');
           };
           img.onerror = reject;
@@ -473,11 +478,11 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     }
     
     async function copyAsSVG() {
-      const svgElement = document.querySelector('#icon-preview svg, #popup-icon-preview svg');
-      if (!svgElement) return;
+      // Use original SVG content for copying to maintain quality
+      const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+      if (!svgData) return;
       
       try {
-        const svgData = new XMLSerializer().serializeToString(svgElement);
         await navigator.clipboard.writeText(svgData);
         const { toast } = await import('react-toastify');
         toast.success('SVG copied to clipboard!');
@@ -490,3 +495,36 @@ const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}
     
   });
 </script>
+
+<style>
+  /* SVG Display Styles */
+  #icon-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 2rem; /* Add padding around the icon */
+  }
+  
+  #icon-preview svg {
+    max-width: 80% !important; /* Reduce size to 80% to add breathing room */
+    max-height: 80% !important;
+    width: auto !important;
+    height: auto !important;
+    display: block;
+    object-fit: contain;
+  }
+  
+  /* Ensure the container maintains aspect ratio */
+  .icon-display-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
