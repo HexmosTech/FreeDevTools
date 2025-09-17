@@ -6,7 +6,7 @@ import BottomPagination from '../../components/BottomPagination.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 30;
 
 async function getAllIcons() {
   // Load the clustor.json file
@@ -148,6 +148,27 @@ const categoryIconMap = {
       itemsLabel="categories"
     />
     
+    <!-- Letter Filter -->
+    <div class="mt-8 mb-6">
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button 
+          id="filter-clear"
+          class="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600"
+        >
+          Clear
+        </button>
+        <button 
+          id="filter-others"
+          class="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600"
+        >
+          Others
+        </button>
+        <div id="letter-filters" class="flex flex-wrap gap-2">
+          <!-- Letters A-Z will be generated dynamically -->
+        </div>
+      </div>
+    </div>
+    
     <!-- Credits Section -->
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
@@ -186,6 +207,7 @@ const categoryIconMap = {
   let currentPage = 1;
   let itemsPerPage = ITEMS_PER_PAGE;
   let searchQuery = '';
+  let letterFilter = '';
   
   // Get current page and items per page from URL
   function getCurrentPageFromURL() {
@@ -250,24 +272,52 @@ const categoryIconMap = {
     return pages;
   }
   
-  // Filter icons based on search query
-  function filterIcons(categories, query) {
-    if (!query.trim()) return categories;
+  // Filter icons based on search query and letter filter
+  function filterIcons(categories, query, letter) {
+    let filtered = categories;
     
-    const filtered = {};
-    const searchLower = query.toLowerCase();
-    
-    Object.entries(categories).forEach(([category, icons]) => {
-      const matchingIcons = icons.filter(icon => 
-        icon.name.toLowerCase().includes(searchLower) ||
-        icon.description?.toLowerCase().includes(searchLower) ||
-        category.toLowerCase().includes(searchLower)
-      );
+    // Apply search filter
+    if (query.trim()) {
+      const searchLower = query.toLowerCase();
+      const searchFiltered = {};
       
-      if (matchingIcons.length > 0) {
-        filtered[category] = matchingIcons;
-      }
-    });
+      Object.entries(categories).forEach(([category, icons]) => {
+        const matchingIcons = icons.filter(icon => 
+          icon.name.toLowerCase().includes(searchLower) ||
+          icon.description?.toLowerCase().includes(searchLower) ||
+          category.toLowerCase().includes(searchLower)
+        );
+        
+        if (matchingIcons.length > 0) {
+          searchFiltered[category] = matchingIcons;
+        }
+      });
+      
+      filtered = searchFiltered;
+    }
+    
+    // Apply letter filter
+    if (letter) {
+      const letterFiltered = {};
+      
+      Object.entries(filtered).forEach(([category, icons]) => {
+        const firstChar = category.charAt(0).toLowerCase();
+        
+        if (letter === 'others') {
+          // Show categories that start with numbers or symbols
+          if (!/[a-z]/.test(firstChar)) {
+            letterFiltered[category] = icons;
+          }
+        } else {
+          // Show categories that start with the selected letter
+          if (firstChar === letter.toLowerCase()) {
+            letterFiltered[category] = icons;
+          }
+        }
+      });
+      
+      filtered = letterFiltered;
+    }
     
     return filtered;
   }
@@ -319,7 +369,7 @@ const categoryIconMap = {
   
   // Render pagination
   function renderPagination() {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -376,11 +426,68 @@ const categoryIconMap = {
     // Show bottom pagination if there are multiple pages
     const bottomPagination = document.getElementById('bottom-pagination');
     bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+    
+    // Update letter filter buttons
+    updateLetterFilters(filteredCategories);
+  }
+  
+  // Generate and update letter filter buttons
+  function updateLetterFilters(categories) {
+    const letterFiltersContainer = document.getElementById('letter-filters');
+    if (!letterFiltersContainer) return;
+    
+    // Count categories for each letter
+    const letterCounts = {};
+    categories.forEach(category => {
+      const firstChar = category.charAt(0).toLowerCase();
+      if (/[a-z]/.test(firstChar)) {
+        letterCounts[firstChar] = (letterCounts[firstChar] || 0) + 1;
+      } else {
+        letterCounts['others'] = (letterCounts['others'] || 0) + 1;
+      }
+    });
+    
+    // Generate A-Z buttons
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const letterButtons = letters.map(letter => {
+      const count = letterCounts[letter] || 0;
+      const isActive = letterFilter === letter;
+      const buttonClass = isActive 
+        ? 'px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors border border-blue-600'
+        : 'px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600';
+      
+      return `<button class="letter-filter-btn ${buttonClass}" data-letter="${letter}" ${count === 0 ? 'disabled' : ''}>
+        ${letter.toUpperCase()}${count > 0 ? ` (${count})` : ''}
+      </button>`;
+    }).join('');
+    
+    letterFiltersContainer.innerHTML = letterButtons;
+    
+    // Update Others button
+    const othersBtn = document.getElementById('filter-others');
+    if (othersBtn) {
+      const othersCount = letterCounts['others'] || 0;
+      const isActive = letterFilter === 'others';
+      othersBtn.className = isActive 
+        ? 'px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors border border-blue-600'
+        : 'px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600';
+      othersBtn.textContent = `Others${othersCount > 0 ? ` (${othersCount})` : ''}`;
+      othersBtn.disabled = othersCount === 0;
+    }
+    
+    // Update Clear button
+    const clearBtn = document.getElementById('filter-clear');
+    if (clearBtn) {
+      const isActive = letterFilter === '';
+      clearBtn.className = isActive 
+        ? 'px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors border border-blue-600'
+        : 'px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors border border-slate-300 dark:border-slate-600';
+    }
   }
   
   // Navigate to page
   function goToPage(page) {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
     
@@ -398,7 +505,7 @@ const categoryIconMap = {
   
   // Handle items per page change
   function handleItemsPerPageChange(newItemsPerPage) {
-    const filteredIcons = filterIcons(allIcons, searchQuery);
+    const filteredIcons = filterIcons(allIcons, searchQuery, letterFilter);
     const filteredCategories = Object.keys(filteredIcons).sort();
     const newTotalPages = Math.ceil(filteredCategories.length / newItemsPerPage);
     const newCurrentPage = Math.min(currentPage, newTotalPages);
@@ -416,6 +523,13 @@ const categoryIconMap = {
   // Handle search
   function handleSearch(query) {
     searchQuery = query;
+    currentPage = 1;
+    renderPagination();
+  }
+  
+  // Handle letter filter
+  function handleLetterFilter(letter) {
+    letterFilter = letter;
     currentPage = 1;
     renderPagination();
   }
@@ -452,6 +566,28 @@ const categoryIconMap = {
         const iconCard = e.target.closest('.icon-card');
         const iconUrl = iconCard.dataset.iconUrl;
         window.location.href = iconUrl;
+        return;
+      }
+      
+      // Handle letter filter clicks
+      if (e.target.classList.contains('letter-filter-btn')) {
+        e.preventDefault();
+        const letter = e.target.dataset.letter;
+        handleLetterFilter(letter);
+        return;
+      }
+      
+      // Handle Others filter click
+      if (e.target.id === 'filter-others') {
+        e.preventDefault();
+        handleLetterFilter('others');
+        return;
+      }
+      
+      // Handle Clear filter click
+      if (e.target.id === 'filter-clear') {
+        e.preventDefault();
+        handleLetterFilter('');
         return;
       }
     });
