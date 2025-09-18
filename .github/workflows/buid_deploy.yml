@@ -12,30 +12,118 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Fetch last 2 commits to compare
+
+      - name: Check for changes in tool pages
+        id: check-changes
+        run: |
+          echo "🔍 Checking for changes in frontend/src/pages/t/..."
+
+          # Get changed files in the last commit, filter for frontend/src/pages/t/
+          changed=$(git diff --name-only HEAD~1 HEAD | grep "^frontend/src/pages/t/" || true)
+
+          if [ -n "$changed" ]; then
+            echo "📦 Changes detected:"
+            echo "$changed" | sed 's/^/ - /'
+            echo "Proceeding with build and deploy..."
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ No changes detected in frontend/src/pages/t/. Skipping build and deploy."
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Node.js
+        if: steps.check-changes.outputs.should_deploy == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ./frontend
+      - name: Create temporary build environment
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Creating temporary build environment..."
+          TMP_DIR="./tmp_build"
+          rm -rf $TMP_DIR ./frontend/dist
+          mkdir -p $TMP_DIR/src/pages
+          mkdir -p $TMP_DIR/public
 
-      - name: Build project
-        run: npm run build
-        working-directory: ./frontend
+      - name: Copy essential files
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Copying essential files..."
+          TMP_DIR="./tmp_build"
+          cd frontend
+
+          rsync -aL --prune-empty-dirs \
+            --include="package.json" \
+            --include="package-lock.json" \
+            --include="astro.config.mjs" \
+            --include="tailwind.config.js" \
+            --include="tsconfig.json" \
+            --include="components.json" \
+            --include="src/" \
+            --include="src/assets/**" \
+            --include="src/components/**" \
+            --include="src/config/**" \
+            --include="src/layouts/**" \
+            --include="src/lib/**" \
+            --include="src/styles/**" \
+            --include="src/content.config.ts" \
+            --include="public/**" \
+            --exclude="*" \
+            ./ ../$TMP_DIR/
+
+      - name: Copy tool pages
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Copying tool pages..."
+          TMP_DIR="./tmp_build"
+          cd frontend
+          rsync -aL src/pages/t/ ../$TMP_DIR/src/pages/t/
+          cp src/pages/index.astro ../$TMP_DIR/src/pages/index.astro 2>/dev/null || true
+
+      - name: Install dependencies and build
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Installing dependencies and building..."
+          cd tmp_build
+          npm install --omit=dev
+          npx astro build
+
+      - name: Copy build artifacts
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Copying build artifacts..."
+          rsync -aL tmp_build/dist/ ./frontend/dist/
 
       - name: Setup SSH
+        if: steps.check-changes.outputs.should_deploy == 'true'
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
+        if: steps.check-changes.outputs.should_deploy == 'true'
         run: |
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
+        if: steps.check-changes.outputs.should_deploy == 'true'
         run: |
+          echo "🚀 Deploying to server..."
           rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/lince_test_deploy/
+
+      - name: Cleanup
+        if: steps.check-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "✅ Cleaning up..."
+          rm -rf tmp_build
+          echo "🎉 Tool deployment complete!"
+
+      - name: Skip deployment message
+        if: steps.check-changes.outputs.should_deploy == 'false'
+        run: |
+          echo "⏭️ Skipping deployment - no changes in frontend/src/pages/t/"
