@@ -23,7 +23,8 @@ async function getAllIcons() {
       url: string;
       description?: string;
       category?: string;
-      svgContent?: string;
+      iconCount?: number;
+      previewSvg?: string;
     }>
   > = {};
 
@@ -36,18 +37,41 @@ async function getAllIcons() {
       iconsByCategory[categoryName] = [];
     }
 
-    // Process each file in the cluster
-    for (const fileName of cluster.fileNames) {
+    // Process each file in the cluster - load preview SVGs for first 6 icons only
+    for (let i = 0; i < cluster.fileNames.length; i++) {
+      const fileName = cluster.fileNames[i];
       const iconName = fileName.replace(".svg", "");
       
-      // Read the SVG file content from the category folder
-      const filePath = path.join('./src/pages/svg_icons/_icons', categoryName, fileName);
-      let svgContent = '';
-      try {
-        svgContent = await fs.readFile(filePath, 'utf-8');
-      } catch (error) {
-        console.warn(`Could not read file: ${categoryName}/${fileName}`);
-        continue;
+      let previewSvg = '';
+      
+      // Only load SVG content for the first 6 icons (for preview)
+      if (i < 6) {
+        const filePath = path.join('./src/pages/svg_icons/_icons', categoryName, fileName);
+        try {
+          const svgContent = await fs.readFile(filePath, 'utf-8');
+          
+          // Simple SVG processing for preview
+          if (svgContent.includes('<svg')) {
+            const widthMatch = svgContent.match(/width="([^"]*)"/);
+            const heightMatch = svgContent.match(/height="([^"]*)"/);
+            const viewBoxMatch = svgContent.match(/viewBox="([^"]*)"/);
+            
+            let width = widthMatch ? widthMatch[1] : '24';
+            let height = heightMatch ? heightMatch[1] : '24';
+            
+            const widthNum = parseFloat(width);
+            const heightNum = parseFloat(height);
+            
+            let viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${widthNum} ${heightNum}`;
+            
+            previewSvg = svgContent.replace(
+              /<svg[^>]*>/,
+              `<svg width="56" height="56" viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%;">`
+            );
+          }
+        } catch (error) {
+          console.warn(`Could not read file: ${categoryName}/${fileName}`);
+        }
       }
 
       iconsByCategory[categoryName].push({
@@ -55,7 +79,8 @@ async function getAllIcons() {
         url: `/freedevtools/svg_icons/${categoryName}/${iconName}`,
         description: `Free ${iconName} icon`,
         category: categoryName,
-        svgContent: svgContent,
+        iconCount: cluster.fileNames.length,
+        previewSvg: previewSvg,
       });
     }
   }
@@ -324,50 +349,39 @@ const categoryIconMap = {
     return filtered;
   }
   
-  // Render category card
+  // Render category card with preview SVGs
   function renderCategoryCard(category, categoryIcons) {
-    // Always create 6 slots for consistent 2-row layout (3 columns x 2 rows)
+    const iconCount = categoryIcons.length;
     const iconSlots = Array(6).fill(null);
     
-    // Fill available slots with icons
-    categoryIcons.slice(0, 6).forEach((icon, index) => {
-      // Process SVG content to ensure proper scaling
-      let processedSvg = icon.svgContent;
+    // Fill available slots with preview icons
+    for (let i = 0; i < Math.min(6, iconCount); i++) {
+      const icon = categoryIcons[i];
       
-      // Add viewBox and proper sizing if not present
-      if (processedSvg.includes('<svg')) {
-        // Extract existing width and height
-        const widthMatch = processedSvg.match(/width="([^"]*)"/);
-        const heightMatch = processedSvg.match(/height="([^"]*)"/);
-        const viewBoxMatch = processedSvg.match(/viewBox="([^"]*)"/);
-        
-        let width = widthMatch ? widthMatch[1] : '32';
-        let height = heightMatch ? heightMatch[1] : '32';
-        
-        // Convert to numbers for calculations
-        const widthNum = parseFloat(width);
-        const heightNum = parseFloat(height);
-        
-        // Create a viewBox if it doesn't exist
-        let viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${widthNum} ${heightNum}`;
-        
-        // Replace the SVG tag with proper attributes
-        processedSvg = processedSvg.replace(
-          /<svg[^>]*>/,
-          `<svg width="56" height="56" viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%;">`
-        );
-      }
-      
-      iconSlots[index] = `<div class="flex items-center justify-center p-1">
-        <div class="w-14 h-14 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
-          <div class="w-14 h-14 flex items-center justify-center">
-            ${processedSvg}
+      if (icon.previewSvg) {
+        // Use the actual preview SVG
+        iconSlots[i] = `<div class="flex items-center justify-center p-1">
+          <div class="w-14 h-14 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
+            <div class="w-14 h-14 flex items-center justify-center">
+              ${icon.previewSvg}
+            </div>
           </div>
-        </div>
-      </div>`;
-    });
+        </div>`;
+      } else {
+        // Use placeholder for icons beyond the first 6
+        iconSlots[i] = `<div class="flex items-center justify-center p-1">
+          <div class="w-14 h-14 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
+            <div class="w-14 h-14 flex items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-lg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-slate-400">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+          </div>
+        </div>`;
+      }
+    }
     
-    // Fill empty slots with transparent placeholders that maintain the grid structure
+    // Fill empty slots with transparent placeholders
     const iconsHtml = iconSlots.map(slot => {
       return slot || `<div class="flex items-center justify-center p-1">
         <div class="w-14 h-14"></div>
@@ -382,7 +396,7 @@ const categoryIconMap = {
               ${category.replace('-', ' ')}
             </h3>
             <span class="text-sm text-slate-500 font-medium">
-              ${categoryIcons.length} ICONS
+              ${iconCount} ICONS
             </span>
           </div>
           
@@ -637,6 +651,7 @@ const categoryIconMap = {
     currentPage = getCurrentPageFromURL();
     renderPagination();
   }
+  
   
   // Set up event listeners only once
   if (!window.paginationEventListenersSet) {

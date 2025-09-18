@@ -22,7 +22,7 @@ export default defineConfig({
   ],
   cacheDir: ".astro/cache",
   build: {
-    concurrency: 32
+    concurrency: 64
   },
   vite: {
     resolve: {
