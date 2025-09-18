@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ site }) => {
     `  <url>
       <loc>${baseUrl}/freedevtools/c/</loc>
       <lastmod>${now}</lastmod>
-      <changefreq>weekly</changefreq>
+      <changefreq>daily</changefreq>
       <priority>0.7</priority>
     </url>`
   );
@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ site }) => {
       `  <url>
         <loc>${baseUrl}/freedevtools/c/${category}/</loc>
         <lastmod>${now}</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>daily</changefreq>
         <priority>0.6</priority>
       </url>`
     );

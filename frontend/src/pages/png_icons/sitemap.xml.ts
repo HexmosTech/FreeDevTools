@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
     const category = parts.pop() || 'general';
     return `
       <url>
-        <loc>${site}/svg_icons/${category}/${name}</loc>
+        <loc>${site}/png_icons/${category}/${name}</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.4</priority>
@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ site }) => {
   // Include the landing page
   urls.unshift(`
     <url>
-      <loc>${site}/svg_icons/</loc>
+      <loc>${site}/png_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.5</priority>

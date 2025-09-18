@@ -7,7 +7,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   const urls: string[] = [];
   // Category landing
-  urls.push(`  <url>\n    <loc>${site}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>`);
+  urls.push(`  <url>\n    <loc>${site}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.7</priority>\n  </url>`);
 
   // Per-category pages
   const categories = new Set<string>();
@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
     categories.add(cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
   }
   for (const cat of Array.from(categories)) {
-    urls.push(`  <url>\n    <loc>${site}/emojis/${cat}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`);
+    urls.push(`  <url>\n    <loc>${site}/emojis/${cat}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.6</priority>\n  </url>`);
   }
 
   // Individual emoji pages
