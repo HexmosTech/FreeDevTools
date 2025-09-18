@@ -37,6 +37,14 @@ export function extractSVGDimensions(svgContent: string): SVGDimensions {
   // Use existing viewBox or create one from dimensions
   if (viewBoxMatch) {
     viewBox = viewBoxMatch[1];
+    // If we have a viewBox but no explicit width/height, extract from viewBox
+    if (!widthMatch && !heightMatch) {
+      const viewBoxParts = viewBox.split(/\s+/);
+      if (viewBoxParts.length >= 4) {
+        width = parseFloat(viewBoxParts[2]) || 24;
+        height = parseFloat(viewBoxParts[3]) || 24;
+      }
+    }
   } else {
     viewBox = `0 0 ${width} ${height}`;
   }
@@ -102,7 +110,7 @@ export function normalizeSVGDimensions(
 }
 
 /**
- * Process SVG content to handle irregular dimensions
+ * Process SVG content to handle irregular dimensions and stroke clipping
  */
 export function processSVGContent(
   svgContent: string,
@@ -118,29 +126,17 @@ export function processSVGContent(
 
   let processedSvg = svgContent;
 
-  if (isIrregular) {
-    // For irregular SVGs, use the original viewBox but add padding
-    const paddingX = dimensions.width * padding;
-    const paddingY = dimensions.height * padding;
-    const paddedViewBox = `${-paddingX} ${-paddingY} ${dimensions.width + paddingX * 2} ${dimensions.height + paddingY * 2}`;
+  // Calculate padding with extra space for stroke width
+  const strokePadding = 4; // Extra padding for stroke width
+  const paddingX = Math.max(dimensions.width * padding, strokePadding);
+  const paddingY = Math.max(dimensions.height * padding, strokePadding);
+  const paddedViewBox = `${-paddingX} ${-paddingY} ${dimensions.width + paddingX * 2} ${dimensions.height + paddingY * 2}`;
 
-    // Replace the SVG tag with proper attributes and padding
-    processedSvg = processedSvg.replace(
-      /<svg[^>]*>/,
-      `<svg width="${targetSize}" height="${targetSize}" viewBox="${paddedViewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;">`
-    );
-  } else {
-    // For regular SVGs, add padding to the viewBox
-    const paddingX = dimensions.width * padding;
-    const paddingY = dimensions.height * padding;
-    const paddedViewBox = `${-paddingX} ${-paddingY} ${dimensions.width + paddingX * 2} ${dimensions.height + paddingY * 2}`;
-
-    // Replace the SVG tag with proper attributes and padding
-    processedSvg = processedSvg.replace(
-      /<svg[^>]*>/,
-      `<svg width="${targetSize}" height="${targetSize}" viewBox="${paddedViewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;">`
-    );
-  }
+  // Replace the SVG tag with proper attributes and padding
+  processedSvg = processedSvg.replace(
+    /<svg[^>]*>/,
+    `<svg width="${targetSize}" height="${targetSize}" viewBox="${paddedViewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%; overflow: visible;">`
+  );
 
   return processedSvg;
 }
