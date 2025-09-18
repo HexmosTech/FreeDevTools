@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ site }) => {
       <url>
         <loc>${site}/png_icons/${category}/${name}</loc>
         <lastmod>${now}</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>daily</changefreq>
         <priority>0.4</priority>
       </url>`;
   });
@@ -28,7 +28,7 @@ export const GET: APIRoute = async ({ site }) => {
     <url>
       <loc>${site}/png_icons/</loc>
       <lastmod>${now}</lastmod>
-      <changefreq>weekly</changefreq>
+      <changefreq>daily</changefreq>
       <priority>0.5</priority>
     </url>`);
 

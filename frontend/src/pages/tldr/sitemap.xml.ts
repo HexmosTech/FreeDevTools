@@ -24,10 +24,10 @@ export const GET: APIRoute = async ({ site }) => {
 
   const urls: string[] = [];
   // Category landing
-  urls.push(`  <url>\n    <loc>${site}/tldr/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>`);
+  urls.push(`  <url>\n    <loc>${site}/tldr/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`);
   // Platform pages
   for (const platform of Object.keys(byPlatform)) {
-    urls.push(`  <url>\n    <loc>${site}/tldr/${platform}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>`);
+    urls.push(`  <url>\n    <loc>${site}/tldr/${platform}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.7</priority>\n  </url>`);
   }
   // Individual command pages
   for (const [platform, commands] of Object.entries(byPlatform)) {
