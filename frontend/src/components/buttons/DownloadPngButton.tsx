@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import React, { useCallback, useRef } from 'react';
 
 interface DownloadPngButtonProps {
@@ -11,29 +12,103 @@ interface DownloadPngButtonProps {
 const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
   const pngSizeSelectRef = useRef<HTMLSelectElement>(null);
 
-  const downloadAsPNG = useCallback((size = 512) => {
+  const downloadAsPNG = useCallback(async (size = 512) => {
     // Use original SVG content for downloads to maintain quality
     const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
     if (!svgData) return;
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
+    try {
+      // Create a temporary Konva stage for high-quality rendering
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '-9999px';
+      document.body.appendChild(container);
 
-    canvas.width = size;
-    canvas.height = size;
+      const stage = new Konva.Stage({
+        container: container,
+        width: size,
+        height: size,
+      });
 
-    img.onload = () => {
-      ctx?.drawImage(img, 0, 0, size, size);
-      const pngData = canvas.toDataURL('image/png');
+      const layer = new Konva.Layer();
+      stage.add(layer);
 
-      const link = document.createElement('a');
-      link.download = `${iconData?.name || 'icon'}-${size}px.png`;
-      link.href = pngData;
-      link.click();
-    };
+      // Create transparent background (no background rect needed)
+      // The stage will have a transparent background by default
 
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+      // Load SVG as image using Konva's method
+      await new Promise<void>((resolve, reject) => {
+        // Ensure SVG has proper namespace and encoding
+        const svgWithNamespace = svgData.includes('xmlns=')
+          ? svgData
+          : svgData.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+
+        // Create data URL
+        const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgWithNamespace);
+
+        // Use Konva's Image.fromURL for better SVG handling
+        Konva.Image.fromURL(svgDataUrl, async (imageNode) => {
+          try {
+            // Scale image to fit within the canvas while maintaining aspect ratio
+            const imageAspect = imageNode.width() / imageNode.height();
+            const canvasAspect = size / size;
+
+            let imageWidth, imageHeight;
+            if (imageAspect > canvasAspect) {
+              imageWidth = size * 0.8; // 80% of canvas size
+              imageHeight = imageWidth / imageAspect;
+            } else {
+              imageHeight = size * 0.8;
+              imageWidth = imageHeight * imageAspect;
+            }
+
+            // Center the image
+            imageNode.setAttrs({
+              x: (size - imageWidth) / 2,
+              y: (size - imageHeight) / 2,
+              width: imageWidth,
+              height: imageHeight,
+              listening: false,
+            });
+
+            layer.add(imageNode);
+            layer.draw();
+
+            // Export using Konva's built-in method with transparency
+            const dataURL = stage.toDataURL({
+              mimeType: 'image/png',
+              quality: 1,
+              pixelRatio: 2, // High DPI
+              // No backgroundColor specified = transparent
+            });
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `${iconData?.name || 'icon'}-${size}px.png`;
+            link.href = dataURL;
+            link.click();
+
+            // Cleanup
+            stage.destroy();
+            document.body.removeChild(container);
+            resolve(undefined);
+          } catch (error) {
+            console.error('Error in Konva image processing:', error);
+            stage.destroy();
+            document.body.removeChild(container);
+            reject(error);
+          }
+        }, (error) => {
+          console.error('Konva image load error:', error);
+          stage.destroy();
+          document.body.removeChild(container);
+          reject(error);
+        });
+      });
+    } catch (error) {
+      console.error('PNG download error:', error);
+    }
   }, [iconData]);
 
   const handleClick = () => {

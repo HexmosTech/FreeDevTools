@@ -37,16 +37,8 @@ const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) =
       const layer = new Konva.Layer();
       stage.add(layer);
 
-      // Create a white background
-      const background = new Konva.Rect({
-        x: 0,
-        y: 0,
-        width: size,
-        height: size,
-        fill: 'white',
-        listening: false,
-      });
-      layer.add(background);
+      // Create transparent background (no background rect needed)
+      // The stage will have a transparent background by default
 
       // Load SVG as image using Konva's method
       await new Promise<void>((resolve, reject) => {
@@ -86,11 +78,12 @@ const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) =
             layer.add(imageNode);
             layer.draw();
 
-            // Export using Konva's built-in method
+            // Export using Konva's built-in method with transparency
             const dataURL = stage.toDataURL({
               mimeType: 'image/png',
               quality: 1,
               pixelRatio: 2, // High DPI
+              // No backgroundColor specified = transparent
             });
 
             // Convert data URL to blob
