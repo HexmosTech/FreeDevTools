@@ -1,5 +1,5 @@
 ---
-title: "QM Config - Control VM Configuration | Free DevTools"
+title: "QM Config - Control VM Configuration | Online Free DevTools by Hexmos"
 name: qm-config
 path: /freedevtools/tldr/linux/qm-config
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-config/"

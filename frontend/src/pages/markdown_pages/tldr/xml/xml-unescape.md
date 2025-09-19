@@ -1,5 +1,5 @@
 ---
-title: "XML Unescape - Convert Special XML Characters | Free DevTools"
+title: "XML Unescape - Convert Special XML Characters | Online Free DevTools by Hexmos"
 name: xml-unescape
 path: /freedevtools/tldr/xml/xml-unescape
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-unescape/"

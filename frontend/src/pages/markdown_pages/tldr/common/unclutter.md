@@ -1,5 +1,5 @@
 ---
-title: "Unclutter - Hide Mouse Cursor | Free DevTools"
+title: "Unclutter - Hide Mouse Cursor | Online Free DevTools by Hexmos"
 name: unclutter
 path: /freedevtools/tldr/common/unclutter
 canonical: "https://hexmos.com/freedevtools/tldr/common/unclutter/"

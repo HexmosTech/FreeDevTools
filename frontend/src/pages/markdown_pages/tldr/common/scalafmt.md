@@ -1,5 +1,5 @@
 ---
-title: "Scalafmt - Format Scala Code | Free DevTools"
+title: "Scalafmt - Format Scala Code | Online Free DevTools by Hexmos"
 name: scalafmt
 path: /freedevtools/tldr/common/scalafmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/scalafmt/"

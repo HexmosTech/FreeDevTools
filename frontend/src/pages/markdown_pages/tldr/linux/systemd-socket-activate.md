@@ -1,5 +1,5 @@
 ---
-title: "Socket Activate - Control Systemd Services | Free DevTools"
+title: "Socket Activate - Control Systemd Services | Online Free DevTools by Hexmos"
 name: systemd-socket-activate
 path: /freedevtools/tldr/linux/systemd-socket-activate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-socket-activate/"

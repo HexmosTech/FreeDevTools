@@ -1,5 +1,5 @@
 ---
-title: "Create Vagrant Environments - Manage VMs | Free DevTools"
+title: "Create Vagrant Environments - Manage VMs | Online Free DevTools by Hexmos"
 name: vagrant
 path: /freedevtools/tldr/vagrant/vagrant
 canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant/"

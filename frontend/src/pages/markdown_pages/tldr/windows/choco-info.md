@@ -1,5 +1,5 @@
 ---
-title: "Chocolatey Info - Display Package Details | Free DevTools"
+title: "Chocolatey Info - Display Package Details | Online Free DevTools by Hexmos"
 name: choco-info
 path: /freedevtools/tldr/windows/choco-info
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-info/"

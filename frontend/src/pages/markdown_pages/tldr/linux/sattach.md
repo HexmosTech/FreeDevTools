@@ -1,5 +1,5 @@
 ---
-title: "Slurm Attach - Control Job Steps | Free DevTools"
+title: "Slurm Attach - Control Job Steps | Online Free DevTools by Hexmos"
 name: sattach
 path: /freedevtools/tldr/linux/sattach
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sattach/"

@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Bulk Rename Files with mmv | Free DevTools"
+title: "Rename Files - Bulk Rename Files with mmv | Online Free DevTools by Hexmos"
 name: mmv
 path: /freedevtools/tldr/common/mmv
 canonical: "https://hexmos.com/freedevtools/tldr/common/mmv/"

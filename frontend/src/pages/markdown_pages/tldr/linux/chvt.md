@@ -1,5 +1,5 @@
 ---
-title: "Change Virtual Terminal - Control TTY on Linux | Free DevTools"
+title: "Change Virtual Terminal - Control TTY on Linux | Online Free DevTools by Hexmos"
 name: chvt
 path: /freedevtools/tldr/linux/chvt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chvt/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Changelog - standard-version for Automated Releases | Free DevTools"
+title: "Generate Changelog - standard-version for Automated Releases | Online Free DevTools by Hexmos"
 name: standard-version
 path: /freedevtools/tldr/st/standard-version
 canonical: "https://hexmos.com/freedevtools/tldr/st/standard-version/"

@@ -1,5 +1,5 @@
 ---
-title: "Nomad - Schedule Tasks | Free DevTools"
+title: "Nomad - Schedule Tasks | Online Free DevTools by Hexmos"
 name: nomad
 path: /freedevtools/tldr/common/nomad
 canonical: "https://hexmos.com/freedevtools/tldr/common/nomad/"

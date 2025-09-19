@@ -1,5 +1,5 @@
 ---
-title: "Calculate IP Information - ipcalc Network Tool | Free DevTools"
+title: "Calculate IP Information - ipcalc Network Tool | Online Free DevTools by Hexmos"
 name: ipcalc
 path: /freedevtools/tldr/common/ipcalc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipcalc/"

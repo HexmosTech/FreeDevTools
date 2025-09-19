@@ -1,5 +1,5 @@
 ---
-title: "Cargo Test - Execute Rust Tests | Free DevTools"
+title: "Cargo Test - Execute Rust Tests | Online Free DevTools by Hexmos"
 name: cargo-test
 path: /freedevtools/tldr/cargo/cargo-test
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-test/"

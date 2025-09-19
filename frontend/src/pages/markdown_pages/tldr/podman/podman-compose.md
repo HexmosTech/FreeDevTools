@@ -1,5 +1,5 @@
 ---
-title: "Compose Control - Manage Containers with Podman-Compose | Free DevTools"
+title: "Compose Control - Manage Containers with Podman-Compose | Online Free DevTools by Hexmos"
 name: podman-compose
 path: /freedevtools/tldr/podman/podman-compose
 canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-compose/"

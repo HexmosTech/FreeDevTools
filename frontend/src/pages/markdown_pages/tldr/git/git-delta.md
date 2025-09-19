@@ -1,5 +1,5 @@
 ---
-title: "Git Delta - List File Differences | Free DevTools"
+title: "Git Delta - List File Differences | Online Free DevTools by Hexmos"
 name: git-delta
 path: /freedevtools/tldr/git/git-delta
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-delta/"

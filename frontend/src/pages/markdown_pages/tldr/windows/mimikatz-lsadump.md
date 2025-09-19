@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz LSADump - Dump Windows Secrets | Free DevTools"
+title: "Mimikatz LSADump - Dump Windows Secrets | Online Free DevTools by Hexmos"
 name: mimikatz-lsadump
 path: /freedevtools/tldr/windows/mimikatz-lsadump
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-lsadump/"

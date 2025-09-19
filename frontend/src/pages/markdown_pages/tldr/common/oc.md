@@ -1,5 +1,5 @@
 ---
-title: "OpenShift CLI - Manage Containers | Free DevTools"
+title: "OpenShift CLI - Manage Containers | Online Free DevTools by Hexmos"
 name: oc
 path: /freedevtools/tldr/common/oc
 canonical: "https://hexmos.com/freedevtools/tldr/common/oc/"

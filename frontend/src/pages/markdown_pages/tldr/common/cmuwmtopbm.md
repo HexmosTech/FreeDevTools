@@ -1,5 +1,5 @@
 ---
-title: "Convert CMUWM to PBM - Image Conversion | Free DevTools"
+title: "Convert CMUWM to PBM - Image Conversion | Online Free DevTools by Hexmos"
 name: cmuwmtopbm
 path: /freedevtools/tldr/common/cmuwmtopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/cmuwmtopbm/"

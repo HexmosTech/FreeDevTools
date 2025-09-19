@@ -1,5 +1,5 @@
 ---
-title: "Docker Logs - Control Container Logs | Free DevTools"
+title: "Docker Logs - Control Container Logs | Online Free DevTools by Hexmos"
 name: docker-logs
 path: /freedevtools/tldr/docker/docker-logs
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-logs/"

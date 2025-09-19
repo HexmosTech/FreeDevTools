@@ -1,5 +1,5 @@
 ---
-title: "Generate Changelog - git-cliff | Free DevTools"
+title: "Generate Changelog - git-cliff | Online Free DevTools by Hexmos"
 name: git-cliff
 path: /freedevtools/tldr/git/git-cliff
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cliff/"

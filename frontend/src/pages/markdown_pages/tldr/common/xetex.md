@@ -1,5 +1,5 @@
 ---
-title: "Compile XeTeX - Generate PDF Documents | Free DevTools"
+title: "Compile XeTeX - Generate PDF Documents | Online Free DevTools by Hexmos"
 name: xetex
 path: /freedevtools/tldr/common/xetex
 canonical: "https://hexmos.com/freedevtools/tldr/common/xetex/"

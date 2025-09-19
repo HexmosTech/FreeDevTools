@@ -1,5 +1,5 @@
 ---
-title: "MySQL Shell - Control MySQL Databases | Free DevTools"
+title: "MySQL Shell - Control MySQL Databases | Online Free DevTools by Hexmos"
 name: mysqlsh
 path: /freedevtools/tldr/common/mysqlsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysqlsh/"

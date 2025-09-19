@@ -1,5 +1,5 @@
 ---
-title: "Analyze Disk Usage - Instantly View Directories with Dust | Free DevTools"
+title: "Analyze Disk Usage - Instantly View Directories with Dust | Online Free DevTools by Hexmos"
 name: dust
 path: /freedevtools/tldr/common/dust
 canonical: "https://hexmos.com/freedevtools/tldr/common/dust/"

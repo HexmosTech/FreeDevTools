@@ -1,5 +1,5 @@
 ---
-title: "Ping IPv6 - Send Network Packets with Ping6 | Free DevTools"
+title: "Ping IPv6 - Send Network Packets with Ping6 | Online Free DevTools by Hexmos"
 name: ping6
 path: /freedevtools/tldr/common/ping6
 canonical: "https://hexmos.com/freedevtools/tldr/common/ping6/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Kerberos SPNs - Extract User SPNs | Free DevTools"
+title: "Generate Kerberos SPNs - Extract User SPNs | Online Free DevTools by Hexmos"
 name: getuserspns.py
 path: /freedevtools/tldr/get/getuserspns.py
 canonical: "https://hexmos.com/freedevtools/tldr/get/getuserspns.py/"

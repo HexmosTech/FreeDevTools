@@ -1,5 +1,5 @@
 ---
-title: "Analyze PHP Security - Detect Vulnerabilities with Progpilot | Free DevTools"
+title: "Analyze PHP Security - Detect Vulnerabilities with Progpilot | Online Free DevTools by Hexmos"
 name: progpilot
 path: /freedevtools/tldr/common/progpilot
 canonical: "https://hexmos.com/freedevtools/tldr/common/progpilot/"

@@ -1,5 +1,5 @@
 ---
-title: "Control NeoMutt - Manage Emails | Free DevTools"
+title: "Control NeoMutt - Manage Emails | Online Free DevTools by Hexmos"
 name: neomutt
 path: /freedevtools/tldr/common/neomutt
 canonical: "https://hexmos.com/freedevtools/tldr/common/neomutt/"

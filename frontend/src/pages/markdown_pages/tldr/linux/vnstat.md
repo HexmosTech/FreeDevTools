@@ -1,5 +1,5 @@
 ---
-title: "Vnstat - Control Network Traffic | Free DevTools"
+title: "Vnstat - Control Network Traffic | Online Free DevTools by Hexmos"
 name: vnstat
 path: /freedevtools/tldr/linux/vnstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vnstat/"

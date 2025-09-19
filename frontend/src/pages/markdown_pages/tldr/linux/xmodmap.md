@@ -1,5 +1,5 @@
 ---
-title: "xmodmap - Control Keymaps & Pointer | Free DevTools"
+title: "xmodmap - Control Keymaps & Pointer | Online Free DevTools by Hexmos"
 name: xmodmap
 path: /freedevtools/tldr/linux/xmodmap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xmodmap/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Add - Stage Changes for Commit | Free DevTools"
+title: "Git Add - Stage Changes for Commit | Online Free DevTools by Hexmos"
 name: git-add
 path: /freedevtools/tldr/git/git-add
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-add/"

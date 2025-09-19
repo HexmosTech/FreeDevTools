@@ -1,5 +1,5 @@
 ---
-title: "BTRFS Rescue - Recover Filesystem | Free DevTools"
+title: "BTRFS Rescue - Recover Filesystem | Online Free DevTools by Hexmos"
 name: btrfs-rescue
 path: /freedevtools/tldr/linux/btrfs-rescue
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-rescue/"

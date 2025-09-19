@@ -1,5 +1,5 @@
 ---
-title: "Clipboard Manager - Control Terminal Clipboard | Free DevTools"
+title: "Clipboard Manager - Control Terminal Clipboard | Online Free DevTools by Hexmos"
 name: cb
 path: /freedevtools/tldr/common/cb
 canonical: "https://hexmos.com/freedevtools/tldr/common/cb/"

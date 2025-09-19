@@ -1,5 +1,5 @@
 ---
-title: "Control Completion Options - Bash Compopt | Free DevTools"
+title: "Control Completion Options - Bash Compopt | Online Free DevTools by Hexmos"
 name: compopt
 path: /freedevtools/tldr/common/compopt
 canonical: "https://hexmos.com/freedevtools/tldr/common/compopt/"

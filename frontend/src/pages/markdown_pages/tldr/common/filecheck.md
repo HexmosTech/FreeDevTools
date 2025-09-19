@@ -1,5 +1,5 @@
 ---
-title: "File Check - Validate Files with Patterns | Free DevTools"
+title: "File Check - Validate Files with Patterns | Online Free DevTools by Hexmos"
 name: filecheck
 path: /freedevtools/tldr/common/filecheck
 canonical: "https://hexmos.com/freedevtools/tldr/common/filecheck/"

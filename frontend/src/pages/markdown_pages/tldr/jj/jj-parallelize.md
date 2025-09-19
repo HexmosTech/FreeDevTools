@@ -1,5 +1,5 @@
 ---
-title: "Parallelize Revisions - Control JJ Branches | Free DevTools"
+title: "Parallelize Revisions - Control JJ Branches | Online Free DevTools by Hexmos"
 name: jj-parallelize
 path: /freedevtools/tldr/jj/jj-parallelize
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-parallelize/"

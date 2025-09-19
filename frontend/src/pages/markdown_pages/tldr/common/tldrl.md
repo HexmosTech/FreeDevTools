@@ -1,5 +1,5 @@
 ---
-title: "TLDR Lint - Validate Command Documentation | Free DevTools"
+title: "TLDR Lint - Validate Command Documentation | Online Free DevTools by Hexmos"
 name: tldrl
 path: /freedevtools/tldr/common/tldrl
 canonical: "https://hexmos.com/freedevtools/tldr/common/tldrl/"

@@ -1,5 +1,5 @@
 ---
-title: "Rubocop - Lint Ruby Code | Free DevTools"
+title: "Rubocop - Lint Ruby Code | Online Free DevTools by Hexmos"
 name: rubocop
 path: /freedevtools/tldr/common/rubocop
 canonical: "https://hexmos.com/freedevtools/tldr/common/rubocop/"

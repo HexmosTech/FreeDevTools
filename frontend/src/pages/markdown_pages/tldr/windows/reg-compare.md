@@ -1,5 +1,5 @@
 ---
-title: "Reg Compare - Compare Registry Keys | Free DevTools"
+title: "Reg Compare - Compare Registry Keys | Online Free DevTools by Hexmos"
 name: reg-compare
 path: /freedevtools/tldr/windows/reg-compare
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-compare/"

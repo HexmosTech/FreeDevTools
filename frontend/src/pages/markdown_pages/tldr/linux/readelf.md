@@ -1,5 +1,5 @@
 ---
-title: "Readelf - Display ELF Information | Free DevTools"
+title: "Readelf - Display ELF Information | Online Free DevTools by Hexmos"
 name: readelf
 path: /freedevtools/tldr/linux/readelf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/readelf/"

@@ -1,5 +1,5 @@
 ---
-title: "Vercel Control - Manage Deployments | Free DevTools"
+title: "Vercel Control - Manage Deployments | Online Free DevTools by Hexmos"
 name: vc
 path: /freedevtools/tldr/common/vc
 canonical: "https://hexmos.com/freedevtools/tldr/common/vc/"

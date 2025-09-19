@@ -1,5 +1,5 @@
 ---
-title: "Fossil Init - Create Repository | Free DevTools"
+title: "Fossil Init - Create Repository | Online Free DevTools by Hexmos"
 name: fossil-init
 path: /freedevtools/tldr/fossil/fossil-init
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-init/"

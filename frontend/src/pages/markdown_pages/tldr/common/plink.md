@@ -1,5 +1,5 @@
 ---
-title: "Plink SSH Client - Control SSH Connections | Free DevTools"
+title: "Plink SSH Client - Control SSH Connections | Online Free DevTools by Hexmos"
 name: plink
 path: /freedevtools/tldr/common/plink
 canonical: "https://hexmos.com/freedevtools/tldr/common/plink/"

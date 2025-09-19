@@ -1,5 +1,5 @@
 ---
-title: "Capture Video - rpicam-vid Command | Free DevTools"
+title: "Capture Video - rpicam-vid Command | Online Free DevTools by Hexmos"
 name: rpicam-vid
 path: /freedevtools/tldr/linux/rpicam-vid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-vid/"

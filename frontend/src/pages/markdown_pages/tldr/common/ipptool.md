@@ -1,5 +1,5 @@
 ---
-title: "Issue IPP Requests - Control Printer Responses | Free DevTools"
+title: "Issue IPP Requests - Control Printer Responses | Online Free DevTools by Hexmos"
 name: ipptool
 path: /freedevtools/tldr/common/ipptool
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipptool/"

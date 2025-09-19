@@ -1,5 +1,5 @@
 ---
-title: "Content Discovery - Scan URLs with Feroxbuster | Free DevTools"
+title: "Content Discovery - Scan URLs with Feroxbuster | Online Free DevTools by Hexmos"
 name: feroxbuster
 path: /freedevtools/tldr/common/feroxbuster
 canonical: "https://hexmos.com/freedevtools/tldr/common/feroxbuster/"

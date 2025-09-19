@@ -1,5 +1,5 @@
 ---
-title: "Dolt Clone - Copy Databases Locally | Free DevTools"
+title: "Dolt Clone - Copy Databases Locally | Online Free DevTools by Hexmos"
 name: dolt-clone
 path: /freedevtools/tldr/dolt/dolt-clone
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-clone/"

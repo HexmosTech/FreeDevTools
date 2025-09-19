@@ -1,5 +1,5 @@
 ---
-title: "Ping - Test Network Connectivity on OSX | Free DevTools"
+title: "Ping - Test Network Connectivity on OSX | Online Free DevTools by Hexmos"
 name: ping
 path: /freedevtools/tldr/osx/ping
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ping/"

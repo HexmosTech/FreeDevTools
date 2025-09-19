@@ -1,5 +1,5 @@
 ---
-title: "YubiKey Config - Control YubiKey Applications | Free DevTools"
+title: "YubiKey Config - Control YubiKey Applications | Online Free DevTools by Hexmos"
 name: ykman-config
 path: /freedevtools/tldr/ykman/ykman-config
 canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-config/"

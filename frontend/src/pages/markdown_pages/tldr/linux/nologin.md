@@ -1,5 +1,5 @@
 ---
-title: "Control nologin - Prevent User Logins | Free DevTools"
+title: "Control nologin - Prevent User Logins | Online Free DevTools by Hexmos"
 name: nologin
 path: /freedevtools/tldr/linux/nologin
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nologin/"

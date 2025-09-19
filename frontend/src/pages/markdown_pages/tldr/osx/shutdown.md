@@ -1,5 +1,5 @@
 ---
-title: "Shutdown - Control System Shutdown & Reboot | Free DevTools"
+title: "Shutdown - Control System Shutdown & Reboot | Online Free DevTools by Hexmos"
 name: shutdown
 path: /freedevtools/tldr/osx/shutdown
 canonical: "https://hexmos.com/freedevtools/tldr/osx/shutdown/"

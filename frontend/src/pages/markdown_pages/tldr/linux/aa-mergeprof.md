@@ -1,5 +1,5 @@
 ---
-title: "Merge AppArmor Profiles - Manage Security with aa-mergeprof | Free DevTools"
+title: "Merge AppArmor Profiles - Manage Security with aa-mergeprof | Online Free DevTools by Hexmos"
 name: aa-mergeprof
 path: /freedevtools/tldr/linux/aa-mergeprof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-mergeprof/"

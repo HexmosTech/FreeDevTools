@@ -1,5 +1,5 @@
 ---
-title: "Run Mailcap - Execute Mail Programs | Free DevTools"
+title: "Run Mailcap - Execute Mail Programs | Online Free DevTools by Hexmos"
 name: run-mailcap
 path: /freedevtools/tldr/linux/run-mailcap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/run-mailcap/"

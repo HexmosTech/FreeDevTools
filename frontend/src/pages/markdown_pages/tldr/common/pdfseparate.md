@@ -1,5 +1,5 @@
 ---
-title: "PDF Separator - Extract PDF Pages | Free DevTools"
+title: "PDF Separator - Extract PDF Pages | Online Free DevTools by Hexmos"
 name: pdfseparate
 path: /freedevtools/tldr/common/pdfseparate
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfseparate/"

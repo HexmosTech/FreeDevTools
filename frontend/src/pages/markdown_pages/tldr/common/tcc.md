@@ -1,5 +1,5 @@
 ---
-title: "Compile C Code - Run C Scripts with TCC | Free DevTools"
+title: "Compile C Code - Run C Scripts with TCC | Online Free DevTools by Hexmos"
 name: tcc
 path: /freedevtools/tldr/common/tcc
 canonical: "https://hexmos.com/freedevtools/tldr/common/tcc/"

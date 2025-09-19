@@ -1,5 +1,5 @@
 ---
-title: "Convert PSID to PGM - Transform Images | Free DevTools"
+title: "Convert PSID to PGM - Transform Images | Online Free DevTools by Hexmos"
 name: psidtopgm
 path: /freedevtools/tldr/common/psidtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/psidtopgm/"

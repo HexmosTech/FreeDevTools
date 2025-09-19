@@ -1,5 +1,5 @@
 ---
-title: "Power Profiles Control - Manage Power Profiles with powerprofilesctl | Free DevTools"
+title: "Power Profiles Control - Manage Power Profiles with powerprofilesctl | Online Free DevTools by Hexmos"
 name: powerprofilesctl
 path: /freedevtools/tldr/linux/powerprofilesctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/powerprofilesctl/"

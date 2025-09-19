@@ -1,5 +1,5 @@
 ---
-title: "Partclone - Backup Partitions Disregarding Empty Blocks | Free DevTools"
+title: "Partclone - Backup Partitions Disregarding Empty Blocks | Online Free DevTools by Hexmos"
 name: partclone
 path: /freedevtools/tldr/linux/partclone
 canonical: "https://hexmos.com/freedevtools/tldr/linux/partclone/"

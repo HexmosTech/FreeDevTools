@@ -1,5 +1,5 @@
 ---
-title: "Crawl Websites - Katana Website Crawler | Free DevTools"
+title: "Crawl Websites - Katana Website Crawler | Online Free DevTools by Hexmos"
 name: katana
 path: /freedevtools/tldr/common/katana
 canonical: "https://hexmos.com/freedevtools/tldr/common/katana/"

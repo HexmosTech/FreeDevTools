@@ -1,5 +1,5 @@
 ---
-title: "Runit - Control Init Process | Free DevTools"
+title: "Runit - Control Init Process | Online Free DevTools by Hexmos"
 name: runit
 path: /freedevtools/tldr/common/runit
 canonical: "https://hexmos.com/freedevtools/tldr/common/runit/"

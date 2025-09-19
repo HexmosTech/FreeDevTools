@@ -1,5 +1,5 @@
 ---
-title: "Convert BMP to PNM - Generate Image Files | Free DevTools"
+title: "Convert BMP to PNM - Generate Image Files | Online Free DevTools by Hexmos"
 name: bmptopnm
 path: /freedevtools/tldr/common/bmptopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/bmptopnm/"

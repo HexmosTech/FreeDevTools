@@ -1,5 +1,5 @@
 ---
-title: "Image to Text - Convert Images to ASCII Art | Free DevTools"
+title: "Image to Text - Convert Images to ASCII Art | Online Free DevTools by Hexmos"
 name: img2txt
 path: /freedevtools/tldr/linux/img2txt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/img2txt/"

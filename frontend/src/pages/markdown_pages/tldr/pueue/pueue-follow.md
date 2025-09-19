@@ -1,5 +1,5 @@
 ---
-title: "Pueue Follow - Monitor Task Output | Free DevTools"
+title: "Pueue Follow - Monitor Task Output | Online Free DevTools by Hexmos"
 name: pueue-follow
 path: /freedevtools/tldr/pueue/pueue-follow
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-follow/"

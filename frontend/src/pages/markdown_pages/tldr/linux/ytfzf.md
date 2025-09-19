@@ -1,5 +1,5 @@
 ---
-title: "ytfzf - Find YouTube Videos and Music | Free DevTools"
+title: "ytfzf - Find YouTube Videos and Music | Online Free DevTools by Hexmos"
 name: ytfzf
 path: /freedevtools/tldr/linux/ytfzf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ytfzf/"

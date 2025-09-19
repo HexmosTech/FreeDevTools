@@ -1,5 +1,5 @@
 ---
-title: "Control ACPI - Monitor System Power and Thermal Status | Free DevTools"
+title: "Control ACPI - Monitor System Power and Thermal Status | Online Free DevTools by Hexmos"
 name: acpi
 path: /freedevtools/tldr/linux/acpi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/acpi/"

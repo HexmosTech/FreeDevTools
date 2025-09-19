@@ -1,5 +1,5 @@
 ---
-title: "Nix Package Manager - Control Packages Declaratively | Free DevTools"
+title: "Nix Package Manager - Control Packages Declaratively | Online Free DevTools by Hexmos"
 name: nix
 path: /freedevtools/tldr/nix/nix
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix/"

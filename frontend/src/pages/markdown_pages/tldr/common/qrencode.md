@@ -1,5 +1,5 @@
 ---
-title: "Generate QR Codes - Convert Text & Files | Free DevTools"
+title: "Generate QR Codes - Convert Text & Files | Online Free DevTools by Hexmos"
 name: qrencode
 path: /freedevtools/tldr/common/qrencode
 canonical: "https://hexmos.com/freedevtools/tldr/common/qrencode/"

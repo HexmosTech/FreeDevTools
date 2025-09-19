@@ -1,5 +1,5 @@
 ---
-title: "Transform JSON - Manage JSON Assignments with gron | Free DevTools"
+title: "Transform JSON - Manage JSON Assignments with gron | Online Free DevTools by Hexmos"
 name: gron
 path: /freedevtools/tldr/common/gron
 canonical: "https://hexmos.com/freedevtools/tldr/common/gron/"

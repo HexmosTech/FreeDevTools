@@ -1,5 +1,5 @@
 ---
-title: "Python Version Control - Manage Python Versions | Free DevTools"
+title: "Python Version Control - Manage Python Versions | Online Free DevTools by Hexmos"
 name: pyenv
 path: /freedevtools/tldr/common/pyenv
 canonical: "https://hexmos.com/freedevtools/tldr/common/pyenv/"

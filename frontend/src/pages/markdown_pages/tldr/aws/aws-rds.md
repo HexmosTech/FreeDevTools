@@ -1,5 +1,5 @@
 ---
-title: "AWS RDS Control - Manage Relational Databases | Free DevTools"
+title: "AWS RDS Control - Manage Relational Databases | Online Free DevTools by Hexmos"
 name: aws-rds
 path: /freedevtools/tldr/aws/aws-rds
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-rds/"

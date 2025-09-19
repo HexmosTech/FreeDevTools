@@ -1,5 +1,5 @@
 ---
-title: "Graphviz Pack - Combine Graph Layouts | Free DevTools"
+title: "Graphviz Pack - Combine Graph Layouts | Online Free DevTools by Hexmos"
 name: gvpack
 path: /freedevtools/tldr/common/gvpack
 canonical: "https://hexmos.com/freedevtools/tldr/common/gvpack/"

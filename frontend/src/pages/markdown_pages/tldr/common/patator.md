@@ -1,5 +1,5 @@
 ---
-title: "Brute Force Passwords - Control Access with Patator | Free DevTools"
+title: "Brute Force Passwords - Control Access with Patator | Online Free DevTools by Hexmos"
 name: patator
 path: /freedevtools/tldr/common/patator
 canonical: "https://hexmos.com/freedevtools/tldr/common/patator/"

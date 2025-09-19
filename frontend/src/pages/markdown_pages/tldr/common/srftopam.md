@@ -1,5 +1,5 @@
 ---
-title: "Convert SRF to PAM - Format Images | Free DevTools"
+title: "Convert SRF to PAM - Format Images | Online Free DevTools by Hexmos"
 name: srftopam
 path: /freedevtools/tldr/common/srftopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/srftopam/"

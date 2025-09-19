@@ -1,5 +1,5 @@
 ---
-title: "Pueue Remove - Control Task Removal | Free DevTools"
+title: "Pueue Remove - Control Task Removal | Online Free DevTools by Hexmos"
 name: pueue-remove
 path: /freedevtools/tldr/pueue/pueue-remove
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-remove/"

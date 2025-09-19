@@ -1,5 +1,5 @@
 ---
-title: "Control NUMA Policy - Processes and Memory | Free DevTools"
+title: "Control NUMA Policy - Processes and Memory | Online Free DevTools by Hexmos"
 name: numactl
 path: /freedevtools/tldr/linux/numactl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/numactl/"

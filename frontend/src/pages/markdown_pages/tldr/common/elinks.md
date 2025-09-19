@@ -1,5 +1,5 @@
 ---
-title: "ELinks Browser - Browse Text-Based Websites | Free DevTools"
+title: "ELinks Browser - Browse Text-Based Websites | Online Free DevTools by Hexmos"
 name: elinks
 path: /freedevtools/tldr/common/elinks
 canonical: "https://hexmos.com/freedevtools/tldr/common/elinks/"

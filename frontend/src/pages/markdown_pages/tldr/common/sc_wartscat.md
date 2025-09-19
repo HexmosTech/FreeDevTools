@@ -1,5 +1,5 @@
 ---
-title: "Warts Concatenator - Create Unified Warts Files | Free DevTools"
+title: "Warts Concatenator - Create Unified Warts Files | Online Free DevTools by Hexmos"
 name: sc_wartscat
 path: /freedevtools/tldr/common/sc_wartscat
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_wartscat/"

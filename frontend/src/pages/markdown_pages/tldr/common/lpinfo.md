@@ -1,5 +1,5 @@
 ---
-title: "List Printers - Manage CUPS Printers | Free DevTools"
+title: "List Printers - Manage CUPS Printers | Online Free DevTools by Hexmos"
 name: lpinfo
 path: /freedevtools/tldr/common/lpinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpinfo/"

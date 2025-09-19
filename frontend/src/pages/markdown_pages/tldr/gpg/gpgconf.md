@@ -1,5 +1,5 @@
 ---
-title: "GPG Configuration - Control GPG Settings | Free DevTools"
+title: "GPG Configuration - Control GPG Settings | Online Free DevTools by Hexmos"
 name: gpgconf
 path: /freedevtools/tldr/gpg/gpgconf
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpgconf/"

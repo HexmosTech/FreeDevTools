@@ -1,5 +1,5 @@
 ---
-title: "ESP8266 Flash Tool - Control ESP Chip Programming | Free DevTools"
+title: "ESP8266 Flash Tool - Control ESP Chip Programming | Online Free DevTools by Hexmos"
 name: esptool.py
 path: /freedevtools/tldr/common/esptool.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/esptool.py/"

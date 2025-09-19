@@ -1,5 +1,5 @@
 ---
-title: "Download MEGA Files - Control Downloads with megadl | Free DevTools"
+title: "Download MEGA Files - Control Downloads with megadl | Online Free DevTools by Hexmos"
 name: megadl
 path: /freedevtools/tldr/linux/megadl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/megadl/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Dropbox Sync - Maestral Client | Free DevTools"
+title: "Control Dropbox Sync - Maestral Client | Online Free DevTools by Hexmos"
 name: maestral
 path: /freedevtools/tldr/common/maestral
 canonical: "https://hexmos.com/freedevtools/tldr/common/maestral/"

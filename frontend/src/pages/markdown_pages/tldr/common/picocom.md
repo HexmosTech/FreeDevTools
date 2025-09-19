@@ -1,5 +1,5 @@
 ---
-title: "Picocom - Control Serial Ports | Free DevTools"
+title: "Picocom - Control Serial Ports | Online Free DevTools by Hexmos"
 name: picocom
 path: /freedevtools/tldr/common/picocom
 canonical: "https://hexmos.com/freedevtools/tldr/common/picocom/"

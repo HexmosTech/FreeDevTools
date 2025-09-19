@@ -1,5 +1,5 @@
 ---
-title: "Unshare Command - Execute in New Namespaces | Free DevTools"
+title: "Unshare Command - Execute in New Namespaces | Online Free DevTools by Hexmos"
 name: unshare
 path: /freedevtools/tldr/linux/unshare
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unshare/"

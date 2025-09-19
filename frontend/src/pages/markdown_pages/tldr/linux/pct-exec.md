@@ -1,5 +1,5 @@
 ---
-title: "PCT Exec - Launch Commands in Linux Containers | Free DevTools"
+title: "PCT Exec - Launch Commands in Linux Containers | Online Free DevTools by Hexmos"
 name: pct-exec
 path: /freedevtools/tldr/linux/pct-exec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-exec/"

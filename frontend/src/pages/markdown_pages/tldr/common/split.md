@@ -1,5 +1,5 @@
 ---
-title: "File Split - Divide Files into Smaller Pieces | Free DevTools"
+title: "File Split - Divide Files into Smaller Pieces | Online Free DevTools by Hexmos"
 name: split
 path: /freedevtools/tldr/common/split
 canonical: "https://hexmos.com/freedevtools/tldr/common/split/"

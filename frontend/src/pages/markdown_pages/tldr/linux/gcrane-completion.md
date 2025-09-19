@@ -1,5 +1,5 @@
 ---
-title: "Generate gcrane Completion Scripts | Free DevTools"
+title: "Generate gcrane Completion Scripts | Online Free DevTools by Hexmos"
 name: gcrane-completion
 path: /freedevtools/tldr/linux/gcrane-completion
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gcrane-completion/"

@@ -1,5 +1,5 @@
 ---
-title: "Query Debian Packages - Manage Apt Packages | Free DevTools"
+title: "Query Debian Packages - Manage Apt Packages | Online Free DevTools by Hexmos"
 name: apt-cache
 path: /freedevtools/tldr/linux/apt-cache
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-cache/"

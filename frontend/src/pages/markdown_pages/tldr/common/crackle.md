@@ -1,5 +1,5 @@
 ---
-title: "Decrypt Bluetooth - Crack BLE Encryption | Free DevTools"
+title: "Decrypt Bluetooth - Crack BLE Encryption | Online Free DevTools by Hexmos"
 name: crackle
 path: /freedevtools/tldr/common/crackle
 canonical: "https://hexmos.com/freedevtools/tldr/common/crackle/"

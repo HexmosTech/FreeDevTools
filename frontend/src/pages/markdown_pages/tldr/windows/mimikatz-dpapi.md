@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz DPAPI - Decrypt Windows Data | Free DevTools"
+title: "Mimikatz DPAPI - Decrypt Windows Data | Online Free DevTools by Hexmos"
 name: mimikatz-dpapi
 path: /freedevtools/tldr/windows/mimikatz-dpapi
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-dpapi/"

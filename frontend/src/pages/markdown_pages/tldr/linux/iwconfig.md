@@ -1,5 +1,5 @@
 ---
-title: "Configure Wireless Networks with iwconfig | Free DevTools"
+title: "Configure Wireless Networks with iwconfig | Online Free DevTools by Hexmos"
 name: iwconfig
 path: /freedevtools/tldr/linux/iwconfig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iwconfig/"

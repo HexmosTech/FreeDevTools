@@ -1,5 +1,5 @@
 ---
-title: "CppClean - Find Unused C++ Code | Free DevTools"
+title: "CppClean - Find Unused C++ Code | Online Free DevTools by Hexmos"
 name: cppclean
 path: /freedevtools/tldr/common/cppclean
 canonical: "https://hexmos.com/freedevtools/tldr/common/cppclean/"

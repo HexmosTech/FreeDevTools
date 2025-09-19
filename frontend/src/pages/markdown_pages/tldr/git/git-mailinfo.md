@@ -1,5 +1,5 @@
 ---
-title: "Extract Git Mailinfo - Analyze Email Patches | Free DevTools"
+title: "Extract Git Mailinfo - Analyze Email Patches | Online Free DevTools by Hexmos"
 name: git-mailinfo
 path: /freedevtools/tldr/git/git-mailinfo
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-mailinfo/"

@@ -1,5 +1,5 @@
 ---
-title: "Godoc - View Go Package Documentation | Free DevTools"
+title: "Godoc - View Go Package Documentation | Online Free DevTools by Hexmos"
 name: godoc
 path: "/freedevtools/tldr/common/godoc"
 canonical: "https://hexmos.com/freedevtools/tldr/common/godoc/"

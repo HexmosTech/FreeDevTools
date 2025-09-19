@@ -1,5 +1,5 @@
 ---
-title: "bcachefs Filesystem - Manage Storage with bcachefs | Free DevTools"
+title: "bcachefs Filesystem - Manage Storage with bcachefs | Online Free DevTools by Hexmos"
 name: bcachefs
 path: /freedevtools/tldr/linux/bcachefs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bcachefs/"

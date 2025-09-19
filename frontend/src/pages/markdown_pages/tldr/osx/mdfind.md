@@ -1,5 +1,5 @@
 ---
-title: "List Files - Find Files with mdfind on macOS | Free DevTools"
+title: "List Files - Find Files with mdfind on macOS | Online Free DevTools by Hexmos"
 name: mdfind
 path: /freedevtools/tldr/osx/mdfind
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mdfind/"

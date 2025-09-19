@@ -1,5 +1,5 @@
 ---
-title: "Generate AI Chat - Interact with AI Models via Command Line | Free DevTools"
+title: "Generate AI Chat - Interact with AI Models via Command Line | Online Free DevTools by Hexmos"
 name: tgpt
 path: "/freedevtools/tldr/common/tgpt"
 canonical: "https://hexmos.com/freedevtools/tldr/common/tgpt/"

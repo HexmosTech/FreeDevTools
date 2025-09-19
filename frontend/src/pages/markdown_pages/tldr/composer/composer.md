@@ -1,5 +1,5 @@
 ---
-title: "Manage PHP Dependencies - Composer Package Manager | Free DevTools"
+title: "Manage PHP Dependencies - Composer Package Manager | Online Free DevTools by Hexmos"
 name: composer
 path: /freedevtools/tldr/composer/composer
 canonical: "https://hexmos.com/freedevtools/tldr/composer/composer/"

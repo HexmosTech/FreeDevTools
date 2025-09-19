@@ -1,5 +1,5 @@
 ---
-title: "Manage Azure Redis - Control Caches | Free DevTools"
+title: "Manage Azure Redis - Control Caches | Online Free DevTools by Hexmos"
 name: az-redis
 path: /freedevtools/tldr/az/az-redis
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-redis/"

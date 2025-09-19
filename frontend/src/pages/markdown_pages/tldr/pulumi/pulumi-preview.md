@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Preview - Show Infrastructure Updates | Free DevTools"
+title: "Pulumi Preview - Show Infrastructure Updates | Online Free DevTools by Hexmos"
 name: pulumi-preview
 path: /freedevtools/tldr/pulumi/pulumi-preview
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-preview/"

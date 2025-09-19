@@ -1,5 +1,5 @@
 ---
-title: "NVMe Control - Manage Storage Devices | Free DevTools"
+title: "NVMe Control - Manage Storage Devices | Online Free DevTools by Hexmos"
 name: nvme
 path: /freedevtools/tldr/common/nvme
 canonical: "https://hexmos.com/freedevtools/tldr/common/nvme/"

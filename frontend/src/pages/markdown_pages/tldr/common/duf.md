@@ -1,5 +1,5 @@
 ---
-title: "Disk Usage Utility - Analyze Disk Space | Free DevTools"
+title: "Disk Usage Utility - Analyze Disk Space | Online Free DevTools by Hexmos"
 name: duf
 path: /freedevtools/tldr/common/duf
 canonical: "https://hexmos.com/freedevtools/tldr/common/duf/"

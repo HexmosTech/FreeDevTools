@@ -1,5 +1,5 @@
 ---
-title: "Manage Wordlists - Kiterunner Wordlist | Free DevTools"
+title: "Manage Wordlists - Kiterunner Wordlist | Online Free DevTools by Hexmos"
 name: kiterunner-wordlist
 path: /freedevtools/tldr/kiterunner/kiterunner-wordlist
 canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-wordlist/"

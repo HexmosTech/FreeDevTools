@@ -1,5 +1,5 @@
 ---
-title: "Download Image Galleries - with gallery-dl | Free DevTools"
+title: "Download Image Galleries - with gallery-dl | Online Free DevTools by Hexmos"
 name: gallery-dl
 path: /freedevtools/tldr/common/gallery-dl
 canonical: "https://hexmos.com/freedevtools/tldr/common/gallery-dl/"

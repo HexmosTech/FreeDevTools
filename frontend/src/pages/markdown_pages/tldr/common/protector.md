@@ -1,5 +1,5 @@
 ---
-title: "Protect Branches - Control GitHub Branches | Free DevTools"
+title: "Protect Branches - Control GitHub Branches | Online Free DevTools by Hexmos"
 name: protector
 path: /freedevtools/tldr/common/protector
 canonical: "https://hexmos.com/freedevtools/tldr/common/protector/"

@@ -1,5 +1,5 @@
 ---
-title: "Iproxy Forward Ports - Control USB Port Forwarding | Free DevTools"
+title: "Iproxy Forward Ports - Control USB Port Forwarding | Online Free DevTools by Hexmos"
 name: iproxy
 path: /freedevtools/tldr/common/iproxy
 canonical: "https://hexmos.com/freedevtools/tldr/common/iproxy/"

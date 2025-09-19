@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to Puzz - Create X11 Puzzle Files | Free DevTools"
+title: "Convert PPM to Puzz - Create X11 Puzzle Files | Online Free DevTools by Hexmos"
 name: ppmtopuzz
 path: /freedevtools/tldr/ppm/ppmtopuzz
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopuzz/"

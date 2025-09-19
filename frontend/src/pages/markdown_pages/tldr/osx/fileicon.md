@@ -1,5 +1,5 @@
 ---
-title: "Manage File Icons - Customize Icons on macOS | Free DevTools"
+title: "Manage File Icons - Customize Icons on macOS | Online Free DevTools by Hexmos"
 name: fileicon
 path: /freedevtools/tldr/osx/fileicon
 canonical: "https://hexmos.com/freedevtools/tldr/osx/fileicon/"

@@ -1,5 +1,5 @@
 ---
-title: "Gnproc - Control Processor Count | Free DevTools"
+title: "Gnproc - Control Processor Count | Online Free DevTools by Hexmos"
 name: gnproc
 path: /freedevtools/tldr/osx/gnproc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gnproc/"

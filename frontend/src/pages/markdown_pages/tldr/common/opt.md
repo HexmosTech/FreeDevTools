@@ -1,5 +1,5 @@
 ---
-title: "LLVM Optimizer - Run Optimizations | Free DevTools"
+title: "LLVM Optimizer - Run Optimizations | Online Free DevTools by Hexmos"
 name: opt
 path: "/freedevtools/tldr/common/opt"
 canonical: "https://hexmos.com/freedevtools/tldr/common/opt/"

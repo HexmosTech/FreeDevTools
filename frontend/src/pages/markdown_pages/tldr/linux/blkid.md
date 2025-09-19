@@ -1,5 +1,5 @@
 ---
-title: "Blkid - List Partitions and UUIDs | Free DevTools"
+title: "Blkid - List Partitions and UUIDs | Online Free DevTools by Hexmos"
 name: blkid
 path: /freedevtools/tldr/linux/blkid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blkid/"

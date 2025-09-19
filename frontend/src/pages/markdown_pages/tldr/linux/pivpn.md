@@ -1,5 +1,5 @@
 ---
-title: "PiVPN OpenVPN Setup - Manage VPN Connections | Free DevTools"
+title: "PiVPN OpenVPN Setup - Manage VPN Connections | Online Free DevTools by Hexmos"
 name: pivpn
 path: /freedevtools/tldr/linux/pivpn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pivpn/"

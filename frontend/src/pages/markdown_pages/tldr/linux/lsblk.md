@@ -1,5 +1,5 @@
 ---
-title: "List Block Devices - Control Disk Info with lsblk | Free DevTools"
+title: "List Block Devices - Control Disk Info with lsblk | Online Free DevTools by Hexmos"
 name: lsblk
 path: /freedevtools/tldr/linux/lsblk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsblk/"

@@ -1,5 +1,5 @@
 ---
-title: "Apply Patch - Apply Changes Without Commit | Free DevTools"
+title: "Apply Patch - Apply Changes Without Commit | Online Free DevTools by Hexmos"
 name: git-apply
 path: /freedevtools/tldr/git/git-apply
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-apply/"

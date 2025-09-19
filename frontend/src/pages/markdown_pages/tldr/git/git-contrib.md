@@ -1,5 +1,5 @@
 ---
-title: "Display Git Commits - Find Author Commits | Free DevTools"
+title: "Display Git Commits - Find Author Commits | Online Free DevTools by Hexmos"
 name: git-contrib
 path: /freedevtools/tldr/git/git-contrib
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-contrib/"

@@ -1,5 +1,5 @@
 ---
-title: "PGM Bentleyize - Format PGM Images | Free DevTools"
+title: "PGM Bentleyize - Format PGM Images | Online Free DevTools by Hexmos"
 name: pgmbentley
 path: /freedevtools/tldr/common/pgmbentley
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmbentley/"

@@ -1,5 +1,5 @@
 ---
-title: "Nim Compiler - Compile Nim Code | Free DevTools"
+title: "Nim Compiler - Compile Nim Code | Online Free DevTools by Hexmos"
 name: nim
 path: /freedevtools/tldr/common/nim
 canonical: "https://hexmos.com/freedevtools/tldr/common/nim/"

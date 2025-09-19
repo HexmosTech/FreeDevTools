@@ -1,5 +1,5 @@
 ---
-title: "Countdown Timer - Control Terminal Timers | Free DevTools"
+title: "Countdown Timer - Control Terminal Timers | Online Free DevTools by Hexmos"
 name: termdown
 path: /freedevtools/tldr/common/termdown
 canonical: "https://hexmos.com/freedevtools/tldr/common/termdown/"

@@ -1,5 +1,5 @@
 ---
-title: "Filesystem Information - Dump ext2/3/4 with dumpe2fs | Free DevTools"
+title: "Filesystem Information - Dump ext2/3/4 with dumpe2fs | Online Free DevTools by Hexmos"
 name: dumpe2fs
 path: /freedevtools/tldr/linux/dumpe2fs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dumpe2fs/"

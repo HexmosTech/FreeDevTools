@@ -1,5 +1,5 @@
 ---
-title: "StrongName Sign - Verify Assemblies with SN | Free DevTools"
+title: "StrongName Sign - Verify Assemblies with SN | Online Free DevTools by Hexmos"
 name: sn
 path: /freedevtools/tldr/common/sn
 canonical: "https://hexmos.com/freedevtools/tldr/common/sn/"

@@ -1,5 +1,5 @@
 ---
-title: "JHipster Generator - Create Web Apps | Free DevTools"
+title: "JHipster Generator - Create Web Apps | Online Free DevTools by Hexmos"
 name: jhipster
 path: /freedevtools/tldr/common/jhipster
 canonical: "https://hexmos.com/freedevtools/tldr/common/jhipster/"

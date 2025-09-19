@@ -1,5 +1,5 @@
 ---
-title: "Yadm Upgrade - Update Yadm to Latest Version | Free DevTools"
+title: "Yadm Upgrade - Update Yadm to Latest Version | Online Free DevTools by Hexmos"
 name: yadm-upgrade
 path: /freedevtools/tldr/yadm/yadm-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-upgrade/"

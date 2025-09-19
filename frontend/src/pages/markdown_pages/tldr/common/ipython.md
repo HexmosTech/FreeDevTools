@@ -1,5 +1,5 @@
 ---
-title: "IPython Shell - Create Interactive Python Sessions | Free DevTools"
+title: "IPython Shell - Create Interactive Python Sessions | Online Free DevTools by Hexmos"
 name: ipython
 path: /freedevtools/tldr/common/ipython
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipython/"

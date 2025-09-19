@@ -1,5 +1,5 @@
 ---
-title: "Revert Changes - Apply Revisions with jj | Free DevTools"
+title: "Revert Changes - Apply Revisions with jj | Online Free DevTools by Hexmos"
 name: jj-revert
 path: /freedevtools/tldr/jj/jj-revert
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-revert/"

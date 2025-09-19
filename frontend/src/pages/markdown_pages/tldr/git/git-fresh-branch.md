@@ -1,5 +1,5 @@
 ---
-title: "Create Git Branch - Empty Local Branch | Free DevTools"
+title: "Create Git Branch - Empty Local Branch | Online Free DevTools by Hexmos"
 name: git-fresh-branch
 path: /freedevtools/tldr/git/git-fresh-branch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-fresh-branch/"

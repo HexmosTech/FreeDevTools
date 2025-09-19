@@ -1,5 +1,5 @@
 ---
-title: "Manage Kubernetes Clusters - Loft Virtual Clusters | Free DevTools"
+title: "Manage Kubernetes Clusters - Loft Virtual Clusters | Online Free DevTools by Hexmos"
 name: loft
 path: /freedevtools/tldr/common/loft
 canonical: "https://hexmos.com/freedevtools/tldr/common/loft/"

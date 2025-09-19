@@ -1,5 +1,5 @@
 ---
-title: "Init - Control Linux Run Levels | Free DevTools"
+title: "Init - Control Linux Run Levels | Online Free DevTools by Hexmos"
 name: init
 path: /freedevtools/tldr/linux/init
 canonical: "https://hexmos.com/freedevtools/tldr/linux/init/"

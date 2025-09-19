@@ -1,5 +1,5 @@
 ---
-title: "Patch File - Apply Diff Patches | Free DevTools"
+title: "Patch File - Apply Diff Patches | Online Free DevTools by Hexmos"
 name: patch
 path: /freedevtools/tldr/common/patch
 canonical: "https://hexmos.com/freedevtools/tldr/common/patch/"

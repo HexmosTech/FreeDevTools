@@ -1,5 +1,5 @@
 ---
-title: "Control runsvchdir - Manage Service Directories | Free DevTools"
+title: "Control runsvchdir - Manage Service Directories | Online Free DevTools by Hexmos"
 name: runsvchdir
 path: "/freedevtools/tldr/common/runsvchdir"
 canonical: "https://hexmos.com/freedevtools/tldr/common/runsvchdir/"

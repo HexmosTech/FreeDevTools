@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Control Software with pkgin | Free DevTools"
+title: "Manage Packages - Control Software with pkgin | Online Free DevTools by Hexmos"
 name: pkgin
 path: /freedevtools/tldr/netbsd/pkgin
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/pkgin/"

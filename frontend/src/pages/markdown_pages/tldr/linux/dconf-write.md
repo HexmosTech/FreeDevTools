@@ -1,5 +1,5 @@
 ---
-title: "Dconf Write - Control Key Values | Free DevTools"
+title: "Dconf Write - Control Key Values | Online Free DevTools by Hexmos"
 name: dconf-write
 path: /freedevtools/tldr/linux/dconf-write
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf-write/"

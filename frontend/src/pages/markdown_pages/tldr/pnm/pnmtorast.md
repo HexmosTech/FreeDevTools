@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to RAST - Image Conversion | Free DevTools"
+title: "Convert PNM to RAST - Image Conversion | Online Free DevTools by Hexmos"
 name: pnmtorast
 path: /freedevtools/tldr/pnm/pnmtorast
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtorast/"

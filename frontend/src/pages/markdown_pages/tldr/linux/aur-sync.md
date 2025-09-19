@@ -1,5 +1,5 @@
 ---
-title: "Sync AUR Packages - Automate Builds | Free DevTools"
+title: "Sync AUR Packages - Automate Builds | Online Free DevTools by Hexmos"
 name: aur-sync
 path: /freedevtools/tldr/linux/aur-sync
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aur-sync/"

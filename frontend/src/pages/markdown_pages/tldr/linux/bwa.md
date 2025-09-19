@@ -1,5 +1,5 @@
 ---
-title: "BWA Alignment - Map DNA Sequences | Free DevTools"
+title: "BWA Alignment - Map DNA Sequences | Online Free DevTools by Hexmos"
 name: bwa
 path: /freedevtools/tldr/linux/bwa
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bwa/"

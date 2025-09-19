@@ -1,5 +1,5 @@
 ---
-title: "Control Directory - Shell Directory Changer | Free DevTools"
+title: "Control Directory - Shell Directory Changer | Online Free DevTools by Hexmos"
 name: scd
 path: /freedevtools/tldr/common/scd
 canonical: "https://hexmos.com/freedevtools/tldr/common/scd/"

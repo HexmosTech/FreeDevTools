@@ -1,5 +1,5 @@
 ---
-title: "Convert Biorad to PGM - Image Format Converter | Free DevTools"
+title: "Convert Biorad to PGM - Image Format Converter | Online Free DevTools by Hexmos"
 name: bioradtopgm
 path: /freedevtools/tldr/common/bioradtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/bioradtopgm/"

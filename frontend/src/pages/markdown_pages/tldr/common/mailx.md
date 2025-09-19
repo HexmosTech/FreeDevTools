@@ -1,5 +1,5 @@
 ---
-title: "Send Mail - Send and Receive Email with Mailx | Free DevTools"
+title: "Send Mail - Send and Receive Email with Mailx | Online Free DevTools by Hexmos"
 name: mailx
 path: /freedevtools/tldr/common/mailx
 canonical: "https://hexmos.com/freedevtools/tldr/common/mailx/"

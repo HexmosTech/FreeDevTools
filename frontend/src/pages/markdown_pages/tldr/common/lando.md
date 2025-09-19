@@ -1,5 +1,5 @@
 ---
-title: "Control Lando Apps - Local Development Environment | Free DevTools"
+title: "Control Lando Apps - Local Development Environment | Online Free DevTools by Hexmos"
 name: lando
 path: /freedevtools/tldr/common/lando
 canonical: "https://hexmos.com/freedevtools/tldr/common/lando/"

@@ -1,5 +1,5 @@
 ---
-title: "Dolt Branch - Manage Database Branches | Free DevTools"
+title: "Dolt Branch - Manage Database Branches | Online Free DevTools by Hexmos"
 name: dolt-branch
 path: /freedevtools/tldr/dolt/dolt-branch
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-branch/"

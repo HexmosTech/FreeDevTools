@@ -1,5 +1,5 @@
 ---
-title: "List Directory - Manage Linux Files | Free DevTools"
+title: "List Directory - Manage Linux Files | Online Free DevTools by Hexmos"
 name: dir
 path: /freedevtools/tldr/linux/dir
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dir/"

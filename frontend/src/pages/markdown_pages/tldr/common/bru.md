@@ -1,5 +1,5 @@
 ---
-title: "Bruno CLI - Run API Requests | Free DevTools"
+title: "Bruno CLI - Run API Requests | Online Free DevTools by Hexmos"
 name: bru
 path: /freedevtools/tldr/common/bru
 canonical: "https://hexmos.com/freedevtools/tldr/common/bru/"

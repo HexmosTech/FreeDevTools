@@ -1,5 +1,5 @@
 ---
-title: "DF Command - Check Disk Space Usage | Free DevTools"
+title: "DF Command - Check Disk Space Usage | Online Free DevTools by Hexmos"
 name: df
 path: /freedevtools/tldr/osx/df
 canonical: "https://hexmos.com/freedevtools/tldr/osx/df/"

@@ -1,5 +1,5 @@
 ---
-title: "Uncompress XZ - Decompress Files Easily | Free DevTools"
+title: "Uncompress XZ - Decompress Files Easily | Online Free DevTools by Hexmos"
 name: unxz
 path: /freedevtools/tldr/common/unxz
 canonical: "https://hexmos.com/freedevtools/tldr/common/unxz/"

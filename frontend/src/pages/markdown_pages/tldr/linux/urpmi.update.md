@@ -1,5 +1,5 @@
 ---
-title: "Update Mageia Packages - urpmi.update Command | Free DevTools"
+title: "Update Mageia Packages - urpmi.update Command | Online Free DevTools by Hexmos"
 name: urpmi.update
 path: /freedevtools/tldr/linux/urpmi.update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi.update/"

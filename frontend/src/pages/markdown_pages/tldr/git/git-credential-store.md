@@ -1,5 +1,5 @@
 ---
-title: "Store Git Credentials - Secure Password Storage | Free DevTools"
+title: "Store Git Credentials - Secure Password Storage | Online Free DevTools by Hexmos"
 name: git-credential-store
 path: /freedevtools/tldr/git/git-credential-store
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-credential-store/"

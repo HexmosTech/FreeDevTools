@@ -1,5 +1,5 @@
 ---
-title: "Pacstall Package Manager - Control Ubuntu Packages | Free DevTools"
+title: "Pacstall Package Manager - Control Ubuntu Packages | Online Free DevTools by Hexmos"
 name: pacstall
 path: /freedevtools/tldr/linux/pacstall
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacstall/"

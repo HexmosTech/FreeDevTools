@@ -1,5 +1,5 @@
 ---
-title: "Module - Control Linux Environment Modules | Free DevTools"
+title: "Module - Control Linux Environment Modules | Online Free DevTools by Hexmos"
 name: module
 path: /freedevtools/tldr/linux/module
 canonical: "https://hexmos.com/freedevtools/tldr/linux/module/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Default Apps - Duti macOS | Free DevTools"
+title: "Control Default Apps - Duti macOS | Online Free DevTools by Hexmos"
 name: duti
 path: "/freedevtools/tldr/osx/duti"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/duti/"

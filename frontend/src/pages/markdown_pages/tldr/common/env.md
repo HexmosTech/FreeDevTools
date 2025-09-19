@@ -1,5 +1,5 @@
 ---
-title: "Environment Variables - Control Env Settings | Free DevTools"
+title: "Environment Variables - Control Env Settings | Online Free DevTools by Hexmos"
 name: env
 path: /freedevtools/tldr/common/env
 canonical: "https://hexmos.com/freedevtools/tldr/common/env/"

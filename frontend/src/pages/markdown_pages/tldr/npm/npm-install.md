@@ -1,5 +1,5 @@
 ---
-title: "NPM Install - Manage Node Packages | Free DevTools"
+title: "NPM Install - Manage Node Packages | Online Free DevTools by Hexmos"
 name: npm-install
 path: /freedevtools/tldr/npm/npm-install
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-install/"

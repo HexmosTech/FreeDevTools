@@ -1,5 +1,5 @@
 ---
-title: "For Command - Execute Commands Iteratively | Free DevTools"
+title: "For Command - Execute Commands Iteratively | Online Free DevTools by Hexmos"
 name: for
 path: /freedevtools/tldr/windows/for
 canonical: "https://hexmos.com/freedevtools/tldr/windows/for/"

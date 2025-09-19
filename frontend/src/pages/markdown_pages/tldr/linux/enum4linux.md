@@ -1,5 +1,5 @@
 ---
-title: "Enum4linux - Enumerate Windows & Samba | Free DevTools"
+title: "Enum4linux - Enumerate Windows & Samba | Online Free DevTools by Hexmos"
 name: enum4linux
 path: /freedevtools/tldr/linux/enum4linux
 canonical: "https://hexmos.com/freedevtools/tldr/linux/enum4linux/"

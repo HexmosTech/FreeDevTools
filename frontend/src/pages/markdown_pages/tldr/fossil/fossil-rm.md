@@ -1,5 +1,5 @@
 ---
-title: "Fossil Delete - Remove Files with Fossil | Free DevTools"
+title: "Fossil Delete - Remove Files with Fossil | Online Free DevTools by Hexmos"
 name: fossil-rm
 path: /freedevtools/tldr/fossil/fossil-rm
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-rm/"

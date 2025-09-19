@@ -1,5 +1,5 @@
 ---
-title: "Dock Applications - Control System Tray Apps | Free DevTools"
+title: "Dock Applications - Control System Tray Apps | Online Free DevTools by Hexmos"
 name: kdocker
 path: /freedevtools/tldr/linux/kdocker
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kdocker/"

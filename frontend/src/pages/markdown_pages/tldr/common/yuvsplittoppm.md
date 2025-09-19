@@ -1,5 +1,5 @@
 ---
-title: "Convert YUV to PPM - Create PPM Images | Free DevTools"
+title: "Convert YUV to PPM - Create PPM Images | Online Free DevTools by Hexmos"
 name: yuvsplittoppm
 path: /freedevtools/tldr/common/yuvsplittoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/yuvsplittoppm/"

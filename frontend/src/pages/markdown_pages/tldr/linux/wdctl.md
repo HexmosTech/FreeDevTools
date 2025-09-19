@@ -1,5 +1,5 @@
 ---
-title: "Watchdog Control - Display Watchdog Status | Free DevTools"
+title: "Watchdog Control - Display Watchdog Status | Online Free DevTools by Hexmos"
 name: wdctl
 path: /freedevtools/tldr/linux/wdctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wdctl/"

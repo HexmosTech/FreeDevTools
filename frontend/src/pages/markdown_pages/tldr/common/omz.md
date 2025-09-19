@@ -1,5 +1,5 @@
 ---
-title: "Control Zsh Configuration - Manage Shell with omz | Free DevTools"
+title: "Control Zsh Configuration - Manage Shell with omz | Online Free DevTools by Hexmos"
 name: omz
 path: /freedevtools/tldr/common/omz
 canonical: "https://hexmos.com/freedevtools/tldr/common/omz/"

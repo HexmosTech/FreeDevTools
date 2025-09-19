@@ -1,5 +1,5 @@
 ---
-title: "Convert PI1 to PPM - Image Conversion | Free DevTools"
+title: "Convert PI1 to PPM - Image Conversion | Online Free DevTools by Hexmos"
 name: pi1toppm
 path: /freedevtools/tldr/common/pi1toppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pi1toppm/"

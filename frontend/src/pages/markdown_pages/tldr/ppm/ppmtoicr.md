@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to ICR - Image Format Conversion | Free DevTools"
+title: "Convert PPM to ICR - Image Format Conversion | Online Free DevTools by Hexmos"
 name: ppmtoicr
 path: /freedevtools/tldr/ppm/ppmtoicr
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoicr/"

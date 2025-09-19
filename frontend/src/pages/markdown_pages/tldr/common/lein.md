@@ -1,5 +1,5 @@
 ---
-title: "Manage Clojure Projects - With Lein | Free DevTools"
+title: "Manage Clojure Projects - With Lein | Online Free DevTools by Hexmos"
 name: lein
 path: /freedevtools/tldr/common/lein
 canonical: "https://hexmos.com/freedevtools/tldr/common/lein/"

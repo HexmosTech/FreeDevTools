@@ -1,5 +1,5 @@
 ---
-title: "Control Displays - ddcutil DDC/CI Command | Free DevTools"
+title: "Control Displays - ddcutil DDC/CI Command | Online Free DevTools by Hexmos"
 name: ddcutil
 path: /freedevtools/tldr/linux/ddcutil
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ddcutil/"

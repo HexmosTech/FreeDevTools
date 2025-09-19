@@ -1,5 +1,5 @@
 ---
-title: "Convert Lisp Machine Bitmap - to PGM Image | Free DevTools"
+title: "Convert Lisp Machine Bitmap - to PGM Image | Online Free DevTools by Hexmos"
 name: lispmtopgm
 path: "/freedevtools/tldr/common/lispmtopgm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/lispmtopgm/"

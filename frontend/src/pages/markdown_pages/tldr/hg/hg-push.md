@@ -1,5 +1,5 @@
 ---
-title: "HG Push - Send Mercurial Changesets | Free DevTools"
+title: "HG Push - Send Mercurial Changesets | Online Free DevTools by Hexmos"
 name: hg-push
 path: /freedevtools/tldr/hg/hg-push
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-push/"

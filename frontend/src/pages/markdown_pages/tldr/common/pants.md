@@ -1,5 +1,5 @@
 ---
-title: "Pants Build Tool - Automate Build Processes | Free DevTools"
+title: "Pants Build Tool - Automate Build Processes | Online Free DevTools by Hexmos"
 name: pants
 path: /freedevtools/tldr/common/pants
 canonical: "https://hexmos.com/freedevtools/tldr/common/pants/"

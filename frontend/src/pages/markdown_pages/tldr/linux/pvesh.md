@@ -1,5 +1,5 @@
 ---
-title: "Pvesh - Interface Proxmox VE API | Free DevTools"
+title: "Pvesh - Interface Proxmox VE API | Online Free DevTools by Hexmos"
 name: pvesh
 path: /freedevtools/tldr/linux/pvesh
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pvesh/"

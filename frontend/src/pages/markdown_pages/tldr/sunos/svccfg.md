@@ -1,5 +1,5 @@
 ---
-title: "Service Config - Control SMF Configuration | Free DevTools"
+title: "Service Config - Control SMF Configuration | Online Free DevTools by Hexmos"
 name: svccfg
 path: /freedevtools/tldr/sunos/svccfg
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/svccfg/"

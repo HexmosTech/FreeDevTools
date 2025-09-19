@@ -1,5 +1,5 @@
 ---
-title: "Pg_restore - Restore PostgreSQL Databases | Free DevTools"
+title: "Pg_restore - Restore PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: pg_restore
 path: /freedevtools/tldr/postgres/pg_restore
 canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_restore/"

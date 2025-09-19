@@ -1,5 +1,5 @@
 ---
-title: "Manage Compute Resources - Exoscale Compute | Free DevTools"
+title: "Manage Compute Resources - Exoscale Compute | Online Free DevTools by Hexmos"
 name: exo-compute
 path: /freedevtools/tldr/exo/exo-compute
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute/"

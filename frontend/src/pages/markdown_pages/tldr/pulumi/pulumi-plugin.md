@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Plugin Manager - Control Plugins | Free DevTools"
+title: "Pulumi Plugin Manager - Control Plugins | Online Free DevTools by Hexmos"
 name: pulumi-plugin
 path: /freedevtools/tldr/pulumi/pulumi-plugin
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-plugin/"

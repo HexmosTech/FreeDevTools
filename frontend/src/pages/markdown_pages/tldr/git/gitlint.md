@@ -1,5 +1,5 @@
 ---
-title: "Validate Git Commit Messages - Style Linter | Free DevTools"
+title: "Validate Git Commit Messages - Style Linter | Online Free DevTools by Hexmos"
 name: gitlint
 path: /freedevtools/tldr/git/gitlint
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitlint/"

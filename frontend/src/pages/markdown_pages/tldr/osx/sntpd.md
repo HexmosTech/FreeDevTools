@@ -1,5 +1,5 @@
 ---
-title: "Control SNTP Daemon - Manage Time Synchronization | Free DevTools"
+title: "Control SNTP Daemon - Manage Time Synchronization | Online Free DevTools by Hexmos"
 name: sntpd
 path: /freedevtools/tldr/osx/sntpd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sntpd/"

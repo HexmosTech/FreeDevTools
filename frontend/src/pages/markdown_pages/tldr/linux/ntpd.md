@@ -1,5 +1,5 @@
 ---
-title: "NTP Control - Synchronize Time | Free DevTools"
+title: "NTP Control - Synchronize Time | Online Free DevTools by Hexmos"
 name: ntpd
 path: /freedevtools/tldr/linux/ntpd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpd/"

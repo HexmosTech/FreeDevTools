@@ -1,5 +1,5 @@
 ---
-title: "Show Proxmox VM Command - Display VM Startup Command | Free DevTools"
+title: "Show Proxmox VM Command - Display VM Startup Command | Online Free DevTools by Hexmos"
 name: qm-showcmd
 path: /freedevtools/tldr/linux/qm-showcmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-showcmd/"

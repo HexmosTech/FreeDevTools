@@ -1,5 +1,5 @@
 ---
-title: "Control Gamepads - QJoypad Keyboard/Mouse Translator | Free DevTools"
+title: "Control Gamepads - QJoypad Keyboard/Mouse Translator | Online Free DevTools by Hexmos"
 name: qjoypad
 path: /freedevtools/tldr/linux/qjoypad
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qjoypad/"

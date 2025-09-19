@@ -1,5 +1,5 @@
 ---
-title: "Generate TLP Status Reports - System Power Management | Free DevTools"
+title: "Generate TLP Status Reports - System Power Management | Online Free DevTools by Hexmos"
 name: tlp-stat
 path: /freedevtools/tldr/linux/tlp-stat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tlp-stat/"

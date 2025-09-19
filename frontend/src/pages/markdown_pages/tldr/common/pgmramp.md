@@ -1,5 +1,5 @@
 ---
-title: "Generate Greyscale Map - pgmramp | Free DevTools"
+title: "Generate Greyscale Map - pgmramp | Online Free DevTools by Hexmos"
 name: pgmramp
 path: /freedevtools/tldr/common/pgmramp
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmramp/"

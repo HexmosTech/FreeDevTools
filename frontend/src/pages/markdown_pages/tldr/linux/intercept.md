@@ -1,5 +1,5 @@
 ---
-title: "Intercept Tool - Control Input Events on Linux | Free DevTools"
+title: "Intercept Tool - Control Input Events on Linux | Online Free DevTools by Hexmos"
 name: intercept
 path: /freedevtools/tldr/linux/intercept
 canonical: "https://hexmos.com/freedevtools/tldr/linux/intercept/"

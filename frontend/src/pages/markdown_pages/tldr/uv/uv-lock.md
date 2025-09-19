@@ -1,5 +1,5 @@
 ---
-title: "Create uv Lockfile - Update Projects | Free DevTools"
+title: "Create uv Lockfile - Update Projects | Online Free DevTools by Hexmos"
 name: uv-lock
 path: /freedevtools/tldr/uv/uv-lock
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-lock/"

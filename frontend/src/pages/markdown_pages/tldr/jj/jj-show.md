@@ -1,5 +1,5 @@
 ---
-title: "JJ Show - Display Commit Details | Free DevTools"
+title: "JJ Show - Display Commit Details | Online Free DevTools by Hexmos"
 name: jj-show
 path: /freedevtools/tldr/jj/jj-show
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-show/"

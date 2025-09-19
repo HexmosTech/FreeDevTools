@@ -1,5 +1,5 @@
 ---
-title: "Control lckdo - File Locking Utility | Free DevTools"
+title: "Control lckdo - File Locking Utility | Online Free DevTools by Hexmos"
 name: lckdo
 path: /freedevtools/tldr/common/lckdo
 canonical: "https://hexmos.com/freedevtools/tldr/common/lckdo/"

@@ -1,5 +1,5 @@
 ---
-title: "bpftrace Tracing - Control Linux eBPF with bpftrace | Free DevTools"
+title: "bpftrace Tracing - Control Linux eBPF with bpftrace | Online Free DevTools by Hexmos"
 name: bpftrace
 path: /freedevtools/tldr/linux/bpftrace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bpftrace/"

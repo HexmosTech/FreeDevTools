@@ -1,5 +1,5 @@
 ---
-title: "Control Documents with Zathura - Modal Viewer | Free DevTools"
+title: "Control Documents with Zathura - Modal Viewer | Online Free DevTools by Hexmos"
 name: zathura
 path: /freedevtools/tldr/linux/zathura
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zathura/"

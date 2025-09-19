@@ -1,5 +1,5 @@
 ---
-title: "Open Zstd Files - Read Compressed Files | Free DevTools"
+title: "Open Zstd Files - Read Compressed Files | Online Free DevTools by Hexmos"
 name: zstdless
 path: /freedevtools/tldr/common/zstdless
 canonical: "https://hexmos.com/freedevtools/tldr/common/zstdless/"

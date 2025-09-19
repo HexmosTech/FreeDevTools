@@ -1,5 +1,5 @@
 ---
-title: "Enscript - Convert Text to PostScript | Free DevTools"
+title: "Enscript - Convert Text to PostScript | Online Free DevTools by Hexmos"
 name: enscript
 path: /freedevtools/tldr/common/enscript
 canonical: "https://hexmos.com/freedevtools/tldr/common/enscript/"

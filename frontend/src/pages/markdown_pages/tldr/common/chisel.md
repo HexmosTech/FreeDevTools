@@ -1,5 +1,5 @@
 ---
-title: "Create Secure Tunnels - Chisel | Free DevTools"
+title: "Create Secure Tunnels - Chisel | Online Free DevTools by Hexmos"
 name: chisel
 path: "/freedevtools/tldr/common/chisel"
 canonical: "https://hexmos.com/freedevtools/tldr/common/chisel/"

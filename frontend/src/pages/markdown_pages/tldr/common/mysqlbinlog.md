@@ -1,5 +1,5 @@
 ---
-title: "Process MySQL Binlog - Analyze Database Logs | Free DevTools"
+title: "Process MySQL Binlog - Analyze Database Logs | Online Free DevTools by Hexmos"
 name: mysqlbinlog
 path: /freedevtools/tldr/common/mysqlbinlog
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysqlbinlog/"

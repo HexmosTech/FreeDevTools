@@ -1,5 +1,5 @@
 ---
-title: "SBCTL - Control Secure Boot Keys | Free DevTools"
+title: "SBCTL - Control Secure Boot Keys | Online Free DevTools by Hexmos"
 name: sbctl
 path: "/freedevtools/tldr/linux/sbctl"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sbctl/"

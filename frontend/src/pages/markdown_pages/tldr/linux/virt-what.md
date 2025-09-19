@@ -1,5 +1,5 @@
 ---
-title: "Virt-What - Detect Virtual Machines | Free DevTools"
+title: "Virt-What - Detect Virtual Machines | Online Free DevTools by Hexmos"
 name: virt-what
 path: /freedevtools/tldr/linux/virt-what
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-what/"

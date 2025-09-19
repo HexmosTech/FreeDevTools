@@ -1,5 +1,5 @@
 ---
-title: "Control Filesystem Readonly - Enable/Disable | Free DevTools"
+title: "Control Filesystem Readonly - Enable/Disable | Online Free DevTools by Hexmos"
 name: steamos-readonly
 path: /freedevtools/tldr/linux/steamos-readonly
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-readonly/"

@@ -1,5 +1,5 @@
 ---
-title: "Analyze Fossa Scans - Generate License Reports | Free DevTools"
+title: "Analyze Fossa Scans - Generate License Reports | Online Free DevTools by Hexmos"
 name: fossa
 path: /freedevtools/tldr/common/fossa
 canonical: "https://hexmos.com/freedevtools/tldr/common/fossa/"

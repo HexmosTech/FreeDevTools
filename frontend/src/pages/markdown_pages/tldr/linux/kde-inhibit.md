@@ -1,5 +1,5 @@
 ---
-title: "KDE Inhibit - Control Desktop Functions | Free DevTools"
+title: "KDE Inhibit - Control Desktop Functions | Online Free DevTools by Hexmos"
 name: kde-inhibit
 path: /freedevtools/tldr/linux/kde-inhibit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kde-inhibit/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Compilation Database - sfdk compiledb | Free DevTools"
+title: "Generate Compilation Database - sfdk compiledb | Online Free DevTools by Hexmos"
 name: sfdk-compiledb
 path: /freedevtools/tldr/sfdk/sfdk-compiledb
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-compiledb/"

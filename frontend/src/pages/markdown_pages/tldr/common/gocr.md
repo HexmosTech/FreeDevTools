@@ -1,5 +1,5 @@
 ---
-title: "Recognize Text - gocr OCR Tool | Free DevTools"
+title: "Recognize Text - gocr OCR Tool | Online Free DevTools by Hexmos"
 name: gocr
 path: /freedevtools/tldr/common/gocr
 canonical: "https://hexmos.com/freedevtools/tldr/common/gocr/"

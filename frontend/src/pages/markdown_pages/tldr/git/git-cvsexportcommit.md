@@ -1,5 +1,5 @@
 ---
-title: "Generate Git CVS Export - Commit to CVS | Free DevTools"
+title: "Generate Git CVS Export - Commit to CVS | Online Free DevTools by Hexmos"
 name: git-cvsexportcommit
 path: /freedevtools/tldr/git/git-cvsexportcommit
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cvsexportcommit/"

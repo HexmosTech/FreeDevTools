@@ -1,5 +1,5 @@
 ---
-title: "Exoscale IAM - Manage IAM Roles & API Keys | Free DevTools"
+title: "Exoscale IAM - Manage IAM Roles & API Keys | Online Free DevTools by Hexmos"
 name: exo-iam
 path: /freedevtools/tldr/exo/exo-iam
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-iam/"

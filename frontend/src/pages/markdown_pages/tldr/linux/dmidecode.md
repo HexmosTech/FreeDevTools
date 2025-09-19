@@ -1,5 +1,5 @@
 ---
-title: "DMI Decode - Display System Hardware Info | Free DevTools"
+title: "DMI Decode - Display System Hardware Info | Online Free DevTools by Hexmos"
 name: dmidecode
 path: /freedevtools/tldr/linux/dmidecode
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dmidecode/"

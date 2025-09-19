@@ -1,5 +1,5 @@
 ---
-title: "Generate SSH Keys - Secure Authentication | Free DevTools"
+title: "Generate SSH Keys - Secure Authentication | Online Free DevTools by Hexmos"
 name: ssh-keygen
 path: /freedevtools/tldr/ssh/ssh-keygen
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-keygen/"

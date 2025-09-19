@@ -1,5 +1,5 @@
 ---
-title: "Validate Python Docstrings - Using pydocstyle | Free DevTools"
+title: "Validate Python Docstrings - Using pydocstyle | Online Free DevTools by Hexmos"
 name: pydocstyle
 path: /freedevtools/tldr/common/pydocstyle
 canonical: "https://hexmos.com/freedevtools/tldr/common/pydocstyle/"

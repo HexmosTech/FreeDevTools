@@ -1,5 +1,5 @@
 ---
-title: "Check Support Status - Identify Debian Package Support | Free DevTools"
+title: "Check Support Status - Identify Debian Package Support | Online Free DevTools by Hexmos"
 name: check-support-status
 path: /freedevtools/tldr/linux/check-support-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/check-support-status/"

@@ -1,5 +1,5 @@
 ---
-title: "Nix Shell - Create Isolated Environments | Free DevTools"
+title: "Nix Shell - Create Isolated Environments | Online Free DevTools by Hexmos"
 name: nix-shell.3
 path: /freedevtools/tldr/nix/nix-shell.3
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-shell.3/"

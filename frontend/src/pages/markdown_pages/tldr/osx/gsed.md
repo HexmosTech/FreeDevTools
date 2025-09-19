@@ -1,5 +1,5 @@
 ---
-title: "GSed - Stream Edit Text | Free DevTools"
+title: "GSed - Stream Edit Text | Online Free DevTools by Hexmos"
 name: gsed
 path: /freedevtools/tldr/osx/gsed
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsed/"

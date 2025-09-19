@@ -1,5 +1,5 @@
 ---
-title: "rr - Debug Program Execution | Free DevTools"
+title: "rr - Debug Program Execution | Online Free DevTools by Hexmos"
 name: rr
 path: /freedevtools/tldr/common/rr
 canonical: "https://hexmos.com/freedevtools/tldr/common/rr/"

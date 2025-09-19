@@ -1,5 +1,5 @@
 ---
-title: "Control LXI Instruments - SCPI Commands | Free DevTools"
+title: "Control LXI Instruments - SCPI Commands | Online Free DevTools by Hexmos"
 name: lxi
 path: /freedevtools/tldr/linux/lxi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxi/"

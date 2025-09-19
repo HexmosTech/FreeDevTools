@@ -1,5 +1,5 @@
 ---
-title: "Add AppxPackage - Install Windows Apps | Free DevTools"
+title: "Add AppxPackage - Install Windows Apps | Online Free DevTools by Hexmos"
 name: add-appxpackage
 path: /freedevtools/tldr/windows/add-appxpackage
 canonical: "https://hexmos.com/freedevtools/tldr/windows/add-appxpackage/"

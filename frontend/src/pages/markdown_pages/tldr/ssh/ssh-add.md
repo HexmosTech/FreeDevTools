@@ -1,5 +1,5 @@
 ---
-title: "SSH-Add - Manage SSH Keys | Free DevTools"
+title: "SSH-Add - Manage SSH Keys | Online Free DevTools by Hexmos"
 name: ssh-add
 path: "/freedevtools/tldr/ssh/ssh-add"
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-add/"

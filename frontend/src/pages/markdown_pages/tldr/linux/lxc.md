@@ -1,5 +1,5 @@
 ---
-title: "LXC Container Manager - Control Linux Containers | Free DevTools"
+title: "LXC Container Manager - Control Linux Containers | Online Free DevTools by Hexmos"
 name: lxc
 path: /freedevtools/tldr/linux/lxc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc/"

@@ -1,5 +1,5 @@
 ---
-title: "Create D Projects - Manage D Packages with Dub | Free DevTools"
+title: "Create D Projects - Manage D Packages with Dub | Online Free DevTools by Hexmos"
 name: dub
 path: /freedevtools/tldr/common/dub
 canonical: "https://hexmos.com/freedevtools/tldr/common/dub/"

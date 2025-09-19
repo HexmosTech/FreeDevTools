@@ -1,5 +1,5 @@
 ---
-title: "Manage Nix Packages - Control Environments with Flox | Free DevTools"
+title: "Manage Nix Packages - Control Environments with Flox | Online Free DevTools by Hexmos"
 name: flox
 path: /freedevtools/tldr/common/flox
 canonical: "https://hexmos.com/freedevtools/tldr/common/flox/"

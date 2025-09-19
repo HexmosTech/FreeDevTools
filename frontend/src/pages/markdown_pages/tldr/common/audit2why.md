@@ -1,5 +1,5 @@
 ---
-title: "Audit2Why - Understand SELinux Audit Messages | Free DevTools"
+title: "Audit2Why - Understand SELinux Audit Messages | Online Free DevTools by Hexmos"
 name: audit2why
 path: /freedevtools/tldr/common/audit2why
 canonical: "https://hexmos.com/freedevtools/tldr/common/audit2why/"

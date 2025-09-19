@@ -1,5 +1,5 @@
 ---
-title: "htpdate - Synchronize Time via HTTP | Free DevTools"
+title: "htpdate - Synchronize Time via HTTP | Online Free DevTools by Hexmos"
 name: htpdate
 path: /freedevtools/tldr/linux/htpdate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/htpdate/"

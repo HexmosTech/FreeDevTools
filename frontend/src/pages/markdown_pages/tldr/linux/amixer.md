@@ -1,5 +1,5 @@
 ---
-title: "Amixer - Control ALSA Sound Volume | Free DevTools"
+title: "Amixer - Control ALSA Sound Volume | Online Free DevTools by Hexmos"
 name: amixer
 path: /freedevtools/tldr/linux/amixer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/amixer/"

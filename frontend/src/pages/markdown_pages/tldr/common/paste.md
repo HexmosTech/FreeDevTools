@@ -1,5 +1,5 @@
 ---
-title: "Paste Tool - Merge File Lines | Free DevTools"
+title: "Paste Tool - Merge File Lines | Online Free DevTools by Hexmos"
 name: paste
 path: /freedevtools/tldr/common/paste
 canonical: "https://hexmos.com/freedevtools/tldr/common/paste/"

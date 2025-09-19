@@ -1,5 +1,5 @@
 ---
-title: "Generate GPG Keys - Control GNU Privacy Guard TUI | Free DevTools"
+title: "Generate GPG Keys - Control GNU Privacy Guard TUI | Online Free DevTools by Hexmos"
 name: gpg-tui
 path: /freedevtools/tldr/gpg/gpg-tui
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-tui/"

@@ -1,5 +1,5 @@
 ---
-title: "Create GitHub Repo - Manage Repositories | Free DevTools"
+title: "Create GitHub Repo - Manage Repositories | Online Free DevTools by Hexmos"
 name: gh-repo-create
 path: /freedevtools/tldr/gh/gh-repo-create
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-repo-create/"

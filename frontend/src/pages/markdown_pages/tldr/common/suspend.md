@@ -1,5 +1,5 @@
 ---
-title: "Suspend Shell - Halt Processes Quickly | Free DevTools"
+title: "Suspend Shell - Halt Processes Quickly | Online Free DevTools by Hexmos"
 name: suspend
 path: /freedevtools/tldr/common/suspend
 canonical: "https://hexmos.com/freedevtools/tldr/common/suspend/"

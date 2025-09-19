@@ -1,5 +1,5 @@
 ---
-title: "Change Group Ownership - Control File Permissions | Free DevTools"
+title: "Change Group Ownership - Control File Permissions | Online Free DevTools by Hexmos"
 name: chgrp
 path: /freedevtools/tldr/common/chgrp
 canonical: "https://hexmos.com/freedevtools/tldr/common/chgrp/"

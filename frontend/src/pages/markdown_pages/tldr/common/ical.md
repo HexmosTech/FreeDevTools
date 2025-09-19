@@ -1,5 +1,5 @@
 ---
-title: "Convert Dates - Gregorian & Hijri with ical | Free DevTools"
+title: "Convert Dates - Gregorian & Hijri with ical | Online Free DevTools by Hexmos"
 name: ical
 path: /freedevtools/tldr/common/ical
 canonical: "https://hexmos.com/freedevtools/tldr/common/ical/"

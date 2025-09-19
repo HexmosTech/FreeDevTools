@@ -1,5 +1,5 @@
 ---
-title: "Busybox - Control System Utilities | Free DevTools"
+title: "Busybox - Control System Utilities | Online Free DevTools by Hexmos"
 name: busybox
 path: /freedevtools/tldr/common/busybox
 canonical: "https://hexmos.com/freedevtools/tldr/common/busybox/"

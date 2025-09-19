@@ -1,5 +1,5 @@
 ---
-title: "Control Processes - Kill Processes with Command | Free DevTools"
+title: "Control Processes - Kill Processes with Command | Online Free DevTools by Hexmos"
 name: kill
 path: /freedevtools/tldr/linux/kill
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kill/"

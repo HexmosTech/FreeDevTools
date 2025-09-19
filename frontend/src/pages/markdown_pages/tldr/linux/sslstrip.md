@@ -1,5 +1,5 @@
 ---
-title: "SSLStrip - Perform SSL Stripping Attacks | Free DevTools"
+title: "SSLStrip - Perform SSL Stripping Attacks | Online Free DevTools by Hexmos"
 name: sslstrip
 path: /freedevtools/tldr/linux/sslstrip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sslstrip/"

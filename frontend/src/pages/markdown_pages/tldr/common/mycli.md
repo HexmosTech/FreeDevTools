@@ -1,5 +1,5 @@
 ---
-title: "MySQL CLI - Control Databases with mycli | Free DevTools"
+title: "MySQL CLI - Control Databases with mycli | Online Free DevTools by Hexmos"
 name: mycli
 path: /freedevtools/tldr/common/mycli
 canonical: "https://hexmos.com/freedevtools/tldr/common/mycli/"

@@ -1,5 +1,5 @@
 ---
-title: "Cam - Control Linux Camera Feed | Free DevTools"
+title: "Cam - Control Linux Camera Feed | Online Free DevTools by Hexmos"
 name: cam
 path: /freedevtools/tldr/linux/cam
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cam/"

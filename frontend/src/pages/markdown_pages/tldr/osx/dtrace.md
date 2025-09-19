@@ -1,5 +1,5 @@
 ---
-title: "DTrace - Trace System Events | Free DevTools"
+title: "DTrace - Trace System Events | Online Free DevTools by Hexmos"
 name: dtrace
 path: /freedevtools/tldr/osx/dtrace
 canonical: "https://hexmos.com/freedevtools/tldr/osx/dtrace/"

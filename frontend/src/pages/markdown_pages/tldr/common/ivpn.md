@@ -1,5 +1,5 @@
 ---
-title: "IVPN Client - Control VPN Connections | Free DevTools"
+title: "IVPN Client - Control VPN Connections | Online Free DevTools by Hexmos"
 name: ivpn
 path: /freedevtools/tldr/common/ivpn
 canonical: "https://hexmos.com/freedevtools/tldr/common/ivpn/"

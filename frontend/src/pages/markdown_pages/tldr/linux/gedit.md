@@ -1,5 +1,5 @@
 ---
-title: "Gedit Text Editor - Create & Edit Text | Free DevTools"
+title: "Gedit Text Editor - Create & Edit Text | Online Free DevTools by Hexmos"
 name: gedit
 path: /freedevtools/tldr/linux/gedit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gedit/"

@@ -1,5 +1,5 @@
 ---
-title: "Graft Git Branch - Merge and Delete Branches | Free DevTools"
+title: "Graft Git Branch - Merge and Delete Branches | Online Free DevTools by Hexmos"
 name: git-graft
 path: /freedevtools/tldr/git/git-graft
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-graft/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Home Directory - Manage User Profiles | Free DevTools"
+title: "Create Home Directory - Manage User Profiles | Online Free DevTools by Hexmos"
 name: mkhomedir_helper
 path: /freedevtools/tldr/linux/mkhomedir_helper
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkhomedir_helper/"

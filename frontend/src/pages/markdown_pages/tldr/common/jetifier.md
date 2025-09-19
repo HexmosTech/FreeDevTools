@@ -1,5 +1,5 @@
 ---
-title: "Jetifier - Migrate AndroidX Dependencies | Free DevTools"
+title: "Jetifier - Migrate AndroidX Dependencies | Online Free DevTools by Hexmos"
 name: jetifier
 path: /freedevtools/tldr/common/jetifier
 canonical: "https://hexmos.com/freedevtools/tldr/common/jetifier/"

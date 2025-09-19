@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Kerberos - Control Tickets | Free DevTools"
+title: "Mimikatz Kerberos - Control Tickets | Online Free DevTools by Hexmos"
 name: mimikatz-kerberos
 path: /freedevtools/tldr/windows/mimikatz-kerberos
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-kerberos/"

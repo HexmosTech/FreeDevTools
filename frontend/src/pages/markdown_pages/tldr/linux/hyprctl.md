@@ -1,5 +1,5 @@
 ---
-title: "Hyprctl Control - Manage Hyprland Compositor | Free DevTools"
+title: "Hyprctl Control - Manage Hyprland Compositor | Online Free DevTools by Hexmos"
 name: hyprctl
 path: /freedevtools/tldr/linux/hyprctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hyprctl/"

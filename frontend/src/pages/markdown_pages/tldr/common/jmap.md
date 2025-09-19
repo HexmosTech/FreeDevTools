@@ -1,5 +1,5 @@
 ---
-title: "JMap - Analyze Java Memory | Free DevTools"
+title: "JMap - Analyze Java Memory | Online Free DevTools by Hexmos"
 name: jmap
 path: /freedevtools/tldr/common/jmap
 canonical: "https://hexmos.com/freedevtools/tldr/common/jmap/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate PTX Index - Format Text with GNU ptx | Free DevTools"
+title: "Generate PTX Index - Format Text with GNU ptx | Online Free DevTools by Hexmos"
 name: gptx
 path: /freedevtools/tldr/osx/gptx
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gptx/"

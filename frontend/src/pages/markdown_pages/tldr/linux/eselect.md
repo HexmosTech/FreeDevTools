@@ -1,5 +1,5 @@
 ---
-title: "Manage Gentoo with eselect - Control System Configurations | Free DevTools"
+title: "Manage Gentoo with eselect - Control System Configurations | Online Free DevTools by Hexmos"
 name: eselect
 path: /freedevtools/tldr/linux/eselect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect/"

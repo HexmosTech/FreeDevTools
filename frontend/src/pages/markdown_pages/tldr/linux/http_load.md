@@ -1,5 +1,5 @@
 ---
-title: "HTTP Load Test - Benchmark Web Server Throughput | Free DevTools"
+title: "HTTP Load Test - Benchmark Web Server Throughput | Online Free DevTools by Hexmos"
 name: http_load
 path: /freedevtools/tldr/linux/http_load
 canonical: "https://hexmos.com/freedevtools/tldr/linux/http_load/"

@@ -1,5 +1,5 @@
 ---
-title: "Ping6 - Control IPv6 Network Connectivity | Free DevTools"
+title: "Ping6 - Control IPv6 Network Connectivity | Online Free DevTools by Hexmos"
 name: gping6
 path: /freedevtools/tldr/osx/gping6
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gping6/"

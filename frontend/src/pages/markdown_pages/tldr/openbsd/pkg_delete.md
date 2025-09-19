@@ -1,5 +1,5 @@
 ---
-title: "Delete Package - Remove Packages on OpenBSD | Free DevTools"
+title: "Delete Package - Remove Packages on OpenBSD | Online Free DevTools by Hexmos"
 name: pkg_delete
 path: /freedevtools/tldr/openbsd/pkg_delete
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg_delete/"

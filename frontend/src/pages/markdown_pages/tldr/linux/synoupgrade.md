@@ -1,5 +1,5 @@
 ---
-title: "Synology DSM Upgrade - Manage Updates | Free DevTools"
+title: "Synology DSM Upgrade - Manage Updates | Online Free DevTools by Hexmos"
 name: synoupgrade
 path: /freedevtools/tldr/linux/synoupgrade
 canonical: "https://hexmos.com/freedevtools/tldr/linux/synoupgrade/"

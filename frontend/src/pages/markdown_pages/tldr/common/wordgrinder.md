@@ -1,5 +1,5 @@
 ---
-title: "Create Documents with WordGrinder - Text Processor | Free DevTools"
+title: "Create Documents with WordGrinder - Text Processor | Online Free DevTools by Hexmos"
 name: wordgrinder
 path: /freedevtools/tldr/common/wordgrinder
 canonical: "https://hexmos.com/freedevtools/tldr/common/wordgrinder/"

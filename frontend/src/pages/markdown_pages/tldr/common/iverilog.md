@@ -1,5 +1,5 @@
 ---
-title: "Iverilog - Compile Verilog Code | Free DevTools"
+title: "Iverilog - Compile Verilog Code | Online Free DevTools by Hexmos"
 name: iverilog
 path: /freedevtools/tldr/common/iverilog
 canonical: "https://hexmos.com/freedevtools/tldr/common/iverilog/"

@@ -1,5 +1,5 @@
 ---
-title: "Korn Shell - Execute Commands | Free DevTools"
+title: "Korn Shell - Execute Commands | Online Free DevTools by Hexmos"
 name: ksh
 path: /freedevtools/tldr/common/ksh
 canonical: "https://hexmos.com/freedevtools/tldr/common/ksh/"

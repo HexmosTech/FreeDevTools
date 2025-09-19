@@ -1,5 +1,5 @@
 ---
-title: "Mercurial Control - Manage Source Code | Free DevTools"
+title: "Mercurial Control - Manage Source Code | Online Free DevTools by Hexmos"
 name: hg
 path: "/freedevtools/tldr/hg/hg"
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg/"

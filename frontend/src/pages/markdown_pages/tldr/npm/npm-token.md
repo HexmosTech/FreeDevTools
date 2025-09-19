@@ -1,5 +1,5 @@
 ---
-title: "Generate npm Tokens - Manage npm Authentication | Free DevTools"
+title: "Generate npm Tokens - Manage npm Authentication | Online Free DevTools by Hexmos"
 name: npm-token
 path: /freedevtools/tldr/npm/npm-token
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-token/"

@@ -1,5 +1,5 @@
 ---
-title: "CSV Clean - Validate CSV Syntax | Free DevTools"
+title: "CSV Clean - Validate CSV Syntax | Online Free DevTools by Hexmos"
 name: csvclean
 path: /freedevtools/tldr/cs/csvclean
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvclean/"

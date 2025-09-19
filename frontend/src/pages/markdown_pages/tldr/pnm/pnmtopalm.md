@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to Palm - Create Palm Images | Free DevTools"
+title: "Convert PNM to Palm - Create Palm Images | Online Free DevTools by Hexmos"
 name: pnmtopalm
 path: /freedevtools/tldr/pnm/pnmtopalm
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopalm/"

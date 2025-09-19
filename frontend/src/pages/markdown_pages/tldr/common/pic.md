@@ -1,5 +1,5 @@
 ---
-title: "Generate Pictures - Format with Pic | Free DevTools"
+title: "Generate Pictures - Format with Pic | Online Free DevTools by Hexmos"
 name: pic
 path: "/freedevtools/tldr/common/pic"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pic/"

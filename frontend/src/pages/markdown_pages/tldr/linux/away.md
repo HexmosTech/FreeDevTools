@@ -1,5 +1,5 @@
 ---
-title: "Away Command - Lock Terminal with Message | Free DevTools"
+title: "Away Command - Lock Terminal with Message | Online Free DevTools by Hexmos"
 name: away
 path: /freedevtools/tldr/linux/away
 canonical: "https://hexmos.com/freedevtools/tldr/linux/away/"

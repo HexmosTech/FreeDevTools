@@ -1,5 +1,5 @@
 ---
-title: "SKS Management - Manage Kubernetes Clusters | Free DevTools"
+title: "SKS Management - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
 name: exo-compute-sks
 path: /freedevtools/tldr/exo/exo-compute-sks
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-sks/"

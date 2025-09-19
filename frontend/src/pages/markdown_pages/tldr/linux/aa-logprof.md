@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Profile - Update Security Profiles | Free DevTools"
+title: "AppArmor Profile - Update Security Profiles | Online Free DevTools by Hexmos"
 name: aa-logprof
 path: /freedevtools/tldr/linux/aa-logprof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-logprof/"

@@ -1,5 +1,5 @@
 ---
-title: "WPA Supplicant - Manage Wireless Networks | Free DevTools"
+title: "WPA Supplicant - Manage Wireless Networks | Online Free DevTools by Hexmos"
 name: wpa_supplicant
 path: /freedevtools/tldr/common/wpa_supplicant
 canonical: "https://hexmos.com/freedevtools/tldr/common/wpa_supplicant/"

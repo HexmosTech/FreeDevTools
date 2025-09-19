@@ -1,5 +1,5 @@
 ---
-title: "GetADUsers - Control Active Directory Users | Free DevTools"
+title: "GetADUsers - Control Active Directory Users | Online Free DevTools by Hexmos"
 name: impacket-getadusers
 path: /freedevtools/tldr/impacket/impacket-getadusers
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getadusers/"

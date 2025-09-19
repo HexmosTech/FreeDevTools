@@ -1,5 +1,5 @@
 ---
-title: "Locale Checker - Manage System Locale Settings | Free DevTools"
+title: "Locale Checker - Manage System Locale Settings | Online Free DevTools by Hexmos"
 name: locale
 path: /freedevtools/tldr/linux/locale
 canonical: "https://hexmos.com/freedevtools/tldr/linux/locale/"

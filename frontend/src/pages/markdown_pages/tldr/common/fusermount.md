@@ -1,5 +1,5 @@
 ---
-title: "Mount Filesystems - Control FUSE Mounts | Free DevTools"
+title: "Mount Filesystems - Control FUSE Mounts | Online Free DevTools by Hexmos"
 name: fusermount
 path: /freedevtools/tldr/common/fusermount
 canonical: "https://hexmos.com/freedevtools/tldr/common/fusermount/"

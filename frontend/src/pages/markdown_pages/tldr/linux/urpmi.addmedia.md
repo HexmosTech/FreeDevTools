@@ -1,5 +1,5 @@
 ---
-title: "Add Mageia Media - Control Repositories | Free DevTools"
+title: "Add Mageia Media - Control Repositories | Online Free DevTools by Hexmos"
 name: urpmi.addmedia
 path: /freedevtools/tldr/linux/urpmi.addmedia
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi.addmedia/"

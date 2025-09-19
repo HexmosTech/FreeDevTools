@@ -1,5 +1,5 @@
 ---
-title: "Create TeX Live Database - tlmgr recreate-tlpdb | Free DevTools"
+title: "Create TeX Live Database - tlmgr recreate-tlpdb | Online Free DevTools by Hexmos"
 name: tlmgr-recreate-tlpdb
 path: /freedevtools/tldr/tlmgr/tlmgr-recreate-tlpdb
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-recreate-tlpdb/"

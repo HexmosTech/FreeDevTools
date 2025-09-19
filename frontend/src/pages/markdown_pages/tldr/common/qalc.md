@@ -1,5 +1,5 @@
 ---
-title: "Calculator qalc - Perform Calculations | Free DevTools"
+title: "Calculator qalc - Perform Calculations | Online Free DevTools by Hexmos"
 name: qalc
 path: /freedevtools/tldr/common/qalc
 canonical: "https://hexmos.com/freedevtools/tldr/common/qalc/"

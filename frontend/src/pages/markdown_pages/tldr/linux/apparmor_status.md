@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Status - Control App Security Profiles | Free DevTools"
+title: "AppArmor Status - Control App Security Profiles | Online Free DevTools by Hexmos"
 name: apparmor_status
 path: /freedevtools/tldr/linux/apparmor_status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apparmor_status/"

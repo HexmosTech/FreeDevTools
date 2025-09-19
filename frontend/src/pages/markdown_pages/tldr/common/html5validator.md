@@ -1,5 +1,5 @@
 ---
-title: "HTML5 Validator - Validate HTML5 Code | Free DevTools"
+title: "HTML5 Validator - Validate HTML5 Code | Online Free DevTools by Hexmos"
 name: html5validator
 path: /freedevtools/tldr/common/html5validator
 canonical: "https://hexmos.com/freedevtools/tldr/common/html5validator/"

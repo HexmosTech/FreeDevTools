@@ -1,5 +1,5 @@
 ---
-title: "Play Audio Files - Control Sound with SoX | Free DevTools"
+title: "Play Audio Files - Control Sound with SoX | Online Free DevTools by Hexmos"
 name: play
 path: /freedevtools/tldr/common/play
 canonical: "https://hexmos.com/freedevtools/tldr/common/play/"

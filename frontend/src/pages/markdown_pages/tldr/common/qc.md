@@ -1,5 +1,5 @@
 ---
-title: "Control Command Snippets - Manage Notes with QC | Free DevTools"
+title: "Control Command Snippets - Manage Notes with QC | Online Free DevTools by Hexmos"
 name: qc
 path: /freedevtools/tldr/common/qc
 canonical: "https://hexmos.com/freedevtools/tldr/common/qc/"

@@ -1,5 +1,5 @@
 ---
-title: "Edit Text - Control Text with Mate Editor | Free DevTools"
+title: "Edit Text - Control Text with Mate Editor | Online Free DevTools by Hexmos"
 name: mate
 path: /freedevtools/tldr/osx/mate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mate/"

@@ -1,5 +1,5 @@
 ---
-title: "Nala Package Manager - Manage Packages Efficiently | Free DevTools"
+title: "Nala Package Manager - Manage Packages Efficiently | Online Free DevTools by Hexmos"
 name: nala
 path: /freedevtools/tldr/linux/nala
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nala/"

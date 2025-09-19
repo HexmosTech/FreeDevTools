@@ -1,5 +1,5 @@
 ---
-title: "Manage SELinux Booleans - Control Security Settings | Free DevTools"
+title: "Manage SELinux Booleans - Control Security Settings | Online Free DevTools by Hexmos"
 name: semanage-boolean
 path: /freedevtools/tldr/linux/semanage-boolean
 canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage-boolean/"

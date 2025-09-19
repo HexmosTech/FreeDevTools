@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Scale - Control Deployment Size | Free DevTools"
+title: "Kubectl Scale - Control Deployment Size | Online Free DevTools by Hexmos"
 name: kubectl-scale
 path: /freedevtools/tldr/kubectl/kubectl-scale
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-scale/"

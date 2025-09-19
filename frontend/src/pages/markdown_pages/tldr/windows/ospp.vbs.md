@@ -1,5 +1,5 @@
 ---
-title: "Office Activation - Manage Office Licenses | Free DevTools"
+title: "Office Activation - Manage Office Licenses | Online Free DevTools by Hexmos"
 name: ospp.vbs
 path: /freedevtools/tldr/windows/ospp.vbs
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ospp.vbs/"

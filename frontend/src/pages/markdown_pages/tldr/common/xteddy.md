@@ -1,5 +1,5 @@
 ---
-title: "Display Teddy Bear - Control X Desktop with xteddy | Free DevTools"
+title: "Display Teddy Bear - Control X Desktop with xteddy | Online Free DevTools by Hexmos"
 name: xteddy
 path: /freedevtools/tldr/common/xteddy
 canonical: "https://hexmos.com/freedevtools/tldr/common/xteddy/"

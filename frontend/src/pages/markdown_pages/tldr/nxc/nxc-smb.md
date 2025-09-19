@@ -1,5 +1,5 @@
 ---
-title: "Control NXC SMB - Exploit SMB Servers | Free DevTools"
+title: "Control NXC SMB - Exploit SMB Servers | Online Free DevTools by Hexmos"
 name: nxc-smb
 path: /freedevtools/tldr/nxc/nxc-smb
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-smb/"

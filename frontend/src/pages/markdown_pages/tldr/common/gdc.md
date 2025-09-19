@@ -1,5 +1,5 @@
 ---
-title: "Generate D Code - Compile D Code with GDC | Free DevTools"
+title: "Generate D Code - Compile D Code with GDC | Online Free DevTools by Hexmos"
 name: gdc
 path: /freedevtools/tldr/common/gdc
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdc/"

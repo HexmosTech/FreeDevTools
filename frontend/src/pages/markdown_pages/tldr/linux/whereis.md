@@ -1,5 +1,5 @@
 ---
-title: "Locate Files - Find Commands with whereis | Free DevTools"
+title: "Locate Files - Find Commands with whereis | Online Free DevTools by Hexmos"
 name: whereis
 path: /freedevtools/tldr/linux/whereis
 canonical: "https://hexmos.com/freedevtools/tldr/linux/whereis/"

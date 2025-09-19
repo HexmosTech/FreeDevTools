@@ -1,5 +1,5 @@
 ---
-title: "Salt-Run - Control Salt Runners on Minions | Free DevTools"
+title: "Salt-Run - Control Salt Runners on Minions | Online Free DevTools by Hexmos"
 name: salt-run
 path: /freedevtools/tldr/salt/salt-run
 canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-run/"

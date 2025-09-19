@@ -1,5 +1,5 @@
 ---
-title: "Analyze User Connection Time - AC Command | Free DevTools"
+title: "Analyze User Connection Time - AC Command | Online Free DevTools by Hexmos"
 name: ac
 path: /freedevtools/tldr/linux/ac
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ac/"

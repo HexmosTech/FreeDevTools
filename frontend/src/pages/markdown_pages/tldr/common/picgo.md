@@ -1,5 +1,5 @@
 ---
-title: "Upload Images - Manage Images with PicGo | Free DevTools"
+title: "Upload Images - Manage Images with PicGo | Online Free DevTools by Hexmos"
 name: picgo
 path: /freedevtools/tldr/common/picgo
 canonical: "https://hexmos.com/freedevtools/tldr/common/picgo/"

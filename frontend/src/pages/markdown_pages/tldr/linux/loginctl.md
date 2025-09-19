@@ -1,5 +1,5 @@
 ---
-title: "Loginctl - Manage Systemd Login Sessions | Free DevTools"
+title: "Loginctl - Manage Systemd Login Sessions | Online Free DevTools by Hexmos"
 name: loginctl
 path: /freedevtools/tldr/linux/loginctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/loginctl/"

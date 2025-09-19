@@ -1,5 +1,5 @@
 ---
-title: "aplay Sound Player - Play Audio Files | Free DevTools"
+title: "aplay Sound Player - Play Audio Files | Online Free DevTools by Hexmos"
 name: aplay
 path: /freedevtools/tldr/linux/aplay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aplay/"

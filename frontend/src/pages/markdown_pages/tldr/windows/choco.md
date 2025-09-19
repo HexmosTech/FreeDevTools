@@ -1,5 +1,5 @@
 ---
-title: "Chocolatey Package Manager - Install Windows Packages | Free DevTools"
+title: "Chocolatey Package Manager - Install Windows Packages | Online Free DevTools by Hexmos"
 name: choco
 path: /freedevtools/tldr/windows/choco
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco/"

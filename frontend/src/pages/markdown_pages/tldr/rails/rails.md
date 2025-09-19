@@ -1,5 +1,5 @@
 ---
-title: "Create Rails Projects - MVC Framework | Free DevTools"
+title: "Create Rails Projects - MVC Framework | Online Free DevTools by Hexmos"
 name: rails
 path: /freedevtools/tldr/rails/rails
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails/"

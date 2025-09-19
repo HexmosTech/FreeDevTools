@@ -1,5 +1,5 @@
 ---
-title: "dbt Model Transformation - Manage Data Warehouses | Free DevTools"
+title: "dbt Model Transformation - Manage Data Warehouses | Online Free DevTools by Hexmos"
 name: dbt
 path: /freedevtools/tldr/common/dbt
 canonical: "https://hexmos.com/freedevtools/tldr/common/dbt/"

@@ -1,5 +1,5 @@
 ---
-title: "Install NPM Dependencies - Clean Install with npm ci | Free DevTools"
+title: "Install NPM Dependencies - Clean Install with npm ci | Online Free DevTools by Hexmos"
 name: npm-ci
 path: /freedevtools/tldr/npm/npm-ci
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-ci/"

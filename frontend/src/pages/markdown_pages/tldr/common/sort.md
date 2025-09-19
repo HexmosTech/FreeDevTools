@@ -1,5 +1,5 @@
 ---
-title: "Sort File - Order Text Lines | Free DevTools"
+title: "Sort File - Order Text Lines | Online Free DevTools by Hexmos"
 name: sort
 path: /freedevtools/tldr/common/sort
 canonical: "https://hexmos.com/freedevtools/tldr/common/sort/"

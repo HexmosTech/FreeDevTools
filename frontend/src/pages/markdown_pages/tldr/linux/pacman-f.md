@@ -1,5 +1,5 @@
 ---
-title: "Pacman Files - Manage Files with Pacman | Free DevTools"
+title: "Pacman Files - Manage Files with Pacman | Online Free DevTools by Hexmos"
 name: pacman-f
 path: /freedevtools/tldr/linux/pacman-f
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-f/"

@@ -1,5 +1,5 @@
 ---
-title: "Rails DB - Create Databases | Free DevTools"
+title: "Rails DB - Create Databases | Online Free DevTools by Hexmos"
 name: rails-db
 path: /freedevtools/tldr/rails/rails-db
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-db/"

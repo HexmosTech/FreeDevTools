@@ -1,5 +1,5 @@
 ---
-title: "Control MySQL Performance - mytop Monitor | Free DevTools"
+title: "Control MySQL Performance - mytop Monitor | Online Free DevTools by Hexmos"
 name: mytop
 path: /freedevtools/tldr/common/mytop
 canonical: "https://hexmos.com/freedevtools/tldr/common/mytop/"

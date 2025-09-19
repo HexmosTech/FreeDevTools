@@ -1,5 +1,5 @@
 ---
-title: "Bindfs - Mount Directory Permissions | Free DevTools"
+title: "Bindfs - Mount Directory Permissions | Online Free DevTools by Hexmos"
 name: bindfs
 path: "/freedevtools/tldr/linux/bindfs"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bindfs/"

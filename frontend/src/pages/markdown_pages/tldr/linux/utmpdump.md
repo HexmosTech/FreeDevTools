@@ -1,5 +1,5 @@
 ---
-title: "utmpdump - Dump & Load Accounting Files | Free DevTools"
+title: "utmpdump - Dump & Load Accounting Files | Online Free DevTools by Hexmos"
 name: utmpdump
 path: /freedevtools/tldr/linux/utmpdump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/utmpdump/"

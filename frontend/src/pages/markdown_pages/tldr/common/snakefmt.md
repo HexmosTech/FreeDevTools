@@ -1,5 +1,5 @@
 ---
-title: "Snakefmt - Format Snakemake Files | Free DevTools"
+title: "Snakefmt - Format Snakemake Files | Online Free DevTools by Hexmos"
 name: snakefmt
 path: /freedevtools/tldr/common/snakefmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/snakefmt/"

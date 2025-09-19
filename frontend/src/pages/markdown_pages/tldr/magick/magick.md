@@ -1,5 +1,5 @@
 ---
-title: "Magick - Convert Image Formats | Free DevTools"
+title: "Magick - Convert Image Formats | Online Free DevTools by Hexmos"
 name: magick
 path: /freedevtools/tldr/magick/magick
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick/"

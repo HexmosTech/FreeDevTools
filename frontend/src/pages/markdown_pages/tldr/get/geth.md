@@ -1,5 +1,5 @@
 ---
-title: "Ethereum Geth - Connect to Ethereum Network | Free DevTools"
+title: "Ethereum Geth - Connect to Ethereum Network | Online Free DevTools by Hexmos"
 name: geth
 path: /freedevtools/tldr/get/geth
 canonical: "https://hexmos.com/freedevtools/tldr/get/geth/"

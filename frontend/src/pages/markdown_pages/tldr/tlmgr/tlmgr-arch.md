@@ -1,5 +1,5 @@
 ---
-title: "TLMGR Arch - Manage TeX Live Platforms | Free DevTools"
+title: "TLMGR Arch - Manage TeX Live Platforms | Online Free DevTools by Hexmos"
 name: tlmgr-arch
 path: /freedevtools/tldr/tlmgr/tlmgr-arch
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-arch/"

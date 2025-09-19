@@ -1,5 +1,5 @@
 ---
-title: "GNOME Calculator - Use Command Line Calculator | Free DevTools"
+title: "GNOME Calculator - Use Command Line Calculator | Online Free DevTools by Hexmos"
 name: gnome-calculator
 path: /freedevtools/tldr/linux/gnome-calculator
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-calculator/"

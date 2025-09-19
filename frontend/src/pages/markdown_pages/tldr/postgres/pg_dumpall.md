@@ -1,5 +1,5 @@
 ---
-title: "pg_dumpall - Extract PostgreSQL Databases | Free DevTools"
+title: "pg_dumpall - Extract PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: pg_dumpall
 path: /freedevtools/tldr/postgres/pg_dumpall
 canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dumpall/"

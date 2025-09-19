@@ -1,5 +1,5 @@
 ---
-title: "Create Infrastructure with Tofu - Deploy Code | Free DevTools"
+title: "Create Infrastructure with Tofu - Deploy Code | Online Free DevTools by Hexmos"
 name: tofu
 path: /freedevtools/tldr/tofu/tofu
 canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Fish Shell - Execute Commands Interactively | Free DevTools"
+title: "Control Fish Shell - Execute Commands Interactively | Online Free DevTools by Hexmos"
 name: fish
 path: /freedevtools/tldr/common/fish
 canonical: "https://hexmos.com/freedevtools/tldr/common/fish/"

@@ -1,5 +1,5 @@
 ---
-title: "Decode DIMMs - Display RAM Data | Free DevTools"
+title: "Decode DIMMs - Display RAM Data | Online Free DevTools by Hexmos"
 name: decode-dimms
 path: /freedevtools/tldr/linux/decode-dimms
 canonical: "https://hexmos.com/freedevtools/tldr/linux/decode-dimms/"

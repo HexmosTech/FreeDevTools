@@ -1,5 +1,5 @@
 ---
-title: "Octal Dump - Format File Content | Free DevTools"
+title: "Octal Dump - Format File Content | Online Free DevTools by Hexmos"
 name: od
 path: /freedevtools/tldr/common/od
 canonical: "https://hexmos.com/freedevtools/tldr/common/od/"

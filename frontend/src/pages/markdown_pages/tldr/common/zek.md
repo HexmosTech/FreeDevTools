@@ -1,5 +1,5 @@
 ---
-title: "Generate XML Struct - Zek | Free DevTools"
+title: "Generate XML Struct - Zek | Online Free DevTools by Hexmos"
 name: zek
 path: /freedevtools/tldr/common/zek
 canonical: "https://hexmos.com/freedevtools/tldr/common/zek/"

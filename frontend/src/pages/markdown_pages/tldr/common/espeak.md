@@ -1,5 +1,5 @@
 ---
-title: "ESpeak - Generate Speech from Text | Free DevTools"
+title: "ESpeak - Generate Speech from Text | Online Free DevTools by Hexmos"
 name: espeak
 path: /freedevtools/tldr/common/espeak
 canonical: "https://hexmos.com/freedevtools/tldr/common/espeak/"

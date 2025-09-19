@@ -1,5 +1,5 @@
 ---
-title: "Create ODPS Table - Manage Data Storage | Free DevTools"
+title: "Create ODPS Table - Manage Data Storage | Online Free DevTools by Hexmos"
 name: odps-table
 path: /freedevtools/tldr/odps/odps-table
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-table/"

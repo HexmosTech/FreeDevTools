@@ -1,5 +1,5 @@
 ---
-title: "Create AWS CUR - Query Usage Reports | Free DevTools"
+title: "Create AWS CUR - Query Usage Reports | Online Free DevTools by Hexmos"
 name: aws-cur
 path: /freedevtools/tldr/aws/aws-cur
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cur/"

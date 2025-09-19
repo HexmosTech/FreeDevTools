@@ -1,5 +1,5 @@
 ---
-title: "YADM Gitconfig - Control Repository Config | Free DevTools"
+title: "YADM Gitconfig - Control Repository Config | Online Free DevTools by Hexmos"
 name: yadm-gitconfig
 path: /freedevtools/tldr/yadm/yadm-gitconfig
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-gitconfig/"

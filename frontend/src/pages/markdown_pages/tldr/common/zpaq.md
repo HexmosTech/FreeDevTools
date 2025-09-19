@@ -1,5 +1,5 @@
 ---
-title: "Create ZPAQ Archives - Incremental Backup | Free DevTools"
+title: "Create ZPAQ Archives - Incremental Backup | Online Free DevTools by Hexmos"
 name: zpaq
 path: /freedevtools/tldr/common/zpaq
 canonical: "https://hexmos.com/freedevtools/tldr/common/zpaq/"

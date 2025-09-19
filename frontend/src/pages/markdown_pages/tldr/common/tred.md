@@ -1,5 +1,5 @@
 ---
-title: "Compute Graph Transitive Reduction - tred | Free DevTools"
+title: "Compute Graph Transitive Reduction - tred | Online Free DevTools by Hexmos"
 name: tred
 path: "/freedevtools/tldr/common/tred"
 canonical: "https://hexmos.com/freedevtools/tldr/common/tred/"

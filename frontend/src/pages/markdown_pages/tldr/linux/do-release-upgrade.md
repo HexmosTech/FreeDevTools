@@ -1,5 +1,5 @@
 ---
-title: "Release Upgrade - Manage Ubuntu Versions | Free DevTools"
+title: "Release Upgrade - Manage Ubuntu Versions | Online Free DevTools by Hexmos"
 name: do-release-upgrade
 path: /freedevtools/tldr/linux/do-release-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/linux/do-release-upgrade/"

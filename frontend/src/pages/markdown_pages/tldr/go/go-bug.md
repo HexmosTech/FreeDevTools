@@ -1,5 +1,5 @@
 ---
-title: "Create Go Bug Report - Submit Issues Easily | Free DevTools"
+title: "Create Go Bug Report - Submit Issues Easily | Online Free DevTools by Hexmos"
 name: go-bug
 path: /freedevtools/tldr/go/go-bug
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-bug/"

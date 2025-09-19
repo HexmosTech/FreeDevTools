@@ -1,5 +1,5 @@
 ---
-title: "Waypipe - Run Remote GUI Apps on Linux | Free DevTools"
+title: "Waypipe - Run Remote GUI Apps on Linux | Online Free DevTools by Hexmos"
 name: waypipe
 path: /freedevtools/tldr/linux/waypipe
 canonical: "https://hexmos.com/freedevtools/tldr/linux/waypipe/"

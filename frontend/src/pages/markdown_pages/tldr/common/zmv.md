@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Control File Names with Zmv | Free DevTools"
+title: "Rename Files - Control File Names with Zmv | Online Free DevTools by Hexmos"
 name: zmv
 path: /freedevtools/tldr/common/zmv
 canonical: "https://hexmos.com/freedevtools/tldr/common/zmv/"

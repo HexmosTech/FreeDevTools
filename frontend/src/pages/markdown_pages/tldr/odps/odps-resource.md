@@ -1,5 +1,5 @@
 ---
-title: "ODPS Resource Manager - Manage Data Resources | Free DevTools"
+title: "ODPS Resource Manager - Manage Data Resources | Online Free DevTools by Hexmos"
 name: odps-resource
 path: /freedevtools/tldr/odps/odps-resource
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-resource/"

@@ -1,5 +1,5 @@
 ---
-title: "Trash Removal - Execute Trash Removal | Free DevTools"
+title: "Trash Removal - Execute Trash Removal | Online Free DevTools by Hexmos"
 name: trash-rm
 path: /freedevtools/tldr/linux/trash-rm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash-rm/"

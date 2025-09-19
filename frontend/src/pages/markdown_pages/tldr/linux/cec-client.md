@@ -1,5 +1,5 @@
 ---
-title: "Control CEC Devices - Manage CEC Connections | Free DevTools"
+title: "Control CEC Devices - Manage CEC Connections | Online Free DevTools by Hexmos"
 name: cec-client
 path: /freedevtools/tldr/linux/cec-client
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cec-client/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Data Duplication - gdd Command Tool | Free DevTools"
+title: "Control Data Duplication - gdd Command Tool | Online Free DevTools by Hexmos"
 name: gdd
 path: /freedevtools/tldr/osx/gdd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdd/"

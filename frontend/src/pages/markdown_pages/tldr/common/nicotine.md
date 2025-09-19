@@ -1,5 +1,5 @@
 ---
-title: "Control Soulseek P2P with Nicotine+ Client | Free DevTools"
+title: "Control Soulseek P2P with Nicotine+ Client | Online Free DevTools by Hexmos"
 name: nicotine
 path: /freedevtools/tldr/common/nicotine
 canonical: "https://hexmos.com/freedevtools/tldr/common/nicotine/"

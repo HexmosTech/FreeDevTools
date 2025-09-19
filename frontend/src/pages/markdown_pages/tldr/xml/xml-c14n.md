@@ -1,5 +1,5 @@
 ---
-title: "XML C14N - Canonicalize XML Files | Free DevTools"
+title: "XML C14N - Canonicalize XML Files | Online Free DevTools by Hexmos"
 name: xml-c14n
 path: /freedevtools/tldr/xml/xml-c14n
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-c14n/"

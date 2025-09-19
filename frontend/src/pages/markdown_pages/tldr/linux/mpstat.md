@@ -1,5 +1,5 @@
 ---
-title: "MPSTAT - Report CPU Statistics | Free DevTools"
+title: "MPSTAT - Report CPU Statistics | Online Free DevTools by Hexmos"
 name: mpstat
 path: /freedevtools/tldr/linux/mpstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mpstat/"

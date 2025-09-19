@@ -1,5 +1,5 @@
 ---
-title: "Execute DNS Server - Resolve Hostnames with Named | Free DevTools"
+title: "Execute DNS Server - Resolve Hostnames with Named | Online Free DevTools by Hexmos"
 name: named
 path: /freedevtools/tldr/linux/named
 canonical: "https://hexmos.com/freedevtools/tldr/linux/named/"

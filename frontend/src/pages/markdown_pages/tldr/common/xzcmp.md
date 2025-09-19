@@ -1,5 +1,5 @@
 ---
-title: "Compare XZ Files - Check Compressed Files | Free DevTools"
+title: "Compare XZ Files - Check Compressed Files | Online Free DevTools by Hexmos"
 name: xzcmp
 path: "/freedevtools/tldr/common/xzcmp"
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzcmp/"

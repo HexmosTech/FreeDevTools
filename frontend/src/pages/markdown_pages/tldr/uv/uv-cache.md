@@ -1,5 +1,5 @@
 ---
-title: "UV Cache - Manage Package Cache | Free DevTools"
+title: "UV Cache - Manage Package Cache | Online Free DevTools by Hexmos"
 name: uv-cache
 path: /freedevtools/tldr/uv/uv-cache
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-cache/"

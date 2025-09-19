@@ -1,5 +1,5 @@
 ---
-title: "Docker Node - Manage Swarm Nodes | Free DevTools"
+title: "Docker Node - Manage Swarm Nodes | Online Free DevTools by Hexmos"
 name: docker-node
 path: /freedevtools/tldr/docker/docker-node
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-node/"

@@ -1,5 +1,5 @@
 ---
-title: "GIO Trash - Manage Files in Trash Bin | Free DevTools"
+title: "GIO Trash - Manage Files in Trash Bin | Online Free DevTools by Hexmos"
 name: gio-trash
 path: /freedevtools/tldr/linux/gio-trash
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gio-trash/"

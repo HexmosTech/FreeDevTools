@@ -1,5 +1,5 @@
 ---
-title: "SFDK Prepare - Build Sailfish OS Recipes | Free DevTools"
+title: "SFDK Prepare - Build Sailfish OS Recipes | Online Free DevTools by Hexmos"
 name: sfdk-prepare
 path: /freedevtools/tldr/sfdk/sfdk-prepare
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-prepare/"

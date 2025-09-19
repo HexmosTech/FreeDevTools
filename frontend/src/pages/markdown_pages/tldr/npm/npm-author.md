@@ -1,5 +1,5 @@
 ---
-title: "NPM Author - Manage Package Owners | Free DevTools"
+title: "NPM Author - Manage Package Owners | Online Free DevTools by Hexmos"
 name: npm-author
 path: /freedevtools/tldr/npm/npm-author
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-author/"

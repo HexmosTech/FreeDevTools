@@ -1,5 +1,5 @@
 ---
-title: "Optimize Docker Images - Analyze and Build | Free DevTools"
+title: "Optimize Docker Images - Analyze and Build | Online Free DevTools by Hexmos"
 name: docker-slim
 path: /freedevtools/tldr/docker/docker-slim
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-slim/"

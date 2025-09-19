@@ -1,5 +1,5 @@
 ---
-title: "Detect File Encoding - Convert Text Encodings | Free DevTools"
+title: "Detect File Encoding - Convert Text Encodings | Online Free DevTools by Hexmos"
 name: enca
 path: "/freedevtools/tldr/common/enca"
 canonical: "https://hexmos.com/freedevtools/tldr/common/enca/"

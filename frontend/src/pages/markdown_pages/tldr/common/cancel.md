@@ -1,5 +1,5 @@
 ---
-title: "Cancel Print Jobs - Control Print Queue | Free DevTools"
+title: "Cancel Print Jobs - Control Print Queue | Online Free DevTools by Hexmos"
 name: cancel
 path: /freedevtools/tldr/common/cancel
 canonical: "https://hexmos.com/freedevtools/tldr/common/cancel/"

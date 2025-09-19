@@ -1,5 +1,5 @@
 ---
-title: "Blog Manager - Control Blog Posts Locally | Free DevTools"
+title: "Blog Manager - Control Blog Posts Locally | Online Free DevTools by Hexmos"
 name: lb
 path: /freedevtools/tldr/common/lb
 canonical: "https://hexmos.com/freedevtools/tldr/common/lb/"

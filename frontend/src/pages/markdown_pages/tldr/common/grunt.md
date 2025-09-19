@@ -1,5 +1,5 @@
 ---
-title: "Automate JavaScript Tasks with Grunt | Free DevTools"
+title: "Automate JavaScript Tasks with Grunt | Online Free DevTools by Hexmos"
 name: grunt
 path: /freedevtools/tldr/common/grunt
 canonical: "https://hexmos.com/freedevtools/tldr/common/grunt/"

@@ -1,5 +1,5 @@
 ---
-title: "Halt System - Control System Shutdown | Free DevTools"
+title: "Halt System - Control System Shutdown | Online Free DevTools by Hexmos"
 name: halt
 path: "/freedevtools/tldr/linux/halt"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/halt/"

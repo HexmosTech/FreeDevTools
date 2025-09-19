@@ -1,5 +1,5 @@
 ---
-title: "Edit Files - View Files with Mailcap | Free DevTools"
+title: "Edit Files - View Files with Mailcap | Online Free DevTools by Hexmos"
 name: edit
 path: /freedevtools/tldr/linux/edit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/edit/"

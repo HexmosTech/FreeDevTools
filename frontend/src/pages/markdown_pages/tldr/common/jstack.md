@@ -1,5 +1,5 @@
 ---
-title: "Generate Java Stack Traces - Control Threads | Free DevTools"
+title: "Generate Java Stack Traces - Control Threads | Online Free DevTools by Hexmos"
 name: jstack
 path: /freedevtools/tldr/common/jstack
 canonical: "https://hexmos.com/freedevtools/tldr/common/jstack/"

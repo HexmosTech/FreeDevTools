@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz - Manage Windows Credentials | Free DevTools"
+title: "Mimikatz - Manage Windows Credentials | Online Free DevTools by Hexmos"
 name: mimikatz-standard
 path: /freedevtools/tldr/windows/mimikatz-standard
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-standard/"

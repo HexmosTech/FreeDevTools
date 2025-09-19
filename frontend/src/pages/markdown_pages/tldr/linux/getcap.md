@@ -1,5 +1,5 @@
 ---
-title: "Getcap - Display File Capabilities | Free DevTools"
+title: "Getcap - Display File Capabilities | Online Free DevTools by Hexmos"
 name: getcap
 path: /freedevtools/tldr/linux/getcap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getcap/"

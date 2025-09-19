@@ -1,5 +1,5 @@
 ---
-title: "Control Scala Apps - Manage Artifacts with cs | Free DevTools"
+title: "Control Scala Apps - Manage Artifacts with cs | Online Free DevTools by Hexmos"
 name: cs
 path: /freedevtools/tldr/cs/cs
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs/"

@@ -1,5 +1,5 @@
 ---
-title: "Etcd Control - Manage Distributed Key-Value Stores | Free DevTools"
+title: "Etcd Control - Manage Distributed Key-Value Stores | Online Free DevTools by Hexmos"
 name: etcd
 path: /freedevtools/tldr/common/etcd
 canonical: "https://hexmos.com/freedevtools/tldr/common/etcd/"

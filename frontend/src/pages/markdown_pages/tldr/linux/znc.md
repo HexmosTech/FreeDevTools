@@ -1,5 +1,5 @@
 ---
-title: "ZNC IRC Bouncer - Manage IRC Connections | Free DevTools"
+title: "ZNC IRC Bouncer - Manage IRC Connections | Online Free DevTools by Hexmos"
 name: znc
 path: /freedevtools/tldr/linux/znc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/znc/"

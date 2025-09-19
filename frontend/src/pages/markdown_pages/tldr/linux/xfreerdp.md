@@ -1,5 +1,5 @@
 ---
-title: "xfreerdp Remote Desktop - Connect to Servers | Free DevTools"
+title: "xfreerdp Remote Desktop - Connect to Servers | Online Free DevTools by Hexmos"
 name: xfreerdp
 path: /freedevtools/tldr/linux/xfreerdp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xfreerdp/"

@@ -1,5 +1,5 @@
 ---
-title: "Synthesize Speech - Generate Audio from Text | Free DevTools"
+title: "Synthesize Speech - Generate Audio from Text | Online Free DevTools by Hexmos"
 name: tts
 path: /freedevtools/tldr/common/tts
 canonical: "https://hexmos.com/freedevtools/tldr/common/tts/"

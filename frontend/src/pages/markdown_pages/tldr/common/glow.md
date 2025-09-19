@@ -1,5 +1,5 @@
 ---
-title: "Render Markdown - View Terminal Markdown with Glow | Free DevTools"
+title: "Render Markdown - View Terminal Markdown with Glow | Online Free DevTools by Hexmos"
 name: glow
 path: /freedevtools/tldr/common/glow
 canonical: "https://hexmos.com/freedevtools/tldr/common/glow/"

@@ -1,5 +1,5 @@
 ---
-title: "Get File Hash - Generate File Hashes | Free DevTools"
+title: "Get File Hash - Generate File Hashes | Online Free DevTools by Hexmos"
 name: get-filehash
 path: /freedevtools/tldr/windows/get-filehash
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-filehash/"

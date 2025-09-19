@@ -1,5 +1,5 @@
 ---
-title: "Uname - Generate System Information | Free DevTools"
+title: "Uname - Generate System Information | Online Free DevTools by Hexmos"
 name: uname
 path: /freedevtools/tldr/common/uname
 canonical: "https://hexmos.com/freedevtools/tldr/common/uname/"

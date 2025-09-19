@@ -1,5 +1,5 @@
 ---
-title: "Search Tar Archives - Find Regex Patterns | Free DevTools"
+title: "Search Tar Archives - Find Regex Patterns | Online Free DevTools by Hexmos"
 name: ptargrep
 path: /freedevtools/tldr/common/ptargrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/ptargrep/"

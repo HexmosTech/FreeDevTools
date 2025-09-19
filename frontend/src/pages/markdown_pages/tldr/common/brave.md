@@ -1,5 +1,5 @@
 ---
-title: "Brave Browser - Control Browser Settings | Free DevTools"
+title: "Brave Browser - Control Browser Settings | Online Free DevTools by Hexmos"
 name: brave
 path: /freedevtools/tldr/common/brave
 canonical: "https://hexmos.com/freedevtools/tldr/common/brave/"

@@ -1,5 +1,5 @@
 ---
-title: "e2image - Save Ext Filesystem Metadata | Free DevTools"
+title: "e2image - Save Ext Filesystem Metadata | Online Free DevTools by Hexmos"
 name: e2image
 path: /freedevtools/tldr/linux/e2image
 canonical: "https://hexmos.com/freedevtools/tldr/linux/e2image/"

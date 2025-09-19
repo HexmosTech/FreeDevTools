@@ -1,5 +1,5 @@
 ---
-title: "DNS Drill - Perform DNS Queries | Free DevTools"
+title: "DNS Drill - Perform DNS Queries | Online Free DevTools by Hexmos"
 name: drill
 path: /freedevtools/tldr/common/drill
 canonical: "https://hexmos.com/freedevtools/tldr/common/drill/"

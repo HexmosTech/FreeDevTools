@@ -1,5 +1,5 @@
 ---
-title: "Control Ad Blocking - Maza Local Ad Blocker | Free DevTools"
+title: "Control Ad Blocking - Maza Local Ad Blocker | Online Free DevTools by Hexmos"
 name: maza
 path: /freedevtools/tldr/common/maza
 canonical: "https://hexmos.com/freedevtools/tldr/common/maza/"

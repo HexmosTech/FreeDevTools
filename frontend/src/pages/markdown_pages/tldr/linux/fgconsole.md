@@ -1,5 +1,5 @@
 ---
-title: "Fgconsole - Print Terminal Number | Free DevTools"
+title: "Fgconsole - Print Terminal Number | Online Free DevTools by Hexmos"
 name: fgconsole
 path: /freedevtools/tldr/linux/fgconsole
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fgconsole/"

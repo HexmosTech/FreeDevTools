@@ -1,5 +1,5 @@
 ---
-title: "SVN Control - Manage Code Versions with Subversion | Free DevTools"
+title: "SVN Control - Manage Code Versions with Subversion | Online Free DevTools by Hexmos"
 name: svn
 path: /freedevtools/tldr/common/svn
 canonical: "https://hexmos.com/freedevtools/tldr/common/svn/"

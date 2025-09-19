@@ -1,5 +1,5 @@
 ---
-title: "Edit Password File - Control User Passwords with vipw | Free DevTools"
+title: "Edit Password File - Control User Passwords with vipw | Online Free DevTools by Hexmos"
 name: vipw
 path: /freedevtools/tldr/linux/vipw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vipw/"

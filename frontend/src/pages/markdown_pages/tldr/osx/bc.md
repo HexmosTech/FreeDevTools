@@ -1,5 +1,5 @@
 ---
-title: "Calculate with bc - Precision Calculation Tool | Free DevTools"
+title: "Calculate with bc - Precision Calculation Tool | Online Free DevTools by Hexmos"
 name: bc
 path: /freedevtools/tldr/osx/bc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/bc/"

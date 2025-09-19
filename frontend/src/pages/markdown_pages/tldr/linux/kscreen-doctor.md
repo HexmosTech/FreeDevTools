@@ -1,5 +1,5 @@
 ---
-title: "Control Screen Setup - Kscreen-doctor | Free DevTools"
+title: "Control Screen Setup - Kscreen-doctor | Online Free DevTools by Hexmos"
 name: kscreen-doctor
 path: /freedevtools/tldr/linux/kscreen-doctor
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kscreen-doctor/"

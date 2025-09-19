@@ -1,5 +1,5 @@
 ---
-title: "Convert PI3 to PBM - Create PBM Images | Free DevTools"
+title: "Convert PI3 to PBM - Create PBM Images | Online Free DevTools by Hexmos"
 name: pi3topbm
 path: "/freedevtools/tldr/common/pi3topbm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pi3topbm/"

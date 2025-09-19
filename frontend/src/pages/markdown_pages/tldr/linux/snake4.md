@@ -1,5 +1,5 @@
 ---
-title: "Control Snake Game - Terminal Game | Free DevTools"
+title: "Control Snake Game - Terminal Game | Online Free DevTools by Hexmos"
 name: snake4
 path: /freedevtools/tldr/linux/snake4
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snake4/"

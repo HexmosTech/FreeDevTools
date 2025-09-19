@@ -1,5 +1,5 @@
 ---
-title: "Manage Repositories - Control VCS at Once | Free DevTools"
+title: "Manage Repositories - Control VCS at Once | Online Free DevTools by Hexmos"
 name: mr
 path: /freedevtools/tldr/common/mr
 canonical: "https://hexmos.com/freedevtools/tldr/common/mr/"

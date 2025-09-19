@@ -1,5 +1,5 @@
 ---
-title: "Prowler AWS - Assess Cloud Security | Free DevTools"
+title: "Prowler AWS - Assess Cloud Security | Online Free DevTools by Hexmos"
 name: prowler-aws
 path: /freedevtools/tldr/prowler/prowler-aws
 canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-aws/"

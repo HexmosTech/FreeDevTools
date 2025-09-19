@@ -1,5 +1,5 @@
 ---
-title: "Cargo Logout - Remove API Token | Free DevTools"
+title: "Cargo Logout - Remove API Token | Online Free DevTools by Hexmos"
 name: cargo-logout
 path: /freedevtools/tldr/cargo/cargo-logout
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-logout/"

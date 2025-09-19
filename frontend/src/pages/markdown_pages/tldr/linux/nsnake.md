@@ -1,5 +1,5 @@
 ---
-title: "Control Snake Game - Play nsnake in Linux | Free DevTools"
+title: "Control Snake Game - Play nsnake in Linux | Online Free DevTools by Hexmos"
 name: nsnake
 path: /freedevtools/tldr/linux/nsnake
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nsnake/"

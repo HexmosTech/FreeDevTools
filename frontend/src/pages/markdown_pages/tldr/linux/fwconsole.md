@@ -1,5 +1,5 @@
 ---
-title: "Control FreePBX - Manage Phone Systems | Free DevTools"
+title: "Control FreePBX - Manage Phone Systems | Online Free DevTools by Hexmos"
 name: fwconsole
 path: /freedevtools/tldr/linux/fwconsole
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fwconsole/"

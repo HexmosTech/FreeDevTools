@@ -1,5 +1,5 @@
 ---
-title: "OpenOCD Debug - Program Embedded Systems | Free DevTools"
+title: "OpenOCD Debug - Program Embedded Systems | Online Free DevTools by Hexmos"
 name: openocd
 path: "/freedevtools/tldr/common/openocd"
 canonical: "https://hexmos.com/freedevtools/tldr/common/openocd/"

@@ -1,5 +1,5 @@
 ---
-title: "PDFFonts - Extract PDF Fonts Information | Free DevTools"
+title: "PDFFonts - Extract PDF Fonts Information | Online Free DevTools by Hexmos"
 name: pdffonts
 path: /freedevtools/tldr/common/pdffonts
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdffonts/"

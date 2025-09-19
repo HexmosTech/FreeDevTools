@@ -1,5 +1,5 @@
 ---
-title: "Create Docker Machines - Manage Containers | Free DevTools"
+title: "Create Docker Machines - Manage Containers | Online Free DevTools by Hexmos"
 name: docker-machine
 path: /freedevtools/tldr/docker/docker-machine
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-machine/"

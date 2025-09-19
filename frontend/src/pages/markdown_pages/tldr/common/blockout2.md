@@ -1,5 +1,5 @@
 ---
-title: "Control Blockout2 - Play 3D Tetris | Free DevTools"
+title: "Control Blockout2 - Play 3D Tetris | Online Free DevTools by Hexmos"
 name: blockout2
 path: /freedevtools/tldr/common/blockout2
 canonical: "https://hexmos.com/freedevtools/tldr/common/blockout2/"

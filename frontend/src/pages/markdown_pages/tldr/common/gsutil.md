@@ -1,5 +1,5 @@
 ---
-title: "Manage Cloud Storage - Control GCP Buckets | Free DevTools"
+title: "Manage Cloud Storage - Control GCP Buckets | Online Free DevTools by Hexmos"
 name: gsutil
 path: /freedevtools/tldr/common/gsutil
 canonical: "https://hexmos.com/freedevtools/tldr/common/gsutil/"

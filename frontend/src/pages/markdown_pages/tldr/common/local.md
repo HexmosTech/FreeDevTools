@@ -1,5 +1,5 @@
 ---
-title: "Local Variables - Declare Variables | Free DevTools"
+title: "Local Variables - Declare Variables | Online Free DevTools by Hexmos"
 name: local
 path: /freedevtools/tldr/common/local
 canonical: "https://hexmos.com/freedevtools/tldr/common/local/"

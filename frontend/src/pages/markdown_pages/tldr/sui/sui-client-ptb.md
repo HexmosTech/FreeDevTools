@@ -1,5 +1,5 @@
 ---
-title: "Create Sui PTB - Execute Programmable Transactions | Free DevTools"
+title: "Create Sui PTB - Execute Programmable Transactions | Online Free DevTools by Hexmos"
 name: sui-client-ptb
 path: /freedevtools/tldr/sui/sui-client-ptb
 canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-client-ptb/"

@@ -1,5 +1,5 @@
 ---
-title: "Set-Location - Change Directory | Free DevTools"
+title: "Set-Location - Change Directory | Online Free DevTools by Hexmos"
 name: set-location
 path: /freedevtools/tldr/windows/set-location
 canonical: "https://hexmos.com/freedevtools/tldr/windows/set-location/"

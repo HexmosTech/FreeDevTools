@@ -1,5 +1,5 @@
 ---
-title: "Radeontop - Control AMD GPU Usage | Free DevTools"
+title: "Radeontop - Control AMD GPU Usage | Online Free DevTools by Hexmos"
 name: radeontop
 path: /freedevtools/tldr/linux/radeontop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/radeontop/"

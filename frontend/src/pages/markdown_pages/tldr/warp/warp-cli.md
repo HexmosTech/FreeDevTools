@@ -1,5 +1,5 @@
 ---
-title: "Control WARP Connections - Manage Cloudflare WARP with CLI | Free DevTools"
+title: "Control WARP Connections - Manage Cloudflare WARP with CLI | Online Free DevTools by Hexmos"
 name: warp-cli
 path: /freedevtools/tldr/warp/warp-cli
 canonical: "https://hexmos.com/freedevtools/tldr/warp/warp-cli/"

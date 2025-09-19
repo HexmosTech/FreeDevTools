@@ -1,5 +1,5 @@
 ---
-title: "Network Select - Choose Fastest Server | Free DevTools"
+title: "Network Select - Choose Fastest Server | Online Free DevTools by Hexmos"
 name: netselect
 path: /freedevtools/tldr/linux/netselect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/netselect/"

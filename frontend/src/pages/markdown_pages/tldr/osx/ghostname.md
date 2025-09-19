@@ -1,5 +1,5 @@
 ---
-title: "Hostname Command - Manage Hostname on macOS | Free DevTools"
+title: "Hostname Command - Manage Hostname on macOS | Online Free DevTools by Hexmos"
 name: ghostname
 path: /freedevtools/tldr/osx/ghostname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ghostname/"

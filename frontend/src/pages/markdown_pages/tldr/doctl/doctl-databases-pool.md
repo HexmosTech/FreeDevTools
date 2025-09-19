@@ -1,5 +1,5 @@
 ---
-title: "Doctl Databases Pool - Manage Database Pools | Free DevTools"
+title: "Doctl Databases Pool - Manage Database Pools | Online Free DevTools by Hexmos"
 name: doctl-databases-pool
 path: /freedevtools/tldr/doctl/doctl-databases-pool
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-pool/"

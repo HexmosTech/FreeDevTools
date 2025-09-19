@@ -1,5 +1,5 @@
 ---
-title: "NordVPN CLI - Manage VPN Connections | Free DevTools"
+title: "NordVPN CLI - Manage VPN Connections | Online Free DevTools by Hexmos"
 name: nordvpn
 path: /freedevtools/tldr/linux/nordvpn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nordvpn/"

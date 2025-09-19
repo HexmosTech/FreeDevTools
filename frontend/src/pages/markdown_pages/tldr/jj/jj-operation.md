@@ -1,5 +1,5 @@
 ---
-title: "JJ Operation - Control Repository History | Free DevTools"
+title: "JJ Operation - Control Repository History | Online Free DevTools by Hexmos"
 name: jj-operation
 path: /freedevtools/tldr/jj/jj-operation
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-operation/"

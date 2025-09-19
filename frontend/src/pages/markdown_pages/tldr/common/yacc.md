@@ -1,5 +1,5 @@
 ---
-title: "Generate Parser - Yacc LALR Parser Generator | Free DevTools"
+title: "Generate Parser - Yacc LALR Parser Generator | Online Free DevTools by Hexmos"
 name: yacc
 path: /freedevtools/tldr/common/yacc
 canonical: "https://hexmos.com/freedevtools/tldr/common/yacc/"

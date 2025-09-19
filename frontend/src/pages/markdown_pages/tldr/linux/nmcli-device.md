@@ -1,5 +1,5 @@
 ---
-title: "Control Network Devices - nmcli Device | Free DevTools"
+title: "Control Network Devices - nmcli Device | Online Free DevTools by Hexmos"
 name: nmcli-device
 path: /freedevtools/tldr/linux/nmcli-device
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-device/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Process with gkill - Send Signals | Free DevTools"
+title: "Control Process with gkill - Send Signals | Online Free DevTools by Hexmos"
 name: gkill
 path: /freedevtools/tldr/osx/gkill
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gkill/"

@@ -1,5 +1,5 @@
 ---
-title: "Avahi Resolve Hostname - Discover Network Services | Free DevTools"
+title: "Avahi Resolve Hostname - Discover Network Services | Online Free DevTools by Hexmos"
 name: avahi-resolve-host-name
 path: /freedevtools/tldr/linux/avahi-resolve-host-name
 canonical: "https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-host-name/"

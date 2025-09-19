@@ -1,5 +1,5 @@
 ---
-title: "Restore Git Files - Undo Changes | Free DevTools"
+title: "Restore Git Files - Undo Changes | Online Free DevTools by Hexmos"
 name: git-restore
 path: /freedevtools/tldr/git/git-restore
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-restore/"

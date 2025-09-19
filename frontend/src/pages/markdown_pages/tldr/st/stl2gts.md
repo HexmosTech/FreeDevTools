@@ -1,5 +1,5 @@
 ---
-title: "Convert STL to GTS - Format 3D Models | Free DevTools"
+title: "Convert STL to GTS - Format 3D Models | Online Free DevTools by Hexmos"
 name: stl2gts
 path: /freedevtools/tldr/st/stl2gts
 canonical: "https://hexmos.com/freedevtools/tldr/st/stl2gts/"

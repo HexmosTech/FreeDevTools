@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Locate Files Quickly on macOS | Free DevTools"
+title: "Find Files - Locate Files Quickly on macOS | Online Free DevTools by Hexmos"
 name: glocate
 path: /freedevtools/tldr/osx/glocate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glocate/"

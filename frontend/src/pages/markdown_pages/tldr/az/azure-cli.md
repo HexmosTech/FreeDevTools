@@ -1,5 +1,5 @@
 ---
-title: "Azure-CLI - Manage Azure Resources | Free DevTools"
+title: "Azure-CLI - Manage Azure Resources | Online Free DevTools by Hexmos"
 name: azure-cli
 path: /freedevtools/tldr/az/azure-cli
 canonical: "https://hexmos.com/freedevtools/tldr/az/azure-cli/"

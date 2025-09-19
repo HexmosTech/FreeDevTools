@@ -1,5 +1,5 @@
 ---
-title: "Kitex Generate - Create Go RPC Stubs | Free DevTools"
+title: "Kitex Generate - Create Go RPC Stubs | Online Free DevTools by Hexmos"
 name: kitex
 path: /freedevtools/tldr/common/kitex
 canonical: "https://hexmos.com/freedevtools/tldr/common/kitex/"

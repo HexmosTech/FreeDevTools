@@ -1,5 +1,5 @@
 ---
-title: "Brute Force APIs - Kiterunner Brute | Free DevTools"
+title: "Brute Force APIs - Kiterunner Brute | Online Free DevTools by Hexmos"
 name: kiterunner-brute
 path: "/freedevtools/tldr/kiterunner/kiterunner-brute"
 canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-brute/"

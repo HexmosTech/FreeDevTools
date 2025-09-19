@@ -1,5 +1,5 @@
 ---
-title: "yt-dlp - Download YouTube Videos and Playlists | Free DevTools"
+title: "yt-dlp - Download YouTube Videos and Playlists | Online Free DevTools by Hexmos"
 name: yt-dlp
 path: /freedevtools/tldr/common/yt-dlp
 canonical: "https://hexmos.com/freedevtools/tldr/common/yt-dlp/"

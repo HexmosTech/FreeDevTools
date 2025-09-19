@@ -1,5 +1,5 @@
 ---
-title: "Nettacker - Automate Vulnerability Scans | Free DevTools"
+title: "Nettacker - Automate Vulnerability Scans | Online Free DevTools by Hexmos"
 name: nettacker
 path: /freedevtools/tldr/common/nettacker
 canonical: "https://hexmos.com/freedevtools/tldr/common/nettacker/"

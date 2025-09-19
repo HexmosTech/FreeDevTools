@@ -1,5 +1,5 @@
 ---
-title: "Smooth PNM Image - Enhance Images | Free DevTools"
+title: "Smooth PNM Image - Enhance Images | Online Free DevTools by Hexmos"
 name: pnmsmooth
 path: /freedevtools/tldr/pnm/pnmsmooth
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmsmooth/"

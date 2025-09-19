@@ -1,5 +1,5 @@
 ---
-title: "List VM Snapshot - Manage Virtual Machine Snapshots | Free DevTools"
+title: "List VM Snapshot - Manage Virtual Machine Snapshots | Online Free DevTools by Hexmos"
 name: qm-listsnapshot
 path: /freedevtools/tldr/linux/qm-listsnapshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-listsnapshot/"

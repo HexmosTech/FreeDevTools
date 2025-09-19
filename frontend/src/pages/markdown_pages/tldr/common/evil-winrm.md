@@ -1,5 +1,5 @@
 ---
-title: "Evil-WinRM Control - PowerShell Remote Access | Free DevTools"
+title: "Evil-WinRM Control - PowerShell Remote Access | Online Free DevTools by Hexmos"
 name: evil-winrm
 path: /freedevtools/tldr/common/evil-winrm
 canonical: "https://hexmos.com/freedevtools/tldr/common/evil-winrm/"

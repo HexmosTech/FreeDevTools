@@ -1,5 +1,5 @@
 ---
-title: "Control Signal Trapping - Execute Commands on Events | Free DevTools"
+title: "Control Signal Trapping - Execute Commands on Events | Online Free DevTools by Hexmos"
 name: trap
 path: /freedevtools/tldr/linux/trap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trap/"

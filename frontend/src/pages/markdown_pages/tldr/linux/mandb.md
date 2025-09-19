@@ -1,5 +1,5 @@
 ---
-title: "Manage Manual Pages - Format Database with mandb | Free DevTools"
+title: "Manage Manual Pages - Format Database with mandb | Online Free DevTools by Hexmos"
 name: mandb
 path: /freedevtools/tldr/linux/mandb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mandb/"

@@ -1,5 +1,5 @@
 ---
-title: "Compile Fortran Code - Generate Executables with gfortran | Free DevTools"
+title: "Compile Fortran Code - Generate Executables with gfortran | Online Free DevTools by Hexmos"
 name: gfortran
 path: /freedevtools/tldr/common/gfortran
 canonical: "https://hexmos.com/freedevtools/tldr/common/gfortran/"

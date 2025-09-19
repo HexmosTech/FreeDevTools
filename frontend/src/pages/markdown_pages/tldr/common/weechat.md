@@ -1,5 +1,5 @@
 ---
-title: "Control WeeChat - IRC Client Configuration | Free DevTools"
+title: "Control WeeChat - IRC Client Configuration | Online Free DevTools by Hexmos"
 name: weechat
 path: /freedevtools/tldr/common/weechat
 canonical: "https://hexmos.com/freedevtools/tldr/common/weechat/"

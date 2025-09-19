@@ -1,5 +1,5 @@
 ---
-title: "XML Canonicalize - Format XML Documents | Free DevTools"
+title: "XML Canonicalize - Format XML Documents | Online Free DevTools by Hexmos"
 name: xml-canonic
 path: /freedevtools/tldr/xml/xml-canonic
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-canonic/"

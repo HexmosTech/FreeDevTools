@@ -1,5 +1,5 @@
 ---
-title: "Hash Identifier - Identify Password Hashes | Free DevTools"
+title: "Hash Identifier - Identify Password Hashes | Online Free DevTools by Hexmos"
 name: hashid
 path: /freedevtools/tldr/common/hashid
 canonical: "https://hexmos.com/freedevtools/tldr/common/hashid/"

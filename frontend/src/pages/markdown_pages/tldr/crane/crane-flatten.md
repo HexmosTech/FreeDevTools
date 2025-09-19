@@ -1,5 +1,5 @@
 ---
-title: "Flatten Image - Generate Single Layer Images | Free DevTools"
+title: "Flatten Image - Generate Single Layer Images | Online Free DevTools by Hexmos"
 name: crane-flatten
 path: /freedevtools/tldr/crane/crane-flatten
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-flatten/"

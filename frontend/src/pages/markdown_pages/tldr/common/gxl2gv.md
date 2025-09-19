@@ -1,5 +1,5 @@
 ---
-title: "Convert GXL to GV - Format Graph Data | Free DevTools"
+title: "Convert GXL to GV - Format Graph Data | Online Free DevTools by Hexmos"
 name: gxl2gv
 path: /freedevtools/tldr/common/gxl2gv
 canonical: "https://hexmos.com/freedevtools/tldr/common/gxl2gv/"

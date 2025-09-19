@@ -1,5 +1,5 @@
 ---
-title: "Gleam Compiler - Build Typesafe Systems | Free DevTools"
+title: "Gleam Compiler - Build Typesafe Systems | Online Free DevTools by Hexmos"
 name: gleam
 path: /freedevtools/tldr/common/gleam
 canonical: "https://hexmos.com/freedevtools/tldr/common/gleam/"

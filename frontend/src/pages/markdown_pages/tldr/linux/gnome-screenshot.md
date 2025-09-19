@@ -1,5 +1,5 @@
 ---
-title: "Screenshot Capture - Take Screenshots with Gnome | Free DevTools"
+title: "Screenshot Capture - Take Screenshots with Gnome | Online Free DevTools by Hexmos"
 name: gnome-screenshot
 path: /freedevtools/tldr/linux/gnome-screenshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-screenshot/"

@@ -1,5 +1,5 @@
 ---
-title: "Pueue Enqueue - Stash Task Enqueuing | Free DevTools"
+title: "Pueue Enqueue - Stash Task Enqueuing | Online Free DevTools by Hexmos"
 name: pueue-enqueue
 path: /freedevtools/tldr/pueue/pueue-enqueue
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-enqueue/"

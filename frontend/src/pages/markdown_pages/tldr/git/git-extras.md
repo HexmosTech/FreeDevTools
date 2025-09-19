@@ -1,5 +1,5 @@
 ---
-title: "Git Extras - Extend Git Functionality | Free DevTools"
+title: "Git Extras - Extend Git Functionality | Online Free DevTools by Hexmos"
 name: git-extras
 path: /freedevtools/tldr/git/git-extras
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-extras/"

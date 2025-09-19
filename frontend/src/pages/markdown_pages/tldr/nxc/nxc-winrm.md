@@ -1,5 +1,5 @@
 ---
-title: "Control WinRM - Pentest Windows Remote Management | Free DevTools"
+title: "Control WinRM - Pentest Windows Remote Management | Online Free DevTools by Hexmos"
 name: nxc-winrm
 path: /freedevtools/tldr/nxc/nxc-winrm
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-winrm/"

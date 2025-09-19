@@ -1,5 +1,5 @@
 ---
-title: "Clockwork CLI - Monitor PHP Debugging | Free DevTools"
+title: "Clockwork CLI - Monitor PHP Debugging | Online Free DevTools by Hexmos"
 name: clockwork-cli
 path: /freedevtools/tldr/common/clockwork-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/clockwork-cli/"

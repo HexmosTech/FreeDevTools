@@ -1,5 +1,5 @@
 ---
-title: "Control SSH Servers - mssh | Free DevTools"
+title: "Control SSH Servers - mssh | Online Free DevTools by Hexmos"
 name: mssh
 path: /freedevtools/tldr/linux/mssh
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mssh/"

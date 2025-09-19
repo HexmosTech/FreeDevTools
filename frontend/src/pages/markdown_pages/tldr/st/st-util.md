@@ -1,5 +1,5 @@
 ---
-title: "STM32 Debug - Control ARM Cortex Microcontrollers | Free DevTools"
+title: "STM32 Debug - Control ARM Cortex Microcontrollers | Online Free DevTools by Hexmos"
 name: st-util
 path: /freedevtools/tldr/st/st-util
 canonical: "https://hexmos.com/freedevtools/tldr/st/st-util/"

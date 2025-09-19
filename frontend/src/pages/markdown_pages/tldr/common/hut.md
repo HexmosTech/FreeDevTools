@@ -1,5 +1,5 @@
 ---
-title: "Sourcehut Control - Manage Repositories and Builds | Free DevTools"
+title: "Sourcehut Control - Manage Repositories and Builds | Online Free DevTools by Hexmos"
 name: hut
 path: /freedevtools/tldr/common/hut
 canonical: "https://hexmos.com/freedevtools/tldr/common/hut/"

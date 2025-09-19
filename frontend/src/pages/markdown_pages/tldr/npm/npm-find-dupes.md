@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicates - Analyze npm Dependencies | Free DevTools"
+title: "Find Duplicates - Analyze npm Dependencies | Online Free DevTools by Hexmos"
 name: npm-find-dupes
 path: /freedevtools/tldr/npm/npm-find-dupes
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-find-dupes/"

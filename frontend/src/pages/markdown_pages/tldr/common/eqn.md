@@ -1,5 +1,5 @@
 ---
-title: "Format Equations - Typeset Groff Documents | Free DevTools"
+title: "Format Equations - Typeset Groff Documents | Online Free DevTools by Hexmos"
 name: eqn
 path: "/freedevtools/tldr/common/eqn"
 canonical: "https://hexmos.com/freedevtools/tldr/common/eqn/"

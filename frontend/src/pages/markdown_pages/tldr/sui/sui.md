@@ -1,5 +1,5 @@
 ---
-title: "Sui Command - Interact with Sui Network | Free DevTools"
+title: "Sui Command - Interact with Sui Network | Online Free DevTools by Hexmos"
 name: sui
 path: /freedevtools/tldr/sui/sui
 canonical: "https://hexmos.com/freedevtools/tldr/sui/sui/"

@@ -1,5 +1,5 @@
 ---
-title: "SED - Edit Text Scriptably | Free DevTools"
+title: "SED - Edit Text Scriptably | Online Free DevTools by Hexmos"
 name: sed
 path: /freedevtools/tldr/netbsd/sed
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sed/"

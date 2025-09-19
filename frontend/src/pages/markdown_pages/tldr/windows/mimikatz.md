@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz - Extract Windows Credentials | Free DevTools"
+title: "Mimikatz - Extract Windows Credentials | Online Free DevTools by Hexmos"
 name: mimikatz
 path: /freedevtools/tldr/windows/mimikatz
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz/"

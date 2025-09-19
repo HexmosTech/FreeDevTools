@@ -1,5 +1,5 @@
 ---
-title: "Git Status - Track File Changes | Free DevTools"
+title: "Git Status - Track File Changes | Online Free DevTools by Hexmos"
 name: git-status
 path: /freedevtools/tldr/git/git-status
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-status/"

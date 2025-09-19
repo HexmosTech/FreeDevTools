@@ -1,5 +1,5 @@
 ---
-title: "Assemble LLVM Bitcode - Generate .bc Files | Free DevTools"
+title: "Assemble LLVM Bitcode - Generate .bc Files | Online Free DevTools by Hexmos"
 name: llvm-as
 path: /freedevtools/tldr/llvm/llvm-as
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-as/"

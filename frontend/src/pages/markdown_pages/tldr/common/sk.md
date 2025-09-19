@@ -1,5 +1,5 @@
 ---
-title: "Find Files with Skim - Fuzzy Finder in Rust | Free DevTools"
+title: "Find Files with Skim - Fuzzy Finder in Rust | Online Free DevTools by Hexmos"
 name: sk
 path: /freedevtools/tldr/common/sk
 canonical: "https://hexmos.com/freedevtools/tldr/common/sk/"

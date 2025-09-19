@@ -1,5 +1,5 @@
 ---
-title: "Inspect Peer Index - Analyze MRT Data | Free DevTools"
+title: "Inspect Peer Index - Analyze MRT Data | Online Free DevTools by Hexmos"
 name: peerindex
 path: "/freedevtools/tldr/common/peerindex"
 canonical: "https://hexmos.com/freedevtools/tldr/common/peerindex/"

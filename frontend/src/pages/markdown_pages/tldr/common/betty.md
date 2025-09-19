@@ -1,5 +1,5 @@
 ---
-title: "Control Commands - Betty Natural Language Interface | Free DevTools"
+title: "Control Commands - Betty Natural Language Interface | Online Free DevTools by Hexmos"
 name: betty
 path: /freedevtools/tldr/common/betty
 canonical: "https://hexmos.com/freedevtools/tldr/common/betty/"

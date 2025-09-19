@@ -1,5 +1,5 @@
 ---
-title: "Probe Linux Boot - Find OS with linux-boot-prober | Free DevTools"
+title: "Probe Linux Boot - Find OS with linux-boot-prober | Online Free DevTools by Hexmos"
 name: linux-boot-prober
 path: /freedevtools/tldr/linux/linux-boot-prober
 canonical: "https://hexmos.com/freedevtools/tldr/linux/linux-boot-prober/"

@@ -1,5 +1,5 @@
 ---
-title: "CIDR Management - Control Network Prefixes | Free DevTools"
+title: "CIDR Management - Control Network Prefixes | Online Free DevTools by Hexmos"
 name: cidr
 path: /freedevtools/tldr/common/cidr
 canonical: "https://hexmos.com/freedevtools/tldr/common/cidr/"

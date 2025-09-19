@@ -1,5 +1,5 @@
 ---
-title: "Control Version Control - Manage Repositories with vcsh | Free DevTools"
+title: "Control Version Control - Manage Repositories with vcsh | Online Free DevTools by Hexmos"
 name: vcsh
 path: /freedevtools/tldr/common/vcsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/vcsh/"

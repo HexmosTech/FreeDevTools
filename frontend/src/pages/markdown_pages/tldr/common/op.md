@@ -1,5 +1,5 @@
 ---
-title: "1Password CLI - Manage Secrets & Vaults | Free DevTools"
+title: "1Password CLI - Manage Secrets & Vaults | Online Free DevTools by Hexmos"
 name: op
 path: /freedevtools/tldr/common/op
 canonical: "https://hexmos.com/freedevtools/tldr/common/op/"

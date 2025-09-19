@@ -1,5 +1,5 @@
 ---
-title: "SPCtl - Control Security Policy | Free DevTools"
+title: "SPCtl - Control Security Policy | Online Free DevTools by Hexmos"
 name: spctl
 path: /freedevtools/tldr/osx/spctl
 canonical: "https://hexmos.com/freedevtools/tldr/osx/spctl/"

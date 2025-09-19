@@ -1,5 +1,5 @@
 ---
-title: "Manage Gentoo Repositories - Control Portage with eselect | Free DevTools"
+title: "Manage Gentoo Repositories - Control Portage with eselect | Online Free DevTools by Hexmos"
 name: eselect-repository
 path: /freedevtools/tldr/linux/eselect-repository
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-repository/"

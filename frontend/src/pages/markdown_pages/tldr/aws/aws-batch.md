@@ -1,5 +1,5 @@
 ---
-title: "AWS Batch - Run Compute Workloads | Free DevTools"
+title: "AWS Batch - Run Compute Workloads | Online Free DevTools by Hexmos"
 name: aws-batch
 path: /freedevtools/tldr/aws/aws-batch
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-batch/"

@@ -1,5 +1,5 @@
 ---
-title: "List USB Devices - Display USB Info | Free DevTools"
+title: "List USB Devices - Display USB Info | Online Free DevTools by Hexmos"
 name: lsusb
 path: /freedevtools/tldr/linux/lsusb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsusb/"

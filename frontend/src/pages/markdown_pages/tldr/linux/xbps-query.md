@@ -1,5 +1,5 @@
 ---
-title: "Query XBPS Packages - Manage Packages with xbps-query | Free DevTools"
+title: "Query XBPS Packages - Manage Packages with xbps-query | Online Free DevTools by Hexmos"
 name: xbps-query
 path: /freedevtools/tldr/linux/xbps-query
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-query/"

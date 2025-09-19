@@ -1,5 +1,5 @@
 ---
-title: "Cargo - Manage Rust Projects & Crates | Free DevTools"
+title: "Cargo - Manage Rust Projects & Crates | Online Free DevTools by Hexmos"
 name: cargo
 path: /freedevtools/tldr/cargo/cargo
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo/"

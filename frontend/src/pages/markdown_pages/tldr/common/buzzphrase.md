@@ -1,5 +1,5 @@
 ---
-title: "Generate Buzzphrases - Create Random Phrases | Free DevTools"
+title: "Generate Buzzphrases - Create Random Phrases | Online Free DevTools by Hexmos"
 name: buzzphrase
 path: /freedevtools/tldr/common/buzzphrase
 canonical: "https://hexmos.com/freedevtools/tldr/common/buzzphrase/"

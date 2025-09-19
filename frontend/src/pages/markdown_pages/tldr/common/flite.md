@@ -1,5 +1,5 @@
 ---
-title: "Synthesize Speech - Flite Text-to-Speech | Free DevTools"
+title: "Synthesize Speech - Flite Text-to-Speech | Online Free DevTools by Hexmos"
 name: flite
 path: /freedevtools/tldr/common/flite
 canonical: "https://hexmos.com/freedevtools/tldr/common/flite/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Qemu-img Images - Manage Virtual Disks | Free DevTools"
+title: "Create Qemu-img Images - Manage Virtual Disks | Online Free DevTools by Hexmos"
 name: qemu-img
 path: /freedevtools/tldr/qemu/qemu-img
 canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-img/"

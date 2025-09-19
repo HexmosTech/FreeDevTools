@@ -1,5 +1,5 @@
 ---
-title: "Copy File - Copy Files and Directories | Free DevTools"
+title: "Copy File - Copy Files and Directories | Online Free DevTools by Hexmos"
 name: cp
 path: /freedevtools/tldr/common/cp
 canonical: "https://hexmos.com/freedevtools/tldr/common/cp/"

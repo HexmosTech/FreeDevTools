@@ -1,5 +1,5 @@
 ---
-title: "Wait Command - Control Process Completion | Free DevTools"
+title: "Wait Command - Control Process Completion | Online Free DevTools by Hexmos"
 name: wait
 path: /freedevtools/tldr/common/wait
 canonical: "https://hexmos.com/freedevtools/tldr/common/wait/"

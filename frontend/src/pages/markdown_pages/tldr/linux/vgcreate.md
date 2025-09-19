@@ -1,5 +1,5 @@
 ---
-title: "Create Volume Groups - vgcreate Command | Free DevTools"
+title: "Create Volume Groups - vgcreate Command | Online Free DevTools by Hexmos"
 name: vgcreate
 path: /freedevtools/tldr/linux/vgcreate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgcreate/"

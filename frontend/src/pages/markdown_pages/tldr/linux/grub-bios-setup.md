@@ -1,5 +1,5 @@
 ---
-title: "GRUB BIOS Setup - Configure GRUB Bootloader | Free DevTools"
+title: "GRUB BIOS Setup - Configure GRUB Bootloader | Online Free DevTools by Hexmos"
 name: grub-bios-setup
 path: /freedevtools/tldr/linux/grub-bios-setup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-bios-setup/"

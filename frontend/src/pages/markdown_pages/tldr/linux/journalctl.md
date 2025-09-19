@@ -1,5 +1,5 @@
 ---
-title: "Journalctl - Query Systemd Logs | Free DevTools"
+title: "Journalctl - Query Systemd Logs | Online Free DevTools by Hexmos"
 name: journalctl
 path: /freedevtools/tldr/linux/journalctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/journalctl/"

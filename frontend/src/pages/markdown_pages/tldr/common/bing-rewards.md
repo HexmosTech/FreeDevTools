@@ -1,5 +1,5 @@
 ---
-title: "Automate Bing Rewards - Earn Daily Points | Free DevTools"
+title: "Automate Bing Rewards - Earn Daily Points | Online Free DevTools by Hexmos"
 name: bing-rewards
 path: /freedevtools/tldr/common/bing-rewards
 canonical: "https://hexmos.com/freedevtools/tldr/common/bing-rewards/"

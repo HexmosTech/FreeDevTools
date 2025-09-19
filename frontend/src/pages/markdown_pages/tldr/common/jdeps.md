@@ -1,5 +1,5 @@
 ---
-title: "Analyze Java Dependencies - With jdeps | Free DevTools"
+title: "Analyze Java Dependencies - With jdeps | Online Free DevTools by Hexmos"
 name: jdeps
 path: /freedevtools/tldr/common/jdeps
 canonical: "https://hexmos.com/freedevtools/tldr/common/jdeps/"

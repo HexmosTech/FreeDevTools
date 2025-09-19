@@ -1,5 +1,5 @@
 ---
-title: "AWS Pricing - Query AWS Prices | Free DevTools"
+title: "AWS Pricing - Query AWS Prices | Online Free DevTools by Hexmos"
 name: aws-pricing
 path: /freedevtools/tldr/aws/aws-pricing
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-pricing/"

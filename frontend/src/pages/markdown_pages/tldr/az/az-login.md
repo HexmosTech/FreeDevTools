@@ -1,5 +1,5 @@
 ---
-title: "Azure Login - Authenticate Azure Accounts | Free DevTools"
+title: "Azure Login - Authenticate Azure Accounts | Online Free DevTools by Hexmos"
 name: az-login
 path: /freedevtools/tldr/az/az-login
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-login/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate SHA Checksums - Verify File Integrity | Free DevTools"
+title: "Generate SHA Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: shasum
 path: /freedevtools/tldr/common/shasum
 canonical: "https://hexmos.com/freedevtools/tldr/common/shasum/"

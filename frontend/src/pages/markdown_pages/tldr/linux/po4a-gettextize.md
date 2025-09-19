@@ -1,5 +1,5 @@
 ---
-title: "Generate PO File - po4a-gettextize | Free DevTools"
+title: "Generate PO File - po4a-gettextize | Online Free DevTools by Hexmos"
 name: po4a-gettextize
 path: /freedevtools/tldr/linux/po4a-gettextize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a-gettextize/"

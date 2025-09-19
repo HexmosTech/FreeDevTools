@@ -1,5 +1,5 @@
 ---
-title: "Execute Command - Control Processes | Free DevTools"
+title: "Execute Command - Control Processes | Online Free DevTools by Hexmos"
 name: exec
 path: /freedevtools/tldr/linux/exec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/exec/"

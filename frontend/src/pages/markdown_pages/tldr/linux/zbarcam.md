@@ -1,5 +1,5 @@
 ---
-title: "Scan Barcodes - Decode QR Codes with Zbarcam | Free DevTools"
+title: "Scan Barcodes - Decode QR Codes with Zbarcam | Online Free DevTools by Hexmos"
 name: zbarcam
 path: /freedevtools/tldr/linux/zbarcam
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zbarcam/"

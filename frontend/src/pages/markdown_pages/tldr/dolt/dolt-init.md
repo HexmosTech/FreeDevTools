@@ -1,5 +1,5 @@
 ---
-title: "Create Dolt Repository - Initialize Data Repositories | Free DevTools"
+title: "Create Dolt Repository - Initialize Data Repositories | Online Free DevTools by Hexmos"
 name: dolt-init
 path: /freedevtools/tldr/dolt/dolt-init
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-init/"

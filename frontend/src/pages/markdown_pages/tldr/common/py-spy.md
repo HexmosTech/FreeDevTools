@@ -1,5 +1,5 @@
 ---
-title: "Py-Spy Profiler - Profile Python Code | Free DevTools"
+title: "Py-Spy Profiler - Profile Python Code | Online Free DevTools by Hexmos"
 name: py-spy
 path: /freedevtools/tldr/common/py-spy
 canonical: "https://hexmos.com/freedevtools/tldr/common/py-spy/"

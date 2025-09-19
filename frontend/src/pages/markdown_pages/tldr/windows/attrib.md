@@ -1,5 +1,5 @@
 ---
-title: "Attrib - Control File Attributes on Windows | Free DevTools"
+title: "Attrib - Control File Attributes on Windows | Online Free DevTools by Hexmos"
 name: attrib
 path: /freedevtools/tldr/windows/attrib
 canonical: "https://hexmos.com/freedevtools/tldr/windows/attrib/"

@@ -1,5 +1,5 @@
 ---
-title: "List Devices - Monitor GStreamer Devices | Free DevTools"
+title: "List Devices - Monitor GStreamer Devices | Online Free DevTools by Hexmos"
 name: gst-device-monitor-1.0
 path: /freedevtools/tldr/gst/gst-device-monitor-1.0
 canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-device-monitor-1.0/"

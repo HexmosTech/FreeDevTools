@@ -1,5 +1,5 @@
 ---
-title: "AIDE Validate File Integrity - Linux Intrusion Detection | Free DevTools"
+title: "AIDE Validate File Integrity - Linux Intrusion Detection | Online Free DevTools by Hexmos"
 name: aide
 path: /freedevtools/tldr/linux/aide
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aide/"

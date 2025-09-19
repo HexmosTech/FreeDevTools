@@ -1,5 +1,5 @@
 ---
-title: "Waydroid - Run Android Apps on Linux | Free DevTools"
+title: "Waydroid - Run Android Apps on Linux | Online Free DevTools by Hexmos"
 name: waydroid
 path: /freedevtools/tldr/linux/waydroid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/waydroid/"

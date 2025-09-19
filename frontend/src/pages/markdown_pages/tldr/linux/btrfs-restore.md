@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Restore - Salvage Files from Btrfs Filesystem | Free DevTools"
+title: "Btrfs Restore - Salvage Files from Btrfs Filesystem | Online Free DevTools by Hexmos"
 name: btrfs-restore
 path: /freedevtools/tldr/linux/btrfs-restore
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-restore/"

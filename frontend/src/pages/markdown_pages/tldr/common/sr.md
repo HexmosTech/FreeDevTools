@@ -1,5 +1,5 @@
 ---
-title: "Surfraw Search - Access Internet Search Engines | Free DevTools"
+title: "Surfraw Search - Access Internet Search Engines | Online Free DevTools by Hexmos"
 name: sr
 path: /freedevtools/tldr/common/sr
 canonical: "https://hexmos.com/freedevtools/tldr/common/sr/"

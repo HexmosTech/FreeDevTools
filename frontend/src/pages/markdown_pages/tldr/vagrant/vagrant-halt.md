@@ -1,5 +1,5 @@
 ---
-title: "Vagrant Halt - Shutdown Virtual Machines | Free DevTools"
+title: "Vagrant Halt - Shutdown Virtual Machines | Online Free DevTools by Hexmos"
 name: vagrant-halt
 path: /freedevtools/tldr/vagrant/vagrant-halt
 canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-halt/"

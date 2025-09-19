@@ -1,5 +1,5 @@
 ---
-title: "Control Sindre Sorhus CLI - Interactive Tool | Free DevTools"
+title: "Control Sindre Sorhus CLI - Interactive Tool | Online Free DevTools by Hexmos"
 name: sindresorhus
 path: /freedevtools/tldr/common/sindresorhus
 canonical: "https://hexmos.com/freedevtools/tldr/common/sindresorhus/"

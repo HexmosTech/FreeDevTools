@@ -1,5 +1,5 @@
 ---
-title: "Choco Pack - Create NuGet Packages | Free DevTools"
+title: "Choco Pack - Create NuGet Packages | Online Free DevTools by Hexmos"
 name: choco-pack
 path: /freedevtools/tldr/windows/choco-pack
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-pack/"

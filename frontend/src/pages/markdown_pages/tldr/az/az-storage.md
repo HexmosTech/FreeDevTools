@@ -1,5 +1,5 @@
 ---
-title: "Azure Storage - Manage Cloud Resources | Free DevTools"
+title: "Azure Storage - Manage Cloud Resources | Online Free DevTools by Hexmos"
 name: az-storage
 path: /freedevtools/tldr/az/az-storage
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage/"

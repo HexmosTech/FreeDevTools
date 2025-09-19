@@ -1,5 +1,5 @@
 ---
-title: "Generate SQL from CSV - csvsql | Free DevTools"
+title: "Generate SQL from CSV - csvsql | Online Free DevTools by Hexmos"
 name: csvsql
 path: /freedevtools/tldr/cs/csvsql
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvsql/"

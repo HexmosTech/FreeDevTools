@@ -1,5 +1,5 @@
 ---
-title: "Sudo - Execute Commands as Superuser | Free DevTools"
+title: "Sudo - Execute Commands as Superuser | Online Free DevTools by Hexmos"
 name: sudo
 path: /freedevtools/tldr/common/sudo
 canonical: "https://hexmos.com/freedevtools/tldr/common/sudo/"

@@ -1,5 +1,5 @@
 ---
-title: "Validate GRUB Scripts - Check Syntax | Free DevTools"
+title: "Validate GRUB Scripts - Check Syntax | Online Free DevTools by Hexmos"
 name: grub-script-check
 path: /freedevtools/tldr/linux/grub-script-check
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-script-check/"

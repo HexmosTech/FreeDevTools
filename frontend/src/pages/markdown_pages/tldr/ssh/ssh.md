@@ -1,5 +1,5 @@
 ---
-title: "SSH Command - Securely Connect to Remote Servers | Free DevTools"
+title: "SSH Command - Securely Connect to Remote Servers | Online Free DevTools by Hexmos"
 name: ssh
 path: /freedevtools/tldr/ssh/ssh
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Music with Termusic - Terminal Player | Free DevTools"
+title: "Control Music with Termusic - Terminal Player | Online Free DevTools by Hexmos"
 name: termusic
 path: /freedevtools/tldr/linux/termusic
 canonical: "https://hexmos.com/freedevtools/tldr/linux/termusic/"

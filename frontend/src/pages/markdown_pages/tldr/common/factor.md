@@ -1,5 +1,5 @@
 ---
-title: "Factor Number - Generate Prime Factors | Free DevTools"
+title: "Factor Number - Generate Prime Factors | Online Free DevTools by Hexmos"
 name: factor
 path: "/freedevtools/tldr/common/factor"
 canonical: "https://hexmos.com/freedevtools/tldr/common/factor/"

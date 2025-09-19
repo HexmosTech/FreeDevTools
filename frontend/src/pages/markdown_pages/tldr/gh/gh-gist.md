@@ -1,5 +1,5 @@
 ---
-title: "Create GitHub Gists - Manage and Share Code | Free DevTools"
+title: "Create GitHub Gists - Manage and Share Code | Online Free DevTools by Hexmos"
 name: gh-gist
 path: /freedevtools/tldr/gh/gh-gist
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-gist/"

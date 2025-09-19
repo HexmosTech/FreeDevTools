@@ -1,5 +1,5 @@
 ---
-title: "View Package Dependency - Control Linux Packages | Free DevTools"
+title: "View Package Dependency - Control Linux Packages | Online Free DevTools by Hexmos"
 name: pactree
 path: /freedevtools/tldr/linux/pactree
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pactree/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Stage - Add Files to Index | Free DevTools"
+title: "Git Stage - Add Files to Index | Online Free DevTools by Hexmos"
 name: git-stage
 path: /freedevtools/tldr/git/git-stage
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-stage/"

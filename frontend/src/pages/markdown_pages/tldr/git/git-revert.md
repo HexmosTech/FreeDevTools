@@ -1,5 +1,5 @@
 ---
-title: "Create Git Reverts - Undo Changes | Free DevTools"
+title: "Create Git Reverts - Undo Changes | Online Free DevTools by Hexmos"
 name: git-revert
 path: /freedevtools/tldr/git/git-revert
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-revert/"

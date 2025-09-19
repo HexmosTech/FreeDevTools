@@ -1,5 +1,5 @@
 ---
-title: "XMLStarlet - Format XML Documents | Free DevTools"
+title: "XMLStarlet - Format XML Documents | Online Free DevTools by Hexmos"
 name: xmlstarlet
 path: /freedevtools/tldr/xml/xmlstarlet
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xmlstarlet/"

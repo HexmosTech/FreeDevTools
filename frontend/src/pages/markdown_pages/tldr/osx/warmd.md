@@ -1,5 +1,5 @@
 ---
-title: "Warmd - Control Startup Caches | Free DevTools"
+title: "Warmd - Control Startup Caches | Online Free DevTools by Hexmos"
 name: warmd
 path: /freedevtools/tldr/osx/warmd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/warmd/"

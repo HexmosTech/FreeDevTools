@@ -1,5 +1,5 @@
 ---
-title: "Transmission Show - Get Torrent Info | Free DevTools"
+title: "Transmission Show - Get Torrent Info | Online Free DevTools by Hexmos"
 name: transmission-show
 path: /freedevtools/tldr/transmission/transmission-show
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-show/"

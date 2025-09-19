@@ -1,5 +1,5 @@
 ---
-title: "Pacman Query - Search Packages | Free DevTools"
+title: "Pacman Query - Search Packages | Online Free DevTools by Hexmos"
 name: pacman-q
 path: /freedevtools/tldr/linux/pacman-q
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-q/"

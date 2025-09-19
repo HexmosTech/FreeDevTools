@@ -1,5 +1,5 @@
 ---
-title: "WordPress Control - Manage WP Instances | Free DevTools"
+title: "WordPress Control - Manage WP Instances | Online Free DevTools by Hexmos"
 name: wp
 path: /freedevtools/tldr/common/wp
 canonical: "https://hexmos.com/freedevtools/tldr/common/wp/"

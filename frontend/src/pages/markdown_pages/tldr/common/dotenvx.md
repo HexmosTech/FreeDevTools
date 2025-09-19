@@ -1,5 +1,5 @@
 ---
-title: "dotenvx - Manage Environment Variables | Free DevTools"
+title: "dotenvx - Manage Environment Variables | Online Free DevTools by Hexmos"
 name: dotenvx
 path: /freedevtools/tldr/common/dotenvx
 canonical: "https://hexmos.com/freedevtools/tldr/common/dotenvx/"

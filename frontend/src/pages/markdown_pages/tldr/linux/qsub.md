@@ -1,5 +1,5 @@
 ---
-title: "Submit Qsub Scripts - Manage Jobs | Free DevTools"
+title: "Submit Qsub Scripts - Manage Jobs | Online Free DevTools by Hexmos"
 name: qsub
 path: /freedevtools/tldr/linux/qsub
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qsub/"

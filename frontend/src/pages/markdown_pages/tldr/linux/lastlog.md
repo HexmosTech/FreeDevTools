@@ -1,5 +1,5 @@
 ---
-title: "Lastlog - View User Login History | Free DevTools"
+title: "Lastlog - View User Login History | Online Free DevTools by Hexmos"
 name: lastlog
 path: /freedevtools/tldr/linux/lastlog
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lastlog/"

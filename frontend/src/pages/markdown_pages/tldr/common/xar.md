@@ -1,5 +1,5 @@
 ---
-title: "XAR Archive Manager - Create XAR Archives | Free DevTools"
+title: "XAR Archive Manager - Create XAR Archives | Online Free DevTools by Hexmos"
 name: xar
 path: /freedevtools/tldr/common/xar
 canonical: "https://hexmos.com/freedevtools/tldr/common/xar/"

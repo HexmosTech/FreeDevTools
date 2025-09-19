@@ -1,5 +1,5 @@
 ---
-title: "pyATS Shell - Control Network Devices | Free DevTools"
+title: "pyATS Shell - Control Network Devices | Online Free DevTools by Hexmos"
 name: pyats-shell
 path: /freedevtools/tldr/pyats/pyats-shell
 canonical: "https://hexmos.com/freedevtools/tldr/pyats/pyats-shell/"

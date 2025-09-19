@@ -1,5 +1,5 @@
 ---
-title: "UV Export - Generate Lockfiles | Free DevTools"
+title: "UV Export - Generate Lockfiles | Online Free DevTools by Hexmos"
 name: uv-export
 path: /freedevtools/tldr/uv/uv-export
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-export/"

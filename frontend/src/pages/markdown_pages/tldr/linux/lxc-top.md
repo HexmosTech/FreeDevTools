@@ -1,5 +1,5 @@
 ---
-title: "Monitor LXC Containers - Resource Usage with lxc-top | Free DevTools"
+title: "Monitor LXC Containers - Resource Usage with lxc-top | Online Free DevTools by Hexmos"
 name: lxc-top
 path: /freedevtools/tldr/linux/lxc-top
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-top/"

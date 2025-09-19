@@ -1,5 +1,5 @@
 ---
-title: "InfluxDB Client - Control InfluxDB Instances | Free DevTools"
+title: "InfluxDB Client - Control InfluxDB Instances | Online Free DevTools by Hexmos"
 name: influx
 path: /freedevtools/tldr/in/influx
 canonical: "https://hexmos.com/freedevtools/tldr/in/influx/"

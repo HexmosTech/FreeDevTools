@@ -1,5 +1,5 @@
 ---
-title: "Addr2line - Convert Addresses to Line Numbers | Free DevTools"
+title: "Addr2line - Convert Addresses to Line Numbers | Online Free DevTools by Hexmos"
 name: addr2line
 path: /freedevtools/tldr/linux/addr2line
 canonical: "https://hexmos.com/freedevtools/tldr/linux/addr2line/"

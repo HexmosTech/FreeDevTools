@@ -1,5 +1,5 @@
 ---
-title: "Find Debuginfo - Request Debug Data | Free DevTools"
+title: "Find Debuginfo - Request Debug Data | Online Free DevTools by Hexmos"
 name: debuginfod-find
 path: /freedevtools/tldr/linux/debuginfod-find
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debuginfod-find/"

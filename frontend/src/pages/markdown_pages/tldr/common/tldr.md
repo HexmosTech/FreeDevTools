@@ -1,5 +1,5 @@
 ---
-title: "TLDR - Display Command Help Pages | Free DevTools"
+title: "TLDR - Display Command Help Pages | Online Free DevTools by Hexmos"
 name: tldr
 path: /freedevtools/tldr/common/tldr
 canonical: "https://hexmos.com/freedevtools/tldr/common/tldr/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Wine Environments - Winetricks | Free DevTools"
+title: "Manage Wine Environments - Winetricks | Online Free DevTools by Hexmos"
 name: winetricks
 path: "/freedevtools/tldr/linux/winetricks"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/winetricks/"

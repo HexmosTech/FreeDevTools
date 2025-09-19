@@ -1,5 +1,5 @@
 ---
-title: "GPU Control - Manage Nvidia Optimus with envycontrol | Free DevTools"
+title: "GPU Control - Manage Nvidia Optimus with envycontrol | Online Free DevTools by Hexmos"
 name: envycontrol
 path: /freedevtools/tldr/linux/envycontrol
 canonical: "https://hexmos.com/freedevtools/tldr/linux/envycontrol/"

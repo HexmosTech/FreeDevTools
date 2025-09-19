@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Syntax Aware Diff Tool | Free DevTools"
+title: "Compare Files - Syntax Aware Diff Tool | Online Free DevTools by Hexmos"
 name: difft
 path: /freedevtools/tldr/common/difft
 canonical: "https://hexmos.com/freedevtools/tldr/common/difft/"

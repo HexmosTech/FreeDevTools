@@ -1,5 +1,5 @@
 ---
-title: "Task Manager - Manage Tasks and Notes | Free DevTools"
+title: "Task Manager - Manage Tasks and Notes | Online Free DevTools by Hexmos"
 name: tb
 path: /freedevtools/tldr/common/tb
 canonical: "https://hexmos.com/freedevtools/tldr/common/tb/"

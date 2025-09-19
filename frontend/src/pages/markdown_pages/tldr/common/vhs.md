@@ -1,5 +1,5 @@
 ---
-title: "Generate Terminal GIFs - VHS Tape Recorder | Free DevTools"
+title: "Generate Terminal GIFs - VHS Tape Recorder | Online Free DevTools by Hexmos"
 name: vhs
 path: /freedevtools/tldr/common/vhs
 canonical: "https://hexmos.com/freedevtools/tldr/common/vhs/"

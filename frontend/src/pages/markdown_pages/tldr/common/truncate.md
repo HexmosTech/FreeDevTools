@@ -1,5 +1,5 @@
 ---
-title: "Truncate - Control File Size | Free DevTools"
+title: "Truncate - Control File Size | Online Free DevTools by Hexmos"
 name: truncate
 path: /freedevtools/tldr/common/truncate
 canonical: "https://hexmos.com/freedevtools/tldr/common/truncate/"

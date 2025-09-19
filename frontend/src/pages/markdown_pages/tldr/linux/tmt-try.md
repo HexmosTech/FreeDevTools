@@ -1,5 +1,5 @@
 ---
-title: "TMT Try - Experiment with Tests | Free DevTools"
+title: "TMT Try - Experiment with Tests | Online Free DevTools by Hexmos"
 name: tmt-try
 path: /freedevtools/tldr/linux/tmt-try
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tmt-try/"

@@ -1,5 +1,5 @@
 ---
-title: "Sort Object - Control Data Output | Free DevTools"
+title: "Sort Object - Control Data Output | Online Free DevTools by Hexmos"
 name: sort-object
 path: /freedevtools/tldr/windows/sort-object
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sort-object/"

@@ -1,5 +1,5 @@
 ---
-title: "Execute LLVM Tests - lit Test Runner | Free DevTools"
+title: "Execute LLVM Tests - lit Test Runner | Online Free DevTools by Hexmos"
 name: lit
 path: /freedevtools/tldr/common/lit
 canonical: "https://hexmos.com/freedevtools/tldr/common/lit/"

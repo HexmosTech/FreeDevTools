@@ -1,5 +1,5 @@
 ---
-title: "PPM Normalize - Format PPM Images | Free DevTools"
+title: "PPM Normalize - Format PPM Images | Online Free DevTools by Hexmos"
 name: ppmnorm
 path: /freedevtools/tldr/ppm/ppmnorm
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmnorm/"

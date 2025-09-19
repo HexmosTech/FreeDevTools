@@ -1,5 +1,5 @@
 ---
-title: "Create Directory - Make Directories with gmkdir | Free DevTools"
+title: "Create Directory - Make Directories with gmkdir | Online Free DevTools by Hexmos"
 name: gmkdir
 path: /freedevtools/tldr/osx/gmkdir
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmkdir/"

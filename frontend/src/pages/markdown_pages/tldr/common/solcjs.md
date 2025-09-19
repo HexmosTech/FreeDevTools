@@ -1,5 +1,5 @@
 ---
-title: "Solidity Compiler - Generate Contract Bytecode | Free DevTools"
+title: "Solidity Compiler - Generate Contract Bytecode | Online Free DevTools by Hexmos"
 name: solcjs
 path: /freedevtools/tldr/common/solcjs
 canonical: "https://hexmos.com/freedevtools/tldr/common/solcjs/"

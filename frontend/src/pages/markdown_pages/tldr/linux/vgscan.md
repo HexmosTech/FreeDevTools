@@ -1,5 +1,5 @@
 ---
-title: "VGScan - Scan Linux Volume Groups | Free DevTools"
+title: "VGScan - Scan Linux Volume Groups | Online Free DevTools by Hexmos"
 name: vgscan
 path: /freedevtools/tldr/linux/vgscan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgscan/"

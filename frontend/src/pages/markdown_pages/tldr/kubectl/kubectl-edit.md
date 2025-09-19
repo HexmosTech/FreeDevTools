@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Edit - Edit Kubernetes Resources | Free DevTools"
+title: "Kubectl Edit - Edit Kubernetes Resources | Online Free DevTools by Hexmos"
 name: kubectl-edit
 path: /freedevtools/tldr/kubectl/kubectl-edit
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-edit/"

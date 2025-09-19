@@ -1,5 +1,5 @@
 ---
-title: "Netplan - Configure Network Settings with YAML | Free DevTools"
+title: "Netplan - Configure Network Settings with YAML | Online Free DevTools by Hexmos"
 name: netplan
 path: /freedevtools/tldr/linux/netplan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/netplan/"

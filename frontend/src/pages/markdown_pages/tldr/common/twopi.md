@@ -1,5 +1,5 @@
 ---
-title: "Generate Graph Image - Render Radial Network with Twopi | Free DevTools"
+title: "Generate Graph Image - Render Radial Network with Twopi | Online Free DevTools by Hexmos"
 name: twopi
 path: /freedevtools/tldr/common/twopi
 canonical: "https://hexmos.com/freedevtools/tldr/common/twopi/"

@@ -1,5 +1,5 @@
 ---
-title: "Display File - Interact and Scroll with More | Free DevTools"
+title: "Display File - Interact and Scroll with More | Online Free DevTools by Hexmos"
 name: more
 path: /freedevtools/tldr/linux/more
 canonical: "https://hexmos.com/freedevtools/tldr/linux/more/"

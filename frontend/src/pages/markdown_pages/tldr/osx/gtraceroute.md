@@ -1,5 +1,5 @@
 ---
-title: "Traceroute Command - Diagnose Network Paths | Free DevTools"
+title: "Traceroute Command - Diagnose Network Paths | Online Free DevTools by Hexmos"
 name: gtraceroute
 path: /freedevtools/tldr/osx/gtraceroute
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtraceroute/"

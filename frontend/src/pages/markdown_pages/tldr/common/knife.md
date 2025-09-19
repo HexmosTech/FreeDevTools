@@ -1,5 +1,5 @@
 ---
-title: "Control Chef Server - Manage Nodes with Knife | Free DevTools"
+title: "Control Chef Server - Manage Nodes with Knife | Online Free DevTools by Hexmos"
 name: knife
 path: /freedevtools/tldr/common/knife
 canonical: "https://hexmos.com/freedevtools/tldr/common/knife/"

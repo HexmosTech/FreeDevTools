@@ -1,5 +1,5 @@
 ---
-title: "Control Packages - Nix Package Manager with CLI | Free DevTools"
+title: "Control Packages - Nix Package Manager with CLI | Online Free DevTools by Hexmos"
 name: nix-classic
 path: /freedevtools/tldr/nix/nix-classic
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-classic/"

@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Get - Control Kubernetes Objects | Free DevTools"
+title: "Kubectl Get - Control Kubernetes Objects | Online Free DevTools by Hexmos"
 name: kubectl-get
 path: /freedevtools/tldr/kubectl/kubectl-get
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-get/"

@@ -1,5 +1,5 @@
 ---
-title: "Display UV Dependencies - Analyze Project Tree | Free DevTools"
+title: "Display UV Dependencies - Analyze Project Tree | Online Free DevTools by Hexmos"
 name: uv-tree
 path: /freedevtools/tldr/uv/uv-tree
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-tree/"

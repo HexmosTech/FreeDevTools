@@ -1,5 +1,5 @@
 ---
-title: "Flatpak Info - View Remote Application Information | Free DevTools"
+title: "Flatpak Info - View Remote Application Information | Online Free DevTools by Hexmos"
 name: flatpak-remote-info
 path: /freedevtools/tldr/linux/flatpak-remote-info
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-remote-info/"

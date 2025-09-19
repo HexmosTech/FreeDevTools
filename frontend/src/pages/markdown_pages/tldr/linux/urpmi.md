@@ -1,5 +1,5 @@
 ---
-title: "Install Packages - Control Mageia Packages with urpmi | Free DevTools"
+title: "Install Packages - Control Mageia Packages with urpmi | Online Free DevTools by Hexmos"
 name: urpmi
 path: "/freedevtools/tldr/linux/urpmi"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi/"

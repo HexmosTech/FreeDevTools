@@ -1,5 +1,5 @@
 ---
-title: "Change Directory - Control File Paths on Windows | Free DevTools"
+title: "Change Directory - Control File Paths on Windows | Online Free DevTools by Hexmos"
 name: chdir
 path: /freedevtools/tldr/windows/chdir
 canonical: "https://hexmos.com/freedevtools/tldr/windows/chdir/"

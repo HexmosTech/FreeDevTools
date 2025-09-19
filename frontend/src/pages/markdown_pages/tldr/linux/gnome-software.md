@@ -1,5 +1,5 @@
 ---
-title: "Manage Software - Update and Install Apps | Free DevTools"
+title: "Manage Software - Update and Install Apps | Online Free DevTools by Hexmos"
 name: gnome-software
 path: /freedevtools/tldr/linux/gnome-software
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-software/"

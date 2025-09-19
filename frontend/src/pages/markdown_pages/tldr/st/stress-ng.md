@@ -1,5 +1,5 @@
 ---
-title: "Stress Linux System - Load Test with stress-ng | Free DevTools"
+title: "Stress Linux System - Load Test with stress-ng | Online Free DevTools by Hexmos"
 name: stress-ng
 path: "/freedevtools/tldr/st/stress-ng"
 canonical: "https://hexmos.com/freedevtools/tldr/st/stress-ng/"

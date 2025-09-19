@@ -1,5 +1,5 @@
 ---
-title: "obabel Converter - Translate Chemistry Data | Free DevTools"
+title: "obabel Converter - Translate Chemistry Data | Online Free DevTools by Hexmos"
 name: obabel
 path: /freedevtools/tldr/linux/obabel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/obabel/"

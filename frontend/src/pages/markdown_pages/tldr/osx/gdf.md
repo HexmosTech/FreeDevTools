@@ -1,5 +1,5 @@
 ---
-title: "Disk Free - View Disk Space | Free DevTools"
+title: "Disk Free - View Disk Space | Online Free DevTools by Hexmos"
 name: gdf
 path: /freedevtools/tldr/osx/gdf
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdf/"

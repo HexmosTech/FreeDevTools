@@ -1,5 +1,5 @@
 ---
-title: "Resolve Dependencies - List Transitive Deps with Coursier | Free DevTools"
+title: "Resolve Dependencies - List Transitive Deps with Coursier | Online Free DevTools by Hexmos"
 name: cs-resolve
 path: /freedevtools/tldr/cs/cs-resolve
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-resolve/"

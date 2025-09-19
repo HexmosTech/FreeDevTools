@@ -1,5 +1,5 @@
 ---
-title: "Create Rust Package - Cargo Init Tool | Free DevTools"
+title: "Create Rust Package - Cargo Init Tool | Online Free DevTools by Hexmos"
 name: cargo-init
 path: /freedevtools/tldr/cargo/cargo-init
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-init/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Virtual Drives - Control Paths with Subst | Free DevTools"
+title: "Create Virtual Drives - Control Paths with Subst | Online Free DevTools by Hexmos"
 name: subst
 path: /freedevtools/tldr/windows/subst
 canonical: "https://hexmos.com/freedevtools/tldr/windows/subst/"

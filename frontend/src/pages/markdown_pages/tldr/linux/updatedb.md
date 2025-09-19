@@ -1,5 +1,5 @@
 ---
-title: "Create updatedb Database - Refresh File Index | Free DevTools"
+title: "Create updatedb Database - Refresh File Index | Online Free DevTools by Hexmos"
 name: updatedb
 path: /freedevtools/tldr/linux/updatedb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/updatedb/"

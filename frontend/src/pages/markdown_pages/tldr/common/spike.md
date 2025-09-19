@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Websites - Spike | Free DevTools"
+title: "Generate Static Websites - Spike | Online Free DevTools by Hexmos"
 name: spike
 path: /freedevtools/tldr/common/spike
 canonical: "https://hexmos.com/freedevtools/tldr/common/spike/"

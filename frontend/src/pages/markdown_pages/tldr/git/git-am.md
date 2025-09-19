@@ -1,5 +1,5 @@
 ---
-title: "Apply Git Patch - Create Commits Easily | Free DevTools"
+title: "Apply Git Patch - Create Commits Easily | Online Free DevTools by Hexmos"
 name: git-am
 path: /freedevtools/tldr/git/git-am
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-am/"

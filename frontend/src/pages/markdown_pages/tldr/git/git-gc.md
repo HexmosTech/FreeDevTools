@@ -1,5 +1,5 @@
 ---
-title: "Git Repository - Optimize Repository with Git GC | Free DevTools"
+title: "Git Repository - Optimize Repository with Git GC | Online Free DevTools by Hexmos"
 name: git-gc
 path: /freedevtools/tldr/git/git-gc
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-gc/"

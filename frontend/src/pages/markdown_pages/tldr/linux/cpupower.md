@@ -1,5 +1,5 @@
 ---
-title: "CPU Power Control - Manage CPU Frequency | Free DevTools"
+title: "CPU Power Control - Manage CPU Frequency | Online Free DevTools by Hexmos"
 name: cpupower
 path: /freedevtools/tldr/linux/cpupower
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cpupower/"

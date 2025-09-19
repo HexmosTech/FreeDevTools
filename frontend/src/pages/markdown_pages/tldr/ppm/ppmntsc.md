@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to NTSC/PAL - Color Correct PPM Images | Free DevTools"
+title: "Convert PPM to NTSC/PAL - Color Correct PPM Images | Online Free DevTools by Hexmos"
 name: ppmntsc
 path: /freedevtools/tldr/ppm/ppmntsc
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmntsc/"

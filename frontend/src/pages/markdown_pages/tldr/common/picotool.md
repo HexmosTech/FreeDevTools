@@ -1,5 +1,5 @@
 ---
-title: "Picotool - Manage Raspberry Pi Pico Boards | Free DevTools"
+title: "Picotool - Manage Raspberry Pi Pico Boards | Online Free DevTools by Hexmos"
 name: picotool
 path: /freedevtools/tldr/common/picotool
 canonical: "https://hexmos.com/freedevtools/tldr/common/picotool/"

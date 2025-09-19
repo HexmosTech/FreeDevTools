@@ -1,5 +1,5 @@
 ---
-title: "Exercism - Download Coding Exercises | Free DevTools"
+title: "Exercism - Download Coding Exercises | Online Free DevTools by Hexmos"
 name: exercism
 path: /freedevtools/tldr/common/exercism
 canonical: "https://hexmos.com/freedevtools/tldr/common/exercism/"

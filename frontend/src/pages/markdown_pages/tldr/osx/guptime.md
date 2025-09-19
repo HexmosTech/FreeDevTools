@@ -1,5 +1,5 @@
 ---
-title: "GUptime - View System Uptime | Free DevTools"
+title: "GUptime - View System Uptime | Online Free DevTools by Hexmos"
 name: guptime
 path: /freedevtools/tldr/osx/guptime
 canonical: "https://hexmos.com/freedevtools/tldr/osx/guptime/"

@@ -1,5 +1,5 @@
 ---
-title: "JSON Processor - Format JSON Data with jq | Free DevTools"
+title: "JSON Processor - Format JSON Data with jq | Online Free DevTools by Hexmos"
 name: jq
 path: /freedevtools/tldr/common/jq
 canonical: "https://hexmos.com/freedevtools/tldr/common/jq/"

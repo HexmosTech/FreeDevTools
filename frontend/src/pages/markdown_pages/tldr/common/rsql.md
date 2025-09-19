@@ -1,5 +1,5 @@
 ---
-title: "RSQL - Query Databases Interactively | Free DevTools"
+title: "RSQL - Query Databases Interactively | Online Free DevTools by Hexmos"
 name: rsql
 path: /freedevtools/tldr/common/rsql
 canonical: "https://hexmos.com/freedevtools/tldr/common/rsql/"

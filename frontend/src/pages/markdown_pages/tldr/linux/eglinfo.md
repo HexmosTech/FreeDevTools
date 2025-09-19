@@ -1,5 +1,5 @@
 ---
-title: "EGL Info Display - View EGL Platform Details | Free DevTools"
+title: "EGL Info Display - View EGL Platform Details | Online Free DevTools by Hexmos"
 name: eglinfo
 path: /freedevtools/tldr/linux/eglinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eglinfo/"

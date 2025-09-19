@@ -1,5 +1,5 @@
 ---
-title: "Synchronize IMAP - Manage Mail with Offlineimap | Free DevTools"
+title: "Synchronize IMAP - Manage Mail with Offlineimap | Online Free DevTools by Hexmos"
 name: offlineimap
 path: /freedevtools/tldr/common/offlineimap
 canonical: "https://hexmos.com/freedevtools/tldr/common/offlineimap/"

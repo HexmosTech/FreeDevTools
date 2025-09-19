@@ -1,5 +1,5 @@
 ---
-title: "Ropper - Find ROP Gadgets in Binaries | Free DevTools"
+title: "Ropper - Find ROP Gadgets in Binaries | Online Free DevTools by Hexmos"
 name: ropper
 path: /freedevtools/tldr/common/ropper
 canonical: "https://hexmos.com/freedevtools/tldr/common/ropper/"

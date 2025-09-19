@@ -1,5 +1,5 @@
 ---
-title: "Caddy Server - Control Web Server with Automatic HTTPS | Free DevTools"
+title: "Caddy Server - Control Web Server with Automatic HTTPS | Online Free DevTools by Hexmos"
 name: caddy
 path: /freedevtools/tldr/common/caddy
 canonical: "https://hexmos.com/freedevtools/tldr/common/caddy/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - PBM to Epson | Free DevTools"
+title: "Convert PBM Image - PBM to Epson | Online Free DevTools by Hexmos"
 name: pbmtoepson
 path: /freedevtools/tldr/common/pbmtoepson
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoepson/"

@@ -1,5 +1,5 @@
 ---
-title: "Validate FIGlet Font - Format .FLF Files | Free DevTools"
+title: "Validate FIGlet Font - Format .FLF Files | Online Free DevTools by Hexmos"
 name: chkfont
 path: /freedevtools/tldr/common/chkfont
 canonical: "https://hexmos.com/freedevtools/tldr/common/chkfont/"

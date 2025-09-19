@@ -1,5 +1,5 @@
 ---
-title: "Measure WPM - Typing Speed Test with Command Line | Free DevTools"
+title: "Measure WPM - Typing Speed Test with Command Line | Online Free DevTools by Hexmos"
 name: wpm
 path: /freedevtools/tldr/common/wpm
 canonical: "https://hexmos.com/freedevtools/tldr/common/wpm/"

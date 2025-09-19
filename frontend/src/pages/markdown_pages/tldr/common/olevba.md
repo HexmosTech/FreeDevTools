@@ -1,5 +1,5 @@
 ---
-title: "OLE VBA Parser - Extract Macros | Free DevTools"
+title: "OLE VBA Parser - Extract Macros | Online Free DevTools by Hexmos"
 name: olevba
 path: "/freedevtools/tldr/common/olevba"
 canonical: "https://hexmos.com/freedevtools/tldr/common/olevba/"

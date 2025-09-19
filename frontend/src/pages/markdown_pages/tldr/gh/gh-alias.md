@@ -1,5 +1,5 @@
 ---
-title: "GH Alias - Create CLI Aliases for GitHub Commands | Free DevTools"
+title: "GH Alias - Create CLI Aliases for GitHub Commands | Online Free DevTools by Hexmos"
 name: gh-alias
 path: /freedevtools/tldr/gh/gh-alias
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-alias/"

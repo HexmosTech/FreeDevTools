@@ -1,5 +1,5 @@
 ---
-title: "Generate Compilation Database - Bear Tool | Free DevTools"
+title: "Generate Compilation Database - Bear Tool | Online Free DevTools by Hexmos"
 name: bear
 path: /freedevtools/tldr/common/bear
 canonical: "https://hexmos.com/freedevtools/tldr/common/bear/"

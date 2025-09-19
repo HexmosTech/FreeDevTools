@@ -1,5 +1,5 @@
 ---
-title: "Trash Manager - Control Recycling Bin | Free DevTools"
+title: "Trash Manager - Control Recycling Bin | Online Free DevTools by Hexmos"
 name: trash
 path: /freedevtools/tldr/linux/trash
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash/"

@@ -1,5 +1,5 @@
 ---
-title: "Orbiton - Edit Text Files | Free DevTools"
+title: "Orbiton - Edit Text Files | Online Free DevTools by Hexmos"
 name: o
 path: /freedevtools/tldr/common/o
 canonical: "https://hexmos.com/freedevtools/tldr/common/o/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to MGR - Create MGR Bitmap | Free DevTools"
+title: "Convert PBM to MGR - Create MGR Bitmap | Online Free DevTools by Hexmos"
 name: pbmtomgr
 path: /freedevtools/tldr/common/pbmtomgr
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtomgr/"

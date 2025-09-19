@@ -1,5 +1,5 @@
 ---
-title: "Get IP Route - Find Network Routes on Linux | Free DevTools"
+title: "Get IP Route - Find Network Routes on Linux | Online Free DevTools by Hexmos"
 name: ip-route-get
 path: /freedevtools/tldr/linux/ip-route-get
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-route-get/"

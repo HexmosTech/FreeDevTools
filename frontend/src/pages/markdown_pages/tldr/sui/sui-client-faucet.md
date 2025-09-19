@@ -1,5 +1,5 @@
 ---
-title: "Sui Faucet - Get Sui Coins Instantly | Free DevTools"
+title: "Sui Faucet - Get Sui Coins Instantly | Online Free DevTools by Hexmos"
 name: sui-client-faucet
 path: /freedevtools/tldr/sui/sui-client-faucet
 canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-client-faucet/"

@@ -1,5 +1,5 @@
 ---
-title: "Analyze PHP Code - Phan Static Analysis | Free DevTools"
+title: "Analyze PHP Code - Phan Static Analysis | Online Free DevTools by Hexmos"
 name: phan
 path: /freedevtools/tldr/common/phan
 canonical: "https://hexmos.com/freedevtools/tldr/common/phan/"

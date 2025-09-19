@@ -1,5 +1,5 @@
 ---
-title: "Cage Kiosk - Open Applications in Kiosk Mode | Free DevTools"
+title: "Cage Kiosk - Open Applications in Kiosk Mode | Online Free DevTools by Hexmos"
 name: cage
 path: /freedevtools/tldr/linux/cage
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cage/"

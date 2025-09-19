@@ -1,5 +1,5 @@
 ---
-title: "WFuzz - Web Application Brute Forcer | Free DevTools"
+title: "WFuzz - Web Application Brute Forcer | Online Free DevTools by Hexmos"
 name: wfuzz
 path: /freedevtools/tldr/common/wfuzz
 canonical: "https://hexmos.com/freedevtools/tldr/common/wfuzz/"

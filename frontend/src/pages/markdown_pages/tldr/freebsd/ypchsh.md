@@ -1,5 +1,5 @@
 ---
-title: "Change User Password - Modify User Account on FreeBSD | Free DevTools"
+title: "Change User Password - Modify User Account on FreeBSD | Online Free DevTools by Hexmos"
 name: ypchsh
 path: /freedevtools/tldr/freebsd/ypchsh
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ypchsh/"

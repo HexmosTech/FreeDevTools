@@ -1,5 +1,5 @@
 ---
-title: "Create Menu - Bash Select Command | Free DevTools"
+title: "Create Menu - Bash Select Command | Online Free DevTools by Hexmos"
 name: select
 path: /freedevtools/tldr/common/select
 canonical: "https://hexmos.com/freedevtools/tldr/common/select/"

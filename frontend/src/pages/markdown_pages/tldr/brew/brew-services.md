@@ -1,5 +1,5 @@
 ---
-title: "Control Brew Services - Manage Daemons on macOS | Free DevTools"
+title: "Control Brew Services - Manage Daemons on macOS | Online Free DevTools by Hexmos"
 name: brew-services
 path: /freedevtools/tldr/brew/brew-services
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-services/"

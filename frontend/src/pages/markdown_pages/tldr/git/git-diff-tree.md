@@ -1,5 +1,5 @@
 ---
-title: "Diff Tree - Compare Git Trees | Free DevTools"
+title: "Diff Tree - Compare Git Trees | Online Free DevTools by Hexmos"
 name: git-diff-tree
 path: /freedevtools/tldr/git/git-diff-tree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff-tree/"

@@ -1,5 +1,5 @@
 ---
-title: "Delete Nix Garbage - Reclaim Disk Space | Free DevTools"
+title: "Delete Nix Garbage - Reclaim Disk Space | Online Free DevTools by Hexmos"
 name: nix-collect-garbage
 path: /freedevtools/tldr/nix/nix-collect-garbage
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-collect-garbage/"

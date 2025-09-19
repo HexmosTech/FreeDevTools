@@ -1,5 +1,5 @@
 ---
-title: "Control OpenRC Services - Manage System Processes with rc-service | Free DevTools"
+title: "Control OpenRC Services - Manage System Processes with rc-service | Online Free DevTools by Hexmos"
 name: rc-service
 path: /freedevtools/tldr/linux/rc-service
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-service/"

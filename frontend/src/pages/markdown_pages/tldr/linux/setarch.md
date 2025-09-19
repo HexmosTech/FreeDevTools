@@ -1,5 +1,5 @@
 ---
-title: "Change Architecture - Control Program Architecture with Setarch | Free DevTools"
+title: "Change Architecture - Control Program Architecture with Setarch | Online Free DevTools by Hexmos"
 name: setarch
 path: /freedevtools/tldr/linux/setarch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setarch/"

@@ -1,5 +1,5 @@
 ---
-title: "NPM Cache - Manage Package Cache | Free DevTools"
+title: "NPM Cache - Manage Package Cache | Online Free DevTools by Hexmos"
 name: npm-cache
 path: /freedevtools/tldr/npm/npm-cache
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-cache/"

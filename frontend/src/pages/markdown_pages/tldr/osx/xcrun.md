@@ -1,5 +1,5 @@
 ---
-title: "XCrun - Locate and Run Dev Tools | Free DevTools"
+title: "XCrun - Locate and Run Dev Tools | Online Free DevTools by Hexmos"
 name: xcrun
 path: /freedevtools/tldr/osx/xcrun
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xcrun/"

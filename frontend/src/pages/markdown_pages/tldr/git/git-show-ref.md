@@ -1,5 +1,5 @@
 ---
-title: "List Git References - Show Repository Refs | Free DevTools"
+title: "List Git References - Show Repository Refs | Online Free DevTools by Hexmos"
 name: git-show-ref
 path: /freedevtools/tldr/git/git-show-ref
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-ref/"

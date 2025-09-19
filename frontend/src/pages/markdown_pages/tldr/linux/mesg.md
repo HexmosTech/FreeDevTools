@@ -1,5 +1,5 @@
 ---
-title: "Mesg Command - Control Terminal Messages | Free DevTools"
+title: "Mesg Command - Control Terminal Messages | Online Free DevTools by Hexmos"
 name: mesg
 path: /freedevtools/tldr/linux/mesg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mesg/"

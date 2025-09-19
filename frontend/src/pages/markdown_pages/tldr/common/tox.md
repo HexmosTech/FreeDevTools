@@ -1,5 +1,5 @@
 ---
-title: "Tox - Automate Python Testing Across Versions | Free DevTools"
+title: "Tox - Automate Python Testing Across Versions | Online Free DevTools by Hexmos"
 name: tox
 path: /freedevtools/tldr/common/tox
 canonical: "https://hexmos.com/freedevtools/tldr/common/tox/"

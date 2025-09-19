@@ -1,5 +1,5 @@
 ---
-title: "Zipnote - Edit Zip Archive Comments | Free DevTools"
+title: "Zipnote - Edit Zip Archive Comments | Online Free DevTools by Hexmos"
 name: zipnote
 path: /freedevtools/tldr/common/zipnote
 canonical: "https://hexmos.com/freedevtools/tldr/common/zipnote/"

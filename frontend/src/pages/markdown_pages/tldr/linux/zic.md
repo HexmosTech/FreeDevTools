@@ -1,5 +1,5 @@
 ---
-title: "Compile Timezones - Generate TZ Binary Files | Free DevTools"
+title: "Compile Timezones - Generate TZ Binary Files | Online Free DevTools by Hexmos"
 name: zic
 path: /freedevtools/tldr/linux/zic
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zic/"

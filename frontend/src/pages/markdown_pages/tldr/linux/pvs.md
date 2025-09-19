@@ -1,5 +1,5 @@
 ---
-title: "PVS - Display Physical Volumes | Free DevTools"
+title: "PVS - Display Physical Volumes | Online Free DevTools by Hexmos"
 name: pvs
 path: /freedevtools/tldr/linux/pvs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pvs/"

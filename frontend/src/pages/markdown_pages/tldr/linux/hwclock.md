@@ -1,5 +1,5 @@
 ---
-title: "hwclock - Control System Time | Free DevTools"
+title: "hwclock - Control System Time | Online Free DevTools by Hexmos"
 name: hwclock
 path: /freedevtools/tldr/linux/hwclock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hwclock/"

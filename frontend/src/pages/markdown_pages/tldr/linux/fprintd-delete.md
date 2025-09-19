@@ -1,5 +1,5 @@
 ---
-title: "Delete Fingerprints - Remove Fingerprint Data | Free DevTools"
+title: "Delete Fingerprints - Remove Fingerprint Data | Online Free DevTools by Hexmos"
 name: fprintd-delete
 path: /freedevtools/tldr/linux/fprintd-delete
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-delete/"

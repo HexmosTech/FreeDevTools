@@ -1,5 +1,5 @@
 ---
-title: "Generate Graphviz Images - DOT Render Online | Free DevTools"
+title: "Generate Graphviz Images - DOT Render Online | Online Free DevTools by Hexmos"
 name: dot
 path: "/freedevtools/tldr/common/dot"
 canonical: "https://hexmos.com/freedevtools/tldr/common/dot/"

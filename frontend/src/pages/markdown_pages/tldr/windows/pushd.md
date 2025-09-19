@@ -1,5 +1,5 @@
 ---
-title: "Manage Directory Stack - Control Directory Changes | Free DevTools"
+title: "Manage Directory Stack - Control Directory Changes | Online Free DevTools by Hexmos"
 name: pushd
 path: /freedevtools/tldr/windows/pushd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pushd/"

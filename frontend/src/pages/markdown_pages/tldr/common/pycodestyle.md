@@ -1,5 +1,5 @@
 ---
-title: "Validate Python Code - PEP 8 Style Checker | Free DevTools"
+title: "Validate Python Code - PEP 8 Style Checker | Online Free DevTools by Hexmos"
 name: pycodestyle
 path: /freedevtools/tldr/common/pycodestyle
 canonical: "https://hexmos.com/freedevtools/tldr/common/pycodestyle/"

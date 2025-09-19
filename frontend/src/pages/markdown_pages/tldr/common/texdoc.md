@@ -1,5 +1,5 @@
 ---
-title: "Texdoc Search - Find LaTeX Documentation | Free DevTools"
+title: "Texdoc Search - Find LaTeX Documentation | Online Free DevTools by Hexmos"
 name: texdoc
 path: /freedevtools/tldr/common/texdoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/texdoc/"

@@ -1,5 +1,5 @@
 ---
-title: "Vault Control - Secure Data Storage | Free DevTools"
+title: "Vault Control - Secure Data Storage | Online Free DevTools by Hexmos"
 name: vault
 path: /freedevtools/tldr/common/vault
 canonical: "https://hexmos.com/freedevtools/tldr/common/vault/"

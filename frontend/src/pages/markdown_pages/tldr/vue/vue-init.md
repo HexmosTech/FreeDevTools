@@ -1,5 +1,5 @@
 ---
-title: "Generate Vue Project - Initialize App Templates | Free DevTools"
+title: "Generate Vue Project - Initialize App Templates | Online Free DevTools by Hexmos"
 name: vue-init
 path: /freedevtools/tldr/vue/vue-init
 canonical: "https://hexmos.com/freedevtools/tldr/vue/vue-init/"

@@ -1,5 +1,5 @@
 ---
-title: "ProtonVPN Client - Control VPN Connections | Free DevTools"
+title: "ProtonVPN Client - Control VPN Connections | Online Free DevTools by Hexmos"
 name: protonvpn
 path: /freedevtools/tldr/linux/protonvpn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/protonvpn/"

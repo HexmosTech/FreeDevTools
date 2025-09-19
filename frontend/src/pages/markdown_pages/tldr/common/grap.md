@@ -1,5 +1,5 @@
 ---
-title: "Generate Groff Charts - Format Diagrams with Grap | Free DevTools"
+title: "Generate Groff Charts - Format Diagrams with Grap | Online Free DevTools by Hexmos"
 name: grap
 path: /freedevtools/tldr/common/grap
 canonical: "https://hexmos.com/freedevtools/tldr/common/grap/"

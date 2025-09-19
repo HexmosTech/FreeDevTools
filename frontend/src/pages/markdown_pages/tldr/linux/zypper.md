@@ -1,5 +1,5 @@
 ---
-title: "Zypper Package Manager - Manage Packages | Free DevTools"
+title: "Zypper Package Manager - Manage Packages | Online Free DevTools by Hexmos"
 name: zypper
 path: /freedevtools/tldr/linux/zypper
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zypper/"

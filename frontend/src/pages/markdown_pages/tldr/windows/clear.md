@@ -1,5 +1,5 @@
 ---
-title: "Clear Command - Clear Host | Free DevTools"
+title: "Clear Command - Clear Host | Online Free DevTools by Hexmos"
 name: clear
 path: /freedevtools/tldr/windows/clear
 canonical: "https://hexmos.com/freedevtools/tldr/windows/clear/"

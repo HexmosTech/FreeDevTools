@@ -1,5 +1,5 @@
 ---
-title: "Nix Run - Execute Applications from Flakes | Free DevTools"
+title: "Nix Run - Execute Applications from Flakes | Online Free DevTools by Hexmos"
 name: nix-run
 path: /freedevtools/tldr/nix/nix-run
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-run/"

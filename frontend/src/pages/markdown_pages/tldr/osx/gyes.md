@@ -1,5 +1,5 @@
 ---
-title: "Yes Command - Generate Repeated Strings | Free DevTools"
+title: "Yes Command - Generate Repeated Strings | Online Free DevTools by Hexmos"
 name: gyes
 path: /freedevtools/tldr/osx/gyes
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gyes/"

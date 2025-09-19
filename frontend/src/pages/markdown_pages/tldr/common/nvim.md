@@ -1,5 +1,5 @@
 ---
-title: "Edit Text with Nvim - Text Editing | Free DevTools"
+title: "Edit Text with Nvim - Text Editing | Online Free DevTools by Hexmos"
 name: nvim
 path: /freedevtools/tldr/common/nvim
 canonical: "https://hexmos.com/freedevtools/tldr/common/nvim/"

@@ -1,5 +1,5 @@
 ---
-title: "Tye - Deploy Microservices Easily | Free DevTools"
+title: "Tye - Deploy Microservices Easily | Online Free DevTools by Hexmos"
 name: tye
 path: /freedevtools/tldr/common/tye
 canonical: "https://hexmos.com/freedevtools/tldr/common/tye/"

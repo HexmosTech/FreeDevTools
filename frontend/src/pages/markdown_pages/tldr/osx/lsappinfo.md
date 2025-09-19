@@ -1,5 +1,5 @@
 ---
-title: "Control App State - lsappinfo Tool on macOS | Free DevTools"
+title: "Control App State - lsappinfo Tool on macOS | Online Free DevTools by Hexmos"
 name: lsappinfo
 path: "/freedevtools/tldr/osx/lsappinfo"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/lsappinfo/"

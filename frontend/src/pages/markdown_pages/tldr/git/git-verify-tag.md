@@ -1,5 +1,5 @@
 ---
-title: "Git Verify Tag - Check GPG Signatures | Free DevTools"
+title: "Git Verify Tag - Check GPG Signatures | Online Free DevTools by Hexmos"
 name: git-verify-tag
 path: /freedevtools/tldr/git/git-verify-tag
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-tag/"

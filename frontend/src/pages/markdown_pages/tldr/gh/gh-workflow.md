@@ -1,5 +1,5 @@
 ---
-title: "GitHub Workflow - Manage Actions | Free DevTools"
+title: "GitHub Workflow - Manage Actions | Online Free DevTools by Hexmos"
 name: gh-workflow
 path: /freedevtools/tldr/gh/gh-workflow
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-workflow/"

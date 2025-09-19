@@ -1,5 +1,5 @@
 ---
-title: "List Images - Display Sixel Images on Terminal | Free DevTools"
+title: "List Images - Display Sixel Images on Terminal | Online Free DevTools by Hexmos"
 name: lsix
 path: /freedevtools/tldr/common/lsix
 canonical: "https://hexmos.com/freedevtools/tldr/common/lsix/"

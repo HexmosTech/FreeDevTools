@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Statistics - Analyze Repos | Free DevTools"
+title: "Generate Git Statistics - Analyze Repos | Online Free DevTools by Hexmos"
 name: gitstats
 path: /freedevtools/tldr/git/gitstats
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitstats/"

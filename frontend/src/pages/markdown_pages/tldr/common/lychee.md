@@ -1,5 +1,5 @@
 ---
-title: "Validate URLs - Find Broken Links with Lychee | Free DevTools"
+title: "Validate URLs - Find Broken Links with Lychee | Online Free DevTools by Hexmos"
 name: lychee
 path: /freedevtools/tldr/common/lychee
 canonical: "https://hexmos.com/freedevtools/tldr/common/lychee/"

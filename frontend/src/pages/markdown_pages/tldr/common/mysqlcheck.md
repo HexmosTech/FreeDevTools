@@ -1,5 +1,5 @@
 ---
-title: "MySQL Check - Repair Tables | Free DevTools"
+title: "MySQL Check - Repair Tables | Online Free DevTools by Hexmos"
 name: mysqlcheck
 path: /freedevtools/tldr/common/mysqlcheck
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysqlcheck/"

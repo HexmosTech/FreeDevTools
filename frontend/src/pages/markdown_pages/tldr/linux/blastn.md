@@ -1,5 +1,5 @@
 ---
-title: "BLASTN - Align Nucleotide Sequences | Free DevTools"
+title: "BLASTN - Align Nucleotide Sequences | Online Free DevTools by Hexmos"
 name: blastn
 path: /freedevtools/tldr/linux/blastn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blastn/"

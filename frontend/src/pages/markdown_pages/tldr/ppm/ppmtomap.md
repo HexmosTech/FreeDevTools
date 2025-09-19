@@ -1,5 +1,5 @@
 ---
-title: "PPM to MAP Converter - Format Netpbm Images | Free DevTools"
+title: "PPM to MAP Converter - Format Netpbm Images | Online Free DevTools by Hexmos"
 name: ppmtomap
 path: /freedevtools/tldr/ppm/ppmtomap
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtomap/"

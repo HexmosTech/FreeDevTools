@@ -1,5 +1,5 @@
 ---
-title: "a2dissite - Disable Apache Sites | Free DevTools"
+title: "a2dissite - Disable Apache Sites | Online Free DevTools by Hexmos"
 name: a2dissite
 path: /freedevtools/tldr/linux/a2dissite
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2dissite/"

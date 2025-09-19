@@ -1,5 +1,5 @@
 ---
-title: "Equery - Manage Portage Packages | Free DevTools"
+title: "Equery - Manage Portage Packages | Online Free DevTools by Hexmos"
 name: equery
 path: /freedevtools/tldr/linux/equery
 canonical: "https://hexmos.com/freedevtools/tldr/linux/equery/"

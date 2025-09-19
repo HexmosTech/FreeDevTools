@@ -1,5 +1,5 @@
 ---
-title: "Copy Disk Image - Forensics with dcfldd | Free DevTools"
+title: "Copy Disk Image - Forensics with dcfldd | Online Free DevTools by Hexmos"
 name: dcfldd
 path: /freedevtools/tldr/common/dcfldd
 canonical: "https://hexmos.com/freedevtools/tldr/common/dcfldd/"

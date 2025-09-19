@@ -1,5 +1,5 @@
 ---
-title: "Software Update - Update macOS Apps | Free DevTools"
+title: "Software Update - Update macOS Apps | Online Free DevTools by Hexmos"
 name: softwareupdate
 path: /freedevtools/tldr/osx/softwareupdate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/softwareupdate/"

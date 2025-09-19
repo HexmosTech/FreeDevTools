@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to PJ - Format Image Files | Free DevTools"
+title: "Convert PPM to PJ - Format Image Files | Online Free DevTools by Hexmos"
 name: ppmtopj
 path: /freedevtools/tldr/ppm/ppmtopj
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopj/"

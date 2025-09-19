@@ -1,5 +1,5 @@
 ---
-title: "Logwatch - Summarize Logs | Free DevTools"
+title: "Logwatch - Summarize Logs | Online Free DevTools by Hexmos"
 name: logwatch
 path: /freedevtools/tldr/linux/logwatch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/logwatch/"

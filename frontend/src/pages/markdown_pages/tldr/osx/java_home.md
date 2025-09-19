@@ -1,5 +1,5 @@
 ---
-title: "Java Home - Control Java Versions on macOS | Free DevTools"
+title: "Java Home - Control Java Versions on macOS | Online Free DevTools by Hexmos"
 name: java_home
 path: /freedevtools/tldr/osx/java_home
 canonical: "https://hexmos.com/freedevtools/tldr/osx/java_home/"

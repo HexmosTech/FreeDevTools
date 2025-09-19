@@ -1,5 +1,5 @@
 ---
-title: "Generate Network Stats PNGs - vnstati Command | Free DevTools"
+title: "Generate Network Stats PNGs - vnstati Command | Online Free DevTools by Hexmos"
 name: vnstati
 path: /freedevtools/tldr/linux/vnstati
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vnstati/"

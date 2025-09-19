@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to SGI - Image Conversion | Free DevTools"
+title: "Convert PNM to SGI - Image Conversion | Online Free DevTools by Hexmos"
 name: pnmtosgi
 path: /freedevtools/tldr/pnm/pnmtosgi
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtosgi/"

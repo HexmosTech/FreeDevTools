@@ -1,5 +1,5 @@
 ---
-title: "Ansiweather - Display Weather in Terminal | Free DevTools"
+title: "Ansiweather - Display Weather in Terminal | Online Free DevTools by Hexmos"
 name: ansiweather
 path: /freedevtools/tldr/common/ansiweather
 canonical: "https://hexmos.com/freedevtools/tldr/common/ansiweather/"

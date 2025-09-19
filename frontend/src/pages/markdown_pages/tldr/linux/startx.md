@@ -1,5 +1,5 @@
 ---
-title: "Start X Session - Control X11 Display | Free DevTools"
+title: "Start X Session - Control X11 Display | Online Free DevTools by Hexmos"
 name: startx
 path: /freedevtools/tldr/linux/startx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/startx/"

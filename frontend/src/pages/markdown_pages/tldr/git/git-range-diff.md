@@ -1,5 +1,5 @@
 ---
-title: "Compare Git Ranges - Diff Commit Ranges | Free DevTools"
+title: "Compare Git Ranges - Diff Commit Ranges | Online Free DevTools by Hexmos"
 name: git-range-diff
 path: /freedevtools/tldr/git/git-range-diff
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-range-diff/"

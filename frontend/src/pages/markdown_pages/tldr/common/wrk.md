@@ -1,5 +1,5 @@
 ---
-title: "Wrk - Generate HTTP Benchmarks | Free DevTools"
+title: "Wrk - Generate HTTP Benchmarks | Online Free DevTools by Hexmos"
 name: wrk
 path: /freedevtools/tldr/common/wrk
 canonical: "https://hexmos.com/freedevtools/tldr/common/wrk/"

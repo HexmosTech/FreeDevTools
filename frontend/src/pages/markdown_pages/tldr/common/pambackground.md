@@ -1,5 +1,5 @@
 ---
-title: "Create PAM Mask - Mask Image Background | Free DevTools"
+title: "Create PAM Mask - Mask Image Background | Online Free DevTools by Hexmos"
 name: pambackground
 path: /freedevtools/tldr/common/pambackground
 canonical: "https://hexmos.com/freedevtools/tldr/common/pambackground/"

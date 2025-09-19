@@ -1,5 +1,5 @@
 ---
-title: "Display Users - Monitor Logged-in Users with w | Free DevTools"
+title: "Display Users - Monitor Logged-in Users with w | Online Free DevTools by Hexmos"
 name: w
 path: /freedevtools/tldr/common/w
 canonical: "https://hexmos.com/freedevtools/tldr/common/w/"

@@ -1,5 +1,5 @@
 ---
-title: "Cabal Package Manager - Manage Haskell Packages | Free DevTools"
+title: "Cabal Package Manager - Manage Haskell Packages | Online Free DevTools by Hexmos"
 name: cabal
 path: /freedevtools/tldr/common/cabal
 canonical: "https://hexmos.com/freedevtools/tldr/common/cabal/"

@@ -1,5 +1,5 @@
 ---
-title: "Wartsfix Tool - Truncate Damaged Warts Files | Free DevTools"
+title: "Wartsfix Tool - Truncate Damaged Warts Files | Online Free DevTools by Hexmos"
 name: sc_wartsfix
 path: /freedevtools/tldr/common/sc_wartsfix
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_wartsfix/"

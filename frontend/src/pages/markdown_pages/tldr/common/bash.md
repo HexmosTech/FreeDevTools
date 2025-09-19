@@ -1,5 +1,5 @@
 ---
-title: "Bash Shell - Control Command-Line Processes | Free DevTools"
+title: "Bash Shell - Control Command-Line Processes | Online Free DevTools by Hexmos"
 name: bash
 path: /freedevtools/tldr/common/bash
 canonical: "https://hexmos.com/freedevtools/tldr/common/bash/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage GitLab Runners - Control CI/CD Pipelines | Free DevTools"
+title: "Manage GitLab Runners - Control CI/CD Pipelines | Online Free DevTools by Hexmos"
 name: gitlab-runner
 path: /freedevtools/tldr/git/gitlab-runner
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitlab-runner/"

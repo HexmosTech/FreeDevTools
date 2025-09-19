@@ -1,5 +1,5 @@
 ---
-title: "ST-Link Info - Control STM32 Devices | Free DevTools"
+title: "ST-Link Info - Control STM32 Devices | Online Free DevTools by Hexmos"
 name: st-info
 path: /freedevtools/tldr/st/st-info
 canonical: "https://hexmos.com/freedevtools/tldr/st/st-info/"

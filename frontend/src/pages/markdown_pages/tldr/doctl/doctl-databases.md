@@ -1,5 +1,5 @@
 ---
-title: "Control Databases - Manage DigitalOcean Clusters | Free DevTools"
+title: "Control Databases - Manage DigitalOcean Clusters | Online Free DevTools by Hexmos"
 name: doctl-databases
 path: /freedevtools/tldr/doctl/doctl-databases
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases/"

@@ -1,5 +1,5 @@
 ---
-title: "Directory Lister - Control Directories with gdir | Free DevTools"
+title: "Directory Lister - Control Directories with gdir | Online Free DevTools by Hexmos"
 name: gdir
 path: /freedevtools/tldr/osx/gdir
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdir/"

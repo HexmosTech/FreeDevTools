@@ -1,5 +1,5 @@
 ---
-title: "Convert Zeiss to PNM - Format Image Files | Free DevTools"
+title: "Convert Zeiss to PNM - Format Image Files | Online Free DevTools by Hexmos"
 name: zeisstopnm
 path: /freedevtools/tldr/common/zeisstopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/zeisstopnm/"

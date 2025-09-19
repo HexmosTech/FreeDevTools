@@ -1,5 +1,5 @@
 ---
-title: "Review Code - Improve Code with GPT | Free DevTools"
+title: "Review Code - Improve Code with GPT | Online Free DevTools by Hexmos"
 name: rgpt
 path: /freedevtools/tldr/common/rgpt
 canonical: "https://hexmos.com/freedevtools/tldr/common/rgpt/"

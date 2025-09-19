@@ -1,5 +1,5 @@
 ---
-title: "Expand - Uncompress Cabinet Files | Free DevTools"
+title: "Expand - Uncompress Cabinet Files | Online Free DevTools by Hexmos"
 name: expand
 path: /freedevtools/tldr/windows/expand
 canonical: "https://hexmos.com/freedevtools/tldr/windows/expand/"

@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO Account - Manage Accounts | Free DevTools"
+title: "PlatformIO Account - Manage Accounts | Online Free DevTools by Hexmos"
 name: pio-account
 path: /freedevtools/tldr/pio/pio-account
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-account/"

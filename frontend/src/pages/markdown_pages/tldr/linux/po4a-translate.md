@@ -1,5 +1,5 @@
 ---
-title: "PO4A Translate - Convert PO to Doc | Free DevTools"
+title: "PO4A Translate - Convert PO to Doc | Online Free DevTools by Hexmos"
 name: po4a-translate
 path: /freedevtools/tldr/linux/po4a-translate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a-translate/"

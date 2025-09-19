@@ -1,5 +1,5 @@
 ---
-title: "Compile CoffeeScript - Convert to JavaScript | Free DevTools"
+title: "Compile CoffeeScript - Convert to JavaScript | Online Free DevTools by Hexmos"
 name: coffee
 path: "/freedevtools/tldr/common/coffee"
 canonical: "https://hexmos.com/freedevtools/tldr/common/coffee/"

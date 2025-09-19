@@ -1,5 +1,5 @@
 ---
-title: "Monitor Resources - Control System Info with bpytop | Free DevTools"
+title: "Monitor Resources - Control System Info with bpytop | Online Free DevTools by Hexmos"
 name: bpytop
 path: /freedevtools/tldr/common/bpytop
 canonical: "https://hexmos.com/freedevtools/tldr/common/bpytop/"

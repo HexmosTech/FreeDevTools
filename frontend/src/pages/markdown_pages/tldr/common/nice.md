@@ -1,5 +1,5 @@
 ---
-title: "Nice Command - Control Process Priority | Free DevTools"
+title: "Nice Command - Control Process Priority | Online Free DevTools by Hexmos"
 name: nice
 path: /freedevtools/tldr/common/nice
 canonical: "https://hexmos.com/freedevtools/tldr/common/nice/"

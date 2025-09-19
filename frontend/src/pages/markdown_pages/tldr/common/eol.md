@@ -1,5 +1,5 @@
 ---
-title: "Show End-of-Life Dates - Check Product EOL Status | Free DevTools"
+title: "Show End-of-Life Dates - Check Product EOL Status | Online Free DevTools by Hexmos"
 name: eol
 path: /freedevtools/tldr/common/eol
 canonical: "https://hexmos.com/freedevtools/tldr/common/eol/"

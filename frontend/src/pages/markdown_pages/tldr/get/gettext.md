@@ -1,5 +1,5 @@
 ---
-title: "Gettext - Translate Strings with Domain Files | Free DevTools"
+title: "Gettext - Translate Strings with Domain Files | Online Free DevTools by Hexmos"
 name: gettext
 path: /freedevtools/tldr/get/gettext
 canonical: "https://hexmos.com/freedevtools/tldr/get/gettext/"

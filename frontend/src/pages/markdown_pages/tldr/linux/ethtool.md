@@ -1,5 +1,5 @@
 ---
-title: "ethtool - Control Network Interfaces | Free DevTools"
+title: "ethtool - Control Network Interfaces | Online Free DevTools by Hexmos"
 name: ethtool
 path: /freedevtools/tldr/linux/ethtool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ethtool/"

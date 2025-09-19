@@ -1,5 +1,5 @@
 ---
-title: "Create Kubernetes Service - Expose Resources | Free DevTools"
+title: "Create Kubernetes Service - Expose Resources | Online Free DevTools by Hexmos"
 name: kubectl-expose
 path: /freedevtools/tldr/kubectl/kubectl-expose
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-expose/"

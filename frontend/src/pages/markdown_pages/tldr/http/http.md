@@ -1,5 +1,5 @@
 ---
-title: "HTTP Client - Interact with APIs & HTTP Servers | Free DevTools"
+title: "HTTP Client - Interact with APIs & HTTP Servers | Online Free DevTools by Hexmos"
 name: http
 path: /freedevtools/tldr/http/http
 canonical: "https://hexmos.com/freedevtools/tldr/http/http/"

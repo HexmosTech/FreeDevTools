@@ -1,5 +1,5 @@
 ---
-title: "Calculate Compression Ratio - compsize Command | Free DevTools"
+title: "Calculate Compression Ratio - compsize Command | Online Free DevTools by Hexmos"
 name: compsize
 path: /freedevtools/tldr/linux/compsize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/compsize/"

@@ -1,5 +1,5 @@
 ---
-title: "Dotnet Test - Execute .NET Tests | Free DevTools"
+title: "Dotnet Test - Execute .NET Tests | Online Free DevTools by Hexmos"
 name: dotnet-test
 path: /freedevtools/tldr/dotnet/dotnet-test
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-test/"

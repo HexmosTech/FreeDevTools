@@ -1,5 +1,5 @@
 ---
-title: "Control OpenStack Instances - Nova Command | Free DevTools"
+title: "Control OpenStack Instances - Nova Command | Online Free DevTools by Hexmos"
 name: nova
 path: /freedevtools/tldr/linux/nova
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nova/"

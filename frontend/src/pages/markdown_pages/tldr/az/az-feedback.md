@@ -1,5 +1,5 @@
 ---
-title: "Azure Feedback - Send CLI Feedback | Free DevTools"
+title: "Azure Feedback - Send CLI Feedback | Online Free DevTools by Hexmos"
 name: az-feedback
 path: /freedevtools/tldr/az/az-feedback
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-feedback/"

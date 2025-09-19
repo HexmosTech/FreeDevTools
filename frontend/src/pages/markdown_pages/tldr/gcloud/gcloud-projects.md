@@ -1,5 +1,5 @@
 ---
-title: "GCloud Projects - Manage Cloud Resources | Free DevTools"
+title: "GCloud Projects - Manage Cloud Resources | Online Free DevTools by Hexmos"
 name: gcloud-projects
 path: /freedevtools/tldr/gcloud/gcloud-projects
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-projects/"

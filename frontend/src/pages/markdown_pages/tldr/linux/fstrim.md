@@ -1,5 +1,5 @@
 ---
-title: "fstrim - Trim Unused SSD Blocks | Free DevTools"
+title: "fstrim - Trim Unused SSD Blocks | Online Free DevTools by Hexmos"
 name: fstrim
 path: /freedevtools/tldr/linux/fstrim
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fstrim/"

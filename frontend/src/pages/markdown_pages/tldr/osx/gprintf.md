@@ -1,5 +1,5 @@
 ---
-title: "Format Output - Format Strings with gprintf | Free DevTools"
+title: "Format Output - Format Strings with gprintf | Online Free DevTools by Hexmos"
 name: gprintf
 path: /freedevtools/tldr/osx/gprintf
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gprintf/"

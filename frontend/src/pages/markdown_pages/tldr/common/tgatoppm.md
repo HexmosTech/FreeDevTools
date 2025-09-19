@@ -1,5 +1,5 @@
 ---
-title: "TGA to PPM - Convert Targa Files | Free DevTools"
+title: "TGA to PPM - Convert Targa Files | Online Free DevTools by Hexmos"
 name: tgatoppm
 path: /freedevtools/tldr/common/tgatoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/tgatoppm/"

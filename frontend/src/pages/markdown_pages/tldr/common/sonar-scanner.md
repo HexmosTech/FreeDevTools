@@ -1,5 +1,5 @@
 ---
-title: "Sonar Scanner - Analyze Code | Free DevTools"
+title: "Sonar Scanner - Analyze Code | Online Free DevTools by Hexmos"
 name: sonar-scanner
 path: /freedevtools/tldr/common/sonar-scanner
 canonical: "https://hexmos.com/freedevtools/tldr/common/sonar-scanner/"

@@ -1,5 +1,5 @@
 ---
-title: "Trace Exec Calls - Control Process Execution | Free DevTools"
+title: "Trace Exec Calls - Control Process Execution | Online Free DevTools by Hexmos"
 name: extrace
 path: /freedevtools/tldr/linux/extrace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/extrace/"

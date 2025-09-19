@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to GIF - Format Images | Free DevTools"
+title: "Convert PPM to GIF - Format Images | Online Free DevTools by Hexmos"
 name: ppmtogif
 path: /freedevtools/tldr/ppm/ppmtogif
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtogif/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate OTP Code - Manage One-Time Passwords | Free DevTools"
+title: "Generate OTP Code - Manage One-Time Passwords | Online Free DevTools by Hexmos"
 name: pass-otp
 path: "/freedevtools/tldr/common/pass-otp"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pass-otp/"

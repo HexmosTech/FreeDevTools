@@ -1,5 +1,5 @@
 ---
-title: "Jujutsu Control - Version Control | Free DevTools"
+title: "Jujutsu Control - Version Control | Online Free DevTools by Hexmos"
 name: jj
 path: /freedevtools/tldr/common/jj
 canonical: "https://hexmos.com/freedevtools/tldr/common/jj/"

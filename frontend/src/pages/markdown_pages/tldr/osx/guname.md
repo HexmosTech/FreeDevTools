@@ -1,5 +1,5 @@
 ---
-title: "Uname Command - Identify System Information | Free DevTools"
+title: "Uname Command - Identify System Information | Online Free DevTools by Hexmos"
 name: guname
 path: /freedevtools/tldr/osx/guname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/guname/"

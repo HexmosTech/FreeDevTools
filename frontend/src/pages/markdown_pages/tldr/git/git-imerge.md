@@ -1,5 +1,5 @@
 ---
-title: "Imerge Git - Merge Branches Incrementally | Free DevTools"
+title: "Imerge Git - Merge Branches Incrementally | Online Free DevTools by Hexmos"
 name: git-imerge
 path: /freedevtools/tldr/git/git-imerge
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-imerge/"

@@ -1,5 +1,5 @@
 ---
-title: "Query CloudWatch Logs - Analyze AWS Logs with awslogs | Free DevTools"
+title: "Query CloudWatch Logs - Analyze AWS Logs with awslogs | Online Free DevTools by Hexmos"
 name: awslogs
 path: /freedevtools/tldr/aws/awslogs
 canonical: "https://hexmos.com/freedevtools/tldr/aws/awslogs/"

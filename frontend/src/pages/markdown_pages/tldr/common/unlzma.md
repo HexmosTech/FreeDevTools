@@ -1,5 +1,5 @@
 ---
-title: "Unlzma - Decompress LZMA Files | Free DevTools"
+title: "Unlzma - Decompress LZMA Files | Online Free DevTools by Hexmos"
 name: unlzma
 path: /freedevtools/tldr/common/unlzma
 canonical: "https://hexmos.com/freedevtools/tldr/common/unlzma/"

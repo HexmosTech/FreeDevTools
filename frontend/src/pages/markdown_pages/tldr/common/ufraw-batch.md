@@ -1,5 +1,5 @@
 ---
-title: "Convert RAW Files - Image Converter | Free DevTools"
+title: "Convert RAW Files - Image Converter | Online Free DevTools by Hexmos"
 name: ufraw-batch
 path: /freedevtools/tldr/common/ufraw-batch
 canonical: "https://hexmos.com/freedevtools/tldr/common/ufraw-batch/"

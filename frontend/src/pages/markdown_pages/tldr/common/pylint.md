@@ -1,5 +1,5 @@
 ---
-title: "Validate Python Code - Pylint Code Linter | Free DevTools"
+title: "Validate Python Code - Pylint Code Linter | Online Free DevTools by Hexmos"
 name: pylint
 path: /freedevtools/tldr/common/pylint
 canonical: "https://hexmos.com/freedevtools/tldr/common/pylint/"

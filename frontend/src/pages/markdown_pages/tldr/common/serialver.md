@@ -1,5 +1,5 @@
 ---
-title: "Generate serialVersionUID - Inspect Java Classes | Free DevTools"
+title: "Generate serialVersionUID - Inspect Java Classes | Online Free DevTools by Hexmos"
 name: serialver
 path: "/freedevtools/tldr/common/serialver"
 canonical: "https://hexmos.com/freedevtools/tldr/common/serialver/"

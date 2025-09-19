@@ -1,5 +1,5 @@
 ---
-title: "MSIexec - Install Windows Packages | Free DevTools"
+title: "MSIexec - Install Windows Packages | Online Free DevTools by Hexmos"
 name: msiexec
 path: /freedevtools/tldr/windows/msiexec
 canonical: "https://hexmos.com/freedevtools/tldr/windows/msiexec/"

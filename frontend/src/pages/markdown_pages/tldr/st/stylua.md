@@ -1,5 +1,5 @@
 ---
-title: "Format Lua Code - Stylua Code Formatter | Free DevTools"
+title: "Format Lua Code - Stylua Code Formatter | Online Free DevTools by Hexmos"
 name: stylua
 path: /freedevtools/tldr/st/stylua
 canonical: "https://hexmos.com/freedevtools/tldr/st/stylua/"

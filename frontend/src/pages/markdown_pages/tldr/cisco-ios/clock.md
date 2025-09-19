@@ -1,5 +1,5 @@
 ---
-title: "Control Clock - Manage System Time | Free DevTools"
+title: "Control Clock - Manage System Time | Online Free DevTools by Hexmos"
 name: clock
 path: /freedevtools/tldr/cisco-ios/clock
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/clock/"

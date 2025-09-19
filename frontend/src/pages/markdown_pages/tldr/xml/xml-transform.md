@@ -1,5 +1,5 @@
 ---
-title: "XML Transform - Transform XML with XSLT | Free DevTools"
+title: "XML Transform - Transform XML with XSLT | Online Free DevTools by Hexmos"
 name: xml-transform
 path: /freedevtools/tldr/xml/xml-transform
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-transform/"

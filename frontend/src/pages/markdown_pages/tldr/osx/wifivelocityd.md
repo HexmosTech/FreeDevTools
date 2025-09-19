@@ -1,5 +1,5 @@
 ---
-title: "wifivelocityd - Manage WiFi on macOS | Free DevTools"
+title: "wifivelocityd - Manage WiFi on macOS | Online Free DevTools by Hexmos"
 name: wifivelocityd
 path: /freedevtools/tldr/osx/wifivelocityd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/wifivelocityd/"

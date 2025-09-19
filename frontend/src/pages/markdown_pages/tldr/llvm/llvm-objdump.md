@@ -1,5 +1,5 @@
 ---
-title: "LLVM Objdump - Inspect Object Code | Free DevTools"
+title: "LLVM Objdump - Inspect Object Code | Online Free DevTools by Hexmos"
 name: llvm-objdump
 path: /freedevtools/tldr/llvm/llvm-objdump
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-objdump/"

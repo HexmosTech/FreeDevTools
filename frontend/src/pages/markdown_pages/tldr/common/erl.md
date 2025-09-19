@@ -1,5 +1,5 @@
 ---
-title: "Erlang Runtime - Run Erlang Programs | Free DevTools"
+title: "Erlang Runtime - Run Erlang Programs | Online Free DevTools by Hexmos"
 name: erl
 path: "/freedevtools/tldr/common/erl"
 canonical: "https://hexmos.com/freedevtools/tldr/common/erl/"

@@ -1,5 +1,5 @@
 ---
-title: "Userdel - Remove Linux User Accounts | Free DevTools"
+title: "Userdel - Remove Linux User Accounts | Online Free DevTools by Hexmos"
 name: userdel
 path: /freedevtools/tldr/linux/userdel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/userdel/"

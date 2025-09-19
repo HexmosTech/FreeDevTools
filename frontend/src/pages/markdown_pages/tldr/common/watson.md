@@ -1,5 +1,5 @@
 ---
-title: "Track Time with Watson CLI - Control Project Timelines | Free DevTools"
+title: "Track Time with Watson CLI - Control Project Timelines | Online Free DevTools by Hexmos"
 name: watson
 path: /freedevtools/tldr/common/watson
 canonical: "https://hexmos.com/freedevtools/tldr/common/watson/"

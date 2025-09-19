@@ -1,5 +1,5 @@
 ---
-title: "Manage Symbolic Links - Control Default Commands | Free DevTools"
+title: "Manage Symbolic Links - Control Default Commands | Online Free DevTools by Hexmos"
 name: update-alternatives
 path: /freedevtools/tldr/linux/update-alternatives
 canonical: "https://hexmos.com/freedevtools/tldr/linux/update-alternatives/"

@@ -1,5 +1,5 @@
 ---
-title: "OpenSSL Prime - Generate Prime Numbers | Free DevTools"
+title: "OpenSSL Prime - Generate Prime Numbers | Online Free DevTools by Hexmos"
 name: openssl-prime
 path: /freedevtools/tldr/openssl/openssl-prime
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-prime/"

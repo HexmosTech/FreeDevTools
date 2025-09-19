@@ -1,5 +1,5 @@
 ---
-title: "Format USB - Create Windows Bootable Drive with WoeUSB | Free DevTools"
+title: "Format USB - Create Windows Bootable Drive with WoeUSB | Online Free DevTools by Hexmos"
 name: woeusb
 path: /freedevtools/tldr/linux/woeusb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/woeusb/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Clone - Download Repositories | Free DevTools"
+title: "Git Clone - Download Repositories | Online Free DevTools by Hexmos"
 name: git-clone
 path: /freedevtools/tldr/git/git-clone
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-clone/"

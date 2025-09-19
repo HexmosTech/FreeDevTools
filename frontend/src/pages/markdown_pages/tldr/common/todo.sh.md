@@ -1,5 +1,5 @@
 ---
-title: "Todo.sh - Manage Todo Lists | Free DevTools"
+title: "Todo.sh - Manage Todo Lists | Online Free DevTools by Hexmos"
 name: todo.sh
 path: /freedevtools/tldr/common/todo.sh
 canonical: "https://hexmos.com/freedevtools/tldr/common/todo.sh/"

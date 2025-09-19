@@ -1,5 +1,5 @@
 ---
-title: "Monitor Process - Get Notifications | Free DevTools"
+title: "Monitor Process - Get Notifications | Online Free DevTools by Hexmos"
 name: noti
 path: /freedevtools/tldr/common/noti
 canonical: "https://hexmos.com/freedevtools/tldr/common/noti/"

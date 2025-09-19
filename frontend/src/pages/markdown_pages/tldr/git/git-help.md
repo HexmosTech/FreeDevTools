@@ -1,5 +1,5 @@
 ---
-title: "Git Help - Display Git Information | Free DevTools"
+title: "Git Help - Display Git Information | Online Free DevTools by Hexmos"
 name: git-help
 path: /freedevtools/tldr/git/git-help
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-help/"

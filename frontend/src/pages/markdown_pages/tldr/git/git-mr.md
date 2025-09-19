@@ -1,5 +1,5 @@
 ---
-title: "Git Merge Request - Checkout Branches Locally | Free DevTools"
+title: "Git Merge Request - Checkout Branches Locally | Online Free DevTools by Hexmos"
 name: git-mr
 path: /freedevtools/tldr/git/git-mr
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-mr/"

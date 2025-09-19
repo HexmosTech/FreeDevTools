@@ -1,5 +1,5 @@
 ---
-title: "Volume Control - Display Drive Information with VOL | Free DevTools"
+title: "Volume Control - Display Drive Information with VOL | Online Free DevTools by Hexmos"
 name: vol
 path: /freedevtools/tldr/windows/vol
 canonical: "https://hexmos.com/freedevtools/tldr/windows/vol/"

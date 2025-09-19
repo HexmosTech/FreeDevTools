@@ -1,5 +1,5 @@
 ---
-title: "Balooctl - Control KDE File Indexing | Free DevTools"
+title: "Balooctl - Control KDE File Indexing | Online Free DevTools by Hexmos"
 name: balooctl
 path: /freedevtools/tldr/linux/balooctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/balooctl/"

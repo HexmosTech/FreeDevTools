@@ -1,5 +1,5 @@
 ---
-title: "Rust Update Check - Manage Rust Toolchains | Free DevTools"
+title: "Rust Update Check - Manage Rust Toolchains | Online Free DevTools by Hexmos"
 name: rustup-check
 path: /freedevtools/tldr/rustup/rustup-check
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-check/"

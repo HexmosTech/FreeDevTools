@@ -1,5 +1,5 @@
 ---
-title: "NTP Control - Manage Time Synchronization | Free DevTools"
+title: "NTP Control - Manage Time Synchronization | Online Free DevTools by Hexmos"
 name: ntp-ctl
 path: /freedevtools/tldr/common/ntp-ctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/ntp-ctl/"

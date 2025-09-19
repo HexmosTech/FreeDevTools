@@ -1,5 +1,5 @@
 ---
-title: "Visudo - Safely Edit Sudoers File | Free DevTools"
+title: "Visudo - Safely Edit Sudoers File | Online Free DevTools by Hexmos"
 name: visudo
 path: /freedevtools/tldr/common/visudo
 canonical: "https://hexmos.com/freedevtools/tldr/common/visudo/"

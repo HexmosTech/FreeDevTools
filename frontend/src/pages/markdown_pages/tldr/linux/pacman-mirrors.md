@@ -1,5 +1,5 @@
 ---
-title: "Generate Pacman Mirrorlist - Optimize Manjaro Repos | Free DevTools"
+title: "Generate Pacman Mirrorlist - Optimize Manjaro Repos | Online Free DevTools by Hexmos"
 name: pacman-mirrors
 path: /freedevtools/tldr/linux/pacman-mirrors
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-mirrors/"

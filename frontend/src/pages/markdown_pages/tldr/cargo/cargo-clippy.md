@@ -1,5 +1,5 @@
 ---
-title: "Clippy - Improve Rust Code with cargo clippy | Free DevTools"
+title: "Clippy - Improve Rust Code with cargo clippy | Online Free DevTools by Hexmos"
 name: cargo-clippy
 path: /freedevtools/tldr/cargo/cargo-clippy
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-clippy/"

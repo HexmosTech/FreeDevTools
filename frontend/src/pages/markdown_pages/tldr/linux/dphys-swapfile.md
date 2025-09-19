@@ -1,5 +1,5 @@
 ---
-title: "Manage Swap File - Control Debian Swap | Free DevTools"
+title: "Manage Swap File - Control Debian Swap | Online Free DevTools by Hexmos"
 name: dphys-swapfile
 path: /freedevtools/tldr/linux/dphys-swapfile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dphys-swapfile/"

@@ -1,5 +1,5 @@
 ---
-title: "Route Traffic with Torsocks - Anonymize Connections | Free DevTools"
+title: "Route Traffic with Torsocks - Anonymize Connections | Online Free DevTools by Hexmos"
 name: torsocks
 path: /freedevtools/tldr/linux/torsocks
 canonical: "https://hexmos.com/freedevtools/tldr/linux/torsocks/"

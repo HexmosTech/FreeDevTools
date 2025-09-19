@@ -1,5 +1,5 @@
 ---
-title: "DM-tool - Control Display Manager | Free DevTools"
+title: "DM-tool - Control Display Manager | Online Free DevTools by Hexmos"
 name: dm-tool
 path: /freedevtools/tldr/linux/dm-tool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dm-tool/"

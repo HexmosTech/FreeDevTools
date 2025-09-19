@@ -1,5 +1,5 @@
 ---
-title: "Track Termination - Control Notifications with ntfyme | Free DevTools"
+title: "Track Termination - Control Notifications with ntfyme | Online Free DevTools by Hexmos"
 name: ntfyme
 path: /freedevtools/tldr/common/ntfyme
 canonical: "https://hexmos.com/freedevtools/tldr/common/ntfyme/"

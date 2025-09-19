@@ -1,5 +1,5 @@
 ---
-title: "Cut - Extract Text Fields | Free DevTools"
+title: "Cut - Extract Text Fields | Online Free DevTools by Hexmos"
 name: cut
 path: /freedevtools/tldr/osx/cut
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cut/"

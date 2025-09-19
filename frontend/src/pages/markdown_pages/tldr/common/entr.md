@@ -1,5 +1,5 @@
 ---
-title: "Entr - Control File Change Actions | Free DevTools"
+title: "Entr - Control File Change Actions | Online Free DevTools by Hexmos"
 name: entr
 path: /freedevtools/tldr/common/entr
 canonical: "https://hexmos.com/freedevtools/tldr/common/entr/"

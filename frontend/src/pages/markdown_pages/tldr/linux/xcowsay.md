@@ -1,5 +1,5 @@
 ---
-title: "Display Cow - Generate Cowsay Messages on Linux | Free DevTools"
+title: "Display Cow - Generate Cowsay Messages on Linux | Online Free DevTools by Hexmos"
 name: xcowsay
 path: /freedevtools/tldr/linux/xcowsay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xcowsay/"

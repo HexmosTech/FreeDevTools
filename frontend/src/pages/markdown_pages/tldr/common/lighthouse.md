@@ -1,5 +1,5 @@
 ---
-title: "Lighthouse - Generate Website Performance Reports | Free DevTools"
+title: "Lighthouse - Generate Website Performance Reports | Online Free DevTools by Hexmos"
 name: lighthouse
 path: /freedevtools/tldr/common/lighthouse
 canonical: "https://hexmos.com/freedevtools/tldr/common/lighthouse/"

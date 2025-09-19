@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to XPM - Create XPM Images | Free DevTools"
+title: "Convert PPM to XPM - Create XPM Images | Online Free DevTools by Hexmos"
 name: ppmtoxpm
 path: /freedevtools/tldr/ppm/ppmtoxpm
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoxpm/"

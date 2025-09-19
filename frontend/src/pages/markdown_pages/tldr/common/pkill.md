@@ -1,5 +1,5 @@
 ---
-title: "PKill - Control Processes by Name | Free DevTools"
+title: "PKill - Control Processes by Name | Online Free DevTools by Hexmos"
 name: pkill
 path: /freedevtools/tldr/common/pkill
 canonical: "https://hexmos.com/freedevtools/tldr/common/pkill/"

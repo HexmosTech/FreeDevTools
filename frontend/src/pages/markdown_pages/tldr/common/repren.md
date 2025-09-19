@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Replace Strings with Repren | Free DevTools"
+title: "Rename Files - Replace Strings with Repren | Online Free DevTools by Hexmos"
 name: repren
 path: /freedevtools/tldr/common/repren
 canonical: "https://hexmos.com/freedevtools/tldr/common/repren/"

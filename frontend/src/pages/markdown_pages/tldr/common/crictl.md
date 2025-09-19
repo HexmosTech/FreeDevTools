@@ -1,5 +1,5 @@
 ---
-title: "Crictl - Control Container Runtimes | Free DevTools"
+title: "Crictl - Control Container Runtimes | Online Free DevTools by Hexmos"
 name: crictl
 path: /freedevtools/tldr/common/crictl
 canonical: "https://hexmos.com/freedevtools/tldr/common/crictl/"

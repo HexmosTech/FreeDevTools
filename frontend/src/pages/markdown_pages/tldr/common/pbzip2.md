@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Control pbzip2 Compression | Free DevTools"
+title: "Compress Files - Control pbzip2 Compression | Online Free DevTools by Hexmos"
 name: pbzip2
 path: /freedevtools/tldr/common/pbzip2
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbzip2/"

@@ -1,5 +1,5 @@
 ---
-title: "Rank Mirrors - Prioritize Pacman Mirrors | Free DevTools"
+title: "Rank Mirrors - Prioritize Pacman Mirrors | Online Free DevTools by Hexmos"
 name: rankmirrors
 path: /freedevtools/tldr/linux/rankmirrors
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rankmirrors/"

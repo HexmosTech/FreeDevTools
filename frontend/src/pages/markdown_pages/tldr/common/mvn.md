@@ -1,5 +1,5 @@
 ---
-title: "Maven Build Tool - Manage Java Projects | Free DevTools"
+title: "Maven Build Tool - Manage Java Projects | Online Free DevTools by Hexmos"
 name: mvn
 path: /freedevtools/tldr/common/mvn
 canonical: "https://hexmos.com/freedevtools/tldr/common/mvn/"

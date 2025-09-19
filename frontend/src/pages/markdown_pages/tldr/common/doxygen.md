@@ -1,5 +1,5 @@
 ---
-title: "Generate Doxygen Documentation - Free Source Documentation | Free DevTools"
+title: "Generate Doxygen Documentation - Free Source Documentation | Online Free DevTools by Hexmos"
 name: doxygen
 path: /freedevtools/tldr/common/doxygen
 canonical: "https://hexmos.com/freedevtools/tldr/common/doxygen/"

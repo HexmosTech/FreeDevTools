@@ -1,5 +1,5 @@
 ---
-title: "PDF to PPM - Convert PDF Pages to Images | Free DevTools"
+title: "PDF to PPM - Convert PDF Pages to Images | Online Free DevTools by Hexmos"
 name: pdftoppm
 path: /freedevtools/tldr/linux/pdftoppm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdftoppm/"

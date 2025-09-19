@@ -1,5 +1,5 @@
 ---
-title: "Control Knockd - Secure Ports with Port Knocking | Free DevTools"
+title: "Control Knockd - Secure Ports with Port Knocking | Online Free DevTools by Hexmos"
 name: knockd
 path: /freedevtools/tldr/linux/knockd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/knockd/"

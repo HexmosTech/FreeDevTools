@@ -1,5 +1,5 @@
 ---
-title: "Sync Command - Flush Disk Writes | Free DevTools"
+title: "Sync Command - Flush Disk Writes | Online Free DevTools by Hexmos"
 name: sync
 path: /freedevtools/tldr/common/sync
 canonical: "https://hexmos.com/freedevtools/tldr/common/sync/"

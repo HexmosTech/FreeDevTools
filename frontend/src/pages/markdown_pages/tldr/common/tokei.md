@@ -1,5 +1,5 @@
 ---
-title: "Generate Code Statistics - Tokei Code Analyzer | Free DevTools"
+title: "Generate Code Statistics - Tokei Code Analyzer | Online Free DevTools by Hexmos"
 name: tokei
 path: /freedevtools/tldr/common/tokei
 canonical: "https://hexmos.com/freedevtools/tldr/common/tokei/"

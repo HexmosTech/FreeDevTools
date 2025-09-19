@@ -1,5 +1,5 @@
 ---
-title: "Generate Code with Codex - Natural Language Tool | Free DevTools"
+title: "Generate Code with Codex - Natural Language Tool | Online Free DevTools by Hexmos"
 name: codex
 path: /freedevtools/tldr/common/codex
 canonical: "https://hexmos.com/freedevtools/tldr/common/codex/"

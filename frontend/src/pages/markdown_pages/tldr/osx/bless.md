@@ -1,5 +1,5 @@
 ---
-title: "Bless - Set Startup Disk Options | Free DevTools"
+title: "Bless - Set Startup Disk Options | Online Free DevTools by Hexmos"
 name: bless
 path: /freedevtools/tldr/osx/bless
 canonical: "https://hexmos.com/freedevtools/tldr/osx/bless/"

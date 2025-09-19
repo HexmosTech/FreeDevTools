@@ -1,5 +1,5 @@
 ---
-title: "Grep Command - Search Files with gfgrep | Free DevTools"
+title: "Grep Command - Search Files with gfgrep | Online Free DevTools by Hexmos"
 name: gfgrep
 path: /freedevtools/tldr/osx/gfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfgrep/"

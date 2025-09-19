@@ -1,5 +1,5 @@
 ---
-title: "mac-cleanup - Remove macOS Junk | Free DevTools"
+title: "mac-cleanup - Remove macOS Junk | Online Free DevTools by Hexmos"
 name: mac-cleanup
 path: /freedevtools/tldr/osx/mac-cleanup
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mac-cleanup/"

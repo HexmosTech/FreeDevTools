@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes Pod Controller - Manage Pods with kube-fzf | Free DevTools"
+title: "Kubernetes Pod Controller - Manage Pods with kube-fzf | Online Free DevTools by Hexmos"
 name: kube-fzf
 path: /freedevtools/tldr/kube/kube-fzf
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kube-fzf/"

@@ -1,5 +1,5 @@
 ---
-title: "Java Debugger - Analyze Java Processes | Free DevTools"
+title: "Java Debugger - Analyze Java Processes | Online Free DevTools by Hexmos"
 name: jhsdb
 path: "/freedevtools/tldr/common/jhsdb"
 canonical: "https://hexmos.com/freedevtools/tldr/common/jhsdb/"

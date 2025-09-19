@@ -1,5 +1,5 @@
 ---
-title: "Xzegrep - Extended Grep Search | Free DevTools"
+title: "Xzegrep - Extended Grep Search | Online Free DevTools by Hexmos"
 name: xzegrep
 path: /freedevtools/tldr/common/xzegrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzegrep/"

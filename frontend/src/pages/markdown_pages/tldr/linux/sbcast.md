@@ -1,5 +1,5 @@
 ---
-title: "Send Slurm Job Files - Transfer Files | Free DevTools"
+title: "Send Slurm Job Files - Transfer Files | Online Free DevTools by Hexmos"
 name: sbcast
 path: /freedevtools/tldr/linux/sbcast
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sbcast/"

@@ -1,5 +1,5 @@
 ---
-title: "Godot Game Engine - Create 2D/3D Games | Free DevTools"
+title: "Godot Game Engine - Create 2D/3D Games | Online Free DevTools by Hexmos"
 name: godot
 path: /freedevtools/tldr/common/godot
 canonical: "https://hexmos.com/freedevtools/tldr/common/godot/"

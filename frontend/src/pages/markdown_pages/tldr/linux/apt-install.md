@@ -1,5 +1,5 @@
 ---
-title: "Install Packages - Manage APT Packages | Free DevTools"
+title: "Install Packages - Manage APT Packages | Online Free DevTools by Hexmos"
 name: apt-install
 path: /freedevtools/tldr/linux/apt-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-install/"

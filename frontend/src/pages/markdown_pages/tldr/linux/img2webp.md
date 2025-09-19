@@ -1,5 +1,5 @@
 ---
-title: "Convert Images to WebP - img2webp Converter | Free DevTools"
+title: "Convert Images to WebP - img2webp Converter | Online Free DevTools by Hexmos"
 name: img2webp
 path: /freedevtools/tldr/linux/img2webp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/img2webp/"

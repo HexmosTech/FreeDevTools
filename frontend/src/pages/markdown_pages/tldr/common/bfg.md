@@ -1,5 +1,5 @@
 ---
-title: "BFG Cleaner - Remove Git Data | Free DevTools"
+title: "BFG Cleaner - Remove Git Data | Online Free DevTools by Hexmos"
 name: bfg
 path: /freedevtools/tldr/common/bfg
 canonical: "https://hexmos.com/freedevtools/tldr/common/bfg/"

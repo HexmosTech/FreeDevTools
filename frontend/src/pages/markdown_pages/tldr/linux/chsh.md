@@ -1,5 +1,5 @@
 ---
-title: "Change User Shell - Control Login Shell | Free DevTools"
+title: "Change User Shell - Control Login Shell | Online Free DevTools by Hexmos"
 name: chsh
 path: /freedevtools/tldr/linux/chsh
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chsh/"

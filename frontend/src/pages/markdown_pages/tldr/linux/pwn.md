@@ -1,5 +1,5 @@
 ---
-title: "Pwn Exploit Tool - Generate Shellcode & Analyze Binaries | Free DevTools"
+title: "Pwn Exploit Tool - Generate Shellcode & Analyze Binaries | Online Free DevTools by Hexmos"
 name: pwn
 path: /freedevtools/tldr/linux/pwn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pwn/"

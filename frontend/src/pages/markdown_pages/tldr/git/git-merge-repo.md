@@ -1,5 +1,5 @@
 ---
-title: "Merge Git Repository - Combine Histories | Free DevTools"
+title: "Merge Git Repository - Combine Histories | Online Free DevTools by Hexmos"
 name: git-merge-repo
 path: /freedevtools/tldr/git/git-merge-repo
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge-repo/"

@@ -1,5 +1,5 @@
 ---
-title: "JJ Rebase - Move Revisions Effortlessly | Free DevTools"
+title: "JJ Rebase - Move Revisions Effortlessly | Online Free DevTools by Hexmos"
 name: jj-rebase
 path: /freedevtools/tldr/jj/jj-rebase
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-rebase/"

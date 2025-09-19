@@ -1,5 +1,5 @@
 ---
-title: "Generate AI Responses - Command-line AI with Mods | Free DevTools"
+title: "Generate AI Responses - Command-line AI with Mods | Online Free DevTools by Hexmos"
 name: mods
 path: /freedevtools/tldr/common/mods
 canonical: "https://hexmos.com/freedevtools/tldr/common/mods/"

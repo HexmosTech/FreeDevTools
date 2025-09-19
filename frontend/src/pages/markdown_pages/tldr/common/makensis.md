@@ -1,5 +1,5 @@
 ---
-title: "Create NSIS Installer - Compile Scripts | Free DevTools"
+title: "Create NSIS Installer - Compile Scripts | Online Free DevTools by Hexmos"
 name: makensis
 path: /freedevtools/tldr/common/makensis
 canonical: "https://hexmos.com/freedevtools/tldr/common/makensis/"

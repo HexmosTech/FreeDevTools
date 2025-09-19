@@ -1,5 +1,5 @@
 ---
-title: "Homectl - Control Home Directories on Linux | Free DevTools"
+title: "Homectl - Control Home Directories on Linux | Online Free DevTools by Hexmos"
 name: homectl
 path: /freedevtools/tldr/linux/homectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/homectl/"

@@ -1,5 +1,5 @@
 ---
-title: "Crunch - Generate Wordlists | Free DevTools"
+title: "Crunch - Generate Wordlists | Online Free DevTools by Hexmos"
 name: crunch
 path: "/freedevtools/tldr/common/crunch"
 canonical: "https://hexmos.com/freedevtools/tldr/common/crunch/"

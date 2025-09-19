@@ -1,5 +1,5 @@
 ---
-title: "Zellij - Manage Terminal Sessions | Free DevTools"
+title: "Zellij - Manage Terminal Sessions | Online Free DevTools by Hexmos"
 name: zellij
 path: "/freedevtools/tldr/common/zellij"
 canonical: "https://hexmos.com/freedevtools/tldr/common/zellij/"

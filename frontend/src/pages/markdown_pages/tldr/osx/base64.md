@@ -1,5 +1,5 @@
 ---
-title: "Base64 Encode/Decode - Convert Files Online | Free DevTools"
+title: "Base64 Encode/Decode - Convert Files Online | Online Free DevTools by Hexmos"
 name: base64
 path: /freedevtools/tldr/osx/base64
 canonical: "https://hexmos.com/freedevtools/tldr/osx/base64/"

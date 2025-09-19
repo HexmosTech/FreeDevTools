@@ -1,5 +1,5 @@
 ---
-title: "Search Files with Ag - Fast Code Search | Free DevTools"
+title: "Search Files with Ag - Fast Code Search | Online Free DevTools by Hexmos"
 name: ag
 path: /freedevtools/tldr/common/ag
 canonical: "https://hexmos.com/freedevtools/tldr/common/ag/"

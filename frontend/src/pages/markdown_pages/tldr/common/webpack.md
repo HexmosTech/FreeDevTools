@@ -1,5 +1,5 @@
 ---
-title: "Bundle JavaScript - Create Web Bundles with Webpack | Free DevTools"
+title: "Bundle JavaScript - Create Web Bundles with Webpack | Online Free DevTools by Hexmos"
 name: webpack
 path: /freedevtools/tldr/common/webpack
 canonical: "https://hexmos.com/freedevtools/tldr/common/webpack/"

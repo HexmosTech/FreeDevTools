@@ -1,5 +1,5 @@
 ---
-title: "NetExec Database - Interact with Data | Free DevTools"
+title: "NetExec Database - Interact with Data | Online Free DevTools by Hexmos"
 name: nxcdb
 path: /freedevtools/tldr/nxc/nxcdb
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxcdb/"

@@ -1,5 +1,5 @@
 ---
-title: "Systemd Confext - Extend System Configuration | Free DevTools"
+title: "Systemd Confext - Extend System Configuration | Online Free DevTools by Hexmos"
 name: systemd-confext
 path: /freedevtools/tldr/linux/systemd-confext
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-confext/"

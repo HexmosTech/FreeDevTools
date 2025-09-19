@@ -1,5 +1,5 @@
 ---
-title: "View Kernel Messages - dmesg Command | Free DevTools"
+title: "View Kernel Messages - dmesg Command | Online Free DevTools by Hexmos"
 name: dmesg
 path: /freedevtools/tldr/linux/dmesg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dmesg/"

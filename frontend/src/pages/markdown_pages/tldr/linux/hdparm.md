@@ -1,5 +1,5 @@
 ---
-title: "Control Hard Drive Parameters - hdparm | Free DevTools"
+title: "Control Hard Drive Parameters - hdparm | Online Free DevTools by Hexmos"
 name: hdparm
 path: /freedevtools/tldr/linux/hdparm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hdparm/"

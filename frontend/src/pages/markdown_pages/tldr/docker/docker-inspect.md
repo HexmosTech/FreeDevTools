@@ -1,5 +1,5 @@
 ---
-title: "Docker Inspect - Return Container Information | Free DevTools"
+title: "Docker Inspect - Return Container Information | Online Free DevTools by Hexmos"
 name: docker-inspect
 path: /freedevtools/tldr/docker/docker-inspect
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-inspect/"

@@ -1,5 +1,5 @@
 ---
-title: "Flow Type Checker - Validate JavaScript Code | Free DevTools"
+title: "Flow Type Checker - Validate JavaScript Code | Online Free DevTools by Hexmos"
 name: flow
 path: /freedevtools/tldr/common/flow
 canonical: "https://hexmos.com/freedevtools/tldr/common/flow/"

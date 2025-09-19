@@ -1,5 +1,5 @@
 ---
-title: "React Native - Create Native Apps with React | Free DevTools"
+title: "React Native - Create Native Apps with React | Online Free DevTools by Hexmos"
 name: react-native
 path: /freedevtools/tldr/react/react-native
 canonical: "https://hexmos.com/freedevtools/tldr/react/react-native/"

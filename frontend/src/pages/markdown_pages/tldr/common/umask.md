@@ -1,5 +1,5 @@
 ---
-title: "Umask - Control File Permissions | Free DevTools"
+title: "Umask - Control File Permissions | Online Free DevTools by Hexmos"
 name: umask
 path: "/freedevtools/tldr/common/umask"
 canonical: "https://hexmos.com/freedevtools/tldr/common/umask/"

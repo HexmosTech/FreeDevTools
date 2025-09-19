@@ -1,5 +1,5 @@
 ---
-title: "Read CD Data - Extract Disc Images | Free DevTools"
+title: "Read CD Data - Extract Disc Images | Online Free DevTools by Hexmos"
 name: readcd
 path: /freedevtools/tldr/linux/readcd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/readcd/"

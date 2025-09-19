@@ -1,5 +1,5 @@
 ---
-title: "Resolve Conflicts - Control JJ Merge Tool | Free DevTools"
+title: "Resolve Conflicts - Control JJ Merge Tool | Online Free DevTools by Hexmos"
 name: jj-resolve
 path: /freedevtools/tldr/jj/jj-resolve
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-resolve/"

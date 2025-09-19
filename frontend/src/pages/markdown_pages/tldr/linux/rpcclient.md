@@ -1,5 +1,5 @@
 ---
-title: "RPC Client - Control Remote Windows Systems | Free DevTools"
+title: "RPC Client - Control Remote Windows Systems | Online Free DevTools by Hexmos"
 name: rpcclient
 path: /freedevtools/tldr/linux/rpcclient
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpcclient/"

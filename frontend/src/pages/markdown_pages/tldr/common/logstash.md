@@ -1,5 +1,5 @@
 ---
-title: "Validate Logstash Configuration - ETL Tool | Free DevTools"
+title: "Validate Logstash Configuration - ETL Tool | Online Free DevTools by Hexmos"
 name: logstash
 path: /freedevtools/tldr/common/logstash
 canonical: "https://hexmos.com/freedevtools/tldr/common/logstash/"

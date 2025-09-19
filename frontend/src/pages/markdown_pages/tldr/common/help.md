@@ -1,5 +1,5 @@
 ---
-title: "Bash Help - Display Command Information | Free DevTools"
+title: "Bash Help - Display Command Information | Online Free DevTools by Hexmos"
 name: help
 path: /freedevtools/tldr/common/help
 canonical: "https://hexmos.com/freedevtools/tldr/common/help/"

@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - Identify & Remove Duplicates | Free DevTools"
+title: "Find Duplicate Files - Identify & Remove Duplicates | Online Free DevTools by Hexmos"
 name: fdupes
 path: /freedevtools/tldr/common/fdupes
 canonical: "https://hexmos.com/freedevtools/tldr/common/fdupes/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Number Sequences - gseq | Free DevTools"
+title: "Generate Number Sequences - gseq | Online Free DevTools by Hexmos"
 name: gseq
 path: /freedevtools/tldr/osx/gseq
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gseq/"

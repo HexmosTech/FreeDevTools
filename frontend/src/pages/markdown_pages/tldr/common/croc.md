@@ -1,5 +1,5 @@
 ---
-title: "Croc Transfer - Securely Send Files | Free DevTools"
+title: "Croc Transfer - Securely Send Files | Online Free DevTools by Hexmos"
 name: croc
 path: /freedevtools/tldr/common/croc
 canonical: "https://hexmos.com/freedevtools/tldr/common/croc/"

@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Scrub - Verify Filesystem Data Integrity | Free DevTools"
+title: "Btrfs Scrub - Verify Filesystem Data Integrity | Online Free DevTools by Hexmos"
 name: btrfs-scrub
 path: /freedevtools/tldr/linux/btrfs-scrub
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-scrub/"

@@ -1,5 +1,5 @@
 ---
-title: "PBM to Icon - Convert PBM Images | Free DevTools"
+title: "PBM to Icon - Convert PBM Images | Online Free DevTools by Hexmos"
 name: pbmtoicon
 path: /freedevtools/tldr/common/pbmtoicon
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoicon/"

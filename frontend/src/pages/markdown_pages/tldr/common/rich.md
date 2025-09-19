@@ -1,5 +1,5 @@
 ---
-title: "Format Terminal Output - Rich CLI | Free DevTools"
+title: "Format Terminal Output - Rich CLI | Online Free DevTools by Hexmos"
 name: rich
 path: /freedevtools/tldr/common/rich
 canonical: "https://hexmos.com/freedevtools/tldr/common/rich/"

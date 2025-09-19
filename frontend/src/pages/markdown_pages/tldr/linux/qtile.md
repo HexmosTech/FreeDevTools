@@ -1,5 +1,5 @@
 ---
-title: "qtile Window Manager - Control Windows with Python | Free DevTools"
+title: "qtile Window Manager - Control Windows with Python | Online Free DevTools by Hexmos"
 name: qtile
 path: /freedevtools/tldr/linux/qtile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qtile/"

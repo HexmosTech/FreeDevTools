@@ -1,5 +1,5 @@
 ---
-title: "Scancel Jobs - Cancel Slurm Jobs | Free DevTools"
+title: "Scancel Jobs - Cancel Slurm Jobs | Online Free DevTools by Hexmos"
 name: scancel
 path: /freedevtools/tldr/linux/scancel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scancel/"

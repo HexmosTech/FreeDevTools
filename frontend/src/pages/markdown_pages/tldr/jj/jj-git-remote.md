@@ -1,5 +1,5 @@
 ---
-title: "Git Remote - Manage Git Remotes | Free DevTools"
+title: "Git Remote - Manage Git Remotes | Online Free DevTools by Hexmos"
 name: jj-git-remote
 path: /freedevtools/tldr/jj/jj-git-remote
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-remote/"

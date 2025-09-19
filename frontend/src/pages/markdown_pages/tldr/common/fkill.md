@@ -1,5 +1,5 @@
 ---
-title: "Kill Process - Control Processes Cross-Platform | Free DevTools"
+title: "Kill Process - Control Processes Cross-Platform | Online Free DevTools by Hexmos"
 name: fkill
 path: /freedevtools/tldr/common/fkill
 canonical: "https://hexmos.com/freedevtools/tldr/common/fkill/"

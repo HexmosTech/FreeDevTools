@@ -1,5 +1,5 @@
 ---
-title: "Cryptcat - Encrypt Network Connections | Free DevTools"
+title: "Cryptcat - Encrypt Network Connections | Online Free DevTools by Hexmos"
 name: cryptcat
 path: /freedevtools/tldr/linux/cryptcat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptcat/"

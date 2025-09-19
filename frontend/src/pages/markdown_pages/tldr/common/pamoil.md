@@ -1,5 +1,5 @@
 ---
-title: "Generate Oil Painting - PAM Image to Oil | Free DevTools"
+title: "Generate Oil Painting - PAM Image to Oil | Online Free DevTools by Hexmos"
 name: pamoil
 path: /freedevtools/tldr/common/pamoil
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamoil/"

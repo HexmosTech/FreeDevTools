@@ -1,5 +1,5 @@
 ---
-title: "Create Flashcards - Manage Knowledge with Anki | Free DevTools"
+title: "Create Flashcards - Manage Knowledge with Anki | Online Free DevTools by Hexmos"
 name: anki
 path: /freedevtools/tldr/common/anki
 canonical: "https://hexmos.com/freedevtools/tldr/common/anki/"

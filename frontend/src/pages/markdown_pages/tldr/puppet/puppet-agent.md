@@ -1,5 +1,5 @@
 ---
-title: "Control Puppet Agent - Apply Configurations | Free DevTools"
+title: "Control Puppet Agent - Apply Configurations | Online Free DevTools by Hexmos"
 name: puppet-agent
 path: /freedevtools/tldr/puppet/puppet-agent
 canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet-agent/"

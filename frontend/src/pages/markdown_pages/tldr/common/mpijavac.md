@@ -1,5 +1,5 @@
 ---
-title: "Compile Java with mpijavac - MPI Compiler | Free DevTools"
+title: "Compile Java with mpijavac - MPI Compiler | Online Free DevTools by Hexmos"
 name: mpijavac
 path: /freedevtools/tldr/common/mpijavac
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpijavac/"

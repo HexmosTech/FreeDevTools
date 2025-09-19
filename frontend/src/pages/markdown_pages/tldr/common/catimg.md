@@ -1,5 +1,5 @@
 ---
-title: "Display Images - Print Images in Terminal | Free DevTools"
+title: "Display Images - Print Images in Terminal | Online Free DevTools by Hexmos"
 name: catimg
 path: /freedevtools/tldr/common/catimg
 canonical: "https://hexmos.com/freedevtools/tldr/common/catimg/"

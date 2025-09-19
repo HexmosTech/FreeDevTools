@@ -1,5 +1,5 @@
 ---
-title: "DNF Install - Install Packages on Linux | Free DevTools"
+title: "DNF Install - Install Packages on Linux | Online Free DevTools by Hexmos"
 name: dnf-install
 path: /freedevtools/tldr/linux/dnf-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-install/"

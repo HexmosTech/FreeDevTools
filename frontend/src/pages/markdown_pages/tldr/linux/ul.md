@@ -1,5 +1,5 @@
 ---
-title: "Underline Text - Format Text with UL Command | Free DevTools"
+title: "Underline Text - Format Text with UL Command | Online Free DevTools by Hexmos"
 name: ul
 path: /freedevtools/tldr/linux/ul
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ul/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Bluetooth Devices - hcitool Command | Free DevTools"
+title: "Control Bluetooth Devices - hcitool Command | Online Free DevTools by Hexmos"
 name: hcitool
 path: /freedevtools/tldr/linux/hcitool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hcitool/"

@@ -1,5 +1,5 @@
 ---
-title: "Flock - Manage File Locks from Shell | Free DevTools"
+title: "Flock - Manage File Locks from Shell | Online Free DevTools by Hexmos"
 name: flock
 path: /freedevtools/tldr/linux/flock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flock/"

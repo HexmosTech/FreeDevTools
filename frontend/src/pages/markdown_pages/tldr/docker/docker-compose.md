@@ -1,5 +1,5 @@
 ---
-title: "Docker Compose - Control Multi-Container Apps | Free DevTools"
+title: "Docker Compose - Control Multi-Container Apps | Online Free DevTools by Hexmos"
 name: docker-compose
 path: /freedevtools/tldr/docker/docker-compose
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-compose/"

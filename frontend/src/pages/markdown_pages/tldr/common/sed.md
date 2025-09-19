@@ -1,5 +1,5 @@
 ---
-title: "Sed Stream Editor - Edit Text with Scripting | Free DevTools"
+title: "Sed Stream Editor - Edit Text with Scripting | Online Free DevTools by Hexmos"
 name: sed
 path: /freedevtools/tldr/common/sed
 canonical: "https://hexmos.com/freedevtools/tldr/common/sed/"

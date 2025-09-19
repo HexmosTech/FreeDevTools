@@ -1,5 +1,5 @@
 ---
-title: "Pipe Command - Connect Programs with Vertical Bar | Free DevTools"
+title: "Pipe Command - Connect Programs with Vertical Bar | Online Free DevTools by Hexmos"
 name: vertical-bar
 path: /freedevtools/tldr/common/vertical-bar
 canonical: "https://hexmos.com/freedevtools/tldr/common/vertical-bar/"

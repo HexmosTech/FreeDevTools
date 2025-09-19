@@ -1,5 +1,5 @@
 ---
-title: "Generate DesktopEntry Files - dex Command | Free DevTools"
+title: "Generate DesktopEntry Files - dex Command | Online Free DevTools by Hexmos"
 name: dex
 path: /freedevtools/tldr/linux/dex
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dex/"

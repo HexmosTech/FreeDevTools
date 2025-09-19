@@ -1,5 +1,5 @@
 ---
-title: "Git Reset File - Revert File Changes in Git | Free DevTools"
+title: "Git Reset File - Revert File Changes in Git | Online Free DevTools by Hexmos"
 name: git-reset-file
 path: /freedevtools/tldr/git/git-reset-file
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-reset-file/"

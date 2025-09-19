@@ -1,5 +1,5 @@
 ---
-title: "Plot Command-Line Data - Visualize Stdin with Ttyplot | Free DevTools"
+title: "Plot Command-Line Data - Visualize Stdin with Ttyplot | Online Free DevTools by Hexmos"
 name: ttyplot
 path: /freedevtools/tldr/linux/ttyplot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ttyplot/"

@@ -1,5 +1,5 @@
 ---
-title: "Create PostgreSQL Database - Initialize DB | Free DevTools"
+title: "Create PostgreSQL Database - Initialize DB | Online Free DevTools by Hexmos"
 name: initdb
 path: /freedevtools/tldr/in/initdb
 canonical: "https://hexmos.com/freedevtools/tldr/in/initdb/"

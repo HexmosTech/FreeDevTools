@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Config - Manage Stack Configuration | Free DevTools"
+title: "Pulumi Config - Manage Stack Configuration | Online Free DevTools by Hexmos"
 name: pulumi-config
 path: /freedevtools/tldr/pulumi/pulumi-config
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-config/"

@@ -1,5 +1,5 @@
 ---
-title: "Search Text with Ack - Find Patterns | Free DevTools"
+title: "Search Text with Ack - Find Patterns | Online Free DevTools by Hexmos"
 name: ack
 path: /freedevtools/tldr/common/ack
 canonical: "https://hexmos.com/freedevtools/tldr/common/ack/"

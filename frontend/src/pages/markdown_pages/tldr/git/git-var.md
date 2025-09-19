@@ -1,5 +1,5 @@
 ---
-title: "Git Variable - Print Git Values | Free DevTools"
+title: "Git Variable - Print Git Values | Online Free DevTools by Hexmos"
 name: git-var
 path: /freedevtools/tldr/git/git-var
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-var/"

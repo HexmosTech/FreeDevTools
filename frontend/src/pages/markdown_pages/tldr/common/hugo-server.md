@@ -1,5 +1,5 @@
 ---
-title: "Hugo Server - Build Websites Quickly | Free DevTools"
+title: "Hugo Server - Build Websites Quickly | Online Free DevTools by Hexmos"
 name: hugo-server
 path: /freedevtools/tldr/common/hugo-server
 canonical: "https://hexmos.com/freedevtools/tldr/common/hugo-server/"

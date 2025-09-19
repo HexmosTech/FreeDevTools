@@ -1,5 +1,5 @@
 ---
-title: "Searchsploit - Find Exploits & Vulnerabilities | Free DevTools"
+title: "Searchsploit - Find Exploits & Vulnerabilities | Online Free DevTools by Hexmos"
 name: searchsploit
 path: /freedevtools/tldr/common/searchsploit
 canonical: "https://hexmos.com/freedevtools/tldr/common/searchsploit/"

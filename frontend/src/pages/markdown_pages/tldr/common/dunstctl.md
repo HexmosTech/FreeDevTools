@@ -1,5 +1,5 @@
 ---
-title: "Dunst Control - Manage Desktop Notifications | Free DevTools"
+title: "Dunst Control - Manage Desktop Notifications | Online Free DevTools by Hexmos"
 name: dunstctl
 path: /freedevtools/tldr/common/dunstctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/dunstctl/"

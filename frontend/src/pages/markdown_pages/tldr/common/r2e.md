@@ -1,5 +1,5 @@
 ---
-title: "RSS to Email - Forward Feeds | Free DevTools"
+title: "RSS to Email - Forward Feeds | Online Free DevTools by Hexmos"
 name: r2e
 path: "/freedevtools/tldr/common/r2e"
 canonical: "https://hexmos.com/freedevtools/tldr/common/r2e/"

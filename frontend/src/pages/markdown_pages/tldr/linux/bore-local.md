@@ -1,5 +1,5 @@
 ---
-title: "Bore Local - Expose Local Ports | Free DevTools"
+title: "Bore Local - Expose Local Ports | Online Free DevTools by Hexmos"
 name: bore-local
 path: /freedevtools/tldr/linux/bore-local
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bore-local/"

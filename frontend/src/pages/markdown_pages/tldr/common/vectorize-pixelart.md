@@ -1,5 +1,5 @@
 ---
-title: "Vectorize Pixel Art - Convert Images to SVG/EPS | Free DevTools"
+title: "Vectorize Pixel Art - Convert Images to SVG/EPS | Online Free DevTools by Hexmos"
 name: vectorize-pixelart
 path: /freedevtools/tldr/common/vectorize-pixelart
 canonical: "https://hexmos.com/freedevtools/tldr/common/vectorize-pixelart/"

@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Files - Secure Git Repositories with Transcrypt | Free DevTools"
+title: "Encrypt Files - Secure Git Repositories with Transcrypt | Online Free DevTools by Hexmos"
 name: transcrypt
 path: /freedevtools/tldr/common/transcrypt
 canonical: "https://hexmos.com/freedevtools/tldr/common/transcrypt/"

@@ -1,5 +1,5 @@
 ---
-title: "Uname - Print System Information | Free DevTools"
+title: "Uname - Print System Information | Online Free DevTools by Hexmos"
 name: uname
 path: /freedevtools/tldr/osx/uname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/uname/"

@@ -1,5 +1,5 @@
 ---
-title: "Whitespace Trim - Format Git Text | Free DevTools"
+title: "Whitespace Trim - Format Git Text | Online Free DevTools by Hexmos"
 name: git-stripspace
 path: /freedevtools/tldr/git/git-stripspace
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-stripspace/"

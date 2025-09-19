@@ -1,5 +1,5 @@
 ---
-title: "Control AUR Packages - Manage AUR with aurman | Free DevTools"
+title: "Control AUR Packages - Manage AUR with aurman | Online Free DevTools by Hexmos"
 name: aurman
 path: /freedevtools/tldr/linux/aurman
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aurman/"

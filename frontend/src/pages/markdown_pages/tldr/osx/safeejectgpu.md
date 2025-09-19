@@ -1,5 +1,5 @@
 ---
-title: "Eject GPU - Safely Eject GPU on macOS | Free DevTools"
+title: "Eject GPU - Safely Eject GPU on macOS | Online Free DevTools by Hexmos"
 name: safeejectgpu
 path: /freedevtools/tldr/osx/safeejectgpu
 canonical: "https://hexmos.com/freedevtools/tldr/osx/safeejectgpu/"

@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Audit - Control Security Profiles | Free DevTools"
+title: "AppArmor Audit - Control Security Profiles | Online Free DevTools by Hexmos"
 name: aa-audit
 path: /freedevtools/tldr/linux/aa-audit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-audit/"

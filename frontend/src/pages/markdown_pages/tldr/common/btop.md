@@ -1,5 +1,5 @@
 ---
-title: "Monitor Resources with Btop - System Monitoring | Free DevTools"
+title: "Monitor Resources with Btop - System Monitoring | Online Free DevTools by Hexmos"
 name: btop
 path: /freedevtools/tldr/common/btop
 canonical: "https://hexmos.com/freedevtools/tldr/common/btop/"

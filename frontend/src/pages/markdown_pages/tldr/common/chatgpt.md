@@ -1,5 +1,5 @@
 ---
-title: "ChatGPT - Generate Text & Images | Free DevTools"
+title: "ChatGPT - Generate Text & Images | Online Free DevTools by Hexmos"
 name: chatgpt
 path: /freedevtools/tldr/common/chatgpt
 canonical: "https://hexmos.com/freedevtools/tldr/common/chatgpt/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Animated Tree Diagrams with Gource | Free DevTools"
+title: "Generate Animated Tree Diagrams with Gource | Online Free DevTools by Hexmos"
 name: gource
 path: "/freedevtools/tldr/common/gource"
 canonical: "https://hexmos.com/freedevtools/tldr/common/gource/"

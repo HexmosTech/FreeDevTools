@@ -1,5 +1,5 @@
 ---
-title: "CPPCheck - Validate C/C++ Code | Free DevTools"
+title: "CPPCheck - Validate C/C++ Code | Online Free DevTools by Hexmos"
 name: cppcheck
 path: /freedevtools/tldr/common/cppcheck
 canonical: "https://hexmos.com/freedevtools/tldr/common/cppcheck/"

@@ -1,5 +1,5 @@
 ---
-title: "Age Encryption - Encrypt and Decrypt Files | Free DevTools"
+title: "Age Encryption - Encrypt and Decrypt Files | Online Free DevTools by Hexmos"
 name: age
 path: /freedevtools/tldr/common/age
 canonical: "https://hexmos.com/freedevtools/tldr/common/age/"

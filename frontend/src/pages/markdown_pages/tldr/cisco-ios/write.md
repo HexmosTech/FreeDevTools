@@ -1,5 +1,5 @@
 ---
-title: "Write Memory - Control Data Storage | Free DevTools"
+title: "Write Memory - Control Data Storage | Online Free DevTools by Hexmos"
 name: write
 path: /freedevtools/tldr/cisco-ios/write
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/write/"

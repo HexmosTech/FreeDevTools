@@ -1,5 +1,5 @@
 ---
-title: "Lsns - List Linux Namespaces | Free DevTools"
+title: "Lsns - List Linux Namespaces | Online Free DevTools by Hexmos"
 name: lsns
 path: /freedevtools/tldr/linux/lsns
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsns/"

@@ -1,5 +1,5 @@
 ---
-title: "Doctl Auth - Control API Tokens with DigitalOcean | Free DevTools"
+title: "Doctl Auth - Control API Tokens with DigitalOcean | Online Free DevTools by Hexmos"
 name: doctl-auth
 path: /freedevtools/tldr/doctl/doctl-auth
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-auth/"

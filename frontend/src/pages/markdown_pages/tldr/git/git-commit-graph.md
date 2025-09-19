@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Commit Graph - Track Repository History | Free DevTools"
+title: "Generate Git Commit Graph - Track Repository History | Online Free DevTools by Hexmos"
 name: git-commit-graph
 path: /freedevtools/tldr/git/git-commit-graph
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit-graph/"

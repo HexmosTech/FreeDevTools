@@ -1,5 +1,5 @@
 ---
-title: "Docker Login - Authenticate to Docker Registry | Free DevTools"
+title: "Docker Login - Authenticate to Docker Registry | Online Free DevTools by Hexmos"
 name: docker-login
 path: /freedevtools/tldr/docker/docker-login
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-login/"

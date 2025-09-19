@@ -1,5 +1,5 @@
 ---
-title: "Brighten PAM Images - Adjust Saturation and Value | Free DevTools"
+title: "Brighten PAM Images - Adjust Saturation and Value | Online Free DevTools by Hexmos"
 name: pambrighten
 path: /freedevtools/tldr/common/pambrighten
 canonical: "https://hexmos.com/freedevtools/tldr/common/pambrighten/"

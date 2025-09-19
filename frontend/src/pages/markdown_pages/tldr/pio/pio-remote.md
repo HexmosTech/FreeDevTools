@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO Remote - Manage Remote Agents | Free DevTools"
+title: "PlatformIO Remote - Manage Remote Agents | Online Free DevTools by Hexmos"
 name: pio-remote
 path: "/freedevtools/tldr/pio/pio-remote"
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-remote/"

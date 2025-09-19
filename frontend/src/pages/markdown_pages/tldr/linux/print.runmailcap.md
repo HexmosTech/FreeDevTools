@@ -1,5 +1,5 @@
 ---
-title: "Print Runmailcap - Control File Printing | Free DevTools"
+title: "Print Runmailcap - Control File Printing | Online Free DevTools by Hexmos"
 name: print.runmailcap
 path: /freedevtools/tldr/linux/print.runmailcap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/print.runmailcap/"

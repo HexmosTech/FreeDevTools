@@ -1,5 +1,5 @@
 ---
-title: "dhcpcd - Manage Network Leases with DHCP Client | Free DevTools"
+title: "dhcpcd - Manage Network Leases with DHCP Client | Online Free DevTools by Hexmos"
 name: dhcpcd
 path: /freedevtools/tldr/linux/dhcpcd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dhcpcd/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage npm Teams - Organize Users | Free DevTools"
+title: "Manage npm Teams - Organize Users | Online Free DevTools by Hexmos"
 name: npm-team
 path: /freedevtools/tldr/npm/npm-team
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-team/"

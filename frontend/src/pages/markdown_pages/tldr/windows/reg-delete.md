@@ -1,5 +1,5 @@
 ---
-title: "Reg Delete - Delete Registry Keys | Free DevTools"
+title: "Reg Delete - Delete Registry Keys | Online Free DevTools by Hexmos"
 name: reg-delete
 path: /freedevtools/tldr/windows/reg-delete
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-delete/"

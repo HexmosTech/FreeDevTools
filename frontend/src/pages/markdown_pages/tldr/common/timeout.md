@@ -1,5 +1,5 @@
 ---
-title: "Timeout Command - Control Process Execution | Free DevTools"
+title: "Timeout Command - Control Process Execution | Online Free DevTools by Hexmos"
 name: timeout
 path: /freedevtools/tldr/common/timeout
 canonical: "https://hexmos.com/freedevtools/tldr/common/timeout/"

@@ -1,5 +1,5 @@
 ---
-title: "Network Control - Manage Network Links | Free DevTools"
+title: "Network Control - Manage Network Links | Online Free DevTools by Hexmos"
 name: networkctl
 path: /freedevtools/tldr/linux/networkctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/networkctl/"

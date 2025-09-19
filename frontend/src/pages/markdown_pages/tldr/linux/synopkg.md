@@ -1,5 +1,5 @@
 ---
-title: "Manage Synology Packages - Control DSM with synopkg | Free DevTools"
+title: "Manage Synology Packages - Control DSM with synopkg | Online Free DevTools by Hexmos"
 name: synopkg
 path: /freedevtools/tldr/linux/synopkg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/synopkg/"

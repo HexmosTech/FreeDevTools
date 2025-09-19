@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Control Termux Packages | Free DevTools"
+title: "Manage Packages - Control Termux Packages | Online Free DevTools by Hexmos"
 name: pkg
 path: /freedevtools/tldr/android/pkg
 canonical: "https://hexmos.com/freedevtools/tldr/android/pkg/"

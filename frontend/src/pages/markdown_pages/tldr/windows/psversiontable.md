@@ -1,5 +1,5 @@
 ---
-title: "Get PowerShell Version - Check PSVersionTable | Free DevTools"
+title: "Get PowerShell Version - Check PSVersionTable | Online Free DevTools by Hexmos"
 name: psversiontable
 path: /freedevtools/tldr/windows/psversiontable
 canonical: "https://hexmos.com/freedevtools/tldr/windows/psversiontable/"

@@ -1,5 +1,5 @@
 ---
-title: "SoXI - Display Sound Metadata | Free DevTools"
+title: "SoXI - Display Sound Metadata | Online Free DevTools by Hexmos"
 name: soxi
 path: /freedevtools/tldr/common/soxi
 canonical: "https://hexmos.com/freedevtools/tldr/common/soxi/"

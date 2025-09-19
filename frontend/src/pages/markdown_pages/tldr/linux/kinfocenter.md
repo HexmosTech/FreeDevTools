@@ -1,5 +1,5 @@
 ---
-title: "Kinfocenter - Show System Information | Free DevTools"
+title: "Kinfocenter - Show System Information | Online Free DevTools by Hexmos"
 name: kinfocenter
 path: /freedevtools/tldr/linux/kinfocenter
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kinfocenter/"

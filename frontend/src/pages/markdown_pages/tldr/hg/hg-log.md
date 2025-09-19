@@ -1,5 +1,5 @@
 ---
-title: "Hg Log - Display Repository History | Free DevTools"
+title: "Hg Log - Display Repository History | Online Free DevTools by Hexmos"
 name: hg-log
 path: /freedevtools/tldr/hg/hg-log
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-log/"

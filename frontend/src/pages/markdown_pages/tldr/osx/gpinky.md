@@ -1,5 +1,5 @@
 ---
-title: "Control Pinky - Display User Information | Free DevTools"
+title: "Control Pinky - Display User Information | Online Free DevTools by Hexmos"
 name: gpinky
 path: /freedevtools/tldr/osx/gpinky
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gpinky/"

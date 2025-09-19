@@ -1,5 +1,5 @@
 ---
-title: "iCal Events - Control Calendar Events with iCalBuddy | Free DevTools"
+title: "iCal Events - Control Calendar Events with iCalBuddy | Online Free DevTools by Hexmos"
 name: icalbuddy
 path: /freedevtools/tldr/osx/icalbuddy
 canonical: "https://hexmos.com/freedevtools/tldr/osx/icalbuddy/"

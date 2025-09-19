@@ -1,5 +1,5 @@
 ---
-title: "End Case Statement - Control Shell Flow | Free DevTools"
+title: "End Case Statement - Control Shell Flow | Online Free DevTools by Hexmos"
 name: esac
 path: /freedevtools/tldr/common/esac
 canonical: "https://hexmos.com/freedevtools/tldr/common/esac/"

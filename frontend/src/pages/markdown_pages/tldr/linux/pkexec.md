@@ -1,5 +1,5 @@
 ---
-title: "Execute Commands as User - Control Privileges | Free DevTools"
+title: "Execute Commands as User - Control Privileges | Online Free DevTools by Hexmos"
 name: pkexec
 path: /freedevtools/tldr/linux/pkexec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkexec/"

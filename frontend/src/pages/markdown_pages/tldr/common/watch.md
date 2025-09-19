@@ -1,5 +1,5 @@
 ---
-title: "Watch Command - Monitor Program Output | Free DevTools"
+title: "Watch Command - Monitor Program Output | Online Free DevTools by Hexmos"
 name: watch
 path: /freedevtools/tldr/common/watch
 canonical: "https://hexmos.com/freedevtools/tldr/common/watch/"

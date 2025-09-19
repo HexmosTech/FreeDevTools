@@ -1,5 +1,5 @@
 ---
-title: "Ncal - Generate Calendar | Free DevTools"
+title: "Ncal - Generate Calendar | Online Free DevTools by Hexmos"
 name: ncal
 path: /freedevtools/tldr/linux/ncal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ncal/"

@@ -1,5 +1,5 @@
 ---
-title: "PHP Artisan - Control Laravel Applications | Free DevTools"
+title: "PHP Artisan - Control Laravel Applications | Online Free DevTools by Hexmos"
 name: php-artisan
 path: /freedevtools/tldr/php/php-artisan
 canonical: "https://hexmos.com/freedevtools/tldr/php/php-artisan/"

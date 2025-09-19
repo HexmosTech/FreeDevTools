@@ -1,5 +1,5 @@
 ---
-title: "Podman Container Control - Manage Pods and Images | Free DevTools"
+title: "Podman Container Control - Manage Pods and Images | Online Free DevTools by Hexmos"
 name: podman
 path: /freedevtools/tldr/podman/podman
 canonical: "https://hexmos.com/freedevtools/tldr/podman/podman/"

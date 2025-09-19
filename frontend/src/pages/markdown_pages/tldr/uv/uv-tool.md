@@ -1,5 +1,5 @@
 ---
-title: "UV Tool - Run Python Packages | Free DevTools"
+title: "UV Tool - Run Python Packages | Online Free DevTools by Hexmos"
 name: uv-tool
 path: /freedevtools/tldr/uv/uv-tool
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-tool/"

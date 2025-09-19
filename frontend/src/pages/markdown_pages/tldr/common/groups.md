@@ -1,5 +1,5 @@
 ---
-title: "Groups - Print User Memberships | Free DevTools"
+title: "Groups - Print User Memberships | Online Free DevTools by Hexmos"
 name: groups
 path: /freedevtools/tldr/common/groups
 canonical: "https://hexmos.com/freedevtools/tldr/common/groups/"

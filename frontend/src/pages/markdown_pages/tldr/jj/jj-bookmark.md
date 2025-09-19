@@ -1,5 +1,5 @@
 ---
-title: "Create jj Bookmarks - Manage Repository Bookmarks | Free DevTools"
+title: "Create jj Bookmarks - Manage Repository Bookmarks | Online Free DevTools by Hexmos"
 name: jj-bookmark
 path: /freedevtools/tldr/jj/jj-bookmark
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-bookmark/"

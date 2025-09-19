@@ -1,5 +1,5 @@
 ---
-title: "Git For-Each-Ref - Format Git References | Free DevTools"
+title: "Git For-Each-Ref - Format Git References | Online Free DevTools by Hexmos"
 name: git-for-each-ref
 path: /freedevtools/tldr/git/git-for-each-ref
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-for-each-ref/"

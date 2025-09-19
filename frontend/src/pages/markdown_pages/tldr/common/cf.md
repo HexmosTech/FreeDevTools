@@ -1,5 +1,5 @@
 ---
-title: "Cloud Foundry Control - Manage Cloud Apps | Free DevTools"
+title: "Cloud Foundry Control - Manage Cloud Apps | Online Free DevTools by Hexmos"
 name: cf
 path: /freedevtools/tldr/common/cf
 canonical: "https://hexmos.com/freedevtools/tldr/common/cf/"

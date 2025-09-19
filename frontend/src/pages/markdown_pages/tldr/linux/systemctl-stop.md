@@ -1,5 +1,5 @@
 ---
-title: "Systemd systemctl - Stop Services | Free DevTools"
+title: "Systemd systemctl - Stop Services | Online Free DevTools by Hexmos"
 name: systemctl-stop
 path: /freedevtools/tldr/linux/systemctl-stop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-stop/"

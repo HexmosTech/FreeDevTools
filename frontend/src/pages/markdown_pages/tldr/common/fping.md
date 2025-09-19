@@ -1,5 +1,5 @@
 ---
-title: "FPing - Ping Multiple Hosts | Free DevTools"
+title: "FPing - Ping Multiple Hosts | Online Free DevTools by Hexmos"
 name: fping
 path: /freedevtools/tldr/common/fping
 canonical: "https://hexmos.com/freedevtools/tldr/common/fping/"

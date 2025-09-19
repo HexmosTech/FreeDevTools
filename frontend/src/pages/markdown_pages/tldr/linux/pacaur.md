@@ -1,5 +1,5 @@
 ---
-title: "Pacaur Package Manager - Install AUR Packages | Free DevTools"
+title: "Pacaur Package Manager - Install AUR Packages | Online Free DevTools by Hexmos"
 name: pacaur
 path: /freedevtools/tldr/linux/pacaur
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacaur/"

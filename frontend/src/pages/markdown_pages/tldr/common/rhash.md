@@ -1,5 +1,5 @@
 ---
-title: "RHash - Generate Message Digests | Free DevTools"
+title: "RHash - Generate Message Digests | Online Free DevTools by Hexmos"
 name: rhash
 path: "/freedevtools/tldr/common/rhash"
 canonical: "https://hexmos.com/freedevtools/tldr/common/rhash/"

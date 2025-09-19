@@ -1,5 +1,5 @@
 ---
-title: "Coreautha - Control Local Authentication | Free DevTools"
+title: "Coreautha - Control Local Authentication | Online Free DevTools by Hexmos"
 name: coreautha
 path: /freedevtools/tldr/osx/coreautha
 canonical: "https://hexmos.com/freedevtools/tldr/osx/coreautha/"

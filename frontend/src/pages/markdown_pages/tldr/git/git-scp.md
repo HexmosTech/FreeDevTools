@@ -1,5 +1,5 @@
 ---
-title: "Git SCP - Copy Files to Remote Repository | Free DevTools"
+title: "Git SCP - Copy Files to Remote Repository | Online Free DevTools by Hexmos"
 name: git-scp
 path: /freedevtools/tldr/git/git-scp
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-scp/"

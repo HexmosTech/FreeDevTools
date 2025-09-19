@@ -1,5 +1,5 @@
 ---
-title: "Run Nextflow Pipelines - Execute Bioinformatics Workflows | Free DevTools"
+title: "Run Nextflow Pipelines - Execute Bioinformatics Workflows | Online Free DevTools by Hexmos"
 name: nextflow
 path: /freedevtools/tldr/common/nextflow
 canonical: "https://hexmos.com/freedevtools/tldr/common/nextflow/"

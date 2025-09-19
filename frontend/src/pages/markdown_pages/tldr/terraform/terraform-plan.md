@@ -1,5 +1,5 @@
 ---
-title: "Generate Terraform Plan - Infrastructure as Code | Free DevTools"
+title: "Generate Terraform Plan - Infrastructure as Code | Online Free DevTools by Hexmos"
 name: terraform-plan
 path: /freedevtools/tldr/terraform/terraform-plan
 canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform-plan/"

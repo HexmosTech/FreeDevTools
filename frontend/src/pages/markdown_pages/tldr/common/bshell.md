@@ -1,5 +1,5 @@
 ---
-title: "Browse SSH/VNC Servers - Control with bshell | Free DevTools"
+title: "Browse SSH/VNC Servers - Control with bshell | Online Free DevTools by Hexmos"
 name: bshell
 path: /freedevtools/tldr/common/bshell
 canonical: "https://hexmos.com/freedevtools/tldr/common/bshell/"

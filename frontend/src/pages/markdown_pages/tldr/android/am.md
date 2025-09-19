@@ -1,5 +1,5 @@
 ---
-title: "Activity Manager - Control Android Activities with ADB | Free DevTools"
+title: "Activity Manager - Control Android Activities with ADB | Online Free DevTools by Hexmos"
 name: am
 path: /freedevtools/tldr/android/am
 canonical: "https://hexmos.com/freedevtools/tldr/android/am/"

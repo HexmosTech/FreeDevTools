@@ -1,5 +1,5 @@
 ---
-title: "BIRD Control - Manage Routing with Birdc | Free DevTools"
+title: "BIRD Control - Manage Routing with Birdc | Online Free DevTools by Hexmos"
 name: birdc
 path: /freedevtools/tldr/common/birdc
 canonical: "https://hexmos.com/freedevtools/tldr/common/birdc/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Online Books - With Mdbook | Free DevTools"
+title: "Create Online Books - With Mdbook | Online Free DevTools by Hexmos"
 name: mdbook
 path: /freedevtools/tldr/linux/mdbook
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mdbook/"

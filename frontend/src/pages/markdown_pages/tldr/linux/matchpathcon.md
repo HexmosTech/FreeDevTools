@@ -1,5 +1,5 @@
 ---
-title: "Lookup SELinux Context - Control Path Security | Free DevTools"
+title: "Lookup SELinux Context - Control Path Security | Online Free DevTools by Hexmos"
 name: matchpathcon
 path: /freedevtools/tldr/linux/matchpathcon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/matchpathcon/"

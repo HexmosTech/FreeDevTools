@@ -1,5 +1,5 @@
 ---
-title: "KDE Connect Control - Manage Devices & Share Files | Free DevTools"
+title: "KDE Connect Control - Manage Devices & Share Files | Online Free DevTools by Hexmos"
 name: kdeconnect-cli
 path: /freedevtools/tldr/common/kdeconnect-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/kdeconnect-cli/"

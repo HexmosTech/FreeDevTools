@@ -1,5 +1,5 @@
 ---
-title: "Terraform Output - Generate Data | Free DevTools"
+title: "Terraform Output - Generate Data | Online Free DevTools by Hexmos"
 name: terraform-output
 path: /freedevtools/tldr/terraform/terraform-output
 canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform-output/"

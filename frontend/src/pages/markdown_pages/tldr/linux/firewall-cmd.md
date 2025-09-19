@@ -1,5 +1,5 @@
 ---
-title: "Control Firewall with firewall-cmd - Manage Network Security | Free DevTools"
+title: "Control Firewall with firewall-cmd - Manage Network Security | Online Free DevTools by Hexmos"
 name: firewall-cmd
 path: /freedevtools/tldr/linux/firewall-cmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/firewall-cmd/"

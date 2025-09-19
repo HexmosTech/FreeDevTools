@@ -1,5 +1,5 @@
 ---
-title: "Create yadm Alternates - Manage Files with yadm | Free DevTools"
+title: "Create yadm Alternates - Manage Files with yadm | Online Free DevTools by Hexmos"
 name: yadm-alt
 path: /freedevtools/tldr/yadm/yadm-alt
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-alt/"

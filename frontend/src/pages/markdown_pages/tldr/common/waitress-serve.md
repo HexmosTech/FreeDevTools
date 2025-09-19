@@ -1,5 +1,5 @@
 ---
-title: "Serve WSGI Apps - Run Python Apps with Waitress | Free DevTools"
+title: "Serve WSGI Apps - Run Python Apps with Waitress | Online Free DevTools by Hexmos"
 name: waitress-serve
 path: /freedevtools/tldr/common/waitress-serve
 canonical: "https://hexmos.com/freedevtools/tldr/common/waitress-serve/"

@@ -1,5 +1,5 @@
 ---
-title: "Slurm Database Daemon - Control Slurm Database | Free DevTools"
+title: "Slurm Database Daemon - Control Slurm Database | Online Free DevTools by Hexmos"
 name: slurmdbd
 path: /freedevtools/tldr/linux/slurmdbd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmdbd/"

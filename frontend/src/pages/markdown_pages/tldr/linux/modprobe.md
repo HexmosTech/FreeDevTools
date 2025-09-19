@@ -1,5 +1,5 @@
 ---
-title: "Manage Kernel Modules - Control Linux Modules with modprobe | Free DevTools"
+title: "Manage Kernel Modules - Control Linux Modules with modprobe | Online Free DevTools by Hexmos"
 name: modprobe
 path: /freedevtools/tldr/linux/modprobe
 canonical: "https://hexmos.com/freedevtools/tldr/linux/modprobe/"

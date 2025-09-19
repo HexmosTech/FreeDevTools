@@ -1,5 +1,5 @@
 ---
-title: "Drupal - Generate Drupal Code | Free DevTools"
+title: "Drupal - Generate Drupal Code | Online Free DevTools by Hexmos"
 name: drupal
 path: /freedevtools/tldr/common/drupal
 canonical: "https://hexmos.com/freedevtools/tldr/common/drupal/"

@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Meld Graphical Diff Tool | Free DevTools"
+title: "Compare Files - Meld Graphical Diff Tool | Online Free DevTools by Hexmos"
 name: meld
 path: /freedevtools/tldr/common/meld
 canonical: "https://hexmos.com/freedevtools/tldr/common/meld/"

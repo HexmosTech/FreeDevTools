@@ -1,5 +1,5 @@
 ---
-title: "Gitea Interact - Manage Gitea Servers | Free DevTools"
+title: "Gitea Interact - Manage Gitea Servers | Online Free DevTools by Hexmos"
 name: tea
 path: /freedevtools/tldr/common/tea
 canonical: "https://hexmos.com/freedevtools/tldr/common/tea/"

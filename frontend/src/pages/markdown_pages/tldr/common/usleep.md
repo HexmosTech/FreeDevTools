@@ -1,5 +1,5 @@
 ---
-title: "Delay Execution - Control Delay with usleep | Free DevTools"
+title: "Delay Execution - Control Delay with usleep | Online Free DevTools by Hexmos"
 name: usleep
 path: /freedevtools/tldr/common/usleep
 canonical: "https://hexmos.com/freedevtools/tldr/common/usleep/"

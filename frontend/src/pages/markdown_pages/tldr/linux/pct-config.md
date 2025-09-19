@@ -1,5 +1,5 @@
 ---
-title: "PCT Config - Display Container Configuration | Free DevTools"
+title: "PCT Config - Display Container Configuration | Online Free DevTools by Hexmos"
 name: pct-config
 path: /freedevtools/tldr/linux/pct-config
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-config/"

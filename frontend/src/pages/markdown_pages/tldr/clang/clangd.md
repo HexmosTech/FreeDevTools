@@ -1,5 +1,5 @@
 ---
-title: "clangd - Generate Code Insights | Free DevTools"
+title: "clangd - Generate Code Insights | Online Free DevTools by Hexmos"
 name: clangd
 path: /freedevtools/tldr/clang/clangd
 canonical: "https://hexmos.com/freedevtools/tldr/clang/clangd/"

@@ -1,5 +1,5 @@
 ---
-title: "Fossil Control - Manage Versions | Free DevTools"
+title: "Fossil Control - Manage Versions | Online Free DevTools by Hexmos"
 name: fossil
 path: /freedevtools/tldr/fossil/fossil
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil/"

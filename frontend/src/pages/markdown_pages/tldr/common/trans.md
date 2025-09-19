@@ -1,5 +1,5 @@
 ---
-title: "Translate Shell - Translate Text via CLI | Free DevTools"
+title: "Translate Shell - Translate Text via CLI | Online Free DevTools by Hexmos"
 name: trans
 path: /freedevtools/tldr/common/trans
 canonical: "https://hexmos.com/freedevtools/tldr/common/trans/"

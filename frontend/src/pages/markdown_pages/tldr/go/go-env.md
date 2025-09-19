@@ -1,5 +1,5 @@
 ---
-title: "Go Env - Manage Go Environment Variables | Free DevTools"
+title: "Go Env - Manage Go Environment Variables | Online Free DevTools by Hexmos"
 name: go-env
 path: /freedevtools/tldr/go/go-env
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-env/"

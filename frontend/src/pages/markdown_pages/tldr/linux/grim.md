@@ -1,5 +1,5 @@
 ---
-title: "Grab Screenshots - Control Linux Screenshots with grim | Free DevTools"
+title: "Grab Screenshots - Control Linux Screenshots with grim | Online Free DevTools by Hexmos"
 name: grim
 path: /freedevtools/tldr/linux/grim
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grim/"

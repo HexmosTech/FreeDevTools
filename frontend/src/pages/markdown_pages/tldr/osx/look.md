@@ -1,5 +1,5 @@
 ---
-title: "Look - Display Lines in Sorted File | Free DevTools"
+title: "Look - Display Lines in Sorted File | Online Free DevTools by Hexmos"
 name: look
 path: /freedevtools/tldr/osx/look
 canonical: "https://hexmos.com/freedevtools/tldr/osx/look/"

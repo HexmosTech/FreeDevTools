@@ -1,5 +1,5 @@
 ---
-title: "Cheatshh - Manage CLI Cheatsheets | Free DevTools"
+title: "Cheatshh - Manage CLI Cheatsheets | Online Free DevTools by Hexmos"
 name: cheatshh
 path: /freedevtools/tldr/common/cheatshh
 canonical: "https://hexmos.com/freedevtools/tldr/common/cheatshh/"

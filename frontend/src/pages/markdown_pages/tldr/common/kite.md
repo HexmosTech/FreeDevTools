@@ -1,5 +1,5 @@
 ---
-title: "Kite Runner - Execute Processes | Free DevTools"
+title: "Kite Runner - Execute Processes | Online Free DevTools by Hexmos"
 name: kite
 path: /freedevtools/tldr/common/kite
 canonical: "https://hexmos.com/freedevtools/tldr/common/kite/"

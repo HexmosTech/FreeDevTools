@@ -1,5 +1,5 @@
 ---
-title: "Parse RDF - Convert RDF Data with Rapper | Free DevTools"
+title: "Parse RDF - Convert RDF Data with Rapper | Online Free DevTools by Hexmos"
 name: rapper
 path: /freedevtools/tldr/common/rapper
 canonical: "https://hexmos.com/freedevtools/tldr/common/rapper/"

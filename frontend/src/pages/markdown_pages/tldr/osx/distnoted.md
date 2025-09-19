@@ -1,5 +1,5 @@
 ---
-title: "Distnoted - Manage Notifications on macOS | Free DevTools"
+title: "Distnoted - Manage Notifications on macOS | Online Free DevTools by Hexmos"
 name: distnoted
 path: /freedevtools/tldr/osx/distnoted
 canonical: "https://hexmos.com/freedevtools/tldr/osx/distnoted/"

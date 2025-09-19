@@ -1,5 +1,5 @@
 ---
-title: "Fabric Deploy - Automate Hyperledger Fabric Networks | Free DevTools"
+title: "Fabric Deploy - Automate Hyperledger Fabric Networks | Online Free DevTools by Hexmos"
 name: minifab
 path: /freedevtools/tldr/common/minifab
 canonical: "https://hexmos.com/freedevtools/tldr/common/minifab/"

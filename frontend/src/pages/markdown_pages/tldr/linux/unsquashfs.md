@@ -1,5 +1,5 @@
 ---
-title: "Unsquashfs - Extract Squashfs Filesystems | Free DevTools"
+title: "Unsquashfs - Extract Squashfs Filesystems | Online Free DevTools by Hexmos"
 name: unsquashfs
 path: /freedevtools/tldr/linux/unsquashfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unsquashfs/"

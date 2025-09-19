@@ -1,5 +1,5 @@
 ---
-title: "Count Lines of Code - Analyze Source Code with cloc | Free DevTools"
+title: "Count Lines of Code - Analyze Source Code with cloc | Online Free DevTools by Hexmos"
 name: cloc
 path: /freedevtools/tldr/common/cloc
 canonical: "https://hexmos.com/freedevtools/tldr/common/cloc/"

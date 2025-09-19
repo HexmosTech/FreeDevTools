@@ -1,5 +1,5 @@
 ---
-title: "Update RC.d - Manage Init Scripts on Linux | Free DevTools"
+title: "Update RC.d - Manage Init Scripts on Linux | Online Free DevTools by Hexmos"
 name: update-rc.d
 path: /freedevtools/tldr/linux/update-rc.d
 canonical: "https://hexmos.com/freedevtools/tldr/linux/update-rc.d/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Digests - OpenSSL dgst Command | Free DevTools"
+title: "Generate Digests - OpenSSL dgst Command | Online Free DevTools by Hexmos"
 name: openssl-dgst
 path: /freedevtools/tldr/openssl/openssl-dgst
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-dgst/"

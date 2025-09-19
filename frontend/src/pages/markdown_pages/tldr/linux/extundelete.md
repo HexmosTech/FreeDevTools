@@ -1,5 +1,5 @@
 ---
-title: "Recover Deleted Files - extundelete | Free DevTools"
+title: "Recover Deleted Files - extundelete | Online Free DevTools by Hexmos"
 name: extundelete
 path: /freedevtools/tldr/linux/extundelete
 canonical: "https://hexmos.com/freedevtools/tldr/linux/extundelete/"

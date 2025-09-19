@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Control File Size | Free DevTools"
+title: "Compress Files - Control File Size | Online Free DevTools by Hexmos"
 name: compress
 path: /freedevtools/tldr/linux/compress
 canonical: "https://hexmos.com/freedevtools/tldr/linux/compress/"

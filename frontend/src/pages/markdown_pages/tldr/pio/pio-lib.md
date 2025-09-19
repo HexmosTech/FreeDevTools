@@ -1,5 +1,5 @@
 ---
-title: "Manage PlatformIO Libraries - Install & Update | Free DevTools"
+title: "Manage PlatformIO Libraries - Install & Update | Online Free DevTools by Hexmos"
 name: pio-lib
 path: /freedevtools/tldr/pio/pio-lib
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-lib/"

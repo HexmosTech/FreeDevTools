@@ -1,5 +1,5 @@
 ---
-title: "Gcrane - Generate Shell Completions | Free DevTools"
+title: "Gcrane - Generate Shell Completions | Online Free DevTools by Hexmos"
 name: gcrane-completion
 path: /freedevtools/tldr/osx/gcrane-completion
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcrane-completion/"

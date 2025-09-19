@@ -1,5 +1,5 @@
 ---
-title: "Simulate Matrix Effect - Unimatrix | Free DevTools"
+title: "Simulate Matrix Effect - Unimatrix | Online Free DevTools by Hexmos"
 name: unimatrix
 path: /freedevtools/tldr/common/unimatrix
 canonical: "https://hexmos.com/freedevtools/tldr/common/unimatrix/"

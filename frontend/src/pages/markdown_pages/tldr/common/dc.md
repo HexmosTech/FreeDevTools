@@ -1,5 +1,5 @@
 ---
-title: "DC Calculator - Precise Calculations with RPN | Free DevTools"
+title: "DC Calculator - Precise Calculations with RPN | Online Free DevTools by Hexmos"
 name: dc
 path: /freedevtools/tldr/common/dc
 canonical: "https://hexmos.com/freedevtools/tldr/common/dc/"

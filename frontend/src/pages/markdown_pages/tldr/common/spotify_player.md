@@ -1,5 +1,5 @@
 ---
-title: "Spotify Control - Manage Music with Spotify Player | Free DevTools"
+title: "Spotify Control - Manage Music with Spotify Player | Online Free DevTools by Hexmos"
 name: spotify_player
 path: /freedevtools/tldr/common/spotify_player
 canonical: "https://hexmos.com/freedevtools/tldr/common/spotify_player/"

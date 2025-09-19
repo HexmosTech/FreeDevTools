@@ -1,5 +1,5 @@
 ---
-title: "XZGrep - Search Compressed Files with Regular Expressions | Free DevTools"
+title: "XZGrep - Search Compressed Files with Regular Expressions | Online Free DevTools by Hexmos"
 name: xzgrep
 path: /freedevtools/tldr/common/xzgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzgrep/"

@@ -1,5 +1,5 @@
 ---
-title: "Screencapture - Create Screenshots and Recordings | Free DevTools"
+title: "Screencapture - Create Screenshots and Recordings | Online Free DevTools by Hexmos"
 name: screencapture
 path: /freedevtools/tldr/osx/screencapture
 canonical: "https://hexmos.com/freedevtools/tldr/osx/screencapture/"

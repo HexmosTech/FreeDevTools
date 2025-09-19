@@ -1,5 +1,5 @@
 ---
-title: "Calculate Checksum - Verify File Integrity | Free DevTools"
+title: "Calculate Checksum - Verify File Integrity | Online Free DevTools by Hexmos"
 name: cksum
 path: /freedevtools/tldr/common/cksum
 canonical: "https://hexmos.com/freedevtools/tldr/common/cksum/"

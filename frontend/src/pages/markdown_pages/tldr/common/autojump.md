@@ -1,5 +1,5 @@
 ---
-title: "Autojump Directory - Navigate Faster | Free DevTools"
+title: "Autojump Directory - Navigate Faster | Online Free DevTools by Hexmos"
 name: autojump
 path: /freedevtools/tldr/common/autojump
 canonical: "https://hexmos.com/freedevtools/tldr/common/autojump/"

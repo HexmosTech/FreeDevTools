@@ -1,5 +1,5 @@
 ---
-title: "Zipinfo - List Zip File Details | Free DevTools"
+title: "Zipinfo - List Zip File Details | Online Free DevTools by Hexmos"
 name: zipinfo
 path: /freedevtools/tldr/common/zipinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/zipinfo/"

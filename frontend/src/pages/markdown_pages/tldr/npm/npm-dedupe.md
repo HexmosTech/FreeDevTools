@@ -1,5 +1,5 @@
 ---
-title: "Dedupe NPM Packages - Reduce Node Modules Duplicates | Free DevTools"
+title: "Dedupe NPM Packages - Reduce Node Modules Duplicates | Online Free DevTools by Hexmos"
 name: npm-dedupe
 path: /freedevtools/tldr/npm/npm-dedupe
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-dedupe/"

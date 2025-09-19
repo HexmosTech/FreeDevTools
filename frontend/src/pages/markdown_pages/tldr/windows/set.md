@@ -1,5 +1,5 @@
 ---
-title: "Set Environment Variables - Control CMD Instance | Free DevTools"
+title: "Set Environment Variables - Control CMD Instance | Online Free DevTools by Hexmos"
 name: set
 path: /freedevtools/tldr/windows/set
 canonical: "https://hexmos.com/freedevtools/tldr/windows/set/"

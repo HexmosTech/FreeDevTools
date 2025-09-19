@@ -1,5 +1,5 @@
 ---
-title: "eyeD3 - Control MP3 Metadata | Free DevTools"
+title: "eyeD3 - Control MP3 Metadata | Online Free DevTools by Hexmos"
 name: eyed3
 path: /freedevtools/tldr/linux/eyed3
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eyed3/"

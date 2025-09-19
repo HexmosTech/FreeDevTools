@@ -1,5 +1,5 @@
 ---
-title: "Interact gRPC Servers - Control gRPC with grpcurl | Free DevTools"
+title: "Interact gRPC Servers - Control gRPC with grpcurl | Online Free DevTools by Hexmos"
 name: grpcurl
 path: /freedevtools/tldr/common/grpcurl
 canonical: "https://hexmos.com/freedevtools/tldr/common/grpcurl/"

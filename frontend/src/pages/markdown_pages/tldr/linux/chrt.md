@@ -1,5 +1,5 @@
 ---
-title: "Control Real-Time Processes - chrt | Free DevTools"
+title: "Control Real-Time Processes - chrt | Online Free DevTools by Hexmos"
 name: chrt
 path: /freedevtools/tldr/linux/chrt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chrt/"

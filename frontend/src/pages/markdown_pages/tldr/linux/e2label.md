@@ -1,5 +1,5 @@
 ---
-title: "Change Ext Label - Format ext Filesystem | Free DevTools"
+title: "Change Ext Label - Format ext Filesystem | Online Free DevTools by Hexmos"
 name: e2label
 path: "/freedevtools/tldr/linux/e2label"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/e2label/"

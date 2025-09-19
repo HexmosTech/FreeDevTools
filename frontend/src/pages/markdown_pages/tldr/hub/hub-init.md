@@ -1,5 +1,5 @@
 ---
-title: "Git Init - Create New Repositories with Hub | Free DevTools"
+title: "Git Init - Create New Repositories with Hub | Online Free DevTools by Hexmos"
 name: hub-init
 path: /freedevtools/tldr/hub/hub-init
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-init/"

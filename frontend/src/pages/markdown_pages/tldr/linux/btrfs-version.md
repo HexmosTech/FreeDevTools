@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Version - Display File System Version | Free DevTools"
+title: "Btrfs Version - Display File System Version | Online Free DevTools by Hexmos"
 name: btrfs-version
 path: /freedevtools/tldr/linux/btrfs-version
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-version/"

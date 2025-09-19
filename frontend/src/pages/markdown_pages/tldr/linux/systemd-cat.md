@@ -1,5 +1,5 @@
 ---
-title: "Systemd-cat - Capture System Output | Free DevTools"
+title: "Systemd-cat - Capture System Output | Online Free DevTools by Hexmos"
 name: systemd-cat
 path: /freedevtools/tldr/linux/systemd-cat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cat/"

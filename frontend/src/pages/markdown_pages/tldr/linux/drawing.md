@@ -1,5 +1,5 @@
 ---
-title: "Draw Images - Edit Raster Images in Linux | Free DevTools"
+title: "Draw Images - Edit Raster Images in Linux | Online Free DevTools by Hexmos"
 name: drawing
 path: /freedevtools/tldr/linux/drawing
 canonical: "https://hexmos.com/freedevtools/tldr/linux/drawing/"

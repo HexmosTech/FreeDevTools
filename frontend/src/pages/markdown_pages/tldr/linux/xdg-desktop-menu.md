@@ -1,5 +1,5 @@
 ---
-title: "Manage Desktop Menus - Control App Menus with xdg-desktop-menu | Free DevTools"
+title: "Manage Desktop Menus - Control App Menus with xdg-desktop-menu | Online Free DevTools by Hexmos"
 name: xdg-desktop-menu
 path: /freedevtools/tldr/linux/xdg-desktop-menu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-desktop-menu/"

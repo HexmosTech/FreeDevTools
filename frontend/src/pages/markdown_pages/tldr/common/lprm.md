@@ -1,5 +1,5 @@
 ---
-title: "Cancel Print Jobs - Control Printing with lprm | Free DevTools"
+title: "Cancel Print Jobs - Control Printing with lprm | Online Free DevTools by Hexmos"
 name: lprm
 path: /freedevtools/tldr/common/lprm
 canonical: "https://hexmos.com/freedevtools/tldr/common/lprm/"

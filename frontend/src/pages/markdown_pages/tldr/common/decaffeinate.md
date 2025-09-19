@@ -1,5 +1,5 @@
 ---
-title: "Convert CoffeeScript - Decaffeinate to JavaScript | Free DevTools"
+title: "Convert CoffeeScript - Decaffeinate to JavaScript | Online Free DevTools by Hexmos"
 name: decaffeinate
 path: /freedevtools/tldr/common/decaffeinate
 canonical: "https://hexmos.com/freedevtools/tldr/common/decaffeinate/"

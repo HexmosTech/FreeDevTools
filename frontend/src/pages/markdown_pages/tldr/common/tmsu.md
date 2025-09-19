@@ -1,5 +1,5 @@
 ---
-title: "Tag Files - Organize Files with tmsu | Free DevTools"
+title: "Tag Files - Organize Files with tmsu | Online Free DevTools by Hexmos"
 name: tmsu
 path: /freedevtools/tldr/common/tmsu
 canonical: "https://hexmos.com/freedevtools/tldr/common/tmsu/"

@@ -1,5 +1,5 @@
 ---
-title: "Monitor Processes - Control System Resources with top | Free DevTools"
+title: "Monitor Processes - Control System Resources with top | Online Free DevTools by Hexmos"
 name: top
 path: /freedevtools/tldr/linux/top
 canonical: "https://hexmos.com/freedevtools/tldr/linux/top/"

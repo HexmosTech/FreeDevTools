@@ -1,5 +1,5 @@
 ---
-title: "Hex Editor - Edit Hexadecimal Files | Free DevTools"
+title: "Hex Editor - Edit Hexadecimal Files | Online Free DevTools by Hexmos"
 name: hexedit
 path: /freedevtools/tldr/common/hexedit
 canonical: "https://hexmos.com/freedevtools/tldr/common/hexedit/"

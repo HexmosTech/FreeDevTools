@@ -1,5 +1,5 @@
 ---
-title: "Control Windows with wmctrl - Manage X Window Manager | Free DevTools"
+title: "Control Windows with wmctrl - Manage X Window Manager | Online Free DevTools by Hexmos"
 name: wmctrl
 path: /freedevtools/tldr/linux/wmctrl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wmctrl/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Archive - Manage Files with pax Utility | Free DevTools"
+title: "Create Archive - Manage Files with pax Utility | Online Free DevTools by Hexmos"
 name: pax
 path: /freedevtools/tldr/common/pax
 canonical: "https://hexmos.com/freedevtools/tldr/common/pax/"

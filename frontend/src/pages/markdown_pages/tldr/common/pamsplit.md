@@ -1,5 +1,5 @@
 ---
-title: "Split Netpbm Images - Divide PAM Files | Free DevTools"
+title: "Split Netpbm Images - Divide PAM Files | Online Free DevTools by Hexmos"
 name: pamsplit
 path: /freedevtools/tldr/common/pamsplit
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamsplit/"

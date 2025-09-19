@@ -1,5 +1,5 @@
 ---
-title: "Extract PDF Images - Control Images in PDFs | Free DevTools"
+title: "Extract PDF Images - Control Images in PDFs | Online Free DevTools by Hexmos"
 name: pdfimages
 path: /freedevtools/tldr/common/pdfimages
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfimages/"

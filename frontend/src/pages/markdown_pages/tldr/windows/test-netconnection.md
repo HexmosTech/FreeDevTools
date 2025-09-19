@@ -1,5 +1,5 @@
 ---
-title: "Test-NetConnection - Network Diagnostic Information | Free DevTools"
+title: "Test-NetConnection - Network Diagnostic Information | Online Free DevTools by Hexmos"
 name: test-netconnection
 path: /freedevtools/tldr/windows/test-netconnection
 canonical: "https://hexmos.com/freedevtools/tldr/windows/test-netconnection/"

@@ -1,5 +1,5 @@
 ---
-title: "SFDK Check - Perform Quality Checks | Free DevTools"
+title: "SFDK Check - Perform Quality Checks | Online Free DevTools by Hexmos"
 name: sfdk-check
 path: /freedevtools/tldr/sfdk/sfdk-check
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-check/"

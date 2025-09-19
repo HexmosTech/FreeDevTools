@@ -1,5 +1,5 @@
 ---
-title: "Format Files with Batcat - Syntax Highlighting | Free DevTools"
+title: "Format Files with Batcat - Syntax Highlighting | Online Free DevTools by Hexmos"
 name: batcat
 path: /freedevtools/tldr/linux/batcat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/batcat/"

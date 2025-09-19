@@ -1,5 +1,5 @@
 ---
-title: "Synchronize Files - Unison File Synchronization | Free DevTools"
+title: "Synchronize Files - Unison File Synchronization | Online Free DevTools by Hexmos"
 name: unison
 path: /freedevtools/tldr/common/unison
 canonical: "https://hexmos.com/freedevtools/tldr/common/unison/"

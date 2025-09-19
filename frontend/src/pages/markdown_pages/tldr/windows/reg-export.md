@@ -1,5 +1,5 @@
 ---
-title: "Reg Export - Create Registry Backups | Free DevTools"
+title: "Reg Export - Create Registry Backups | Online Free DevTools by Hexmos"
 name: reg-export
 path: /freedevtools/tldr/windows/reg-export
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-export/"

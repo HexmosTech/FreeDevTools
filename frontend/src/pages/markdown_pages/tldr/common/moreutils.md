@@ -1,5 +1,5 @@
 ---
-title: "Control UNIX Tools - Manage Standard Streams | Free DevTools"
+title: "Control UNIX Tools - Manage Standard Streams | Online Free DevTools by Hexmos"
 name: moreutils
 path: /freedevtools/tldr/common/moreutils
 canonical: "https://hexmos.com/freedevtools/tldr/common/moreutils/"

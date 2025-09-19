@@ -1,5 +1,5 @@
 ---
-title: "Markdown Presentation - Create Slides from Markdown | Free DevTools"
+title: "Markdown Presentation - Create Slides from Markdown | Online Free DevTools by Hexmos"
 name: mdp
 path: /freedevtools/tldr/common/mdp
 canonical: "https://hexmos.com/freedevtools/tldr/common/mdp/"

@@ -1,5 +1,5 @@
 ---
-title: "TTY - Returns Terminal Name | Free DevTools"
+title: "TTY - Returns Terminal Name | Online Free DevTools by Hexmos"
 name: tty
 path: /freedevtools/tldr/common/tty
 canonical: "https://hexmos.com/freedevtools/tldr/common/tty/"

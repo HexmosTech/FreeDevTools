@@ -1,5 +1,5 @@
 ---
-title: "Burp Suite - Control Web App Security | Free DevTools"
+title: "Burp Suite - Control Web App Security | Online Free DevTools by Hexmos"
 name: burpsuite
 path: /freedevtools/tldr/linux/burpsuite
 canonical: "https://hexmos.com/freedevtools/tldr/linux/burpsuite/"

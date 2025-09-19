@@ -1,5 +1,5 @@
 ---
-title: "VSCE - Manage VS Code Extensions | Free DevTools"
+title: "VSCE - Manage VS Code Extensions | Online Free DevTools by Hexmos"
 name: vsce
 path: /freedevtools/tldr/common/vsce
 canonical: "https://hexmos.com/freedevtools/tldr/common/vsce/"

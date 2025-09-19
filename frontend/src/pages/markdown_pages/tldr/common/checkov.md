@@ -1,5 +1,5 @@
 ---
-title: "Checkov - Validate Infrastructure as Code | Free DevTools"
+title: "Checkov - Validate Infrastructure as Code | Online Free DevTools by Hexmos"
 name: checkov
 path: /freedevtools/tldr/common/checkov
 canonical: "https://hexmos.com/freedevtools/tldr/common/checkov/"

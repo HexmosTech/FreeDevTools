@@ -1,5 +1,5 @@
 ---
-title: "Process Monitor - Display Active Processes | Free DevTools"
+title: "Process Monitor - Display Active Processes | Online Free DevTools by Hexmos"
 name: procs
 path: /freedevtools/tldr/common/procs
 canonical: "https://hexmos.com/freedevtools/tldr/common/procs/"

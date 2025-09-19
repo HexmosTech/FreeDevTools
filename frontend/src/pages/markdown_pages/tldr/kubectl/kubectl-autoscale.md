@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Autoscale - Create Pod Autoscalers | Free DevTools"
+title: "Kubectl Autoscale - Create Pod Autoscalers | Online Free DevTools by Hexmos"
 name: kubectl-autoscale
 path: /freedevtools/tldr/kubectl/kubectl-autoscale
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-autoscale/"

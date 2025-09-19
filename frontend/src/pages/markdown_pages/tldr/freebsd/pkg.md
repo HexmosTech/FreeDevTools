@@ -1,5 +1,5 @@
 ---
-title: "Package Manager - Manage FreeBSD Packages | Free DevTools"
+title: "Package Manager - Manage FreeBSD Packages | Online Free DevTools by Hexmos"
 name: pkg
 path: /freedevtools/tldr/freebsd/pkg
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/pkg/"

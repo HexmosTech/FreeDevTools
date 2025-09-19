@@ -1,5 +1,5 @@
 ---
-title: "Display Disk Space - Manage Filesystems with df | Free DevTools"
+title: "Display Disk Space - Manage Filesystems with df | Online Free DevTools by Hexmos"
 name: df
 path: /freedevtools/tldr/openbsd/df
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/df/"

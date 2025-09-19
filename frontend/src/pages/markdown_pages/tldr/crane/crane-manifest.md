@@ -1,5 +1,5 @@
 ---
-title: "Crane Manifest - Generate Image Manifest | Free DevTools"
+title: "Crane Manifest - Generate Image Manifest | Online Free DevTools by Hexmos"
 name: crane-manifest
 path: /freedevtools/tldr/crane/crane-manifest
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-manifest/"

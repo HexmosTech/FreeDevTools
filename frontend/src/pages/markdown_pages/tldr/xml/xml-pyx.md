@@ -1,5 +1,5 @@
 ---
-title: "Format XML to PYX - Convert XML Documents | Free DevTools"
+title: "Format XML to PYX - Convert XML Documents | Online Free DevTools by Hexmos"
 name: xml-pyx
 path: /freedevtools/tldr/xml/xml-pyx
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-pyx/"

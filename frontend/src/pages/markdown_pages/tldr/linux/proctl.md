@@ -1,5 +1,5 @@
 ---
-title: "Manage Projects - proctl License & Language Control | Free DevTools"
+title: "Manage Projects - proctl License & Language Control | Online Free DevTools by Hexmos"
 name: proctl
 path: /freedevtools/tldr/linux/proctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/proctl/"

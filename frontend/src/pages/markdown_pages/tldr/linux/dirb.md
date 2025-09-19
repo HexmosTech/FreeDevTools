@@ -1,5 +1,5 @@
 ---
-title: "Scan Directories - Analyze Web Servers with dirb | Free DevTools"
+title: "Scan Directories - Analyze Web Servers with dirb | Online Free DevTools by Hexmos"
 name: dirb
 path: /freedevtools/tldr/linux/dirb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dirb/"

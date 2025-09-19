@@ -1,5 +1,5 @@
 ---
-title: "Merge Vector Datasets - with ogrmerge.py | Free DevTools"
+title: "Merge Vector Datasets - with ogrmerge.py | Online Free DevTools by Hexmos"
 name: ogrmerge.py
 path: /freedevtools/tldr/common/ogrmerge.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/ogrmerge.py/"

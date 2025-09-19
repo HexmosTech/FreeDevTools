@@ -1,5 +1,5 @@
 ---
-title: "Convert Audio to Text - Whisper | Free DevTools"
+title: "Convert Audio to Text - Whisper | Online Free DevTools by Hexmos"
 name: whisper
 path: /freedevtools/tldr/common/whisper
 canonical: "https://hexmos.com/freedevtools/tldr/common/whisper/"

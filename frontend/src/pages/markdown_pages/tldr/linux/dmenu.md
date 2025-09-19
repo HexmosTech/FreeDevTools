@@ -1,5 +1,5 @@
 ---
-title: "Create Dynamic Menu - Control Input with dmenu | Free DevTools"
+title: "Create Dynamic Menu - Control Input with dmenu | Online Free DevTools by Hexmos"
 name: dmenu
 path: /freedevtools/tldr/linux/dmenu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dmenu/"

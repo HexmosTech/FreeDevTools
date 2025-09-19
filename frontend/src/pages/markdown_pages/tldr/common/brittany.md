@@ -1,5 +1,5 @@
 ---
-title: "Format Haskell Code - Pretty-Print with Brittany | Free DevTools"
+title: "Format Haskell Code - Pretty-Print with Brittany | Online Free DevTools by Hexmos"
 name: brittany
 path: /freedevtools/tldr/common/brittany
 canonical: "https://hexmos.com/freedevtools/tldr/common/brittany/"

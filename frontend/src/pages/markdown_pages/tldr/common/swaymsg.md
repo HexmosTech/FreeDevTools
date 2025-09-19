@@ -1,5 +1,5 @@
 ---
-title: "Swaymsg - Control Sway Window Manager via IPC | Free DevTools"
+title: "Swaymsg - Control Sway Window Manager via IPC | Online Free DevTools by Hexmos"
 name: swaymsg
 path: /freedevtools/tldr/common/swaymsg
 canonical: "https://hexmos.com/freedevtools/tldr/common/swaymsg/"

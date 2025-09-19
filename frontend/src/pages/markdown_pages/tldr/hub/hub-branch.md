@@ -1,5 +1,5 @@
 ---
-title: "Hub Branch - Create Git Branch | Free DevTools"
+title: "Hub Branch - Create Git Branch | Online Free DevTools by Hexmos"
 name: hub-branch
 path: /freedevtools/tldr/hub/hub-branch
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-branch/"

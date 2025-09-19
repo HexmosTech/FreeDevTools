@@ -1,5 +1,5 @@
 ---
-title: "View Network Stats - ifstat Command | Free DevTools"
+title: "View Network Stats - ifstat Command | Online Free DevTools by Hexmos"
 name: ifstat
 path: /freedevtools/tldr/linux/ifstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ifstat/"

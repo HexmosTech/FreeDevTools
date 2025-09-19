@@ -1,5 +1,5 @@
 ---
-title: "Exit Shell - Terminate Processes | Free DevTools"
+title: "Exit Shell - Terminate Processes | Online Free DevTools by Hexmos"
 name: exit
 path: /freedevtools/tldr/common/exit
 canonical: "https://hexmos.com/freedevtools/tldr/common/exit/"

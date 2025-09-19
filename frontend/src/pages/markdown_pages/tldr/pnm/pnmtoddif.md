@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to DDIF - Image Conversion | Free DevTools"
+title: "Convert PNM to DDIF - Image Conversion | Online Free DevTools by Hexmos"
 name: pnmtoddif
 path: /freedevtools/tldr/pnm/pnmtoddif
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoddif/"

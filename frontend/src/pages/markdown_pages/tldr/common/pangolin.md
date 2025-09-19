@@ -1,5 +1,5 @@
 ---
-title: "Analyze SARS-CoV-2 Lineages with Pangolin | Free DevTools"
+title: "Analyze SARS-CoV-2 Lineages with Pangolin | Online Free DevTools by Hexmos"
 name: pangolin
 path: /freedevtools/tldr/common/pangolin
 canonical: "https://hexmos.com/freedevtools/tldr/common/pangolin/"

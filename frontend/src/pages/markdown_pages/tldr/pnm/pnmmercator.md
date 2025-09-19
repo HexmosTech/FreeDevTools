@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM Images - Mercator Projection | Free DevTools"
+title: "Convert PNM Images - Mercator Projection | Online Free DevTools by Hexmos"
 name: pnmmercator
 path: "/freedevtools/tldr/pnm/pnmmercator"
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmercator/"

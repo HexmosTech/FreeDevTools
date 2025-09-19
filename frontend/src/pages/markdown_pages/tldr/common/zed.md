@@ -1,5 +1,5 @@
 ---
-title: "Zed Editor - Open Files and Directories | Free DevTools"
+title: "Zed Editor - Open Files and Directories | Online Free DevTools by Hexmos"
 name: zed
 path: /freedevtools/tldr/common/zed
 canonical: "https://hexmos.com/freedevtools/tldr/common/zed/"

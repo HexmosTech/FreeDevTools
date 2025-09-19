@@ -1,5 +1,5 @@
 ---
-title: "View Images with Feh - Image Viewer Utility | Free DevTools"
+title: "View Images with Feh - Image Viewer Utility | Online Free DevTools by Hexmos"
 name: feh
 path: /freedevtools/tldr/common/feh
 canonical: "https://hexmos.com/freedevtools/tldr/common/feh/"

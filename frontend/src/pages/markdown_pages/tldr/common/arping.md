@@ -1,5 +1,5 @@
 ---
-title: "Arping - Discover Hosts on Network | Free DevTools"
+title: "Arping - Discover Hosts on Network | Online Free DevTools by Hexmos"
 name: arping
 path: /freedevtools/tldr/common/arping
 canonical: "https://hexmos.com/freedevtools/tldr/common/arping/"

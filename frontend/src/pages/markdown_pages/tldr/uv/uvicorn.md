@@ -1,5 +1,5 @@
 ---
-title: "Uvicorn Server - Run Python ASGI Apps | Free DevTools"
+title: "Uvicorn Server - Run Python ASGI Apps | Online Free DevTools by Hexmos"
 name: uvicorn
 path: /freedevtools/tldr/uv/uvicorn
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uvicorn/"

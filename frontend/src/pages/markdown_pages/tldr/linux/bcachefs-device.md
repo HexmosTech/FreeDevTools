@@ -1,5 +1,5 @@
 ---
-title: "Bcachefs Device - Manage Storage Devices | Free DevTools"
+title: "Bcachefs Device - Manage Storage Devices | Online Free DevTools by Hexmos"
 name: bcachefs-device
 path: /freedevtools/tldr/linux/bcachefs-device
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bcachefs-device/"

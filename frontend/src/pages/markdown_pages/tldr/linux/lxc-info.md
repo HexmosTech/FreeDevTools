@@ -1,5 +1,5 @@
 ---
-title: "LXC Info - Control Linux Containers | Free DevTools"
+title: "LXC Info - Control Linux Containers | Online Free DevTools by Hexmos"
 name: lxc-info
 path: /freedevtools/tldr/linux/lxc-info
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-info/"

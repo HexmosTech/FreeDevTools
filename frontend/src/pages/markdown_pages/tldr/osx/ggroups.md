@@ -1,5 +1,5 @@
 ---
-title: "Groups - View User Group Memberships | Free DevTools"
+title: "Groups - View User Group Memberships | Online Free DevTools by Hexmos"
 name: ggroups
 path: /freedevtools/tldr/osx/ggroups
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ggroups/"

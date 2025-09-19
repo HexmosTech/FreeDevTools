@@ -1,5 +1,5 @@
 ---
-title: "Storage Entity - Manage Azure Tables | Free DevTools"
+title: "Storage Entity - Manage Azure Tables | Online Free DevTools by Hexmos"
 name: az-storage-entity
 path: /freedevtools/tldr/az/az-storage-entity
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-entity/"

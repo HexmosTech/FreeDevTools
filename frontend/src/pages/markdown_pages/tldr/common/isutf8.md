@@ -1,5 +1,5 @@
 ---
-title: "Validate UTF-8 - Check File Encoding | Free DevTools"
+title: "Validate UTF-8 - Check File Encoding | Online Free DevTools by Hexmos"
 name: isutf8
 path: /freedevtools/tldr/common/isutf8
 canonical: "https://hexmos.com/freedevtools/tldr/common/isutf8/"

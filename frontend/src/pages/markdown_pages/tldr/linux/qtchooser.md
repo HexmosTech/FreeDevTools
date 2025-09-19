@@ -1,5 +1,5 @@
 ---
-title: "Qt Version Control - Manage Qt Versions | Free DevTools"
+title: "Qt Version Control - Manage Qt Versions | Online Free DevTools by Hexmos"
 name: qtchooser
 path: /freedevtools/tldr/linux/qtchooser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qtchooser/"

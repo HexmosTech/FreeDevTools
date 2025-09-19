@@ -1,5 +1,5 @@
 ---
-title: "Partition Table - Parse Partitions with partx | Free DevTools"
+title: "Partition Table - Parse Partitions with partx | Online Free DevTools by Hexmos"
 name: partx
 path: /freedevtools/tldr/linux/partx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/partx/"

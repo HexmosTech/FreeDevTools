@@ -1,5 +1,5 @@
 ---
-title: "Flarectl - Control Cloudflare Services | Free DevTools"
+title: "Flarectl - Control Cloudflare Services | Online Free DevTools by Hexmos"
 name: flarectl
 path: /freedevtools/tldr/common/flarectl
 canonical: "https://hexmos.com/freedevtools/tldr/common/flarectl/"

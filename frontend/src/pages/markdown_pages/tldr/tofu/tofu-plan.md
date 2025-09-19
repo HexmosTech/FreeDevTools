@@ -1,5 +1,5 @@
 ---
-title: "Generate Tofu Plans - Automate Infrastructure with OpenTofu | Free DevTools"
+title: "Generate Tofu Plans - Automate Infrastructure with OpenTofu | Online Free DevTools by Hexmos"
 name: tofu-plan
 path: /freedevtools/tldr/tofu/tofu-plan
 canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-plan/"

@@ -1,5 +1,5 @@
 ---
-title: "IPP Find - Discover IPP Printers | Free DevTools"
+title: "IPP Find - Discover IPP Printers | Online Free DevTools by Hexmos"
 name: ippfind
 path: /freedevtools/tldr/common/ippfind
 canonical: "https://hexmos.com/freedevtools/tldr/common/ippfind/"

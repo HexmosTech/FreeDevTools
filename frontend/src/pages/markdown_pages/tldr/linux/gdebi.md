@@ -1,5 +1,5 @@
 ---
-title: "Gdebi - Install Deb Packages Easily | Free DevTools"
+title: "Gdebi - Install Deb Packages Easily | Online Free DevTools by Hexmos"
 name: gdebi
 path: /freedevtools/tldr/linux/gdebi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gdebi/"

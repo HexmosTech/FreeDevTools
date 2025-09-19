@@ -1,5 +1,5 @@
 ---
-title: "Behat Tests - Run BDD Tests with Behat | Free DevTools"
+title: "Behat Tests - Run BDD Tests with Behat | Online Free DevTools by Hexmos"
 name: behat
 path: /freedevtools/tldr/common/behat
 canonical: "https://hexmos.com/freedevtools/tldr/common/behat/"

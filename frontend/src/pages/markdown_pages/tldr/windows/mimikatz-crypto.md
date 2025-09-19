@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Crypto - Manipulate Certificates | Free DevTools"
+title: "Mimikatz Crypto - Manipulate Certificates | Online Free DevTools by Hexmos"
 name: mimikatz-crypto
 path: /freedevtools/tldr/windows/mimikatz-crypto
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-crypto/"

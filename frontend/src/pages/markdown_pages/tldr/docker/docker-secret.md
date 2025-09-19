@@ -1,5 +1,5 @@
 ---
-title: "Create Docker Secrets - Manage Swarm Secrets | Free DevTools"
+title: "Create Docker Secrets - Manage Swarm Secrets | Online Free DevTools by Hexmos"
 name: docker-secret
 path: /freedevtools/tldr/docker/docker-secret
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-secret/"

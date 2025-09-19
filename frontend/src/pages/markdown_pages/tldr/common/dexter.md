@@ -1,5 +1,5 @@
 ---
-title: "Create Kubectl User - Authenticate with Dexter OIDC | Free DevTools"
+title: "Create Kubectl User - Authenticate with Dexter OIDC | Online Free DevTools by Hexmos"
 name: dexter
 path: /freedevtools/tldr/common/dexter
 canonical: "https://hexmos.com/freedevtools/tldr/common/dexter/"

@@ -1,5 +1,5 @@
 ---
-title: "Monitor X Events - Analyze X11 Activity | Free DevTools"
+title: "Monitor X Events - Analyze X11 Activity | Online Free DevTools by Hexmos"
 name: xev
 path: /freedevtools/tldr/common/xev
 canonical: "https://hexmos.com/freedevtools/tldr/common/xev/"

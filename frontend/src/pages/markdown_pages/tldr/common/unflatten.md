@@ -1,5 +1,5 @@
 ---
-title: "Unflatten Graphs - Improve Layout Aspect Ratio | Free DevTools"
+title: "Unflatten Graphs - Improve Layout Aspect Ratio | Online Free DevTools by Hexmos"
 name: unflatten
 path: /freedevtools/tldr/common/unflatten
 canonical: "https://hexmos.com/freedevtools/tldr/common/unflatten/"

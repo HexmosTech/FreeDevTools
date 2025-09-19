@@ -1,5 +1,5 @@
 ---
-title: "Enable PnP Device - Activate Hardware on Windows | Free DevTools"
+title: "Enable PnP Device - Activate Hardware on Windows | Online Free DevTools by Hexmos"
 name: enable-pnpdevice
 path: /freedevtools/tldr/windows/enable-pnpdevice
 canonical: "https://hexmos.com/freedevtools/tldr/windows/enable-pnpdevice/"

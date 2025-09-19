@@ -1,5 +1,5 @@
 ---
-title: "Open - Execute Files & URLs | Free DevTools"
+title: "Open - Execute Files & URLs | Online Free DevTools by Hexmos"
 name: open
 path: /freedevtools/tldr/common/open
 canonical: "https://hexmos.com/freedevtools/tldr/common/open/"

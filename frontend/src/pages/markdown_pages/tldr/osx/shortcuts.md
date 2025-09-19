@@ -1,5 +1,5 @@
 ---
-title: "Shortcuts - Manage MacOS Shortcuts | Free DevTools"
+title: "Shortcuts - Manage MacOS Shortcuts | Online Free DevTools by Hexmos"
 name: shortcuts
 path: /freedevtools/tldr/osx/shortcuts
 canonical: "https://hexmos.com/freedevtools/tldr/osx/shortcuts/"

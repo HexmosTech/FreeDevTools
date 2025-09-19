@@ -1,5 +1,5 @@
 ---
-title: "Assess Kubernetes Security - Prowler Kubernetes | Free DevTools"
+title: "Assess Kubernetes Security - Prowler Kubernetes | Online Free DevTools by Hexmos"
 name: prowler-kubernetes
 path: /freedevtools/tldr/prowler/prowler-kubernetes
 canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-kubernetes/"

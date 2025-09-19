@@ -1,5 +1,5 @@
 ---
-title: "Pacman Game - Play Pacman4Console in Linux | Free DevTools"
+title: "Pacman Game - Play Pacman4Console in Linux | Online Free DevTools by Hexmos"
 name: pacman4console
 path: /freedevtools/tldr/linux/pacman4console
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman4console/"

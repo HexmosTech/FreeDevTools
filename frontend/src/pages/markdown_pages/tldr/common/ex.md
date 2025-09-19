@@ -1,5 +1,5 @@
 ---
-title: "Text Editor - Edit Files with ex | Free DevTools"
+title: "Text Editor - Edit Files with ex | Online Free DevTools by Hexmos"
 name: ex
 path: /freedevtools/tldr/common/ex
 canonical: "https://hexmos.com/freedevtools/tldr/common/ex/"

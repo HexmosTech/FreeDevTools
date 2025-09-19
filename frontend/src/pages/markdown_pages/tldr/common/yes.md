@@ -1,5 +1,5 @@
 ---
-title: "Output Yes - Automate Prompts with Linux 'yes' Command | Free DevTools"
+title: "Output Yes - Automate Prompts with Linux 'yes' Command | Online Free DevTools by Hexmos"
 name: yes
 path: /freedevtools/tldr/common/yes
 canonical: "https://hexmos.com/freedevtools/tldr/common/yes/"

@@ -1,5 +1,5 @@
 ---
-title: "Clean PBM Image - Erase Pixels | Free DevTools"
+title: "Clean PBM Image - Erase Pixels | Online Free DevTools by Hexmos"
 name: pbmclean
 path: /freedevtools/tldr/common/pbmclean
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmclean/"

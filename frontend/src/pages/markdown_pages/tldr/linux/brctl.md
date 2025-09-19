@@ -1,5 +1,5 @@
 ---
-title: "Brctl - Control Ethernet Bridges | Free DevTools"
+title: "Brctl - Control Ethernet Bridges | Online Free DevTools by Hexmos"
 name: brctl
 path: /freedevtools/tldr/linux/brctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/brctl/"

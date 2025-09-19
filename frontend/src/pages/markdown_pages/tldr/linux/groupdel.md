@@ -1,5 +1,5 @@
 ---
-title: "Delete Groups - Manage System Groups | Free DevTools"
+title: "Delete Groups - Manage System Groups | Online Free DevTools by Hexmos"
 name: groupdel
 path: /freedevtools/tldr/linux/groupdel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/groupdel/"

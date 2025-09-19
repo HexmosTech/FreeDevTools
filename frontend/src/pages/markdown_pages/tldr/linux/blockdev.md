@@ -1,5 +1,5 @@
 ---
-title: "Blockdev - Manage Block Devices | Free DevTools"
+title: "Blockdev - Manage Block Devices | Online Free DevTools by Hexmos"
 name: blockdev
 path: /freedevtools/tldr/linux/blockdev
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blockdev/"

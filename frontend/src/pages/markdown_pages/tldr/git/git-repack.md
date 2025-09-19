@@ -1,5 +1,5 @@
 ---
-title: "Repack Git - Optimize Repository Storage | Free DevTools"
+title: "Repack Git - Optimize Repository Storage | Online Free DevTools by Hexmos"
 name: git-repack
 path: /freedevtools/tldr/git/git-repack
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-repack/"

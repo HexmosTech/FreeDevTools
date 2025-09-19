@@ -1,5 +1,5 @@
 ---
-title: "Rainbow Colorizer - Colorize Text with lolcat | Free DevTools"
+title: "Rainbow Colorizer - Colorize Text with lolcat | Online Free DevTools by Hexmos"
 name: lolcat
 path: /freedevtools/tldr/common/lolcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/lolcat/"

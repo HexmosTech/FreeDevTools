@@ -1,5 +1,5 @@
 ---
-title: "Balena Control - Manage IoT Devices | Free DevTools"
+title: "Balena Control - Manage IoT Devices | Online Free DevTools by Hexmos"
 name: balena
 path: /freedevtools/tldr/common/balena
 canonical: "https://hexmos.com/freedevtools/tldr/common/balena/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Linode Object Storage - CLI | Free DevTools"
+title: "Manage Linode Object Storage - CLI | Online Free DevTools by Hexmos"
 name: linode-cli-object-storage
 path: /freedevtools/tldr/linode/linode-cli-object-storage
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-object-storage/"

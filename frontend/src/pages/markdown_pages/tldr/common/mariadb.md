@@ -1,5 +1,5 @@
 ---
-title: "MariaDB Client - Control Databases | Free DevTools"
+title: "MariaDB Client - Control Databases | Online Free DevTools by Hexmos"
 name: mariadb
 path: /freedevtools/tldr/common/mariadb
 canonical: "https://hexmos.com/freedevtools/tldr/common/mariadb/"

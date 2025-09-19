@@ -1,5 +1,5 @@
 ---
-title: "Darling - Run macOS Programs on Linux | Free DevTools"
+title: "Darling - Run macOS Programs on Linux | Online Free DevTools by Hexmos"
 name: darling
 path: /freedevtools/tldr/linux/darling
 canonical: "https://hexmos.com/freedevtools/tldr/linux/darling/"

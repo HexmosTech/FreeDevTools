@@ -1,5 +1,5 @@
 ---
-title: "Share Files Securely with ffsend | Free DevTools"
+title: "Share Files Securely with ffsend | Online Free DevTools by Hexmos"
 name: ffsend
 path: /freedevtools/tldr/common/ffsend
 canonical: "https://hexmos.com/freedevtools/tldr/common/ffsend/"

@@ -1,5 +1,5 @@
 ---
-title: "MSSQL Client - Execute SQL Queries | Free DevTools"
+title: "MSSQL Client - Execute SQL Queries | Online Free DevTools by Hexmos"
 name: mssqlclient.py
 path: /freedevtools/tldr/common/mssqlclient.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/mssqlclient.py/"

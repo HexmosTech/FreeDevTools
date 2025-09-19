@@ -1,5 +1,5 @@
 ---
-title: "Serve Files - Control HTTP File Server with miniserve | Free DevTools"
+title: "Serve Files - Control HTTP File Server with miniserve | Online Free DevTools by Hexmos"
 name: miniserve
 path: /freedevtools/tldr/common/miniserve
 canonical: "https://hexmos.com/freedevtools/tldr/common/miniserve/"

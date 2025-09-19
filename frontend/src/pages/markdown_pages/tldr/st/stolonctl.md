@@ -1,5 +1,5 @@
 ---
-title: "Control Stolon Clusters - Manage HA PostgreSQL | Free DevTools"
+title: "Control Stolon Clusters - Manage HA PostgreSQL | Online Free DevTools by Hexmos"
 name: stolonctl
 path: /freedevtools/tldr/st/stolonctl
 canonical: "https://hexmos.com/freedevtools/tldr/st/stolonctl/"

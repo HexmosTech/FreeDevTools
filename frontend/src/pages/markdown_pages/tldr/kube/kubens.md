@@ -1,5 +1,5 @@
 ---
-title: "Kubens - Switch Kubernetes Namespaces | Free DevTools"
+title: "Kubens - Switch Kubernetes Namespaces | Online Free DevTools by Hexmos"
 name: kubens
 path: /freedevtools/tldr/kube/kubens
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kubens/"

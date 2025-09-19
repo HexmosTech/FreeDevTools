@@ -1,5 +1,5 @@
 ---
-title: "Search Command History - Smart Command Lookup | Free DevTools"
+title: "Search Command History - Smart Command Lookup | Online Free DevTools by Hexmos"
 name: mcfly
 path: /freedevtools/tldr/common/mcfly
 canonical: "https://hexmos.com/freedevtools/tldr/common/mcfly/"

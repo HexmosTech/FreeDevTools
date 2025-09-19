@@ -1,5 +1,5 @@
 ---
-title: "Unexpand - Convert Spaces to Tabs | Free DevTools"
+title: "Unexpand - Convert Spaces to Tabs | Online Free DevTools by Hexmos"
 name: gunexpand
 path: /freedevtools/tldr/osx/gunexpand
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gunexpand/"

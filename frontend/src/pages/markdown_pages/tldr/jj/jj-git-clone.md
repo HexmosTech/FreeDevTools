@@ -1,5 +1,5 @@
 ---
-title: "Create JJ Git Clone - New Repo from Git | Free DevTools"
+title: "Create JJ Git Clone - New Repo from Git | Online Free DevTools by Hexmos"
 name: jj-git-clone
 path: /freedevtools/tldr/jj/jj-git-clone
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-clone/"

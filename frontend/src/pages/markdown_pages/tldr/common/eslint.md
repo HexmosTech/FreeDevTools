@@ -1,5 +1,5 @@
 ---
-title: "ESLint - Validate JavaScript and JSX | Free DevTools"
+title: "ESLint - Validate JavaScript and JSX | Online Free DevTools by Hexmos"
 name: eslint
 path: /freedevtools/tldr/common/eslint
 canonical: "https://hexmos.com/freedevtools/tldr/common/eslint/"

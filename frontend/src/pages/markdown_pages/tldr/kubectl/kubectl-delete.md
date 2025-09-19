@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Delete - Remove Kubernetes Resources | Free DevTools"
+title: "Kubectl Delete - Remove Kubernetes Resources | Online Free DevTools by Hexmos"
 name: kubectl-delete
 path: /freedevtools/tldr/kubectl/kubectl-delete
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-delete/"

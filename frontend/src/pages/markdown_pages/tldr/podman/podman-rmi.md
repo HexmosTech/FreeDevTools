@@ -1,5 +1,5 @@
 ---
-title: "Remove Podman Images - Manage Container Images | Free DevTools"
+title: "Remove Podman Images - Manage Container Images | Online Free DevTools by Hexmos"
 name: podman-rmi
 path: /freedevtools/tldr/podman/podman-rmi
 canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-rmi/"

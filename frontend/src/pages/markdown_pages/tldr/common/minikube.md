@@ -1,5 +1,5 @@
 ---
-title: "Minikube - Run Kubernetes Locally | Free DevTools"
+title: "Minikube - Run Kubernetes Locally | Online Free DevTools by Hexmos"
 name: minikube
 path: /freedevtools/tldr/common/minikube
 canonical: "https://hexmos.com/freedevtools/tldr/common/minikube/"

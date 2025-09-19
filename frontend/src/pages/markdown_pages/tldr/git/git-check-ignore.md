@@ -1,5 +1,5 @@
 ---
-title: "Check Git Ignore - Analyze Ignore Rules | Free DevTools"
+title: "Check Git Ignore - Analyze Ignore Rules | Online Free DevTools by Hexmos"
 name: git-check-ignore
 path: /freedevtools/tldr/git/git-check-ignore
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-check-ignore/"

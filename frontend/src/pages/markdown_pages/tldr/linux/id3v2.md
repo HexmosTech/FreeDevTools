@@ -1,5 +1,5 @@
 ---
-title: "Manage ID3 Tags - Convert & List ID3v1/v2 | Free DevTools"
+title: "Manage ID3 Tags - Convert & List ID3v1/v2 | Online Free DevTools by Hexmos"
 name: id3v2
 path: /freedevtools/tldr/linux/id3v2
 canonical: "https://hexmos.com/freedevtools/tldr/linux/id3v2/"

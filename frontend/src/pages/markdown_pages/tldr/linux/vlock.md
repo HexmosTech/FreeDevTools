@@ -1,5 +1,5 @@
 ---
-title: "vlock - Lock Virtual Consoles | Free DevTools"
+title: "vlock - Lock Virtual Consoles | Online Free DevTools by Hexmos"
 name: vlock
 path: /freedevtools/tldr/linux/vlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vlock/"

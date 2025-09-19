@@ -1,5 +1,5 @@
 ---
-title: "Read RSS Feeds - Control Newsboat from Terminal | Free DevTools"
+title: "Read RSS Feeds - Control Newsboat from Terminal | Online Free DevTools by Hexmos"
 name: newsboat
 path: "/freedevtools/tldr/common/newsboat"
 canonical: "https://hexmos.com/freedevtools/tldr/common/newsboat/"

@@ -1,5 +1,5 @@
 ---
-title: "S3 Website - Configure AWS S3 Websites | Free DevTools"
+title: "S3 Website - Configure AWS S3 Websites | Online Free DevTools by Hexmos"
 name: aws-s3-website
 path: /freedevtools/tldr/aws/aws-s3-website
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-website/"

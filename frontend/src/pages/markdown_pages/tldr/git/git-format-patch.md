@@ -1,5 +1,5 @@
 ---
-title: "Format Patch - Generate Git Patches | Free DevTools"
+title: "Format Patch - Generate Git Patches | Online Free DevTools by Hexmos"
 name: git-format-patch
 path: /freedevtools/tldr/git/git-format-patch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-format-patch/"

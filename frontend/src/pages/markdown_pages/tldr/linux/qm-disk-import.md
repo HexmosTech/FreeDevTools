@@ -1,5 +1,5 @@
 ---
-title: "Disk Import - Create Virtual Machine Disks | Free DevTools"
+title: "Disk Import - Create Virtual Machine Disks | Online Free DevTools by Hexmos"
 name: qm-disk-import
 path: /freedevtools/tldr/linux/qm-disk-import
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk-import/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage GitHub Secrets - Secure Repositories | Free DevTools"
+title: "Manage GitHub Secrets - Secure Repositories | Online Free DevTools by Hexmos"
 name: gh-secret
 path: /freedevtools/tldr/gh/gh-secret
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-secret/"

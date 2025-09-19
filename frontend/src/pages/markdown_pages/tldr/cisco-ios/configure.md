@@ -1,5 +1,5 @@
 ---
-title: "Configure Cisco IOS - Control Network Configuration | Free DevTools"
+title: "Configure Cisco IOS - Control Network Configuration | Online Free DevTools by Hexmos"
 name: configure
 path: /freedevtools/tldr/cisco-ios/configure
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/configure/"

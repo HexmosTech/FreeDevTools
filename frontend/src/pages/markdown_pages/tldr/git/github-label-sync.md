@@ -1,5 +1,5 @@
 ---
-title: "Sync GitHub Labels - Control Repository Labels | Free DevTools"
+title: "Sync GitHub Labels - Control Repository Labels | Online Free DevTools by Hexmos"
 name: github-label-sync
 path: /freedevtools/tldr/git/github-label-sync
 canonical: "https://hexmos.com/freedevtools/tldr/git/github-label-sync/"

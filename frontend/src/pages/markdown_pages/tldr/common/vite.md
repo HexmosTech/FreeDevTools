@@ -1,5 +1,5 @@
 ---
-title: "Create Vite Project - Build JavaScript Apps | Free DevTools"
+title: "Create Vite Project - Build JavaScript Apps | Online Free DevTools by Hexmos"
 name: vite
 path: /freedevtools/tldr/common/vite
 canonical: "https://hexmos.com/freedevtools/tldr/common/vite/"

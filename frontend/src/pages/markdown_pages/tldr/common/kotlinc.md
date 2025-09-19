@@ -1,5 +1,5 @@
 ---
-title: "Kotlin Compiler - Compile Kotlin Code | Free DevTools"
+title: "Kotlin Compiler - Compile Kotlin Code | Online Free DevTools by Hexmos"
 name: kotlinc
 path: /freedevtools/tldr/common/kotlinc
 canonical: "https://hexmos.com/freedevtools/tldr/common/kotlinc/"

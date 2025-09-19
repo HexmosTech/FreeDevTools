@@ -1,5 +1,5 @@
 ---
-title: "Checksec - Analyze Executable Security | Free DevTools"
+title: "Checksec - Analyze Executable Security | Online Free DevTools by Hexmos"
 name: checksec
 path: /freedevtools/tldr/common/checksec
 canonical: "https://hexmos.com/freedevtools/tldr/common/checksec/"

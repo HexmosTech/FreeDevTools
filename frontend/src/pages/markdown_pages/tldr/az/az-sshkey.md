@@ -1,5 +1,5 @@
 ---
-title: "Create SSH Key - Manage Keys with Azure CLI | Free DevTools"
+title: "Create SSH Key - Manage Keys with Azure CLI | Online Free DevTools by Hexmos"
 name: az-sshkey
 path: /freedevtools/tldr/az/az-sshkey
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-sshkey/"

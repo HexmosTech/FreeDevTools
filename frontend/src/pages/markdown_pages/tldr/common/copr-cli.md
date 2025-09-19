@@ -1,5 +1,5 @@
 ---
-title: "Build RPMs - Manage COPR Projects with copr-cli | Free DevTools"
+title: "Build RPMs - Manage COPR Projects with copr-cli | Online Free DevTools by Hexmos"
 name: copr-cli
 path: /freedevtools/tldr/common/copr-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/copr-cli/"

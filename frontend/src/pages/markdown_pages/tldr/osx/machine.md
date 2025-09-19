@@ -1,5 +1,5 @@
 ---
-title: "Machine - Print Machine Type on macOS | Free DevTools"
+title: "Machine - Print Machine Type on macOS | Online Free DevTools by Hexmos"
 name: machine
 path: /freedevtools/tldr/osx/machine
 canonical: "https://hexmos.com/freedevtools/tldr/osx/machine/"

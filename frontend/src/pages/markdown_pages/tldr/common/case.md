@@ -1,5 +1,5 @@
 ---
-title: "Control Case Statements - Bash Multi-Choice | Free DevTools"
+title: "Control Case Statements - Bash Multi-Choice | Online Free DevTools by Hexmos"
 name: case
 path: /freedevtools/tldr/common/case
 canonical: "https://hexmos.com/freedevtools/tldr/common/case/"

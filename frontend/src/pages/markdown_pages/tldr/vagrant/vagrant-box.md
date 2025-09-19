@@ -1,5 +1,5 @@
 ---
-title: "Manage Vagrant Boxes - Create VMs | Free DevTools"
+title: "Manage Vagrant Boxes - Create VMs | Online Free DevTools by Hexmos"
 name: vagrant-box
 path: /freedevtools/tldr/vagrant/vagrant-box
 canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-box/"

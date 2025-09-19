@@ -1,5 +1,5 @@
 ---
-title: "Xeyes - Track Mouse Movements on Linux | Free DevTools"
+title: "Xeyes - Track Mouse Movements on Linux | Online Free DevTools by Hexmos"
 name: xeyes
 path: /freedevtools/tldr/linux/xeyes
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xeyes/"

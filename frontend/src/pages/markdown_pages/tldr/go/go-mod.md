@@ -1,5 +1,5 @@
 ---
-title: "Go Mod - Manage Go Modules | Free DevTools"
+title: "Go Mod - Manage Go Modules | Online Free DevTools by Hexmos"
 name: go-mod
 path: /freedevtools/tldr/go/go-mod
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-mod/"

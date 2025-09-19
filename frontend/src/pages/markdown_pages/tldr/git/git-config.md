@@ -1,5 +1,5 @@
 ---
-title: "Git Config - Manage Git Configurations | Free DevTools"
+title: "Git Config - Manage Git Configurations | Online Free DevTools by Hexmos"
 name: git-config
 path: /freedevtools/tldr/git/git-config
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-config/"

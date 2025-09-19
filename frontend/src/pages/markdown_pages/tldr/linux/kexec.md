@@ -1,5 +1,5 @@
 ---
-title: "Kexec - Reboot Kernel Directly | Free DevTools"
+title: "Kexec - Reboot Kernel Directly | Online Free DevTools by Hexmos"
 name: kexec
 path: /freedevtools/tldr/linux/kexec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kexec/"

@@ -1,5 +1,5 @@
 ---
-title: "Brew Package Manager - Control Packages on macOS/Linux | Free DevTools"
+title: "Brew Package Manager - Control Packages on macOS/Linux | Online Free DevTools by Hexmos"
 name: brew
 path: /freedevtools/tldr/brew/brew
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew/"

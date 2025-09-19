@@ -1,5 +1,5 @@
 ---
-title: "Qmake Builder - Execute Qmake Builds | Free DevTools"
+title: "Qmake Builder - Execute Qmake Builds | Online Free DevTools by Hexmos"
 name: sfdk-qmake
 path: /freedevtools/tldr/sfdk/sfdk-qmake
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmake/"

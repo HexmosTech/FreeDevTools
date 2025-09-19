@@ -1,5 +1,5 @@
 ---
-title: "Parse Shell Options - Control Arguments | Free DevTools"
+title: "Parse Shell Options - Control Arguments | Online Free DevTools by Hexmos"
 name: getopts
 path: /freedevtools/tldr/get/getopts
 canonical: "https://hexmos.com/freedevtools/tldr/get/getopts/"

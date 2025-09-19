@@ -1,5 +1,5 @@
 ---
-title: "Retrieve File Attributes - getfattr | Free DevTools"
+title: "Retrieve File Attributes - getfattr | Online Free DevTools by Hexmos"
 name: getfattr
 path: /freedevtools/tldr/linux/getfattr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getfattr/"

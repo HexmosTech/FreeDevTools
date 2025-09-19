@@ -1,5 +1,5 @@
 ---
-title: "Telnet - Connect to Remote Host | Free DevTools"
+title: "Telnet - Connect to Remote Host | Online Free DevTools by Hexmos"
 name: telnet
 path: /freedevtools/tldr/common/telnet
 canonical: "https://hexmos.com/freedevtools/tldr/common/telnet/"

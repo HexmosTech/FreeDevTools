@@ -1,5 +1,5 @@
 ---
-title: "Control hledger - Plain Text Accounting | Free DevTools"
+title: "Control hledger - Plain Text Accounting | Online Free DevTools by Hexmos"
 name: hledger
 path: "/freedevtools/tldr/hledger/hledger"
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger/"

@@ -1,5 +1,5 @@
 ---
-title: "Blur Screen Lock - Control Screen Blurring | Free DevTools"
+title: "Blur Screen Lock - Control Screen Blurring | Online Free DevTools by Hexmos"
 name: blurlock
 path: /freedevtools/tldr/linux/blurlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blurlock/"

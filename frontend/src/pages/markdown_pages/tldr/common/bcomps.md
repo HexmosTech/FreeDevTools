@@ -1,5 +1,5 @@
 ---
-title: "Decompose Graph - Biconnected Components | Free DevTools"
+title: "Decompose Graph - Biconnected Components | Online Free DevTools by Hexmos"
 name: bcomps
 path: /freedevtools/tldr/common/bcomps
 canonical: "https://hexmos.com/freedevtools/tldr/common/bcomps/"

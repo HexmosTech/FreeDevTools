@@ -1,5 +1,5 @@
 ---
-title: "Format Flash Drive - Edit Partition Table with f3fix | Free DevTools"
+title: "Format Flash Drive - Edit Partition Table with f3fix | Online Free DevTools by Hexmos"
 name: f3fix
 path: /freedevtools/tldr/common/f3fix
 canonical: "https://hexmos.com/freedevtools/tldr/common/f3fix/"

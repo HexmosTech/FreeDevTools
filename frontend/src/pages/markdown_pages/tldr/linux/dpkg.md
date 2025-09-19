@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages with dpkg - Debian Package Control | Free DevTools"
+title: "Manage Packages with dpkg - Debian Package Control | Online Free DevTools by Hexmos"
 name: dpkg
 path: /freedevtools/tldr/linux/dpkg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg/"

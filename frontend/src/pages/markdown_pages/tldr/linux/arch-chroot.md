@@ -1,5 +1,5 @@
 ---
-title: "Arch-Chroot - Control Root Environment on Linux | Free DevTools"
+title: "Arch-Chroot - Control Root Environment on Linux | Online Free DevTools by Hexmos"
 name: arch-chroot
 path: /freedevtools/tldr/linux/arch-chroot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arch-chroot/"

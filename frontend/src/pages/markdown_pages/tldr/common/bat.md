@@ -1,5 +1,5 @@
 ---
-title: "Highlight Files - Format Files with Bat | Free DevTools"
+title: "Highlight Files - Format Files with Bat | Online Free DevTools by Hexmos"
 name: bat
 path: "/freedevtools/tldr/common/bat"
 canonical: "https://hexmos.com/freedevtools/tldr/common/bat/"

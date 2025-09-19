@@ -1,5 +1,5 @@
 ---
-title: "Validate PPD Files - Test PPD Conformance | Free DevTools"
+title: "Validate PPD Files - Test PPD Conformance | Online Free DevTools by Hexmos"
 name: cupstestppd
 path: /freedevtools/tldr/common/cupstestppd
 canonical: "https://hexmos.com/freedevtools/tldr/common/cupstestppd/"

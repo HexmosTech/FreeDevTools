@@ -1,5 +1,5 @@
 ---
-title: "Sequelize ORM - Generate Database Models | Free DevTools"
+title: "Sequelize ORM - Generate Database Models | Online Free DevTools by Hexmos"
 name: sequelize
 path: /freedevtools/tldr/common/sequelize
 canonical: "https://hexmos.com/freedevtools/tldr/common/sequelize/"

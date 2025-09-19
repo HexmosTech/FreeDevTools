@@ -1,5 +1,5 @@
 ---
-title: "Zpool - Manage ZFS Pools | Free DevTools"
+title: "Zpool - Manage ZFS Pools | Online Free DevTools by Hexmos"
 name: zpool
 path: /freedevtools/tldr/common/zpool
 canonical: "https://hexmos.com/freedevtools/tldr/common/zpool/"

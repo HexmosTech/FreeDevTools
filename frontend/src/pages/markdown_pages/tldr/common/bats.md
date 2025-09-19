@@ -1,5 +1,5 @@
 ---
-title: "Bash Test System - Automate Bash Tests | Free DevTools"
+title: "Bash Test System - Automate Bash Tests | Online Free DevTools by Hexmos"
 name: bats
 path: /freedevtools/tldr/common/bats
 canonical: "https://hexmos.com/freedevtools/tldr/common/bats/"

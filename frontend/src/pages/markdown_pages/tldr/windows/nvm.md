@@ -1,5 +1,5 @@
 ---
-title: "Control Node.js Versions - NVM | Free DevTools"
+title: "Control Node.js Versions - NVM | Online Free DevTools by Hexmos"
 name: nvm
 path: /freedevtools/tldr/windows/nvm
 canonical: "https://hexmos.com/freedevtools/tldr/windows/nvm/"

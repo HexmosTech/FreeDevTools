@@ -1,5 +1,5 @@
 ---
-title: "Record Audio - Control Audio Recording with arecord | Free DevTools"
+title: "Record Audio - Control Audio Recording with arecord | Online Free DevTools by Hexmos"
 name: arecord
 path: /freedevtools/tldr/linux/arecord
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arecord/"

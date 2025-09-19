@@ -1,5 +1,5 @@
 ---
-title: "Create ASCII Images - Convert Images to ASCII Art | Free DevTools"
+title: "Create ASCII Images - Convert Images to ASCII Art | Online Free DevTools by Hexmos"
 name: ascii-image-converter
 path: /freedevtools/tldr/common/ascii-image-converter
 canonical: "https://hexmos.com/freedevtools/tldr/common/ascii-image-converter/"

@@ -1,5 +1,5 @@
 ---
-title: "Base64 Encode & Decode - Convert Data Online | Free DevTools"
+title: "Base64 Encode & Decode - Convert Data Online | Online Free DevTools by Hexmos"
 name: base64
 path: /freedevtools/tldr/freebsd/base64
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/base64/"

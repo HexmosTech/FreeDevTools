@@ -1,5 +1,5 @@
 ---
-title: "Invert PNM Image - Transform Colors | Free DevTools"
+title: "Invert PNM Image - Transform Colors | Online Free DevTools by Hexmos"
 name: pnminvert
 path: /freedevtools/tldr/pnm/pnminvert
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnminvert/"

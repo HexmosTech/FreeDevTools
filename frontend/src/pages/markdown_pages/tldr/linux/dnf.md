@@ -1,5 +1,5 @@
 ---
-title: "DNF Package Manager - Manage Linux Packages | Free DevTools"
+title: "DNF Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos"
 name: dnf
 path: /freedevtools/tldr/linux/dnf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf/"

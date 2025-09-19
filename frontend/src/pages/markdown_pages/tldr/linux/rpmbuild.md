@@ -1,5 +1,5 @@
 ---
-title: "RPMBuild - Create RPM Packages | Free DevTools"
+title: "RPMBuild - Create RPM Packages | Online Free DevTools by Hexmos"
 name: rpmbuild
 path: /freedevtools/tldr/linux/rpmbuild
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpmbuild/"

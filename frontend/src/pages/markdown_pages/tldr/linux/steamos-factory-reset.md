@@ -1,5 +1,5 @@
 ---
-title: "SteamOS Factory Reset - Reset SteamOS System | Free DevTools"
+title: "SteamOS Factory Reset - Reset SteamOS System | Online Free DevTools by Hexmos"
 name: steamos-factory-reset
 path: /freedevtools/tldr/linux/steamos-factory-reset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-factory-reset/"

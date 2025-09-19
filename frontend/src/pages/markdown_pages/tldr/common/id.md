@@ -1,5 +1,5 @@
 ---
-title: "Display User ID - Manage User Identity | Free DevTools"
+title: "Display User ID - Manage User Identity | Online Free DevTools by Hexmos"
 name: id
 path: /freedevtools/tldr/common/id
 canonical: "https://hexmos.com/freedevtools/tldr/common/id/"

@@ -1,5 +1,5 @@
 ---
-title: "Lddd - Find Broken Library Links | Free DevTools"
+title: "Lddd - Find Broken Library Links | Online Free DevTools by Hexmos"
 name: lddd
 path: /freedevtools/tldr/linux/lddd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lddd/"

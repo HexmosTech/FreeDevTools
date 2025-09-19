@@ -1,5 +1,5 @@
 ---
-title: "Generate Bonsai Trees - Beautiful ASCII Art with cbonsai | Free DevTools"
+title: "Generate Bonsai Trees - Beautiful ASCII Art with cbonsai | Online Free DevTools by Hexmos"
 name: cbonsai
 path: /freedevtools/tldr/common/cbonsai
 canonical: "https://hexmos.com/freedevtools/tldr/common/cbonsai/"

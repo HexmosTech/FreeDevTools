@@ -1,5 +1,5 @@
 ---
-title: "Bundletool - Generate Android APKs | Free DevTools"
+title: "Bundletool - Generate Android APKs | Online Free DevTools by Hexmos"
 name: bundletool
 path: /freedevtools/tldr/bundletool/bundletool
 canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool/"

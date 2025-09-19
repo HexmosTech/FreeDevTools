@@ -1,5 +1,5 @@
 ---
-title: "Setserial - Control Serial Ports | Free DevTools"
+title: "Setserial - Control Serial Ports | Online Free DevTools by Hexmos"
 name: setserial
 path: /freedevtools/tldr/linux/setserial
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setserial/"

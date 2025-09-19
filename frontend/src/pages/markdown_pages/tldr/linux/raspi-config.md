@@ -1,5 +1,5 @@
 ---
-title: "Configure Raspberry Pi - Control System Settings with raspi-config | Free DevTools"
+title: "Configure Raspberry Pi - Control System Settings with raspi-config | Online Free DevTools by Hexmos"
 name: raspi-config
 path: /freedevtools/tldr/linux/raspi-config
 canonical: "https://hexmos.com/freedevtools/tldr/linux/raspi-config/"

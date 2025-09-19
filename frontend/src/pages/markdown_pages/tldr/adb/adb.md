@@ -1,5 +1,5 @@
 ---
-title: "Android Debug Bridge - Control Devices with ADB | Free DevTools"
+title: "Android Debug Bridge - Control Devices with ADB | Online Free DevTools by Hexmos"
 name: adb
 path: /freedevtools/tldr/adb/adb
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb/"

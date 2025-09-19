@@ -1,5 +1,5 @@
 ---
-title: "Linode CLI - Manage Cloud Services | Free DevTools"
+title: "Linode CLI - Manage Cloud Services | Online Free DevTools by Hexmos"
 name: linode-cli
 path: /freedevtools/tldr/linode/linode-cli
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli/"

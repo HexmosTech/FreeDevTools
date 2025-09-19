@@ -1,5 +1,5 @@
 ---
-title: "Disk Image Utility - Create & Manage Images | Free DevTools"
+title: "Disk Image Utility - Create & Manage Images | Online Free DevTools by Hexmos"
 name: hdiutil
 path: /freedevtools/tldr/osx/hdiutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/hdiutil/"

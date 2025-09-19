@@ -1,5 +1,5 @@
 ---
-title: "Nmtui - Control Network Connections | Free DevTools"
+title: "Nmtui - Control Network Connections | Online Free DevTools by Hexmos"
 name: nmtui
 path: /freedevtools/tldr/linux/nmtui
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmtui/"

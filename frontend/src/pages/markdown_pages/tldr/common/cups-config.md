@@ -1,5 +1,5 @@
 ---
-title: "CUPS Config - Show CUPS Configuration | Free DevTools"
+title: "CUPS Config - Show CUPS Configuration | Online Free DevTools by Hexmos"
 name: cups-config
 path: /freedevtools/tldr/common/cups-config
 canonical: "https://hexmos.com/freedevtools/tldr/common/cups-config/"

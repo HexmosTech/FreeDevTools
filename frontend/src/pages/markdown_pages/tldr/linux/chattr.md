@@ -1,5 +1,5 @@
 ---
-title: "Chattr - Control File Attributes on Linux | Free DevTools"
+title: "Chattr - Control File Attributes on Linux | Online Free DevTools by Hexmos"
 name: chattr
 path: /freedevtools/tldr/linux/chattr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chattr/"

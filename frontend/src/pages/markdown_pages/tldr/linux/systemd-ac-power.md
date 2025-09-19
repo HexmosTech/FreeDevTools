@@ -1,5 +1,5 @@
 ---
-title: "AC Power Status - Check Power Connection with systemd | Free DevTools"
+title: "AC Power Status - Check Power Connection with systemd | Online Free DevTools by Hexmos"
 name: systemd-ac-power
 path: /freedevtools/tldr/linux/systemd-ac-power
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-ac-power/"

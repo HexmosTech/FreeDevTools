@@ -1,5 +1,5 @@
 ---
-title: "ISO Image Validator - Verify and Inspect ISO Files | Free DevTools"
+title: "ISO Image Validator - Verify and Inspect ISO Files | Online Free DevTools by Hexmos"
 name: isoinfo
 path: /freedevtools/tldr/linux/isoinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/isoinfo/"

@@ -1,5 +1,5 @@
 ---
-title: "Automount Daemon - Control Mount Points on macOS | Free DevTools"
+title: "Automount Daemon - Control Mount Points on macOS | Online Free DevTools by Hexmos"
 name: automountd
 path: /freedevtools/tldr/osx/automountd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/automountd/"

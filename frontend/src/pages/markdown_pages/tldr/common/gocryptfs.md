@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Filesystem - Manage Files with gocryptfs | Free DevTools"
+title: "Encrypt Filesystem - Manage Files with gocryptfs | Online Free DevTools by Hexmos"
 name: gocryptfs
 path: /freedevtools/tldr/common/gocryptfs
 canonical: "https://hexmos.com/freedevtools/tldr/common/gocryptfs/"

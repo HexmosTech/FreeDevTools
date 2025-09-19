@@ -1,5 +1,5 @@
 ---
-title: "DEX Dump - Analyze Android DEX Files | Free DevTools"
+title: "DEX Dump - Analyze Android DEX Files | Online Free DevTools by Hexmos"
 name: dexdump
 path: /freedevtools/tldr/common/dexdump
 canonical: "https://hexmos.com/freedevtools/tldr/common/dexdump/"

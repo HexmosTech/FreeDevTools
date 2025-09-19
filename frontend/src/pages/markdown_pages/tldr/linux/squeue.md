@@ -1,5 +1,5 @@
 ---
-title: "Queue View - Monitor SLURM Jobs | Free DevTools"
+title: "Queue View - Monitor SLURM Jobs | Online Free DevTools by Hexmos"
 name: squeue
 path: /freedevtools/tldr/linux/squeue
 canonical: "https://hexmos.com/freedevtools/tldr/linux/squeue/"

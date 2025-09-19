@@ -1,5 +1,5 @@
 ---
-title: "Tail File - View Logs | Free DevTools"
+title: "Tail File - View Logs | Online Free DevTools by Hexmos"
 name: tailf
 path: /freedevtools/tldr/linux/tailf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tailf/"

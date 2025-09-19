@@ -1,5 +1,5 @@
 ---
-title: "Execute Python Scripts - Run pypy Commands | Free DevTools"
+title: "Execute Python Scripts - Run pypy Commands | Online Free DevTools by Hexmos"
 name: pypy
 path: /freedevtools/tldr/common/pypy
 canonical: "https://hexmos.com/freedevtools/tldr/common/pypy/"

@@ -1,5 +1,5 @@
 ---
-title: "Capture HTTP Streams - Analyze Network Traffic | Free DevTools"
+title: "Capture HTTP Streams - Analyze Network Traffic | Online Free DevTools by Hexmos"
 name: httpflow
 path: /freedevtools/tldr/http/httpflow
 canonical: "https://hexmos.com/freedevtools/tldr/http/httpflow/"

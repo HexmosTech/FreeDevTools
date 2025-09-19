@@ -1,5 +1,5 @@
 ---
-title: "Readonly - Control Shell Variables | Free DevTools"
+title: "Readonly - Control Shell Variables | Online Free DevTools by Hexmos"
 name: readonly
 path: /freedevtools/tldr/common/readonly
 canonical: "https://hexmos.com/freedevtools/tldr/common/readonly/"

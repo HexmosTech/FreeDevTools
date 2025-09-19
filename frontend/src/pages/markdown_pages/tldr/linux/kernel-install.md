@@ -1,5 +1,5 @@
 ---
-title: "Kernel Install - Add/Remove Kernels | Free DevTools"
+title: "Kernel Install - Add/Remove Kernels | Online Free DevTools by Hexmos"
 name: kernel-install
 path: /freedevtools/tldr/linux/kernel-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kernel-install/"

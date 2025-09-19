@@ -1,5 +1,5 @@
 ---
-title: "Invoke-Item - Open Files | Free DevTools"
+title: "Invoke-Item - Open Files | Online Free DevTools by Hexmos"
 name: invoke-item
 path: "/freedevtools/tldr/windows/invoke-item"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/invoke-item/"

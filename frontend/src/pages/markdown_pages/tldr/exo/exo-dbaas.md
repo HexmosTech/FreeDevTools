@@ -1,5 +1,5 @@
 ---
-title: "Manage Exoscale DBaaS - Control Cloud Databases | Free DevTools"
+title: "Manage Exoscale DBaaS - Control Cloud Databases | Online Free DevTools by Hexmos"
 name: exo-dbaas
 path: /freedevtools/tldr/exo/exo-dbaas
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-dbaas/"

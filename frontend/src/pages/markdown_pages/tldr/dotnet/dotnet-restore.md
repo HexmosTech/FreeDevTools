@@ -1,5 +1,5 @@
 ---
-title: "Dotnet Restore - Restore .NET Dependencies | Free DevTools"
+title: "Dotnet Restore - Restore .NET Dependencies | Online Free DevTools by Hexmos"
 name: dotnet-restore
 path: /freedevtools/tldr/dotnet/dotnet-restore
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-restore/"

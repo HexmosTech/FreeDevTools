@@ -1,5 +1,5 @@
 ---
-title: "Zstdcat - Decompress Zstd Files | Free DevTools"
+title: "Zstdcat - Decompress Zstd Files | Online Free DevTools by Hexmos"
 name: zstdcat
 path: /freedevtools/tldr/common/zstdcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/zstdcat/"

@@ -1,5 +1,5 @@
 ---
-title: "Track Time - Manage Work Time with Moro | Free DevTools"
+title: "Track Time - Manage Work Time with Moro | Online Free DevTools by Hexmos"
 name: moro
 path: /freedevtools/tldr/common/moro
 canonical: "https://hexmos.com/freedevtools/tldr/common/moro/"

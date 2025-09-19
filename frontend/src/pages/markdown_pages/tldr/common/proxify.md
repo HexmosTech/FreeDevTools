@@ -1,5 +1,5 @@
 ---
-title: "Proxify - Capture HTTP/HTTPS Traffic | Free DevTools"
+title: "Proxify - Capture HTTP/HTTPS Traffic | Online Free DevTools by Hexmos"
 name: proxify
 path: /freedevtools/tldr/common/proxify
 canonical: "https://hexmos.com/freedevtools/tldr/common/proxify/"

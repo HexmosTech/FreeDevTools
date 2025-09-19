@@ -1,5 +1,5 @@
 ---
-title: "Ptyxis Terminal - Control GNOME Sessions | Free DevTools"
+title: "Ptyxis Terminal - Control GNOME Sessions | Online Free DevTools by Hexmos"
 name: ptyxis
 path: /freedevtools/tldr/linux/ptyxis
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ptyxis/"

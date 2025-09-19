@@ -1,5 +1,5 @@
 ---
-title: "Unshadow - Obtain Password File | Free DevTools"
+title: "Unshadow - Obtain Password File | Online Free DevTools by Hexmos"
 name: unshadow
 path: /freedevtools/tldr/linux/unshadow
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unshadow/"

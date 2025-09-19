@@ -1,5 +1,5 @@
 ---
-title: "Format Code with AStyle - Indent Source Code | Free DevTools"
+title: "Format Code with AStyle - Indent Source Code | Online Free DevTools by Hexmos"
 name: astyle
 path: /freedevtools/tldr/common/astyle
 canonical: "https://hexmos.com/freedevtools/tldr/common/astyle/"

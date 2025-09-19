@@ -1,5 +1,5 @@
 ---
-title: "UV Package Manager - Generate UV Help Documentation | Free DevTools"
+title: "UV Package Manager - Generate UV Help Documentation | Online Free DevTools by Hexmos"
 name: uv-help
 path: /freedevtools/tldr/uv/uv-help
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-help/"

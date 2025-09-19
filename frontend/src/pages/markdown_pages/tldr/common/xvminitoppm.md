@@ -1,5 +1,5 @@
 ---
-title: "Convert XV Thumbnail - PPM Image Conversion | Free DevTools"
+title: "Convert XV Thumbnail - PPM Image Conversion | Online Free DevTools by Hexmos"
 name: xvminitoppm
 path: /freedevtools/tldr/common/xvminitoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/xvminitoppm/"

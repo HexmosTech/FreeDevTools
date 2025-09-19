@@ -1,5 +1,5 @@
 ---
-title: "Visualize Network Usage - Control Traffic with Nload | Free DevTools"
+title: "Visualize Network Usage - Control Traffic with Nload | Online Free DevTools by Hexmos"
 name: nload
 path: /freedevtools/tldr/common/nload
 canonical: "https://hexmos.com/freedevtools/tldr/common/nload/"

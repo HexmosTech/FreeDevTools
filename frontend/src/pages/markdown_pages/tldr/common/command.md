@@ -1,5 +1,5 @@
 ---
-title: "Command Execution - Control Shell Commands | Free DevTools"
+title: "Command Execution - Control Shell Commands | Online Free DevTools by Hexmos"
 name: command
 path: /freedevtools/tldr/common/command
 canonical: "https://hexmos.com/freedevtools/tldr/common/command/"

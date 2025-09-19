@@ -1,5 +1,5 @@
 ---
-title: "Check npm Name - Verify Package Availability | Free DevTools"
+title: "Check npm Name - Verify Package Availability | Online Free DevTools by Hexmos"
 name: npm-name
 path: /freedevtools/tldr/npm/npm-name
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-name/"

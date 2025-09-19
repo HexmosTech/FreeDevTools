@@ -1,5 +1,5 @@
 ---
-title: "Raco Tool - Manage Racket Packages | Free DevTools"
+title: "Raco Tool - Manage Racket Packages | Online Free DevTools by Hexmos"
 name: raco
 path: /freedevtools/tldr/common/raco
 canonical: "https://hexmos.com/freedevtools/tldr/common/raco/"

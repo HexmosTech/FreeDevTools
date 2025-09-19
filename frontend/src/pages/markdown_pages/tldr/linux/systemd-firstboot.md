@@ -1,5 +1,5 @@
 ---
-title: "Systemd-firstboot - Initialize System Settings | Free DevTools"
+title: "Systemd-firstboot - Initialize System Settings | Online Free DevTools by Hexmos"
 name: systemd-firstboot
 path: /freedevtools/tldr/linux/systemd-firstboot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-firstboot/"

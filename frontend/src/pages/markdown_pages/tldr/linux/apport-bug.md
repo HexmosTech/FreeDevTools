@@ -1,5 +1,5 @@
 ---
-title: "Report Ubuntu Bugs - File Apport Bug Reports | Free DevTools"
+title: "Report Ubuntu Bugs - File Apport Bug Reports | Online Free DevTools by Hexmos"
 name: apport-bug
 path: /freedevtools/tldr/linux/apport-bug
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apport-bug/"

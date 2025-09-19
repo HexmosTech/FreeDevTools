@@ -1,5 +1,5 @@
 ---
-title: "Azcopy - Upload Files to Azure Cloud Storage | Free DevTools"
+title: "Azcopy - Upload Files to Azure Cloud Storage | Online Free DevTools by Hexmos"
 name: azcopy
 path: /freedevtools/tldr/windows/azcopy
 canonical: "https://hexmos.com/freedevtools/tldr/windows/azcopy/"

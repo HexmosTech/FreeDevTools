@@ -1,5 +1,5 @@
 ---
-title: "Flutter Commands - Create Cross-Platform Apps | Free DevTools"
+title: "Flutter Commands - Create Cross-Platform Apps | Online Free DevTools by Hexmos"
 name: flutter
 path: /freedevtools/tldr/common/flutter
 canonical: "https://hexmos.com/freedevtools/tldr/common/flutter/"

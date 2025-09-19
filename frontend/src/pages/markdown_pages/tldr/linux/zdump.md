@@ -1,5 +1,5 @@
 ---
-title: "Print Timezone Information - zdump | Free DevTools"
+title: "Print Timezone Information - zdump | Online Free DevTools by Hexmos"
 name: zdump
 path: /freedevtools/tldr/linux/zdump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zdump/"

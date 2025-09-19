@@ -1,5 +1,5 @@
 ---
-title: "Edit Images - Edit and Draw Images with Pinta | Free DevTools"
+title: "Edit Images - Edit and Draw Images with Pinta | Online Free DevTools by Hexmos"
 name: pinta
 path: /freedevtools/tldr/common/pinta
 canonical: "https://hexmos.com/freedevtools/tldr/common/pinta/"

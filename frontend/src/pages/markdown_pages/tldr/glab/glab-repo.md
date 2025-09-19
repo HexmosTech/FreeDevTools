@@ -1,5 +1,5 @@
 ---
-title: "GitLab Repo - Manage Repositories | Free DevTools"
+title: "GitLab Repo - Manage Repositories | Online Free DevTools by Hexmos"
 name: glab-repo
 path: /freedevtools/tldr/glab/glab-repo
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-repo/"

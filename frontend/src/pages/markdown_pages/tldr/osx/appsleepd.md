@@ -1,5 +1,5 @@
 ---
-title: "Appsleepd - Control App Sleep Services | Free DevTools"
+title: "Appsleepd - Control App Sleep Services | Online Free DevTools by Hexmos"
 name: appsleepd
 path: /freedevtools/tldr/osx/appsleepd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/appsleepd/"

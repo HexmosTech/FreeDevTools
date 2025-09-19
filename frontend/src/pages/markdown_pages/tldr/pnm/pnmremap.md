@@ -1,5 +1,5 @@
 ---
-title: "PNM Remap - Replace Image Colors | Free DevTools"
+title: "PNM Remap - Replace Image Colors | Online Free DevTools by Hexmos"
 name: pnmremap
 path: /freedevtools/tldr/pnm/pnmremap
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmremap/"

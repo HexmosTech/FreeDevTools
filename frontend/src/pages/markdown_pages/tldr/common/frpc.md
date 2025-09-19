@@ -1,5 +1,5 @@
 ---
-title: "Frpc - Proxy Connections Securely | Free DevTools"
+title: "Frpc - Proxy Connections Securely | Online Free DevTools by Hexmos"
 name: frpc
 path: "/freedevtools/tldr/common/frpc"
 canonical: "https://hexmos.com/freedevtools/tldr/common/frpc/"

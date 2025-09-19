@@ -1,5 +1,5 @@
 ---
-title: "Deploy Netlify Sites - Configure CD with Netlify CLI | Free DevTools"
+title: "Deploy Netlify Sites - Configure CD with Netlify CLI | Online Free DevTools by Hexmos"
 name: netlify
 path: /freedevtools/tldr/common/netlify
 canonical: "https://hexmos.com/freedevtools/tldr/common/netlify/"

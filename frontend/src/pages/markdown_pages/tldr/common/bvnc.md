@@ -1,5 +1,5 @@
 ---
-title: "Browse VNC - Explore SSH/VNC Servers | Free DevTools"
+title: "Browse VNC - Explore SSH/VNC Servers | Online Free DevTools by Hexmos"
 name: bvnc
 path: /freedevtools/tldr/common/bvnc
 canonical: "https://hexmos.com/freedevtools/tldr/common/bvnc/"

@@ -1,5 +1,5 @@
 ---
-title: "Record Screen - Capture Screen Recordings with Byzanz-record | Free DevTools"
+title: "Record Screen - Capture Screen Recordings with Byzanz-record | Online Free DevTools by Hexmos"
 name: byzanz-record
 path: /freedevtools/tldr/linux/byzanz-record
 canonical: "https://hexmos.com/freedevtools/tldr/linux/byzanz-record/"

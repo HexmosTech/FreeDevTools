@@ -1,5 +1,5 @@
 ---
-title: "Shell Plugin Manager - Control Plugins with Antibody | Free DevTools"
+title: "Shell Plugin Manager - Control Plugins with Antibody | Online Free DevTools by Hexmos"
 name: antibody
 path: /freedevtools/tldr/common/antibody
 canonical: "https://hexmos.com/freedevtools/tldr/common/antibody/"

@@ -1,5 +1,5 @@
 ---
-title: "Cups Reject - Control Printer Jobs | Free DevTools"
+title: "Cups Reject - Control Printer Jobs | Online Free DevTools by Hexmos"
 name: cupsreject
 path: /freedevtools/tldr/common/cupsreject
 canonical: "https://hexmos.com/freedevtools/tldr/common/cupsreject/"

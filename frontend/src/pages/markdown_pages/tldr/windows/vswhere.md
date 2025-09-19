@@ -1,5 +1,5 @@
 ---
-title: "Locate VS Installations - Find Visual Studio with vswhere | Free DevTools"
+title: "Locate VS Installations - Find Visual Studio with vswhere | Online Free DevTools by Hexmos"
 name: vswhere
 path: /freedevtools/tldr/windows/vswhere
 canonical: "https://hexmos.com/freedevtools/tldr/windows/vswhere/"

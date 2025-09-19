@@ -1,5 +1,5 @@
 ---
-title: "ZFS Debugger - Analyze ZFS Pools | Free DevTools"
+title: "ZFS Debugger - Analyze ZFS Pools | Online Free DevTools by Hexmos"
 name: zdb
 path: /freedevtools/tldr/common/zdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/zdb/"

@@ -1,5 +1,5 @@
 ---
-title: "List Sockets - Monitor Network Connections | Free DevTools"
+title: "List Sockets - Monitor Network Connections | Online Free DevTools by Hexmos"
 name: sockstat
 path: /freedevtools/tldr/linux/sockstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sockstat/"

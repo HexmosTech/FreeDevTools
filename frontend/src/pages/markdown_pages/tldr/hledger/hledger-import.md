@@ -1,5 +1,5 @@
 ---
-title: "Hledger Import - Import Transactions | Free DevTools"
+title: "Hledger Import - Import Transactions | Online Free DevTools by Hexmos"
 name: hledger-import
 path: /freedevtools/tldr/hledger/hledger-import
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-import/"

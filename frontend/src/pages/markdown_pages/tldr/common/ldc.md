@@ -1,5 +1,5 @@
 ---
-title: "Compile D Code - LDC D Compiler with LLVM | Free DevTools"
+title: "Compile D Code - LDC D Compiler with LLVM | Online Free DevTools by Hexmos"
 name: ldc
 path: /freedevtools/tldr/common/ldc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ldc/"

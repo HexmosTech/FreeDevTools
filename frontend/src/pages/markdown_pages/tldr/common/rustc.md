@@ -1,5 +1,5 @@
 ---
-title: "Compile Rust Code - Execute Rust Programs | Free DevTools"
+title: "Compile Rust Code - Execute Rust Programs | Online Free DevTools by Hexmos"
 name: rustc
 path: /freedevtools/tldr/common/rustc
 canonical: "https://hexmos.com/freedevtools/tldr/common/rustc/"

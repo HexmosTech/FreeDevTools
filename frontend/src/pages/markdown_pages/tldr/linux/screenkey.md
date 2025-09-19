@@ -1,5 +1,5 @@
 ---
-title: "Display Keys - Control Screenkey | Free DevTools"
+title: "Display Keys - Control Screenkey | Online Free DevTools by Hexmos"
 name: screenkey
 path: /freedevtools/tldr/linux/screenkey
 canonical: "https://hexmos.com/freedevtools/tldr/linux/screenkey/"

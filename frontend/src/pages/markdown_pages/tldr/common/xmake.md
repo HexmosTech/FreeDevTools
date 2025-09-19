@@ -1,5 +1,5 @@
 ---
-title: "Xmake Build Tool - Create C/C++ Projects | Free DevTools"
+title: "Xmake Build Tool - Create C/C++ Projects | Online Free DevTools by Hexmos"
 name: xmake
 path: /freedevtools/tldr/common/xmake
 canonical: "https://hexmos.com/freedevtools/tldr/common/xmake/"

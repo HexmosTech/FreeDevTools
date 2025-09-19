@@ -1,5 +1,5 @@
 ---
-title: "SFDP Graph Renderer - Generate Network Images | Free DevTools"
+title: "SFDP Graph Renderer - Generate Network Images | Online Free DevTools by Hexmos"
 name: sfdp
 path: /freedevtools/tldr/common/sfdp
 canonical: "https://hexmos.com/freedevtools/tldr/common/sfdp/"

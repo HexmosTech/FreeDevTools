@@ -1,5 +1,5 @@
 ---
-title: "Pueue Help - Display Subcommand Information | Free DevTools"
+title: "Pueue Help - Display Subcommand Information | Online Free DevTools by Hexmos"
 name: pueue-help
 path: /freedevtools/tldr/pueue/pueue-help
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-help/"

@@ -1,5 +1,5 @@
 ---
-title: "Check Rust Code - Find Errors with Cargo Check | Free DevTools"
+title: "Check Rust Code - Find Errors with Cargo Check | Online Free DevTools by Hexmos"
 name: cargo-check
 path: /freedevtools/tldr/cargo/cargo-check
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-check/"

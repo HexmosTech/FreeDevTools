@@ -1,5 +1,5 @@
 ---
-title: "Trace-cmd - Control Linux Kernel Tracing | Free DevTools"
+title: "Trace-cmd - Control Linux Kernel Tracing | Online Free DevTools by Hexmos"
 name: trace-cmd
 path: /freedevtools/tldr/linux/trace-cmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trace-cmd/"

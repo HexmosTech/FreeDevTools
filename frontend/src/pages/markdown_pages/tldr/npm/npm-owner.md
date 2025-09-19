@@ -1,5 +1,5 @@
 ---
-title: "Control npm Package Owners - Manage Access | Free DevTools"
+title: "Control npm Package Owners - Manage Access | Online Free DevTools by Hexmos"
 name: npm-owner
 path: /freedevtools/tldr/npm/npm-owner
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-owner/"

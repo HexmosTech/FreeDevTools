@@ -1,5 +1,5 @@
 ---
-title: "vcgencmd - Monitor Raspberry Pi System | Free DevTools"
+title: "vcgencmd - Monitor Raspberry Pi System | Online Free DevTools by Hexmos"
 name: vcgencmd
 path: /freedevtools/tldr/linux/vcgencmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vcgencmd/"

@@ -1,5 +1,5 @@
 ---
-title: "Tailscale File - Send Files Across Tailscale | Free DevTools"
+title: "Tailscale File - Send Files Across Tailscale | Online Free DevTools by Hexmos"
 name: tailscale-file
 path: /freedevtools/tldr/tailscale/tailscale-file
 canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-file/"

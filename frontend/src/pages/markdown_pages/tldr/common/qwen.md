@@ -1,5 +1,5 @@
 ---
-title: "Generate Qwen Code - Interactive Chatbot | Free DevTools"
+title: "Generate Qwen Code - Interactive Chatbot | Online Free DevTools by Hexmos"
 name: qwen
 path: /freedevtools/tldr/common/qwen
 canonical: "https://hexmos.com/freedevtools/tldr/common/qwen/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate System Information - macchina | Free DevTools"
+title: "Generate System Information - macchina | Online Free DevTools by Hexmos"
 name: macchina
 path: /freedevtools/tldr/common/macchina
 canonical: "https://hexmos.com/freedevtools/tldr/common/macchina/"

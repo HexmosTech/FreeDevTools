@@ -1,5 +1,5 @@
 ---
-title: "Filter Repo - Rewrite Git History | Free DevTools"
+title: "Filter Repo - Rewrite Git History | Online Free DevTools by Hexmos"
 name: git-filter-repo
 path: /freedevtools/tldr/git/git-filter-repo
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-filter-repo/"

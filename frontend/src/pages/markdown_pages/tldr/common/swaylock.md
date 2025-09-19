@@ -1,5 +1,5 @@
 ---
-title: "Lock Screen - Control Swaylock Screen Locking | Free DevTools"
+title: "Lock Screen - Control Swaylock Screen Locking | Online Free DevTools by Hexmos"
 name: swaylock
 path: /freedevtools/tldr/common/swaylock
 canonical: "https://hexmos.com/freedevtools/tldr/common/swaylock/"

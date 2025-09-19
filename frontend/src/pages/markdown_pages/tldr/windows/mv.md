@@ -1,5 +1,5 @@
 ---
-title: "MV - Move Files and Directories | Free DevTools"
+title: "MV - Move Files and Directories | Online Free DevTools by Hexmos"
 name: mv
 path: /freedevtools/tldr/windows/mv
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mv/"

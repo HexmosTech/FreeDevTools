@@ -1,5 +1,5 @@
 ---
-title: "Generate DVI with TeX - Compile TeX Files | Free DevTools"
+title: "Generate DVI with TeX - Compile TeX Files | Online Free DevTools by Hexmos"
 name: tex
 path: /freedevtools/tldr/common/tex
 canonical: "https://hexmos.com/freedevtools/tldr/common/tex/"

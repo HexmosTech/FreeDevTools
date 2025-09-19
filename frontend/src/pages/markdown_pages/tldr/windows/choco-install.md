@@ -1,5 +1,5 @@
 ---
-title: "Choco Install - Package Management on Windows | Free DevTools"
+title: "Choco Install - Package Management on Windows | Online Free DevTools by Hexmos"
 name: choco-install
 path: /freedevtools/tldr/windows/choco-install
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-install/"

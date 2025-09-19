@@ -1,5 +1,5 @@
 ---
-title: "Toolbox Remove - Delete Containers | Free DevTools"
+title: "Toolbox Remove - Delete Containers | Online Free DevTools by Hexmos"
 name: toolbox-rm
 path: /freedevtools/tldr/linux/toolbox-rm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-rm/"

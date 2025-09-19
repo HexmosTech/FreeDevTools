@@ -1,5 +1,5 @@
 ---
-title: "Format Go Imports - Organize Code | Free DevTools"
+title: "Format Go Imports - Organize Code | Online Free DevTools by Hexmos"
 name: goimports
 path: /freedevtools/tldr/common/goimports
 canonical: "https://hexmos.com/freedevtools/tldr/common/goimports/"

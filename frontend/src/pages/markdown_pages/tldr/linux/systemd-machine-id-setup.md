@@ -1,5 +1,5 @@
 ---
-title: "Generate Machine ID - Setup System with systemd | Free DevTools"
+title: "Generate Machine ID - Setup System with systemd | Online Free DevTools by Hexmos"
 name: systemd-machine-id-setup
 path: /freedevtools/tldr/linux/systemd-machine-id-setup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-machine-id-setup/"

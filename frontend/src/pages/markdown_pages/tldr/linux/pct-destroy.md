@@ -1,5 +1,5 @@
 ---
-title: "Destroy Container - PCT Command | Free DevTools"
+title: "Destroy Container - PCT Command | Online Free DevTools by Hexmos"
 name: pct-destroy
 path: /freedevtools/tldr/linux/pct-destroy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-destroy/"

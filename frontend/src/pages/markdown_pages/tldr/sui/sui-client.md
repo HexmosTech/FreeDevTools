@@ -1,5 +1,5 @@
 ---
-title: "Sui Client - Control Smart Contracts | Free DevTools"
+title: "Sui Client - Control Smart Contracts | Online Free DevTools by Hexmos"
 name: sui-client
 path: /freedevtools/tldr/sui/sui-client
 canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-client/"

@@ -1,5 +1,5 @@
 ---
-title: "NPM Query - Print Package Dependencies | Free DevTools"
+title: "NPM Query - Print Package Dependencies | Online Free DevTools by Hexmos"
 name: npm-query
 path: /freedevtools/tldr/npm/npm-query
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-query/"

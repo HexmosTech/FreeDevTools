@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Misc - Control System Functions | Free DevTools"
+title: "Mimikatz Misc - Control System Functions | Online Free DevTools by Hexmos"
 name: mimikatz-misc
 path: /freedevtools/tldr/windows/mimikatz-misc
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-misc/"

@@ -1,5 +1,5 @@
 ---
-title: "macOS Installer Tool - Download macOS Installers | Free DevTools"
+title: "macOS Installer Tool - Download macOS Installers | Online Free DevTools by Hexmos"
 name: mist
 path: /freedevtools/tldr/osx/mist
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mist/"

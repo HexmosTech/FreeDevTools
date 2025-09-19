@@ -1,5 +1,5 @@
 ---
-title: "CSV Extract - Filter CSV Data | Free DevTools"
+title: "CSV Extract - Filter CSV Data | Online Free DevTools by Hexmos"
 name: csvtool
 path: /freedevtools/tldr/cs/csvtool
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvtool/"

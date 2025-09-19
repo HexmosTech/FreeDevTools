@@ -1,5 +1,5 @@
 ---
-title: "Show Markdown - Render Markdown Files to Console | Free DevTools"
+title: "Show Markdown - Render Markdown Files to Console | Online Free DevTools by Hexmos"
 name: show-markdown
 path: /freedevtools/tldr/windows/show-markdown
 canonical: "https://hexmos.com/freedevtools/tldr/windows/show-markdown/"

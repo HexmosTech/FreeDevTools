@@ -1,5 +1,5 @@
 ---
-title: "Memory Monitor - Display System Memory Usage | Free DevTools"
+title: "Memory Monitor - Display System Memory Usage | Online Free DevTools by Hexmos"
 name: free
 path: /freedevtools/tldr/linux/free
 canonical: "https://hexmos.com/freedevtools/tldr/linux/free/"

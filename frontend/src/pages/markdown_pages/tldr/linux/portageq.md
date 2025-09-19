@@ -1,5 +1,5 @@
 ---
-title: "Portage Query - Manage Gentoo Packages | Free DevTools"
+title: "Portage Query - Manage Gentoo Packages | Online Free DevTools by Hexmos"
 name: portageq
 path: /freedevtools/tldr/linux/portageq
 canonical: "https://hexmos.com/freedevtools/tldr/linux/portageq/"

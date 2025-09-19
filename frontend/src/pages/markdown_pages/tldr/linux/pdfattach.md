@@ -1,5 +1,5 @@
 ---
-title: "pdfattach - Add PDF Attachments | Free DevTools"
+title: "pdfattach - Add PDF Attachments | Online Free DevTools by Hexmos"
 name: pdfattach
 path: /freedevtools/tldr/linux/pdfattach
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfattach/"

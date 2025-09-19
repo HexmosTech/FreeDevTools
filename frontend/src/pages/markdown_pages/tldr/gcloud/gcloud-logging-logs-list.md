@@ -1,5 +1,5 @@
 ---
-title: "List Cloud Logging Logs - Analyze Logs | Free DevTools"
+title: "List Cloud Logging Logs - Analyze Logs | Online Free DevTools by Hexmos"
 name: gcloud-logging-logs-list
 path: /freedevtools/tldr/gcloud/gcloud-logging-logs-list
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-logging-logs-list/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Keystore - Manage Java Certificates | Free DevTools"
+title: "Generate Keystore - Manage Java Certificates | Online Free DevTools by Hexmos"
 name: keytool
 path: /freedevtools/tldr/common/keytool
 canonical: "https://hexmos.com/freedevtools/tldr/common/keytool/"

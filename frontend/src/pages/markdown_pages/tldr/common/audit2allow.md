@@ -1,5 +1,5 @@
 ---
-title: "Generate SELinux Rules - audit2allow | Free DevTools"
+title: "Generate SELinux Rules - audit2allow | Online Free DevTools by Hexmos"
 name: audit2allow
 path: /freedevtools/tldr/common/audit2allow
 canonical: "https://hexmos.com/freedevtools/tldr/common/audit2allow/"

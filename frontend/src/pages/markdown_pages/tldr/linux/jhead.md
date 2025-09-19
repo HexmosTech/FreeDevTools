@@ -1,5 +1,5 @@
 ---
-title: "Jhead - Control Image EXIF Data | Free DevTools"
+title: "Jhead - Control Image EXIF Data | Online Free DevTools by Hexmos"
 name: jhead
 path: /freedevtools/tldr/linux/jhead
 canonical: "https://hexmos.com/freedevtools/tldr/linux/jhead/"

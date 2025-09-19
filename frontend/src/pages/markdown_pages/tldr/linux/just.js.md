@@ -1,5 +1,5 @@
 ---
-title: "Just.js - Run JavaScript on Linux | Free DevTools"
+title: "Just.js - Run JavaScript on Linux | Online Free DevTools by Hexmos"
 name: just.js
 path: /freedevtools/tldr/linux/just.js
 canonical: "https://hexmos.com/freedevtools/tldr/linux/just.js/"

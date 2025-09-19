@@ -1,5 +1,5 @@
 ---
-title: "TTY Controller - Manage Terminal Output on macOS | Free DevTools"
+title: "TTY Controller - Manage Terminal Output on macOS | Online Free DevTools by Hexmos"
 name: gtty
 path: /freedevtools/tldr/osx/gtty
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtty/"

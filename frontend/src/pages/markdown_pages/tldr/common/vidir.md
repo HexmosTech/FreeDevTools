@@ -1,5 +1,5 @@
 ---
-title: "Vidir Editor - Edit Directories in Editor | Free DevTools"
+title: "Vidir Editor - Edit Directories in Editor | Online Free DevTools by Hexmos"
 name: vidir
 path: /freedevtools/tldr/common/vidir
 canonical: "https://hexmos.com/freedevtools/tldr/common/vidir/"

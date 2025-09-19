@@ -1,5 +1,5 @@
 ---
-title: "Envoy - Control Laravel Server Tasks | Free DevTools"
+title: "Envoy - Control Laravel Server Tasks | Online Free DevTools by Hexmos"
 name: envoy
 path: "/freedevtools/tldr/common/envoy"
 canonical: "https://hexmos.com/freedevtools/tldr/common/envoy/"

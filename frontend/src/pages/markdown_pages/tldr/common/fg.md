@@ -1,5 +1,5 @@
 ---
-title: "FG Command - Run Jobs in Foreground | Free DevTools"
+title: "FG Command - Run Jobs in Foreground | Online Free DevTools by Hexmos"
 name: fg
 path: /freedevtools/tldr/common/fg
 canonical: "https://hexmos.com/freedevtools/tldr/common/fg/"

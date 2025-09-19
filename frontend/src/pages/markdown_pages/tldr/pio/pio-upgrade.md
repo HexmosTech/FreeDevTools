@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO Upgrade - Update Core | Free DevTools"
+title: "PlatformIO Upgrade - Update Core | Online Free DevTools by Hexmos"
 name: pio-upgrade
 path: /freedevtools/tldr/pio/pio-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-upgrade/"

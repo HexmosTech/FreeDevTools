@@ -1,5 +1,5 @@
 ---
-title: "Validate PHP Code - Detect Coding Standards with phpcs | Free DevTools"
+title: "Validate PHP Code - Detect Coding Standards with phpcs | Online Free DevTools by Hexmos"
 name: phpcs
 path: /freedevtools/tldr/php/phpcs
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpcs/"

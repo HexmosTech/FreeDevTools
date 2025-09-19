@@ -1,5 +1,5 @@
 ---
-title: "Pueue Restart - Control Task Execution | Free DevTools"
+title: "Pueue Restart - Control Task Execution | Online Free DevTools by Hexmos"
 name: pueue-restart
 path: /freedevtools/tldr/pueue/pueue-restart
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-restart/"

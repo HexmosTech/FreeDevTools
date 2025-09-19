@@ -1,5 +1,5 @@
 ---
-title: "OSM Data Handler - Manage OpenStreetMap Files | Free DevTools"
+title: "OSM Data Handler - Manage OpenStreetMap Files | Online Free DevTools by Hexmos"
 name: osmium
 path: /freedevtools/tldr/common/osmium
 canonical: "https://hexmos.com/freedevtools/tldr/common/osmium/"

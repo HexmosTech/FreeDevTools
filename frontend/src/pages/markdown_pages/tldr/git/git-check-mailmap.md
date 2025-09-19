@@ -1,5 +1,5 @@
 ---
-title: "Check Git Mailmap - Show Canonical Names | Free DevTools"
+title: "Check Git Mailmap - Show Canonical Names | Online Free DevTools by Hexmos"
 name: git-check-mailmap
 path: /freedevtools/tldr/git/git-check-mailmap
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-check-mailmap/"

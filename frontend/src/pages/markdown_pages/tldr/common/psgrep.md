@@ -1,5 +1,5 @@
 ---
-title: "Psgrep - Search Processes with Grep | Free DevTools"
+title: "Psgrep - Search Processes with Grep | Online Free DevTools by Hexmos"
 name: psgrep
 path: /freedevtools/tldr/common/psgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/psgrep/"

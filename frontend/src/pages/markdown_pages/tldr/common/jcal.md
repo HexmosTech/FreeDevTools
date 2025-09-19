@@ -1,5 +1,5 @@
 ---
-title: "Jalali Calendar - Display Persian Calendar | Free DevTools"
+title: "Jalali Calendar - Display Persian Calendar | Online Free DevTools by Hexmos"
 name: jcal
 path: /freedevtools/tldr/common/jcal
 canonical: "https://hexmos.com/freedevtools/tldr/common/jcal/"

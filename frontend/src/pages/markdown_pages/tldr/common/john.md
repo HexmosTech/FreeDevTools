@@ -1,5 +1,5 @@
 ---
-title: "Crack Passwords - John the Ripper | Free DevTools"
+title: "Crack Passwords - John the Ripper | Online Free DevTools by Hexmos"
 name: john
 path: /freedevtools/tldr/common/john
 canonical: "https://hexmos.com/freedevtools/tldr/common/john/"

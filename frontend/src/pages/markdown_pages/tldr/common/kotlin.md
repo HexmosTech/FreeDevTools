@@ -1,5 +1,5 @@
 ---
-title: "Kotlin Launcher - Execute Kotlin Applications | Free DevTools"
+title: "Kotlin Launcher - Execute Kotlin Applications | Online Free DevTools by Hexmos"
 name: kotlin
 path: /freedevtools/tldr/common/kotlin
 canonical: "https://hexmos.com/freedevtools/tldr/common/kotlin/"

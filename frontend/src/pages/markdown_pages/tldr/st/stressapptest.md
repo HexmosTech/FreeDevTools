@@ -1,5 +1,5 @@
 ---
-title: "Stressapptest - Memory and IO Test | Free DevTools"
+title: "Stressapptest - Memory and IO Test | Online Free DevTools by Hexmos"
 name: stressapptest
 path: /freedevtools/tldr/st/stressapptest
 canonical: "https://hexmos.com/freedevtools/tldr/st/stressapptest/"

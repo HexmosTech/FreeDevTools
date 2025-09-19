@@ -1,5 +1,5 @@
 ---
-title: "Benchmark Tool - Run Command Benchmarks | Free DevTools"
+title: "Benchmark Tool - Run Command Benchmarks | Online Free DevTools by Hexmos"
 name: hyperfine
 path: /freedevtools/tldr/common/hyperfine
 canonical: "https://hexmos.com/freedevtools/tldr/common/hyperfine/"

@@ -1,5 +1,5 @@
 ---
-title: "Dump exFAT - Format Data with exFAT Dumper | Free DevTools"
+title: "Dump exFAT - Format Data with exFAT Dumper | Online Free DevTools by Hexmos"
 name: dump.exfat
 path: /freedevtools/tldr/linux/dump.exfat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dump.exfat/"

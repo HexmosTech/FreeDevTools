@@ -1,5 +1,5 @@
 ---
-title: "XBPS Remove - Uninstall Packages on Linux | Free DevTools"
+title: "XBPS Remove - Uninstall Packages on Linux | Online Free DevTools by Hexmos"
 name: xbps-remove
 path: /freedevtools/tldr/linux/xbps-remove
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-remove/"

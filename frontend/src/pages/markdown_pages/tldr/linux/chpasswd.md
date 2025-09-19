@@ -1,5 +1,5 @@
 ---
-title: "chpasswd - Change Passwords Securely | Free DevTools"
+title: "chpasswd - Change Passwords Securely | Online Free DevTools by Hexmos"
 name: chpasswd
 path: /freedevtools/tldr/linux/chpasswd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chpasswd/"

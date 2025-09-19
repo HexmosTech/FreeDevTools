@@ -1,5 +1,5 @@
 ---
-title: "SMB Password Control - Manage Samba User Passwords | Free DevTools"
+title: "SMB Password Control - Manage Samba User Passwords | Online Free DevTools by Hexmos"
 name: smbpasswd
 path: /freedevtools/tldr/linux/smbpasswd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smbpasswd/"

@@ -1,5 +1,5 @@
 ---
-title: "Montage Images - Create Image Grids with Magick | Free DevTools"
+title: "Montage Images - Create Image Grids with Magick | Online Free DevTools by Hexmos"
 name: magick-montage
 path: /freedevtools/tldr/magick/magick-montage
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-montage/"

@@ -1,5 +1,5 @@
 ---
-title: "Hash Object - Generate Git Object ID | Free DevTools"
+title: "Hash Object - Generate Git Object ID | Online Free DevTools by Hexmos"
 name: git-hash-object
 path: /freedevtools/tldr/git/git-hash-object
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-hash-object/"

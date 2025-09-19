@@ -1,5 +1,5 @@
 ---
-title: "Yesod Scaffolding - Create Haskell Web Apps | Free DevTools"
+title: "Yesod Scaffolding - Create Haskell Web Apps | Online Free DevTools by Hexmos"
 name: yesod
 path: /freedevtools/tldr/common/yesod
 canonical: "https://hexmos.com/freedevtools/tldr/common/yesod/"

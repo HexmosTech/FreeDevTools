@@ -1,5 +1,5 @@
 ---
-title: "Foreman - Manage Procfile Apps | Free DevTools"
+title: "Foreman - Manage Procfile Apps | Online Free DevTools by Hexmos"
 name: foreman
 path: /freedevtools/tldr/linux/foreman
 canonical: "https://hexmos.com/freedevtools/tldr/linux/foreman/"

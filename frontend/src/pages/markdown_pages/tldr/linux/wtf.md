@@ -1,5 +1,5 @@
 ---
-title: "WTF Acronym Expander - Expand Acronyms Instantly | Free DevTools"
+title: "WTF Acronym Expander - Expand Acronyms Instantly | Online Free DevTools by Hexmos"
 name: wtf
 path: /freedevtools/tldr/linux/wtf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wtf/"

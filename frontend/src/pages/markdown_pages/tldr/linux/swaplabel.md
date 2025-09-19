@@ -1,5 +1,5 @@
 ---
-title: "Swaplabel - Manage Swap Partitions | Free DevTools"
+title: "Swaplabel - Manage Swap Partitions | Online Free DevTools by Hexmos"
 name: swaplabel
 path: /freedevtools/tldr/linux/swaplabel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/swaplabel/"

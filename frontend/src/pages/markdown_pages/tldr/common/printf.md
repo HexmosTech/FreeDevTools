@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Printf Command | Free DevTools"
+title: "Format Text - Printf Command | Online Free DevTools by Hexmos"
 name: printf
 path: /freedevtools/tldr/common/printf
 canonical: "https://hexmos.com/freedevtools/tldr/common/printf/"

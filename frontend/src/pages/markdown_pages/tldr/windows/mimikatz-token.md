@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Token - Control Security Tokens | Free DevTools"
+title: "Mimikatz Token - Control Security Tokens | Online Free DevTools by Hexmos"
 name: mimikatz-token
 path: /freedevtools/tldr/windows/mimikatz-token
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-token/"

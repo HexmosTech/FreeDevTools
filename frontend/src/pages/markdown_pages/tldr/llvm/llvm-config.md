@@ -1,5 +1,5 @@
 ---
-title: "LLVM Config - Generate Compiler Flags | Free DevTools"
+title: "LLVM Config - Generate Compiler Flags | Online Free DevTools by Hexmos"
 name: llvm-config
 path: /freedevtools/tldr/llvm/llvm-config
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-config/"

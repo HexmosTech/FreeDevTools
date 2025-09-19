@@ -1,5 +1,5 @@
 ---
-title: "Visualize Disk Usage - Inspect Files with Duc | Free DevTools"
+title: "Visualize Disk Usage - Inspect Files with Duc | Online Free DevTools by Hexmos"
 name: duc
 path: /freedevtools/tldr/common/duc
 canonical: "https://hexmos.com/freedevtools/tldr/common/duc/"

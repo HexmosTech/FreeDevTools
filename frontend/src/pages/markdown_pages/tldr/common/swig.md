@@ -1,5 +1,5 @@
 ---
-title: "SWIG - Generate Bindings for Multiple Languages | Free DevTools"
+title: "SWIG - Generate Bindings for Multiple Languages | Online Free DevTools by Hexmos"
 name: swig
 path: "/freedevtools/tldr/common/swig"
 canonical: "https://hexmos.com/freedevtools/tldr/common/swig/"

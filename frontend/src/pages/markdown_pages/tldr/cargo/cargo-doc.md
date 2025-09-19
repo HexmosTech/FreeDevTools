@@ -1,5 +1,5 @@
 ---
-title: "Generate Rust Documentation - Cargo Doc | Free DevTools"
+title: "Generate Rust Documentation - Cargo Doc | Online Free DevTools by Hexmos"
 name: cargo-doc
 path: /freedevtools/tldr/cargo/cargo-doc
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-doc/"

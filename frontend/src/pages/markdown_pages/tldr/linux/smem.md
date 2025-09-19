@@ -1,5 +1,5 @@
 ---
-title: "smem Memory Usage - Monitor System Processes | Free DevTools"
+title: "smem Memory Usage - Monitor System Processes | Online Free DevTools by Hexmos"
 name: smem
 path: /freedevtools/tldr/linux/smem
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smem/"

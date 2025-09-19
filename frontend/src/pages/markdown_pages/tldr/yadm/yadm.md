@@ -1,5 +1,5 @@
 ---
-title: "Manage Dotfiles - Control Configurations with yadm | Free DevTools"
+title: "Manage Dotfiles - Control Configurations with yadm | Online Free DevTools by Hexmos"
 name: yadm
 path: /freedevtools/tldr/yadm/yadm
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm/"

@@ -1,5 +1,5 @@
 ---
-title: "DNSrecon - Enumerate DNS Records | Free DevTools"
+title: "DNSrecon - Enumerate DNS Records | Online Free DevTools by Hexmos"
 name: dnsrecon
 path: /freedevtools/tldr/linux/dnsrecon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsrecon/"

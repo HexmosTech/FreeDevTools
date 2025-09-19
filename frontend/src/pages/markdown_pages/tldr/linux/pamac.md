@@ -1,5 +1,5 @@
 ---
-title: "Pamac Package Manager - Manage Linux Packages | Free DevTools"
+title: "Pamac Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos"
 name: pamac
 path: /freedevtools/tldr/linux/pamac
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pamac/"

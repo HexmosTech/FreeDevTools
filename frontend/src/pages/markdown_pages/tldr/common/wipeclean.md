@@ -1,5 +1,5 @@
 ---
-title: "WipeClean - Clear Terminal Screen | Free DevTools"
+title: "WipeClean - Clear Terminal Screen | Online Free DevTools by Hexmos"
 name: wipeclean
 path: /freedevtools/tldr/common/wipeclean
 canonical: "https://hexmos.com/freedevtools/tldr/common/wipeclean/"

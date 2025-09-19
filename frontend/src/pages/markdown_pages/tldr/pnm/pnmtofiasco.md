@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to FIASCO - Compress Images | Free DevTools"
+title: "Convert PNM to FIASCO - Compress Images | Online Free DevTools by Hexmos"
 name: pnmtofiasco
 path: /freedevtools/tldr/pnm/pnmtofiasco
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtofiasco/"

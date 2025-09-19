@@ -1,5 +1,5 @@
 ---
-title: "Generate PGM Texture - Extract Image Features | Free DevTools"
+title: "Generate PGM Texture - Extract Image Features | Online Free DevTools by Hexmos"
 name: pgmtexture
 path: /freedevtools/tldr/common/pgmtexture
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtexture/"

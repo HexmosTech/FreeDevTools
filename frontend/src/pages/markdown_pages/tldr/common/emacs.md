@@ -1,5 +1,5 @@
 ---
-title: "Emacs Editor - Control Text Editing | Free DevTools"
+title: "Emacs Editor - Control Text Editing | Online Free DevTools by Hexmos"
 name: emacs
 path: /freedevtools/tldr/common/emacs
 canonical: "https://hexmos.com/freedevtools/tldr/common/emacs/"

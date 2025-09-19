@@ -1,5 +1,5 @@
 ---
-title: "Brew Update - Fetch Homebrew Formulae | Free DevTools"
+title: "Brew Update - Fetch Homebrew Formulae | Online Free DevTools by Hexmos"
 name: brew-update
 path: /freedevtools/tldr/brew/brew-update
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-update/"

@@ -1,5 +1,5 @@
 ---
-title: "Nodemon - Restart Node.js Apps | Free DevTools"
+title: "Nodemon - Restart Node.js Apps | Online Free DevTools by Hexmos"
 name: nodemon
 path: /freedevtools/tldr/common/nodemon
 canonical: "https://hexmos.com/freedevtools/tldr/common/nodemon/"

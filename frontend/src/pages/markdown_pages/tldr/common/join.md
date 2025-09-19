@@ -1,5 +1,5 @@
 ---
-title: "Join Files - Merge Data with Common Fields | Free DevTools"
+title: "Join Files - Merge Data with Common Fields | Online Free DevTools by Hexmos"
 name: join
 path: /freedevtools/tldr/common/join
 canonical: "https://hexmos.com/freedevtools/tldr/common/join/"

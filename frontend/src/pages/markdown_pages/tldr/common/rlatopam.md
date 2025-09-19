@@ -1,5 +1,5 @@
 ---
-title: "Convert RLA Image - Format RLA to PAM | Free DevTools"
+title: "Convert RLA Image - Format RLA to PAM | Online Free DevTools by Hexmos"
 name: rlatopam
 path: /freedevtools/tldr/common/rlatopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/rlatopam/"

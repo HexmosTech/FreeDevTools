@@ -1,5 +1,5 @@
 ---
-title: "e2fsck Filesystem Check - Validate Linux Partitions | Free DevTools"
+title: "e2fsck Filesystem Check - Validate Linux Partitions | Online Free DevTools by Hexmos"
 name: e2fsck
 path: /freedevtools/tldr/linux/e2fsck
 canonical: "https://hexmos.com/freedevtools/tldr/linux/e2fsck/"

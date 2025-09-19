@@ -1,5 +1,5 @@
 ---
-title: "Format Bytes - Convert to Human-Readable Format | Free DevTools"
+title: "Format Bytes - Convert to Human-Readable Format | Online Free DevTools by Hexmos"
 name: pretty-bytes
 path: /freedevtools/tldr/common/pretty-bytes
 canonical: "https://hexmos.com/freedevtools/tldr/common/pretty-bytes/"

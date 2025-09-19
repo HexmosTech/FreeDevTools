@@ -1,5 +1,5 @@
 ---
-title: "PIO Debug - Debug PlatformIO Projects | Free DevTools"
+title: "PIO Debug - Debug PlatformIO Projects | Online Free DevTools by Hexmos"
 name: pio-debug
 path: /freedevtools/tldr/pio/pio-debug
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-debug/"

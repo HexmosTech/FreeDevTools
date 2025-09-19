@@ -1,5 +1,5 @@
 ---
-title: "Create Hard Link - File Linking Command | Free DevTools"
+title: "Create Hard Link - File Linking Command | Online Free DevTools by Hexmos"
 name: link
 path: /freedevtools/tldr/common/link
 canonical: "https://hexmos.com/freedevtools/tldr/common/link/"

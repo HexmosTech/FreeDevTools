@@ -1,5 +1,5 @@
 ---
-title: "Transmission Daemon - Control Torrents | Free DevTools"
+title: "Transmission Daemon - Control Torrents | Online Free DevTools by Hexmos"
 name: transmission-daemon
 path: /freedevtools/tldr/transmission/transmission-daemon
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-daemon/"

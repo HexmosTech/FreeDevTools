@@ -1,5 +1,5 @@
 ---
-title: "WARP Diagnostic - Generate System Information | Free DevTools"
+title: "WARP Diagnostic - Generate System Information | Online Free DevTools by Hexmos"
 name: warp-diag
 path: /freedevtools/tldr/warp/warp-diag
 canonical: "https://hexmos.com/freedevtools/tldr/warp/warp-diag/"

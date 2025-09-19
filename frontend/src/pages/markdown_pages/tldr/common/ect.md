@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Efficient Compression Tool | Free DevTools"
+title: "Compress Files - Efficient Compression Tool | Online Free DevTools by Hexmos"
 name: ect
 path: /freedevtools/tldr/common/ect
 canonical: "https://hexmos.com/freedevtools/tldr/common/ect/"

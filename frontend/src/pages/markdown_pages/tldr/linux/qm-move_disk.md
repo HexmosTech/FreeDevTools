@@ -1,5 +1,5 @@
 ---
-title: "QM Move Disk - Migrate VM Storage | Free DevTools"
+title: "QM Move Disk - Migrate VM Storage | Online Free DevTools by Hexmos"
 name: qm-move_disk
 path: /freedevtools/tldr/linux/qm-move_disk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-move_disk/"

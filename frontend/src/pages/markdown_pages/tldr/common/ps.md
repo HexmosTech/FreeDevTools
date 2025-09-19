@@ -1,5 +1,5 @@
 ---
-title: "Process Manager - Control Running Processes with ps | Free DevTools"
+title: "Process Manager - Control Running Processes with ps | Online Free DevTools by Hexmos"
 name: ps
 path: /freedevtools/tldr/common/ps
 canonical: "https://hexmos.com/freedevtools/tldr/common/ps/"

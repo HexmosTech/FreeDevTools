@@ -1,5 +1,5 @@
 ---
-title: "BC Calculator - Arbitrary Precision Calculation | Free DevTools"
+title: "BC Calculator - Arbitrary Precision Calculation | Online Free DevTools by Hexmos"
 name: bc
 path: /freedevtools/tldr/common/bc
 canonical: "https://hexmos.com/freedevtools/tldr/common/bc/"

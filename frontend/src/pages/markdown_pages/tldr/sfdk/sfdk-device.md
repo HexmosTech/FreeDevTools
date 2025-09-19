@@ -1,5 +1,5 @@
 ---
-title: "SFDK Device - Control SailfishOS Devices | Free DevTools"
+title: "SFDK Device - Control SailfishOS Devices | Online Free DevTools by Hexmos"
 name: sfdk-device
 path: /freedevtools/tldr/sfdk/sfdk-device
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-device/"

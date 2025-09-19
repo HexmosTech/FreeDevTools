@@ -1,5 +1,5 @@
 ---
-title: "Pueue Reset - Kill Tasks & Clear Logs | Free DevTools"
+title: "Pueue Reset - Kill Tasks & Clear Logs | Online Free DevTools by Hexmos"
 name: pueue-reset
 path: /freedevtools/tldr/pueue/pueue-reset
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-reset/"

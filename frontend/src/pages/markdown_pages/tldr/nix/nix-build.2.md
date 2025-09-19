@@ -1,5 +1,5 @@
 ---
-title: "Nix Build - Create Nix Expressions | Free DevTools"
+title: "Nix Build - Create Nix Expressions | Online Free DevTools by Hexmos"
 name: nix-build.2
 path: /freedevtools/tldr/nix/nix-build.2
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-build.2/"

@@ -1,5 +1,5 @@
 ---
-title: "PBM to MDA - Convert Image File | Free DevTools"
+title: "PBM to MDA - Convert Image File | Online Free DevTools by Hexmos"
 name: pbmtomda
 path: /freedevtools/tldr/common/pbmtomda
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtomda/"

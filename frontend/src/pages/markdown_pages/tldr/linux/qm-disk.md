@@ -1,5 +1,5 @@
 ---
-title: "QM Disk - Manage Virtual Disks | Free DevTools"
+title: "QM Disk - Manage Virtual Disks | Online Free DevTools by Hexmos"
 name: qm-disk
 path: /freedevtools/tldr/linux/qm-disk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk/"

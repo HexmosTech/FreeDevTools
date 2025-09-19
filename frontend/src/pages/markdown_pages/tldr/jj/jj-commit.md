@@ -1,5 +1,5 @@
 ---
-title: "Create JJ Commits - Update Changes with Ease | Free DevTools"
+title: "Create JJ Commits - Update Changes with Ease | Online Free DevTools by Hexmos"
 name: jj-commit
 path: /freedevtools/tldr/jj/jj-commit
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-commit/"

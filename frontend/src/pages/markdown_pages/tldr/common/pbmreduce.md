@@ -1,5 +1,5 @@
 ---
-title: "Reduce PBM Image - Proportionally Shrink Images | Free DevTools"
+title: "Reduce PBM Image - Proportionally Shrink Images | Online Free DevTools by Hexmos"
 name: pbmreduce
 path: /freedevtools/tldr/common/pbmreduce
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmreduce/"

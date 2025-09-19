@@ -1,5 +1,5 @@
 ---
-title: "Control Sway - Tiling Window Manager | Free DevTools"
+title: "Control Sway - Tiling Window Manager | Online Free DevTools by Hexmos"
 name: sway
 path: /freedevtools/tldr/common/sway
 canonical: "https://hexmos.com/freedevtools/tldr/common/sway/"

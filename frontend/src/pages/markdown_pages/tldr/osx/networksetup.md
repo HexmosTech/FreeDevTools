@@ -1,5 +1,5 @@
 ---
-title: "Networksetup - Control Network Settings | Free DevTools"
+title: "Networksetup - Control Network Settings | Online Free DevTools by Hexmos"
 name: networksetup
 path: /freedevtools/tldr/osx/networksetup
 canonical: "https://hexmos.com/freedevtools/tldr/osx/networksetup/"

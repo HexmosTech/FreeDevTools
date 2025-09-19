@@ -1,5 +1,5 @@
 ---
-title: "Trace-cmd Report - Display Trace Events | Free DevTools"
+title: "Trace-cmd Report - Display Trace Events | Online Free DevTools by Hexmos"
 name: trace-cmd-report
 path: /freedevtools/tldr/linux/trace-cmd-report
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trace-cmd-report/"

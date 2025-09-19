@@ -1,5 +1,5 @@
 ---
-title: "Create initramfs - Manage Linux Images | Free DevTools"
+title: "Create initramfs - Manage Linux Images | Online Free DevTools by Hexmos"
 name: update-initramfs
 path: /freedevtools/tldr/linux/update-initramfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/update-initramfs/"

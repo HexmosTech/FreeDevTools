@@ -1,5 +1,5 @@
 ---
-title: "Warts Filter - Select Warts Records | Free DevTools"
+title: "Warts Filter - Select Warts Records | Online Free DevTools by Hexmos"
 name: sc_wartsfilter
 path: /freedevtools/tldr/common/sc_wartsfilter
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_wartsfilter/"

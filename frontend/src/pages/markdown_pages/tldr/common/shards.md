@@ -1,5 +1,5 @@
 ---
-title: "Shards - Manage Crystal Dependencies | Free DevTools"
+title: "Shards - Manage Crystal Dependencies | Online Free DevTools by Hexmos"
 name: shards
 path: /freedevtools/tldr/common/shards
 canonical: "https://hexmos.com/freedevtools/tldr/common/shards/"

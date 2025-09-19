@@ -1,5 +1,5 @@
 ---
-title: "Android WM - Control Device Screen Info | Free DevTools"
+title: "Android WM - Control Device Screen Info | Online Free DevTools by Hexmos"
 name: wm
 path: /freedevtools/tldr/android/wm
 canonical: "https://hexmos.com/freedevtools/tldr/android/wm/"

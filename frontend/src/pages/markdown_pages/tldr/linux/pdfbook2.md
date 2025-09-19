@@ -1,5 +1,5 @@
 ---
-title: "Create PDF Booklets - Format PDF for Printing | Free DevTools"
+title: "Create PDF Booklets - Format PDF for Printing | Online Free DevTools by Hexmos"
 name: pdfbook2
 path: /freedevtools/tldr/linux/pdfbook2
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfbook2/"

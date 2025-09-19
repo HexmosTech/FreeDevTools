@@ -1,5 +1,5 @@
 ---
-title: "Search Web Engines - Query Websites with Surfraw | Free DevTools"
+title: "Search Web Engines - Query Websites with Surfraw | Online Free DevTools by Hexmos"
 name: surfraw
 path: /freedevtools/tldr/common/surfraw
 canonical: "https://hexmos.com/freedevtools/tldr/common/surfraw/"

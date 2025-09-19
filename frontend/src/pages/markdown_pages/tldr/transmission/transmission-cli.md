@@ -1,5 +1,5 @@
 ---
-title: "Torrent Downloader - Control Downloads with transmission-cli | Free DevTools"
+title: "Torrent Downloader - Control Downloads with transmission-cli | Online Free DevTools by Hexmos"
 name: transmission-cli
 path: /freedevtools/tldr/transmission/transmission-cli
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-cli/"

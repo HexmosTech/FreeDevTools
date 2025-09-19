@@ -1,5 +1,5 @@
 ---
-title: "PNM Scale - Resize Image Files | Free DevTools"
+title: "PNM Scale - Resize Image Files | Online Free DevTools by Hexmos"
 name: pnmscale
 path: /freedevtools/tldr/pnm/pnmscale
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmscale/"

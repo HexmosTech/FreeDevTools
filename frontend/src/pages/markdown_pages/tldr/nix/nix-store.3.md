@@ -1,5 +1,5 @@
 ---
-title: "Nix Store - Manage Package Store Paths | Free DevTools"
+title: "Nix Store - Manage Package Store Paths | Online Free DevTools by Hexmos"
 name: nix-store.3
 path: /freedevtools/tldr/nix/nix-store.3
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-store.3/"

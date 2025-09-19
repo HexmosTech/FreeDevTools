@@ -1,5 +1,5 @@
 ---
-title: "Convert SLD to PPM - Generate Images | Free DevTools"
+title: "Convert SLD to PPM - Generate Images | Online Free DevTools by Hexmos"
 name: sldtoppm
 path: /freedevtools/tldr/common/sldtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/sldtoppm/"

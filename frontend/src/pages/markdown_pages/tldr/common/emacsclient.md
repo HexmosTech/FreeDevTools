@@ -1,5 +1,5 @@
 ---
-title: "Emacsclient - Open Files in Emacs | Free DevTools"
+title: "Emacsclient - Open Files in Emacs | Online Free DevTools by Hexmos"
 name: emacsclient
 path: /freedevtools/tldr/common/emacsclient
 canonical: "https://hexmos.com/freedevtools/tldr/common/emacsclient/"

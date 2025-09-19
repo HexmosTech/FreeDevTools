@@ -1,5 +1,5 @@
 ---
-title: "LVM Manage Volumes - Create and Manage Logical Volumes | Free DevTools"
+title: "LVM Manage Volumes - Create and Manage Logical Volumes | Online Free DevTools by Hexmos"
 name: lvm
 path: /freedevtools/tldr/linux/lvm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvm/"

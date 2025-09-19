@@ -1,5 +1,5 @@
 ---
-title: "Remove Columns - Control Text Columns with colrm | Free DevTools"
+title: "Remove Columns - Control Text Columns with colrm | Online Free DevTools by Hexmos"
 name: colrm
 path: /freedevtools/tldr/linux/colrm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/colrm/"

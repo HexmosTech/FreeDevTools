@@ -1,5 +1,5 @@
 ---
-title: "PostgreSQL CLI - Connect to PostgreSQL Databases | Free DevTools"
+title: "PostgreSQL CLI - Connect to PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: pgcli
 path: /freedevtools/tldr/common/pgcli
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgcli/"

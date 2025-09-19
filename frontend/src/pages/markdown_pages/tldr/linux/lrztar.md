@@ -1,5 +1,5 @@
 ---
-title: "Lrztar - Compress Directories | Free DevTools"
+title: "Lrztar - Compress Directories | Online Free DevTools by Hexmos"
 name: lrztar
 path: /freedevtools/tldr/linux/lrztar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lrztar/"

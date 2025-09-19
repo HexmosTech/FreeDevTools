@@ -1,5 +1,5 @@
 ---
-title: "Hexdump - Inspect Binary Data | Free DevTools"
+title: "Hexdump - Inspect Binary Data | Online Free DevTools by Hexmos"
 name: hexdump
 path: /freedevtools/tldr/common/hexdump
 canonical: "https://hexmos.com/freedevtools/tldr/common/hexdump/"

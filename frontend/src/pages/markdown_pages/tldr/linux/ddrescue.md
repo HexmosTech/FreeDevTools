@@ -1,5 +1,5 @@
 ---
-title: "Data Recovery with ddrescue - Recover Damaged Devices | Free DevTools"
+title: "Data Recovery with ddrescue - Recover Damaged Devices | Online Free DevTools by Hexmos"
 name: ddrescue
 path: /freedevtools/tldr/linux/ddrescue
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ddrescue/"

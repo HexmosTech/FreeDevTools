@@ -1,5 +1,5 @@
 ---
-title: "Paste PNM Images - Control PNM Image Pasting | Free DevTools"
+title: "Paste PNM Images - Control PNM Image Pasting | Online Free DevTools by Hexmos"
 name: pnmpaste
 path: /freedevtools/tldr/pnm/pnmpaste
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpaste/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Send Email - Send Patches as Emails | Free DevTools"
+title: "Git Send Email - Send Patches as Emails | Online Free DevTools by Hexmos"
 name: git-send-email
 path: /freedevtools/tldr/git/git-send-email
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-send-email/"

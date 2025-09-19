@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage ModifyVM - Control Virtual Machine Settings | Free DevTools"
+title: "VBoxManage ModifyVM - Control Virtual Machine Settings | Online Free DevTools by Hexmos"
 name: vboxmanage-modifyvm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-modifyvm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-modifyvm/"

@@ -1,5 +1,5 @@
 ---
-title: "Brotli Compress - Create Brotli Archives | Free DevTools"
+title: "Brotli Compress - Create Brotli Archives | Online Free DevTools by Hexmos"
 name: brotli
 path: /freedevtools/tldr/common/brotli
 canonical: "https://hexmos.com/freedevtools/tldr/common/brotli/"

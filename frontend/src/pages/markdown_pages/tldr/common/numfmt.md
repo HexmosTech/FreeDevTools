@@ -1,5 +1,5 @@
 ---
-title: "Format Numbers - Convert Numbers to Human-Readable Format | Free DevTools"
+title: "Format Numbers - Convert Numbers to Human-Readable Format | Online Free DevTools by Hexmos"
 name: numfmt
 path: /freedevtools/tldr/common/numfmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/numfmt/"

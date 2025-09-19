@@ -1,5 +1,5 @@
 ---
-title: "LZOP Compress - Compress Files with LZO | Free DevTools"
+title: "LZOP Compress - Compress Files with LZO | Online Free DevTools by Hexmos"
 name: lzop
 path: "/freedevtools/tldr/common/lzop"
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzop/"

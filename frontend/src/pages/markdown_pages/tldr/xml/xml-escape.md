@@ -1,5 +1,5 @@
 ---
-title: "XML Escape - Convert Special Characters | Free DevTools"
+title: "XML Escape - Convert Special Characters | Online Free DevTools by Hexmos"
 name: xml-escape
 path: /freedevtools/tldr/xml/xml-escape
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-escape/"

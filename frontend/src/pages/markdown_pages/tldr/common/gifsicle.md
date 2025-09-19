@@ -1,5 +1,5 @@
 ---
-title: "Gifsicle - Create and Edit GIFs | Free DevTools"
+title: "Gifsicle - Create and Edit GIFs | Online Free DevTools by Hexmos"
 name: gifsicle
 path: /freedevtools/tldr/common/gifsicle
 canonical: "https://hexmos.com/freedevtools/tldr/common/gifsicle/"

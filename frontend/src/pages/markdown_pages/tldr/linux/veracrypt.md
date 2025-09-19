@@ -1,5 +1,5 @@
 ---
-title: "VeraCrypt Encryption - Create Secure Volumes | Free DevTools"
+title: "VeraCrypt Encryption - Create Secure Volumes | Online Free DevTools by Hexmos"
 name: veracrypt
 path: /freedevtools/tldr/linux/veracrypt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/veracrypt/"

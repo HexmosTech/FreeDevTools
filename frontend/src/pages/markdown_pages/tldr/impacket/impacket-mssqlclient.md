@@ -1,5 +1,5 @@
 ---
-title: "MSSQL Client - Execute Queries | Free DevTools"
+title: "MSSQL Client - Execute Queries | Online Free DevTools by Hexmos"
 name: impacket-mssqlclient
 path: /freedevtools/tldr/impacket/impacket-mssqlclient
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-mssqlclient/"

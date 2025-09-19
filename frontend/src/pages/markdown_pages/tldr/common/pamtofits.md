@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to FITS - Image Format Conversion | Free DevTools"
+title: "Convert PAM to FITS - Image Format Conversion | Online Free DevTools by Hexmos"
 name: pamtofits
 path: "/freedevtools/tldr/common/pamtofits"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtofits/"

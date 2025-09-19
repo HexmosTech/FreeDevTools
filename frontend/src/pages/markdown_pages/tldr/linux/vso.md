@@ -1,5 +1,5 @@
 ---
-title: "Control Vanilla OS - System Operator with VSO | Free DevTools"
+title: "Control Vanilla OS - System Operator with VSO | Online Free DevTools by Hexmos"
 name: vso
 path: /freedevtools/tldr/linux/vso
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vso/"

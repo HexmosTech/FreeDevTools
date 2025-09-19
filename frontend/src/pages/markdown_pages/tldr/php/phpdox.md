@@ -1,5 +1,5 @@
 ---
-title: "Generate PHP Documentation - phpDox | Free DevTools"
+title: "Generate PHP Documentation - phpDox | Online Free DevTools by Hexmos"
 name: phpdox
 path: /freedevtools/tldr/php/phpdox
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpdox/"

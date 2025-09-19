@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Control Files with gmv | Free DevTools"
+title: "Rename Files - Control Files with gmv | Online Free DevTools by Hexmos"
 name: gmv
 path: /freedevtools/tldr/osx/gmv
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmv/"

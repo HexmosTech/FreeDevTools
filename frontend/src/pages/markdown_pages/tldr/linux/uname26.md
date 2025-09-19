@@ -1,5 +1,5 @@
 ---
-title: "Uname26 Command - System Info Retrieval | Free DevTools"
+title: "Uname26 Command - System Info Retrieval | Online Free DevTools by Hexmos"
 name: uname26
 path: /freedevtools/tldr/linux/uname26
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uname26/"

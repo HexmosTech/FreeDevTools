@@ -1,5 +1,5 @@
 ---
-title: "Convert PYX to XML - Format PYX Documents | Free DevTools"
+title: "Convert PYX to XML - Format PYX Documents | Online Free DevTools by Hexmos"
 name: xml-depyx
 path: /freedevtools/tldr/xml/xml-depyx
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-depyx/"

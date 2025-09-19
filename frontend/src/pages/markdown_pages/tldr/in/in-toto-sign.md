@@ -1,5 +1,5 @@
 ---
-title: "Sign in-toto Metadata - Secure Software Supply Chains | Free DevTools"
+title: "Sign in-toto Metadata - Secure Software Supply Chains | Online Free DevTools by Hexmos"
 name: in-toto-sign
 path: /freedevtools/tldr/in/in-toto-sign
 canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-sign/"

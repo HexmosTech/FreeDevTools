@@ -1,5 +1,5 @@
 ---
-title: "Sacct Command - Display Slurm Accounting Data | Free DevTools"
+title: "Sacct Command - Display Slurm Accounting Data | Online Free DevTools by Hexmos"
 name: sacct
 path: /freedevtools/tldr/linux/sacct
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sacct/"

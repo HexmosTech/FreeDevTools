@@ -1,5 +1,5 @@
 ---
-title: "Recover BZ2 - Restore Damaged Archives | Free DevTools"
+title: "Recover BZ2 - Restore Damaged Archives | Online Free DevTools by Hexmos"
 name: bzip2recover
 path: /freedevtools/tldr/common/bzip2recover
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzip2recover/"

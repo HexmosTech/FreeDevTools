@@ -1,5 +1,5 @@
 ---
-title: "Parse HTML - Format & Filter HTML with pup | Free DevTools"
+title: "Parse HTML - Format & Filter HTML with pup | Online Free DevTools by Hexmos"
 name: pup
 path: /freedevtools/tldr/common/pup
 canonical: "https://hexmos.com/freedevtools/tldr/common/pup/"

@@ -1,5 +1,5 @@
 ---
-title: "SMB Client - Interact with SMB Servers | Free DevTools"
+title: "SMB Client - Interact with SMB Servers | Online Free DevTools by Hexmos"
 name: smbclient.py
 path: /freedevtools/tldr/common/smbclient.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/smbclient.py/"

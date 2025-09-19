@@ -1,5 +1,5 @@
 ---
-title: "Control Irssi - Text-Based IRC Client | Free DevTools"
+title: "Control Irssi - Text-Based IRC Client | Online Free DevTools by Hexmos"
 name: irssi
 path: "/freedevtools/tldr/common/irssi"
 canonical: "https://hexmos.com/freedevtools/tldr/common/irssi/"

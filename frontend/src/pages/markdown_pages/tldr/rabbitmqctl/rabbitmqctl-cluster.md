@@ -1,5 +1,5 @@
 ---
-title: "RabbitMQ Cluster - Control Nodes | Free DevTools"
+title: "RabbitMQ Cluster - Control Nodes | Online Free DevTools by Hexmos"
 name: rabbitmqctl-cluster
 path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster
 canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster/"

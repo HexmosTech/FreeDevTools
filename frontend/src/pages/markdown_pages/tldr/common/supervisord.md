@@ -1,5 +1,5 @@
 ---
-title: "Control Processes - Supervisord | Free DevTools"
+title: "Control Processes - Supervisord | Online Free DevTools by Hexmos"
 name: supervisord
 path: /freedevtools/tldr/common/supervisord
 canonical: "https://hexmos.com/freedevtools/tldr/common/supervisord/"

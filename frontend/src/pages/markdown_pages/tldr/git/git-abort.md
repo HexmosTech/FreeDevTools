@@ -1,5 +1,5 @@
 ---
-title: "Abort Git - Manage Rebase Operations | Free DevTools"
+title: "Abort Git - Manage Rebase Operations | Online Free DevTools by Hexmos"
 name: git-abort
 path: /freedevtools/tldr/git/git-abort
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-abort/"

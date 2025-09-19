@@ -1,5 +1,5 @@
 ---
-title: "setsid Command - Control Process Sessions | Free DevTools"
+title: "setsid Command - Control Process Sessions | Online Free DevTools by Hexmos"
 name: setsid
 path: /freedevtools/tldr/linux/setsid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setsid/"

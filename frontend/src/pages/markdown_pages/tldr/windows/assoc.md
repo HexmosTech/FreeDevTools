@@ -1,5 +1,5 @@
 ---
-title: "Assoc - Manage File Associations | Free DevTools"
+title: "Assoc - Manage File Associations | Online Free DevTools by Hexmos"
 name: assoc
 path: /freedevtools/tldr/windows/assoc
 canonical: "https://hexmos.com/freedevtools/tldr/windows/assoc/"

@@ -1,5 +1,5 @@
 ---
-title: "Zip Archive - Package and Compress Files | Free DevTools"
+title: "Zip Archive - Package and Compress Files | Online Free DevTools by Hexmos"
 name: zip
 path: "/freedevtools/tldr/common/zip"
 canonical: "https://hexmos.com/freedevtools/tldr/common/zip/"

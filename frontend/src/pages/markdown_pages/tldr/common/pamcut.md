@@ -1,5 +1,5 @@
 ---
-title: "Pamcut - Cut Netpbm Images | Free DevTools"
+title: "Pamcut - Cut Netpbm Images | Online Free DevTools by Hexmos"
 name: pamcut
 path: "/freedevtools/tldr/common/pamcut"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamcut/"

@@ -1,5 +1,5 @@
 ---
-title: "Backup VG - Backup Volume Group Configuration | Free DevTools"
+title: "Backup VG - Backup Volume Group Configuration | Online Free DevTools by Hexmos"
 name: vgcfgbackup
 path: /freedevtools/tldr/linux/vgcfgbackup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgcfgbackup/"

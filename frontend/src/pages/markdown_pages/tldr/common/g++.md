@@ -1,5 +1,5 @@
 ---
-title: "G++ Compiler - Compile C++ Code | Free DevTools"
+title: "G++ Compiler - Compile C++ Code | Online Free DevTools by Hexmos"
 name: g++
 path: /freedevtools/tldr/common/g++
 canonical: "https://hexmos.com/freedevtools/tldr/common/g++/"

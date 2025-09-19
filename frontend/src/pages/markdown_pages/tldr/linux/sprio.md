@@ -1,5 +1,5 @@
 ---
-title: "SPRIO - View Job Scheduling Priority | Free DevTools"
+title: "SPRIO - View Job Scheduling Priority | Online Free DevTools by Hexmos"
 name: sprio
 path: "/freedevtools/tldr/linux/sprio"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sprio/"

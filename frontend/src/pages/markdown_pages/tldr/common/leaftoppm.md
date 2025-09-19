@@ -1,5 +1,5 @@
 ---
-title: "Convert Leaf Image - Generate PPM Images | Free DevTools"
+title: "Convert Leaf Image - Generate PPM Images | Online Free DevTools by Hexmos"
 name: leaftoppm
 path: "/freedevtools/tldr/common/leaftoppm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/leaftoppm/"

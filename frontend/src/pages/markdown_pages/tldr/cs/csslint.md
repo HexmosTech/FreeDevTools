@@ -1,5 +1,5 @@
 ---
-title: "CSS Lint - Validate CSS Code | Free DevTools"
+title: "CSS Lint - Validate CSS Code | Online Free DevTools by Hexmos"
 name: csslint
 path: /freedevtools/tldr/cs/csslint
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csslint/"

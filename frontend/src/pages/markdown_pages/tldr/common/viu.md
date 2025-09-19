@@ -1,5 +1,5 @@
 ---
-title: "View Images - Render Images in Terminal | Free DevTools"
+title: "View Images - Render Images in Terminal | Online Free DevTools by Hexmos"
 name: viu
 path: /freedevtools/tldr/common/viu
 canonical: "https://hexmos.com/freedevtools/tldr/common/viu/"

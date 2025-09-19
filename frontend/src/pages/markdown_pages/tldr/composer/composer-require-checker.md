@@ -1,5 +1,5 @@
 ---
-title: "Analyze Composer Dependencies - Check Packages | Free DevTools"
+title: "Analyze Composer Dependencies - Check Packages | Online Free DevTools by Hexmos"
 name: composer-require-checker
 path: /freedevtools/tldr/composer/composer-require-checker
 canonical: "https://hexmos.com/freedevtools/tldr/composer/composer-require-checker/"

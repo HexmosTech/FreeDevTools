@@ -1,5 +1,5 @@
 ---
-title: "Generate PipeWire Graph - Create .dot Files | Free DevTools"
+title: "Generate PipeWire Graph - Create .dot Files | Online Free DevTools by Hexmos"
 name: pw-dot
 path: /freedevtools/tldr/linux/pw-dot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-dot/"

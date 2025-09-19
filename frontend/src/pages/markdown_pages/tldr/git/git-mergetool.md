@@ -1,5 +1,5 @@
 ---
-title: "Git Mergetool - Resolve Merge Conflicts | Free DevTools"
+title: "Git Mergetool - Resolve Merge Conflicts | Online Free DevTools by Hexmos"
 name: git-mergetool
 path: /freedevtools/tldr/git/git-mergetool
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-mergetool/"

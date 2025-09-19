@@ -1,5 +1,5 @@
 ---
-title: "Vinmap Scanner - Parallel Network Scanning | Free DevTools"
+title: "Vinmap Scanner - Parallel Network Scanning | Online Free DevTools by Hexmos"
 name: vinmap
 path: /freedevtools/tldr/common/vinmap
 canonical: "https://hexmos.com/freedevtools/tldr/common/vinmap/"

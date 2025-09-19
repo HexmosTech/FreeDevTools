@@ -1,5 +1,5 @@
 ---
-title: "Control Head Output - Tail Command Alias | Free DevTools"
+title: "Control Head Output - Tail Command Alias | Online Free DevTools by Hexmos"
 name: ghead
 path: /freedevtools/tldr/osx/ghead
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ghead/"

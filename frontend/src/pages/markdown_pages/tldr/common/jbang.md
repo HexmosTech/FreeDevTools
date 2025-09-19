@@ -1,5 +1,5 @@
 ---
-title: "Create Java Programs - Run Source Code with Jbang | Free DevTools"
+title: "Create Java Programs - Run Source Code with Jbang | Online Free DevTools by Hexmos"
 name: jbang
 path: /freedevtools/tldr/common/jbang
 canonical: "https://hexmos.com/freedevtools/tldr/common/jbang/"

@@ -1,5 +1,5 @@
 ---
-title: "Export Container Image - Create Tarballs | Free DevTools"
+title: "Export Container Image - Create Tarballs | Online Free DevTools by Hexmos"
 name: crane-export
 path: /freedevtools/tldr/crane/crane-export
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-export/"

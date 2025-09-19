@@ -1,5 +1,5 @@
 ---
-title: "Telinit - Control Runlevels on Linux | Free DevTools"
+title: "Telinit - Control Runlevels on Linux | Online Free DevTools by Hexmos"
 name: telinit
 path: /freedevtools/tldr/linux/telinit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/telinit/"

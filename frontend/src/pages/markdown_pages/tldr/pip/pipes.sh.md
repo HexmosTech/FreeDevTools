@@ -1,5 +1,5 @@
 ---
-title: "Pipes Terminal Generator - Create Animated Pipes | Free DevTools"
+title: "Pipes Terminal Generator - Create Animated Pipes | Online Free DevTools by Hexmos"
 name: pipes.sh
 path: /freedevtools/tldr/pip/pipes.sh
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pipes.sh/"

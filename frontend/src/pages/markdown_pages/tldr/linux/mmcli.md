@@ -1,5 +1,5 @@
 ---
-title: "Modem Control - Manage Modems with mmcli | Free DevTools"
+title: "Modem Control - Manage Modems with mmcli | Online Free DevTools by Hexmos"
 name: mmcli
 path: /freedevtools/tldr/linux/mmcli
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mmcli/"

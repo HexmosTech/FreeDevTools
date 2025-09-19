@@ -1,5 +1,5 @@
 ---
-title: "View PDF Files - Display PDF Documents with Xpdf | Free DevTools"
+title: "View PDF Files - Display PDF Documents with Xpdf | Online Free DevTools by Hexmos"
 name: xpdf
 path: /freedevtools/tldr/common/xpdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/xpdf/"

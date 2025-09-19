@@ -1,5 +1,5 @@
 ---
-title: "Control CPU Speed - auto-cpufreq Optimizer | Free DevTools"
+title: "Control CPU Speed - auto-cpufreq Optimizer | Online Free DevTools by Hexmos"
 name: auto-cpufreq
 path: /freedevtools/tldr/linux/auto-cpufreq
 canonical: "https://hexmos.com/freedevtools/tldr/linux/auto-cpufreq/"

@@ -1,5 +1,5 @@
 ---
-title: "Stern - Tail Kubernetes Pod Logs | Free DevTools"
+title: "Stern - Tail Kubernetes Pod Logs | Online Free DevTools by Hexmos"
 name: stern
 path: "/freedevtools/tldr/st/stern"
 canonical: "https://hexmos.com/freedevtools/tldr/st/stern/"

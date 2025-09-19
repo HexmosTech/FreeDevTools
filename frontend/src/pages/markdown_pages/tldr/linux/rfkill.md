@@ -1,5 +1,5 @@
 ---
-title: "Control Wireless Devices with rfkill | Free DevTools"
+title: "Control Wireless Devices with rfkill | Online Free DevTools by Hexmos"
 name: rfkill
 path: /freedevtools/tldr/linux/rfkill
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rfkill/"

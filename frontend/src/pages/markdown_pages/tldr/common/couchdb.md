@@ -1,5 +1,5 @@
 ---
-title: "Manage CouchDB - Control Database Server | Free DevTools"
+title: "Manage CouchDB - Control Database Server | Online Free DevTools by Hexmos"
 name: couchdb
 path: /freedevtools/tldr/common/couchdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/couchdb/"

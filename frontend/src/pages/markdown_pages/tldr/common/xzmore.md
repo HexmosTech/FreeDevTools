@@ -1,5 +1,5 @@
 ---
-title: "Display XZ Files - View Compressed Text | Free DevTools"
+title: "Display XZ Files - View Compressed Text | Online Free DevTools by Hexmos"
 name: xzmore
 path: /freedevtools/tldr/common/xzmore
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzmore/"

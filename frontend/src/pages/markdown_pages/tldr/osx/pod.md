@@ -1,5 +1,5 @@
 ---
-title: "Manage Cocoa Dependencies - Control Pods on OSX | Free DevTools"
+title: "Manage Cocoa Dependencies - Control Pods on OSX | Online Free DevTools by Hexmos"
 name: pod
 path: /freedevtools/tldr/osx/pod
 canonical: "https://hexmos.com/freedevtools/tldr/osx/pod/"

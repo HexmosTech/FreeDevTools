@@ -1,5 +1,5 @@
 ---
-title: "Enable Swapping - Manage Swap Space with Swapon | Free DevTools"
+title: "Enable Swapping - Manage Swap Space with Swapon | Online Free DevTools by Hexmos"
 name: swapon
 path: /freedevtools/tldr/linux/swapon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/swapon/"

@@ -1,5 +1,5 @@
 ---
-title: "Autossh - Control SSH Connections and Tunnels | Free DevTools"
+title: "Autossh - Control SSH Connections and Tunnels | Online Free DevTools by Hexmos"
 name: autossh
 path: /freedevtools/tldr/common/autossh
 canonical: "https://hexmos.com/freedevtools/tldr/common/autossh/"

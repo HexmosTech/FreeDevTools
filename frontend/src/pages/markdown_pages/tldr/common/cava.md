@@ -1,5 +1,5 @@
 ---
-title: "Visualize Audio - Control CAVA Visualizer | Free DevTools"
+title: "Visualize Audio - Control CAVA Visualizer | Online Free DevTools by Hexmos"
 name: cava
 path: /freedevtools/tldr/common/cava
 canonical: "https://hexmos.com/freedevtools/tldr/common/cava/"

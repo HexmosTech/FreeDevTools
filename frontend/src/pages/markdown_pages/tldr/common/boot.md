@@ -1,5 +1,5 @@
 ---
-title: "Boot Builder - Build Clojure Projects | Free DevTools"
+title: "Boot Builder - Build Clojure Projects | Online Free DevTools by Hexmos"
 name: boot
 path: /freedevtools/tldr/common/boot
 canonical: "https://hexmos.com/freedevtools/tldr/common/boot/"

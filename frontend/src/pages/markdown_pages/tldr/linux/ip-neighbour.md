@@ -1,5 +1,5 @@
 ---
-title: "Manage IP Neighbour - Control Network Neighbours | Free DevTools"
+title: "Manage IP Neighbour - Control Network Neighbours | Online Free DevTools by Hexmos"
 name: ip-neighbour
 path: /freedevtools/tldr/linux/ip-neighbour
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-neighbour/"

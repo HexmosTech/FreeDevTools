@@ -1,5 +1,5 @@
 ---
-title: "Convert GIF to WebP - Optimize Images | Free DevTools"
+title: "Convert GIF to WebP - Optimize Images | Online Free DevTools by Hexmos"
 name: gif2webp
 path: /freedevtools/tldr/linux/gif2webp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gif2webp/"

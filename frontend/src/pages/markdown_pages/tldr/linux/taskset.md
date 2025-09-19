@@ -1,5 +1,5 @@
 ---
-title: "Taskset - Control CPU Affinity | Free DevTools"
+title: "Taskset - Control CPU Affinity | Online Free DevTools by Hexmos"
 name: taskset
 path: /freedevtools/tldr/linux/taskset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/taskset/"

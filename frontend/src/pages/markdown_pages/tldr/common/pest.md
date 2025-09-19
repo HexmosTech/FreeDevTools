@@ -1,5 +1,5 @@
 ---
-title: "Pest Tests - Run PHP Tests Simply | Free DevTools"
+title: "Pest Tests - Run PHP Tests Simply | Online Free DevTools by Hexmos"
 name: pest
 path: /freedevtools/tldr/common/pest
 canonical: "https://hexmos.com/freedevtools/tldr/common/pest/"

@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Edge - Control Web Browsing with msedge | Free DevTools"
+title: "Microsoft Edge - Control Web Browsing with msedge | Online Free DevTools by Hexmos"
 name: msedge
 path: /freedevtools/tldr/windows/msedge
 canonical: "https://hexmos.com/freedevtools/tldr/windows/msedge/"

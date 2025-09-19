@@ -1,5 +1,5 @@
 ---
-title: "Flyctl Control - Manage Fly.io Apps | Free DevTools"
+title: "Flyctl Control - Manage Fly.io Apps | Online Free DevTools by Hexmos"
 name: flyctl
 path: /freedevtools/tldr/common/flyctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/flyctl/"

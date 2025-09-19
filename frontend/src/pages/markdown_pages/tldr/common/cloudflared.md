@@ -1,5 +1,5 @@
 ---
-title: "Create Cloudflare Tunnel - Secure Connections | Free DevTools"
+title: "Create Cloudflare Tunnel - Secure Connections | Online Free DevTools by Hexmos"
 name: cloudflared
 path: /freedevtools/tldr/common/cloudflared
 canonical: "https://hexmos.com/freedevtools/tldr/common/cloudflared/"

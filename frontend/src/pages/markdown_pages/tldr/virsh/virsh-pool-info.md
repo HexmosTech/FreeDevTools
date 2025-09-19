@@ -1,5 +1,5 @@
 ---
-title: "Virsh Pool Info - List VM Storage | Free DevTools"
+title: "Virsh Pool Info - List VM Storage | Online Free DevTools by Hexmos"
 name: virsh-pool-info
 path: /freedevtools/tldr/virsh/virsh-pool-info
 canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-info/"

@@ -1,5 +1,5 @@
 ---
-title: "XML Edit - Edit XML Documents | Free DevTools"
+title: "XML Edit - Edit XML Documents | Online Free DevTools by Hexmos"
 name: xml-edit
 path: /freedevtools/tldr/xml/xml-edit
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-edit/"

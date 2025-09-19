@@ -1,5 +1,5 @@
 ---
-title: "Control IPv6 Firewall with ip6tables-restore | Free DevTools"
+title: "Control IPv6 Firewall with ip6tables-restore | Online Free DevTools by Hexmos"
 name: ip6tables-restore
 path: /freedevtools/tldr/linux/ip6tables-restore
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip6tables-restore/"

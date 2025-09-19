@@ -1,5 +1,5 @@
 ---
-title: "Pueue Group - Manage Task Groups | Free DevTools"
+title: "Pueue Group - Manage Task Groups | Online Free DevTools by Hexmos"
 name: pueue-group
 path: /freedevtools/tldr/pueue/pueue-group
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-group/"

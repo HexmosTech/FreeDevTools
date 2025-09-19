@@ -1,5 +1,5 @@
 ---
-title: "GDAL DEM - Analyze Elevation Models | Free DevTools"
+title: "GDAL DEM - Analyze Elevation Models | Online Free DevTools by Hexmos"
 name: gdaldem
 path: /freedevtools/tldr/common/gdaldem
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdaldem/"

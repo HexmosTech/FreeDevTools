@@ -1,5 +1,5 @@
 ---
-title: "Sort CSV Files - Control CSV Sorting with csvsort | Free DevTools"
+title: "Sort CSV Files - Control CSV Sorting with csvsort | Online Free DevTools by Hexmos"
 name: csvsort
 path: /freedevtools/tldr/cs/csvsort
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvsort/"

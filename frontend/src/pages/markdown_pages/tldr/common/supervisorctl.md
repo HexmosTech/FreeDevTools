@@ -1,5 +1,5 @@
 ---
-title: "Supervisorctl - Control Processes | Free DevTools"
+title: "Supervisorctl - Control Processes | Online Free DevTools by Hexmos"
 name: supervisorctl
 path: /freedevtools/tldr/common/supervisorctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/supervisorctl/"

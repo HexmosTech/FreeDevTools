@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Files - Secure Data with yadm-encrypt | Free DevTools"
+title: "Encrypt Files - Secure Data with yadm-encrypt | Online Free DevTools by Hexmos"
 name: yadm-encrypt
 path: /freedevtools/tldr/yadm/yadm-encrypt
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-encrypt/"

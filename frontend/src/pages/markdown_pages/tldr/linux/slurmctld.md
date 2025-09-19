@@ -1,5 +1,5 @@
 ---
-title: "Slurmctld Control - Manage Slurm Resources | Free DevTools"
+title: "Slurmctld Control - Manage Slurm Resources | Online Free DevTools by Hexmos"
 name: slurmctld
 path: /freedevtools/tldr/linux/slurmctld
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmctld/"

@@ -1,5 +1,5 @@
 ---
-title: "Fossil Control - Add Files Under Version Control | Free DevTools"
+title: "Fossil Control - Add Files Under Version Control | Online Free DevTools by Hexmos"
 name: fossil-add
 path: /freedevtools/tldr/fossil/fossil-add
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-add/"

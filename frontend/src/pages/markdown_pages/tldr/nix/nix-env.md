@@ -1,5 +1,5 @@
 ---
-title: "Nix-env - Manage Packages | Free DevTools"
+title: "Nix-env - Manage Packages | Online Free DevTools by Hexmos"
 name: nix-env
 path: /freedevtools/tldr/nix/nix-env
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-env/"

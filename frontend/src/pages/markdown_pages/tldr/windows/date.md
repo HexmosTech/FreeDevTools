@@ -1,5 +1,5 @@
 ---
-title: "Date - Display System Date | Free DevTools"
+title: "Date - Display System Date | Online Free DevTools by Hexmos"
 name: date
 path: /freedevtools/tldr/windows/date
 canonical: "https://hexmos.com/freedevtools/tldr/windows/date/"

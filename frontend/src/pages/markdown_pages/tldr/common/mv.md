@@ -1,5 +1,5 @@
 ---
-title: "File Move - Rename Files & Directories | Free DevTools"
+title: "File Move - Rename Files & Directories | Online Free DevTools by Hexmos"
 name: mv
 path: /freedevtools/tldr/common/mv
 canonical: "https://hexmos.com/freedevtools/tldr/common/mv/"

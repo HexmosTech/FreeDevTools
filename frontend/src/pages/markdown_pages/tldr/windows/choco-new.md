@@ -1,5 +1,5 @@
 ---
-title: "Generate Chocolatey Packages - choco-new | Free DevTools"
+title: "Generate Chocolatey Packages - choco-new | Online Free DevTools by Hexmos"
 name: choco-new
 path: /freedevtools/tldr/windows/choco-new
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-new/"

@@ -1,5 +1,5 @@
 ---
-title: "Size - Display Binary File Sections | Free DevTools"
+title: "Size - Display Binary File Sections | Online Free DevTools by Hexmos"
 name: size
 path: /freedevtools/tldr/linux/size
 canonical: "https://hexmos.com/freedevtools/tldr/linux/size/"

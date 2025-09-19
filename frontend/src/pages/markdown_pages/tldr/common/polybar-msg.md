@@ -1,5 +1,5 @@
 ---
-title: "Control Polybar - Manage Bar Instances | Free DevTools"
+title: "Control Polybar - Manage Bar Instances | Online Free DevTools by Hexmos"
 name: polybar-msg
 path: /freedevtools/tldr/common/polybar-msg
 canonical: "https://hexmos.com/freedevtools/tldr/common/polybar-msg/"

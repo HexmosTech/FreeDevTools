@@ -1,5 +1,5 @@
 ---
-title: "Manage Tasks - To-Do List Manager | Free DevTools"
+title: "Manage Tasks - To-Do List Manager | Online Free DevTools by Hexmos"
 name: task
 path: /freedevtools/tldr/common/task
 canonical: "https://hexmos.com/freedevtools/tldr/common/task/"

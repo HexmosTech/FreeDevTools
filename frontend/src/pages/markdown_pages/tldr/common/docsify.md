@@ -1,5 +1,5 @@
 ---
-title: "Docsify - Generate Documentation | Free DevTools"
+title: "Docsify - Generate Documentation | Online Free DevTools by Hexmos"
 name: docsify
 path: "/freedevtools/tldr/common/docsify"
 canonical: "https://hexmos.com/freedevtools/tldr/common/docsify/"

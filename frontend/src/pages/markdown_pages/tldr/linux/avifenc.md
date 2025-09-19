@@ -1,5 +1,5 @@
 ---
-title: "AVIF Encoder - Create AVIF Images | Free DevTools"
+title: "AVIF Encoder - Create AVIF Images | Online Free DevTools by Hexmos"
 name: avifenc
 path: /freedevtools/tldr/linux/avifenc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/avifenc/"

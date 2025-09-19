@@ -1,5 +1,5 @@
 ---
-title: "Parted - Manage Partitions | Free DevTools"
+title: "Parted - Manage Partitions | Online Free DevTools by Hexmos"
 name: parted.interactive
 path: /freedevtools/tldr/linux/parted.interactive
 canonical: "https://hexmos.com/freedevtools/tldr/linux/parted.interactive/"

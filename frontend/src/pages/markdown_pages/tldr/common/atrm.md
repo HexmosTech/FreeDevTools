@@ -1,5 +1,5 @@
 ---
-title: "Atrm - Remove Scheduled Jobs | Free DevTools"
+title: "Atrm - Remove Scheduled Jobs | Online Free DevTools by Hexmos"
 name: atrm
 path: /freedevtools/tldr/common/atrm
 canonical: "https://hexmos.com/freedevtools/tldr/common/atrm/"

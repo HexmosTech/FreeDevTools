@@ -1,5 +1,5 @@
 ---
-title: "Android Package Manager - List Apps | Free DevTools"
+title: "Android Package Manager - List Apps | Online Free DevTools by Hexmos"
 name: pm
 path: /freedevtools/tldr/android/pm
 canonical: "https://hexmos.com/freedevtools/tldr/android/pm/"

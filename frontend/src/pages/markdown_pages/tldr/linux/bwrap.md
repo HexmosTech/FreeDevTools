@@ -1,5 +1,5 @@
 ---
-title: "bwrap Sandbox - Run Programs Securely | Free DevTools"
+title: "bwrap Sandbox - Run Programs Securely | Online Free DevTools by Hexmos"
 name: bwrap
 path: /freedevtools/tldr/linux/bwrap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bwrap/"

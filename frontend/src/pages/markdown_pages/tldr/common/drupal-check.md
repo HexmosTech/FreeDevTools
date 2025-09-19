@@ -1,5 +1,5 @@
 ---
-title: "Check Drupal Code - Detect Deprecations | Free DevTools"
+title: "Check Drupal Code - Detect Deprecations | Online Free DevTools by Hexmos"
 name: drupal-check
 path: /freedevtools/tldr/common/drupal-check
 canonical: "https://hexmos.com/freedevtools/tldr/common/drupal-check/"

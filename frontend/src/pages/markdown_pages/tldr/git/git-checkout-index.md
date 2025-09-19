@@ -1,5 +1,5 @@
 ---
-title: "Checkout Index - Restore Git Files | Free DevTools"
+title: "Checkout Index - Restore Git Files | Online Free DevTools by Hexmos"
 name: git-checkout-index
 path: /freedevtools/tldr/git/git-checkout-index
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-checkout-index/"

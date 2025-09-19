@@ -1,5 +1,5 @@
 ---
-title: "Manage Virtual Environments - Control Python Env with VF | Free DevTools"
+title: "Manage Virtual Environments - Control Python Env with VF | Online Free DevTools by Hexmos"
 name: vf
 path: /freedevtools/tldr/common/vf
 canonical: "https://hexmos.com/freedevtools/tldr/common/vf/"

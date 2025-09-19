@@ -1,5 +1,5 @@
 ---
-title: "Elvish Shell - Execute Commands | Free DevTools"
+title: "Elvish Shell - Execute Commands | Online Free DevTools by Hexmos"
 name: elvish
 path: /freedevtools/tldr/common/elvish
 canonical: "https://hexmos.com/freedevtools/tldr/common/elvish/"

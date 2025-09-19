@@ -1,5 +1,5 @@
 ---
-title: "Sysdig - Capture System Calls | Free DevTools"
+title: "Sysdig - Capture System Calls | Online Free DevTools by Hexmos"
 name: sysdig
 path: /freedevtools/tldr/linux/sysdig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sysdig/"

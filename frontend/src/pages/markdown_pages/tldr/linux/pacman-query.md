@@ -1,5 +1,5 @@
 ---
-title: "Pacman Query - Manage Arch Linux Packages | Free DevTools"
+title: "Pacman Query - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: pacman-query
 path: /freedevtools/tldr/linux/pacman-query
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-query/"

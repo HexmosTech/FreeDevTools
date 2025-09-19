@@ -1,5 +1,5 @@
 ---
-title: "Control SQL Databases - Universal CLI with usql | Free DevTools"
+title: "Control SQL Databases - Universal CLI with usql | Online Free DevTools by Hexmos"
 name: usql
 path: /freedevtools/tldr/common/usql
 canonical: "https://hexmos.com/freedevtools/tldr/common/usql/"

@@ -1,5 +1,5 @@
 ---
-title: "Install Tool - Control Files on macOS | Free DevTools"
+title: "Install Tool - Control Files on macOS | Online Free DevTools by Hexmos"
 name: ginstall
 path: /freedevtools/tldr/osx/ginstall
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ginstall/"

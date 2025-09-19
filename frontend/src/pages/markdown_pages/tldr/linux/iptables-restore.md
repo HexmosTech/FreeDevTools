@@ -1,5 +1,5 @@
 ---
-title: "iptables-restore - Restore Linux Firewall | Free DevTools"
+title: "iptables-restore - Restore Linux Firewall | Online Free DevTools by Hexmos"
 name: iptables-restore
 path: /freedevtools/tldr/linux/iptables-restore
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iptables-restore/"

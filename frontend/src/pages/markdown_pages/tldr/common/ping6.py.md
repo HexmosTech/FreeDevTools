@@ -1,5 +1,5 @@
 ---
-title: "Ping IPv6 - Check Host Reachability | Free DevTools"
+title: "Ping IPv6 - Check Host Reachability | Online Free DevTools by Hexmos"
 name: ping6.py
 path: /freedevtools/tldr/common/ping6.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/ping6.py/"

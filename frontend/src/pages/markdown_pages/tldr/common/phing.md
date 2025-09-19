@@ -1,5 +1,5 @@
 ---
-title: "Phing - Build PHP Projects | Free DevTools"
+title: "Phing - Build PHP Projects | Online Free DevTools by Hexmos"
 name: phing
 path: /freedevtools/tldr/common/phing
 canonical: "https://hexmos.com/freedevtools/tldr/common/phing/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Azure Accounts - Set Subscriptions | Free DevTools"
+title: "Manage Azure Accounts - Set Subscriptions | Online Free DevTools by Hexmos"
 name: az-account
 path: /freedevtools/tldr/az/az-account
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-account/"

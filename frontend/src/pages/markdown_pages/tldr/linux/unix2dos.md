@@ -1,5 +1,5 @@
 ---
-title: "Unix2dos - Convert Line Endings to DOS | Free DevTools"
+title: "Unix2dos - Convert Line Endings to DOS | Online Free DevTools by Hexmos"
 name: unix2dos
 path: "/freedevtools/tldr/linux/unix2dos"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unix2dos/"

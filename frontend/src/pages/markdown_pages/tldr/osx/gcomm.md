@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Control File Differences with gcomm | Free DevTools"
+title: "Compare Files - Control File Differences with gcomm | Online Free DevTools by Hexmos"
 name: gcomm
 path: /freedevtools/tldr/osx/gcomm
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcomm/"

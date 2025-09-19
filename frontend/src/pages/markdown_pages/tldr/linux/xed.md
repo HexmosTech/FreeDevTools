@@ -1,5 +1,5 @@
 ---
-title: "Xed Editor - Edit Files on Linux | Free DevTools"
+title: "Xed Editor - Edit Files on Linux | Online Free DevTools by Hexmos"
 name: xed
 path: /freedevtools/tldr/linux/xed
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xed/"

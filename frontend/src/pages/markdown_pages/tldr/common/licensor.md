@@ -1,5 +1,5 @@
 ---
-title: "Generate License Files - Licensor | Free DevTools"
+title: "Generate License Files - Licensor | Online Free DevTools by Hexmos"
 name: licensor
 path: /freedevtools/tldr/common/licensor
 canonical: "https://hexmos.com/freedevtools/tldr/common/licensor/"

@@ -1,5 +1,5 @@
 ---
-title: "Control X11 Clipboard - Xsel Clipboard Tool | Free DevTools"
+title: "Control X11 Clipboard - Xsel Clipboard Tool | Online Free DevTools by Hexmos"
 name: xsel
 path: /freedevtools/tldr/linux/xsel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xsel/"

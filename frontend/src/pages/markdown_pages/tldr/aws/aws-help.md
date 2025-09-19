@@ -1,5 +1,5 @@
 ---
-title: "AWS Help - Display CLI Information | Free DevTools"
+title: "AWS Help - Display CLI Information | Online Free DevTools by Hexmos"
 name: aws-help
 path: /freedevtools/tldr/aws/aws-help
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-help/"

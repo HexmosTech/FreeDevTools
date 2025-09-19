@@ -1,5 +1,5 @@
 ---
-title: "Expand - Convert Tabs to Spaces | Free DevTools"
+title: "Expand - Convert Tabs to Spaces | Online Free DevTools by Hexmos"
 name: expand
 path: /freedevtools/tldr/common/expand
 canonical: "https://hexmos.com/freedevtools/tldr/common/expand/"

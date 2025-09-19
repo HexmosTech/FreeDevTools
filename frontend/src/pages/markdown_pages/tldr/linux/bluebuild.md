@@ -1,5 +1,5 @@
 ---
-title: "Bluebuild - Generate Container Images | Free DevTools"
+title: "Bluebuild - Generate Container Images | Online Free DevTools by Hexmos"
 name: bluebuild
 path: /freedevtools/tldr/linux/bluebuild
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bluebuild/"

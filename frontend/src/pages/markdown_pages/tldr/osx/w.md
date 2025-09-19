@@ -1,5 +1,5 @@
 ---
-title: "W Command - Show Logged-in Users | Free DevTools"
+title: "W Command - Show Logged-in Users | Online Free DevTools by Hexmos"
 name: w
 path: /freedevtools/tldr/osx/w
 canonical: "https://hexmos.com/freedevtools/tldr/osx/w/"

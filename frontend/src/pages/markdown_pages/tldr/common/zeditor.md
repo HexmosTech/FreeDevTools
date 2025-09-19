@@ -1,5 +1,5 @@
 ---
-title: "Zeditor - Edit Files Quickly | Free DevTools"
+title: "Zeditor - Edit Files Quickly | Online Free DevTools by Hexmos"
 name: zeditor
 path: /freedevtools/tldr/common/zeditor
 canonical: "https://hexmos.com/freedevtools/tldr/common/zeditor/"

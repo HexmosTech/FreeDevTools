@@ -1,5 +1,5 @@
 ---
-title: "ICO to PAM Converter - Convert Images | Free DevTools"
+title: "ICO to PAM Converter - Convert Images | Online Free DevTools by Hexmos"
 name: winicontopam
 path: /freedevtools/tldr/common/winicontopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/winicontopam/"

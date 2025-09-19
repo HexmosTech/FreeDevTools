@@ -1,5 +1,5 @@
 ---
-title: "ptpython3 - Control Python REPL | Free DevTools"
+title: "ptpython3 - Control Python REPL | Online Free DevTools by Hexmos"
 name: ptpython3
 path: /freedevtools/tldr/common/ptpython3
 canonical: "https://hexmos.com/freedevtools/tldr/common/ptpython3/"

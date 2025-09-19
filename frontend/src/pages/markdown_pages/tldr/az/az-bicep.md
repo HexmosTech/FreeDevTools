@@ -1,5 +1,5 @@
 ---
-title: "Bicep CLI - Generate ARM Templates | Free DevTools"
+title: "Bicep CLI - Generate ARM Templates | Online Free DevTools by Hexmos"
 name: az-bicep
 path: /freedevtools/tldr/az/az-bicep
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-bicep/"

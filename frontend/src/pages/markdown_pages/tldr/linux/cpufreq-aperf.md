@@ -1,5 +1,5 @@
 ---
-title: "CPU Frequency Control - Monitor CPU Speed | Free DevTools"
+title: "CPU Frequency Control - Monitor CPU Speed | Online Free DevTools by Hexmos"
 name: cpufreq-aperf
 path: /freedevtools/tldr/linux/cpufreq-aperf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cpufreq-aperf/"

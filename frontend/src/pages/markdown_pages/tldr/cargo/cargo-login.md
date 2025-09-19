@@ -1,5 +1,5 @@
 ---
-title: "Cargo Login - Save API Token | Free DevTools"
+title: "Cargo Login - Save API Token | Online Free DevTools by Hexmos"
 name: cargo-login
 path: /freedevtools/tldr/cargo/cargo-login
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-login/"

@@ -1,5 +1,5 @@
 ---
-title: "Nix Registry - Manage Flake Registries | Free DevTools"
+title: "Nix Registry - Manage Flake Registries | Online Free DevTools by Hexmos"
 name: nix-registry
 path: /freedevtools/tldr/nix/nix-registry
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-registry/"

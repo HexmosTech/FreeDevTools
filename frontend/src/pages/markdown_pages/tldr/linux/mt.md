@@ -1,5 +1,5 @@
 ---
-title: "MT - Control Magnetic Tape Drive Operation | Free DevTools"
+title: "MT - Control Magnetic Tape Drive Operation | Online Free DevTools by Hexmos"
 name: mt
 path: /freedevtools/tldr/linux/mt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mt/"

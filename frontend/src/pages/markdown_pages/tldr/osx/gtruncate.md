@@ -1,5 +1,5 @@
 ---
-title: "Truncate File - Control File Size on macOS | Free DevTools"
+title: "Truncate File - Control File Size on macOS | Online Free DevTools by Hexmos"
 name: gtruncate
 path: /freedevtools/tldr/osx/gtruncate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtruncate/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate PDF from LaTeX - Compile Documents | Free DevTools"
+title: "Generate PDF from LaTeX - Compile Documents | Online Free DevTools by Hexmos"
 name: pdflatex
 path: /freedevtools/tldr/common/pdflatex
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdflatex/"

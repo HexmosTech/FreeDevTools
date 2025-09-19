@@ -1,5 +1,5 @@
 ---
-title: "MPIEXEC Command - Execute Parallel Programs | Free DevTools"
+title: "MPIEXEC Command - Execute Parallel Programs | Online Free DevTools by Hexmos"
 name: mpiexec
 path: /freedevtools/tldr/common/mpiexec
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpiexec/"

@@ -1,5 +1,5 @@
 ---
-title: "IMAP Sync - Migrate Email Mailboxes | Free DevTools"
+title: "IMAP Sync - Migrate Email Mailboxes | Online Free DevTools by Hexmos"
 name: imapsync
 path: /freedevtools/tldr/common/imapsync
 canonical: "https://hexmos.com/freedevtools/tldr/common/imapsync/"

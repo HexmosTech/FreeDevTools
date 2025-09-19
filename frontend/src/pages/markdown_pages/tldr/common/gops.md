@@ -1,5 +1,5 @@
 ---
-title: "Diagnose Go Processes - Control Go Programs | Free DevTools"
+title: "Diagnose Go Processes - Control Go Programs | Online Free DevTools by Hexmos"
 name: gops
 path: /freedevtools/tldr/common/gops
 canonical: "https://hexmos.com/freedevtools/tldr/common/gops/"

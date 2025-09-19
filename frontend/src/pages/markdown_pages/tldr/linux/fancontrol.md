@@ -1,5 +1,5 @@
 ---
-title: "Fan Control - Manage System Fan Speeds | Free DevTools"
+title: "Fan Control - Manage System Fan Speeds | Online Free DevTools by Hexmos"
 name: fancontrol
 path: /freedevtools/tldr/linux/fancontrol
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fancontrol/"

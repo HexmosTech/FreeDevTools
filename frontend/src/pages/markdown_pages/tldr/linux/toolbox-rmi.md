@@ -1,5 +1,5 @@
 ---
-title: "Toolbox Image Remover - Remove Images | Free DevTools"
+title: "Toolbox Image Remover - Remove Images | Online Free DevTools by Hexmos"
 name: toolbox-rmi
 path: /freedevtools/tldr/linux/toolbox-rmi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-rmi/"

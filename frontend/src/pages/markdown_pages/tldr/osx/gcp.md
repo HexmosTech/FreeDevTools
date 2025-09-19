@@ -1,5 +1,5 @@
 ---
-title: "GCP - Copy Files on macOS | Free DevTools"
+title: "GCP - Copy Files on macOS | Online Free DevTools by Hexmos"
 name: gcp
 path: /freedevtools/tldr/osx/gcp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcp/"

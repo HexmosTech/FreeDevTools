@@ -1,5 +1,5 @@
 ---
-title: "Mercurial Add - Stage Changes for Commit | Free DevTools"
+title: "Mercurial Add - Stage Changes for Commit | Online Free DevTools by Hexmos"
 name: hg-add
 path: /freedevtools/tldr/hg/hg-add
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-add/"

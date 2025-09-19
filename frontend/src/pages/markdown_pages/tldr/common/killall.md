@@ -1,5 +1,5 @@
 ---
-title: "Control Killall - Terminate Processes | Free DevTools"
+title: "Control Killall - Terminate Processes | Online Free DevTools by Hexmos"
 name: killall
 path: /freedevtools/tldr/common/killall
 canonical: "https://hexmos.com/freedevtools/tldr/common/killall/"

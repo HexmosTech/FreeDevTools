@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Help - Get CLI Help | Free DevTools"
+title: "OpenStack Help - Get CLI Help | Online Free DevTools by Hexmos"
 name: openstack-help
 path: /freedevtools/tldr/openstack/openstack-help
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-help/"

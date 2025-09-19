@@ -1,5 +1,5 @@
 ---
-title: "Download Debian Packages - dget Command | Free DevTools"
+title: "Download Debian Packages - dget Command | Online Free DevTools by Hexmos"
 name: dget
 path: /freedevtools/tldr/linux/dget
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dget/"

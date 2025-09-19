@@ -1,5 +1,5 @@
 ---
-title: "AWS Amplify - Manage Web and Mobile Apps | Free DevTools"
+title: "AWS Amplify - Manage Web and Mobile Apps | Online Free DevTools by Hexmos"
 name: aws-amplify
 path: /freedevtools/tldr/aws/aws-amplify
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-amplify/"

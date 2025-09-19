@@ -1,5 +1,5 @@
 ---
-title: "Vue Serve - Develop Vue Apps Quickly | Free DevTools"
+title: "Vue Serve - Develop Vue Apps Quickly | Online Free DevTools by Hexmos"
 name: vue-serve
 path: /freedevtools/tldr/vue/vue-serve
 canonical: "https://hexmos.com/freedevtools/tldr/vue/vue-serve/"

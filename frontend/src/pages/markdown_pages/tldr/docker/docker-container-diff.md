@@ -1,5 +1,5 @@
 ---
-title: "Docker Diff - Compare Container Filesystems | Free DevTools"
+title: "Docker Diff - Compare Container Filesystems | Online Free DevTools by Hexmos"
 name: docker-container-diff
 path: /freedevtools/tldr/docker/docker-container-diff
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-container-diff/"

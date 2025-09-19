@@ -1,5 +1,5 @@
 ---
-title: "Host File Manager - Control Host Names with Hostess | Free DevTools"
+title: "Host File Manager - Control Host Names with Hostess | Online Free DevTools by Hexmos"
 name: hostess
 path: /freedevtools/tldr/common/hostess
 canonical: "https://hexmos.com/freedevtools/tldr/common/hostess/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert File - Copy Files with dd Command | Free DevTools"
+title: "Convert File - Copy Files with dd Command | Online Free DevTools by Hexmos"
 name: dd
 path: /freedevtools/tldr/osx/dd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/dd/"

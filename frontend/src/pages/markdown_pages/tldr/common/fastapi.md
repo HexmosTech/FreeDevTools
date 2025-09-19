@@ -1,5 +1,5 @@
 ---
-title: "FastAPI Runner - Control Uvicorn Apps | Free DevTools"
+title: "FastAPI Runner - Control Uvicorn Apps | Online Free DevTools by Hexmos"
 name: fastapi
 path: /freedevtools/tldr/common/fastapi
 canonical: "https://hexmos.com/freedevtools/tldr/common/fastapi/"

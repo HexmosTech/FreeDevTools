@@ -1,5 +1,5 @@
 ---
-title: "Pamarith - Apply Binary Functions on Images | Free DevTools"
+title: "Pamarith - Apply Binary Functions on Images | Online Free DevTools by Hexmos"
 name: pamarith
 path: /freedevtools/tldr/common/pamarith
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamarith/"

@@ -1,5 +1,5 @@
 ---
-title: "Pyflakes - Validate Python Code | Free DevTools"
+title: "Pyflakes - Validate Python Code | Online Free DevTools by Hexmos"
 name: pyflakes
 path: /freedevtools/tldr/common/pyflakes
 canonical: "https://hexmos.com/freedevtools/tldr/common/pyflakes/"

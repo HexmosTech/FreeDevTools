@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage - Control Virtual Machines | Free DevTools"
+title: "VBoxManage - Control Virtual Machines | Online Free DevTools by Hexmos"
 name: vboxmanage
 path: /freedevtools/tldr/vboxmanager/vboxmanage
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage/"

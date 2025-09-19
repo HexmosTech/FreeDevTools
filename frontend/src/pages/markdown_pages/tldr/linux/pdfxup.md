@@ -1,5 +1,5 @@
 ---
-title: "Create PDF N-up Layouts - pdfxup | Free DevTools"
+title: "Create PDF N-up Layouts - pdfxup | Online Free DevTools by Hexmos"
 name: pdfxup
 path: /freedevtools/tldr/linux/pdfxup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfxup/"

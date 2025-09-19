@@ -1,5 +1,5 @@
 ---
-title: "chpass Command - Manage User Accounts | Free DevTools"
+title: "chpass Command - Manage User Accounts | Online Free DevTools by Hexmos"
 name: chpass
 path: /freedevtools/tldr/freebsd/chpass
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/chpass/"

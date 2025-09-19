@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM Images - Format with pamtopam | Free DevTools"
+title: "Convert PAM Images - Format with pamtopam | Online Free DevTools by Hexmos"
 name: pamtopam
 path: /freedevtools/tldr/common/pamtopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtopam/"

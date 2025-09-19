@@ -1,5 +1,5 @@
 ---
-title: "dconf - Manage dconf Databases | Free DevTools"
+title: "dconf - Manage dconf Databases | Online Free DevTools by Hexmos"
 name: dconf
 path: /freedevtools/tldr/linux/dconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf/"

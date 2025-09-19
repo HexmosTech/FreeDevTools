@@ -1,5 +1,5 @@
 ---
-title: "Zforce - Add Gzip Extension | Free DevTools"
+title: "Zforce - Add Gzip Extension | Online Free DevTools by Hexmos"
 name: zforce
 path: /freedevtools/tldr/linux/zforce
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zforce/"

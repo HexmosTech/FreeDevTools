@@ -1,5 +1,5 @@
 ---
-title: "Control Proxmox Version - Get System Info | Free DevTools"
+title: "Control Proxmox Version - Get System Info | Online Free DevTools by Hexmos"
 name: pveversion
 path: /freedevtools/tldr/linux/pveversion
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pveversion/"

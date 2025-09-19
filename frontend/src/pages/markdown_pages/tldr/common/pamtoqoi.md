@@ -1,5 +1,5 @@
 ---
-title: "Convert Netpbm to QOI - Image Format Conversion | Free DevTools"
+title: "Convert Netpbm to QOI - Image Format Conversion | Online Free DevTools by Hexmos"
 name: pamtoqoi
 path: /freedevtools/tldr/common/pamtoqoi
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtoqoi/"

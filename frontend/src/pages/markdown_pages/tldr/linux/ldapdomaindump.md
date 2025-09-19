@@ -1,5 +1,5 @@
 ---
-title: "LDAP Dump - Extract Domain Info | Free DevTools"
+title: "LDAP Dump - Extract Domain Info | Online Free DevTools by Hexmos"
 name: ldapdomaindump
 path: /freedevtools/tldr/linux/ldapdomaindump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ldapdomaindump/"

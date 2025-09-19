@@ -1,5 +1,5 @@
 ---
-title: "Esearch - Perform Entrez Searches | Free DevTools"
+title: "Esearch - Perform Entrez Searches | Online Free DevTools by Hexmos"
 name: esearch
 path: /freedevtools/tldr/linux/esearch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/esearch/"

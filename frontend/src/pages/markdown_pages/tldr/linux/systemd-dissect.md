@@ -1,5 +1,5 @@
 ---
-title: "Systemd Dissect - Inspect Disk Images | Free DevTools"
+title: "Systemd Dissect - Inspect Disk Images | Online Free DevTools by Hexmos"
 name: systemd-dissect
 path: /freedevtools/tldr/linux/systemd-dissect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-dissect/"

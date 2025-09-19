@@ -1,5 +1,5 @@
 ---
-title: "PG_CTL - Control PostgreSQL Server | Free DevTools"
+title: "PG_CTL - Control PostgreSQL Server | Online Free DevTools by Hexmos"
 name: pg_ctl
 path: /freedevtools/tldr/postgres/pg_ctl
 canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_ctl/"

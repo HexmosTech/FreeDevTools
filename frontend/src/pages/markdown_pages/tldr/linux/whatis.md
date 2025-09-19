@@ -1,5 +1,5 @@
 ---
-title: "Whatis Command - Display Man Page Descriptions | Free DevTools"
+title: "Whatis Command - Display Man Page Descriptions | Online Free DevTools by Hexmos"
 name: whatis
 path: /freedevtools/tldr/linux/whatis
 canonical: "https://hexmos.com/freedevtools/tldr/linux/whatis/"

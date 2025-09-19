@@ -1,5 +1,5 @@
 ---
-title: "Network Scanner - Discover Live Hosts with Netdiscover | Free DevTools"
+title: "Network Scanner - Discover Live Hosts with Netdiscover | Online Free DevTools by Hexmos"
 name: netdiscover
 path: /freedevtools/tldr/common/netdiscover
 canonical: "https://hexmos.com/freedevtools/tldr/common/netdiscover/"

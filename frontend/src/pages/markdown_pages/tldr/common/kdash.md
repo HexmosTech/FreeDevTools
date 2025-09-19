@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes Dashboard - Monitor Clusters with kdash | Free DevTools"
+title: "Kubernetes Dashboard - Monitor Clusters with kdash | Online Free DevTools by Hexmos"
 name: kdash
 path: /freedevtools/tldr/common/kdash
 canonical: "https://hexmos.com/freedevtools/tldr/common/kdash/"

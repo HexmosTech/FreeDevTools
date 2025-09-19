@@ -1,5 +1,5 @@
 ---
-title: "Bundler - Manage Ruby Dependencies | Free DevTools"
+title: "Bundler - Manage Ruby Dependencies | Online Free DevTools by Hexmos"
 name: bundler
 path: /freedevtools/tldr/common/bundler
 canonical: "https://hexmos.com/freedevtools/tldr/common/bundler/"

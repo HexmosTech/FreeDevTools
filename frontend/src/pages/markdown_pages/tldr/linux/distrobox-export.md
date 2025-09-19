@@ -1,5 +1,5 @@
 ---
-title: "Distrobox Export - Export Apps & Binaries | Free DevTools"
+title: "Distrobox Export - Export Apps & Binaries | Online Free DevTools by Hexmos"
 name: distrobox-export
 path: /freedevtools/tldr/linux/distrobox-export
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-export/"

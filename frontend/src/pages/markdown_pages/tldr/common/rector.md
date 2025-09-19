@@ -1,5 +1,5 @@
 ---
-title: "Refactor PHP Code - Automate Updates with Rector | Free DevTools"
+title: "Refactor PHP Code - Automate Updates with Rector | Online Free DevTools by Hexmos"
 name: rector
 path: /freedevtools/tldr/common/rector
 canonical: "https://hexmos.com/freedevtools/tldr/common/rector/"

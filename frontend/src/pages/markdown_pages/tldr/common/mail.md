@@ -1,5 +1,5 @@
 ---
-title: "Mail Command - Send Email from Command Line | Free DevTools"
+title: "Mail Command - Send Email from Command Line | Online Free DevTools by Hexmos"
 name: mail
 path: "/freedevtools/tldr/common/mail"
 canonical: "https://hexmos.com/freedevtools/tldr/common/mail/"

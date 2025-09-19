@@ -1,5 +1,5 @@
 ---
-title: "Cradle Package Manager - Control Packages | Free DevTools"
+title: "Cradle Package Manager - Control Packages | Online Free DevTools by Hexmos"
 name: cradle-package
 path: /freedevtools/tldr/cradle/cradle-package
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-package/"

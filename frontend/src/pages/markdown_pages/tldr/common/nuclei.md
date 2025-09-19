@@ -1,5 +1,5 @@
 ---
-title: "Nuclei Scanner - Scan for Vulnerabilities with YAML DSL | Free DevTools"
+title: "Nuclei Scanner - Scan for Vulnerabilities with YAML DSL | Online Free DevTools by Hexmos"
 name: nuclei
 path: /freedevtools/tldr/common/nuclei
 canonical: "https://hexmos.com/freedevtools/tldr/common/nuclei/"

@@ -1,5 +1,5 @@
 ---
-title: "WebStorm - Open Files & Directories | Free DevTools"
+title: "WebStorm - Open Files & Directories | Online Free DevTools by Hexmos"
 name: webstorm
 path: /freedevtools/tldr/common/webstorm
 canonical: "https://hexmos.com/freedevtools/tldr/common/webstorm/"

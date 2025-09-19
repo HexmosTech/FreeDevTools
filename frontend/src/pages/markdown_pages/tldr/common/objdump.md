@@ -1,5 +1,5 @@
 ---
-title: "Objdump - View Object File Information | Free DevTools"
+title: "Objdump - View Object File Information | Online Free DevTools by Hexmos"
 name: objdump
 path: /freedevtools/tldr/common/objdump
 canonical: "https://hexmos.com/freedevtools/tldr/common/objdump/"

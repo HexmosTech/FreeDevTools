@@ -1,5 +1,5 @@
 ---
-title: "Cockpit WS - Control Websocket Communication | Free DevTools"
+title: "Cockpit WS - Control Websocket Communication | Online Free DevTools by Hexmos"
 name: cockpit-ws
 path: /freedevtools/tldr/linux/cockpit-ws
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-ws/"

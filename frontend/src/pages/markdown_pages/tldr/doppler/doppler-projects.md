@@ -1,5 +1,5 @@
 ---
-title: "Doppler Projects - Manage Secure Configuration | Free DevTools"
+title: "Doppler Projects - Manage Secure Configuration | Online Free DevTools by Hexmos"
 name: doppler-projects
 path: /freedevtools/tldr/doppler/doppler-projects
 canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-projects/"

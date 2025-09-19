@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to FITS - Format Images | Free DevTools"
+title: "Convert PNM to FITS - Format Images | Online Free DevTools by Hexmos"
 name: pnmtofits
 path: /freedevtools/tldr/pnm/pnmtofits
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtofits/"

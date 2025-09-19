@@ -1,5 +1,5 @@
 ---
-title: "Bzfgrep Search - Find Strings in bzip2 Files | Free DevTools"
+title: "Bzfgrep Search - Find Strings in bzip2 Files | Online Free DevTools by Hexmos"
 name: bzfgrep
 path: /freedevtools/tldr/common/bzfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzfgrep/"

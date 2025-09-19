@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal - Set Options | Free DevTools"
+title: "Control Terminal - Set Options | Online Free DevTools by Hexmos"
 name: stty
 path: /freedevtools/tldr/st/stty
 canonical: "https://hexmos.com/freedevtools/tldr/st/stty/"

@@ -1,5 +1,5 @@
 ---
-title: "HCloud Control - Manage Hetzner Cloud Resources | Free DevTools"
+title: "HCloud Control - Manage Hetzner Cloud Resources | Online Free DevTools by Hexmos"
 name: hcloud
 path: /freedevtools/tldr/common/hcloud
 canonical: "https://hexmos.com/freedevtools/tldr/common/hcloud/"

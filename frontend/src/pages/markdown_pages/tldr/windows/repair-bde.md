@@ -1,5 +1,5 @@
 ---
-title: "Repair BDE - Decrypt Damaged Volumes | Free DevTools"
+title: "Repair BDE - Decrypt Damaged Volumes | Online Free DevTools by Hexmos"
 name: repair-bde
 path: /freedevtools/tldr/windows/repair-bde
 canonical: "https://hexmos.com/freedevtools/tldr/windows/repair-bde/"

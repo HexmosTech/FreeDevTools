@@ -1,5 +1,5 @@
 ---
-title: "Analyze CSV Data - Descriptive Statistics | Free DevTools"
+title: "Analyze CSV Data - Descriptive Statistics | Online Free DevTools by Hexmos"
 name: csvstat
 path: /freedevtools/tldr/cs/csvstat
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvstat/"

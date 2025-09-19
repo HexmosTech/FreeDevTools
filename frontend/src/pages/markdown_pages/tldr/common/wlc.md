@@ -1,5 +1,5 @@
 ---
-title: "Manage Weblate Projects - Control Localization with WLC | Free DevTools"
+title: "Manage Weblate Projects - Control Localization with WLC | Online Free DevTools by Hexmos"
 name: wlc
 path: /freedevtools/tldr/common/wlc
 canonical: "https://hexmos.com/freedevtools/tldr/common/wlc/"

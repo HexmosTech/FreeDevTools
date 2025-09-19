@@ -1,5 +1,5 @@
 ---
-title: "Control Preferences - Manage CFPreferences with cfprefsd | Free DevTools"
+title: "Control Preferences - Manage CFPreferences with cfprefsd | Online Free DevTools by Hexmos"
 name: cfprefsd
 path: /freedevtools/tldr/osx/cfprefsd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cfprefsd/"

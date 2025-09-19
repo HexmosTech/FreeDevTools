@@ -1,5 +1,5 @@
 ---
-title: "DCGMI Control - Manage NVIDIA GPUs | Free DevTools"
+title: "DCGMI Control - Manage NVIDIA GPUs | Online Free DevTools by Hexmos"
 name: dcgmi
 path: /freedevtools/tldr/common/dcgmi
 canonical: "https://hexmos.com/freedevtools/tldr/common/dcgmi/"

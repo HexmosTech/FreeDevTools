@@ -1,5 +1,5 @@
 ---
-title: "Compare Package Files - pkgctl diff | Free DevTools"
+title: "Compare Package Files - pkgctl diff | Online Free DevTools by Hexmos"
 name: pkgctl-diff
 path: /freedevtools/tldr/linux/pkgctl-diff
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-diff/"

@@ -1,5 +1,5 @@
 ---
-title: "SSH Keyscan - Get Public Keys | Free DevTools"
+title: "SSH Keyscan - Get Public Keys | Online Free DevTools by Hexmos"
 name: ssh-keyscan
 path: /freedevtools/tldr/ssh/ssh-keyscan
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-keyscan/"

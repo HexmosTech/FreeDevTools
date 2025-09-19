@@ -1,5 +1,5 @@
 ---
-title: "TreeTime - Analyze Molecular Clock Phylogenies | Free DevTools"
+title: "TreeTime - Analyze Molecular Clock Phylogenies | Online Free DevTools by Hexmos"
 name: treetime
 path: /freedevtools/tldr/linux/treetime
 canonical: "https://hexmos.com/freedevtools/tldr/linux/treetime/"

@@ -1,5 +1,5 @@
 ---
-title: "Control IRC Sessions - Simple IRC Client | Free DevTools"
+title: "Control IRC Sessions - Simple IRC Client | Online Free DevTools by Hexmos"
 name: sic
 path: /freedevtools/tldr/linux/sic
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sic/"

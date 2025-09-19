@@ -1,5 +1,5 @@
 ---
-title: "Control Git History with tig - TUI Tool | Free DevTools"
+title: "Control Git History with tig - TUI Tool | Online Free DevTools by Hexmos"
 name: tig
 path: /freedevtools/tldr/common/tig
 canonical: "https://hexmos.com/freedevtools/tldr/common/tig/"

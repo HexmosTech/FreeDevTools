@@ -1,5 +1,5 @@
 ---
-title: "Automate Content with FlexGet - Automation Tool | Free DevTools"
+title: "Automate Content with FlexGet - Automation Tool | Online Free DevTools by Hexmos"
 name: flexget
 path: /freedevtools/tldr/common/flexget
 canonical: "https://hexmos.com/freedevtools/tldr/common/flexget/"

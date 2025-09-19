@@ -1,5 +1,5 @@
 ---
-title: "Manage Latte-Dock - Customize Plasma Dock | Free DevTools"
+title: "Manage Latte-Dock - Customize Plasma Dock | Online Free DevTools by Hexmos"
 name: latte-dock
 path: /freedevtools/tldr/linux/latte-dock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/latte-dock/"

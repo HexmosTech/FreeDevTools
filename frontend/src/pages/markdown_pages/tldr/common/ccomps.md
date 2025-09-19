@@ -1,5 +1,5 @@
 ---
-title: "Decompose Graph - Analyze Connected Components | Free DevTools"
+title: "Decompose Graph - Analyze Connected Components | Online Free DevTools by Hexmos"
 name: ccomps
 path: /freedevtools/tldr/common/ccomps
 canonical: "https://hexmos.com/freedevtools/tldr/common/ccomps/"

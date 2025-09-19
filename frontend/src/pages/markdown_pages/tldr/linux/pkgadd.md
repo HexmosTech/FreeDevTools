@@ -1,5 +1,5 @@
 ---
-title: "Install Package - Add Software on Linux | Free DevTools"
+title: "Install Package - Add Software on Linux | Online Free DevTools by Hexmos"
 name: pkgadd
 path: /freedevtools/tldr/linux/pkgadd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgadd/"

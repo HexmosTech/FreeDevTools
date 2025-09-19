@@ -1,5 +1,5 @@
 ---
-title: "Create ODPS Authorities - Manage User Access | Free DevTools"
+title: "Create ODPS Authorities - Manage User Access | Online Free DevTools by Hexmos"
 name: odps-auth
 path: /freedevtools/tldr/odps/odps-auth
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-auth/"

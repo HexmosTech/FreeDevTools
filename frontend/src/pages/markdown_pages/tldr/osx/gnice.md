@@ -1,5 +1,5 @@
 ---
-title: "Nice Command - Control Process Priority on macOS | Free DevTools"
+title: "Nice Command - Control Process Priority on macOS | Online Free DevTools by Hexmos"
 name: gnice
 path: /freedevtools/tldr/osx/gnice
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gnice/"

@@ -1,5 +1,5 @@
 ---
-title: "DHCPv6 Daemon - Control Network Configuration | Free DevTools"
+title: "DHCPv6 Daemon - Control Network Configuration | Online Free DevTools by Hexmos"
 name: dhcp6d
 path: /freedevtools/tldr/osx/dhcp6d
 canonical: "https://hexmos.com/freedevtools/tldr/osx/dhcp6d/"

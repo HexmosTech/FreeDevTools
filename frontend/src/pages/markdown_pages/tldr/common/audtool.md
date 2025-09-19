@@ -1,5 +1,5 @@
 ---
-title: "Audacious Control - Manage Music Playback | Free DevTools"
+title: "Audacious Control - Manage Music Playback | Online Free DevTools by Hexmos"
 name: audtool
 path: /freedevtools/tldr/common/audtool
 canonical: "https://hexmos.com/freedevtools/tldr/common/audtool/"

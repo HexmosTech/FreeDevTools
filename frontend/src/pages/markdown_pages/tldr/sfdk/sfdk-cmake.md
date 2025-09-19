@@ -1,5 +1,5 @@
 ---
-title: "SFDK CMake - Execute Build Steps | Free DevTools"
+title: "SFDK CMake - Execute Build Steps | Online Free DevTools by Hexmos"
 name: sfdk-cmake
 path: /freedevtools/tldr/sfdk/sfdk-cmake
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-cmake/"

@@ -1,5 +1,5 @@
 ---
-title: "Keyctl - Control Linux Kernel Keyrings | Free DevTools"
+title: "Keyctl - Control Linux Kernel Keyrings | Online Free DevTools by Hexmos"
 name: keyctl
 path: /freedevtools/tldr/linux/keyctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/keyctl/"

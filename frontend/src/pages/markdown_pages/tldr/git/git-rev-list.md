@@ -1,5 +1,5 @@
 ---
-title: "Git Rev-List - List Commits in Reverse Order | Free DevTools"
+title: "Git Rev-List - List Commits in Reverse Order | Online Free DevTools by Hexmos"
 name: git-rev-list
 path: /freedevtools/tldr/git/git-rev-list
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rev-list/"

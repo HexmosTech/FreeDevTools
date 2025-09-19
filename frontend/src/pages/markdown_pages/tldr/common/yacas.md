@@ -1,5 +1,5 @@
 ---
-title: "Control Yacas Algebra - Interactive Session | Free DevTools"
+title: "Control Yacas Algebra - Interactive Session | Online Free DevTools by Hexmos"
 name: yacas
 path: /freedevtools/tldr/common/yacas
 canonical: "https://hexmos.com/freedevtools/tldr/common/yacas/"

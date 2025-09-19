@@ -1,5 +1,5 @@
 ---
-title: "zsync Downloader - Download Files Efficiently | Free DevTools"
+title: "zsync Downloader - Download Files Efficiently | Online Free DevTools by Hexmos"
 name: zsync
 path: /freedevtools/tldr/linux/zsync
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zsync/"

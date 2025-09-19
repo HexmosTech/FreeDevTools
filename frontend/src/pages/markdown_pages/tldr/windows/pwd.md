@@ -1,5 +1,5 @@
 ---
-title: "PWD Command - Determine Current Directory | Free DevTools"
+title: "PWD Command - Determine Current Directory | Online Free DevTools by Hexmos"
 name: pwd
 path: /freedevtools/tldr/windows/pwd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pwd/"

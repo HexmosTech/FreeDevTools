@@ -1,5 +1,5 @@
 ---
-title: "Create Desktop Notifications - Notify-send | Free DevTools"
+title: "Create Desktop Notifications - Notify-send | Online Free DevTools by Hexmos"
 name: notify-send
 path: /freedevtools/tldr/common/notify-send
 canonical: "https://hexmos.com/freedevtools/tldr/common/notify-send/"

@@ -1,5 +1,5 @@
 ---
-title: "Loadkeys Command - Control Linux Keyboard Layouts | Free DevTools"
+title: "Loadkeys Command - Control Linux Keyboard Layouts | Online Free DevTools by Hexmos"
 name: loadkeys
 path: /freedevtools/tldr/linux/loadkeys
 canonical: "https://hexmos.com/freedevtools/tldr/linux/loadkeys/"

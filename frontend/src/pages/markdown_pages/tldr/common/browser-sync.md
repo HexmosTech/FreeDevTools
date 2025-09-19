@@ -1,5 +1,5 @@
 ---
-title: "Browser Sync - Update Browser on File Changes | Free DevTools"
+title: "Browser Sync - Update Browser on File Changes | Online Free DevTools by Hexmos"
 name: browser-sync
 path: /freedevtools/tldr/common/browser-sync
 canonical: "https://hexmos.com/freedevtools/tldr/common/browser-sync/"

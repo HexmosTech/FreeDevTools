@@ -1,5 +1,5 @@
 ---
-title: "Get Wikipedia Summary - Wikit Command | Free DevTools"
+title: "Get Wikipedia Summary - Wikit Command | Online Free DevTools by Hexmos"
 name: wikit
 path: /freedevtools/tldr/common/wikit
 canonical: "https://hexmos.com/freedevtools/tldr/common/wikit/"

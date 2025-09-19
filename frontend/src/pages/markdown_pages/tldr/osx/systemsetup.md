@@ -1,5 +1,5 @@
 ---
-title: "Systemsetup - Configure macOS Settings | Free DevTools"
+title: "Systemsetup - Configure macOS Settings | Online Free DevTools by Hexmos"
 name: systemsetup
 path: /freedevtools/tldr/osx/systemsetup
 canonical: "https://hexmos.com/freedevtools/tldr/osx/systemsetup/"

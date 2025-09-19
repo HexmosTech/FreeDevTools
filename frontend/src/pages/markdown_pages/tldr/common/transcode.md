@@ -1,5 +1,5 @@
 ---
-title: "Transcode Video - Convert Media Formats | Free DevTools"
+title: "Transcode Video - Convert Media Formats | Online Free DevTools by Hexmos"
 name: transcode
 path: /freedevtools/tldr/common/transcode
 canonical: "https://hexmos.com/freedevtools/tldr/common/transcode/"

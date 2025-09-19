@@ -1,5 +1,5 @@
 ---
-title: "OpenVPN3 Control - Manage VPN Sessions | Free DevTools"
+title: "OpenVPN3 Control - Manage VPN Sessions | Online Free DevTools by Hexmos"
 name: openvpn3
 path: /freedevtools/tldr/linux/openvpn3
 canonical: "https://hexmos.com/freedevtools/tldr/linux/openvpn3/"

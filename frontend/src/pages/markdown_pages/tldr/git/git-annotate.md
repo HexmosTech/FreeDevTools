@@ -1,5 +1,5 @@
 ---
-title: "Git Annotate - Show Commit History | Free DevTools"
+title: "Git Annotate - Show Commit History | Online Free DevTools by Hexmos"
 name: git-annotate
 path: /freedevtools/tldr/git/git-annotate
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-annotate/"

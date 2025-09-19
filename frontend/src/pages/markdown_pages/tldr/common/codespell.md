@@ -1,5 +1,5 @@
 ---
-title: "Codespell - Spell Check Code | Free DevTools"
+title: "Codespell - Spell Check Code | Online Free DevTools by Hexmos"
 name: codespell
 path: /freedevtools/tldr/common/codespell
 canonical: "https://hexmos.com/freedevtools/tldr/common/codespell/"

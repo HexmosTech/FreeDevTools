@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Zstd Compression Tool | Free DevTools"
+title: "Compress Files - Zstd Compression Tool | Online Free DevTools by Hexmos"
 name: zstd
 path: /freedevtools/tldr/common/zstd
 canonical: "https://hexmos.com/freedevtools/tldr/common/zstd/"

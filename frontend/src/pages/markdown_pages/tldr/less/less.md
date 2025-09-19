@@ -1,5 +1,5 @@
 ---
-title: "Less - View Files Interactively | Free DevTools"
+title: "Less - View Files Interactively | Online Free DevTools by Hexmos"
 name: less
 path: /freedevtools/tldr/less/less
 canonical: "https://hexmos.com/freedevtools/tldr/less/less/"

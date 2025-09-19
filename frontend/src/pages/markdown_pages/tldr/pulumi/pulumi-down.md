@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Down - Destroy Infrastructure | Free DevTools"
+title: "Pulumi Down - Destroy Infrastructure | Online Free DevTools by Hexmos"
 name: pulumi-down
 path: /freedevtools/tldr/pulumi/pulumi-down
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-down/"

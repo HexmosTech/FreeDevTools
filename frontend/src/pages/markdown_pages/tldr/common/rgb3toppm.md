@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM Images - Create PPM with rgb3toppm | Free DevTools"
+title: "Convert PGM Images - Create PPM with rgb3toppm | Online Free DevTools by Hexmos"
 name: rgb3toppm
 path: /freedevtools/tldr/common/rgb3toppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/rgb3toppm/"

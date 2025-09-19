@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Flavor - Manage Instance Flavors | Free DevTools"
+title: "OpenStack Flavor - Manage Instance Flavors | Online Free DevTools by Hexmos"
 name: openstack-flavor
 path: /freedevtools/tldr/openstack/openstack-flavor
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-flavor/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage JavaScript Projects - Lerna | Free DevTools"
+title: "Manage JavaScript Projects - Lerna | Online Free DevTools by Hexmos"
 name: lerna
 path: /freedevtools/tldr/common/lerna
 canonical: "https://hexmos.com/freedevtools/tldr/common/lerna/"

@@ -1,5 +1,5 @@
 ---
-title: "SteamOS Branch Select - Control Releases | Free DevTools"
+title: "SteamOS Branch Select - Control Releases | Online Free DevTools by Hexmos"
 name: steamos-select-branch
 path: /freedevtools/tldr/linux/steamos-select-branch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-select-branch/"

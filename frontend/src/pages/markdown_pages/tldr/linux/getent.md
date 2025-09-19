@@ -1,5 +1,5 @@
 ---
-title: "Getent - Retrieve System Database Entries | Free DevTools"
+title: "Getent - Retrieve System Database Entries | Online Free DevTools by Hexmos"
 name: getent
 path: /freedevtools/tldr/linux/getent
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getent/"

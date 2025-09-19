@@ -1,5 +1,5 @@
 ---
-title: "List Scheduled Jobs - Control atq jobs | Free DevTools"
+title: "List Scheduled Jobs - Control atq jobs | Online Free DevTools by Hexmos"
 name: atq
 path: /freedevtools/tldr/common/atq
 canonical: "https://hexmos.com/freedevtools/tldr/common/atq/"

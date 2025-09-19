@@ -1,5 +1,5 @@
 ---
-title: "Control PDF Files - Manipulate Documents | Free DevTools"
+title: "Control PDF Files - Manipulate Documents | Online Free DevTools by Hexmos"
 name: cpdf
 path: "/freedevtools/tldr/common/cpdf"
 canonical: "https://hexmos.com/freedevtools/tldr/common/cpdf/"

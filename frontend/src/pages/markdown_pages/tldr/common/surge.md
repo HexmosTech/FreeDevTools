@@ -1,5 +1,5 @@
 ---
-title: "Deploy Websites - Surge Web Publishing | Free DevTools"
+title: "Deploy Websites - Surge Web Publishing | Online Free DevTools by Hexmos"
 name: surge
 path: /freedevtools/tldr/common/surge
 canonical: "https://hexmos.com/freedevtools/tldr/common/surge/"

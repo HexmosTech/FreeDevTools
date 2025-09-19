@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Bulk Rename Tool | Free DevTools"
+title: "Rename Files - Bulk Rename Tool | Online Free DevTools by Hexmos"
 name: rnm
 path: /freedevtools/tldr/linux/rnm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rnm/"

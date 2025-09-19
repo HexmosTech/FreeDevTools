@@ -1,5 +1,5 @@
 ---
-title: "Cargo Rustc - Compile Rust Packages | Free DevTools"
+title: "Cargo Rustc - Compile Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-rustc
 path: /freedevtools/tldr/cargo/cargo-rustc
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-rustc/"

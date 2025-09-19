@@ -1,5 +1,5 @@
 ---
-title: "IPCS Tool - Control System V IPC Facilities | Free DevTools"
+title: "IPCS Tool - Control System V IPC Facilities | Online Free DevTools by Hexmos"
 name: ipcs
 path: /freedevtools/tldr/linux/ipcs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ipcs/"

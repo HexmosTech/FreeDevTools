@@ -1,5 +1,5 @@
 ---
-title: "AWS SNS - Manage Notifications & Topics | Free DevTools"
+title: "AWS SNS - Manage Notifications & Topics | Online Free DevTools by Hexmos"
 name: aws-sns
 path: /freedevtools/tldr/aws/aws-sns
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sns/"

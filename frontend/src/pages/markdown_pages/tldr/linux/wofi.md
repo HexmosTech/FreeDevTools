@@ -1,5 +1,5 @@
 ---
-title: "Wofi App Launcher - Launch Apps with Wayland | Free DevTools"
+title: "Wofi App Launcher - Launch Apps with Wayland | Online Free DevTools by Hexmos"
 name: wofi
 path: /freedevtools/tldr/linux/wofi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wofi/"

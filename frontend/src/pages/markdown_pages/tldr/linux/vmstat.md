@@ -1,5 +1,5 @@
 ---
-title: "VMStat - Monitor System Activity | Free DevTools"
+title: "VMStat - Monitor System Activity | Online Free DevTools by Hexmos"
 name: vmstat
 path: /freedevtools/tldr/linux/vmstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vmstat/"

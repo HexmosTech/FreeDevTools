@@ -1,5 +1,5 @@
 ---
-title: "APX Stacks - Create and Manage Stacks | Free DevTools"
+title: "APX Stacks - Create and Manage Stacks | Online Free DevTools by Hexmos"
 name: apx-stacks
 path: /freedevtools/tldr/linux/apx-stacks
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apx-stacks/"

@@ -1,5 +1,5 @@
 ---
-title: "Graph Acyclic - Generate Acyclic Graphs | Free DevTools"
+title: "Graph Acyclic - Generate Acyclic Graphs | Online Free DevTools by Hexmos"
 name: acyclic
 path: /freedevtools/tldr/common/acyclic
 canonical: "https://hexmos.com/freedevtools/tldr/common/acyclic/"

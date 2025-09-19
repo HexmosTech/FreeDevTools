@@ -1,5 +1,5 @@
 ---
-title: "Wall Command - Send Messages to Users | Free DevTools"
+title: "Wall Command - Send Messages to Users | Online Free DevTools by Hexmos"
 name: wall
 path: /freedevtools/tldr/linux/wall
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wall/"

@@ -1,5 +1,5 @@
 ---
-title: "Rustup Man - View Command Documentation | Free DevTools"
+title: "Rustup Man - View Command Documentation | Online Free DevTools by Hexmos"
 name: rustup-man
 path: /freedevtools/tldr/rustup/rustup-man
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-man/"

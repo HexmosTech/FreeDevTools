@@ -1,5 +1,5 @@
 ---
-title: "Pacman Key Manager - Secure Package Management | Free DevTools"
+title: "Pacman Key Manager - Secure Package Management | Online Free DevTools by Hexmos"
 name: pacman-key
 path: /freedevtools/tldr/linux/pacman-key
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-key/"

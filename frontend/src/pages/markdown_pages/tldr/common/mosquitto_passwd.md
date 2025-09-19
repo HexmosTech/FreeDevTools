@@ -1,5 +1,5 @@
 ---
-title: "Create Mosquitto Passwords - Manage Users | Free DevTools"
+title: "Create Mosquitto Passwords - Manage Users | Online Free DevTools by Hexmos"
 name: mosquitto_passwd
 path: /freedevtools/tldr/common/mosquitto_passwd
 canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_passwd/"

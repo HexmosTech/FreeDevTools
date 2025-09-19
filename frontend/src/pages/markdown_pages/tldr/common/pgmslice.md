@@ -1,5 +1,5 @@
 ---
-title: "PGM Slice - Extract PGM Image Slices | Free DevTools"
+title: "PGM Slice - Extract PGM Image Slices | Online Free DevTools by Hexmos"
 name: pgmslice
 path: /freedevtools/tldr/common/pgmslice
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmslice/"

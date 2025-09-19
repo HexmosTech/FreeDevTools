@@ -1,5 +1,5 @@
 ---
-title: "Latexdiff - Determine LaTeX Differences | Free DevTools"
+title: "Latexdiff - Determine LaTeX Differences | Online Free DevTools by Hexmos"
 name: latexdiff
 path: "/freedevtools/tldr/common/latexdiff"
 canonical: "https://hexmos.com/freedevtools/tldr/common/latexdiff/"

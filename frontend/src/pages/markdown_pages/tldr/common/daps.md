@@ -1,5 +1,5 @@
 ---
-title: "DocBook Validation - Convert DocBook XML | Free DevTools"
+title: "DocBook Validation - Convert DocBook XML | Online Free DevTools by Hexmos"
 name: daps
 path: /freedevtools/tldr/common/daps
 canonical: "https://hexmos.com/freedevtools/tldr/common/daps/"

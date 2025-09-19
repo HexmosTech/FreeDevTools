@@ -1,5 +1,5 @@
 ---
-title: "HTTP Probe - Check Server Status | Free DevTools"
+title: "HTTP Probe - Check Server Status | Online Free DevTools by Hexmos"
 name: httprobe
 path: /freedevtools/tldr/http/httprobe
 canonical: "https://hexmos.com/freedevtools/tldr/http/httprobe/"

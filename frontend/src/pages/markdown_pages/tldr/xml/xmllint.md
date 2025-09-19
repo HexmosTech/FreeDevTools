@@ -1,5 +1,5 @@
 ---
-title: "XML Linter - Validate & Format XML with xmllint | Free DevTools"
+title: "XML Linter - Validate & Format XML with xmllint | Online Free DevTools by Hexmos"
 name: xmllint
 path: /freedevtools/tldr/xml/xmllint
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xmllint/"

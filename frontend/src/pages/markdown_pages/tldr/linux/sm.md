@@ -1,5 +1,5 @@
 ---
-title: "Display Messages - Fullscreen Control with sm | Free DevTools"
+title: "Display Messages - Fullscreen Control with sm | Online Free DevTools by Hexmos"
 name: sm
 path: /freedevtools/tldr/linux/sm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sm/"

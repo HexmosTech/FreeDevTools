@@ -1,5 +1,5 @@
 ---
-title: "Locate Secure Files - Search Files Securely | Free DevTools"
+title: "Locate Secure Files - Search Files Securely | Online Free DevTools by Hexmos"
 name: slocate
 path: /freedevtools/tldr/common/slocate
 canonical: "https://hexmos.com/freedevtools/tldr/common/slocate/"

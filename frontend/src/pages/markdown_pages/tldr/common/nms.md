@@ -1,5 +1,5 @@
 ---
-title: "Decrypt Text - Reveal Hidden Data with nms | Free DevTools"
+title: "Decrypt Text - Reveal Hidden Data with nms | Online Free DevTools by Hexmos"
 name: nms
 path: /freedevtools/tldr/common/nms
 canonical: "https://hexmos.com/freedevtools/tldr/common/nms/"

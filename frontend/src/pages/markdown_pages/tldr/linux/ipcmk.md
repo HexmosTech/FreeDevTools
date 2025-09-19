@@ -1,5 +1,5 @@
 ---
-title: "Create IPC Resources - ipcmk Command | Free DevTools"
+title: "Create IPC Resources - ipcmk Command | Online Free DevTools by Hexmos"
 name: ipcmk
 path: /freedevtools/tldr/linux/ipcmk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ipcmk/"

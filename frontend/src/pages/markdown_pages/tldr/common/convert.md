@@ -1,5 +1,5 @@
 ---
-title: "Image Convert - Format Images | Free DevTools"
+title: "Image Convert - Format Images | Online Free DevTools by Hexmos"
 name: convert
 path: /freedevtools/tldr/common/convert
 canonical: "https://hexmos.com/freedevtools/tldr/common/convert/"

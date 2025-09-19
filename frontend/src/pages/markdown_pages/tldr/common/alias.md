@@ -1,5 +1,5 @@
 ---
-title: "Alias - Create Command Shortcuts | Free DevTools"
+title: "Alias - Create Command Shortcuts | Online Free DevTools by Hexmos"
 name: alias
 path: /freedevtools/tldr/common/alias
 canonical: "https://hexmos.com/freedevtools/tldr/common/alias/"

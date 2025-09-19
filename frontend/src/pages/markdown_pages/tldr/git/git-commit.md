@@ -1,5 +1,5 @@
 ---
-title: "Git Commit - Create Repository Commits | Free DevTools"
+title: "Git Commit - Create Repository Commits | Online Free DevTools by Hexmos"
 name: git-commit
 path: /freedevtools/tldr/git/git-commit
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit/"

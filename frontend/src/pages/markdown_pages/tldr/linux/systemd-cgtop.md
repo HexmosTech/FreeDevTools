@@ -1,5 +1,5 @@
 ---
-title: "Control Groups - Monitor System Resources with systemd-cgtop | Free DevTools"
+title: "Control Groups - Monitor System Resources with systemd-cgtop | Online Free DevTools by Hexmos"
 name: systemd-cgtop
 path: /freedevtools/tldr/linux/systemd-cgtop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cgtop/"

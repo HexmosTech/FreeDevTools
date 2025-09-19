@@ -1,5 +1,5 @@
 ---
-title: "Scrot Screenshot - Capture Screens Easily | Free DevTools"
+title: "Scrot Screenshot - Capture Screens Easily | Online Free DevTools by Hexmos"
 name: scrot
 path: /freedevtools/tldr/linux/scrot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scrot/"

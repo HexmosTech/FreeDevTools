@@ -1,5 +1,5 @@
 ---
-title: "Exiv2 Metadata Editor - Control Image Metadata | Free DevTools"
+title: "Exiv2 Metadata Editor - Control Image Metadata | Online Free DevTools by Hexmos"
 name: exiv2
 path: /freedevtools/tldr/common/exiv2
 canonical: "https://hexmos.com/freedevtools/tldr/common/exiv2/"

@@ -1,5 +1,5 @@
 ---
-title: "Doppler Secrets - Manage Secrets Securely | Free DevTools"
+title: "Doppler Secrets - Manage Secrets Securely | Online Free DevTools by Hexmos"
 name: doppler-secrets
 path: /freedevtools/tldr/doppler/doppler-secrets
 canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-secrets/"

@@ -1,5 +1,5 @@
 ---
-title: "Pluma Text Editor - Edit Files in MATE | Free DevTools"
+title: "Pluma Text Editor - Edit Files in MATE | Online Free DevTools by Hexmos"
 name: pluma
 path: /freedevtools/tldr/linux/pluma
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pluma/"

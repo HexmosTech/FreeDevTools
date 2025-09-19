@@ -1,5 +1,5 @@
 ---
-title: "OpenStreetMap Editor - Edit OSM Data with JOSM | Free DevTools"
+title: "OpenStreetMap Editor - Edit OSM Data with JOSM | Online Free DevTools by Hexmos"
 name: josm
 path: /freedevtools/tldr/common/josm
 canonical: "https://hexmos.com/freedevtools/tldr/common/josm/"

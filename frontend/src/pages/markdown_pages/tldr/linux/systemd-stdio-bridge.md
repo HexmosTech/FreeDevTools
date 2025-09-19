@@ -1,5 +1,5 @@
 ---
-title: "Systemd STDIO Bridge - Proxy STDIO to D-Bus | Free DevTools"
+title: "Systemd STDIO Bridge - Proxy STDIO to D-Bus | Online Free DevTools by Hexmos"
 name: systemd-stdio-bridge
 path: /freedevtools/tldr/linux/systemd-stdio-bridge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-stdio-bridge/"

@@ -1,5 +1,5 @@
 ---
-title: "Code Sign - Create macOS Code Signatures | Free DevTools"
+title: "Code Sign - Create macOS Code Signatures | Online Free DevTools by Hexmos"
 name: codesign
 path: /freedevtools/tldr/osx/codesign
 canonical: "https://hexmos.com/freedevtools/tldr/osx/codesign/"

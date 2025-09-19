@@ -1,5 +1,5 @@
 ---
-title: "Control X Server - Manage X Settings | Free DevTools"
+title: "Control X Server - Manage X Settings | Online Free DevTools by Hexmos"
 name: xset
 path: /freedevtools/tldr/linux/xset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xset/"

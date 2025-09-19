@@ -1,5 +1,5 @@
 ---
-title: "JFrog - Manage Artifacts and Pipelines | Free DevTools"
+title: "JFrog - Manage Artifacts and Pipelines | Online Free DevTools by Hexmos"
 name: jfrog
 path: /freedevtools/tldr/common/jfrog
 canonical: "https://hexmos.com/freedevtools/tldr/common/jfrog/"

@@ -1,5 +1,5 @@
 ---
-title: "Postfix MTA - Control Email Server with Postfix | Free DevTools"
+title: "Postfix MTA - Control Email Server with Postfix | Online Free DevTools by Hexmos"
 name: postfix
 path: /freedevtools/tldr/linux/postfix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/postfix/"

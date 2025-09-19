@@ -1,5 +1,5 @@
 ---
-title: "AZ Tag - Manage Azure Resource Tags | Free DevTools"
+title: "AZ Tag - Manage Azure Resource Tags | Online Free DevTools by Hexmos"
 name: az-tag
 path: /freedevtools/tldr/az/az-tag
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-tag/"

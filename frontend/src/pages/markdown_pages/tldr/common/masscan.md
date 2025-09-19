@@ -1,5 +1,5 @@
 ---
-title: "Network Scan - Discover Open Ports | Free DevTools"
+title: "Network Scan - Discover Open Ports | Online Free DevTools by Hexmos"
 name: masscan
 path: /freedevtools/tldr/common/masscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/masscan/"

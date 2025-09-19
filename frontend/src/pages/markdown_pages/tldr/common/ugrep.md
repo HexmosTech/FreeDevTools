@@ -1,5 +1,5 @@
 ---
-title: "Ugrep Search - Ultra Fast File Search TUI | Free DevTools"
+title: "Ugrep Search - Ultra Fast File Search TUI | Online Free DevTools by Hexmos"
 name: ugrep
 path: /freedevtools/tldr/common/ugrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/ugrep/"

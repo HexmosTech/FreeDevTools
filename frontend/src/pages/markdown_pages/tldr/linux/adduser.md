@@ -1,5 +1,5 @@
 ---
-title: "Create Users - adduser Command | Free DevTools"
+title: "Create Users - adduser Command | Online Free DevTools by Hexmos"
 name: adduser
 path: /freedevtools/tldr/linux/adduser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/adduser/"

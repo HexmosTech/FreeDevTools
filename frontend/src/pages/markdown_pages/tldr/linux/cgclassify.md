@@ -1,5 +1,5 @@
 ---
-title: "CGClassify - Control Linux Cgroups | Free DevTools"
+title: "CGClassify - Control Linux Cgroups | Online Free DevTools by Hexmos"
 name: cgclassify
 path: /freedevtools/tldr/linux/cgclassify
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cgclassify/"

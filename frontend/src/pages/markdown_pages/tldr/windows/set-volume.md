@@ -1,5 +1,5 @@
 ---
-title: "Set-Volume - Change Volume Labels | Free DevTools"
+title: "Set-Volume - Change Volume Labels | Online Free DevTools by Hexmos"
 name: set-volume
 path: /freedevtools/tldr/windows/set-volume
 canonical: "https://hexmos.com/freedevtools/tldr/windows/set-volume/"

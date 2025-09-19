@@ -1,5 +1,5 @@
 ---
-title: "Choco Upgrade - Update Packages on Windows | Free DevTools"
+title: "Choco Upgrade - Update Packages on Windows | Online Free DevTools by Hexmos"
 name: choco-upgrade
 path: /freedevtools/tldr/windows/choco-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-upgrade/"

@@ -1,5 +1,5 @@
 ---
-title: "Automate Infrastructure - Control Servers with pyinfra | Free DevTools"
+title: "Automate Infrastructure - Control Servers with pyinfra | Online Free DevTools by Hexmos"
 name: pyinfra
 path: /freedevtools/tldr/common/pyinfra
 canonical: "https://hexmos.com/freedevtools/tldr/common/pyinfra/"

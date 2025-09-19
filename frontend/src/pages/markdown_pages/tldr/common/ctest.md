@@ -1,5 +1,5 @@
 ---
-title: "CTest - Generate Test Reports | Free DevTools"
+title: "CTest - Generate Test Reports | Online Free DevTools by Hexmos"
 name: ctest
 path: /freedevtools/tldr/common/ctest
 canonical: "https://hexmos.com/freedevtools/tldr/common/ctest/"

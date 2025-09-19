@@ -1,5 +1,5 @@
 ---
-title: "Base64 Encode/Decode - Format Data with base64 | Free DevTools"
+title: "Base64 Encode/Decode - Format Data with base64 | Online Free DevTools by Hexmos"
 name: base64
 path: /freedevtools/tldr/common/base64
 canonical: "https://hexmos.com/freedevtools/tldr/common/base64/"

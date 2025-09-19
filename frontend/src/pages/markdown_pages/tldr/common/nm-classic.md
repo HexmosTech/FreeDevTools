@@ -1,5 +1,5 @@
 ---
-title: "NM Classic - Access Object File Symbols | Free DevTools"
+title: "NM Classic - Access Object File Symbols | Online Free DevTools by Hexmos"
 name: nm-classic
 path: /freedevtools/tldr/common/nm-classic
 canonical: "https://hexmos.com/freedevtools/tldr/common/nm-classic/"

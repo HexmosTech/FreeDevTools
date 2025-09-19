@@ -1,5 +1,5 @@
 ---
-title: "Execute Typescript - Control Shell Scripts in Real-Time | Free DevTools"
+title: "Execute Typescript - Control Shell Scripts in Real-Time | Online Free DevTools by Hexmos"
 name: scriptlive
 path: /freedevtools/tldr/linux/scriptlive
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scriptlive/"

@@ -1,5 +1,5 @@
 ---
-title: "GRUB2 Password Generate - Create PBKDF2 Hash | Free DevTools"
+title: "GRUB2 Password Generate - Create PBKDF2 Hash | Online Free DevTools by Hexmos"
 name: grub2-mkpasswd-pbkdf2
 path: /freedevtools/tldr/linux/grub2-mkpasswd-pbkdf2
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub2-mkpasswd-pbkdf2/"

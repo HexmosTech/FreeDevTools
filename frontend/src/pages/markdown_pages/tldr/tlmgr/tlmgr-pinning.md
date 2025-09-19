@@ -1,5 +1,5 @@
 ---
-title: "TLMGR Pinning - Manage Package Pinning | Free DevTools"
+title: "TLMGR Pinning - Manage Package Pinning | Online Free DevTools by Hexmos"
 name: tlmgr-pinning
 path: /freedevtools/tldr/tlmgr/tlmgr-pinning
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-pinning/"

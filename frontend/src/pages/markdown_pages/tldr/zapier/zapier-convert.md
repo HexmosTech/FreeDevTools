@@ -1,5 +1,5 @@
 ---
-title: "Zapier Convert - Generate CLI Integration | Free DevTools"
+title: "Zapier Convert - Generate CLI Integration | Online Free DevTools by Hexmos"
 name: zapier-convert
 path: /freedevtools/tldr/zapier/zapier-convert
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-convert/"

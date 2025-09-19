@@ -1,5 +1,5 @@
 ---
-title: "Rekor-cli - Verify Software Supply Chain Metadata | Free DevTools"
+title: "Rekor-cli - Verify Software Supply Chain Metadata | Online Free DevTools by Hexmos"
 name: rekor-cli
 path: /freedevtools/tldr/common/rekor-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/rekor-cli/"

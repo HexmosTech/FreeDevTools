@@ -1,5 +1,5 @@
 ---
-title: "LMMS - Create Music Tracks with Open Source DAW | Free DevTools"
+title: "LMMS - Create Music Tracks with Open Source DAW | Online Free DevTools by Hexmos"
 name: lmms
 path: /freedevtools/tldr/common/lmms
 canonical: "https://hexmos.com/freedevtools/tldr/common/lmms/"

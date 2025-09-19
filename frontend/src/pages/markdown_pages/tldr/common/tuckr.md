@@ -1,5 +1,5 @@
 ---
-title: "Manage Dotfiles - Control Dotfile Configurations | Free DevTools"
+title: "Manage Dotfiles - Control Dotfile Configurations | Online Free DevTools by Hexmos"
 name: tuckr
 path: /freedevtools/tldr/common/tuckr
 canonical: "https://hexmos.com/freedevtools/tldr/common/tuckr/"

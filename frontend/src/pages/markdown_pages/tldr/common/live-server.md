@@ -1,5 +1,5 @@
 ---
-title: "Serve Files - Live Server with Live Reload | Free DevTools"
+title: "Serve Files - Live Server with Live Reload | Online Free DevTools by Hexmos"
 name: live-server
 path: /freedevtools/tldr/common/live-server
 canonical: "https://hexmos.com/freedevtools/tldr/common/live-server/"

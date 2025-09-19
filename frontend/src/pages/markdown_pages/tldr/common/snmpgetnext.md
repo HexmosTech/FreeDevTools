@@ -1,5 +1,5 @@
 ---
-title: "Query SNMP Next - Retrieve MIB Data | Free DevTools"
+title: "Query SNMP Next - Retrieve MIB Data | Online Free DevTools by Hexmos"
 name: snmpgetnext
 path: /freedevtools/tldr/common/snmpgetnext
 canonical: "https://hexmos.com/freedevtools/tldr/common/snmpgetnext/"

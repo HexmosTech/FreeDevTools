@@ -1,5 +1,5 @@
 ---
-title: "macOS Version - Print System Information | Free DevTools"
+title: "macOS Version - Print System Information | Online Free DevTools by Hexmos"
 name: sw_vers
 path: /freedevtools/tldr/osx/sw_vers
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sw_vers/"

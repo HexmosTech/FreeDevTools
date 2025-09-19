@@ -1,5 +1,5 @@
 ---
-title: "SMB File Downloader - Download Files from SMB Servers | Free DevTools"
+title: "SMB File Downloader - Download Files from SMB Servers | Online Free DevTools by Hexmos"
 name: smbget
 path: /freedevtools/tldr/linux/smbget
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smbget/"

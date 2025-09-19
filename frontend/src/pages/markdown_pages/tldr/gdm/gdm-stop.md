@@ -1,5 +1,5 @@
 ---
-title: "GDM Stop - Control GNOME Display Manager | Free DevTools"
+title: "GDM Stop - Control GNOME Display Manager | Online Free DevTools by Hexmos"
 name: gdm-stop
 path: /freedevtools/tldr/gdm/gdm-stop
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-stop/"

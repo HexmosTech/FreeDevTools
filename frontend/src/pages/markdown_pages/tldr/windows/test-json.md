@@ -1,5 +1,5 @@
 ---
-title: "Validate JSON - Test JSON Syntax Online | Free DevTools"
+title: "Validate JSON - Test JSON Syntax Online | Online Free DevTools by Hexmos"
 name: test-json
 path: /freedevtools/tldr/windows/test-json
 canonical: "https://hexmos.com/freedevtools/tldr/windows/test-json/"

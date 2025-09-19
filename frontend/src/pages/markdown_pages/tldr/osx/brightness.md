@@ -1,5 +1,5 @@
 ---
-title: "Brightness - Control Display Brightness | Free DevTools"
+title: "Brightness - Control Display Brightness | Online Free DevTools by Hexmos"
 name: brightness
 path: /freedevtools/tldr/osx/brightness
 canonical: "https://hexmos.com/freedevtools/tldr/osx/brightness/"

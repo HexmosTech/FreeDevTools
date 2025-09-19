@@ -1,5 +1,5 @@
 ---
-title: "Wipe Filesystem - Remove Signatures | Free DevTools"
+title: "Wipe Filesystem - Remove Signatures | Online Free DevTools by Hexmos"
 name: wipefs
 path: /freedevtools/tldr/linux/wipefs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wipefs/"

@@ -1,5 +1,5 @@
 ---
-title: "Edit Text - Control Files with Atom Editor | Free DevTools"
+title: "Edit Text - Control Files with Atom Editor | Online Free DevTools by Hexmos"
 name: atom
 path: /freedevtools/tldr/common/atom
 canonical: "https://hexmos.com/freedevtools/tldr/common/atom/"

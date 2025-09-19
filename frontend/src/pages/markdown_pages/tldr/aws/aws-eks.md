@@ -1,5 +1,5 @@
 ---
-title: "AWS EKS - Manage Kubernetes Clusters | Free DevTools"
+title: "AWS EKS - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
 name: aws-eks
 path: /freedevtools/tldr/aws/aws-eks
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-eks/"

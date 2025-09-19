@@ -1,5 +1,5 @@
 ---
-title: "Dotnet Tool - Manage .NET Tools | Free DevTools"
+title: "Dotnet Tool - Manage .NET Tools | Online Free DevTools by Hexmos"
 name: dotnet-tool
 path: /freedevtools/tldr/dotnet/dotnet-tool
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-tool/"

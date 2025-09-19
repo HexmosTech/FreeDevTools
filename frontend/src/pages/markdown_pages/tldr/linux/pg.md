@@ -1,5 +1,5 @@
 ---
-title: "View File - Control Files with pg Command | Free DevTools"
+title: "View File - Control Files with pg Command | Online Free DevTools by Hexmos"
 name: pg
 path: /freedevtools/tldr/linux/pg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pg/"

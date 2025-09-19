@@ -1,5 +1,5 @@
 ---
-title: "Heroku Manager - Manage Heroku Apps | Free DevTools"
+title: "Heroku Manager - Manage Heroku Apps | Online Free DevTools by Hexmos"
 name: heroku
 path: /freedevtools/tldr/common/heroku
 canonical: "https://hexmos.com/freedevtools/tldr/common/heroku/"

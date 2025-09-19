@@ -1,5 +1,5 @@
 ---
-title: "Generate GIF - Create Animated GIFs from asciinema | Free DevTools"
+title: "Generate GIF - Create Animated GIFs from asciinema | Online Free DevTools by Hexmos"
 name: agg
 path: /freedevtools/tldr/common/agg
 canonical: "https://hexmos.com/freedevtools/tldr/common/agg/"

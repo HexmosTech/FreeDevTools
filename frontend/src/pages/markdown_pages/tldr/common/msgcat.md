@@ -1,5 +1,5 @@
 ---
-title: "Concatenate PO Files - Combine Translations | Free DevTools"
+title: "Concatenate PO Files - Combine Translations | Online Free DevTools by Hexmos"
 name: msgcat
 path: "/freedevtools/tldr/common/msgcat"
 canonical: "https://hexmos.com/freedevtools/tldr/common/msgcat/"

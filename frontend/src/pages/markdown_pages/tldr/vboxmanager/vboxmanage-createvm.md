@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage Create VM - Generate Virtual Machines | Free DevTools"
+title: "VBoxManage Create VM - Generate Virtual Machines | Online Free DevTools by Hexmos"
 name: vboxmanage-createvm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-createvm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-createvm/"

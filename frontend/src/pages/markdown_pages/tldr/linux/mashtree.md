@@ -1,5 +1,5 @@
 ---
-title: "Create Genome Tree - mashtree | Free DevTools"
+title: "Create Genome Tree - mashtree | Online Free DevTools by Hexmos"
 name: mashtree
 path: /freedevtools/tldr/linux/mashtree
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mashtree/"

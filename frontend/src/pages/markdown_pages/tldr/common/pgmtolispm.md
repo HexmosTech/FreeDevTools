@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM Image - Format to Lisp Machine | Free DevTools"
+title: "Convert PGM Image - Format to Lisp Machine | Online Free DevTools by Hexmos"
 name: pgmtolispm
 path: /freedevtools/tldr/common/pgmtolispm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtolispm/"

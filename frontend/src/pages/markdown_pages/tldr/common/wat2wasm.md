@@ -1,5 +1,5 @@
 ---
-title: "Wat2wasm - Convert WebAssembly Text to Binary | Free DevTools"
+title: "Wat2wasm - Convert WebAssembly Text to Binary | Online Free DevTools by Hexmos"
 name: wat2wasm
 path: /freedevtools/tldr/common/wat2wasm
 canonical: "https://hexmos.com/freedevtools/tldr/common/wat2wasm/"

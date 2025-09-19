@@ -1,5 +1,5 @@
 ---
-title: "Start NPM Script - Run Package Scripts | Free DevTools"
+title: "Start NPM Script - Run Package Scripts | Online Free DevTools by Hexmos"
 name: npm-start
 path: /freedevtools/tldr/npm/npm-start
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-start/"

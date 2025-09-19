@@ -1,5 +1,5 @@
 ---
-title: "Scontrol - Control Slurm Jobs | Free DevTools"
+title: "Scontrol - Control Slurm Jobs | Online Free DevTools by Hexmos"
 name: scontrol
 path: /freedevtools/tldr/linux/scontrol
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scontrol/"

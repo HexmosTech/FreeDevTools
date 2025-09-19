@@ -1,5 +1,5 @@
 ---
-title: "Control Minetest - Manage Worlds and Logs | Free DevTools"
+title: "Control Minetest - Manage Worlds and Logs | Online Free DevTools by Hexmos"
 name: minetest
 path: /freedevtools/tldr/common/minetest
 canonical: "https://hexmos.com/freedevtools/tldr/common/minetest/"

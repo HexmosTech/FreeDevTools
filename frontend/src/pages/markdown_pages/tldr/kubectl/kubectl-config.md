@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Config - Manage Kubernetes Configuration | Free DevTools"
+title: "Kubectl Config - Manage Kubernetes Configuration | Online Free DevTools by Hexmos"
 name: kubectl-config
 path: /freedevtools/tldr/kubectl/kubectl-config
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-config/"

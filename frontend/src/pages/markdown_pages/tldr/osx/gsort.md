@@ -1,5 +1,5 @@
 ---
-title: "Sort Files - Organize Data with gsort | Free DevTools"
+title: "Sort Files - Organize Data with gsort | Online Free DevTools by Hexmos"
 name: gsort
 path: /freedevtools/tldr/osx/gsort
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsort/"

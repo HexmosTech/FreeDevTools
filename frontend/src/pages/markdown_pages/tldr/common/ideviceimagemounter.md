@@ -1,5 +1,5 @@
 ---
-title: "iDevice Image Mount - Mount iOS Images | Free DevTools"
+title: "iDevice Image Mount - Mount iOS Images | Online Free DevTools by Hexmos"
 name: ideviceimagemounter
 path: /freedevtools/tldr/common/ideviceimagemounter
 canonical: "https://hexmos.com/freedevtools/tldr/common/ideviceimagemounter/"

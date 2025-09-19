@@ -1,5 +1,5 @@
 ---
-title: "Manage Ruby Environments - Control RVM | Free DevTools"
+title: "Manage Ruby Environments - Control RVM | Online Free DevTools by Hexmos"
 name: rvm
 path: /freedevtools/tldr/common/rvm
 canonical: "https://hexmos.com/freedevtools/tldr/common/rvm/"

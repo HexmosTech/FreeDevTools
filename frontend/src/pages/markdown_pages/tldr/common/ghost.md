@@ -1,5 +1,5 @@
 ---
-title: "Manage Ghost Blogs - Deploy and Control | Free DevTools"
+title: "Manage Ghost Blogs - Deploy and Control | Online Free DevTools by Hexmos"
 name: ghost
 path: /freedevtools/tldr/common/ghost
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghost/"

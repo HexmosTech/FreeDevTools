@@ -1,5 +1,5 @@
 ---
-title: "List User Groups - Manage Linux Users with lid | Free DevTools"
+title: "List User Groups - Manage Linux Users with lid | Online Free DevTools by Hexmos"
 name: lid.libuser
 path: /freedevtools/tldr/linux/lid.libuser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lid.libuser/"

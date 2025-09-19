@@ -1,5 +1,5 @@
 ---
-title: "Monitor Network Utilization - Bandwhich | Free DevTools"
+title: "Monitor Network Utilization - Bandwhich | Online Free DevTools by Hexmos"
 name: bandwhich
 path: /freedevtools/tldr/common/bandwhich
 canonical: "https://hexmos.com/freedevtools/tldr/common/bandwhich/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert FITS to PNM - Image Conversion | Free DevTools"
+title: "Convert FITS to PNM - Image Conversion | Online Free DevTools by Hexmos"
 name: fitstopnm
 path: /freedevtools/tldr/common/fitstopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/fitstopnm/"

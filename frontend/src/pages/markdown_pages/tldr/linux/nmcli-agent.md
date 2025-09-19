@@ -1,5 +1,5 @@
 ---
-title: "Control nmcli Agent - Manage NetworkManager Secrets | Free DevTools"
+title: "Control nmcli Agent - Manage NetworkManager Secrets | Online Free DevTools by Hexmos"
 name: nmcli-agent
 path: /freedevtools/tldr/linux/nmcli-agent
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-agent/"

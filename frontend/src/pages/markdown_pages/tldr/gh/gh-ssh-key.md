@@ -1,5 +1,5 @@
 ---
-title: "Manage SSH Keys - Control GitHub Keys | Free DevTools"
+title: "Manage SSH Keys - Control GitHub Keys | Online Free DevTools by Hexmos"
 name: gh-ssh-key
 path: /freedevtools/tldr/gh/gh-ssh-key
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-ssh-key/"

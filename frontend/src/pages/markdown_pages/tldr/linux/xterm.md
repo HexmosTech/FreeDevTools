@@ -1,5 +1,5 @@
 ---
-title: "Control XTerm - Terminal Emulator for X Window System | Free DevTools"
+title: "Control XTerm - Terminal Emulator for X Window System | Online Free DevTools by Hexmos"
 name: xterm
 path: /freedevtools/tldr/linux/xterm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xterm/"

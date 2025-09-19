@@ -1,5 +1,5 @@
 ---
-title: "Control SteamOS Dev Mode - Enable Developer Features | Free DevTools"
+title: "Control SteamOS Dev Mode - Enable Developer Features | Online Free DevTools by Hexmos"
 name: steamos-devmode
 path: /freedevtools/tldr/linux/steamos-devmode
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-devmode/"

@@ -1,5 +1,5 @@
 ---
-title: "List Attributes - Inspect Linux Files | Free DevTools"
+title: "List Attributes - Inspect Linux Files | Online Free DevTools by Hexmos"
 name: lsattr
 path: /freedevtools/tldr/linux/lsattr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsattr/"

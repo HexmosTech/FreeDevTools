@@ -1,5 +1,5 @@
 ---
-title: "Convert ESC/P2 to PBM - Image Conversion | Free DevTools"
+title: "Convert ESC/P2 to PBM - Image Conversion | Online Free DevTools by Hexmos"
 name: escp2topbm
 path: /freedevtools/tldr/common/escp2topbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/escp2topbm/"

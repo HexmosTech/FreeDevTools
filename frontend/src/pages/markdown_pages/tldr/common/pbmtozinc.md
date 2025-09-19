@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to Zinc - Create Zinc Bitmaps | Free DevTools"
+title: "Convert PBM to Zinc - Create Zinc Bitmaps | Online Free DevTools by Hexmos"
 name: pbmtozinc
 path: "/freedevtools/tldr/common/pbmtozinc"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtozinc/"

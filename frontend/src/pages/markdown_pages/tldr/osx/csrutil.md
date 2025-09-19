@@ -1,5 +1,5 @@
 ---
-title: "CSRUtil - Control System Integrity Protection | Free DevTools"
+title: "CSRUtil - Control System Integrity Protection | Online Free DevTools by Hexmos"
 name: csrutil
 path: /freedevtools/tldr/osx/csrutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/csrutil/"

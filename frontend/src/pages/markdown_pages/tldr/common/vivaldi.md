@@ -1,5 +1,5 @@
 ---
-title: "Vivaldi - Browse Web Pages | Free DevTools"
+title: "Vivaldi - Browse Web Pages | Online Free DevTools by Hexmos"
 name: vivaldi
 path: /freedevtools/tldr/common/vivaldi
 canonical: "https://hexmos.com/freedevtools/tldr/common/vivaldi/"

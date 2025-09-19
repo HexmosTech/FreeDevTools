@@ -1,5 +1,5 @@
 ---
-title: "Dolt Fetch - Download Repository Objects | Free DevTools"
+title: "Dolt Fetch - Download Repository Objects | Online Free DevTools by Hexmos"
 name: dolt-fetch
 path: /freedevtools/tldr/dolt/dolt-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-fetch/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Man Pages - help2man Tool | Free DevTools"
+title: "Generate Man Pages - help2man Tool | Online Free DevTools by Hexmos"
 name: help2man
 path: /freedevtools/tldr/common/help2man
 canonical: "https://hexmos.com/freedevtools/tldr/common/help2man/"

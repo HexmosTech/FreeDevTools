@@ -1,5 +1,5 @@
 ---
-title: "Hg Pull - Retrieve Remote Repository Changes | Free DevTools"
+title: "Hg Pull - Retrieve Remote Repository Changes | Online Free DevTools by Hexmos"
 name: hg-pull
 path: /freedevtools/tldr/hg/hg-pull
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-pull/"

@@ -1,5 +1,5 @@
 ---
-title: "Lilypond - Typeset Music & Generate MIDI | Free DevTools"
+title: "Lilypond - Typeset Music & Generate MIDI | Online Free DevTools by Hexmos"
 name: lilypond
 path: /freedevtools/tldr/common/lilypond
 canonical: "https://hexmos.com/freedevtools/tldr/common/lilypond/"

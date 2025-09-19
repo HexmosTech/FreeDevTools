@@ -1,5 +1,5 @@
 ---
-title: "Create Journal Entries - Manage Life with jrnl | Free DevTools"
+title: "Create Journal Entries - Manage Life with jrnl | Online Free DevTools by Hexmos"
 name: jrnl
 path: /freedevtools/tldr/common/jrnl
 canonical: "https://hexmos.com/freedevtools/tldr/common/jrnl/"

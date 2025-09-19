@@ -1,5 +1,5 @@
 ---
-title: "Google Chrome - Launch Browser from Command Line | Free DevTools"
+title: "Google Chrome - Launch Browser from Command Line | Online Free DevTools by Hexmos"
 name: google-chrome
 path: /freedevtools/tldr/common/google-chrome
 canonical: "https://hexmos.com/freedevtools/tldr/common/google-chrome/"

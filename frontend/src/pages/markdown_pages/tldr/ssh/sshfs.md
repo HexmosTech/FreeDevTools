@@ -1,5 +1,5 @@
 ---
-title: "SSHFS Mount - Access Remote Files Securely | Free DevTools"
+title: "SSHFS Mount - Access Remote Files Securely | Online Free DevTools by Hexmos"
 name: sshfs
 path: /freedevtools/tldr/ssh/sshfs
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshfs/"

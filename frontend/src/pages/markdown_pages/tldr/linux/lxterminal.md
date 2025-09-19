@@ -1,5 +1,5 @@
 ---
-title: "Control Linux Terminal - Open LXTerminal Windows | Free DevTools"
+title: "Control Linux Terminal - Open LXTerminal Windows | Online Free DevTools by Hexmos"
 name: lxterminal
 path: /freedevtools/tldr/linux/lxterminal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxterminal/"

@@ -1,5 +1,5 @@
 ---
-title: "GLab Release - Manage GitLab Releases | Free DevTools"
+title: "GLab Release - Manage GitLab Releases | Online Free DevTools by Hexmos"
 name: glab-release
 path: /freedevtools/tldr/glab/glab-release
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-release/"

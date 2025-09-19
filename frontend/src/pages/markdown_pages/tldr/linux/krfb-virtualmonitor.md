@@ -1,5 +1,5 @@
 ---
-title: "Create Virtual Monitor - VNC Control with krfb | Free DevTools"
+title: "Create Virtual Monitor - VNC Control with krfb | Online Free DevTools by Hexmos"
 name: krfb-virtualmonitor
 path: /freedevtools/tldr/linux/krfb-virtualmonitor
 canonical: "https://hexmos.com/freedevtools/tldr/linux/krfb-virtualmonitor/"

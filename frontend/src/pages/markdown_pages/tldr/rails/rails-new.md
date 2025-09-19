@@ -1,5 +1,5 @@
 ---
-title: "Create Rails App - Generate New Rails Projects | Free DevTools"
+title: "Create Rails App - Generate New Rails Projects | Online Free DevTools by Hexmos"
 name: rails-new
 path: /freedevtools/tldr/rails/rails-new
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-new/"

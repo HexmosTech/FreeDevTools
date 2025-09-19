@@ -1,5 +1,5 @@
 ---
-title: "Manage PaperMC - Control Minecraft Server | Free DevTools"
+title: "Manage PaperMC - Control Minecraft Server | Online Free DevTools by Hexmos"
 name: papermc
 path: /freedevtools/tldr/common/papermc
 canonical: "https://hexmos.com/freedevtools/tldr/common/papermc/"

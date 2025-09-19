@@ -1,5 +1,5 @@
 ---
-title: "Generate System Report - system_profiler | Free DevTools"
+title: "Generate System Report - system_profiler | Online Free DevTools by Hexmos"
 name: system_profiler
 path: /freedevtools/tldr/osx/system_profiler
 canonical: "https://hexmos.com/freedevtools/tldr/osx/system_profiler/"

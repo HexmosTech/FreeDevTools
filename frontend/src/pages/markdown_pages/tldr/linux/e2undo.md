@@ -1,5 +1,5 @@
 ---
-title: "Undo Ext Filesystem Changes - e2undo | Free DevTools"
+title: "Undo Ext Filesystem Changes - e2undo | Online Free DevTools by Hexmos"
 name: e2undo
 path: "/freedevtools/tldr/linux/e2undo"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/e2undo/"

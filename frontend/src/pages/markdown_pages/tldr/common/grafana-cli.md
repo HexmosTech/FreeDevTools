@@ -1,5 +1,5 @@
 ---
-title: "Grafana CLI - Control Grafana Plugins | Free DevTools"
+title: "Grafana CLI - Control Grafana Plugins | Online Free DevTools by Hexmos"
 name: grafana-cli
 path: /freedevtools/tldr/common/grafana-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/grafana-cli/"

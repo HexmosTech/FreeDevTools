@@ -1,5 +1,5 @@
 ---
-title: "MOPAC Quantum Chemistry - Perform Semiempirical Calculations | Free DevTools"
+title: "MOPAC Quantum Chemistry - Perform Semiempirical Calculations | Online Free DevTools by Hexmos"
 name: mopac
 path: /freedevtools/tldr/linux/mopac
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mopac/"

@@ -1,5 +1,5 @@
 ---
-title: "Taskkill - Terminate Processes by ID or Name | Free DevTools"
+title: "Taskkill - Terminate Processes by ID or Name | Online Free DevTools by Hexmos"
 name: taskkill
 path: /freedevtools/tldr/windows/taskkill
 canonical: "https://hexmos.com/freedevtools/tldr/windows/taskkill/"

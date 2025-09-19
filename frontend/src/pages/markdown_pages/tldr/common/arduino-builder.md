@@ -1,5 +1,5 @@
 ---
-title: "Compile Arduino Sketches - Command Line Tool | Free DevTools"
+title: "Compile Arduino Sketches - Command Line Tool | Online Free DevTools by Hexmos"
 name: arduino-builder
 path: /freedevtools/tldr/common/arduino-builder
 canonical: "https://hexmos.com/freedevtools/tldr/common/arduino-builder/"

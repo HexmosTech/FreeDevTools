@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Suspend - Control System Suspend | Free DevTools"
+title: "Systemctl Suspend - Control System Suspend | Online Free DevTools by Hexmos"
 name: systemctl-suspend
 path: /freedevtools/tldr/linux/systemctl-suspend
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-suspend/"

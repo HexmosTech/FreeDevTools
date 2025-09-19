@@ -1,5 +1,5 @@
 ---
-title: "Zmore - View Compressed Files with More | Free DevTools"
+title: "Zmore - View Compressed Files with More | Online Free DevTools by Hexmos"
 name: zmore
 path: /freedevtools/tldr/common/zmore
 canonical: "https://hexmos.com/freedevtools/tldr/common/zmore/"

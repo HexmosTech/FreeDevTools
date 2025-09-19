@@ -1,5 +1,5 @@
 ---
-title: "Review Nix Packages - Build PR Changes | Free DevTools"
+title: "Review Nix Packages - Build PR Changes | Online Free DevTools by Hexmos"
 name: nixpkgs-review
 path: /freedevtools/tldr/nix/nixpkgs-review
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nixpkgs-review/"

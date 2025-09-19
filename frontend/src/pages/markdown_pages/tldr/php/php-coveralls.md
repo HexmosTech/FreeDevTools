@@ -1,5 +1,5 @@
 ---
-title: "Generate PHP Coverage Reports with php-coveralls | Free DevTools"
+title: "Generate PHP Coverage Reports with php-coveralls | Online Free DevTools by Hexmos"
 name: php-coveralls
 path: /freedevtools/tldr/php/php-coveralls
 canonical: "https://hexmos.com/freedevtools/tldr/php/php-coveralls/"

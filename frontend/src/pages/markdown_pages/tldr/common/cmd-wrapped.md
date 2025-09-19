@@ -1,5 +1,5 @@
 ---
-title: "Shell History Statistics - Analyze Command History | Free DevTools"
+title: "Shell History Statistics - Analyze Command History | Online Free DevTools by Hexmos"
 name: cmd-wrapped
 path: /freedevtools/tldr/common/cmd-wrapped
 canonical: "https://hexmos.com/freedevtools/tldr/common/cmd-wrapped/"

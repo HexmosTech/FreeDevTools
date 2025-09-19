@@ -1,5 +1,5 @@
 ---
-title: "Git Bundle - Package Git Objects into Archives | Free DevTools"
+title: "Git Bundle - Package Git Objects into Archives | Online Free DevTools by Hexmos"
 name: git-bundle
 path: /freedevtools/tldr/git/git-bundle
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-bundle/"

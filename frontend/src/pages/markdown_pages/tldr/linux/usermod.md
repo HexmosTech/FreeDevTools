@@ -1,5 +1,5 @@
 ---
-title: "Usermod Command - Manage Linux Users | Free DevTools"
+title: "Usermod Command - Manage Linux Users | Online Free DevTools by Hexmos"
 name: usermod
 path: /freedevtools/tldr/linux/usermod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/usermod/"

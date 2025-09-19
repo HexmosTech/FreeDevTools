@@ -1,5 +1,5 @@
 ---
-title: "Ego - Manage System Personalities | Free DevTools"
+title: "Ego - Manage System Personalities | Online Free DevTools by Hexmos"
 name: ego
 path: /freedevtools/tldr/linux/ego
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ego/"

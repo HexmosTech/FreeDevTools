@@ -1,5 +1,5 @@
 ---
-title: "Update Finger Info - Control User Data with chfn | Free DevTools"
+title: "Update Finger Info - Control User Data with chfn | Online Free DevTools by Hexmos"
 name: chfn
 path: /freedevtools/tldr/linux/chfn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chfn/"

@@ -1,5 +1,5 @@
 ---
-title: "Accelerate - Run PyTorch Models Easily | Free DevTools"
+title: "Accelerate - Run PyTorch Models Easily | Online Free DevTools by Hexmos"
 name: accelerate
 path: /freedevtools/tldr/common/accelerate
 canonical: "https://hexmos.com/freedevtools/tldr/common/accelerate/"

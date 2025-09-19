@@ -1,5 +1,5 @@
 ---
-title: "Control cmus - Command-Line Music Player | Free DevTools"
+title: "Control cmus - Command-Line Music Player | Online Free DevTools by Hexmos"
 name: cmus
 path: "/freedevtools/tldr/linux/cmus"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cmus/"

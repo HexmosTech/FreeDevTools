@@ -1,5 +1,5 @@
 ---
-title: "Basenc Encode - Encode Data with GNU Basenc | Free DevTools"
+title: "Basenc Encode - Encode Data with GNU Basenc | Online Free DevTools by Hexmos"
 name: gbasenc
 path: /freedevtools/tldr/osx/gbasenc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gbasenc/"

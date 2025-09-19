@@ -1,5 +1,5 @@
 ---
-title: "Create PDF from Images - img2pdf Converter | Free DevTools"
+title: "Create PDF from Images - img2pdf Converter | Online Free DevTools by Hexmos"
 name: img2pdf
 path: /freedevtools/tldr/common/img2pdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/img2pdf/"

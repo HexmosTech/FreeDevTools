@@ -1,5 +1,5 @@
 ---
-title: "Deploy PHP Apps - Automate Deployment | Free DevTools"
+title: "Deploy PHP Apps - Automate Deployment | Online Free DevTools by Hexmos"
 name: dep
 path: /freedevtools/tldr/common/dep
 canonical: "https://hexmos.com/freedevtools/tldr/common/dep/"

@@ -1,5 +1,5 @@
 ---
-title: "XBPS Package Manager - Update Linux Packages | Free DevTools"
+title: "XBPS Package Manager - Update Linux Packages | Online Free DevTools by Hexmos"
 name: xbps
 path: /freedevtools/tldr/linux/xbps
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps/"

@@ -1,5 +1,5 @@
 ---
-title: "NestJS CLI - Create and Manage NestJS Applications | Free DevTools"
+title: "NestJS CLI - Create and Manage NestJS Applications | Online Free DevTools by Hexmos"
 name: nest
 path: /freedevtools/tldr/common/nest
 canonical: "https://hexmos.com/freedevtools/tldr/common/nest/"

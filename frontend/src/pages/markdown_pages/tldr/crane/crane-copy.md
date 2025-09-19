@@ -1,5 +1,5 @@
 ---
-title: "Copy Image - Transfer Container Images with Crane | Free DevTools"
+title: "Copy Image - Transfer Container Images with Crane | Online Free DevTools by Hexmos"
 name: crane-copy
 path: /freedevtools/tldr/crane/crane-copy
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-copy/"

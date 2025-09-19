@@ -1,5 +1,5 @@
 ---
-title: "qm nbdstop - Stop nbd Server | Free DevTools"
+title: "qm nbdstop - Stop nbd Server | Online Free DevTools by Hexmos"
 name: qm-nbdstop
 path: /freedevtools/tldr/linux/qm-nbdstop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-nbdstop/"

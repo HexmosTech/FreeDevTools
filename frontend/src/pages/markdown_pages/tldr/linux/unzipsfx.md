@@ -1,5 +1,5 @@
 ---
-title: "Create Self-Extracting Zip - unzipsfx | Free DevTools"
+title: "Create Self-Extracting Zip - unzipsfx | Online Free DevTools by Hexmos"
 name: unzipsfx
 path: /freedevtools/tldr/linux/unzipsfx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unzipsfx/"

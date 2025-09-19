@@ -1,5 +1,5 @@
 ---
-title: "Lua Compiler - Generate Bytecode | Free DevTools"
+title: "Lua Compiler - Generate Bytecode | Online Free DevTools by Hexmos"
 name: luac
 path: /freedevtools/tldr/common/luac
 canonical: "https://hexmos.com/freedevtools/tldr/common/luac/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Translation Files - msginit | Free DevTools"
+title: "Generate Translation Files - msginit | Online Free DevTools by Hexmos"
 name: msginit
 path: /freedevtools/tldr/common/msginit
 canonical: "https://hexmos.com/freedevtools/tldr/common/msginit/"

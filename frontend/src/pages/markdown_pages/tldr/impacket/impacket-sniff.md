@@ -1,5 +1,5 @@
 ---
-title: "Sniff Network Packets - Control Network Traffic | Free DevTools"
+title: "Sniff Network Packets - Control Network Traffic | Online Free DevTools by Hexmos"
 name: impacket-sniff
 path: /freedevtools/tldr/impacket/impacket-sniff
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sniff/"

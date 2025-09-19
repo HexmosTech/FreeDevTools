@@ -1,5 +1,5 @@
 ---
-title: "Recompress Files - Convert .Z to gzip | Free DevTools"
+title: "Recompress Files - Convert .Z to gzip | Online Free DevTools by Hexmos"
 name: znew
 path: /freedevtools/tldr/common/znew
 canonical: "https://hexmos.com/freedevtools/tldr/common/znew/"

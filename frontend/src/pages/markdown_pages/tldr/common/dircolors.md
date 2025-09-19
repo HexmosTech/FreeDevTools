@@ -1,5 +1,5 @@
 ---
-title: "Generate LS_COLOR - Style LS Commands | Free DevTools"
+title: "Generate LS_COLOR - Style LS Commands | Online Free DevTools by Hexmos"
 name: dircolors
 path: /freedevtools/tldr/common/dircolors
 canonical: "https://hexmos.com/freedevtools/tldr/common/dircolors/"

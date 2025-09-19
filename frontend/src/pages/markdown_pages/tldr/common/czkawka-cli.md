@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - Czkawka CLI | Free DevTools"
+title: "Find Duplicate Files - Czkawka CLI | Online Free DevTools by Hexmos"
 name: czkawka-cli
 path: /freedevtools/tldr/common/czkawka-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/czkawka-cli/"

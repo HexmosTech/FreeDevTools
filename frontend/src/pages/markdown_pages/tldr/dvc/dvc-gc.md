@@ -1,5 +1,5 @@
 ---
-title: "DVC Garbage Collect - Remove Unused Files | Free DevTools"
+title: "DVC Garbage Collect - Remove Unused Files | Online Free DevTools by Hexmos"
 name: dvc-gc
 path: /freedevtools/tldr/dvc/dvc-gc
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-gc/"

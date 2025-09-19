@@ -1,5 +1,5 @@
 ---
-title: "Yadm Decrypt - Decrypt Files Securely | Free DevTools"
+title: "Yadm Decrypt - Decrypt Files Securely | Online Free DevTools by Hexmos"
 name: yadm-decrypt
 path: /freedevtools/tldr/yadm/yadm-decrypt
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-decrypt/"

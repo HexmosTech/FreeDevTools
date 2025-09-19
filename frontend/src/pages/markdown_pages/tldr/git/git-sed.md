@@ -1,5 +1,5 @@
 ---
-title: "Replace Text with git-sed - Edit Files | Free DevTools"
+title: "Replace Text with git-sed - Edit Files | Online Free DevTools by Hexmos"
 name: git-sed
 path: /freedevtools/tldr/git/git-sed
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-sed/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Network Traffic with tc | Free DevTools"
+title: "Control Network Traffic with tc | Online Free DevTools by Hexmos"
 name: tc
 path: /freedevtools/tldr/linux/tc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tc/"

@@ -1,5 +1,5 @@
 ---
-title: "Packer - Build Machine Images | Free DevTools"
+title: "Packer - Build Machine Images | Online Free DevTools by Hexmos"
 name: packer
 path: /freedevtools/tldr/common/packer
 canonical: "https://hexmos.com/freedevtools/tldr/common/packer/"

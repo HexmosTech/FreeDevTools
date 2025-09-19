@@ -1,5 +1,5 @@
 ---
-title: "Deluge Daemon - Control BitTorrent Daemon | Free DevTools"
+title: "Deluge Daemon - Control BitTorrent Daemon | Online Free DevTools by Hexmos"
 name: deluged
 path: /freedevtools/tldr/common/deluged
 canonical: "https://hexmos.com/freedevtools/tldr/common/deluged/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Topological Sort - Dependency Order | Free DevTools"
+title: "Generate Topological Sort - Dependency Order | Online Free DevTools by Hexmos"
 name: tsort
 path: /freedevtools/tldr/common/tsort
 canonical: "https://hexmos.com/freedevtools/tldr/common/tsort/"

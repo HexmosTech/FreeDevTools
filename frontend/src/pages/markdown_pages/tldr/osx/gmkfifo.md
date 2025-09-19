@@ -1,5 +1,5 @@
 ---
-title: "Create FIFO - Manage Pipes with gmkfifo | Free DevTools"
+title: "Create FIFO - Manage Pipes with gmkfifo | Online Free DevTools by Hexmos"
 name: gmkfifo
 path: /freedevtools/tldr/osx/gmkfifo
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmkfifo/"

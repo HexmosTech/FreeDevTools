@@ -1,5 +1,5 @@
 ---
-title: "Bitcode Analyzer - Analyze LLVM .bc Files | Free DevTools"
+title: "Bitcode Analyzer - Analyze LLVM .bc Files | Online Free DevTools by Hexmos"
 name: llvm-bcanalyzer
 path: /freedevtools/tldr/llvm/llvm-bcanalyzer
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-bcanalyzer/"

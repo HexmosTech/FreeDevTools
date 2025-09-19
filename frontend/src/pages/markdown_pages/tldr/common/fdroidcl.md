@@ -1,5 +1,5 @@
 ---
-title: "F-Droid Manager - Control Apps via ADB | Free DevTools"
+title: "F-Droid Manager - Control Apps via ADB | Online Free DevTools by Hexmos"
 name: fdroidcl
 path: /freedevtools/tldr/common/fdroidcl
 canonical: "https://hexmos.com/freedevtools/tldr/common/fdroidcl/"

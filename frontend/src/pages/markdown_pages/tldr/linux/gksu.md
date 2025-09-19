@@ -1,5 +1,5 @@
 ---
-title: "Run Graphical Commands - Control Root Access | Free DevTools"
+title: "Run Graphical Commands - Control Root Access | Online Free DevTools by Hexmos"
 name: gksu
 path: /freedevtools/tldr/linux/gksu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gksu/"

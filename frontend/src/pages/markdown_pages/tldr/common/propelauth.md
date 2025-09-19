@@ -1,5 +1,5 @@
 ---
-title: "PropelAuth Setup - Manage Authentication | Free DevTools"
+title: "PropelAuth Setup - Manage Authentication | Online Free DevTools by Hexmos"
 name: propelauth
 path: /freedevtools/tldr/common/propelauth
 canonical: "https://hexmos.com/freedevtools/tldr/common/propelauth/"

@@ -1,5 +1,5 @@
 ---
-title: "RPI Imager - Flash Images to Storage | Free DevTools"
+title: "RPI Imager - Flash Images to Storage | Online Free DevTools by Hexmos"
 name: rpi-imager
 path: /freedevtools/tldr/common/rpi-imager
 canonical: "https://hexmos.com/freedevtools/tldr/common/rpi-imager/"

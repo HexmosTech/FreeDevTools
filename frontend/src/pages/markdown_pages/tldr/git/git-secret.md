@@ -1,5 +1,5 @@
 ---
-title: "Git Secret - Securely Store Data in Git | Free DevTools"
+title: "Git Secret - Securely Store Data in Git | Online Free DevTools by Hexmos"
 name: git-secret
 path: /freedevtools/tldr/git/git-secret
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-secret/"

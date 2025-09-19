@@ -1,5 +1,5 @@
 ---
-title: "doctl Replica - Manage Database Replicas | Free DevTools"
+title: "doctl Replica - Manage Database Replicas | Online Free DevTools by Hexmos"
 name: doctl-databases-replica
 path: /freedevtools/tldr/doctl/doctl-databases-replica
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-replica/"

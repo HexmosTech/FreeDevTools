@@ -1,5 +1,5 @@
 ---
-title: "Validate Dockerfiles - Hadolint Linter | Free DevTools"
+title: "Validate Dockerfiles - Hadolint Linter | Online Free DevTools by Hexmos"
 name: hadolint
 path: /freedevtools/tldr/common/hadolint
 canonical: "https://hexmos.com/freedevtools/tldr/common/hadolint/"

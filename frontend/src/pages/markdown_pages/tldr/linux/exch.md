@@ -1,5 +1,5 @@
 ---
-title: "Exch File Swap - Exchange Filepaths on Linux | Free DevTools"
+title: "Exch File Swap - Exchange Filepaths on Linux | Online Free DevTools by Hexmos"
 name: exch
 path: /freedevtools/tldr/linux/exch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/exch/"

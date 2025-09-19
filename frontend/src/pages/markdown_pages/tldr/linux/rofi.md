@@ -1,5 +1,5 @@
 ---
-title: "Control Rofi - Application Launcher | Free DevTools"
+title: "Control Rofi - Application Launcher | Online Free DevTools by Hexmos"
 name: rofi
 path: /freedevtools/tldr/linux/rofi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rofi/"

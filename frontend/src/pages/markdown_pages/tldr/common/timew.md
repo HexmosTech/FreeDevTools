@@ -1,5 +1,5 @@
 ---
-title: "Time Tracker - Measure Activity Duration | Free DevTools"
+title: "Time Tracker - Measure Activity Duration | Online Free DevTools by Hexmos"
 name: timew
 path: /freedevtools/tldr/common/timew
 canonical: "https://hexmos.com/freedevtools/tldr/common/timew/"

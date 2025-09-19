@@ -1,5 +1,5 @@
 ---
-title: "Generate GitHub CLI Completion - Shell Scripts | Free DevTools"
+title: "Generate GitHub CLI Completion - Shell Scripts | Online Free DevTools by Hexmos"
 name: gh-completion
 path: /freedevtools/tldr/gh/gh-completion
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-completion/"

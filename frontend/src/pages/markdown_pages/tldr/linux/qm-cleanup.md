@@ -1,5 +1,5 @@
 ---
-title: "QM Cleanup - Manage QEMU/KVM Resources | Free DevTools"
+title: "QM Cleanup - Manage QEMU/KVM Resources | Online Free DevTools by Hexmos"
 name: qm-cleanup
 path: /freedevtools/tldr/linux/qm-cleanup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-cleanup/"

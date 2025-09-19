@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to PICT - Format Image Files | Free DevTools"
+title: "Convert PPM to PICT - Format Image Files | Online Free DevTools by Hexmos"
 name: ppmtopict
 path: /freedevtools/tldr/ppm/ppmtopict
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopict/"

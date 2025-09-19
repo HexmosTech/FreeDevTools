@@ -1,5 +1,5 @@
 ---
-title: "Cargo Bench - Execute Rust Benchmarks | Free DevTools"
+title: "Cargo Bench - Execute Rust Benchmarks | Online Free DevTools by Hexmos"
 name: cargo-bench
 path: /freedevtools/tldr/cargo/cargo-bench
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-bench/"

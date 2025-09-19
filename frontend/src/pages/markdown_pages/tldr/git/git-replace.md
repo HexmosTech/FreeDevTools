@@ -1,5 +1,5 @@
 ---
-title: "Create Git Replaces - Manage Objects | Free DevTools"
+title: "Create Git Replaces - Manage Objects | Online Free DevTools by Hexmos"
 name: git-replace
 path: /freedevtools/tldr/git/git-replace
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-replace/"

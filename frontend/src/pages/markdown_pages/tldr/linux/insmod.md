@@ -1,5 +1,5 @@
 ---
-title: "Load Kernel Module - Dynamically Insmod | Free DevTools"
+title: "Load Kernel Module - Dynamically Insmod | Online Free DevTools by Hexmos"
 name: insmod
 path: /freedevtools/tldr/linux/insmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/insmod/"

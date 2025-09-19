@@ -1,5 +1,5 @@
 ---
-title: "Process Status - Control Running Processes | Free DevTools"
+title: "Process Status - Control Running Processes | Online Free DevTools by Hexmos"
 name: ps
 path: /freedevtools/tldr/osx/ps
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ps/"

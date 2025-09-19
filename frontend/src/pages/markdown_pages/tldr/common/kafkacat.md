@@ -1,5 +1,5 @@
 ---
-title: "Kafkacat - Produce and Consume Kafka Messages | Free DevTools"
+title: "Kafkacat - Produce and Consume Kafka Messages | Online Free DevTools by Hexmos"
 name: kafkacat
 path: /freedevtools/tldr/common/kafkacat
 canonical: "https://hexmos.com/freedevtools/tldr/common/kafkacat/"

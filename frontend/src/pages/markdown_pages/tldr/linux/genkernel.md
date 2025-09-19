@@ -1,5 +1,5 @@
 ---
-title: "Generate Linux Kernel - Compile Kernels | Free DevTools"
+title: "Generate Linux Kernel - Compile Kernels | Online Free DevTools by Hexmos"
 name: genkernel
 path: /freedevtools/tldr/linux/genkernel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/genkernel/"

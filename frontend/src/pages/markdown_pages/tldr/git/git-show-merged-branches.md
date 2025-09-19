@@ -1,5 +1,5 @@
 ---
-title: "Show Merged Branches - List Git Branches | Free DevTools"
+title: "Show Merged Branches - List Git Branches | Online Free DevTools by Hexmos"
 name: git-show-merged-branches
 path: /freedevtools/tldr/git/git-show-merged-branches
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-merged-branches/"

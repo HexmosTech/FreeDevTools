@@ -1,5 +1,5 @@
 ---
-title: "Hacker News Reader - View HN Stories | Free DevTools"
+title: "Hacker News Reader - View HN Stories | Online Free DevTools by Hexmos"
 name: hn
 path: /freedevtools/tldr/common/hn
 canonical: "https://hexmos.com/freedevtools/tldr/common/hn/"

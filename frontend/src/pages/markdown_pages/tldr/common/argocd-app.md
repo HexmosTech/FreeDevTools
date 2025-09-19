@@ -1,5 +1,5 @@
 ---
-title: "ArgoCD App - Manage Kubernetes Applications | Free DevTools"
+title: "ArgoCD App - Manage Kubernetes Applications | Online Free DevTools by Hexmos"
 name: argocd-app
 path: /freedevtools/tldr/common/argocd-app
 canonical: "https://hexmos.com/freedevtools/tldr/common/argocd-app/"

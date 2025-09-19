@@ -1,5 +1,5 @@
 ---
-title: "Docker Search - Find Docker Images on Docker Hub | Free DevTools"
+title: "Docker Search - Find Docker Images on Docker Hub | Online Free DevTools by Hexmos"
 name: docker-search
 path: /freedevtools/tldr/docker/docker-search
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-search/"

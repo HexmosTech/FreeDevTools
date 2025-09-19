@@ -1,5 +1,5 @@
 ---
-title: "Choco Source - Manage Package Sources | Free DevTools"
+title: "Choco Source - Manage Package Sources | Online Free DevTools by Hexmos"
 name: choco-source
 path: /freedevtools/tldr/windows/choco-source
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-source/"

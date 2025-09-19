@@ -1,5 +1,5 @@
 ---
-title: "Azure Term - Manage Marketplace Agreements | Free DevTools"
+title: "Azure Term - Manage Marketplace Agreements | Online Free DevTools by Hexmos"
 name: az-term
 path: /freedevtools/tldr/az/az-term
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-term/"

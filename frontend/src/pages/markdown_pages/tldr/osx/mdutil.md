@@ -1,5 +1,5 @@
 ---
-title: "Metadata Control - Manage Spotlight Indexing | Free DevTools"
+title: "Metadata Control - Manage Spotlight Indexing | Online Free DevTools by Hexmos"
 name: mdutil
 path: /freedevtools/tldr/osx/mdutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mdutil/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert CD Images - bchunk to ISO/CDR | Free DevTools"
+title: "Convert CD Images - bchunk to ISO/CDR | Online Free DevTools by Hexmos"
 name: bchunk
 path: /freedevtools/tldr/linux/bchunk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bchunk/"

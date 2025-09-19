@@ -1,5 +1,5 @@
 ---
-title: "Archinstall - Install Arch Linux | Free DevTools"
+title: "Archinstall - Install Arch Linux | Online Free DevTools by Hexmos"
 name: archinstall
 path: /freedevtools/tldr/linux/archinstall
 canonical: "https://hexmos.com/freedevtools/tldr/linux/archinstall/"

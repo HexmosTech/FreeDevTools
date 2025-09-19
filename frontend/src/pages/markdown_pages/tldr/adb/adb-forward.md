@@ -1,5 +1,5 @@
 ---
-title: "ADB Forward - Connect Android Devices Wirelessly | Free DevTools"
+title: "ADB Forward - Connect Android Devices Wirelessly | Online Free DevTools by Hexmos"
 name: adb-forward
 path: /freedevtools/tldr/adb/adb-forward
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-forward/"

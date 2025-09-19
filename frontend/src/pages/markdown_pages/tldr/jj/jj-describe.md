@@ -1,5 +1,5 @@
 ---
-title: "JJ Describe - Update Change Descriptions | Free DevTools"
+title: "JJ Describe - Update Change Descriptions | Online Free DevTools by Hexmos"
 name: jj-describe
 path: /freedevtools/tldr/jj/jj-describe
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-describe/"

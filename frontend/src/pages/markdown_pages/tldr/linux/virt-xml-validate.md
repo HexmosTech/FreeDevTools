@@ -1,5 +1,5 @@
 ---
-title: "Validate Libvirt XML - Schema Validation Tool | Free DevTools"
+title: "Validate Libvirt XML - Schema Validation Tool | Online Free DevTools by Hexmos"
 name: virt-xml-validate
 path: /freedevtools/tldr/linux/virt-xml-validate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-xml-validate/"

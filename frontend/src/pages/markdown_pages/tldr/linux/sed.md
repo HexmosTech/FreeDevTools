@@ -1,5 +1,5 @@
 ---
-title: "Sed Stream Editor - Transform Text | Free DevTools"
+title: "Sed Stream Editor - Transform Text | Online Free DevTools by Hexmos"
 name: sed
 path: /freedevtools/tldr/linux/sed
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sed/"

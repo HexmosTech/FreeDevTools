@@ -1,5 +1,5 @@
 ---
-title: "Create Spark Projects - Laravel Spark Tool | Free DevTools"
+title: "Create Spark Projects - Laravel Spark Tool | Online Free DevTools by Hexmos"
 name: spark
 path: /freedevtools/tldr/common/spark
 canonical: "https://hexmos.com/freedevtools/tldr/common/spark/"

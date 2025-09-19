@@ -1,5 +1,5 @@
 ---
-title: "Control Postfix Configuration - Manage Mail Server Settings | Free DevTools"
+title: "Control Postfix Configuration - Manage Mail Server Settings | Online Free DevTools by Hexmos"
 name: postconf
 path: /freedevtools/tldr/linux/postconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/postconf/"

@@ -1,5 +1,5 @@
 ---
-title: "Reflex - Watch Files & Rerun Commands | Free DevTools"
+title: "Reflex - Watch Files & Rerun Commands | Online Free DevTools by Hexmos"
 name: reflex
 path: /freedevtools/tldr/common/reflex
 canonical: "https://hexmos.com/freedevtools/tldr/common/reflex/"

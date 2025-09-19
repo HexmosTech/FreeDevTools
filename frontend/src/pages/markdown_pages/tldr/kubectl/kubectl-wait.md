@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Wait - Control Resource States | Free DevTools"
+title: "Kubectl Wait - Control Resource States | Online Free DevTools by Hexmos"
 name: kubectl-wait
 path: /freedevtools/tldr/kubectl/kubectl-wait
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-wait/"

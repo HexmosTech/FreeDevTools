@@ -1,5 +1,5 @@
 ---
-title: "Fingerprint List - Manage User Fingerprints | Free DevTools"
+title: "Fingerprint List - Manage User Fingerprints | Online Free DevTools by Hexmos"
 name: fprintd-list
 path: /freedevtools/tldr/linux/fprintd-list
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-list/"

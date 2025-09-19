@@ -1,5 +1,5 @@
 ---
-title: "Validate PHP Code - Detect Messes with phpmd | Free DevTools"
+title: "Validate PHP Code - Detect Messes with phpmd | Online Free DevTools by Hexmos"
 name: phpmd
 path: /freedevtools/tldr/php/phpmd
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpmd/"

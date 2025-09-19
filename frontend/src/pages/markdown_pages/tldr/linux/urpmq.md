@@ -1,5 +1,5 @@
 ---
-title: "Query Package Info - Control Mageia Packages | Free DevTools"
+title: "Query Package Info - Control Mageia Packages | Online Free DevTools by Hexmos"
 name: urpmq
 path: /freedevtools/tldr/linux/urpmq
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmq/"

@@ -1,5 +1,5 @@
 ---
-title: "Linux atop - Monitor System Processes | Free DevTools"
+title: "Linux atop - Monitor System Processes | Online Free DevTools by Hexmos"
 name: atop
 path: /freedevtools/tldr/linux/atop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/atop/"

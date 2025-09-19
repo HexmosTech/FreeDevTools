@@ -1,5 +1,5 @@
 ---
-title: "Time Command - Measure Execution Time | Free DevTools"
+title: "Time Command - Measure Execution Time | Online Free DevTools by Hexmos"
 name: time
 path: "/freedevtools/tldr/common/time"
 canonical: "https://hexmos.com/freedevtools/tldr/common/time/"

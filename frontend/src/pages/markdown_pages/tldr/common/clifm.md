@@ -1,5 +1,5 @@
 ---
-title: "Control clifm - Command-Line File Manager | Free DevTools"
+title: "Control clifm - Command-Line File Manager | Online Free DevTools by Hexmos"
 name: clifm
 path: /freedevtools/tldr/common/clifm
 canonical: "https://hexmos.com/freedevtools/tldr/common/clifm/"

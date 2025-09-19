@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to PGM - Pixel Averaging | Free DevTools"
+title: "Convert PBM to PGM - Pixel Averaging | Online Free DevTools by Hexmos"
 name: pbmtopgm
 path: /freedevtools/tldr/common/pbmtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtopgm/"

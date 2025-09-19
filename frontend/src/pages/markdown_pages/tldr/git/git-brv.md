@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Branches View - Sort Branches by Date | Free DevTools"
+title: "Generate Git Branches View - Sort Branches by Date | Online Free DevTools by Hexmos"
 name: git-brv
 path: /freedevtools/tldr/git/git-brv
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-brv/"

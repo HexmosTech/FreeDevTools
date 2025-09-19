@@ -1,5 +1,5 @@
 ---
-title: "Logread - Read System Logs | Free DevTools"
+title: "Logread - Read System Logs | Online Free DevTools by Hexmos"
 name: logread
 path: /freedevtools/tldr/linux/logread
 canonical: "https://hexmos.com/freedevtools/tldr/linux/logread/"

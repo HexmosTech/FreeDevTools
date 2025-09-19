@@ -1,5 +1,5 @@
 ---
-title: "Speedometer - Monitor Network Traffic | Free DevTools"
+title: "Speedometer - Monitor Network Traffic | Online Free DevTools by Hexmos"
 name: speedometer
 path: /freedevtools/tldr/linux/speedometer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/speedometer/"

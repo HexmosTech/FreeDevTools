@@ -1,5 +1,5 @@
 ---
-title: "CPU Frequency Info - Check CPU Speed | Free DevTools"
+title: "CPU Frequency Info - Check CPU Speed | Online Free DevTools by Hexmos"
 name: cpufreq-info
 path: /freedevtools/tldr/linux/cpufreq-info
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cpufreq-info/"

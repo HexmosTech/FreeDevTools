@@ -1,5 +1,5 @@
 ---
-title: "Fatlabel - Manage FAT32 Partition Labels | Free DevTools"
+title: "Fatlabel - Manage FAT32 Partition Labels | Online Free DevTools by Hexmos"
 name: fatlabel
 path: /freedevtools/tldr/linux/fatlabel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fatlabel/"

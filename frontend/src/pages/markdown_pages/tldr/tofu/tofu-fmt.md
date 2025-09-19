@@ -1,5 +1,5 @@
 ---
-title: "Tofu Format - Format Tofu Configuration | Free DevTools"
+title: "Tofu Format - Format Tofu Configuration | Online Free DevTools by Hexmos"
 name: tofu-fmt
 path: /freedevtools/tldr/tofu/tofu-fmt
 canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-fmt/"

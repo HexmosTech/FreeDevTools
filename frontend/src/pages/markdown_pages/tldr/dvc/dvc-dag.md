@@ -1,5 +1,5 @@
 ---
-title: "Generate DVC DAG - Visualize Pipelines | Free DevTools"
+title: "Generate DVC DAG - Visualize Pipelines | Online Free DevTools by Hexmos"
 name: dvc-dag
 path: /freedevtools/tldr/dvc/dvc-dag
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-dag/"

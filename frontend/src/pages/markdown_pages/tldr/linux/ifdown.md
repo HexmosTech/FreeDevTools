@@ -1,5 +1,5 @@
 ---
-title: "Control Network Interfaces - ifdown Command | Free DevTools"
+title: "Control Network Interfaces - ifdown Command | Online Free DevTools by Hexmos"
 name: ifdown
 path: /freedevtools/tldr/linux/ifdown
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ifdown/"

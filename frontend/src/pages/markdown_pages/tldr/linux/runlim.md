@@ -1,5 +1,5 @@
 ---
-title: "Runlim - Control Resource Usage | Free DevTools"
+title: "Runlim - Control Resource Usage | Online Free DevTools by Hexmos"
 name: runlim
 path: /freedevtools/tldr/linux/runlim
 canonical: "https://hexmos.com/freedevtools/tldr/linux/runlim/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Slackware Packages - slapt-get Management | Free DevTools"
+title: "Control Slackware Packages - slapt-get Management | Online Free DevTools by Hexmos"
 name: slapt-get
 path: /freedevtools/tldr/linux/slapt-get
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slapt-get/"

@@ -1,5 +1,5 @@
 ---
-title: "Extract Data with Xidel - HTML/XML Parser | Free DevTools"
+title: "Extract Data with Xidel - HTML/XML Parser | Online Free DevTools by Hexmos"
 name: xidel
 path: /freedevtools/tldr/common/xidel
 canonical: "https://hexmos.com/freedevtools/tldr/common/xidel/"

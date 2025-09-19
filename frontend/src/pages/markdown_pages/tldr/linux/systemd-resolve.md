@@ -1,5 +1,5 @@
 ---
-title: "Resolve Domain Names - Query DNS with systemd-resolve | Free DevTools"
+title: "Resolve Domain Names - Query DNS with systemd-resolve | Online Free DevTools by Hexmos"
 name: systemd-resolve
 path: /freedevtools/tldr/linux/systemd-resolve
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-resolve/"

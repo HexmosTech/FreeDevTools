@@ -1,5 +1,5 @@
 ---
-title: "NVRAM Manager - Control Firmware Variables on macOS | Free DevTools"
+title: "NVRAM Manager - Control Firmware Variables on macOS | Online Free DevTools by Hexmos"
 name: nvram
 path: /freedevtools/tldr/osx/nvram
 canonical: "https://hexmos.com/freedevtools/tldr/osx/nvram/"

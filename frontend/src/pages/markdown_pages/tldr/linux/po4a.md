@@ -1,5 +1,5 @@
 ---
-title: "Generate PO Files - Update Translations with po4a | Free DevTools"
+title: "Generate PO Files - Update Translations with po4a | Online Free DevTools by Hexmos"
 name: po4a
 path: /freedevtools/tldr/linux/po4a
 canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Merge - Merge Branches | Free DevTools"
+title: "Git Merge - Merge Branches | Online Free DevTools by Hexmos"
 name: git-merge
 path: /freedevtools/tldr/git/git-merge
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge/"

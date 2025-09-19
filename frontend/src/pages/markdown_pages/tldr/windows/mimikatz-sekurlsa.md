@@ -1,5 +1,5 @@
 ---
-title: "Extract Mimikatz Secrets - Dump Credentials | Free DevTools"
+title: "Extract Mimikatz Secrets - Dump Credentials | Online Free DevTools by Hexmos"
 name: mimikatz-sekurlsa
 path: /freedevtools/tldr/windows/mimikatz-sekurlsa
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-sekurlsa/"

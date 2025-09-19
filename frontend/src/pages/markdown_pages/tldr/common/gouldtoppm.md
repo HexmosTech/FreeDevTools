@@ -1,5 +1,5 @@
 ---
-title: "Convert Gould to PPM - Image Conversion | Free DevTools"
+title: "Convert Gould to PPM - Image Conversion | Online Free DevTools by Hexmos"
 name: gouldtoppm
 path: /freedevtools/tldr/common/gouldtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/gouldtoppm/"

@@ -1,5 +1,5 @@
 ---
-title: "Count Git Commits - Generate Commit Statistics | Free DevTools"
+title: "Count Git Commits - Generate Commit Statistics | Online Free DevTools by Hexmos"
 name: git-count
 path: /freedevtools/tldr/git/git-count
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-count/"

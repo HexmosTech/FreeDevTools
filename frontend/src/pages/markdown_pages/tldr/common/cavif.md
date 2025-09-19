@@ -1,5 +1,5 @@
 ---
-title: "Convert Images to AVIF - Create AVIF Files | Free DevTools"
+title: "Convert Images to AVIF - Create AVIF Files | Online Free DevTools by Hexmos"
 name: cavif
 path: /freedevtools/tldr/common/cavif
 canonical: "https://hexmos.com/freedevtools/tldr/common/cavif/"

@@ -1,5 +1,5 @@
 ---
-title: "Run Postman Collections - Newman Runner | Free DevTools"
+title: "Run Postman Collections - Newman Runner | Online Free DevTools by Hexmos"
 name: newman
 path: /freedevtools/tldr/common/newman
 canonical: "https://hexmos.com/freedevtools/tldr/common/newman/"

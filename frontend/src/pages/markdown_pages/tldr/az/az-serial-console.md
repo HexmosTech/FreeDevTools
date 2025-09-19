@@ -1,5 +1,5 @@
 ---
-title: "Serial Console - Connect to Azure VMs | Free DevTools"
+title: "Serial Console - Connect to Azure VMs | Online Free DevTools by Hexmos"
 name: az-serial-console
 path: /freedevtools/tldr/az/az-serial-console
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-serial-console/"

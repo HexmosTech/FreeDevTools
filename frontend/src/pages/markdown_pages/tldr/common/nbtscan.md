@@ -1,5 +1,5 @@
 ---
-title: "NetBIOS Scan - Discover Network Names with nbtscan | Free DevTools"
+title: "NetBIOS Scan - Discover Network Names with nbtscan | Online Free DevTools by Hexmos"
 name: nbtscan
 path: /freedevtools/tldr/common/nbtscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/nbtscan/"

@@ -1,5 +1,5 @@
 ---
-title: "Kate - Edit Text Files | Free DevTools"
+title: "Kate - Edit Text Files | Online Free DevTools by Hexmos"
 name: kate
 path: /freedevtools/tldr/common/kate
 canonical: "https://hexmos.com/freedevtools/tldr/common/kate/"

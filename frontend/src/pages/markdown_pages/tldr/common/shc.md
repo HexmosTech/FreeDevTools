@@ -1,5 +1,5 @@
 ---
-title: "SHC Compiler - Compile Shell Scripts | Free DevTools"
+title: "SHC Compiler - Compile Shell Scripts | Online Free DevTools by Hexmos"
 name: shc
 path: /freedevtools/tldr/common/shc
 canonical: "https://hexmos.com/freedevtools/tldr/common/shc/"

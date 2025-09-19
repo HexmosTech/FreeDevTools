@@ -1,5 +1,5 @@
 ---
-title: "TFTP Control - Manage Files with TFTP | Free DevTools"
+title: "TFTP Control - Manage Files with TFTP | Online Free DevTools by Hexmos"
 name: gtftp
 path: /freedevtools/tldr/osx/gtftp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtftp/"

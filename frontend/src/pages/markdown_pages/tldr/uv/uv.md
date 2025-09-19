@@ -1,5 +1,5 @@
 ---
-title: "Create Python Projects - UV Package Manager | Free DevTools"
+title: "Create Python Projects - UV Package Manager | Online Free DevTools by Hexmos"
 name: uv
 path: /freedevtools/tldr/uv/uv
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv/"

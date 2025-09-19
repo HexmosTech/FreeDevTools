@@ -1,5 +1,5 @@
 ---
-title: "Analyze Network Traffic with tcpick | Free DevTools"
+title: "Analyze Network Traffic with tcpick | Online Free DevTools by Hexmos"
 name: tcpick
 path: /freedevtools/tldr/linux/tcpick
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tcpick/"

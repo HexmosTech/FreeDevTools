@@ -1,5 +1,5 @@
 ---
-title: "Generate TOTP Token - OATHTool | Free DevTools"
+title: "Generate TOTP Token - OATHTool | Online Free DevTools by Hexmos"
 name: oathtool
 path: /freedevtools/tldr/common/oathtool
 canonical: "https://hexmos.com/freedevtools/tldr/common/oathtool/"

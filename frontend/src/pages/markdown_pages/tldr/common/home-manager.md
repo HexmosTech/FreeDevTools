@@ -1,5 +1,5 @@
 ---
-title: "Manage Home Configuration - Home-Manager User Environment | Free DevTools"
+title: "Manage Home Configuration - Home-Manager User Environment | Online Free DevTools by Hexmos"
 name: home-manager
 path: /freedevtools/tldr/common/home-manager
 canonical: "https://hexmos.com/freedevtools/tldr/common/home-manager/"

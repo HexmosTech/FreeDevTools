@@ -1,5 +1,5 @@
 ---
-title: "X Cursor Generate - Create Cursors from PNGs | Free DevTools"
+title: "X Cursor Generate - Create Cursors from PNGs | Online Free DevTools by Hexmos"
 name: xcursorgen
 path: /freedevtools/tldr/linux/xcursorgen
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xcursorgen/"

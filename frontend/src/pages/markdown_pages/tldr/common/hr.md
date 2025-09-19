@@ -1,5 +1,5 @@
 ---
-title: "Generate Horizontal Rule - Terminal Divider | Free DevTools"
+title: "Generate Horizontal Rule - Terminal Divider | Online Free DevTools by Hexmos"
 name: hr
 path: /freedevtools/tldr/common/hr
 canonical: "https://hexmos.com/freedevtools/tldr/common/hr/"

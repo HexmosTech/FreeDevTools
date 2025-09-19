@@ -1,5 +1,5 @@
 ---
-title: "Run Programs as Background - xwinwrap Control | Free DevTools"
+title: "Run Programs as Background - xwinwrap Control | Online Free DevTools by Hexmos"
 name: xwinwrap
 path: /freedevtools/tldr/linux/xwinwrap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xwinwrap/"

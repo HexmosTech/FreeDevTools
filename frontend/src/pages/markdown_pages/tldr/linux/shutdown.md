@@ -1,5 +1,5 @@
 ---
-title: "Shutdown System - Control System Power States | Free DevTools"
+title: "Shutdown System - Control System Power States | Online Free DevTools by Hexmos"
 name: shutdown
 path: /freedevtools/tldr/linux/shutdown
 canonical: "https://hexmos.com/freedevtools/tldr/linux/shutdown/"

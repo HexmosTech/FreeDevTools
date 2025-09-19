@@ -1,5 +1,5 @@
 ---
-title: "Show User Login - Display User Name with Logname | Free DevTools"
+title: "Show User Login - Display User Name with Logname | Online Free DevTools by Hexmos"
 name: logname
 path: /freedevtools/tldr/common/logname
 canonical: "https://hexmos.com/freedevtools/tldr/common/logname/"

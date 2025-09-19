@@ -1,5 +1,5 @@
 ---
-title: "Gtimeout - Control Process Execution Time on macOS | Free DevTools"
+title: "Gtimeout - Control Process Execution Time on macOS | Online Free DevTools by Hexmos"
 name: gtimeout
 path: /freedevtools/tldr/osx/gtimeout
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtimeout/"

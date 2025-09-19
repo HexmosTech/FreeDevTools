@@ -1,5 +1,5 @@
 ---
-title: "Convert Spectrum Image - spctoppm to PPM | Free DevTools"
+title: "Convert Spectrum Image - spctoppm to PPM | Online Free DevTools by Hexmos"
 name: spctoppm
 path: /freedevtools/tldr/common/spctoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/spctoppm/"

@@ -1,5 +1,5 @@
 ---
-title: "Yadm Transcrypt - Encrypt Files | Free DevTools"
+title: "Yadm Transcrypt - Encrypt Files | Online Free DevTools by Hexmos"
 name: yadm-transcrypt
 path: /freedevtools/tldr/yadm/yadm-transcrypt
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-transcrypt/"

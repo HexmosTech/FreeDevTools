@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO Update - Control Core Packages | Free DevTools"
+title: "PlatformIO Update - Control Core Packages | Online Free DevTools by Hexmos"
 name: pio-update
 path: /freedevtools/tldr/pio/pio-update
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-update/"

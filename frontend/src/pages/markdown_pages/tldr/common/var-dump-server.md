@@ -1,5 +1,5 @@
 ---
-title: "Var Dump Server - Collect Symfony Data | Free DevTools"
+title: "Var Dump Server - Collect Symfony Data | Online Free DevTools by Hexmos"
 name: var-dump-server
 path: /freedevtools/tldr/common/var-dump-server
 canonical: "https://hexmos.com/freedevtools/tldr/common/var-dump-server/"

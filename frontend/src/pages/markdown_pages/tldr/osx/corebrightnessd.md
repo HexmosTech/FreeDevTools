@@ -1,5 +1,5 @@
 ---
-title: "Corebrightnessd - Control Night Shift | Free DevTools"
+title: "Corebrightnessd - Control Night Shift | Online Free DevTools by Hexmos"
 name: corebrightnessd
 path: /freedevtools/tldr/osx/corebrightnessd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/corebrightnessd/"

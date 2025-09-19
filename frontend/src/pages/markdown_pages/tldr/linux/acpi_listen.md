@@ -1,5 +1,5 @@
 ---
-title: "Listen to ACPI Events - Monitor System Events | Free DevTools"
+title: "Listen to ACPI Events - Monitor System Events | Online Free DevTools by Hexmos"
 name: acpi_listen
 path: /freedevtools/tldr/linux/acpi_listen
 canonical: "https://hexmos.com/freedevtools/tldr/linux/acpi_listen/"

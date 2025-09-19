@@ -1,5 +1,5 @@
 ---
-title: "Pixterm Image Printer - Render Images in Terminal | Free DevTools"
+title: "Pixterm Image Printer - Render Images in Terminal | Online Free DevTools by Hexmos"
 name: pixterm
 path: /freedevtools/tldr/common/pixterm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pixterm/"

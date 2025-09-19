@@ -1,5 +1,5 @@
 ---
-title: "Control Notifications - Dunstify Message Tool | Free DevTools"
+title: "Control Notifications - Dunstify Message Tool | Online Free DevTools by Hexmos"
 name: dunstify
 path: "/freedevtools/tldr/common/dunstify"
 canonical: "https://hexmos.com/freedevtools/tldr/common/dunstify/"

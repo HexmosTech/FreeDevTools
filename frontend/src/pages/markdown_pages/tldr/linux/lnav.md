@@ -1,5 +1,5 @@
 ---
-title: "lnav - Analyze Log Files | Free DevTools"
+title: "lnav - Analyze Log Files | Online Free DevTools by Hexmos"
 name: lnav
 path: /freedevtools/tldr/linux/lnav
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lnav/"

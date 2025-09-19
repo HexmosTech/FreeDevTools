@@ -1,5 +1,5 @@
 ---
-title: "Convert TLDR to Clip - Generate CLI Pages | Free DevTools"
+title: "Convert TLDR to Clip - Generate CLI Pages | Online Free DevTools by Hexmos"
 name: md-to-clip
 path: /freedevtools/tldr/common/md-to-clip
 canonical: "https://hexmos.com/freedevtools/tldr/common/md-to-clip/"

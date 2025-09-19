@@ -1,5 +1,5 @@
 ---
-title: "FFplay - Play Media Files Easily | Free DevTools"
+title: "FFplay - Play Media Files Easily | Online Free DevTools by Hexmos"
 name: ffplay
 path: /freedevtools/tldr/common/ffplay
 canonical: "https://hexmos.com/freedevtools/tldr/common/ffplay/"

@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Find File Differences with FC | Free DevTools"
+title: "Compare Files - Find File Differences with FC | Online Free DevTools by Hexmos"
 name: fc
 path: /freedevtools/tldr/windows/fc
 canonical: "https://hexmos.com/freedevtools/tldr/windows/fc/"

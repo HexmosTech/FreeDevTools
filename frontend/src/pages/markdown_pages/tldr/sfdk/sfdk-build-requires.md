@@ -1,5 +1,5 @@
 ---
-title: "Update Build Requires - SFDK Dependency Manager | Free DevTools"
+title: "Update Build Requires - SFDK Dependency Manager | Online Free DevTools by Hexmos"
 name: sfdk-build-requires
 path: /freedevtools/tldr/sfdk/sfdk-build-requires
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-requires/"

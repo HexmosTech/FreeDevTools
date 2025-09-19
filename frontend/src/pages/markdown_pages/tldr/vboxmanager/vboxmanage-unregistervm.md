@@ -1,5 +1,5 @@
 ---
-title: "Unregister VM - Remove Virtual Machines | Free DevTools"
+title: "Unregister VM - Remove Virtual Machines | Online Free DevTools by Hexmos"
 name: vboxmanage-unregistervm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-unregistervm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/"

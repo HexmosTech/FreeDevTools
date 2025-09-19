@@ -1,5 +1,5 @@
 ---
-title: "Alias Command - Redirect Commands with AA | Free DevTools"
+title: "Alias Command - Redirect Commands with AA | Online Free DevTools by Hexmos"
 name: aa
 path: /freedevtools/tldr/osx/aa
 canonical: "https://hexmos.com/freedevtools/tldr/osx/aa/"

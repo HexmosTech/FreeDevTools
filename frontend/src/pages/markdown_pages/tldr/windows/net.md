@@ -1,5 +1,5 @@
 ---
-title: "Control Network Settings - Windows Net Command | Free DevTools"
+title: "Control Network Settings - Windows Net Command | Online Free DevTools by Hexmos"
 name: net
 path: /freedevtools/tldr/windows/net
 canonical: "https://hexmos.com/freedevtools/tldr/windows/net/"

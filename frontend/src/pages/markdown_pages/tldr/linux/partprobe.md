@@ -1,5 +1,5 @@
 ---
-title: "Notify Partitions - Control Linux Partition Tables | Free DevTools"
+title: "Notify Partitions - Control Linux Partition Tables | Online Free DevTools by Hexmos"
 name: partprobe
 path: /freedevtools/tldr/linux/partprobe
 canonical: "https://hexmos.com/freedevtools/tldr/linux/partprobe/"

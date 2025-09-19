@@ -1,5 +1,5 @@
 ---
-title: "Nix Edit - Modify Nix Expressions | Free DevTools"
+title: "Nix Edit - Modify Nix Expressions | Online Free DevTools by Hexmos"
 name: nix-edit
 path: /freedevtools/tldr/nix/nix-edit
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-edit/"

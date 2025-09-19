@@ -1,5 +1,5 @@
 ---
-title: "Fuzzy Find Files - Search Files Quickly | Free DevTools"
+title: "Fuzzy Find Files - Search Files Quickly | Online Free DevTools by Hexmos"
 name: fzf
 path: "/freedevtools/tldr/common/fzf"
 canonical: "https://hexmos.com/freedevtools/tldr/common/fzf/"

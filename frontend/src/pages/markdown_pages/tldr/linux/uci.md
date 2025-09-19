@@ -1,5 +1,5 @@
 ---
-title: "UCI - Manage OpenWrt Configuration | Free DevTools"
+title: "UCI - Manage OpenWrt Configuration | Online Free DevTools by Hexmos"
 name: uci
 path: "/freedevtools/tldr/linux/uci"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uci/"

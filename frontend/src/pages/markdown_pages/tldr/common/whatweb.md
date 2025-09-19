@@ -1,5 +1,5 @@
 ---
-title: "Scan Websites - Identify Technologies with WhatWeb | Free DevTools"
+title: "Scan Websites - Identify Technologies with WhatWeb | Online Free DevTools by Hexmos"
 name: whatweb
 path: /freedevtools/tldr/common/whatweb
 canonical: "https://hexmos.com/freedevtools/tldr/common/whatweb/"

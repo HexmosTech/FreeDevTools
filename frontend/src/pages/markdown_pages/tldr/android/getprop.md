@@ -1,5 +1,5 @@
 ---
-title: "Getprop - Show Android System Properties | Free DevTools"
+title: "Getprop - Show Android System Properties | Online Free DevTools by Hexmos"
 name: getprop
 path: /freedevtools/tldr/android/getprop
 canonical: "https://hexmos.com/freedevtools/tldr/android/getprop/"

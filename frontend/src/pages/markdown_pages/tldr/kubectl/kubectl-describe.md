@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Describe - Show Kubernetes Resource Details | Free DevTools"
+title: "Kubectl Describe - Show Kubernetes Resource Details | Online Free DevTools by Hexmos"
 name: kubectl-describe
 path: /freedevtools/tldr/kubectl/kubectl-describe
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-describe/"

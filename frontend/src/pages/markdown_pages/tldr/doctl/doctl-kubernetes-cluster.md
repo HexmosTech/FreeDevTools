@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes Cluster - Control DigitalOcean Clusters | Free DevTools"
+title: "Kubernetes Cluster - Control DigitalOcean Clusters | Online Free DevTools by Hexmos"
 name: doctl-kubernetes-cluster
 path: /freedevtools/tldr/doctl/doctl-kubernetes-cluster
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-cluster/"

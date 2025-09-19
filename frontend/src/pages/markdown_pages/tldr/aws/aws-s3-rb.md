@@ -1,5 +1,5 @@
 ---
-title: "AWS S3 Delete - Remove Empty S3 Buckets | Free DevTools"
+title: "AWS S3 Delete - Remove Empty S3 Buckets | Online Free DevTools by Hexmos"
 name: aws-s3-rb
 path: /freedevtools/tldr/aws/aws-s3-rb
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-rb/"

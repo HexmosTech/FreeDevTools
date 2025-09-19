@@ -1,5 +1,5 @@
 ---
-title: "Create Mercurial Repository - Initialize Repo with hg | Free DevTools"
+title: "Create Mercurial Repository - Initialize Repo with hg | Online Free DevTools by Hexmos"
 name: hg-init
 path: /freedevtools/tldr/hg/hg-init
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-init/"

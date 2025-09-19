@@ -1,5 +1,5 @@
 ---
-title: "Playerctl - Control Media Players via MPRIS | Free DevTools"
+title: "Playerctl - Control Media Players via MPRIS | Online Free DevTools by Hexmos"
 name: playerctl
 path: /freedevtools/tldr/linux/playerctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/playerctl/"

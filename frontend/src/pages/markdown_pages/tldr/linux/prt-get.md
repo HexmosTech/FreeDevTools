@@ -1,5 +1,5 @@
 ---
-title: "Control CRUX Packages - Manage Software with prt-get | Free DevTools"
+title: "Control CRUX Packages - Manage Software with prt-get | Online Free DevTools by Hexmos"
 name: prt-get
 path: /freedevtools/tldr/linux/prt-get
 canonical: "https://hexmos.com/freedevtools/tldr/linux/prt-get/"

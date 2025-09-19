@@ -1,5 +1,5 @@
 ---
-title: "PSPing - Measure Network Latency | Free DevTools"
+title: "PSPing - Measure Network Latency | Online Free DevTools by Hexmos"
 name: psping
 path: /freedevtools/tldr/windows/psping
 canonical: "https://hexmos.com/freedevtools/tldr/windows/psping/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Ninja Builds - Fast Compilation | Free DevTools"
+title: "Generate Ninja Builds - Fast Compilation | Online Free DevTools by Hexmos"
 name: ninja
 path: /freedevtools/tldr/common/ninja
 canonical: "https://hexmos.com/freedevtools/tldr/common/ninja/"

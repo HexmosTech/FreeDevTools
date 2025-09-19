@@ -1,5 +1,5 @@
 ---
-title: "Android Service Manager - Control Services with CMD | Free DevTools"
+title: "Android Service Manager - Control Services with CMD | Online Free DevTools by Hexmos"
 name: cmd
 path: /freedevtools/tldr/android/cmd
 canonical: "https://hexmos.com/freedevtools/tldr/android/cmd/"

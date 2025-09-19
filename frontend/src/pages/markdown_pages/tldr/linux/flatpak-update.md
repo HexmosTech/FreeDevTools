@@ -1,5 +1,5 @@
 ---
-title: "Flatpak Update - Manage App Updates on Linux | Free DevTools"
+title: "Flatpak Update - Manage App Updates on Linux | Online Free DevTools by Hexmos"
 name: flatpak-update
 path: /freedevtools/tldr/linux/flatpak-update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-update/"

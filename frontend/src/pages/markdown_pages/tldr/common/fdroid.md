@@ -1,5 +1,5 @@
 ---
-title: "F-Droid Builder - Build Android Apps | Free DevTools"
+title: "F-Droid Builder - Build Android Apps | Online Free DevTools by Hexmos"
 name: fdroid
 path: /freedevtools/tldr/common/fdroid
 canonical: "https://hexmos.com/freedevtools/tldr/common/fdroid/"

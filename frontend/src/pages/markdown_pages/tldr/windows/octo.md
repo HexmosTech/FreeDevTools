@@ -1,5 +1,5 @@
 ---
-title: "Octo - Deploy Releases | Free DevTools"
+title: "Octo - Deploy Releases | Online Free DevTools by Hexmos"
 name: octo
 path: /freedevtools/tldr/windows/octo
 canonical: "https://hexmos.com/freedevtools/tldr/windows/octo/"

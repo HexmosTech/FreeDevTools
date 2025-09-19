@@ -1,5 +1,5 @@
 ---
-title: "Control Cut/Copy/Paste - Command-Line Editing | Free DevTools"
+title: "Control Cut/Copy/Paste - Command-Line Editing | Online Free DevTools by Hexmos"
 name: xcv
 path: /freedevtools/tldr/common/xcv
 canonical: "https://hexmos.com/freedevtools/tldr/common/xcv/"

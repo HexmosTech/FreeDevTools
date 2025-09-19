@@ -1,5 +1,5 @@
 ---
-title: "Control Wallpaper - Set Linux Backgrounds | Free DevTools"
+title: "Control Wallpaper - Set Linux Backgrounds | Online Free DevTools by Hexmos"
 name: nitrogen
 path: /freedevtools/tldr/linux/nitrogen
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nitrogen/"

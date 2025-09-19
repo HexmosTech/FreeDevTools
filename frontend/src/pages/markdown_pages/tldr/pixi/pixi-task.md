@@ -1,5 +1,5 @@
 ---
-title: "Pixi Task - Manage Project Tasks | Free DevTools"
+title: "Pixi Task - Manage Project Tasks | Online Free DevTools by Hexmos"
 name: pixi-task
 path: /freedevtools/tldr/pixi/pixi-task
 canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-task/"

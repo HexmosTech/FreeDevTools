@@ -1,5 +1,5 @@
 ---
-title: "Everything Search - Find Files Quickly | Free DevTools"
+title: "Everything Search - Find Files Quickly | Online Free DevTools by Hexmos"
 name: es
 path: "/freedevtools/tldr/windows/es"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/es/"

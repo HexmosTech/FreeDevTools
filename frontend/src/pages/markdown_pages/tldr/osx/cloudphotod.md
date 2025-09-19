@@ -1,5 +1,5 @@
 ---
-title: "Sync iCloud Photos - Control Photo Syncing on macOS | Free DevTools"
+title: "Sync iCloud Photos - Control Photo Syncing on macOS | Online Free DevTools by Hexmos"
 name: cloudphotod
 path: /freedevtools/tldr/osx/cloudphotod
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cloudphotod/"

@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Parser - Manage Security Profiles | Free DevTools"
+title: "AppArmor Parser - Manage Security Profiles | Online Free DevTools by Hexmos"
 name: apparmor_parser
 path: /freedevtools/tldr/linux/apparmor_parser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apparmor_parser/"

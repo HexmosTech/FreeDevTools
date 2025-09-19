@@ -1,5 +1,5 @@
 ---
-title: "Run Rust Code Checker - Bacon | Free DevTools"
+title: "Run Rust Code Checker - Bacon | Online Free DevTools by Hexmos"
 name: bacon
 path: /freedevtools/tldr/common/bacon
 canonical: "https://hexmos.com/freedevtools/tldr/common/bacon/"

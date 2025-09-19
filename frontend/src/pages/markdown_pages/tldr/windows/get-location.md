@@ -1,5 +1,5 @@
 ---
-title: "Get Location - Print Directory Path | Free DevTools"
+title: "Get Location - Print Directory Path | Online Free DevTools by Hexmos"
 name: get-location
 path: /freedevtools/tldr/windows/get-location
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-location/"

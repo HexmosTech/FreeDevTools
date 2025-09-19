@@ -1,5 +1,5 @@
 ---
-title: "Highlight Log Files - Control Log Output with tspin | Free DevTools"
+title: "Highlight Log Files - Control Log Output with tspin | Online Free DevTools by Hexmos"
 name: tspin
 path: /freedevtools/tldr/common/tspin
 canonical: "https://hexmos.com/freedevtools/tldr/common/tspin/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Remote - Manage Remote Repositories | Free DevTools"
+title: "Git Remote - Manage Remote Repositories | Online Free DevTools by Hexmos"
 name: git-remote
 path: /freedevtools/tldr/git/git-remote
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-remote/"

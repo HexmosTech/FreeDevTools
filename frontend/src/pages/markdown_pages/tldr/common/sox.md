@@ -1,5 +1,5 @@
 ---
-title: "Sox - Convert Audio Files | Free DevTools"
+title: "Sox - Convert Audio Files | Online Free DevTools by Hexmos"
 name: sox
 path: /freedevtools/tldr/common/sox
 canonical: "https://hexmos.com/freedevtools/tldr/common/sox/"

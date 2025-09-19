@@ -1,5 +1,5 @@
 ---
-title: "Nohup - Execute Commands Persistently | Free DevTools"
+title: "Nohup - Execute Commands Persistently | Online Free DevTools by Hexmos"
 name: nohup
 path: /freedevtools/tldr/common/nohup
 canonical: "https://hexmos.com/freedevtools/tldr/common/nohup/"

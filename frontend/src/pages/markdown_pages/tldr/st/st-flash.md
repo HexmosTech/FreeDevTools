@@ -1,5 +1,5 @@
 ---
-title: "Flash STM32 - Program Microcontrollers | Free DevTools"
+title: "Flash STM32 - Program Microcontrollers | Online Free DevTools by Hexmos"
 name: st-flash
 path: /freedevtools/tldr/st/st-flash
 canonical: "https://hexmos.com/freedevtools/tldr/st/st-flash/"

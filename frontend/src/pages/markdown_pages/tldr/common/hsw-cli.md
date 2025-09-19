@@ -1,5 +1,5 @@
 ---
-title: "Handshake Wallet CLI - Control Handshake Wallet | Free DevTools"
+title: "Handshake Wallet CLI - Control Handshake Wallet | Online Free DevTools by Hexmos"
 name: hsw-cli
 path: /freedevtools/tldr/common/hsw-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/hsw-cli/"

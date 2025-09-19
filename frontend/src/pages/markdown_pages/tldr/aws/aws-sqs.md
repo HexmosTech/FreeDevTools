@@ -1,5 +1,5 @@
 ---
-title: "AWS SQS - Manage Queues | Free DevTools"
+title: "AWS SQS - Manage Queues | Online Free DevTools by Hexmos"
 name: aws-sqs
 path: /freedevtools/tldr/aws/aws-sqs
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sqs/"

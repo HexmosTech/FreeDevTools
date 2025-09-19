@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Service - Manage Windows Services | Free DevTools"
+title: "Mimikatz Service - Manage Windows Services | Online Free DevTools by Hexmos"
 name: mimikatz-service
 path: /freedevtools/tldr/windows/mimikatz-service
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-service/"

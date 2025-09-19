@@ -1,5 +1,5 @@
 ---
-title: "Generate Lexical Analyzers with Flex | Free DevTools"
+title: "Generate Lexical Analyzers with Flex | Online Free DevTools by Hexmos"
 name: flex
 path: /freedevtools/tldr/linux/flex
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flex/"

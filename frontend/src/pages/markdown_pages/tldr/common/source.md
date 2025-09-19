@@ -1,5 +1,5 @@
 ---
-title: "Execute Shell Script - Source Files on Linux/macOS | Free DevTools"
+title: "Execute Shell Script - Source Files on Linux/macOS | Online Free DevTools by Hexmos"
 name: source
 path: /freedevtools/tldr/common/source
 canonical: "https://hexmos.com/freedevtools/tldr/common/source/"

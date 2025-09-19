@@ -1,5 +1,5 @@
 ---
-title: "Pkgctl Repo - Manage Git Repositories | Free DevTools"
+title: "Pkgctl Repo - Manage Git Repositories | Online Free DevTools by Hexmos"
 name: pkgctl-repo
 path: /freedevtools/tldr/linux/pkgctl-repo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-repo/"

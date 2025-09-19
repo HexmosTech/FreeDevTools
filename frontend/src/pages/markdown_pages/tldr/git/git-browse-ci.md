@@ -1,5 +1,5 @@
 ---
-title: "Git Browse CI - Open CI Website | Free DevTools"
+title: "Git Browse CI - Open CI Website | Online Free DevTools by Hexmos"
 name: git-browse-ci
 path: /freedevtools/tldr/git/git-browse-ci
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-browse-ci/"

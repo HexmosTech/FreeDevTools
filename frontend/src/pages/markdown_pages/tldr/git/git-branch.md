@@ -1,5 +1,5 @@
 ---
-title: "Git Branch - Manage Branches in Git | Free DevTools"
+title: "Git Branch - Manage Branches in Git | Online Free DevTools by Hexmos"
 name: git-branch
 path: /freedevtools/tldr/git/git-branch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-branch/"

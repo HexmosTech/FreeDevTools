@@ -1,5 +1,5 @@
 ---
-title: "Zipsplit - Split Zip Archives into Smaller Parts | Free DevTools"
+title: "Zipsplit - Split Zip Archives into Smaller Parts | Online Free DevTools by Hexmos"
 name: zipsplit
 path: /freedevtools/tldr/linux/zipsplit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zipsplit/"

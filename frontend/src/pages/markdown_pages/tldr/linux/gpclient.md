@@ -1,5 +1,5 @@
 ---
-title: "GlobalProtect VPN Client - Connect to VPN with gpclient | Free DevTools"
+title: "GlobalProtect VPN Client - Connect to VPN with gpclient | Online Free DevTools by Hexmos"
 name: gpclient
 path: /freedevtools/tldr/linux/gpclient
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gpclient/"

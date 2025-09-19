@@ -1,5 +1,5 @@
 ---
-title: "Update PKGBUILD Checksums - Manage Linux Packages | Free DevTools"
+title: "Update PKGBUILD Checksums - Manage Linux Packages | Online Free DevTools by Hexmos"
 name: updpkgsums
 path: /freedevtools/tldr/linux/updpkgsums
 canonical: "https://hexmos.com/freedevtools/tldr/linux/updpkgsums/"

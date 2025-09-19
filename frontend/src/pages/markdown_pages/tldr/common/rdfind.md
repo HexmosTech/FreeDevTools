@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - Manage Duplicates with rdfind | Free DevTools"
+title: "Find Duplicate Files - Manage Duplicates with rdfind | Online Free DevTools by Hexmos"
 name: rdfind
 path: /freedevtools/tldr/common/rdfind
 canonical: "https://hexmos.com/freedevtools/tldr/common/rdfind/"

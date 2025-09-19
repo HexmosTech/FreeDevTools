@@ -1,5 +1,5 @@
 ---
-title: "Xrdb Resource Database - Manage X Window System Settings | Free DevTools"
+title: "Xrdb Resource Database - Manage X Window System Settings | Online Free DevTools by Hexmos"
 name: xrdb
 path: /freedevtools/tldr/linux/xrdb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xrdb/"

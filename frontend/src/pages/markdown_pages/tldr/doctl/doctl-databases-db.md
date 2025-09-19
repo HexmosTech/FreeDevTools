@@ -1,5 +1,5 @@
 ---
-title: "Doctl Databases DB - Manage Database Clusters | Free DevTools"
+title: "Doctl Databases DB - Manage Database Clusters | Online Free DevTools by Hexmos"
 name: doctl-databases-db
 path: /freedevtools/tldr/doctl/doctl-databases-db
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-db/"

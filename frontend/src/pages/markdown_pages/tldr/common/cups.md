@@ -1,5 +1,5 @@
 ---
-title: "Manage CUPS Printing - Open Source Print System | Free DevTools"
+title: "Manage CUPS Printing - Open Source Print System | Online Free DevTools by Hexmos"
 name: cups
 path: /freedevtools/tldr/common/cups
 canonical: "https://hexmos.com/freedevtools/tldr/common/cups/"

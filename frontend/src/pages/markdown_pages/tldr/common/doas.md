@@ -1,5 +1,5 @@
 ---
-title: "Execute Command as User - Control Privileges with doas | Free DevTools"
+title: "Execute Command as User - Control Privileges with doas | Online Free DevTools by Hexmos"
 name: doas
 path: /freedevtools/tldr/common/doas
 canonical: "https://hexmos.com/freedevtools/tldr/common/doas/"

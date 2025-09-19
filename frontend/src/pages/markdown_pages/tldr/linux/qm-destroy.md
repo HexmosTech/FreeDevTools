@@ -1,5 +1,5 @@
 ---
-title: "Destroy VM - Manage QEMU VMs with qm destroy | Free DevTools"
+title: "Destroy VM - Manage QEMU VMs with qm destroy | Online Free DevTools by Hexmos"
 name: qm-destroy
 path: /freedevtools/tldr/linux/qm-destroy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-destroy/"

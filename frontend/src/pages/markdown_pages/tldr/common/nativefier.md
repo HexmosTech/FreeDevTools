@@ -1,5 +1,5 @@
 ---
-title: "Create Desktop Apps - Nativefier Websites | Free DevTools"
+title: "Create Desktop Apps - Nativefier Websites | Online Free DevTools by Hexmos"
 name: nativefier
 path: /freedevtools/tldr/common/nativefier
 canonical: "https://hexmos.com/freedevtools/tldr/common/nativefier/"

@@ -1,5 +1,5 @@
 ---
-title: "Spell Check Text - Correct Spelling with Aspell | Free DevTools"
+title: "Spell Check Text - Correct Spelling with Aspell | Online Free DevTools by Hexmos"
 name: aspell
 path: /freedevtools/tldr/common/aspell
 canonical: "https://hexmos.com/freedevtools/tldr/common/aspell/"

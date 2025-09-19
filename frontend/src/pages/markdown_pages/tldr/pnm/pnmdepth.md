@@ -1,5 +1,5 @@
 ---
-title: "PAM Depth - Display Image Depth Values | Free DevTools"
+title: "PAM Depth - Display Image Depth Values | Online Free DevTools by Hexmos"
 name: pnmdepth
 path: /freedevtools/tldr/pnm/pnmdepth
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmdepth/"

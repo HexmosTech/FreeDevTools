@@ -1,5 +1,5 @@
 ---
-title: "Control Chromium - Open Web Pages | Free DevTools"
+title: "Control Chromium - Open Web Pages | Online Free DevTools by Hexmos"
 name: chromium
 path: /freedevtools/tldr/common/chromium
 canonical: "https://hexmos.com/freedevtools/tldr/common/chromium/"

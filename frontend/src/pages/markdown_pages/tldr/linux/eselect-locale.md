@@ -1,5 +1,5 @@
 ---
-title: "Control Locale - Manage System Language with eselect | Free DevTools"
+title: "Control Locale - Manage System Language with eselect | Online Free DevTools by Hexmos"
 name: eselect-locale
 path: /freedevtools/tldr/linux/eselect-locale
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-locale/"

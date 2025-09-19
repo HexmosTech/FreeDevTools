@@ -1,5 +1,5 @@
 ---
-title: "MuPDF Viewer - Open and View PDF Files | Free DevTools"
+title: "MuPDF Viewer - Open and View PDF Files | Online Free DevTools by Hexmos"
 name: mupdf
 path: /freedevtools/tldr/common/mupdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/mupdf/"

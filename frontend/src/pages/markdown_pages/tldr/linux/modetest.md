@@ -1,5 +1,5 @@
 ---
-title: "Diagnose DRM - Analyze KMS with modetest | Free DevTools"
+title: "Diagnose DRM - Analyze KMS with modetest | Online Free DevTools by Hexmos"
 name: modetest
 path: /freedevtools/tldr/linux/modetest
 canonical: "https://hexmos.com/freedevtools/tldr/linux/modetest/"

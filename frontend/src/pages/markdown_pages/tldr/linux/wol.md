@@ -1,5 +1,5 @@
 ---
-title: "Wake-on-LAN Client - Send WoL Packets | Free DevTools"
+title: "Wake-on-LAN Client - Send WoL Packets | Online Free DevTools by Hexmos"
 name: wol
 path: /freedevtools/tldr/linux/wol
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wol/"

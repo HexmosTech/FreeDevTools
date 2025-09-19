@@ -1,5 +1,5 @@
 ---
-title: "Khal Calendar - Schedule Events with Command Line | Free DevTools"
+title: "Khal Calendar - Schedule Events with Command Line | Online Free DevTools by Hexmos"
 name: khal
 path: /freedevtools/tldr/common/khal
 canonical: "https://hexmos.com/freedevtools/tldr/common/khal/"

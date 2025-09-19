@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Compress & Decompress XZ Files | Free DevTools"
+title: "Compress Files - Compress & Decompress XZ Files | Online Free DevTools by Hexmos"
 name: xz
 path: /freedevtools/tldr/common/xz
 canonical: "https://hexmos.com/freedevtools/tldr/common/xz/"

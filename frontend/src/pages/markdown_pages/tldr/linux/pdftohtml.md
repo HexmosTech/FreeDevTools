@@ -1,5 +1,5 @@
 ---
-title: "Convert PDF to HTML - Generate HTML from PDF Files | Free DevTools"
+title: "Convert PDF to HTML - Generate HTML from PDF Files | Online Free DevTools by Hexmos"
 name: pdftohtml
 path: /freedevtools/tldr/linux/pdftohtml
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdftohtml/"

@@ -1,5 +1,5 @@
 ---
-title: "Search Files - Find Files with MATE Search Tool | Free DevTools"
+title: "Search Files - Find Files with MATE Search Tool | Online Free DevTools by Hexmos"
 name: mate-search-tool
 path: /freedevtools/tldr/linux/mate-search-tool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-search-tool/"

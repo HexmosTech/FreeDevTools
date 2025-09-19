@@ -1,5 +1,5 @@
 ---
-title: "SSL Scan - Check SSL/TLS Protocols | Free DevTools"
+title: "SSL Scan - Check SSL/TLS Protocols | Online Free DevTools by Hexmos"
 name: sslscan
 path: /freedevtools/tldr/common/sslscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/sslscan/"

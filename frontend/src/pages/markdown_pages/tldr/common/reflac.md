@@ -1,5 +1,5 @@
 ---
-title: "Recompress FLAC - Compress Audio Files with Reflac | Free DevTools"
+title: "Recompress FLAC - Compress Audio Files with Reflac | Online Free DevTools by Hexmos"
 name: reflac
 path: /freedevtools/tldr/common/reflac
 canonical: "https://hexmos.com/freedevtools/tldr/common/reflac/"

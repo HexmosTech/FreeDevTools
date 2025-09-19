@@ -1,5 +1,5 @@
 ---
-title: "Convert ILBM to PPM - Image Conversion | Free DevTools"
+title: "Convert ILBM to PPM - Image Conversion | Online Free DevTools by Hexmos"
 name: ilbmtoppm
 path: /freedevtools/tldr/common/ilbmtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/ilbmtoppm/"

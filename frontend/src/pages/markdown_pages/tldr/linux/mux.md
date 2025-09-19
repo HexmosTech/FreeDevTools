@@ -1,5 +1,5 @@
 ---
-title: "Mux Streams - Intercept and Multiplex Data | Free DevTools"
+title: "Mux Streams - Intercept and Multiplex Data | Online Free DevTools by Hexmos"
 name: mux
 path: /freedevtools/tldr/linux/mux
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mux/"

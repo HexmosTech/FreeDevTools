@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - Format Nokia Graphics | Free DevTools"
+title: "Convert PBM Image - Format Nokia Graphics | Online Free DevTools by Hexmos"
 name: pbmtonokia
 path: /freedevtools/tldr/common/pbmtonokia
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtonokia/"

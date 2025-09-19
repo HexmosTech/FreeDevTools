@@ -1,5 +1,5 @@
 ---
-title: "Manage Patches with Quilt - Patch Management | Free DevTools"
+title: "Manage Patches with Quilt - Patch Management | Online Free DevTools by Hexmos"
 name: quilt
 path: /freedevtools/tldr/common/quilt
 canonical: "https://hexmos.com/freedevtools/tldr/common/quilt/"

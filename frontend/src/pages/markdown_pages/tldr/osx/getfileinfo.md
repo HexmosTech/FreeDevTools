@@ -1,5 +1,5 @@
 ---
-title: "GetFileInfo - Display File Information on macOS | Free DevTools"
+title: "GetFileInfo - Display File Information on macOS | Online Free DevTools by Hexmos"
 name: getfileinfo
 path: /freedevtools/tldr/osx/getfileinfo
 canonical: "https://hexmos.com/freedevtools/tldr/osx/getfileinfo/"

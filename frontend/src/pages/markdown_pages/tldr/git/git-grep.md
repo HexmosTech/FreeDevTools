@@ -1,5 +1,5 @@
 ---
-title: "Git Grep - Find Strings in Files | Free DevTools"
+title: "Git Grep - Find Strings in Files | Online Free DevTools by Hexmos"
 name: git-grep
 path: /freedevtools/tldr/git/git-grep
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-grep/"

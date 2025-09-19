@@ -1,5 +1,5 @@
 ---
-title: "Yabai Window Manager - Control macOS Windows | Free DevTools"
+title: "Yabai Window Manager - Control macOS Windows | Online Free DevTools by Hexmos"
 name: yabai
 path: /freedevtools/tldr/osx/yabai
 canonical: "https://hexmos.com/freedevtools/tldr/osx/yabai/"

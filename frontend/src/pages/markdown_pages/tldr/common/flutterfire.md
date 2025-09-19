@@ -1,5 +1,5 @@
 ---
-title: "Configure Flutterfire - Setup Firebase Projects | Free DevTools"
+title: "Configure Flutterfire - Setup Firebase Projects | Online Free DevTools by Hexmos"
 name: flutterfire
 path: "/freedevtools/tldr/common/flutterfire"
 canonical: "https://hexmos.com/freedevtools/tldr/common/flutterfire/"

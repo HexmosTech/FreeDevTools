@@ -1,5 +1,5 @@
 ---
-title: "PIO Settings - Control PlatformIO Configuration | Free DevTools"
+title: "PIO Settings - Control PlatformIO Configuration | Online Free DevTools by Hexmos"
 name: pio-settings
 path: /freedevtools/tldr/pio/pio-settings
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-settings/"

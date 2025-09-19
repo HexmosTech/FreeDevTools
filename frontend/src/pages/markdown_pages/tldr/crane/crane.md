@@ -1,5 +1,5 @@
 ---
-title: "Container Image Control - Manage Images with Crane | Free DevTools"
+title: "Container Image Control - Manage Images with Crane | Online Free DevTools by Hexmos"
 name: crane
 path: /freedevtools/tldr/crane/crane
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane/"

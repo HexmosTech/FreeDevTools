@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - bzip3 Statistical Compression | Free DevTools"
+title: "Compress Files - bzip3 Statistical Compression | Online Free DevTools by Hexmos"
 name: bzip3
 path: /freedevtools/tldr/common/bzip3
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzip3/"

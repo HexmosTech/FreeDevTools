@@ -1,5 +1,5 @@
 ---
-title: "Create Git Stacks - Manage Code Changes | Free DevTools"
+title: "Create Git Stacks - Manage Code Changes | Online Free DevTools by Hexmos"
 name: gt
 path: /freedevtools/tldr/common/gt
 canonical: "https://hexmos.com/freedevtools/tldr/common/gt/"

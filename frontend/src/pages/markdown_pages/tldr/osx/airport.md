@@ -1,5 +1,5 @@
 ---
-title: "Airport - Configure Wireless Networks | Free DevTools"
+title: "Airport - Configure Wireless Networks | Online Free DevTools by Hexmos"
 name: airport
 path: /freedevtools/tldr/osx/airport
 canonical: "https://hexmos.com/freedevtools/tldr/osx/airport/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Kubernetes Clusters - k9s | Free DevTools"
+title: "Manage Kubernetes Clusters - k9s | Online Free DevTools by Hexmos"
 name: k9s
 path: /freedevtools/tldr/common/k9s
 canonical: "https://hexmos.com/freedevtools/tldr/common/k9s/"

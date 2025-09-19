@@ -1,5 +1,5 @@
 ---
-title: "Update ClamAV Definitions - Manage Virus Signatures | Free DevTools"
+title: "Update ClamAV Definitions - Manage Virus Signatures | Online Free DevTools by Hexmos"
 name: freshclam
 path: /freedevtools/tldr/common/freshclam
 canonical: "https://hexmos.com/freedevtools/tldr/common/freshclam/"

@@ -1,5 +1,5 @@
 ---
-title: "PHP Static Analysis - Discover Bugs with PHPStan | Free DevTools"
+title: "PHP Static Analysis - Discover Bugs with PHPStan | Online Free DevTools by Hexmos"
 name: phpstan
 path: /freedevtools/tldr/php/phpstan
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpstan/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to PS - Generate PostScript Files | Free DevTools"
+title: "Convert PNM to PS - Generate PostScript Files | Online Free DevTools by Hexmos"
 name: pnmtops
 path: /freedevtools/tldr/pnm/pnmtops
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtops/"

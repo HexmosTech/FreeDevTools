@@ -1,5 +1,5 @@
 ---
-title: "Powerstat - Measure Power Consumption | Free DevTools"
+title: "Powerstat - Measure Power Consumption | Online Free DevTools by Hexmos"
 name: powerstat
 path: /freedevtools/tldr/linux/powerstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/powerstat/"

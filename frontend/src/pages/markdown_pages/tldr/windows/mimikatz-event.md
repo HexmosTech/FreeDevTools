@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Event Log - Manage Records | Free DevTools"
+title: "Mimikatz Event Log - Manage Records | Online Free DevTools by Hexmos"
 name: mimikatz-event
 path: /freedevtools/tldr/windows/mimikatz-event
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-event/"

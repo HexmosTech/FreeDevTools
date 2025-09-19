@@ -1,5 +1,5 @@
 ---
-title: "Dolt Add - Stage Dolt Tables | Free DevTools"
+title: "Dolt Add - Stage Dolt Tables | Online Free DevTools by Hexmos"
 name: dolt-add
 path: /freedevtools/tldr/dolt/dolt-add
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-add/"

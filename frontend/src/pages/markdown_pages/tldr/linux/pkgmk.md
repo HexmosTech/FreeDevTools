@@ -1,5 +1,5 @@
 ---
-title: "Create Binary Packages - Manage CRUX Packages | Free DevTools"
+title: "Create Binary Packages - Manage CRUX Packages | Online Free DevTools by Hexmos"
 name: pkgmk
 path: /freedevtools/tldr/linux/pkgmk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgmk/"

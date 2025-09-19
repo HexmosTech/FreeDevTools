@@ -1,5 +1,5 @@
 ---
-title: "Simplify Parents - Control JJ Revisions | Free DevTools"
+title: "Simplify Parents - Control JJ Revisions | Online Free DevTools by Hexmos"
 name: jj-simplify-parents
 path: /freedevtools/tldr/jj/jj-simplify-parents
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-simplify-parents/"

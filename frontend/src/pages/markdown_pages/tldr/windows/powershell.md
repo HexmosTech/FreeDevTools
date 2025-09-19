@@ -1,5 +1,5 @@
 ---
-title: "PowerShell - Control System Administration | Free DevTools"
+title: "PowerShell - Control System Administration | Online Free DevTools by Hexmos"
 name: powershell
 path: /freedevtools/tldr/windows/powershell
 canonical: "https://hexmos.com/freedevtools/tldr/windows/powershell/"

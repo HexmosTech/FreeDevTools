@@ -1,5 +1,5 @@
 ---
-title: "Stream Torrents - Peerflix Stream Media | Free DevTools"
+title: "Stream Torrents - Peerflix Stream Media | Online Free DevTools by Hexmos"
 name: peerflix
 path: /freedevtools/tldr/common/peerflix
 canonical: "https://hexmos.com/freedevtools/tldr/common/peerflix/"

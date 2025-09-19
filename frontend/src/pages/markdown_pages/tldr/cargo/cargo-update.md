@@ -1,5 +1,5 @@
 ---
-title: "Cargo Update - Manage Rust Dependencies | Free DevTools"
+title: "Cargo Update - Manage Rust Dependencies | Online Free DevTools by Hexmos"
 name: cargo-update
 path: /freedevtools/tldr/cargo/cargo-update
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-update/"

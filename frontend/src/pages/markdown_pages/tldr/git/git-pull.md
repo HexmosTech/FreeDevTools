@@ -1,5 +1,5 @@
 ---
-title: "Git Pull - Fetch and Merge Branch | Free DevTools"
+title: "Git Pull - Fetch and Merge Branch | Online Free DevTools by Hexmos"
 name: git-pull
 path: /freedevtools/tldr/git/git-pull
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-pull/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to JPEG - Image Conversion | Free DevTools"
+title: "Convert PNM to JPEG - Image Conversion | Online Free DevTools by Hexmos"
 name: pnmtojpeg
 path: /freedevtools/tldr/pnm/pnmtojpeg
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtojpeg/"

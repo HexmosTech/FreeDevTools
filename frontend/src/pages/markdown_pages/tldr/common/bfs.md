@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Breadth-First Search with BFS | Free DevTools"
+title: "Find Files - Breadth-First Search with BFS | Online Free DevTools by Hexmos"
 name: bfs
 path: /freedevtools/tldr/common/bfs
 canonical: "https://hexmos.com/freedevtools/tldr/common/bfs/"

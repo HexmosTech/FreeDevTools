@@ -1,5 +1,5 @@
 ---
-title: "Convert PDF Files - Format Images with pstoedit | Free DevTools"
+title: "Convert PDF Files - Format Images with pstoedit | Online Free DevTools by Hexmos"
 name: pstoedit
 path: /freedevtools/tldr/linux/pstoedit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pstoedit/"

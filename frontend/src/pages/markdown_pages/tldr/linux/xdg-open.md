@@ -1,5 +1,5 @@
 ---
-title: "Xdg-Open - Open Files and URLs | Free DevTools"
+title: "Xdg-Open - Open Files and URLs | Online Free DevTools by Hexmos"
 name: xdg-open
 path: /freedevtools/tldr/linux/xdg-open
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-open/"

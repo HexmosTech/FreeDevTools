@@ -1,5 +1,5 @@
 ---
-title: "Quotacheck - Manage Disk Usage with Quota Files | Free DevTools"
+title: "Quotacheck - Manage Disk Usage with Quota Files | Online Free DevTools by Hexmos"
 name: quotacheck
 path: /freedevtools/tldr/linux/quotacheck
 canonical: "https://hexmos.com/freedevtools/tldr/linux/quotacheck/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Shadow Directory - lndir Command | Free DevTools"
+title: "Create Shadow Directory - lndir Command | Online Free DevTools by Hexmos"
 name: lndir
 path: /freedevtools/tldr/linux/lndir
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lndir/"

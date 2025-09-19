@@ -1,5 +1,5 @@
 ---
-title: "Deluge Torrent Client - Download Torrents | Free DevTools"
+title: "Deluge Torrent Client - Download Torrents | Online Free DevTools by Hexmos"
 name: deluge
 path: /freedevtools/tldr/common/deluge
 canonical: "https://hexmos.com/freedevtools/tldr/common/deluge/"

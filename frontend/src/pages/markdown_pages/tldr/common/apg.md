@@ -1,5 +1,5 @@
 ---
-title: "Generate Password - Create Secure Passwords with APG | Free DevTools"
+title: "Generate Password - Create Secure Passwords with APG | Online Free DevTools by Hexmos"
 name: apg
 path: /freedevtools/tldr/common/apg
 canonical: "https://hexmos.com/freedevtools/tldr/common/apg/"

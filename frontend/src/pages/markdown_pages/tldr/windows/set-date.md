@@ -1,5 +1,5 @@
 ---
-title: "Set-Date - Change System Date | Free DevTools"
+title: "Set-Date - Change System Date | Online Free DevTools by Hexmos"
 name: set-date
 path: /freedevtools/tldr/windows/set-date
 canonical: "https://hexmos.com/freedevtools/tldr/windows/set-date/"

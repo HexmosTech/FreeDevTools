@@ -1,5 +1,5 @@
 ---
-title: "Git Reflog - Track Reference Changes | Free DevTools"
+title: "Git Reflog - Track Reference Changes | Online Free DevTools by Hexmos"
 name: git-reflog
 path: /freedevtools/tldr/git/git-reflog
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-reflog/"

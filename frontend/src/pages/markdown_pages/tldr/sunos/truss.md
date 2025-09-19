@@ -1,5 +1,5 @@
 ---
-title: "Trace System Calls with truss | Free DevTools"
+title: "Trace System Calls with truss | Online Free DevTools by Hexmos"
 name: truss
 path: /freedevtools/tldr/sunos/truss
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/truss/"

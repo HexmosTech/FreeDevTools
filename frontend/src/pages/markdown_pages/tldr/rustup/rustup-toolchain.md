@@ -1,5 +1,5 @@
 ---
-title: "Rust Toolchain Manager - Control Rust Versions | Free DevTools"
+title: "Rust Toolchain Manager - Control Rust Versions | Online Free DevTools by Hexmos"
 name: rustup-toolchain
 path: /freedevtools/tldr/rustup/rustup-toolchain
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-toolchain/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Nagios3 Monitoring - Legacy Network Monitor | Free DevTools"
+title: "Control Nagios3 Monitoring - Legacy Network Monitor | Online Free DevTools by Hexmos"
 name: nagios3
 path: /freedevtools/tldr/common/nagios3
 canonical: "https://hexmos.com/freedevtools/tldr/common/nagios3/"

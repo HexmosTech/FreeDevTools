@@ -1,5 +1,5 @@
 ---
-title: "Synchronize Directories - Lsyncd File Watcher | Free DevTools"
+title: "Synchronize Directories - Lsyncd File Watcher | Online Free DevTools by Hexmos"
 name: lsyncd
 path: /freedevtools/tldr/common/lsyncd
 canonical: "https://hexmos.com/freedevtools/tldr/common/lsyncd/"

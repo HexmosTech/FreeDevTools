@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Files - Secure Files with Rage | Free DevTools"
+title: "Encrypt Files - Secure Files with Rage | Online Free DevTools by Hexmos"
 name: rage
 path: /freedevtools/tldr/common/rage
 canonical: "https://hexmos.com/freedevtools/tldr/common/rage/"

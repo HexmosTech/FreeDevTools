@@ -1,5 +1,5 @@
 ---
-title: "Browse Web - Lynx Command-Line Browser | Free DevTools"
+title: "Browse Web - Lynx Command-Line Browser | Online Free DevTools by Hexmos"
 name: lynx
 path: /freedevtools/tldr/common/lynx
 canonical: "https://hexmos.com/freedevtools/tldr/common/lynx/"

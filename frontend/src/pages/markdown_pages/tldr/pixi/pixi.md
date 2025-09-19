@@ -1,5 +1,5 @@
 ---
-title: "Pixi - Manage Project Environments | Free DevTools"
+title: "Pixi - Manage Project Environments | Online Free DevTools by Hexmos"
 name: pixi
 path: /freedevtools/tldr/pixi/pixi
 canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi/"

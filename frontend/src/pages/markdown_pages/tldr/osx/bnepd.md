@@ -1,5 +1,5 @@
 ---
-title: "Bluetooth Network Control - Manage macOS Connections | Free DevTools"
+title: "Bluetooth Network Control - Manage macOS Connections | Online Free DevTools by Hexmos"
 name: bnepd
 path: /freedevtools/tldr/osx/bnepd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/bnepd/"

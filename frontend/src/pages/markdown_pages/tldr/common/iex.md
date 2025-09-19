@@ -1,5 +1,5 @@
 ---
-title: "IEx Shell - Control Elixir Interactions | Free DevTools"
+title: "IEx Shell - Control Elixir Interactions | Online Free DevTools by Hexmos"
 name: iex
 path: /freedevtools/tldr/common/iex
 canonical: "https://hexmos.com/freedevtools/tldr/common/iex/"

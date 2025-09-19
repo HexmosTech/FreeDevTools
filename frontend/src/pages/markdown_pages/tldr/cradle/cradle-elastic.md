@@ -1,5 +1,5 @@
 ---
-title: "Control Elasticsearch - Manage Cradle Indices | Free DevTools"
+title: "Control Elasticsearch - Manage Cradle Indices | Online Free DevTools by Hexmos"
 name: cradle-elastic
 path: /freedevtools/tldr/cradle/cradle-elastic
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-elastic/"

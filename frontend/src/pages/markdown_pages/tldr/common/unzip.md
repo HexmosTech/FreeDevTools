@@ -1,5 +1,5 @@
 ---
-title: "Unzip Archive - Extract Files From Zip | Free DevTools"
+title: "Unzip Archive - Extract Files From Zip | Online Free DevTools by Hexmos"
 name: unzip
 path: /freedevtools/tldr/common/unzip
 canonical: "https://hexmos.com/freedevtools/tldr/common/unzip/"

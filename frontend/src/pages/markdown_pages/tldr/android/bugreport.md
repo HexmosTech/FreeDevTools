@@ -1,5 +1,5 @@
 ---
-title: "Generate Android Bug Report - Analyze System State | Free DevTools"
+title: "Generate Android Bug Report - Analyze System State | Online Free DevTools by Hexmos"
 name: bugreport
 path: /freedevtools/tldr/android/bugreport
 canonical: "https://hexmos.com/freedevtools/tldr/android/bugreport/"

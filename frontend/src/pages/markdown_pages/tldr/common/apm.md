@@ -1,5 +1,5 @@
 ---
-title: "Control Atom Packages - Manage APM Packages | Free DevTools"
+title: "Control Atom Packages - Manage APM Packages | Online Free DevTools by Hexmos"
 name: apm
 path: /freedevtools/tldr/common/apm
 canonical: "https://hexmos.com/freedevtools/tldr/common/apm/"

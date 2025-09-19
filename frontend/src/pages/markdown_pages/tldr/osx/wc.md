@@ -1,5 +1,5 @@
 ---
-title: "Count Words - Analyze Text Files with wc | Free DevTools"
+title: "Count Words - Analyze Text Files with wc | Online Free DevTools by Hexmos"
 name: wc
 path: /freedevtools/tldr/osx/wc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/wc/"

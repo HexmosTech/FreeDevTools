@@ -1,5 +1,5 @@
 ---
-title: "MPI Compiler - Compile C++ MPI Programs | Free DevTools"
+title: "MPI Compiler - Compile C++ MPI Programs | Online Free DevTools by Hexmos"
 name: mpicxx
 path: /freedevtools/tldr/common/mpicxx
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpicxx/"

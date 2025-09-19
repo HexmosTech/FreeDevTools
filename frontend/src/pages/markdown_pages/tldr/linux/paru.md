@@ -1,5 +1,5 @@
 ---
-title: "Manage AUR Packages - Paru Package Manager | Free DevTools"
+title: "Manage AUR Packages - Paru Package Manager | Online Free DevTools by Hexmos"
 name: paru
 path: /freedevtools/tldr/linux/paru
 canonical: "https://hexmos.com/freedevtools/tldr/linux/paru/"

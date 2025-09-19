@@ -1,5 +1,5 @@
 ---
-title: "C# Compiler - Generate Executables | Free DevTools"
+title: "C# Compiler - Generate Executables | Online Free DevTools by Hexmos"
 name: csc
 path: /freedevtools/tldr/cs/csc
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csc/"

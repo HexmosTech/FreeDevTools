@@ -1,5 +1,5 @@
 ---
-title: "Control CPU Usage - Limit Process Consumption | Free DevTools"
+title: "Control CPU Usage - Limit Process Consumption | Online Free DevTools by Hexmos"
 name: cpulimit
 path: /freedevtools/tldr/linux/cpulimit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cpulimit/"

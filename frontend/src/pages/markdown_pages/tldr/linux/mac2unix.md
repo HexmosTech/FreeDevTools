@@ -1,5 +1,5 @@
 ---
-title: "Mac2unix - Format Line Endings | Free DevTools"
+title: "Mac2unix - Format Line Endings | Online Free DevTools by Hexmos"
 name: mac2unix
 path: /freedevtools/tldr/linux/mac2unix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mac2unix/"

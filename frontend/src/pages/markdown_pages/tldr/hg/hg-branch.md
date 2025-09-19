@@ -1,5 +1,5 @@
 ---
-title: "Hg Branch - Create Branch Names | Free DevTools"
+title: "Hg Branch - Create Branch Names | Online Free DevTools by Hexmos"
 name: hg-branch
 path: /freedevtools/tldr/hg/hg-branch
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-branch/"

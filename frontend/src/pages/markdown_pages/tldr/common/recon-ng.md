@@ -1,5 +1,5 @@
 ---
-title: "Recon-ng - Automate Reconnaissance | Free DevTools"
+title: "Recon-ng - Automate Reconnaissance | Online Free DevTools by Hexmos"
 name: recon-ng
 path: /freedevtools/tldr/common/recon-ng
 canonical: "https://hexmos.com/freedevtools/tldr/common/recon-ng/"

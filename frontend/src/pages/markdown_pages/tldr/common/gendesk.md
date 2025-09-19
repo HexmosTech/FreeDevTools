@@ -1,5 +1,5 @@
 ---
-title: "Generate Desktop File - Create .desktop Files | Free DevTools"
+title: "Generate Desktop File - Create .desktop Files | Online Free DevTools by Hexmos"
 name: gendesk
 path: /freedevtools/tldr/common/gendesk
 canonical: "https://hexmos.com/freedevtools/tldr/common/gendesk/"

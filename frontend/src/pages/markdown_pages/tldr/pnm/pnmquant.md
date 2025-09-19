@@ -1,5 +1,5 @@
 ---
-title: "Quantize PNM Colors - Generate PNM Color Palettes | Free DevTools"
+title: "Quantize PNM Colors - Generate PNM Color Palettes | Online Free DevTools by Hexmos"
 name: pnmquant
 path: /freedevtools/tldr/pnm/pnmquant
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmquant/"

@@ -1,5 +1,5 @@
 ---
-title: "SA Command - Summarize Accounting Data | Free DevTools"
+title: "SA Command - Summarize Accounting Data | Online Free DevTools by Hexmos"
 name: sa
 path: /freedevtools/tldr/linux/sa
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sa/"

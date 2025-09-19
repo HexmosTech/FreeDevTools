@@ -1,5 +1,5 @@
 ---
-title: "NTP Query - Control NTP Daemon | Free DevTools"
+title: "NTP Query - Control NTP Daemon | Online Free DevTools by Hexmos"
 name: ntpq
 path: "/freedevtools/tldr/linux/ntpq"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpq/"

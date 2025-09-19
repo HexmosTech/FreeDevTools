@@ -1,5 +1,5 @@
 ---
-title: "Manage Go Telemetry Data - Control Telemetry Settings | Free DevTools"
+title: "Manage Go Telemetry Data - Control Telemetry Settings | Online Free DevTools by Hexmos"
 name: gotelemetry
 path: /freedevtools/tldr/common/gotelemetry
 canonical: "https://hexmos.com/freedevtools/tldr/common/gotelemetry/"

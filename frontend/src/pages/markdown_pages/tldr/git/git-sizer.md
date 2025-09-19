@@ -1,5 +1,5 @@
 ---
-title: "Analyze Git Size - Control Repository Metrics | Free DevTools"
+title: "Analyze Git Size - Control Repository Metrics | Online Free DevTools by Hexmos"
 name: git-sizer
 path: /freedevtools/tldr/git/git-sizer
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-sizer/"

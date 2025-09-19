@@ -1,5 +1,5 @@
 ---
-title: "Restart GDM - Control Display Manager | Free DevTools"
+title: "Restart GDM - Control Display Manager | Online Free DevTools by Hexmos"
 name: gdm-restart
 path: /freedevtools/tldr/gdm/gdm-restart
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-restart/"

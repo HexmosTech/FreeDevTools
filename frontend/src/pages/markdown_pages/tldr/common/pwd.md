@@ -1,5 +1,5 @@
 ---
-title: "Print Directory - Show Current Path | Free DevTools"
+title: "Print Directory - Show Current Path | Online Free DevTools by Hexmos"
 name: pwd
 path: /freedevtools/tldr/common/pwd
 canonical: "https://hexmos.com/freedevtools/tldr/common/pwd/"

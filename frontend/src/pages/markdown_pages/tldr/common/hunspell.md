@@ -1,5 +1,5 @@
 ---
-title: "Check Spelling - Hunspell Spell Checker | Free DevTools"
+title: "Check Spelling - Hunspell Spell Checker | Online Free DevTools by Hexmos"
 name: hunspell
 path: /freedevtools/tldr/common/hunspell
 canonical: "https://hexmos.com/freedevtools/tldr/common/hunspell/"

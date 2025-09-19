@@ -1,5 +1,5 @@
 ---
-title: "Arionum CLI - Manage Crypto Wallet | Free DevTools"
+title: "Arionum CLI - Manage Crypto Wallet | Online Free DevTools by Hexmos"
 name: light-arionum-cli
 path: /freedevtools/tldr/common/light-arionum-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/light-arionum-cli/"

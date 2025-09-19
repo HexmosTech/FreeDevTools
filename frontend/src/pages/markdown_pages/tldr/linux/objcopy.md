@@ -1,5 +1,5 @@
 ---
-title: "Objcopy - Copy Object Files | Free DevTools"
+title: "Objcopy - Copy Object Files | Online Free DevTools by Hexmos"
 name: objcopy
 path: /freedevtools/tldr/linux/objcopy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/objcopy/"

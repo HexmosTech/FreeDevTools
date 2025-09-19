@@ -1,5 +1,5 @@
 ---
-title: "Colorize Graph - Colorize Ranked Digraphs | Free DevTools"
+title: "Colorize Graph - Colorize Ranked Digraphs | Online Free DevTools by Hexmos"
 name: gvcolor
 path: /freedevtools/tldr/common/gvcolor
 canonical: "https://hexmos.com/freedevtools/tldr/common/gvcolor/"

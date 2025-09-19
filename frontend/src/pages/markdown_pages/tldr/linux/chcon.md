@@ -1,5 +1,5 @@
 ---
-title: "Chcon - Control File Context on Linux | Free DevTools"
+title: "Chcon - Control File Context on Linux | Online Free DevTools by Hexmos"
 name: chcon
 path: /freedevtools/tldr/linux/chcon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chcon/"

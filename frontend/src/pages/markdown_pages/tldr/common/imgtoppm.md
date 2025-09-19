@@ -1,5 +1,5 @@
 ---
-title: "Image to PPM - Convert Images to PPM Format | Free DevTools"
+title: "Image to PPM - Convert Images to PPM Format | Online Free DevTools by Hexmos"
 name: imgtoppm
 path: /freedevtools/tldr/common/imgtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/imgtoppm/"

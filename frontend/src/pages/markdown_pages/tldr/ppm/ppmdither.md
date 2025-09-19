@@ -1,5 +1,5 @@
 ---
-title: "PPM Dither - Reduce Image Colors | Free DevTools"
+title: "PPM Dither - Reduce Image Colors | Online Free DevTools by Hexmos"
 name: ppmdither
 path: /freedevtools/tldr/ppm/ppmdither
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmdither/"

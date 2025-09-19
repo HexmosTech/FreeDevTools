@@ -1,5 +1,5 @@
 ---
-title: "F3Write - Fill Drive with Test Files | Free DevTools"
+title: "F3Write - Fill Drive with Test Files | Online Free DevTools by Hexmos"
 name: f3write
 path: /freedevtools/tldr/common/f3write
 canonical: "https://hexmos.com/freedevtools/tldr/common/f3write/"

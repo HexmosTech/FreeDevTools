@@ -1,5 +1,5 @@
 ---
-title: "RPCInfo - List Remote Programs | Free DevTools"
+title: "RPCInfo - List Remote Programs | Online Free DevTools by Hexmos"
 name: rpcinfo
 path: /freedevtools/tldr/windows/rpcinfo
 canonical: "https://hexmos.com/freedevtools/tldr/windows/rpcinfo/"

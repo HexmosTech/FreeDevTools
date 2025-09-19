@@ -1,5 +1,5 @@
 ---
-title: "Control Window with Xkill - Kill Windows | Free DevTools"
+title: "Control Window with Xkill - Kill Windows | Online Free DevTools by Hexmos"
 name: xkill
 path: /freedevtools/tldr/common/xkill
 canonical: "https://hexmos.com/freedevtools/tldr/common/xkill/"

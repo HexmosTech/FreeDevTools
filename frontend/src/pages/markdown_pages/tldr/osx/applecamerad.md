@@ -1,5 +1,5 @@
 ---
-title: "Camera Manager - Control Apple Cameras on macOS | Free DevTools"
+title: "Camera Manager - Control Apple Cameras on macOS | Online Free DevTools by Hexmos"
 name: applecamerad
 path: /freedevtools/tldr/osx/applecamerad
 canonical: "https://hexmos.com/freedevtools/tldr/osx/applecamerad/"

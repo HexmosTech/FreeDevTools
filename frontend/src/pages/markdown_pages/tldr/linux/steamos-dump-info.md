@@ -1,5 +1,5 @@
 ---
-title: "SteamOS System Info - View System Details | Free DevTools"
+title: "SteamOS System Info - View System Details | Online Free DevTools by Hexmos"
 name: steamos-dump-info
 path: /freedevtools/tldr/linux/steamos-dump-info
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-dump-info/"

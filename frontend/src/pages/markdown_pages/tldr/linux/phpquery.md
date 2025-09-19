@@ -1,5 +1,5 @@
 ---
-title: "PHP Extension Manager - Control PHP Versions & Extensions | Free DevTools"
+title: "PHP Extension Manager - Control PHP Versions & Extensions | Online Free DevTools by Hexmos"
 name: phpquery
 path: /freedevtools/tldr/linux/phpquery
 canonical: "https://hexmos.com/freedevtools/tldr/linux/phpquery/"

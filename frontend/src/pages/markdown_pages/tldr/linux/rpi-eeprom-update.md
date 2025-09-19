@@ -1,5 +1,5 @@
 ---
-title: "Update Raspberry Pi EEPROM - Manage Firmware | Free DevTools"
+title: "Update Raspberry Pi EEPROM - Manage Firmware | Online Free DevTools by Hexmos"
 name: rpi-eeprom-update
 path: /freedevtools/tldr/linux/rpi-eeprom-update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpi-eeprom-update/"

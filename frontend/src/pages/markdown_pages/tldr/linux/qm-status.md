@@ -1,5 +1,5 @@
 ---
-title: "QM Status - Control Virtual Machines | Free DevTools"
+title: "QM Status - Control Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-status
 path: /freedevtools/tldr/linux/qm-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-status/"

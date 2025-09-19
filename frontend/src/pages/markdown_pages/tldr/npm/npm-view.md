@@ -1,5 +1,5 @@
 ---
-title: "NPM View - Inspect Package Information | Free DevTools"
+title: "NPM View - Inspect Package Information | Online Free DevTools by Hexmos"
 name: npm-view
 path: /freedevtools/tldr/npm/npm-view
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-view/"

@@ -1,5 +1,5 @@
 ---
-title: "Lscpu - Display CPU Information | Free DevTools"
+title: "Lscpu - Display CPU Information | Online Free DevTools by Hexmos"
 name: lscpu
 path: /freedevtools/tldr/linux/lscpu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lscpu/"

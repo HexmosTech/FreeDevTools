@@ -1,5 +1,5 @@
 ---
-title: "Write Message - Send Terminal Messages | Free DevTools"
+title: "Write Message - Send Terminal Messages | Online Free DevTools by Hexmos"
 name: write
 path: /freedevtools/tldr/linux/write
 canonical: "https://hexmos.com/freedevtools/tldr/linux/write/"

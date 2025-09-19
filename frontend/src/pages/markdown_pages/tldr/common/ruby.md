@@ -1,5 +1,5 @@
 ---
-title: "Ruby Interpreter - Execute Ruby Code | Free DevTools"
+title: "Ruby Interpreter - Execute Ruby Code | Online Free DevTools by Hexmos"
 name: ruby
 path: "/freedevtools/tldr/common/ruby"
 canonical: "https://hexmos.com/freedevtools/tldr/common/ruby/"

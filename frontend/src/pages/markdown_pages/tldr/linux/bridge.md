@@ -1,5 +1,5 @@
 ---
-title: "Bridge Network Control - Manage Network Bridges | Free DevTools"
+title: "Bridge Network Control - Manage Network Bridges | Online Free DevTools by Hexmos"
 name: bridge
 path: /freedevtools/tldr/linux/bridge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bridge/"

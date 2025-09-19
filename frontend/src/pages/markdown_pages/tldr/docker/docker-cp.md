@@ -1,5 +1,5 @@
 ---
-title: "Copy Files - Manage Docker Filesystems with Docker CP | Free DevTools"
+title: "Copy Files - Manage Docker Filesystems with Docker CP | Online Free DevTools by Hexmos"
 name: docker-cp
 path: /freedevtools/tldr/docker/docker-cp
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-cp/"

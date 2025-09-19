@@ -1,5 +1,5 @@
 ---
-title: "Dolt SQL - Run SQL Queries | Free DevTools"
+title: "Dolt SQL - Run SQL Queries | Online Free DevTools by Hexmos"
 name: dolt-sql
 path: /freedevtools/tldr/dolt/dolt-sql
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-sql/"

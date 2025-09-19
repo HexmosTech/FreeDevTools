@@ -1,5 +1,5 @@
 ---
-title: "Ionice - Control I/O Scheduling | Free DevTools"
+title: "Ionice - Control I/O Scheduling | Online Free DevTools by Hexmos"
 name: ionice
 path: /freedevtools/tldr/linux/ionice
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ionice/"

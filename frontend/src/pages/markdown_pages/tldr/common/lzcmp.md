@@ -1,5 +1,5 @@
 ---
-title: "LZCMP - Compare Files | Free DevTools"
+title: "LZCMP - Compare Files | Online Free DevTools by Hexmos"
 name: lzcmp
 path: /freedevtools/tldr/common/lzcmp
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzcmp/"

@@ -1,5 +1,5 @@
 ---
-title: "Print Text - Format Text Output with Zsh | Free DevTools"
+title: "Print Text - Format Text Output with Zsh | Online Free DevTools by Hexmos"
 name: print.zsh
 path: /freedevtools/tldr/common/print.zsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/print.zsh/"

@@ -1,5 +1,5 @@
 ---
-title: "Execute SQL on Text - Query CSV/TSV with TextQL | Free DevTools"
+title: "Execute SQL on Text - Query CSV/TSV with TextQL | Online Free DevTools by Hexmos"
 name: textql
 path: "/freedevtools/tldr/common/textql"
 canonical: "https://hexmos.com/freedevtools/tldr/common/textql/"

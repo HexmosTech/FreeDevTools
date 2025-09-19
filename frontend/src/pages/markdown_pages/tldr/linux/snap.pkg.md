@@ -1,5 +1,5 @@
 ---
-title: "Snap Package Manager - Manage Linux Software | Free DevTools"
+title: "Snap Package Manager - Manage Linux Software | Online Free DevTools by Hexmos"
 name: snap.pkg
 path: /freedevtools/tldr/linux/snap.pkg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snap.pkg/"

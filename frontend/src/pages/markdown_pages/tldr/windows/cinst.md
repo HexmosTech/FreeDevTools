@@ -1,5 +1,5 @@
 ---
-title: "Cinst Install - Package Installation | Free DevTools"
+title: "Cinst Install - Package Installation | Online Free DevTools by Hexmos"
 name: cinst
 path: /freedevtools/tldr/windows/cinst
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cinst/"

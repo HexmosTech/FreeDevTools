@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO - Manage Embedded Platforms | Free DevTools"
+title: "PlatformIO - Manage Embedded Platforms | Online Free DevTools by Hexmos"
 name: pio-platform
 path: /freedevtools/tldr/pio/pio-platform
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-platform/"

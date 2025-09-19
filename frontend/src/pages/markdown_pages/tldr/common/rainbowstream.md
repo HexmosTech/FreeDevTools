@@ -1,5 +1,5 @@
 ---
-title: "Control Twitter Stream - Rainbowstream | Free DevTools"
+title: "Control Twitter Stream - Rainbowstream | Online Free DevTools by Hexmos"
 name: rainbowstream
 path: /freedevtools/tldr/common/rainbowstream
 canonical: "https://hexmos.com/freedevtools/tldr/common/rainbowstream/"

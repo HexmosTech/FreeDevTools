@@ -1,5 +1,5 @@
 ---
-title: "Discover SMB Shares - Scan Network SMB with nmblookup | Free DevTools"
+title: "Discover SMB Shares - Scan Network SMB with nmblookup | Online Free DevTools by Hexmos"
 name: nmblookup
 path: /freedevtools/tldr/common/nmblookup
 canonical: "https://hexmos.com/freedevtools/tldr/common/nmblookup/"

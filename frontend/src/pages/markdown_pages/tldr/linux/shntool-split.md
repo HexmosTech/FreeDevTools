@@ -1,5 +1,5 @@
 ---
-title: "Split Audio - Split Files with shntool-split | Free DevTools"
+title: "Split Audio - Split Files with shntool-split | Online Free DevTools by Hexmos"
 name: shntool-split
 path: /freedevtools/tldr/linux/shntool-split
 canonical: "https://hexmos.com/freedevtools/tldr/linux/shntool-split/"

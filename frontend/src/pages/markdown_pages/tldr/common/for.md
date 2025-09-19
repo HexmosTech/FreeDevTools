@@ -1,5 +1,5 @@
 ---
-title: "For Loop - Execute Commands Repeatedly | Free DevTools"
+title: "For Loop - Execute Commands Repeatedly | Online Free DevTools by Hexmos"
 name: for
 path: /freedevtools/tldr/common/for
 canonical: "https://hexmos.com/freedevtools/tldr/common/for/"

@@ -1,5 +1,5 @@
 ---
-title: "Debugfs - Debug Linux Filesystems | Free DevTools"
+title: "Debugfs - Debug Linux Filesystems | Online Free DevTools by Hexmos"
 name: debugfs
 path: /freedevtools/tldr/linux/debugfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debugfs/"

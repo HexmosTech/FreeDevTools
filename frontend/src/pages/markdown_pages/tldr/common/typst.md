@@ -1,5 +1,5 @@
 ---
-title: "Compile Typst to PDF - Generate Docs | Free DevTools"
+title: "Compile Typst to PDF - Generate Docs | Online Free DevTools by Hexmos"
 name: typst
 path: /freedevtools/tldr/common/typst
 canonical: "https://hexmos.com/freedevtools/tldr/common/typst/"

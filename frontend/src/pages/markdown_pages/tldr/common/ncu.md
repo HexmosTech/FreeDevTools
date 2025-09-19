@@ -1,5 +1,5 @@
 ---
-title: "Check Package Updates - Update npm Packages with ncu | Free DevTools"
+title: "Check Package Updates - Update npm Packages with ncu | Online Free DevTools by Hexmos"
 name: ncu
 path: /freedevtools/tldr/common/ncu
 canonical: "https://hexmos.com/freedevtools/tldr/common/ncu/"

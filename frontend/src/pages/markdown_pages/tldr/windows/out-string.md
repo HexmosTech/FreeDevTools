@@ -1,5 +1,5 @@
 ---
-title: "Format String - Output String with PowerShell | Free DevTools"
+title: "Format String - Output String with PowerShell | Online Free DevTools by Hexmos"
 name: out-string
 path: /freedevtools/tldr/windows/out-string
 canonical: "https://hexmos.com/freedevtools/tldr/windows/out-string/"

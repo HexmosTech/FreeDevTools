@@ -1,5 +1,5 @@
 ---
-title: "Show Git Commits - View Unpushed Changes | Free DevTools"
+title: "Show Git Commits - View Unpushed Changes | Online Free DevTools by Hexmos"
 name: git-local-commits
 path: /freedevtools/tldr/git/git-local-commits
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-local-commits/"

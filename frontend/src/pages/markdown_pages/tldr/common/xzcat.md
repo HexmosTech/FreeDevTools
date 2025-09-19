@@ -1,5 +1,5 @@
 ---
-title: "Decompress XZ - Decompress Files with xzcat | Free DevTools"
+title: "Decompress XZ - Decompress Files with xzcat | Online Free DevTools by Hexmos"
 name: xzcat
 path: /freedevtools/tldr/common/xzcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzcat/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage RSS Feeds - Feedreader Client | Free DevTools"
+title: "Manage RSS Feeds - Feedreader Client | Online Free DevTools by Hexmos"
 name: feedreader
 path: /freedevtools/tldr/linux/feedreader
 canonical: "https://hexmos.com/freedevtools/tldr/linux/feedreader/"

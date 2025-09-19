@@ -1,5 +1,5 @@
 ---
-title: "File Coordination - Manage File Access | Free DevTools"
+title: "File Coordination - Manage File Access | Online Free DevTools by Hexmos"
 name: filecoordinationd
 path: /freedevtools/tldr/osx/filecoordinationd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/filecoordinationd/"

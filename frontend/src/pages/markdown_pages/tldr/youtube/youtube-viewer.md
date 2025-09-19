@@ -1,5 +1,5 @@
 ---
-title: "Youtube-viewer - Search and Play YouTube Videos | Free DevTools"
+title: "Youtube-viewer - Search and Play YouTube Videos | Online Free DevTools by Hexmos"
 name: youtube-viewer
 path: /freedevtools/tldr/youtube/youtube-viewer
 canonical: "https://hexmos.com/freedevtools/tldr/youtube/youtube-viewer/"

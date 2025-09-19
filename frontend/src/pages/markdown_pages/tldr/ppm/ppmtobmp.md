@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to BMP - Image Conversion | Free DevTools"
+title: "Convert PPM to BMP - Image Conversion | Online Free DevTools by Hexmos"
 name: ppmtobmp
 path: /freedevtools/tldr/ppm/ppmtobmp
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtobmp/"

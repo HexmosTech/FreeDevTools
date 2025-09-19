@@ -1,5 +1,5 @@
 ---
-title: "Netcat (nc) - Control Network Connections | Free DevTools"
+title: "Netcat (nc) - Control Network Connections | Online Free DevTools by Hexmos"
 name: nc
 path: /freedevtools/tldr/common/nc
 canonical: "https://hexmos.com/freedevtools/tldr/common/nc/"

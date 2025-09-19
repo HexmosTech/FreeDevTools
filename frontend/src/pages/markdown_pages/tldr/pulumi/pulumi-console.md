@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Console - Open Pulumi Stacks | Free DevTools"
+title: "Pulumi Console - Open Pulumi Stacks | Online Free DevTools by Hexmos"
 name: pulumi-console
 path: /freedevtools/tldr/pulumi/pulumi-console
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-console/"

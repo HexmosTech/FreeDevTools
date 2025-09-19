@@ -1,5 +1,5 @@
 ---
-title: "View Files - Read Files Using View Command | Free DevTools"
+title: "View Files - Read Files Using View Command | Online Free DevTools by Hexmos"
 name: view
 path: /freedevtools/tldr/common/view
 canonical: "https://hexmos.com/freedevtools/tldr/common/view/"

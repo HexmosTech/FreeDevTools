@@ -1,5 +1,5 @@
 ---
-title: "Calculator - Perform Arbitrary Precision Calculations | Free DevTools"
+title: "Calculator - Perform Arbitrary Precision Calculations | Online Free DevTools by Hexmos"
 name: calc
 path: /freedevtools/tldr/common/calc
 canonical: "https://hexmos.com/freedevtools/tldr/common/calc/"

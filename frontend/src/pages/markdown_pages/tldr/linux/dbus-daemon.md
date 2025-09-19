@@ -1,5 +1,5 @@
 ---
-title: "D-Bus Daemon - Control Message Bus | Free DevTools"
+title: "D-Bus Daemon - Control Message Bus | Online Free DevTools by Hexmos"
 name: dbus-daemon
 path: /freedevtools/tldr/linux/dbus-daemon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dbus-daemon/"

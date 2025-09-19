@@ -1,5 +1,5 @@
 ---
-title: "Configure Authconfig - System Authentication | Free DevTools"
+title: "Configure Authconfig - System Authentication | Online Free DevTools by Hexmos"
 name: authconfig
 path: "/freedevtools/tldr/linux/authconfig"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/authconfig/"

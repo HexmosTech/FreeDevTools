@@ -1,5 +1,5 @@
 ---
-title: "GAWK - Process Files with GNU AWK | Free DevTools"
+title: "GAWK - Process Files with GNU AWK | Online Free DevTools by Hexmos"
 name: gawk
 path: /freedevtools/tldr/common/gawk
 canonical: "https://hexmos.com/freedevtools/tldr/common/gawk/"

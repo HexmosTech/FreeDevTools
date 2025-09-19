@@ -1,5 +1,5 @@
 ---
-title: "Flutter Pub - Manage Dart Packages | Free DevTools"
+title: "Flutter Pub - Manage Dart Packages | Online Free DevTools by Hexmos"
 name: flutter-pub
 path: /freedevtools/tldr/common/flutter-pub
 canonical: "https://hexmos.com/freedevtools/tldr/common/flutter-pub/"

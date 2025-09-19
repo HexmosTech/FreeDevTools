@@ -1,5 +1,5 @@
 ---
-title: "Convert GIF to PNM - Pixel-Perfect Conversion | Free DevTools"
+title: "Convert GIF to PNM - Pixel-Perfect Conversion | Online Free DevTools by Hexmos"
 name: giftopnm
 path: /freedevtools/tldr/common/giftopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/giftopnm/"

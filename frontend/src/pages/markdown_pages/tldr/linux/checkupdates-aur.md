@@ -1,5 +1,5 @@
 ---
-title: "Check AUR Updates - List Pending AUR Updates | Free DevTools"
+title: "Check AUR Updates - List Pending AUR Updates | Online Free DevTools by Hexmos"
 name: checkupdates-aur
 path: /freedevtools/tldr/linux/checkupdates-aur
 canonical: "https://hexmos.com/freedevtools/tldr/linux/checkupdates-aur/"

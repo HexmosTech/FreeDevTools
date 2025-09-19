@@ -1,5 +1,5 @@
 ---
-title: "Create User - Manage Linux Users | Free DevTools"
+title: "Create User - Manage Linux Users | Online Free DevTools by Hexmos"
 name: useradd
 path: /freedevtools/tldr/linux/useradd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/useradd/"

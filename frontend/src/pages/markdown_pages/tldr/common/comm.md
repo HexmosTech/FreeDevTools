@@ -1,5 +1,5 @@
 ---
-title: "Comm - Compare and Filter Lines | Free DevTools"
+title: "Comm - Compare and Filter Lines | Online Free DevTools by Hexmos"
 name: comm
 path: /freedevtools/tldr/common/comm
 canonical: "https://hexmos.com/freedevtools/tldr/common/comm/"

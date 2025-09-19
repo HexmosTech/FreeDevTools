@@ -1,5 +1,5 @@
 ---
-title: "Create Exoscale Instance - Manage Cloud VMs | Free DevTools"
+title: "Create Exoscale Instance - Manage Cloud VMs | Online Free DevTools by Hexmos"
 name: exo-compute-instance
 path: /freedevtools/tldr/exo/exo-compute-instance
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-instance/"

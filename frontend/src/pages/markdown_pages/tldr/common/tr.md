@@ -1,5 +1,5 @@
 ---
-title: "Translate Characters - Replace Text | Free DevTools"
+title: "Translate Characters - Replace Text | Online Free DevTools by Hexmos"
 name: tr
 path: /freedevtools/tldr/common/tr
 canonical: "https://hexmos.com/freedevtools/tldr/common/tr/"

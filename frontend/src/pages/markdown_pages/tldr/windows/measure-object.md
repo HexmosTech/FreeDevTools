@@ -1,5 +1,5 @@
 ---
-title: "Measure Object - Calculate File Metrics | Free DevTools"
+title: "Measure Object - Calculate File Metrics | Online Free DevTools by Hexmos"
 name: measure-object
 path: /freedevtools/tldr/windows/measure-object
 canonical: "https://hexmos.com/freedevtools/tldr/windows/measure-object/"

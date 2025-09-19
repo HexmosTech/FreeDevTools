@@ -1,5 +1,5 @@
 ---
-title: "Control PlatformIO Devices - Monitor and Manage | Free DevTools"
+title: "Control PlatformIO Devices - Monitor and Manage | Online Free DevTools by Hexmos"
 name: pio-device
 path: /freedevtools/tldr/pio/pio-device
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-device/"

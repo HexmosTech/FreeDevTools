@@ -1,5 +1,5 @@
 ---
-title: "Arch Command - Display System Architecture | Free DevTools"
+title: "Arch Command - Display System Architecture | Online Free DevTools by Hexmos"
 name: arch
 path: /freedevtools/tldr/common/arch
 canonical: "https://hexmos.com/freedevtools/tldr/common/arch/"

@@ -1,5 +1,5 @@
 ---
-title: "Read NTFS Files - Explore NTFS Volumes | Free DevTools"
+title: "Read NTFS Files - Explore NTFS Volumes | Online Free DevTools by Hexmos"
 name: ntfs-read.py
 path: /freedevtools/tldr/common/ntfs-read.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/ntfs-read.py/"

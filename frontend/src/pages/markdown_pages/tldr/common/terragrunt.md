@@ -1,5 +1,5 @@
 ---
-title: "Control Terraform Infrastructure with Terragrunt | Free DevTools"
+title: "Control Terraform Infrastructure with Terragrunt | Online Free DevTools by Hexmos"
 name: terragrunt
 path: /freedevtools/tldr/common/terragrunt
 canonical: "https://hexmos.com/freedevtools/tldr/common/terragrunt/"

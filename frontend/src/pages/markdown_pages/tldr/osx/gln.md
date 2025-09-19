@@ -1,5 +1,5 @@
 ---
-title: "Link Command - Create Symbolic Links | Free DevTools"
+title: "Link Command - Create Symbolic Links | Online Free DevTools by Hexmos"
 name: gln
 path: /freedevtools/tldr/osx/gln
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gln/"

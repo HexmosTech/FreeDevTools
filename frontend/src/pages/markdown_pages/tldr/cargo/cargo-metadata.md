@@ -1,5 +1,5 @@
 ---
-title: "Generate Cargo Metadata - Inspect Rust Packages | Free DevTools"
+title: "Generate Cargo Metadata - Inspect Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-metadata
 path: /freedevtools/tldr/cargo/cargo-metadata
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-metadata/"

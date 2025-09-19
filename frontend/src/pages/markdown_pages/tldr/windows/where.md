@@ -1,5 +1,5 @@
 ---
-title: "Locate Files - Find Files with Where Command | Free DevTools"
+title: "Locate Files - Find Files with Where Command | Online Free DevTools by Hexmos"
 name: where
 path: /freedevtools/tldr/windows/where
 canonical: "https://hexmos.com/freedevtools/tldr/windows/where/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage AWS WorkMail - Control Organizations and Users | Free DevTools"
+title: "Manage AWS WorkMail - Control Organizations and Users | Online Free DevTools by Hexmos"
 name: aws-workmail
 path: /freedevtools/tldr/aws/aws-workmail
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-workmail/"

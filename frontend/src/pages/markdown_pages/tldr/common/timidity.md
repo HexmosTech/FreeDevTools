@@ -1,5 +1,5 @@
 ---
-title: "Play MIDI Files - Convert MIDI Audio | Free DevTools"
+title: "Play MIDI Files - Convert MIDI Audio | Online Free DevTools by Hexmos"
 name: timidity
 path: /freedevtools/tldr/common/timidity
 canonical: "https://hexmos.com/freedevtools/tldr/common/timidity/"

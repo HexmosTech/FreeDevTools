@@ -1,5 +1,5 @@
 ---
-title: "Redirect Files with Boxxy - Manage XDG Paths | Free DevTools"
+title: "Redirect Files with Boxxy - Manage XDG Paths | Online Free DevTools by Hexmos"
 name: boxxy
 path: /freedevtools/tldr/common/boxxy
 canonical: "https://hexmos.com/freedevtools/tldr/common/boxxy/"

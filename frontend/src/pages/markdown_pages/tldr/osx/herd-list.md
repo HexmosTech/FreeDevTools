@@ -1,5 +1,5 @@
 ---
-title: "Herd List - List Herd Commands | Free DevTools"
+title: "Herd List - List Herd Commands | Online Free DevTools by Hexmos"
 name: herd-list
 path: /freedevtools/tldr/osx/herd-list
 canonical: "https://hexmos.com/freedevtools/tldr/osx/herd-list/"

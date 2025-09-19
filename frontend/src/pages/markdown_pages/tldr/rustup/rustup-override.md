@@ -1,5 +1,5 @@
 ---
-title: "Rustup Override - Manage Toolchains | Free DevTools"
+title: "Rustup Override - Manage Toolchains | Online Free DevTools by Hexmos"
 name: rustup-override
 path: /freedevtools/tldr/rustup/rustup-override
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-override/"

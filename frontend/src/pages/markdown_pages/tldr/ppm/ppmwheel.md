@@ -1,5 +1,5 @@
 ---
-title: "Generate PPM Color Wheel - Image Creation | Free DevTools"
+title: "Generate PPM Color Wheel - Image Creation | Online Free DevTools by Hexmos"
 name: ppmwheel
 path: /freedevtools/tldr/ppm/ppmwheel
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmwheel/"

@@ -1,5 +1,5 @@
 ---
-title: "Optimize SVG - Clean SVG Files | Free DevTools"
+title: "Optimize SVG - Clean SVG Files | Online Free DevTools by Hexmos"
 name: svgcleaner
 path: /freedevtools/tldr/common/svgcleaner
 canonical: "https://hexmos.com/freedevtools/tldr/common/svgcleaner/"

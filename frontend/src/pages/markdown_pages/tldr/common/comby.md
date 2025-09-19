@@ -1,5 +1,5 @@
 ---
-title: "Rewrite Code - Structure Search and Replace with Comby | Free DevTools"
+title: "Rewrite Code - Structure Search and Replace with Comby | Online Free DevTools by Hexmos"
 name: comby
 path: /freedevtools/tldr/common/comby
 canonical: "https://hexmos.com/freedevtools/tldr/common/comby/"

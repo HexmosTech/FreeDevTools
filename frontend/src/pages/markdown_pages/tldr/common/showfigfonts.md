@@ -1,5 +1,5 @@
 ---
-title: "Display Figlet Fonts - Show Available Fonts | Free DevTools"
+title: "Display Figlet Fonts - Show Available Fonts | Online Free DevTools by Hexmos"
 name: showfigfonts
 path: /freedevtools/tldr/common/showfigfonts
 canonical: "https://hexmos.com/freedevtools/tldr/common/showfigfonts/"

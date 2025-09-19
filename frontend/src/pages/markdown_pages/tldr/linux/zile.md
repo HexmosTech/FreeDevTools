@@ -1,5 +1,5 @@
 ---
-title: "Zile Text Editor - Edit Text Files Efficiently | Free DevTools"
+title: "Zile Text Editor - Edit Text Files Efficiently | Online Free DevTools by Hexmos"
 name: zile
 path: /freedevtools/tldr/linux/zile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zile/"

@@ -1,5 +1,5 @@
 ---
-title: "Control CUPS Printers - Accept Print Jobs | Free DevTools"
+title: "Control CUPS Printers - Accept Print Jobs | Online Free DevTools by Hexmos"
 name: cupsaccept
 path: /freedevtools/tldr/common/cupsaccept
 canonical: "https://hexmos.com/freedevtools/tldr/common/cupsaccept/"

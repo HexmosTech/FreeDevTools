@@ -1,5 +1,5 @@
 ---
-title: "Control Loop Devices with losetup | Free DevTools"
+title: "Control Loop Devices with losetup | Online Free DevTools by Hexmos"
 name: losetup
 path: /freedevtools/tldr/linux/losetup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/losetup/"

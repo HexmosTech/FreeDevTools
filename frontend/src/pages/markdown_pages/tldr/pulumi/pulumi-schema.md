@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Schema Check - Validate Pulumi Package Schemas | Free DevTools"
+title: "Pulumi Schema Check - Validate Pulumi Package Schemas | Online Free DevTools by Hexmos"
 name: pulumi-schema
 path: /freedevtools/tldr/pulumi/pulumi-schema
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-schema/"

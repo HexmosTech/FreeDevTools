@@ -1,5 +1,5 @@
 ---
-title: "Control gchown - Change File Owner on macOS | Free DevTools"
+title: "Control gchown - Change File Owner on macOS | Online Free DevTools by Hexmos"
 name: gchown
 path: /freedevtools/tldr/osx/gchown
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gchown/"

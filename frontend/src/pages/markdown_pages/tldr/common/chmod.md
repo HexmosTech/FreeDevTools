@@ -1,5 +1,5 @@
 ---
-title: "Chmod - Control File Permissions | Free DevTools"
+title: "Chmod - Control File Permissions | Online Free DevTools by Hexmos"
 name: chmod
 path: /freedevtools/tldr/common/chmod
 canonical: "https://hexmos.com/freedevtools/tldr/common/chmod/"

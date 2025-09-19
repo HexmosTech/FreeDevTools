@@ -1,5 +1,5 @@
 ---
-title: "Takeout - Manage Docker Dependencies | Free DevTools"
+title: "Takeout - Manage Docker Dependencies | Online Free DevTools by Hexmos"
 name: takeout
 path: /freedevtools/tldr/common/takeout
 canonical: "https://hexmos.com/freedevtools/tldr/common/takeout/"

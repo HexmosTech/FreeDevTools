@@ -1,5 +1,5 @@
 ---
-title: "Adscript Compiler - Generate Executables | Free DevTools"
+title: "Adscript Compiler - Generate Executables | Online Free DevTools by Hexmos"
 name: adscript
 path: /freedevtools/tldr/common/adscript
 canonical: "https://hexmos.com/freedevtools/tldr/common/adscript/"

@@ -1,5 +1,5 @@
 ---
-title: "Just - Execute Commands with Precision | Free DevTools"
+title: "Just - Execute Commands with Precision | Online Free DevTools by Hexmos"
 name: just
 path: /freedevtools/tldr/common/just
 canonical: "https://hexmos.com/freedevtools/tldr/common/just/"

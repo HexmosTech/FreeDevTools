@@ -1,5 +1,5 @@
 ---
-title: "Crawl URLs - Scan Endpoints with Cariddi | Free DevTools"
+title: "Crawl URLs - Scan Endpoints with Cariddi | Online Free DevTools by Hexmos"
 name: cariddi
 path: /freedevtools/tldr/common/cariddi
 canonical: "https://hexmos.com/freedevtools/tldr/common/cariddi/"

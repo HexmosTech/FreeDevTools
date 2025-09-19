@@ -1,5 +1,5 @@
 ---
-title: "Pipe Commands - Control Command Execution | Free DevTools"
+title: "Pipe Commands - Control Command Execution | Online Free DevTools by Hexmos"
 name: mispipe
 path: /freedevtools/tldr/common/mispipe
 canonical: "https://hexmos.com/freedevtools/tldr/common/mispipe/"

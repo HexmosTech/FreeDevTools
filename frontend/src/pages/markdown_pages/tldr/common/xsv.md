@@ -1,5 +1,5 @@
 ---
-title: "Control CSV Files - xsv Toolkit | Free DevTools"
+title: "Control CSV Files - xsv Toolkit | Online Free DevTools by Hexmos"
 name: xsv
 path: /freedevtools/tldr/common/xsv
 canonical: "https://hexmos.com/freedevtools/tldr/common/xsv/"

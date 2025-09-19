@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to SIR - Format Images | Free DevTools"
+title: "Convert PNM to SIR - Format Images | Online Free DevTools by Hexmos"
 name: pnmtosir
 path: "/freedevtools/tldr/pnm/pnmtosir"
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtosir/"

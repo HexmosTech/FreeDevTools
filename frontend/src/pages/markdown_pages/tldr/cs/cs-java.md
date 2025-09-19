@@ -1,5 +1,5 @@
 ---
-title: "Control Java JVM - Install and Run JVMs | Free DevTools"
+title: "Control Java JVM - Install and Run JVMs | Online Free DevTools by Hexmos"
 name: cs-java
 path: /freedevtools/tldr/cs/cs-java
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-java/"

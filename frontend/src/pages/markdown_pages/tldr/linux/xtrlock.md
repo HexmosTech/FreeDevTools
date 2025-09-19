@@ -1,5 +1,5 @@
 ---
-title: "Xtrlock - Lock X Display | Free DevTools"
+title: "Xtrlock - Lock X Display | Online Free DevTools by Hexmos"
 name: xtrlock
 path: /freedevtools/tldr/linux/xtrlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xtrlock/"

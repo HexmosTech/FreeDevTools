@@ -1,5 +1,5 @@
 ---
-title: "Generate QR Codes - Command Line QR Generator | Free DevTools"
+title: "Generate QR Codes - Command Line QR Generator | Online Free DevTools by Hexmos"
 name: qr
 path: /freedevtools/tldr/common/qr
 canonical: "https://hexmos.com/freedevtools/tldr/common/qr/"

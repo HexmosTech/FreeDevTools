@@ -1,5 +1,5 @@
 ---
-title: "Resize Terminal - Control Window Size | Free DevTools"
+title: "Resize Terminal - Control Window Size | Online Free DevTools by Hexmos"
 name: resize
 path: /freedevtools/tldr/linux/resize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/resize/"

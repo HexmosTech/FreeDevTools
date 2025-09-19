@@ -1,5 +1,5 @@
 ---
-title: "Todoist - Control Tasks | Free DevTools"
+title: "Todoist - Control Tasks | Online Free DevTools by Hexmos"
 name: todoist
 path: /freedevtools/tldr/common/todoist
 canonical: "https://hexmos.com/freedevtools/tldr/common/todoist/"

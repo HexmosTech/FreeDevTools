@@ -1,5 +1,5 @@
 ---
-title: "Control Remote Copy - Transfer Files with GRCP | Free DevTools"
+title: "Control Remote Copy - Transfer Files with GRCP | Online Free DevTools by Hexmos"
 name: grcp
 path: /freedevtools/tldr/osx/grcp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grcp/"

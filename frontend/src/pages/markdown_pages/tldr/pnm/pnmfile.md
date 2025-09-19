@@ -1,5 +1,5 @@
 ---
-title: "PNM File Format - Validate PNM Images | Free DevTools"
+title: "PNM File Format - Validate PNM Images | Online Free DevTools by Hexmos"
 name: pnmfile
 path: /freedevtools/tldr/pnm/pnmfile
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmfile/"

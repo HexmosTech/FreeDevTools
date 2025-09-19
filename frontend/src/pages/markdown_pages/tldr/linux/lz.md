@@ -1,5 +1,5 @@
 ---
-title: "List Tar Archives - Inspect Compressed Files | Free DevTools"
+title: "List Tar Archives - Inspect Compressed Files | Online Free DevTools by Hexmos"
 name: lz
 path: /freedevtools/tldr/linux/lz
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lz/"

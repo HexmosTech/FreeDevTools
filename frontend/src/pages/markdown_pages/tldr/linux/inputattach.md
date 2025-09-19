@@ -1,5 +1,5 @@
 ---
-title: "Inputattach - Attach Devices to Input System | Free DevTools"
+title: "Inputattach - Attach Devices to Input System | Online Free DevTools by Hexmos"
 name: inputattach
 path: /freedevtools/tldr/linux/inputattach
 canonical: "https://hexmos.com/freedevtools/tldr/linux/inputattach/"

@@ -1,5 +1,5 @@
 ---
-title: "Gzip - Compress and Decompress Files | Free DevTools"
+title: "Gzip - Compress and Decompress Files | Online Free DevTools by Hexmos"
 name: gzip
 path: /freedevtools/tldr/common/gzip
 canonical: "https://hexmos.com/freedevtools/tldr/common/gzip/"

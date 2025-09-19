@@ -1,5 +1,5 @@
 ---
-title: "Free Ramdisk Memory - Control Legacy Ramdisk | Free DevTools"
+title: "Free Ramdisk Memory - Control Legacy Ramdisk | Online Free DevTools by Hexmos"
 name: freeramdisk
 path: /freedevtools/tldr/common/freeramdisk
 canonical: "https://hexmos.com/freedevtools/tldr/common/freeramdisk/"

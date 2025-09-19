@@ -1,5 +1,5 @@
 ---
-title: "Add Rust Dependencies - Manage Crates with Cargo Add | Free DevTools"
+title: "Add Rust Dependencies - Manage Crates with Cargo Add | Online Free DevTools by Hexmos"
 name: cargo-add
 path: /freedevtools/tldr/cargo/cargo-add
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-add/"

@@ -1,5 +1,5 @@
 ---
-title: "Toolbox List - Manage Containers & Images | Free DevTools"
+title: "Toolbox List - Manage Containers & Images | Online Free DevTools by Hexmos"
 name: toolbox-list
 path: /freedevtools/tldr/linux/toolbox-list
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-list/"

@@ -1,5 +1,5 @@
 ---
-title: "Uniq Command - Filter Unique Lines | Free DevTools"
+title: "Uniq Command - Filter Unique Lines | Online Free DevTools by Hexmos"
 name: uniq
 path: /freedevtools/tldr/common/uniq
 canonical: "https://hexmos.com/freedevtools/tldr/common/uniq/"

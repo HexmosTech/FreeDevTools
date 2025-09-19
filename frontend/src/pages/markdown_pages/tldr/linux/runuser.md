@@ -1,5 +1,5 @@
 ---
-title: "Runuser - Execute Commands as Different User | Free DevTools"
+title: "Runuser - Execute Commands as Different User | Online Free DevTools by Hexmos"
 name: runuser
 path: /freedevtools/tldr/linux/runuser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/runuser/"

@@ -1,5 +1,5 @@
 ---
-title: "Docker - Manage Containers & Images | Free DevTools"
+title: "Docker - Manage Containers & Images | Online Free DevTools by Hexmos"
 name: docker
 path: /freedevtools/tldr/docker/docker
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker/"

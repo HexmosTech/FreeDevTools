@@ -1,5 +1,5 @@
 ---
-title: "Poweroff System - Halt Linux Instantly | Free DevTools"
+title: "Poweroff System - Halt Linux Instantly | Online Free DevTools by Hexmos"
 name: poweroff
 path: /freedevtools/tldr/linux/poweroff
 canonical: "https://hexmos.com/freedevtools/tldr/linux/poweroff/"

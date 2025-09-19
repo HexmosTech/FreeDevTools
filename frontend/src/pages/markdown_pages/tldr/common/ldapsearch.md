@@ -1,5 +1,5 @@
 ---
-title: "LDAP Search - Query Directories | Free DevTools"
+title: "LDAP Search - Query Directories | Online Free DevTools by Hexmos"
 name: ldapsearch
 path: /freedevtools/tldr/common/ldapsearch
 canonical: "https://hexmos.com/freedevtools/tldr/common/ldapsearch/"

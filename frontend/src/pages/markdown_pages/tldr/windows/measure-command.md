@@ -1,5 +1,5 @@
 ---
-title: "Measure Command - Analyze Script Performance | Free DevTools"
+title: "Measure Command - Analyze Script Performance | Online Free DevTools by Hexmos"
 name: measure-command
 path: /freedevtools/tldr/windows/measure-command
 canonical: "https://hexmos.com/freedevtools/tldr/windows/measure-command/"

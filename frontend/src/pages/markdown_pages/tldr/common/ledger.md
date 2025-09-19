@@ -1,5 +1,5 @@
 ---
-title: "Ledger Accounting - Track Finances | Free DevTools"
+title: "Ledger Accounting - Track Finances | Online Free DevTools by Hexmos"
 name: ledger
 path: /freedevtools/tldr/common/ledger
 canonical: "https://hexmos.com/freedevtools/tldr/common/ledger/"

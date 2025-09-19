@@ -1,5 +1,5 @@
 ---
-title: "Generate Permuted Index - ptx Command | Free DevTools"
+title: "Generate Permuted Index - ptx Command | Online Free DevTools by Hexmos"
 name: ptx
 path: /freedevtools/tldr/linux/ptx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ptx/"

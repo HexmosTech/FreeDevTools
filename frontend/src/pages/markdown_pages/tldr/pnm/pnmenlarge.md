@@ -1,5 +1,5 @@
 ---
-title: "Enlarge Pnm Image - Resize Images | Free DevTools"
+title: "Enlarge Pnm Image - Resize Images | Online Free DevTools by Hexmos"
 name: pnmenlarge
 path: /freedevtools/tldr/pnm/pnmenlarge
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmenlarge/"

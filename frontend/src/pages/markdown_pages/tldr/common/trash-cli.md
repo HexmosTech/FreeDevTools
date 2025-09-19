@@ -1,5 +1,5 @@
 ---
-title: "Trash CLI - Manage Deleted Files | Free DevTools"
+title: "Trash CLI - Manage Deleted Files | Online Free DevTools by Hexmos"
 name: trash-cli
 path: /freedevtools/tldr/common/trash-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/trash-cli/"

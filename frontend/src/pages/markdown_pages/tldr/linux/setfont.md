@@ -1,5 +1,5 @@
 ---
-title: "Setfont - Control Terminal Font | Free DevTools"
+title: "Setfont - Control Terminal Font | Online Free DevTools by Hexmos"
 name: setfont
 path: /freedevtools/tldr/linux/setfont
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setfont/"

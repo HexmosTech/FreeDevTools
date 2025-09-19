@@ -1,5 +1,5 @@
 ---
-title: "Ember CLI - Create Ember.js Apps | Free DevTools"
+title: "Ember CLI - Create Ember.js Apps | Online Free DevTools by Hexmos"
 name: ember
 path: /freedevtools/tldr/common/ember
 canonical: "https://hexmos.com/freedevtools/tldr/common/ember/"

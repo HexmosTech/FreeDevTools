@@ -1,5 +1,5 @@
 ---
-title: "Manage Linux Passwords - Control User Policies with lchage | Free DevTools"
+title: "Manage Linux Passwords - Control User Policies with lchage | Online Free DevTools by Hexmos"
 name: lchage
 path: /freedevtools/tldr/linux/lchage
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lchage/"

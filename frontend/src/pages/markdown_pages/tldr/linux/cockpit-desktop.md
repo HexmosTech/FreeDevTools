@@ -1,5 +1,5 @@
 ---
-title: "Control Cockpit - Secure Linux Sessions | Free DevTools"
+title: "Control Cockpit - Secure Linux Sessions | Online Free DevTools by Hexmos"
 name: cockpit-desktop
 path: /freedevtools/tldr/linux/cockpit-desktop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-desktop/"

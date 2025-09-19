@@ -1,5 +1,5 @@
 ---
-title: "Open PHP Files - Edit Code with PHPStorm | Free DevTools"
+title: "Open PHP Files - Edit Code with PHPStorm | Online Free DevTools by Hexmos"
 name: phpstorm
 path: /freedevtools/tldr/php/phpstorm
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpstorm/"

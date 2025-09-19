@@ -1,5 +1,5 @@
 ---
-title: "Generate Cargo Lockfile - Package Dependency Management | Free DevTools"
+title: "Generate Cargo Lockfile - Package Dependency Management | Online Free DevTools by Hexmos"
 name: cargo-generate-lockfile
 path: /freedevtools/tldr/cargo/cargo-generate-lockfile
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-generate-lockfile/"

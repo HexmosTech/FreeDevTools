@@ -1,5 +1,5 @@
 ---
-title: "Control Images - View with nsxiv | Free DevTools"
+title: "Control Images - View with nsxiv | Online Free DevTools by Hexmos"
 name: nsxiv
 path: /freedevtools/tldr/linux/nsxiv
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nsxiv/"

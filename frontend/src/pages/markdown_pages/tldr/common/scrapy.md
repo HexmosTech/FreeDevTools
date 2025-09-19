@@ -1,5 +1,5 @@
 ---
-title: "Crawl Websites - Manage Scrapy Projects | Free DevTools"
+title: "Crawl Websites - Manage Scrapy Projects | Online Free DevTools by Hexmos"
 name: scrapy
 path: /freedevtools/tldr/common/scrapy
 canonical: "https://hexmos.com/freedevtools/tldr/common/scrapy/"

@@ -1,5 +1,5 @@
 ---
-title: "Determine MIME Type - File Analyzer | Free DevTools"
+title: "Determine MIME Type - File Analyzer | Online Free DevTools by Hexmos"
 name: mimetype
 path: /freedevtools/tldr/linux/mimetype
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mimetype/"

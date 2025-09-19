@@ -1,5 +1,5 @@
 ---
-title: "DHCP Client - Control IP Addresses | Free DevTools"
+title: "DHCP Client - Control IP Addresses | Online Free DevTools by Hexmos"
 name: dhclient
 path: /freedevtools/tldr/common/dhclient
 canonical: "https://hexmos.com/freedevtools/tldr/common/dhclient/"

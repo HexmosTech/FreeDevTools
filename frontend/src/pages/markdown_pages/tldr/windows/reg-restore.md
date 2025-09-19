@@ -1,5 +1,5 @@
 ---
-title: "Reg Restore - Restore Registry from .hiv File | Free DevTools"
+title: "Reg Restore - Restore Registry from .hiv File | Online Free DevTools by Hexmos"
 name: reg-restore
 path: /freedevtools/tldr/windows/reg-restore
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-restore/"

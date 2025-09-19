@@ -1,5 +1,5 @@
 ---
-title: "Disk Resize - Manage Proxmox Virtual Disks | Free DevTools"
+title: "Disk Resize - Manage Proxmox Virtual Disks | Online Free DevTools by Hexmos"
 name: qm-disk-resize
 path: /freedevtools/tldr/linux/qm-disk-resize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk-resize/"

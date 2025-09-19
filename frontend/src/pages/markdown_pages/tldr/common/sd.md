@@ -1,5 +1,5 @@
 ---
-title: "Replace Text - Find and Replace with sd | Free DevTools"
+title: "Replace Text - Find and Replace with sd | Online Free DevTools by Hexmos"
 name: sd
 path: /freedevtools/tldr/common/sd
 canonical: "https://hexmos.com/freedevtools/tldr/common/sd/"

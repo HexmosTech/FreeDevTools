@@ -1,5 +1,5 @@
 ---
-title: "Convert ICON to PBM - Format Image Files | Free DevTools"
+title: "Convert ICON to PBM - Format Image Files | Online Free DevTools by Hexmos"
 name: icontopbm
 path: /freedevtools/tldr/common/icontopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/icontopbm/"

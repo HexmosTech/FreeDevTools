@@ -1,5 +1,5 @@
 ---
-title: "iostat Command - Monitor Disk & CPU | Free DevTools"
+title: "iostat Command - Monitor Disk & CPU | Online Free DevTools by Hexmos"
 name: iostat
 path: /freedevtools/tldr/linux/iostat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iostat/"

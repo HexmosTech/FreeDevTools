@@ -1,5 +1,5 @@
 ---
-title: "Generate Hledger Balancesheet - Financial Summary | Free DevTools"
+title: "Generate Hledger Balancesheet - Financial Summary | Online Free DevTools by Hexmos"
 name: hledger-balancesheet
 path: /freedevtools/tldr/hledger/hledger-balancesheet
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-balancesheet/"

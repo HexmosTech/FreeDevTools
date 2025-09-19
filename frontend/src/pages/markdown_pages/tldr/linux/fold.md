@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Fold Long Lines | Free DevTools"
+title: "Format Text - Fold Long Lines | Online Free DevTools by Hexmos"
 name: fold
 path: /freedevtools/tldr/linux/fold
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fold/"

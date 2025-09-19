@@ -1,5 +1,5 @@
 ---
-title: "Investigate Sockets with ss - Network Monitoring | Free DevTools"
+title: "Investigate Sockets with ss - Network Monitoring | Online Free DevTools by Hexmos"
 name: ss
 path: /freedevtools/tldr/linux/ss
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ss/"

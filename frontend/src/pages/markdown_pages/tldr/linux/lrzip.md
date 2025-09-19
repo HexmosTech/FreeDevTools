@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - lrzip Large File Compression | Free DevTools"
+title: "Compress Files - lrzip Large File Compression | Online Free DevTools by Hexmos"
 name: lrzip
 path: /freedevtools/tldr/linux/lrzip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lrzip/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Gists - Share Code Snippets Online | Free DevTools"
+title: "Create Gists - Share Code Snippets Online | Online Free DevTools by Hexmos"
 name: gist
 path: /freedevtools/tldr/common/gist
 canonical: "https://hexmos.com/freedevtools/tldr/common/gist/"

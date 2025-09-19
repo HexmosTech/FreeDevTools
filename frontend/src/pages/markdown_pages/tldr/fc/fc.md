@@ -1,5 +1,5 @@
 ---
-title: "FC - Edit and Run Commands | Free DevTools"
+title: "FC - Edit and Run Commands | Online Free DevTools by Hexmos"
 name: fc
 path: /freedevtools/tldr/fc/fc
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fc/"

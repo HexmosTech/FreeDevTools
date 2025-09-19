@@ -1,5 +1,5 @@
 ---
-title: "Control Vault Secrets - Interact with Vault Using Safe | Free DevTools"
+title: "Control Vault Secrets - Interact with Vault Using Safe | Online Free DevTools by Hexmos"
 name: safe
 path: /freedevtools/tldr/common/safe
 canonical: "https://hexmos.com/freedevtools/tldr/common/safe/"

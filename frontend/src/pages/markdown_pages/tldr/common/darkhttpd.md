@@ -1,5 +1,5 @@
 ---
-title: "Start darkhttpd Server - Serve Files Simply | Free DevTools"
+title: "Start darkhttpd Server - Serve Files Simply | Online Free DevTools by Hexmos"
 name: darkhttpd
 path: /freedevtools/tldr/common/darkhttpd
 canonical: "https://hexmos.com/freedevtools/tldr/common/darkhttpd/"

@@ -1,5 +1,5 @@
 ---
-title: "Audio Player - Play Sound Files with afplay | Free DevTools"
+title: "Audio Player - Play Sound Files with afplay | Online Free DevTools by Hexmos"
 name: afplay
 path: /freedevtools/tldr/osx/afplay
 canonical: "https://hexmos.com/freedevtools/tldr/osx/afplay/"

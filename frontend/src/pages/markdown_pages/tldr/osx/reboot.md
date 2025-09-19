@@ -1,5 +1,5 @@
 ---
-title: "Reboot System - Control System Restarts | Free DevTools"
+title: "Reboot System - Control System Restarts | Online Free DevTools by Hexmos"
 name: reboot
 path: /freedevtools/tldr/osx/reboot
 canonical: "https://hexmos.com/freedevtools/tldr/osx/reboot/"

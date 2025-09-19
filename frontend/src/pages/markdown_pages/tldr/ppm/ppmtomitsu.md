@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to MITSU - Image Converter | Free DevTools"
+title: "Convert PPM to MITSU - Image Converter | Online Free DevTools by Hexmos"
 name: ppmtomitsu
 path: /freedevtools/tldr/ppm/ppmtomitsu
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtomitsu/"

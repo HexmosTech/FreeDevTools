@@ -1,5 +1,5 @@
 ---
-title: "GitHub PR - Manage Pull Requests | Free DevTools"
+title: "GitHub PR - Manage Pull Requests | Online Free DevTools by Hexmos"
 name: gh-pr
 path: /freedevtools/tldr/gh/gh-pr
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr/"

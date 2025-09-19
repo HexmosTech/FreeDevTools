@@ -1,5 +1,5 @@
 ---
-title: "Control Groups - Limit Resource Usage with Cgroups | Free DevTools"
+title: "Control Groups - Limit Resource Usage with Cgroups | Online Free DevTools by Hexmos"
 name: cgroups
 path: /freedevtools/tldr/linux/cgroups
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cgroups/"

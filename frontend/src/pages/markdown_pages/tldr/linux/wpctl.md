@@ -1,5 +1,5 @@
 ---
-title: "Manage WirePlumber - Control PipeWire with wpctl | Free DevTools"
+title: "Manage WirePlumber - Control PipeWire with wpctl | Online Free DevTools by Hexmos"
 name: wpctl
 path: /freedevtools/tldr/linux/wpctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wpctl/"

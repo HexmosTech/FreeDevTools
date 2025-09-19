@@ -1,5 +1,5 @@
 ---
-title: "pw-profiler - Profile Instances | Free DevTools"
+title: "pw-profiler - Profile Instances | Online Free DevTools by Hexmos"
 name: pw-profiler
 path: /freedevtools/tldr/linux/pw-profiler
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-profiler/"

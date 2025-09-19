@@ -1,5 +1,5 @@
 ---
-title: "Git Delete Branch - Remove Local/Remote Branches | Free DevTools"
+title: "Git Delete Branch - Remove Local/Remote Branches | Online Free DevTools by Hexmos"
 name: git-delete-branch
 path: /freedevtools/tldr/git/git-delete-branch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-branch/"

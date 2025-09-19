@@ -1,5 +1,5 @@
 ---
-title: "Symptomsd - Manage System Symptoms | Free DevTools"
+title: "Symptomsd - Manage System Symptoms | Online Free DevTools by Hexmos"
 name: symptomsd
 path: /freedevtools/tldr/osx/symptomsd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/symptomsd/"

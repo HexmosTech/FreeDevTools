@@ -1,5 +1,5 @@
 ---
-title: "Control Arcanist - Manage Code Reviews with Arc CLI | Free DevTools"
+title: "Control Arcanist - Manage Code Reviews with Arc CLI | Online Free DevTools by Hexmos"
 name: arc
 path: /freedevtools/tldr/common/arc
 canonical: "https://hexmos.com/freedevtools/tldr/common/arc/"

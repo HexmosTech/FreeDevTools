@@ -1,5 +1,5 @@
 ---
-title: "Validate Go Code - Check Source Files with go vet | Free DevTools"
+title: "Validate Go Code - Check Source Files with go vet | Online Free DevTools by Hexmos"
 name: go-vet
 path: /freedevtools/tldr/go/go-vet
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-vet/"

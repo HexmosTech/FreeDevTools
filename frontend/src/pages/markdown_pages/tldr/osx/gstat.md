@@ -1,5 +1,5 @@
 ---
-title: "Control File Status - gstat Command | Free DevTools"
+title: "Control File Status - gstat Command | Online Free DevTools by Hexmos"
 name: gstat
 path: /freedevtools/tldr/osx/gstat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gstat/"

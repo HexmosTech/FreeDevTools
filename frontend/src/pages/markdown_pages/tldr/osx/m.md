@@ -1,5 +1,5 @@
 ---
-title: "macOS Control - Manage System Settings with m | Free DevTools"
+title: "macOS Control - Manage System Settings with m | Online Free DevTools by Hexmos"
 name: m
 path: /freedevtools/tldr/osx/m
 canonical: "https://hexmos.com/freedevtools/tldr/osx/m/"

@@ -1,5 +1,5 @@
 ---
-title: "Nikto Scanner - Scan Web Servers | Free DevTools"
+title: "Nikto Scanner - Scan Web Servers | Online Free DevTools by Hexmos"
 name: nikto
 path: /freedevtools/tldr/common/nikto
 canonical: "https://hexmos.com/freedevtools/tldr/common/nikto/"

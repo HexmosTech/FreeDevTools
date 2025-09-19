@@ -1,5 +1,5 @@
 ---
-title: "Print Files - Print Files on Linux, macOS | Free DevTools"
+title: "Print Files - Print Files on Linux, macOS | Online Free DevTools by Hexmos"
 name: lp
 path: /freedevtools/tldr/common/lp
 canonical: "https://hexmos.com/freedevtools/tldr/common/lp/"

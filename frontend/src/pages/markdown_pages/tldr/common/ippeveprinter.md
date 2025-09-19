@@ -1,5 +1,5 @@
 ---
-title: "Control IPP Printer - Simple Server | Free DevTools"
+title: "Control IPP Printer - Simple Server | Online Free DevTools by Hexmos"
 name: ippeveprinter
 path: /freedevtools/tldr/common/ippeveprinter
 canonical: "https://hexmos.com/freedevtools/tldr/common/ippeveprinter/"

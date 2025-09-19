@@ -1,5 +1,5 @@
 ---
-title: "Yadm Introspect - View Managed Data | Free DevTools"
+title: "Yadm Introspect - View Managed Data | Online Free DevTools by Hexmos"
 name: yadm-introspect
 path: /freedevtools/tldr/yadm/yadm-introspect
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-introspect/"

@@ -1,5 +1,5 @@
 ---
-title: "Lima - Shell into Default VM | Free DevTools"
+title: "Lima - Shell into Default VM | Online Free DevTools by Hexmos"
 name: lima
 path: /freedevtools/tldr/common/lima
 canonical: "https://hexmos.com/freedevtools/tldr/common/lima/"

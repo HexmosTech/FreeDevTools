@@ -1,5 +1,5 @@
 ---
-title: "Dolt Merge - Join Development Histories | Free DevTools"
+title: "Dolt Merge - Join Development Histories | Online Free DevTools by Hexmos"
 name: dolt-merge
 path: /freedevtools/tldr/dolt/dolt-merge
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-merge/"

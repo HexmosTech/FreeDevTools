@@ -1,5 +1,5 @@
 ---
-title: "qm agent - Manage Guest Commands | Free DevTools"
+title: "qm agent - Manage Guest Commands | Online Free DevTools by Hexmos"
 name: qm-agent
 path: /freedevtools/tldr/linux/qm-agent
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-agent/"

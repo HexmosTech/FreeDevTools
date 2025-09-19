@@ -1,5 +1,5 @@
 ---
-title: "Download Files - Web Downloader with Wget | Free DevTools"
+title: "Download Files - Web Downloader with Wget | Online Free DevTools by Hexmos"
 name: wget
 path: /freedevtools/tldr/common/wget
 canonical: "https://hexmos.com/freedevtools/tldr/common/wget/"

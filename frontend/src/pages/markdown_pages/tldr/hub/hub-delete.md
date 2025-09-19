@@ -1,5 +1,5 @@
 ---
-title: "GitHub Delete - Delete Repository | Free DevTools"
+title: "GitHub Delete - Delete Repository | Online Free DevTools by Hexmos"
 name: hub-delete
 path: /freedevtools/tldr/hub/hub-delete
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-delete/"

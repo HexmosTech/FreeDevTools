@@ -1,5 +1,5 @@
 ---
-title: "Tmux - Manage Terminal Sessions with Ease | Free DevTools"
+title: "Tmux - Manage Terminal Sessions with Ease | Online Free DevTools by Hexmos"
 name: tmux
 path: /freedevtools/tldr/common/tmux
 canonical: "https://hexmos.com/freedevtools/tldr/common/tmux/"

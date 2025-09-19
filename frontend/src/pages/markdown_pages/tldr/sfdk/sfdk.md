@@ -1,5 +1,5 @@
 ---
-title: "Sailfish SDK - Control Sailfish OS Apps | Free DevTools"
+title: "Sailfish SDK - Control Sailfish OS Apps | Online Free DevTools by Hexmos"
 name: sfdk
 path: /freedevtools/tldr/sfdk/sfdk
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk/"

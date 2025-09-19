@@ -1,5 +1,5 @@
 ---
-title: "Generate Lexical Analyzers - Lex | Free DevTools"
+title: "Generate Lexical Analyzers - Lex | Online Free DevTools by Hexmos"
 name: lex
 path: /freedevtools/tldr/common/lex
 canonical: "https://hexmos.com/freedevtools/tldr/common/lex/"

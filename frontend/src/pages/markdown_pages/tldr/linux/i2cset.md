@@ -1,5 +1,5 @@
 ---
-title: "I2cset - Control I2C Devices | Free DevTools"
+title: "I2cset - Control I2C Devices | Online Free DevTools by Hexmos"
 name: i2cset
 path: /freedevtools/tldr/linux/i2cset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i2cset/"

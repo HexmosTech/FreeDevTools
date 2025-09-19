@@ -1,5 +1,5 @@
 ---
-title: "Cargo Build - Compile Rust Packages Easily | Free DevTools"
+title: "Cargo Build - Compile Rust Packages Easily | Online Free DevTools by Hexmos"
 name: cargo-build
 path: /freedevtools/tldr/cargo/cargo-build
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-build/"

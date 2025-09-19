@@ -1,5 +1,5 @@
 ---
-title: "Generate Pulumi Completion - Enhance CLI Experience | Free DevTools"
+title: "Generate Pulumi Completion - Enhance CLI Experience | Online Free DevTools by Hexmos"
 name: pulumi-gen-completion
 path: /freedevtools/tldr/pulumi/pulumi-gen-completion
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-gen-completion/"

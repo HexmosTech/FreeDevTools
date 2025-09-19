@@ -1,5 +1,5 @@
 ---
-title: "Cola - Manage Git Repositories Visually | Free DevTools"
+title: "Cola - Manage Git Repositories Visually | Online Free DevTools by Hexmos"
 name: cola
 path: /freedevtools/tldr/common/cola
 canonical: "https://hexmos.com/freedevtools/tldr/common/cola/"

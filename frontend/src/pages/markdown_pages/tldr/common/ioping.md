@@ -1,5 +1,5 @@
 ---
-title: "Monitor I/O Latency - Check Disk Speed | Free DevTools"
+title: "Monitor I/O Latency - Check Disk Speed | Online Free DevTools by Hexmos"
 name: ioping
 path: /freedevtools/tldr/common/ioping
 canonical: "https://hexmos.com/freedevtools/tldr/common/ioping/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Satis Repository - Static Composer Output | Free DevTools"
+title: "Generate Satis Repository - Static Composer Output | Online Free DevTools by Hexmos"
 name: satis
 path: /freedevtools/tldr/common/satis
 canonical: "https://hexmos.com/freedevtools/tldr/common/satis/"

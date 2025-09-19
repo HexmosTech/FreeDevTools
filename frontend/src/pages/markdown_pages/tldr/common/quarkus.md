@@ -1,5 +1,5 @@
 ---
-title: "Quarkus - Create Java Applications | Free DevTools"
+title: "Quarkus - Create Java Applications | Online Free DevTools by Hexmos"
 name: quarkus
 path: /freedevtools/tldr/common/quarkus
 canonical: "https://hexmos.com/freedevtools/tldr/common/quarkus/"

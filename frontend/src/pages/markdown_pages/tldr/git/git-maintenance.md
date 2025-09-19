@@ -1,5 +1,5 @@
 ---
-title: "Git Maintenance - Optimize Repository Data | Free DevTools"
+title: "Git Maintenance - Optimize Repository Data | Online Free DevTools by Hexmos"
 name: git-maintenance
 path: "/freedevtools/tldr/git/git-maintenance"
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-maintenance/"

@@ -1,5 +1,5 @@
 ---
-title: "Retrieve NPM Funding - Manage Package Funding | Free DevTools"
+title: "Retrieve NPM Funding - Manage Package Funding | Online Free DevTools by Hexmos"
 name: npm-fund
 path: /freedevtools/tldr/npm/npm-fund
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-fund/"

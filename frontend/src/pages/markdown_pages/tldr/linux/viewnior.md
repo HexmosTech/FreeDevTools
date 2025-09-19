@@ -1,5 +1,5 @@
 ---
-title: "View Images - Display Images with Viewnior | Free DevTools"
+title: "View Images - Display Images with Viewnior | Online Free DevTools by Hexmos"
 name: viewnior
 path: /freedevtools/tldr/linux/viewnior
 canonical: "https://hexmos.com/freedevtools/tldr/linux/viewnior/"

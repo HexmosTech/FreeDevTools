@@ -1,5 +1,5 @@
 ---
-title: "Lookup MSRPC Interfaces - Control RPC Connections | Free DevTools"
+title: "Lookup MSRPC Interfaces - Control RPC Connections | Online Free DevTools by Hexmos"
 name: rpcmap.py
 path: /freedevtools/tldr/common/rpcmap.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/rpcmap.py/"

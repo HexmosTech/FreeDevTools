@@ -1,5 +1,5 @@
 ---
-title: "Docker Network - Create & Manage Networks | Free DevTools"
+title: "Docker Network - Create & Manage Networks | Online Free DevTools by Hexmos"
 name: docker-network
 path: "/freedevtools/tldr/docker/docker-network"
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-network/"

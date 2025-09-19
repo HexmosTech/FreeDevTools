@@ -1,5 +1,5 @@
 ---
-title: "Execute Expect Scripts - Automate Program Interactions | Free DevTools"
+title: "Execute Expect Scripts - Automate Program Interactions | Online Free DevTools by Hexmos"
 name: expect
 path: /freedevtools/tldr/linux/expect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/expect/"

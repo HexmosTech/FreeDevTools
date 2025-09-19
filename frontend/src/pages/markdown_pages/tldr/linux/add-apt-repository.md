@@ -1,5 +1,5 @@
 ---
-title: "APT Repository - Manage Package Sources on Linux | Free DevTools"
+title: "APT Repository - Manage Package Sources on Linux | Online Free DevTools by Hexmos"
 name: add-apt-repository
 path: /freedevtools/tldr/linux/add-apt-repository
 canonical: "https://hexmos.com/freedevtools/tldr/linux/add-apt-repository/"

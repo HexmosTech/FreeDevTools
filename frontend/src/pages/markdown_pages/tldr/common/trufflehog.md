@@ -1,5 +1,5 @@
 ---
-title: "Find Secrets with TruffleHog - Scan Git Repos | Free DevTools"
+title: "Find Secrets with TruffleHog - Scan Git Repos | Online Free DevTools by Hexmos"
 name: trufflehog
 path: /freedevtools/tldr/common/trufflehog
 canonical: "https://hexmos.com/freedevtools/tldr/common/trufflehog/"

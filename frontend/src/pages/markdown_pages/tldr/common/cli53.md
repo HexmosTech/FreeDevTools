@@ -1,5 +1,5 @@
 ---
-title: "Control Route53 DNS - CLI53 Command | Free DevTools"
+title: "Control Route53 DNS - CLI53 Command | Online Free DevTools by Hexmos"
 name: cli53
 path: /freedevtools/tldr/common/cli53
 canonical: "https://hexmos.com/freedevtools/tldr/common/cli53/"

@@ -1,5 +1,5 @@
 ---
-title: "Change File Flags - Control File Attributes | Free DevTools"
+title: "Change File Flags - Control File Attributes | Online Free DevTools by Hexmos"
 name: chflags
 path: /freedevtools/tldr/osx/chflags
 canonical: "https://hexmos.com/freedevtools/tldr/osx/chflags/"

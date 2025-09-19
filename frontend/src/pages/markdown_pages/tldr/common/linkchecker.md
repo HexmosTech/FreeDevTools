@@ -1,5 +1,5 @@
 ---
-title: "Link Checker - Validate Website Links | Free DevTools"
+title: "Link Checker - Validate Website Links | Online Free DevTools by Hexmos"
 name: linkchecker
 path: /freedevtools/tldr/common/linkchecker
 canonical: "https://hexmos.com/freedevtools/tldr/common/linkchecker/"

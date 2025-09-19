@@ -1,5 +1,5 @@
 ---
-title: "VCVARSALL - Setup Visual Studio Environment | Free DevTools"
+title: "VCVARSALL - Setup Visual Studio Environment | Online Free DevTools by Hexmos"
 name: vcvarsall
 path: /freedevtools/tldr/windows/vcvarsall
 canonical: "https://hexmos.com/freedevtools/tldr/windows/vcvarsall/"

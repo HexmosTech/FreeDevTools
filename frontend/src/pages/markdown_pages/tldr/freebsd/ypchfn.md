@@ -1,5 +1,5 @@
 ---
-title: "Password Changer - Modify User Passwords | Free DevTools"
+title: "Password Changer - Modify User Passwords | Online Free DevTools by Hexmos"
 name: ypchfn
 path: /freedevtools/tldr/freebsd/ypchfn
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ypchfn/"

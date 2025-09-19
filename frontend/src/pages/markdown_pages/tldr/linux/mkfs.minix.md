@@ -1,5 +1,5 @@
 ---
-title: "Create Minix Filesystem - Format Partitions with mkfs.minix | Free DevTools"
+title: "Create Minix Filesystem - Format Partitions with mkfs.minix | Online Free DevTools by Hexmos"
 name: mkfs.minix
 path: /freedevtools/tldr/linux/mkfs.minix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.minix/"

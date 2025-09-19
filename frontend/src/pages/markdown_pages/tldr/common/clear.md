@@ -1,5 +1,5 @@
 ---
-title: "Clear Terminal - Erase Screen | Free DevTools"
+title: "Clear Terminal - Erase Screen | Online Free DevTools by Hexmos"
 name: clear
 path: /freedevtools/tldr/common/clear
 canonical: "https://hexmos.com/freedevtools/tldr/common/clear/"

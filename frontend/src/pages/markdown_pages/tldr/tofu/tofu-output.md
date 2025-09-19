@@ -1,5 +1,5 @@
 ---
-title: "Tofu Output - Export Tofu Resources | Free DevTools"
+title: "Tofu Output - Export Tofu Resources | Online Free DevTools by Hexmos"
 name: tofu-output
 path: /freedevtools/tldr/tofu/tofu-output
 canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-output/"

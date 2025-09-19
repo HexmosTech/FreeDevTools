@@ -1,5 +1,5 @@
 ---
-title: "Join Files - Merge Data with Gjoin Command | Free DevTools"
+title: "Join Files - Merge Data with Gjoin Command | Online Free DevTools by Hexmos"
 name: gjoin
 path: /freedevtools/tldr/osx/gjoin
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gjoin/"

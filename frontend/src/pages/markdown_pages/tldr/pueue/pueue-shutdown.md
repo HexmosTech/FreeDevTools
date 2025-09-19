@@ -1,5 +1,5 @@
 ---
-title: "Pueue Shutdown - Control Daemon | Free DevTools"
+title: "Pueue Shutdown - Control Daemon | Online Free DevTools by Hexmos"
 name: pueue-shutdown
 path: /freedevtools/tldr/pueue/pueue-shutdown
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-shutdown/"

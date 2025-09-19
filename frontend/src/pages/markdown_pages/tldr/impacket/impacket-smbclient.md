@@ -1,5 +1,5 @@
 ---
-title: "Control SMB Shares - Impacket SMBClient | Free DevTools"
+title: "Control SMB Shares - Impacket SMBClient | Online Free DevTools by Hexmos"
 name: impacket-smbclient
 path: /freedevtools/tldr/impacket/impacket-smbclient
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-smbclient/"

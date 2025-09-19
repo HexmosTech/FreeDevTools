@@ -1,5 +1,5 @@
 ---
-title: "Generate Passphrases - Create Secure Passwords | Free DevTools"
+title: "Generate Passphrases - Create Secure Passwords | Online Free DevTools by Hexmos"
 name: pwqgen
 path: /freedevtools/tldr/common/pwqgen
 canonical: "https://hexmos.com/freedevtools/tldr/common/pwqgen/"

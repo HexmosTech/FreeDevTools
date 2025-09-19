@@ -1,5 +1,5 @@
 ---
-title: "Colima - Run Container Runtimes on macOS/Linux | Free DevTools"
+title: "Colima - Run Container Runtimes on macOS/Linux | Online Free DevTools by Hexmos"
 name: colima
 path: /freedevtools/tldr/common/colima
 canonical: "https://hexmos.com/freedevtools/tldr/common/colima/"

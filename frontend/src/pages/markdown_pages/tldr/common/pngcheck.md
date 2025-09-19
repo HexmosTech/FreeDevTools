@@ -1,5 +1,5 @@
 ---
-title: "PNG Check - Validate PNG Images | Free DevTools"
+title: "PNG Check - Validate PNG Images | Online Free DevTools by Hexmos"
 name: pngcheck
 path: /freedevtools/tldr/common/pngcheck
 canonical: "https://hexmos.com/freedevtools/tldr/common/pngcheck/"

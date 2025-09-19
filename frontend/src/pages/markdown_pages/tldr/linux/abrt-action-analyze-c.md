@@ -1,5 +1,5 @@
 ---
-title: "Generate UUID - abrt-action-analyze-c | Free DevTools"
+title: "Generate UUID - abrt-action-analyze-c | Online Free DevTools by Hexmos"
 name: abrt-action-analyze-c
 path: /freedevtools/tldr/linux/abrt-action-analyze-c
 canonical: "https://hexmos.com/freedevtools/tldr/linux/abrt-action-analyze-c/"

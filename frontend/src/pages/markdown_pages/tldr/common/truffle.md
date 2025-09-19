@@ -1,5 +1,5 @@
 ---
-title: "Truffle - Develop Ethereum Smart Contracts | Free DevTools"
+title: "Truffle - Develop Ethereum Smart Contracts | Online Free DevTools by Hexmos"
 name: truffle
 path: /freedevtools/tldr/common/truffle
 canonical: "https://hexmos.com/freedevtools/tldr/common/truffle/"

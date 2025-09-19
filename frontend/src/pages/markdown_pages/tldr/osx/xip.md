@@ -1,5 +1,5 @@
 ---
-title: "Create XIP Archive - Expand Secure Archives | Free DevTools"
+title: "Create XIP Archive - Expand Secure Archives | Online Free DevTools by Hexmos"
 name: xip
 path: /freedevtools/tldr/osx/xip
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xip/"

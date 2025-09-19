@@ -1,5 +1,5 @@
 ---
-title: "Strings Extractor - Find Text Strings | Free DevTools"
+title: "Strings Extractor - Find Text Strings | Online Free DevTools by Hexmos"
 name: strings
 path: "/freedevtools/tldr/st/strings"
 canonical: "https://hexmos.com/freedevtools/tldr/st/strings/"

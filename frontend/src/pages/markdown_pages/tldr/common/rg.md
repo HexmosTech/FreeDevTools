@@ -1,5 +1,5 @@
 ---
-title: "Ripgrep Search - Find Text Faster with rg | Free DevTools"
+title: "Ripgrep Search - Find Text Faster with rg | Online Free DevTools by Hexmos"
 name: rg
 path: /freedevtools/tldr/common/rg
 canonical: "https://hexmos.com/freedevtools/tldr/common/rg/"

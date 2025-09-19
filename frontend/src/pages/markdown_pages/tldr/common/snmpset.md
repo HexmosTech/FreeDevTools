@@ -1,5 +1,5 @@
 ---
-title: "SNMP Set - Control Values via SNMP Protocol | Free DevTools"
+title: "SNMP Set - Control Values via SNMP Protocol | Online Free DevTools by Hexmos"
 name: snmpset
 path: /freedevtools/tldr/common/snmpset
 canonical: "https://hexmos.com/freedevtools/tldr/common/snmpset/"

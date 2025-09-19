@@ -1,5 +1,5 @@
 ---
-title: "Manage Fingerprints - fprintd Control | Free DevTools"
+title: "Manage Fingerprints - fprintd Control | Online Free DevTools by Hexmos"
 name: fprintd
 path: /freedevtools/tldr/linux/fprintd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Function Return - Exit Early | Free DevTools"
+title: "Control Function Return - Exit Early | Online Free DevTools by Hexmos"
 name: return
 path: /freedevtools/tldr/common/return
 canonical: "https://hexmos.com/freedevtools/tldr/common/return/"

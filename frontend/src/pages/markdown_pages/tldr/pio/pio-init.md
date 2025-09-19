@@ -1,5 +1,5 @@
 ---
-title: "PIO Init - Create PlatformIO Project | Free DevTools"
+title: "PIO Init - Create PlatformIO Project | Online Free DevTools by Hexmos"
 name: pio-init
 path: /freedevtools/tldr/pio/pio-init
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-init/"

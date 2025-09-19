@@ -1,5 +1,5 @@
 ---
-title: "Nagios Monitoring - Control Network Services | Free DevTools"
+title: "Nagios Monitoring - Control Network Services | Online Free DevTools by Hexmos"
 name: nagios
 path: /freedevtools/tldr/common/nagios
 canonical: "https://hexmos.com/freedevtools/tldr/common/nagios/"

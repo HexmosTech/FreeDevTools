@@ -1,5 +1,5 @@
 ---
-title: "PIO Debug GDB - Control Debugging with PlatformIO | Free DevTools"
+title: "PIO Debug GDB - Control Debugging with PlatformIO | Online Free DevTools by Hexmos"
 name: piodebuggdb
 path: /freedevtools/tldr/pio/piodebuggdb
 canonical: "https://hexmos.com/freedevtools/tldr/pio/piodebuggdb/"

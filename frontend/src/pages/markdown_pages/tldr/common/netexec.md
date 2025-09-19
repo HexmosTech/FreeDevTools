@@ -1,5 +1,5 @@
 ---
-title: "Netexec - Execute Commands | Free DevTools"
+title: "Netexec - Execute Commands | Online Free DevTools by Hexmos"
 name: netexec
 path: /freedevtools/tldr/common/netexec
 canonical: "https://hexmos.com/freedevtools/tldr/common/netexec/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Sum - Calculate File Checksums | Free DevTools"
+title: "Generate Sum - Calculate File Checksums | Online Free DevTools by Hexmos"
 name: gsum
 path: /freedevtools/tldr/osx/gsum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsum/"

@@ -1,5 +1,5 @@
 ---
-title: "Develop Ethereum Software - Hardhat Development | Free DevTools"
+title: "Develop Ethereum Software - Hardhat Development | Online Free DevTools by Hexmos"
 name: hardhat
 path: "/freedevtools/tldr/common/hardhat"
 canonical: "https://hexmos.com/freedevtools/tldr/common/hardhat/"

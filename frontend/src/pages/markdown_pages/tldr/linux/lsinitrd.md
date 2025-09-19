@@ -1,5 +1,5 @@
 ---
-title: "List Initramfs - Inspect Image Contents | Free DevTools"
+title: "List Initramfs - Inspect Image Contents | Online Free DevTools by Hexmos"
 name: lsinitrd
 path: /freedevtools/tldr/linux/lsinitrd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsinitrd/"

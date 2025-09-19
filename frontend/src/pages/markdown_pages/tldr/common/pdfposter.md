@@ -1,5 +1,5 @@
 ---
-title: "Generate PDF Posters - Scale and Print PDFs | Free DevTools"
+title: "Generate PDF Posters - Scale and Print PDFs | Online Free DevTools by Hexmos"
 name: pdfposter
 path: /freedevtools/tldr/common/pdfposter
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfposter/"

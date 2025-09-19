@@ -1,5 +1,5 @@
 ---
-title: "Cradle Framework - Manage PHP Projects | Free DevTools"
+title: "Cradle Framework - Manage PHP Projects | Online Free DevTools by Hexmos"
 name: cradle
 path: /freedevtools/tldr/cradle/cradle
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle/"

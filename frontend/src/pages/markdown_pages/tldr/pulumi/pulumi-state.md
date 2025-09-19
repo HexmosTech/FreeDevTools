@@ -1,5 +1,5 @@
 ---
-title: "Pulumi State - Edit Stack State | Free DevTools"
+title: "Pulumi State - Edit Stack State | Online Free DevTools by Hexmos"
 name: pulumi-state
 path: /freedevtools/tldr/pulumi/pulumi-state
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-state/"

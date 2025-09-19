@@ -1,5 +1,5 @@
 ---
-title: "Hollywood Command - Generate Melodrama Text | Free DevTools"
+title: "Hollywood Command - Generate Melodrama Text | Online Free DevTools by Hexmos"
 name: hollywood
 path: /freedevtools/tldr/linux/hollywood
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hollywood/"

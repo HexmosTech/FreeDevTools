@@ -1,5 +1,5 @@
 ---
-title: "Create Quarto Projects - Render Docs with Quarto | Free DevTools"
+title: "Create Quarto Projects - Render Docs with Quarto | Online Free DevTools by Hexmos"
 name: quarto
 path: /freedevtools/tldr/common/quarto
 canonical: "https://hexmos.com/freedevtools/tldr/common/quarto/"

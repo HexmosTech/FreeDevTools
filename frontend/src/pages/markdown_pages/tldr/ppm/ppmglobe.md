@@ -1,5 +1,5 @@
 ---
-title: "Generate PPM Globe - Create Spherical Images | Free DevTools"
+title: "Generate PPM Globe - Create Spherical Images | Online Free DevTools by Hexmos"
 name: ppmglobe
 path: /freedevtools/tldr/ppm/ppmglobe
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmglobe/"

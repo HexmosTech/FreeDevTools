@@ -1,5 +1,5 @@
 ---
-title: "Disown Process - Detach Background Jobs | Free DevTools"
+title: "Disown Process - Detach Background Jobs | Online Free DevTools by Hexmos"
 name: disown
 path: /freedevtools/tldr/common/disown
 canonical: "https://hexmos.com/freedevtools/tldr/common/disown/"

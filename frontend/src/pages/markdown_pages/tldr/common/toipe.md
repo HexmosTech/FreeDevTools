@@ -1,5 +1,5 @@
 ---
-title: "Typing Test - Improve Speed and Accuracy | Free DevTools"
+title: "Typing Test - Improve Speed and Accuracy | Online Free DevTools by Hexmos"
 name: toipe
 path: /freedevtools/tldr/common/toipe
 canonical: "https://hexmos.com/freedevtools/tldr/common/toipe/"

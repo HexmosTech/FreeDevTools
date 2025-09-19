@@ -1,5 +1,5 @@
 ---
-title: "Cgexec - Control Linux Resources | Free DevTools"
+title: "Cgexec - Control Linux Resources | Online Free DevTools by Hexmos"
 name: cgexec
 path: /freedevtools/tldr/linux/cgexec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cgexec/"

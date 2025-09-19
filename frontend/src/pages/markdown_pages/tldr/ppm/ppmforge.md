@@ -1,5 +1,5 @@
 ---
-title: "Generate Fractals with ppmforge - Image Creation | Free DevTools"
+title: "Generate Fractals with ppmforge - Image Creation | Online Free DevTools by Hexmos"
 name: ppmforge
 path: /freedevtools/tldr/ppm/ppmforge
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmforge/"

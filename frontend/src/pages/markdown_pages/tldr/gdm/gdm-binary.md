@@ -1,5 +1,5 @@
 ---
-title: "GDM Binary - Control Display Manager | Free DevTools"
+title: "GDM Binary - Control Display Manager | Online Free DevTools by Hexmos"
 name: gdm-binary
 path: /freedevtools/tldr/gdm/gdm-binary
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-binary/"

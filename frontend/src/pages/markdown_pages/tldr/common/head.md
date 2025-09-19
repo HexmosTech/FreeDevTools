@@ -1,5 +1,5 @@
 ---
-title: "Output Head - Display File First Lines | Free DevTools"
+title: "Output Head - Display File First Lines | Online Free DevTools by Hexmos"
 name: head
 path: /freedevtools/tldr/common/head
 canonical: "https://hexmos.com/freedevtools/tldr/common/head/"

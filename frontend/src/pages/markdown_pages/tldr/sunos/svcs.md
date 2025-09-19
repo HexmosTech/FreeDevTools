@@ -1,5 +1,5 @@
 ---
-title: "List SunOS Services - Check Service Status | Free DevTools"
+title: "List SunOS Services - Check Service Status | Online Free DevTools by Hexmos"
 name: svcs
 path: /freedevtools/tldr/sunos/svcs
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcs/"

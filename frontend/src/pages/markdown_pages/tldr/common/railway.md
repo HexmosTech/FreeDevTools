@@ -1,5 +1,5 @@
 ---
-title: "Control Railway Projects - Connect and Manage | Free DevTools"
+title: "Control Railway Projects - Connect and Manage | Online Free DevTools by Hexmos"
 name: railway
 path: /freedevtools/tldr/common/railway
 canonical: "https://hexmos.com/freedevtools/tldr/common/railway/"

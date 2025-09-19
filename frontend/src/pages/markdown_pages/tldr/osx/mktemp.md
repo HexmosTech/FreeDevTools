@@ -1,5 +1,5 @@
 ---
-title: "Create Temporary File - Generate Temp Files | Free DevTools"
+title: "Create Temporary File - Generate Temp Files | Online Free DevTools by Hexmos"
 name: mktemp
 path: /freedevtools/tldr/osx/mktemp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mktemp/"

@@ -1,5 +1,5 @@
 ---
-title: "Show Git Tree - Visualize Branches with Git Show-Tree | Free DevTools"
+title: "Show Git Tree - Visualize Branches with Git Show-Tree | Online Free DevTools by Hexmos"
 name: git-show-tree
 path: /freedevtools/tldr/git/git-show-tree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-tree/"

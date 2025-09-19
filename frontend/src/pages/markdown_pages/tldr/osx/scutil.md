@@ -1,5 +1,5 @@
 ---
-title: "SCUTIL - Control System Configuration | Free DevTools"
+title: "SCUTIL - Control System Configuration | Online Free DevTools by Hexmos"
 name: scutil
 path: /freedevtools/tldr/osx/scutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/scutil/"

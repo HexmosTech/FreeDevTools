@@ -1,5 +1,5 @@
 ---
-title: "Generate Base64 - Encode Data with gbase64 | Free DevTools"
+title: "Generate Base64 - Encode Data with gbase64 | Online Free DevTools by Hexmos"
 name: gbase64
 path: /freedevtools/tldr/osx/gbase64
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gbase64/"

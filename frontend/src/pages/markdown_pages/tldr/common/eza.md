@@ -1,5 +1,5 @@
 ---
-title: "List Files - Control File Listing with eza | Free DevTools"
+title: "List Files - Control File Listing with eza | Online Free DevTools by Hexmos"
 name: eza
 path: /freedevtools/tldr/common/eza
 canonical: "https://hexmos.com/freedevtools/tldr/common/eza/"

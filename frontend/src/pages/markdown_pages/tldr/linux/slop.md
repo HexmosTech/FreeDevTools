@@ -1,5 +1,5 @@
 ---
-title: "Slop - Capture Screen Selections | Free DevTools"
+title: "Slop - Capture Screen Selections | Online Free DevTools by Hexmos"
 name: slop
 path: /freedevtools/tldr/linux/slop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slop/"

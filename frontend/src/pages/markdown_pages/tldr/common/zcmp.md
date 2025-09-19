@@ -1,5 +1,5 @@
 ---
-title: "Compare Compressed Files - Analyze gzip Files | Free DevTools"
+title: "Compare Compressed Files - Analyze gzip Files | Online Free DevTools by Hexmos"
 name: zcmp
 path: /freedevtools/tldr/common/zcmp
 canonical: "https://hexmos.com/freedevtools/tldr/common/zcmp/"

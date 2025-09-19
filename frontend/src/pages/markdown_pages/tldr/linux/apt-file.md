@@ -1,5 +1,5 @@
 ---
-title: "Apt-File Search - Find Files in APT Packages | Free DevTools"
+title: "Apt-File Search - Find Files in APT Packages | Online Free DevTools by Hexmos"
 name: apt-file
 path: /freedevtools/tldr/linux/apt-file
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-file/"

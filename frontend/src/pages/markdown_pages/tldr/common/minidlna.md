@@ -1,5 +1,5 @@
 ---
-title: "Control minidlna - Stream Media with DLNA | Free DevTools"
+title: "Control minidlna - Stream Media with DLNA | Online Free DevTools by Hexmos"
 name: minidlna
 path: /freedevtools/tldr/common/minidlna
 canonical: "https://hexmos.com/freedevtools/tldr/common/minidlna/"

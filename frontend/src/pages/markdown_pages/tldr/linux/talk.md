@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Talk - Communicate Visually | Free DevTools"
+title: "Control Terminal Talk - Communicate Visually | Online Free DevTools by Hexmos"
 name: talk
 path: /freedevtools/tldr/linux/talk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/talk/"

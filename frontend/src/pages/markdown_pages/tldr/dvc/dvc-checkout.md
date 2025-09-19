@@ -1,5 +1,5 @@
 ---
-title: "DVC Checkout - Manage Data Versions | Free DevTools"
+title: "DVC Checkout - Manage Data Versions | Online Free DevTools by Hexmos"
 name: dvc-checkout
 path: /freedevtools/tldr/dvc/dvc-checkout
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-checkout/"

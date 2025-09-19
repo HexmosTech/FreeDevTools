@@ -1,5 +1,5 @@
 ---
-title: "Stack Manager - Create Haskell Projects | Free DevTools"
+title: "Stack Manager - Create Haskell Projects | Online Free DevTools by Hexmos"
 name: stack
 path: /freedevtools/tldr/st/stack
 canonical: "https://hexmos.com/freedevtools/tldr/st/stack/"

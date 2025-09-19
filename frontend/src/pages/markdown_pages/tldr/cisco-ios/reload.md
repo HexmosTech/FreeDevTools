@@ -1,5 +1,5 @@
 ---
-title: "IOS Reload - Control System Reboot Behavior | Free DevTools"
+title: "IOS Reload - Control System Reboot Behavior | Online Free DevTools by Hexmos"
 name: reload
 path: /freedevtools/tldr/cisco-ios/reload
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/reload/"

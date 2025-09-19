@@ -1,5 +1,5 @@
 ---
-title: "Hexdump - Format Data in Hexadecimal | Free DevTools"
+title: "Hexdump - Format Data in Hexadecimal | Online Free DevTools by Hexmos"
 name: hexdump
 path: /freedevtools/tldr/linux/hexdump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hexdump/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Rename Branch - Change Branch Names Easily | Free DevTools"
+title: "Git Rename Branch - Change Branch Names Easily | Online Free DevTools by Hexmos"
 name: git-rename-branch
 path: /freedevtools/tldr/git/git-rename-branch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rename-branch/"

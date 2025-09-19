@@ -1,5 +1,5 @@
 ---
-title: "Scrontab - Manage Slurm Crontab Files | Free DevTools"
+title: "Scrontab - Manage Slurm Crontab Files | Online Free DevTools by Hexmos"
 name: scrontab
 path: /freedevtools/tldr/linux/scrontab
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scrontab/"

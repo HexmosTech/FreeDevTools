@@ -1,5 +1,5 @@
 ---
-title: "Create F-Droid Build Server - Virtual Machine | Free DevTools"
+title: "Create F-Droid Build Server - Virtual Machine | Online Free DevTools by Hexmos"
 name: makebuildserver
 path: /freedevtools/tldr/common/makebuildserver
 canonical: "https://hexmos.com/freedevtools/tldr/common/makebuildserver/"

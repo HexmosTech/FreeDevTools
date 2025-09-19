@@ -1,5 +1,5 @@
 ---
-title: "Control Cursor Theme - Plasma Apply Cursortheme | Free DevTools"
+title: "Control Cursor Theme - Plasma Apply Cursortheme | Online Free DevTools by Hexmos"
 name: plasma-apply-cursortheme
 path: /freedevtools/tldr/linux/plasma-apply-cursortheme
 canonical: "https://hexmos.com/freedevtools/tldr/linux/plasma-apply-cursortheme/"

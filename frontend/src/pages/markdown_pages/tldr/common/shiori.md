@@ -1,5 +1,5 @@
 ---
-title: "Manage Bookmarks - Shiori Bookmark Manager | Free DevTools"
+title: "Manage Bookmarks - Shiori Bookmark Manager | Online Free DevTools by Hexmos"
 name: shiori
 path: /freedevtools/tldr/common/shiori
 canonical: "https://hexmos.com/freedevtools/tldr/common/shiori/"

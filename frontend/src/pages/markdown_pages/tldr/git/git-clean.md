@@ -1,5 +1,5 @@
 ---
-title: "Git Clean - Remove Untracked Files | Free DevTools"
+title: "Git Clean - Remove Untracked Files | Online Free DevTools by Hexmos"
 name: git-clean
 path: /freedevtools/tldr/git/git-clean
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-clean/"

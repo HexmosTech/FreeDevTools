@@ -1,5 +1,5 @@
 ---
-title: "GLS - List Directory Contents | Free DevTools"
+title: "GLS - List Directory Contents | Online Free DevTools by Hexmos"
 name: gls
 path: /freedevtools/tldr/osx/gls
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gls/"

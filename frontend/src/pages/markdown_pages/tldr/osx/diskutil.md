@@ -1,5 +1,5 @@
 ---
-title: "Disk Utility - Manage Disks and Volumes | Free DevTools"
+title: "Disk Utility - Manage Disks and Volumes | Online Free DevTools by Hexmos"
 name: diskutil
 path: /freedevtools/tldr/osx/diskutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/diskutil/"

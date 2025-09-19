@@ -1,5 +1,5 @@
 ---
-title: "Ping Network Host - Test Network Connectivity | Free DevTools"
+title: "Ping Network Host - Test Network Connectivity | Online Free DevTools by Hexmos"
 name: ping
 path: /freedevtools/tldr/common/ping
 canonical: "https://hexmos.com/freedevtools/tldr/common/ping/"

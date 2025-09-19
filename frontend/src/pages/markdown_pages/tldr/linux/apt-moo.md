@@ -1,5 +1,5 @@
 ---
-title: "APT Moo - Print Cow Easter Egg | Free DevTools"
+title: "APT Moo - Print Cow Easter Egg | Online Free DevTools by Hexmos"
 name: apt-moo
 path: /freedevtools/tldr/linux/apt-moo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-moo/"

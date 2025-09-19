@@ -1,5 +1,5 @@
 ---
-title: "Pwlauncher - Manage Windows To Go Startup | Free DevTools"
+title: "Pwlauncher - Manage Windows To Go Startup | Online Free DevTools by Hexmos"
 name: pwlauncher
 path: /freedevtools/tldr/windows/pwlauncher
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pwlauncher/"

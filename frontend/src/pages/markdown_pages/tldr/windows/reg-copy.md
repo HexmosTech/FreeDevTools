@@ -1,5 +1,5 @@
 ---
-title: "Reg Copy - Copy Registry Keys | Free DevTools"
+title: "Reg Copy - Copy Registry Keys | Online Free DevTools by Hexmos"
 name: reg-copy
 path: /freedevtools/tldr/windows/reg-copy
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-copy/"

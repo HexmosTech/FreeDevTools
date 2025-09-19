@@ -1,5 +1,5 @@
 ---
-title: "QM Rescan - Disk Rescan | Free DevTools"
+title: "QM Rescan - Disk Rescan | Online Free DevTools by Hexmos"
 name: qm-rescan
 path: /freedevtools/tldr/linux/qm-rescan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-rescan/"

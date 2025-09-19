@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM - Transform Image Files | Free DevTools"
+title: "Convert PGM - Transform Image Files | Online Free DevTools by Hexmos"
 name: pgmtopgm
 path: /freedevtools/tldr/common/pgmtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtopgm/"

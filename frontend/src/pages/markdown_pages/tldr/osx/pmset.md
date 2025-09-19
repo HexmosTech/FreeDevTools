@@ -1,5 +1,5 @@
 ---
-title: "Pmset - Control macOS Power Management | Free DevTools"
+title: "Pmset - Control macOS Power Management | Online Free DevTools by Hexmos"
 name: pmset
 path: /freedevtools/tldr/osx/pmset
 canonical: "https://hexmos.com/freedevtools/tldr/osx/pmset/"

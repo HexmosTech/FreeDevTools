@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage Import - Import VMs | Free DevTools"
+title: "VBoxManage Import - Import VMs | Online Free DevTools by Hexmos"
 name: vboxmanage-import
 path: /freedevtools/tldr/vboxmanager/vboxmanage-import
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-import/"

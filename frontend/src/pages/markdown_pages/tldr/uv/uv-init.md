@@ -1,5 +1,5 @@
 ---
-title: "UV Init - Create Python Projects | Free DevTools"
+title: "UV Init - Create Python Projects | Online Free DevTools by Hexmos"
 name: uv-init
 path: /freedevtools/tldr/uv/uv-init
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-init/"

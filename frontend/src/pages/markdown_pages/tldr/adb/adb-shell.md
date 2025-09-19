@@ -1,5 +1,5 @@
 ---
-title: "ADB Shell - Control Android Devices via Command Line | Free DevTools"
+title: "ADB Shell - Control Android Devices via Command Line | Online Free DevTools by Hexmos"
 name: adb-shell
 path: /freedevtools/tldr/adb/adb-shell
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-shell/"

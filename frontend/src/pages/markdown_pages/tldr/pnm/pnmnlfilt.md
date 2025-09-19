@@ -1,5 +1,5 @@
 ---
-title: "Filter PNM Image - Apply Non-Linear Filters | Free DevTools"
+title: "Filter PNM Image - Apply Non-Linear Filters | Online Free DevTools by Hexmos"
 name: pnmnlfilt
 path: /freedevtools/tldr/pnm/pnmnlfilt
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmnlfilt/"

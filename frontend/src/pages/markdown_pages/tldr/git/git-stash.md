@@ -1,5 +1,5 @@
 ---
-title: "Git Stash - Manage Local Changes | Free DevTools"
+title: "Git Stash - Manage Local Changes | Online Free DevTools by Hexmos"
 name: git-stash
 path: /freedevtools/tldr/git/git-stash
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-stash/"

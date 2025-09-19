@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to XBM - Generate Bitmap Images | Free DevTools"
+title: "Convert PBM to XBM - Generate Bitmap Images | Online Free DevTools by Hexmos"
 name: pbmtoxbm
 path: /freedevtools/tldr/common/pbmtoxbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoxbm/"

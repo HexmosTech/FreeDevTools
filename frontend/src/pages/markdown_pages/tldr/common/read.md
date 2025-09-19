@@ -1,5 +1,5 @@
 ---
-title: "Read Input - Retrieve Data from STDIN | Free DevTools"
+title: "Read Input - Retrieve Data from STDIN | Online Free DevTools by Hexmos"
 name: read
 path: /freedevtools/tldr/common/read
 canonical: "https://hexmos.com/freedevtools/tldr/common/read/"

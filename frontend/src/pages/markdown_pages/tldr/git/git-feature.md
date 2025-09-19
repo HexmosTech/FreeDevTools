@@ -1,5 +1,5 @@
 ---
-title: "Git Feature - Create and Merge Feature Branches | Free DevTools"
+title: "Git Feature - Create and Merge Feature Branches | Online Free DevTools by Hexmos"
 name: git-feature
 path: /freedevtools/tldr/git/git-feature
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-feature/"

@@ -1,5 +1,5 @@
 ---
-title: "Display System Info - Screenfetch | Free DevTools"
+title: "Display System Info - Screenfetch | Online Free DevTools by Hexmos"
 name: screenfetch
 path: /freedevtools/tldr/common/screenfetch
 canonical: "https://hexmos.com/freedevtools/tldr/common/screenfetch/"

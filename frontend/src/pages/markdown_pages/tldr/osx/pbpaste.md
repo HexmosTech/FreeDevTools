@@ -1,5 +1,5 @@
 ---
-title: "Control Clipboard - Access Clipboard Contents | Free DevTools"
+title: "Control Clipboard - Access Clipboard Contents | Online Free DevTools by Hexmos"
 name: pbpaste
 path: /freedevtools/tldr/osx/pbpaste
 canonical: "https://hexmos.com/freedevtools/tldr/osx/pbpaste/"

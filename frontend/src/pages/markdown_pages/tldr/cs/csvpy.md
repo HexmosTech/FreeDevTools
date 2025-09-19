@@ -1,5 +1,5 @@
 ---
-title: "Load CSV - Execute CSV Files in Python | Free DevTools"
+title: "Load CSV - Execute CSV Files in Python | Online Free DevTools by Hexmos"
 name: csvpy
 path: /freedevtools/tldr/cs/csvpy
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvpy/"

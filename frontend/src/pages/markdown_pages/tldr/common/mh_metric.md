@@ -1,5 +1,5 @@
 ---
-title: "Calculate Code Metrics - mh_metric Tool | Free DevTools"
+title: "Calculate Code Metrics - mh_metric Tool | Online Free DevTools by Hexmos"
 name: mh_metric
 path: /freedevtools/tldr/common/mh_metric
 canonical: "https://hexmos.com/freedevtools/tldr/common/mh_metric/"

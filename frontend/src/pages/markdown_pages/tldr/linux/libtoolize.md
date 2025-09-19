@@ -1,5 +1,5 @@
 ---
-title: "Libtoolize - Generate Libtool Files | Free DevTools"
+title: "Libtoolize - Generate Libtool Files | Online Free DevTools by Hexmos"
 name: libtoolize
 path: /freedevtools/tldr/linux/libtoolize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/libtoolize/"

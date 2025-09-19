@@ -1,5 +1,5 @@
 ---
-title: "Format Python Code - Black Formatter | Free DevTools"
+title: "Format Python Code - Black Formatter | Online Free DevTools by Hexmos"
 name: black
 path: /freedevtools/tldr/common/black
 canonical: "https://hexmos.com/freedevtools/tldr/common/black/"

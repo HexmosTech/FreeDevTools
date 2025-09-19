@@ -1,5 +1,5 @@
 ---
-title: "CakePHP Framework - Control App Building | Free DevTools"
+title: "CakePHP Framework - Control App Building | Online Free DevTools by Hexmos"
 name: cake
 path: /freedevtools/tldr/common/cake
 canonical: "https://hexmos.com/freedevtools/tldr/common/cake/"

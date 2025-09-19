@@ -1,5 +1,5 @@
 ---
-title: "LimaCTL - Create Linux VMs on MacOS | Free DevTools"
+title: "LimaCTL - Create Linux VMs on MacOS | Online Free DevTools by Hexmos"
 name: limactl
 path: /freedevtools/tldr/common/limactl
 canonical: "https://hexmos.com/freedevtools/tldr/common/limactl/"

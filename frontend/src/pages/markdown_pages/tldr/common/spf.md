@@ -1,5 +1,5 @@
 ---
-title: "Superfile Manager - Control Files in Terminal | Free DevTools"
+title: "Superfile Manager - Control Files in Terminal | Online Free DevTools by Hexmos"
 name: spf
 path: /freedevtools/tldr/common/spf
 canonical: "https://hexmos.com/freedevtools/tldr/common/spf/"

@@ -1,5 +1,5 @@
 ---
-title: "Cpio - Create Archive Files | Free DevTools"
+title: "Cpio - Create Archive Files | Online Free DevTools by Hexmos"
 name: cpio
 path: /freedevtools/tldr/common/cpio
 canonical: "https://hexmos.com/freedevtools/tldr/common/cpio/"

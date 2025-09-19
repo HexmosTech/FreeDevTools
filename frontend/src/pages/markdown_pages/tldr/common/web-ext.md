@@ -1,5 +1,5 @@
 ---
-title: "Web Extension Manager - Control Firefox Extensions | Free DevTools"
+title: "Web Extension Manager - Control Firefox Extensions | Online Free DevTools by Hexmos"
 name: web-ext
 path: /freedevtools/tldr/common/web-ext
 canonical: "https://hexmos.com/freedevtools/tldr/common/web-ext/"

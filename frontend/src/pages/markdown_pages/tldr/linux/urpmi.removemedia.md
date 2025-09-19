@@ -1,5 +1,5 @@
 ---
-title: "Remove Media - Manage URPMI Repositories | Free DevTools"
+title: "Remove Media - Manage URPMI Repositories | Online Free DevTools by Hexmos"
 name: urpmi.removemedia
 path: /freedevtools/tldr/linux/urpmi.removemedia
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi.removemedia/"

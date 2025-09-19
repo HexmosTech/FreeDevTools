@@ -1,5 +1,5 @@
 ---
-title: "Generate Lorem Ipsum - Create Dummy Text | Free DevTools"
+title: "Generate Lorem Ipsum - Create Dummy Text | Online Free DevTools by Hexmos"
 name: lorem
 path: /freedevtools/tldr/common/lorem
 canonical: "https://hexmos.com/freedevtools/tldr/common/lorem/"

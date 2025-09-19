@@ -1,5 +1,5 @@
 ---
-title: "Git Checkout - Switch Branches and Restore Files | Free DevTools"
+title: "Git Checkout - Switch Branches and Restore Files | Online Free DevTools by Hexmos"
 name: git-checkout
 path: /freedevtools/tldr/git/git-checkout
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-checkout/"

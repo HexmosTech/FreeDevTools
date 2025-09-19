@@ -1,5 +1,5 @@
 ---
-title: "Secure Remove - Securely Delete Files with srm | Free DevTools"
+title: "Secure Remove - Securely Delete Files with srm | Online Free DevTools by Hexmos"
 name: srm
 path: /freedevtools/tldr/common/srm
 canonical: "https://hexmos.com/freedevtools/tldr/common/srm/"

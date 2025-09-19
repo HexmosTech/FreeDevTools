@@ -1,5 +1,5 @@
 ---
-title: "Linode Tickets - Manage Support Tickets | Free DevTools"
+title: "Linode Tickets - Manage Support Tickets | Online Free DevTools by Hexmos"
 name: linode-cli-tickets
 path: /freedevtools/tldr/linode/linode-cli-tickets
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-tickets/"

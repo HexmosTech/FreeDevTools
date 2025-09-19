@@ -1,5 +1,5 @@
 ---
-title: "Add Partition - Tell Linux Kernel About Partitions | Free DevTools"
+title: "Add Partition - Tell Linux Kernel About Partitions | Online Free DevTools by Hexmos"
 name: addpart
 path: /freedevtools/tldr/linux/addpart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/addpart/"

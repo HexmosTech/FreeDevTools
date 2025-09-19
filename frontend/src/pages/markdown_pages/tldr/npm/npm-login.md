@@ -1,5 +1,5 @@
 ---
-title: "NPM Login - Manage User Accounts | Free DevTools"
+title: "NPM Login - Manage User Accounts | Online Free DevTools by Hexmos"
 name: npm-login
 path: /freedevtools/tldr/npm/npm-login
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-login/"

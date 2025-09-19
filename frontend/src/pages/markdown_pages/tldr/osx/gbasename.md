@@ -1,5 +1,5 @@
 ---
-title: "Gbasename - Extract Filename | Free DevTools"
+title: "Gbasename - Extract Filename | Online Free DevTools by Hexmos"
 name: gbasename
 path: /freedevtools/tldr/osx/gbasename
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gbasename/"

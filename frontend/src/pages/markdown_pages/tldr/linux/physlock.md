@@ -1,5 +1,5 @@
 ---
-title: "Physlock - Lock Consoles Securely | Free DevTools"
+title: "Physlock - Lock Consoles Securely | Online Free DevTools by Hexmos"
 name: physlock
 path: /freedevtools/tldr/linux/physlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/physlock/"

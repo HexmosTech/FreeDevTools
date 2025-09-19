@@ -1,5 +1,5 @@
 ---
-title: "Control Gitea Server - Manage Git Repositories | Free DevTools"
+title: "Control Gitea Server - Manage Git Repositories | Online Free DevTools by Hexmos"
 name: gitea
 path: /freedevtools/tldr/git/gitea
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitea/"

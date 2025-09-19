@@ -1,5 +1,5 @@
 ---
-title: "Verify Cargo Project - Validate Cargo.toml Manifest | Free DevTools"
+title: "Verify Cargo Project - Validate Cargo.toml Manifest | Online Free DevTools by Hexmos"
 name: cargo-verify-project
 path: /freedevtools/tldr/cargo/cargo-verify-project
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-verify-project/"

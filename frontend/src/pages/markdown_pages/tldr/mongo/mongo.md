@@ -1,5 +1,5 @@
 ---
-title: "Connect to MongoDB - Manage Databases | Free DevTools"
+title: "Connect to MongoDB - Manage Databases | Online Free DevTools by Hexmos"
 name: mongo
 path: /freedevtools/tldr/mongo/mongo
 canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongo/"

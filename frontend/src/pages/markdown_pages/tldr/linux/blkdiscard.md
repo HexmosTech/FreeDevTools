@@ -1,5 +1,5 @@
 ---
-title: "blkdiscard - Securely Discard Device Blocks | Free DevTools"
+title: "blkdiscard - Securely Discard Device Blocks | Online Free DevTools by Hexmos"
 name: blkdiscard
 path: /freedevtools/tldr/linux/blkdiscard
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blkdiscard/"

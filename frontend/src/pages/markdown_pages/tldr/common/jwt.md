@@ -1,5 +1,5 @@
 ---
-title: "JWT Tool - Create and Decode JSON Web Tokens | Free DevTools"
+title: "JWT Tool - Create and Decode JSON Web Tokens | Online Free DevTools by Hexmos"
 name: jwt
 path: /freedevtools/tldr/common/jwt
 canonical: "https://hexmos.com/freedevtools/tldr/common/jwt/"

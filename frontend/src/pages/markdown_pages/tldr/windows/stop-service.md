@@ -1,5 +1,5 @@
 ---
-title: "Stop Service - Control Windows Services | Free DevTools"
+title: "Stop Service - Control Windows Services | Online Free DevTools by Hexmos"
 name: stop-service
 path: /freedevtools/tldr/windows/stop-service
 canonical: "https://hexmos.com/freedevtools/tldr/windows/stop-service/"

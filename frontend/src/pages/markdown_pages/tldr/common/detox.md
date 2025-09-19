@@ -1,5 +1,5 @@
 ---
-title: "Detox Rename - Format Filenames with Detox | Free DevTools"
+title: "Detox Rename - Format Filenames with Detox | Online Free DevTools by Hexmos"
 name: detox
 path: /freedevtools/tldr/common/detox
 canonical: "https://hexmos.com/freedevtools/tldr/common/detox/"

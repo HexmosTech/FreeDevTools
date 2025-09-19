@@ -1,5 +1,5 @@
 ---
-title: "Create Hatch Projects - Manage Python Projects | Free DevTools"
+title: "Create Hatch Projects - Manage Python Projects | Online Free DevTools by Hexmos"
 name: hatch
 path: /freedevtools/tldr/common/hatch
 canonical: "https://hexmos.com/freedevtools/tldr/common/hatch/"

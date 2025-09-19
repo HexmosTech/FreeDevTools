@@ -1,5 +1,5 @@
 ---
-title: "DHCP Exhaustion - Initiate DHCP Attacks | Free DevTools"
+title: "DHCP Exhaustion - Initiate DHCP Attacks | Online Free DevTools by Hexmos"
 name: dhcpig
 path: /freedevtools/tldr/common/dhcpig
 canonical: "https://hexmos.com/freedevtools/tldr/common/dhcpig/"

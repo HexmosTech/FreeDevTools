@@ -1,5 +1,5 @@
 ---
-title: "Telegram Desktop - Chat Securely with Open Source Clients | Free DevTools"
+title: "Telegram Desktop - Chat Securely with Open Source Clients | Online Free DevTools by Hexmos"
 name: telegram-desktop
 path: /freedevtools/tldr/common/telegram-desktop
 canonical: "https://hexmos.com/freedevtools/tldr/common/telegram-desktop/"

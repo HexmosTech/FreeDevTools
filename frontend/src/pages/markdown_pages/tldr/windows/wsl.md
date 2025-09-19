@@ -1,5 +1,5 @@
 ---
-title: "WSL - Manage Linux Subsystems on Windows | Free DevTools"
+title: "WSL - Manage Linux Subsystems on Windows | Online Free DevTools by Hexmos"
 name: wsl
 path: /freedevtools/tldr/windows/wsl
 canonical: "https://hexmos.com/freedevtools/tldr/windows/wsl/"

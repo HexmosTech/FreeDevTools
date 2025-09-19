@@ -1,5 +1,5 @@
 ---
-title: "GPupdate - Control Group Policy Updates | Free DevTools"
+title: "GPupdate - Control Group Policy Updates | Online Free DevTools by Hexmos"
 name: gpupdate
 path: /freedevtools/tldr/windows/gpupdate
 canonical: "https://hexmos.com/freedevtools/tldr/windows/gpupdate/"

@@ -1,5 +1,5 @@
 ---
-title: "Get PWD - Control Current Directory Path | Free DevTools"
+title: "Get PWD - Control Current Directory Path | Online Free DevTools by Hexmos"
 name: gpwd
 path: /freedevtools/tldr/osx/gpwd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gpwd/"

@@ -1,5 +1,5 @@
 ---
-title: "AFInfo - Parse Audio Metadata | Free DevTools"
+title: "AFInfo - Parse Audio Metadata | Online Free DevTools by Hexmos"
 name: afinfo
 path: /freedevtools/tldr/osx/afinfo
 canonical: "https://hexmos.com/freedevtools/tldr/osx/afinfo/"

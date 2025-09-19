@@ -1,5 +1,5 @@
 ---
-title: "Fdisk - Manage Disk Partitions | Free DevTools"
+title: "Fdisk - Manage Disk Partitions | Online Free DevTools by Hexmos"
 name: fdisk
 path: /freedevtools/tldr/linux/fdisk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fdisk/"

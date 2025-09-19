@@ -1,5 +1,5 @@
 ---
-title: "Kubie - Control Kubernetes Contexts and Namespaces | Free DevTools"
+title: "Kubie - Control Kubernetes Contexts and Namespaces | Online Free DevTools by Hexmos"
 name: kubie
 path: /freedevtools/tldr/common/kubie
 canonical: "https://hexmos.com/freedevtools/tldr/common/kubie/"

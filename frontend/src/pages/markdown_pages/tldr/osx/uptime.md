@@ -1,5 +1,5 @@
 ---
-title: "Uptime - Monitor System Uptime and Load | Free DevTools"
+title: "Uptime - Monitor System Uptime and Load | Online Free DevTools by Hexmos"
 name: uptime
 path: /freedevtools/tldr/osx/uptime
 canonical: "https://hexmos.com/freedevtools/tldr/osx/uptime/"

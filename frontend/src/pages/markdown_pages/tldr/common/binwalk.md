@@ -1,5 +1,5 @@
 ---
-title: "Analyze Binaries - Firmware Analysis with Binwalk | Free DevTools"
+title: "Analyze Binaries - Firmware Analysis with Binwalk | Online Free DevTools by Hexmos"
 name: binwalk
 path: /freedevtools/tldr/common/binwalk
 canonical: "https://hexmos.com/freedevtools/tldr/common/binwalk/"

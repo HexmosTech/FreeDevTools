@@ -1,5 +1,5 @@
 ---
-title: "Set Environment Variables - Control with Setx | Free DevTools"
+title: "Set Environment Variables - Control with Setx | Online Free DevTools by Hexmos"
 name: setx
 path: /freedevtools/tldr/windows/setx
 canonical: "https://hexmos.com/freedevtools/tldr/windows/setx/"

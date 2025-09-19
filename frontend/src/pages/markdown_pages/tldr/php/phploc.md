@@ -1,5 +1,5 @@
 ---
-title: "Analyze PHP Code - phploc Code Metrics | Free DevTools"
+title: "Analyze PHP Code - phploc Code Metrics | Online Free DevTools by Hexmos"
 name: phploc
 path: /freedevtools/tldr/php/phploc
 canonical: "https://hexmos.com/freedevtools/tldr/php/phploc/"

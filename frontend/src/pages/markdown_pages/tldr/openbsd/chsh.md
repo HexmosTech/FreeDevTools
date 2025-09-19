@@ -1,5 +1,5 @@
 ---
-title: "Chsh - Change User Shell | Free DevTools"
+title: "Chsh - Change User Shell | Online Free DevTools by Hexmos"
 name: chsh
 path: /freedevtools/tldr/openbsd/chsh
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/chsh/"

@@ -1,5 +1,5 @@
 ---
-title: "Format Line Endings - dos2unix Converter | Free DevTools"
+title: "Format Line Endings - dos2unix Converter | Online Free DevTools by Hexmos"
 name: dos2unix
 path: /freedevtools/tldr/linux/dos2unix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dos2unix/"

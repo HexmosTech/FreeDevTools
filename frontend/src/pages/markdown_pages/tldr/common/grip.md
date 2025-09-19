@@ -1,5 +1,5 @@
 ---
-title: "Render Markdown - Preview GitHub Markdown with Grip | Free DevTools"
+title: "Render Markdown - Preview GitHub Markdown with Grip | Online Free DevTools by Hexmos"
 name: grip
 path: /freedevtools/tldr/common/grip
 canonical: "https://hexmos.com/freedevtools/tldr/common/grip/"

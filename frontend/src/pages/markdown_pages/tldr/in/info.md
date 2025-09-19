@@ -1,5 +1,5 @@
 ---
-title: "Info - Read Info Documentation | Free DevTools"
+title: "Info - Read Info Documentation | Online Free DevTools by Hexmos"
 name: info
 path: "/freedevtools/tldr/in/info"
 canonical: "https://hexmos.com/freedevtools/tldr/in/info/"

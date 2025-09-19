@@ -1,5 +1,5 @@
 ---
-title: "Locate Files - Find Filenames Quickly | Free DevTools"
+title: "Locate Files - Find Filenames Quickly | Online Free DevTools by Hexmos"
 name: plocate
 path: /freedevtools/tldr/common/plocate
 canonical: "https://hexmos.com/freedevtools/tldr/common/plocate/"

@@ -1,5 +1,5 @@
 ---
-title: "Combine Netpbm Images - Grid Layouts | Free DevTools"
+title: "Combine Netpbm Images - Grid Layouts | Online Free DevTools by Hexmos"
 name: pamundice
 path: /freedevtools/tldr/common/pamundice
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamundice/"

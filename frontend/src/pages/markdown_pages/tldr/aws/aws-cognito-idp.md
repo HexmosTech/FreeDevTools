@@ -1,5 +1,5 @@
 ---
-title: "Create Cognito User Pools - Control AWS Users | Free DevTools"
+title: "Create Cognito User Pools - Control AWS Users | Online Free DevTools by Hexmos"
 name: aws-cognito-idp
 path: /freedevtools/tldr/aws/aws-cognito-idp
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cognito-idp/"

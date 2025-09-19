@@ -1,5 +1,5 @@
 ---
-title: "Set Keyboard Layout - Control X Keyboard with setxkbmap | Free DevTools"
+title: "Set Keyboard Layout - Control X Keyboard with setxkbmap | Online Free DevTools by Hexmos"
 name: setxkbmap
 path: /freedevtools/tldr/linux/setxkbmap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setxkbmap/"

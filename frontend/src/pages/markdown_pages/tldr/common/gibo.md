@@ -1,5 +1,5 @@
 ---
-title: "Generate Gitignore Boilerplates - Fetch Configurations | Free DevTools"
+title: "Generate Gitignore Boilerplates - Fetch Configurations | Online Free DevTools by Hexmos"
 name: gibo
 path: /freedevtools/tldr/common/gibo
 canonical: "https://hexmos.com/freedevtools/tldr/common/gibo/"

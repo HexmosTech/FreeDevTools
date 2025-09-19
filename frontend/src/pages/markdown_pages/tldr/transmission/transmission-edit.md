@@ -1,5 +1,5 @@
 ---
-title: "Transmission Edit - Modify Torrent Announce URLs | Free DevTools"
+title: "Transmission Edit - Modify Torrent Announce URLs | Online Free DevTools by Hexmos"
 name: transmission-edit
 path: /freedevtools/tldr/transmission/transmission-edit
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-edit/"

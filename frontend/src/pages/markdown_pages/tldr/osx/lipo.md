@@ -1,5 +1,5 @@
 ---
-title: "Lipo Create Universal Binaries - Manage Mach-O | Free DevTools"
+title: "Lipo Create Universal Binaries - Manage Mach-O | Online Free DevTools by Hexmos"
 name: lipo
 path: /freedevtools/tldr/osx/lipo
 canonical: "https://hexmos.com/freedevtools/tldr/osx/lipo/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Diff Histogram - Analyze File Changes | Free DevTools"
+title: "Create Diff Histogram - Analyze File Changes | Online Free DevTools by Hexmos"
 name: diffstat
 path: /freedevtools/tldr/common/diffstat
 canonical: "https://hexmos.com/freedevtools/tldr/common/diffstat/"

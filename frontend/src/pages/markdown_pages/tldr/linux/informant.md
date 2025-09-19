@@ -1,5 +1,5 @@
 ---
-title: "Read Arch News - Check Package Updates | Free DevTools"
+title: "Read Arch News - Check Package Updates | Online Free DevTools by Hexmos"
 name: informant
 path: /freedevtools/tldr/linux/informant
 canonical: "https://hexmos.com/freedevtools/tldr/linux/informant/"

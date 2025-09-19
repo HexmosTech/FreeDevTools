@@ -1,5 +1,5 @@
 ---
-title: "Render HTML to PDF - Weasyprint | Free DevTools"
+title: "Render HTML to PDF - Weasyprint | Online Free DevTools by Hexmos"
 name: weasyprint
 path: /freedevtools/tldr/common/weasyprint
 canonical: "https://hexmos.com/freedevtools/tldr/common/weasyprint/"

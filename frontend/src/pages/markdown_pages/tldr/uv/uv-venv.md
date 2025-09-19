@@ -1,5 +1,5 @@
 ---
-title: "Create Python Virtual Environments - uv-venv | Free DevTools"
+title: "Create Python Virtual Environments - uv-venv | Online Free DevTools by Hexmos"
 name: uv-venv
 path: /freedevtools/tldr/uv/uv-venv
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-venv/"

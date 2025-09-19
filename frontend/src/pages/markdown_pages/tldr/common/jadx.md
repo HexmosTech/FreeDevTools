@@ -1,5 +1,5 @@
 ---
-title: "Decompile Android Dex - Generate Java Code with Jadx | Free DevTools"
+title: "Decompile Android Dex - Generate Java Code with Jadx | Online Free DevTools by Hexmos"
 name: jadx
 path: /freedevtools/tldr/common/jadx
 canonical: "https://hexmos.com/freedevtools/tldr/common/jadx/"

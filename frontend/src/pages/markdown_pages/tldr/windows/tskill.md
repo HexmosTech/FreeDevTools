@@ -1,5 +1,5 @@
 ---
-title: "Tskill - Terminate Processes on Windows | Free DevTools"
+title: "Tskill - Terminate Processes on Windows | Online Free DevTools by Hexmos"
 name: tskill
 path: /freedevtools/tldr/windows/tskill
 canonical: "https://hexmos.com/freedevtools/tldr/windows/tskill/"

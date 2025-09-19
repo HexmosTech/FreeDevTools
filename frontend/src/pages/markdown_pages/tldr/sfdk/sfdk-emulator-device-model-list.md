@@ -1,5 +1,5 @@
 ---
-title: "SFDK Device Model - List Emulator Models | Free DevTools"
+title: "SFDK Device Model - List Emulator Models | Online Free DevTools by Hexmos"
 name: sfdk-emulator-device-model-list
 path: /freedevtools/tldr/sfdk/sfdk-emulator-device-model-list
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-device-model-list/"

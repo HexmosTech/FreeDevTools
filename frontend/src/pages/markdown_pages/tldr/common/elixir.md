@@ -1,5 +1,5 @@
 ---
-title: "Elixir Interpreter - Execute Code | Free DevTools"
+title: "Elixir Interpreter - Execute Code | Online Free DevTools by Hexmos"
 name: elixir
 path: /freedevtools/tldr/common/elixir
 canonical: "https://hexmos.com/freedevtools/tldr/common/elixir/"

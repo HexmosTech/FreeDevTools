@@ -1,5 +1,5 @@
 ---
-title: "PipeWire Control - Manage Objects via Command Line | Free DevTools"
+title: "PipeWire Control - Manage Objects via Command Line | Online Free DevTools by Hexmos"
 name: pw-cli
 path: /freedevtools/tldr/linux/pw-cli
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-cli/"

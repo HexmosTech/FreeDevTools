@@ -1,5 +1,5 @@
 ---
-title: "Execute TypeScript - Run TS Directly | Free DevTools"
+title: "Execute TypeScript - Run TS Directly | Online Free DevTools by Hexmos"
 name: ts-node
 path: /freedevtools/tldr/common/ts-node
 canonical: "https://hexmos.com/freedevtools/tldr/common/ts-node/"

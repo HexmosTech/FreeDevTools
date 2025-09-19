@@ -1,5 +1,5 @@
 ---
-title: "Crane Validate - Image Validation Tool | Free DevTools"
+title: "Crane Validate - Image Validation Tool | Online Free DevTools by Hexmos"
 name: crane-validate
 path: /freedevtools/tldr/crane/crane-validate
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-validate/"

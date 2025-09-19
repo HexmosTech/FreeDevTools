@@ -1,5 +1,5 @@
 ---
-title: "Select Timezone - Interactively Choose Timezone | Free DevTools"
+title: "Select Timezone - Interactively Choose Timezone | Online Free DevTools by Hexmos"
 name: tzselect
 path: /freedevtools/tldr/linux/tzselect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tzselect/"

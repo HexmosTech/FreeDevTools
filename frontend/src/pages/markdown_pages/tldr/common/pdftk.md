@@ -1,5 +1,5 @@
 ---
-title: "PDF Toolkit - Control PDF Files | Free DevTools"
+title: "PDF Toolkit - Control PDF Files | Online Free DevTools by Hexmos"
 name: pdftk
 path: "/freedevtools/tldr/common/pdftk"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdftk/"

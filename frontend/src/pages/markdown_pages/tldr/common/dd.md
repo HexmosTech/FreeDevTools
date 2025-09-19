@@ -1,5 +1,5 @@
 ---
-title: "Convert and Copy Files with dd | Free DevTools"
+title: "Convert and Copy Files with dd | Online Free DevTools by Hexmos"
 name: dd
 path: /freedevtools/tldr/common/dd
 canonical: "https://hexmos.com/freedevtools/tldr/common/dd/"

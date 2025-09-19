@@ -1,5 +1,5 @@
 ---
-title: "Docker Exec - Execute Commands in Running Containers | Free DevTools"
+title: "Docker Exec - Execute Commands in Running Containers | Online Free DevTools by Hexmos"
 name: docker-exec
 path: /freedevtools/tldr/docker/docker-exec
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-exec/"

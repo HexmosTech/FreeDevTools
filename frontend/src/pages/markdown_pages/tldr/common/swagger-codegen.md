@@ -1,5 +1,5 @@
 ---
-title: "Swagger Codegen - Generate REST API Code & Docs | Free DevTools"
+title: "Swagger Codegen - Generate REST API Code & Docs | Online Free DevTools by Hexmos"
 name: swagger-codegen
 path: /freedevtools/tldr/common/swagger-codegen
 canonical: "https://hexmos.com/freedevtools/tldr/common/swagger-codegen/"

@@ -1,5 +1,5 @@
 ---
-title: "Zapier Scaffold - Generate Integration Templates | Free DevTools"
+title: "Zapier Scaffold - Generate Integration Templates | Online Free DevTools by Hexmos"
 name: zapier-scaffold
 path: /freedevtools/tldr/zapier/zapier-scaffold
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-scaffold/"

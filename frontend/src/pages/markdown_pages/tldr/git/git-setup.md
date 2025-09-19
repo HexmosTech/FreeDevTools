@@ -1,5 +1,5 @@
 ---
-title: "Create Git Repository - Initialize and Commit Files | Free DevTools"
+title: "Create Git Repository - Initialize and Commit Files | Online Free DevTools by Hexmos"
 name: git-setup
 path: /freedevtools/tldr/git/git-setup
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-setup/"

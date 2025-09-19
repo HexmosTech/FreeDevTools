@@ -1,5 +1,5 @@
 ---
-title: "Control Serial Ports - Microcom Terminal | Free DevTools"
+title: "Control Serial Ports - Microcom Terminal | Online Free DevTools by Hexmos"
 name: microcom
 path: "/freedevtools/tldr/linux/microcom"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/microcom/"

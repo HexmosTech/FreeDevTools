@@ -1,5 +1,5 @@
 ---
-title: "BZEgrep - Search Compressed Files with Regex | Free DevTools"
+title: "BZEgrep - Search Compressed Files with Regex | Online Free DevTools by Hexmos"
 name: bzegrep
 path: /freedevtools/tldr/common/bzegrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzegrep/"

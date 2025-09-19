@@ -1,5 +1,5 @@
 ---
-title: "Package Manager - Manage Packages | Free DevTools"
+title: "Package Manager - Manage Packages | Online Free DevTools by Hexmos"
 name: pkgz
 path: /freedevtools/tldr/common/pkgz
 canonical: "https://hexmos.com/freedevtools/tldr/common/pkgz/"

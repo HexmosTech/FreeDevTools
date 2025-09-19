@@ -1,5 +1,5 @@
 ---
-title: "Create Tar Archives - Archiving Utility | Free DevTools"
+title: "Create Tar Archives - Archiving Utility | Online Free DevTools by Hexmos"
 name: tar
 path: /freedevtools/tldr/common/tar
 canonical: "https://hexmos.com/freedevtools/tldr/common/tar/"

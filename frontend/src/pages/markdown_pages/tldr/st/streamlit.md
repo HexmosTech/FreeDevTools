@@ -1,5 +1,5 @@
 ---
-title: "Streamlit App Builder - Create Web Apps in Python | Free DevTools"
+title: "Streamlit App Builder - Create Web Apps in Python | Online Free DevTools by Hexmos"
 name: streamlit
 path: /freedevtools/tldr/st/streamlit
 canonical: "https://hexmos.com/freedevtools/tldr/st/streamlit/"

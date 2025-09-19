@@ -1,5 +1,5 @@
 ---
-title: "Debug with GDB - Debug Executables | Free DevTools"
+title: "Debug with GDB - Debug Executables | Online Free DevTools by Hexmos"
 name: gdb
 path: /freedevtools/tldr/common/gdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdb/"

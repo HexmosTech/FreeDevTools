@@ -1,5 +1,5 @@
 ---
-title: "Which Command - Locate Executables on macOS | Free DevTools"
+title: "Which Command - Locate Executables on macOS | Online Free DevTools by Hexmos"
 name: gwhich
 path: /freedevtools/tldr/osx/gwhich
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gwhich/"

@@ -1,5 +1,5 @@
 ---
-title: "Enable Apache Config - a2enconf Command | Free DevTools"
+title: "Enable Apache Config - a2enconf Command | Online Free DevTools by Hexmos"
 name: a2enconf
 path: /freedevtools/tldr/linux/a2enconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2enconf/"

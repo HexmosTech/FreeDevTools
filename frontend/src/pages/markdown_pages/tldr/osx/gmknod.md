@@ -1,5 +1,5 @@
 ---
-title: "Create File Node - gmknod Command | Free DevTools"
+title: "Create File Node - gmknod Command | Online Free DevTools by Hexmos"
 name: gmknod
 path: /freedevtools/tldr/osx/gmknod
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmknod/"

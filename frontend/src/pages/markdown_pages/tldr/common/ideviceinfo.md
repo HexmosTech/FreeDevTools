@@ -1,5 +1,5 @@
 ---
-title: "Ideviceinfo - Show iOS Device Info | Free DevTools"
+title: "Ideviceinfo - Show iOS Device Info | Online Free DevTools by Hexmos"
 name: ideviceinfo
 path: /freedevtools/tldr/common/ideviceinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/ideviceinfo/"

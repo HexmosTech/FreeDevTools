@@ -1,5 +1,5 @@
 ---
-title: "Rustup Settings - Control Rust Installations | Free DevTools"
+title: "Rustup Settings - Control Rust Installations | Online Free DevTools by Hexmos"
 name: rustup-set
 path: /freedevtools/tldr/rustup/rustup-set
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-set/"

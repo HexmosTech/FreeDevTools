@@ -1,5 +1,5 @@
 ---
-title: "Control Process Terminal - Move Processes with reptyr | Free DevTools"
+title: "Control Process Terminal - Move Processes with reptyr | Online Free DevTools by Hexmos"
 name: reptyr
 path: /freedevtools/tldr/linux/reptyr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/reptyr/"

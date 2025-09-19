@@ -1,5 +1,5 @@
 ---
-title: "Generate Diagrams - Mermaid CLI Tool | Free DevTools"
+title: "Generate Diagrams - Mermaid CLI Tool | Online Free DevTools by Hexmos"
 name: mmdc
 path: /freedevtools/tldr/common/mmdc
 canonical: "https://hexmos.com/freedevtools/tldr/common/mmdc/"

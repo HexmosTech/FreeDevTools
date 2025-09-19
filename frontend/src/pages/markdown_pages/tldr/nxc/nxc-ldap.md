@@ -1,5 +1,5 @@
 ---
-title: "LDAP Exploitation - Control Active Directory | Free DevTools"
+title: "LDAP Exploitation - Control Active Directory | Online Free DevTools by Hexmos"
 name: nxc-ldap
 path: /freedevtools/tldr/nxc/nxc-ldap
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ldap/"

@@ -1,5 +1,5 @@
 ---
-title: "Chars - Display Unicode Characters | Free DevTools"
+title: "Chars - Display Unicode Characters | Online Free DevTools by Hexmos"
 name: chars
 path: "/freedevtools/tldr/common/chars"
 canonical: "https://hexmos.com/freedevtools/tldr/common/chars/"

@@ -1,5 +1,5 @@
 ---
-title: "Arthas Trace - Trace Method Calls | Free DevTools"
+title: "Arthas Trace - Trace Method Calls | Online Free DevTools by Hexmos"
 name: arthas-trace
 path: /freedevtools/tldr/arthas/arthas-trace
 canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas-trace/"

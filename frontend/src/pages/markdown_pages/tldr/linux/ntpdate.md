@@ -1,5 +1,5 @@
 ---
-title: "Synchronize Time - Set Date via NTP | Free DevTools"
+title: "Synchronize Time - Set Date via NTP | Online Free DevTools by Hexmos"
 name: ntpdate
 path: "/freedevtools/tldr/linux/ntpdate"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpdate/"

@@ -1,5 +1,5 @@
 ---
-title: "Aura Package Manager - Manage Arch Linux Packages | Free DevTools"
+title: "Aura Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: aura
 path: /freedevtools/tldr/linux/aura
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aura/"

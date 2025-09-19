@@ -1,5 +1,5 @@
 ---
-title: "GHCID Compiler - Control Haskell Compilation | Free DevTools"
+title: "GHCID Compiler - Control Haskell Compilation | Online Free DevTools by Hexmos"
 name: ghcid
 path: /freedevtools/tldr/common/ghcid
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghcid/"

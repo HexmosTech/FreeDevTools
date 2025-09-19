@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Sessions - mtm Multiplexer | Free DevTools"
+title: "Control Terminal Sessions - mtm Multiplexer | Online Free DevTools by Hexmos"
 name: mtm
 path: /freedevtools/tldr/common/mtm
 canonical: "https://hexmos.com/freedevtools/tldr/common/mtm/"

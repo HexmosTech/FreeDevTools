@@ -1,5 +1,5 @@
 ---
-title: "Manage System Extensions - Control systemd-sysext | Free DevTools"
+title: "Manage System Extensions - Control systemd-sysext | Online Free DevTools by Hexmos"
 name: systemd-sysext
 path: /freedevtools/tldr/linux/systemd-sysext
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-sysext/"

@@ -1,5 +1,5 @@
 ---
-title: "HID Daemon - Control macOS Devices | Free DevTools"
+title: "HID Daemon - Control macOS Devices | Online Free DevTools by Hexmos"
 name: hidd
 path: /freedevtools/tldr/osx/hidd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/hidd/"

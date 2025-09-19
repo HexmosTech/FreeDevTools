@@ -1,5 +1,5 @@
 ---
-title: "Scan I2C Buses - I2C Detect Command | Free DevTools"
+title: "Scan I2C Buses - I2C Detect Command | Online Free DevTools by Hexmos"
 name: i2cdetect
 path: /freedevtools/tldr/linux/i2cdetect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i2cdetect/"

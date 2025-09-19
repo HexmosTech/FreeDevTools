@@ -1,5 +1,5 @@
 ---
-title: "Conan - Manage Native Binaries | Free DevTools"
+title: "Conan - Manage Native Binaries | Online Free DevTools by Hexmos"
 name: conan
 path: /freedevtools/tldr/common/conan
 canonical: "https://hexmos.com/freedevtools/tldr/common/conan/"

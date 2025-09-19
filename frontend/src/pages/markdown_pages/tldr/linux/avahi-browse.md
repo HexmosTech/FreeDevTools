@@ -1,5 +1,5 @@
 ---
-title: "Avahi-browse - Discover Network Services | Free DevTools"
+title: "Avahi-browse - Discover Network Services | Online Free DevTools by Hexmos"
 name: avahi-browse
 path: /freedevtools/tldr/linux/avahi-browse
 canonical: "https://hexmos.com/freedevtools/tldr/linux/avahi-browse/"

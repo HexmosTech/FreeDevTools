@@ -1,5 +1,5 @@
 ---
-title: "Raspinfo - Display System Information | Free DevTools"
+title: "Raspinfo - Display System Information | Online Free DevTools by Hexmos"
 name: raspinfo
 path: /freedevtools/tldr/linux/raspinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/raspinfo/"

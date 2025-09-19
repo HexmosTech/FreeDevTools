@@ -1,5 +1,5 @@
 ---
-title: "Format LZMA Files - Compress and Decompress | Free DevTools"
+title: "Format LZMA Files - Compress and Decompress | Online Free DevTools by Hexmos"
 name: lzma
 path: /freedevtools/tldr/common/lzma
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzma/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Chocolatey Features - Enable/Disable | Free DevTools"
+title: "Control Chocolatey Features - Enable/Disable | Online Free DevTools by Hexmos"
 name: choco-feature
 path: /freedevtools/tldr/windows/choco-feature
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-feature/"

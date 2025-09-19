@@ -1,5 +1,5 @@
 ---
-title: "Unexpand - Convert Spaces to Tabs | Free DevTools"
+title: "Unexpand - Convert Spaces to Tabs | Online Free DevTools by Hexmos"
 name: unexpand
 path: /freedevtools/tldr/common/unexpand
 canonical: "https://hexmos.com/freedevtools/tldr/common/unexpand/"

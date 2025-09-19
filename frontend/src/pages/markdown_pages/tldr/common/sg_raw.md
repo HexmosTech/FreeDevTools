@@ -1,5 +1,5 @@
 ---
-title: "SCSI Control - Send Raw SCSI Commands | Free DevTools"
+title: "SCSI Control - Send Raw SCSI Commands | Online Free DevTools by Hexmos"
 name: sg_raw
 path: /freedevtools/tldr/common/sg_raw
 canonical: "https://hexmos.com/freedevtools/tldr/common/sg_raw/"

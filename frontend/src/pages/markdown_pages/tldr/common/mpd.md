@@ -1,5 +1,5 @@
 ---
-title: "Control Music Playback - MPD Command | Free DevTools"
+title: "Control Music Playback - MPD Command | Online Free DevTools by Hexmos"
 name: mpd
 path: /freedevtools/tldr/common/mpd
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpd/"

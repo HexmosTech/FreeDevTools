@@ -1,5 +1,5 @@
 ---
-title: "Generate Numbered Lines - Control Text with GNL | Free DevTools"
+title: "Generate Numbered Lines - Control Text with GNL | Online Free DevTools by Hexmos"
 name: gnl
 path: /freedevtools/tldr/osx/gnl
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gnl/"

@@ -1,5 +1,5 @@
 ---
-title: "Validate REUSE Compliance - Manage License and Copyright Info | Free DevTools"
+title: "Validate REUSE Compliance - Manage License and Copyright Info | Online Free DevTools by Hexmos"
 name: reuse
 path: "/freedevtools/tldr/common/reuse"
 canonical: "https://hexmos.com/freedevtools/tldr/common/reuse/"

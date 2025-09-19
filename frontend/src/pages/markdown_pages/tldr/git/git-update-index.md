@@ -1,5 +1,5 @@
 ---
-title: "Git Update Index - Control File Tracking | Free DevTools"
+title: "Git Update Index - Control File Tracking | Online Free DevTools by Hexmos"
 name: git-update-index
 path: /freedevtools/tldr/git/git-update-index
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-update-index/"

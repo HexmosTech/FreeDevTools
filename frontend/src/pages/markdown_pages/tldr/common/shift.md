@@ -1,5 +1,5 @@
 ---
-title: "Shift Command - Move Positional Parameters | Free DevTools"
+title: "Shift Command - Move Positional Parameters | Online Free DevTools by Hexmos"
 name: shift
 path: /freedevtools/tldr/common/shift
 canonical: "https://hexmos.com/freedevtools/tldr/common/shift/"

@@ -1,5 +1,5 @@
 ---
-title: "Package Utility - Query macOS Installer Packages | Free DevTools"
+title: "Package Utility - Query macOS Installer Packages | Online Free DevTools by Hexmos"
 name: pkgutil
 path: /freedevtools/tldr/osx/pkgutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/pkgutil/"

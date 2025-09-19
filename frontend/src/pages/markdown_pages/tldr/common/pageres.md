@@ -1,5 +1,5 @@
 ---
-title: "Generate Website Screenshots - Pageres | Free DevTools"
+title: "Generate Website Screenshots - Pageres | Online Free DevTools by Hexmos"
 name: pageres
 path: /freedevtools/tldr/common/pageres
 canonical: "https://hexmos.com/freedevtools/tldr/common/pageres/"

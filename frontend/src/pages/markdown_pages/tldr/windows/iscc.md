@@ -1,5 +1,5 @@
 ---
-title: "Create Inno Setup Installer - Compile Scripts | Free DevTools"
+title: "Create Inno Setup Installer - Compile Scripts | Online Free DevTools by Hexmos"
 name: iscc
 path: /freedevtools/tldr/windows/iscc
 canonical: "https://hexmos.com/freedevtools/tldr/windows/iscc/"

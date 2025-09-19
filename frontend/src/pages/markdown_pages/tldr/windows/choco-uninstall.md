@@ -1,5 +1,5 @@
 ---
-title: "Choco Uninstall - Remove Packages with Chocolatey | Free DevTools"
+title: "Choco Uninstall - Remove Packages with Chocolatey | Online Free DevTools by Hexmos"
 name: choco-uninstall
 path: /freedevtools/tldr/windows/choco-uninstall
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-uninstall/"

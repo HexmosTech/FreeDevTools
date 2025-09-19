@@ -1,5 +1,5 @@
 ---
-title: "Create Archive Files - Manage Files with patool | Free DevTools"
+title: "Create Archive Files - Manage Files with patool | Online Free DevTools by Hexmos"
 name: patool
 path: /freedevtools/tldr/linux/patool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/patool/"

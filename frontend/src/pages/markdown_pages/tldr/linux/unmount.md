@@ -1,5 +1,5 @@
 ---
-title: "Unmount Command - Control File Systems | Free DevTools"
+title: "Unmount Command - Control File Systems | Online Free DevTools by Hexmos"
 name: umount
 path: /freedevtools/tldr/linux/unmount
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unmount/"

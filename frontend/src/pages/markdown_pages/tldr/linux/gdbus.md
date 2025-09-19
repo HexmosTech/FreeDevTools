@@ -1,5 +1,5 @@
 ---
-title: "DBus Interact - Control D-Bus Objects | Free DevTools"
+title: "DBus Interact - Control D-Bus Objects | Online Free DevTools by Hexmos"
 name: gdbus
 path: /freedevtools/tldr/linux/gdbus
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gdbus/"

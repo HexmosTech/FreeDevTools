@@ -1,5 +1,5 @@
 ---
-title: "Mkinitcpio - Generate Linux Initramfs Images | Free DevTools"
+title: "Mkinitcpio - Generate Linux Initramfs Images | Online Free DevTools by Hexmos"
 name: mkinitcpio
 path: /freedevtools/tldr/linux/mkinitcpio
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkinitcpio/"

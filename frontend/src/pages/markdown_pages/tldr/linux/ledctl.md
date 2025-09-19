@@ -1,5 +1,5 @@
 ---
-title: "LED Control - Manage Enclosure LEDs | Free DevTools"
+title: "LED Control - Manage Enclosure LEDs | Online Free DevTools by Hexmos"
 name: ledctl
 path: /freedevtools/tldr/linux/ledctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ledctl/"

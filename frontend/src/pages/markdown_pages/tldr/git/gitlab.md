@@ -1,5 +1,5 @@
 ---
-title: "GitLab Control - Manage Repositories and Pipelines | Free DevTools"
+title: "GitLab Control - Manage Repositories and Pipelines | Online Free DevTools by Hexmos"
 name: gitlab
 path: /freedevtools/tldr/git/gitlab
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitlab/"

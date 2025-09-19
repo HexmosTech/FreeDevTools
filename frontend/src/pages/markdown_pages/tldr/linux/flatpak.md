@@ -1,5 +1,5 @@
 ---
-title: "Install Flatpak Applications - Manage Packages | Free DevTools"
+title: "Install Flatpak Applications - Manage Packages | Online Free DevTools by Hexmos"
 name: flatpak
 path: /freedevtools/tldr/linux/flatpak
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak/"

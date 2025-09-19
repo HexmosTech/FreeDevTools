@@ -1,5 +1,5 @@
 ---
-title: "Tune exFAT - Adjust exFAT Parameters | Free DevTools"
+title: "Tune exFAT - Adjust exFAT Parameters | Online Free DevTools by Hexmos"
 name: tune.exfat
 path: /freedevtools/tldr/linux/tune.exfat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tune.exfat/"

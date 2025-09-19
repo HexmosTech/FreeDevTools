@@ -1,5 +1,5 @@
 ---
-title: "Execute NPM Packages - Run Commands with NPX | Free DevTools"
+title: "Execute NPM Packages - Run Commands with NPX | Online Free DevTools by Hexmos"
 name: npx
 path: /freedevtools/tldr/common/npx
 canonical: "https://hexmos.com/freedevtools/tldr/common/npx/"

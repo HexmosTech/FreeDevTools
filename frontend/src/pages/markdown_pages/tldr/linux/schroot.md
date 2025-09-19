@@ -1,5 +1,5 @@
 ---
-title: "Schroot - Control Root Directories | Free DevTools"
+title: "Schroot - Control Root Directories | Online Free DevTools by Hexmos"
 name: schroot
 path: /freedevtools/tldr/linux/schroot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/schroot/"

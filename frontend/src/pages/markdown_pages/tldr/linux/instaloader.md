@@ -1,5 +1,5 @@
 ---
-title: "Instaloader - Download Instagram Media | Free DevTools"
+title: "Instaloader - Download Instagram Media | Online Free DevTools by Hexmos"
 name: instaloader
 path: /freedevtools/tldr/linux/instaloader
 canonical: "https://hexmos.com/freedevtools/tldr/linux/instaloader/"

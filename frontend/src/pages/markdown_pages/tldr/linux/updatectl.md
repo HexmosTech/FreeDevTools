@@ -1,5 +1,5 @@
 ---
-title: "Updatectl - Control System Updates | Free DevTools"
+title: "Updatectl - Control System Updates | Online Free DevTools by Hexmos"
 name: updatectl
 path: /freedevtools/tldr/linux/updatectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/updatectl/"

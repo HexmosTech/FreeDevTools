@@ -1,5 +1,5 @@
 ---
-title: "ImageMagick Capture - Screen Capture | Free DevTools"
+title: "ImageMagick Capture - Screen Capture | Online Free DevTools by Hexmos"
 name: magick-import
 path: /freedevtools/tldr/magick/magick-import
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-import/"

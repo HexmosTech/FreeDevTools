@@ -1,5 +1,5 @@
 ---
-title: "Parallel Command - Run Commands Simultaneously | Free DevTools"
+title: "Parallel Command - Run Commands Simultaneously | Online Free DevTools by Hexmos"
 name: parallel
 path: "/freedevtools/tldr/common/parallel"
 canonical: "https://hexmos.com/freedevtools/tldr/common/parallel/"

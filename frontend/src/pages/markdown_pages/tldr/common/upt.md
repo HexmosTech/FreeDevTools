@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Upt Package Manager | Free DevTools"
+title: "Manage Packages - Upt Package Manager | Online Free DevTools by Hexmos"
 name: upt
 path: /freedevtools/tldr/common/upt
 canonical: "https://hexmos.com/freedevtools/tldr/common/upt/"

@@ -1,5 +1,5 @@
 ---
-title: "Process ID Finder - Identify Processes | Free DevTools"
+title: "Process ID Finder - Identify Processes | Online Free DevTools by Hexmos"
 name: pidof
 path: /freedevtools/tldr/linux/pidof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pidof/"

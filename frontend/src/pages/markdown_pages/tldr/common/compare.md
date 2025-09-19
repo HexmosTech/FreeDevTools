@@ -1,5 +1,5 @@
 ---
-title: "Compare Images - Visualize Differences | Free DevTools"
+title: "Compare Images - Visualize Differences | Online Free DevTools by Hexmos"
 name: compare
 path: /freedevtools/tldr/common/compare
 canonical: "https://hexmos.com/freedevtools/tldr/common/compare/"

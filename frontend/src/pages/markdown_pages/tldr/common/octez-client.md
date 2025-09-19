@@ -1,5 +1,5 @@
 ---
-title: "Octez Client - Interact with Tezos Blockchain | Free DevTools"
+title: "Octez Client - Interact with Tezos Blockchain | Online Free DevTools by Hexmos"
 name: octez-client
 path: /freedevtools/tldr/common/octez-client
 canonical: "https://hexmos.com/freedevtools/tldr/common/octez-client/"

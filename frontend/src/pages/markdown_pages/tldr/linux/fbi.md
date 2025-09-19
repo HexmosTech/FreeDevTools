@@ -1,5 +1,5 @@
 ---
-title: "Display Images - Control Images in Linux Framebuffer | Free DevTools"
+title: "Display Images - Control Images in Linux Framebuffer | Online Free DevTools by Hexmos"
 name: fbi
 path: /freedevtools/tldr/linux/fbi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fbi/"

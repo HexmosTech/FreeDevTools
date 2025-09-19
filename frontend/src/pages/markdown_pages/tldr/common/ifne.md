@@ -1,5 +1,5 @@
 ---
-title: "Control Command Execution - ifne | Free DevTools"
+title: "Control Command Execution - ifne | Online Free DevTools by Hexmos"
 name: ifne
 path: /freedevtools/tldr/common/ifne
 canonical: "https://hexmos.com/freedevtools/tldr/common/ifne/"

@@ -1,5 +1,5 @@
 ---
-title: "LXC Profile - Manage Container Profiles | Free DevTools"
+title: "LXC Profile - Manage Container Profiles | Online Free DevTools by Hexmos"
 name: lxc-profile
 path: /freedevtools/tldr/linux/lxc-profile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-profile/"

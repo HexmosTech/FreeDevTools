@@ -1,5 +1,5 @@
 ---
-title: "RBAC Lookup - Control Kubernetes Roles | Free DevTools"
+title: "RBAC Lookup - Control Kubernetes Roles | Online Free DevTools by Hexmos"
 name: rbac-lookup
 path: /freedevtools/tldr/common/rbac-lookup
 canonical: "https://hexmos.com/freedevtools/tldr/common/rbac-lookup/"

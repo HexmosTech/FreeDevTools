@@ -1,5 +1,5 @@
 ---
-title: "Nautilus File Explorer - Manage Files on GNOME | Free DevTools"
+title: "Nautilus File Explorer - Manage Files on GNOME | Online Free DevTools by Hexmos"
 name: nautilus
 path: /freedevtools/tldr/linux/nautilus
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nautilus/"

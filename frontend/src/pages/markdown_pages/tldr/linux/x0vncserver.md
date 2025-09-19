@@ -1,5 +1,5 @@
 ---
-title: "Control VNC Server - Access X Displays | Free DevTools"
+title: "Control VNC Server - Access X Displays | Online Free DevTools by Hexmos"
 name: x0vncserver
 path: /freedevtools/tldr/linux/x0vncserver
 canonical: "https://hexmos.com/freedevtools/tldr/linux/x0vncserver/"

@@ -1,5 +1,5 @@
 ---
-title: "Execute Command Rargs - Pattern Matching Command Exec | Free DevTools"
+title: "Execute Command Rargs - Pattern Matching Command Exec | Online Free DevTools by Hexmos"
 name: rargs
 path: /freedevtools/tldr/osx/rargs
 canonical: "https://hexmos.com/freedevtools/tldr/osx/rargs/"

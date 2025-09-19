@@ -1,5 +1,5 @@
 ---
-title: "List Sockets - Monitor Network Sockets with sockstat | Free DevTools"
+title: "List Sockets - Monitor Network Sockets with sockstat | Online Free DevTools by Hexmos"
 name: sockstat
 path: /freedevtools/tldr/netbsd/sockstat
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sockstat/"

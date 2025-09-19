@@ -1,5 +1,5 @@
 ---
-title: "Gnatmake - Build Ada Programs | Free DevTools"
+title: "Gnatmake - Build Ada Programs | Online Free DevTools by Hexmos"
 name: gnatmake
 path: /freedevtools/tldr/common/gnatmake
 canonical: "https://hexmos.com/freedevtools/tldr/common/gnatmake/"

@@ -1,5 +1,5 @@
 ---
-title: "Azure Logout - Manage Azure Subscriptions | Free DevTools"
+title: "Azure Logout - Manage Azure Subscriptions | Online Free DevTools by Hexmos"
 name: az-logout
 path: /freedevtools/tldr/az/az-logout
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-logout/"

@@ -1,5 +1,5 @@
 ---
-title: "Assemble GNU Code - Assemble Files with as | Free DevTools"
+title: "Assemble GNU Code - Assemble Files with as | Online Free DevTools by Hexmos"
 name: as
 path: /freedevtools/tldr/osx/as
 canonical: "https://hexmos.com/freedevtools/tldr/osx/as/"

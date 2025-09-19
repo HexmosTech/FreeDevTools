@@ -1,5 +1,5 @@
 ---
-title: "Gdirname - Extract Directory Name | Free DevTools"
+title: "Gdirname - Extract Directory Name | Online Free DevTools by Hexmos"
 name: gdirname
 path: /freedevtools/tldr/osx/gdirname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdirname/"

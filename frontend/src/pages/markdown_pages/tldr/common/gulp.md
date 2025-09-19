@@ -1,5 +1,5 @@
 ---
-title: "Gulp - Automate JavaScript Tasks | Free DevTools"
+title: "Gulp - Automate JavaScript Tasks | Online Free DevTools by Hexmos"
 name: gulp
 path: /freedevtools/tldr/common/gulp
 canonical: "https://hexmos.com/freedevtools/tldr/common/gulp/"

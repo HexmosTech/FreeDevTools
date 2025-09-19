@@ -1,5 +1,5 @@
 ---
-title: "ICMP Ping - Check Host Reachability | Free DevTools"
+title: "ICMP Ping - Check Host Reachability | Online Free DevTools by Hexmos"
 name: ping.py
 path: /freedevtools/tldr/common/ping.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/ping.py/"

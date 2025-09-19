@@ -1,5 +1,5 @@
 ---
-title: "Tree - Generate Directory Structure | Free DevTools"
+title: "Tree - Generate Directory Structure | Online Free DevTools by Hexmos"
 name: tree
 path: /freedevtools/tldr/windows/tree
 canonical: "https://hexmos.com/freedevtools/tldr/windows/tree/"

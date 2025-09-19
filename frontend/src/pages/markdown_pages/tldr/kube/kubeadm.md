@@ -1,5 +1,5 @@
 ---
-title: "Kubeadm - Manage Kubernetes Clusters | Free DevTools"
+title: "Kubeadm - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
 name: kubeadm
 path: /freedevtools/tldr/kube/kubeadm
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kubeadm/"

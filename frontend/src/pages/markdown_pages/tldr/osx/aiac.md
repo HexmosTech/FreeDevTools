@@ -1,5 +1,5 @@
 ---
-title: "Generate IaC Configurations - aiac | Free DevTools"
+title: "Generate IaC Configurations - aiac | Online Free DevTools by Hexmos"
 name: aiac
 path: /freedevtools/tldr/osx/aiac
 canonical: "https://hexmos.com/freedevtools/tldr/osx/aiac/"

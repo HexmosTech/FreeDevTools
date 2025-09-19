@@ -1,5 +1,5 @@
 ---
-title: "Archive Mount - Access Archives as Filesystem | Free DevTools"
+title: "Archive Mount - Access Archives as Filesystem | Online Free DevTools by Hexmos"
 name: archivemount
 path: /freedevtools/tldr/linux/archivemount
 canonical: "https://hexmos.com/freedevtools/tldr/linux/archivemount/"

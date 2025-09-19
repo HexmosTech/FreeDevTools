@@ -1,5 +1,5 @@
 ---
-title: "SCIM Spreadsheet - Calculate Data in Terminal | Free DevTools"
+title: "SCIM Spreadsheet - Calculate Data in Terminal | Online Free DevTools by Hexmos"
 name: scim
 path: /freedevtools/tldr/common/scim
 canonical: "https://hexmos.com/freedevtools/tldr/common/scim/"

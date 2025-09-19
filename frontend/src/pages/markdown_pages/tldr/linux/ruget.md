@@ -1,5 +1,5 @@
 ---
-title: "Download Files - Download Files with Ruget | Free DevTools"
+title: "Download Files - Download Files with Ruget | Online Free DevTools by Hexmos"
 name: ruget
 path: /freedevtools/tldr/linux/ruget
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ruget/"

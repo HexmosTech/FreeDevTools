@@ -1,5 +1,5 @@
 ---
-title: "Create PostgreSQL Database - Create DB with createdb | Free DevTools"
+title: "Create PostgreSQL Database - Create DB with createdb | Online Free DevTools by Hexmos"
 name: createdb
 path: /freedevtools/tldr/common/createdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/createdb/"

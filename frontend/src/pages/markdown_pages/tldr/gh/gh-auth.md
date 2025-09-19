@@ -1,5 +1,5 @@
 ---
-title: "GitHub Auth - Authenticate GitHub Hosts | Free DevTools"
+title: "GitHub Auth - Authenticate GitHub Hosts | Online Free DevTools by Hexmos"
 name: gh-auth
 path: /freedevtools/tldr/gh/gh-auth
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-auth/"

@@ -1,5 +1,5 @@
 ---
-title: "Cheat Sheet - Create Interactive Cheat Sheets | Free DevTools"
+title: "Cheat Sheet - Create Interactive Cheat Sheets | Online Free DevTools by Hexmos"
 name: cheat
 path: /freedevtools/tldr/common/cheat
 canonical: "https://hexmos.com/freedevtools/tldr/common/cheat/"

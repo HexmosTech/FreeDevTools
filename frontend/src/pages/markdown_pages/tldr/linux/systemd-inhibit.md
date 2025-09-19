@@ -1,5 +1,5 @@
 ---
-title: "Control System Power States with systemd-inhibit | Free DevTools"
+title: "Control System Power States with systemd-inhibit | Online Free DevTools by Hexmos"
 name: systemd-inhibit
 path: /freedevtools/tldr/linux/systemd-inhibit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-inhibit/"

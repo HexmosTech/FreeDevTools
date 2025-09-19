@@ -1,5 +1,5 @@
 ---
-title: "Gcov - Generate Code Coverage Reports | Free DevTools"
+title: "Gcov - Generate Code Coverage Reports | Online Free DevTools by Hexmos"
 name: gcov
 path: /freedevtools/tldr/linux/gcov
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gcov/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Disposable Email - Mailsy Email Generator | Free DevTools"
+title: "Generate Disposable Email - Mailsy Email Generator | Online Free DevTools by Hexmos"
 name: mailsy
 path: /freedevtools/tldr/common/mailsy
 canonical: "https://hexmos.com/freedevtools/tldr/common/mailsy/"

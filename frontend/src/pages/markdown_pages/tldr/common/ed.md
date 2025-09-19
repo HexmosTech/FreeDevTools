@@ -1,5 +1,5 @@
 ---
-title: "Edit Text - Control Text Files with ed | Free DevTools"
+title: "Edit Text - Control Text Files with ed | Online Free DevTools by Hexmos"
 name: ed
 path: /freedevtools/tldr/common/ed
 canonical: "https://hexmos.com/freedevtools/tldr/common/ed/"

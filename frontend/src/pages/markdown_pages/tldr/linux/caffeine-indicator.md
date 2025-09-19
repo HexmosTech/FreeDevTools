@@ -1,5 +1,5 @@
 ---
-title: "Inhibit Desktop Idle - Control with Caffeine Indicator | Free DevTools"
+title: "Inhibit Desktop Idle - Control with Caffeine Indicator | Online Free DevTools by Hexmos"
 name: caffeine-indicator
 path: /freedevtools/tldr/linux/caffeine-indicator
 canonical: "https://hexmos.com/freedevtools/tldr/linux/caffeine-indicator/"

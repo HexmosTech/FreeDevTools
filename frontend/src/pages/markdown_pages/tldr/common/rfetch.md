@@ -1,5 +1,5 @@
 ---
-title: "Fetch System Info - Control System Details | Free DevTools"
+title: "Fetch System Info - Control System Details | Online Free DevTools by Hexmos"
 name: rfetch
 path: /freedevtools/tldr/common/rfetch
 canonical: "https://hexmos.com/freedevtools/tldr/common/rfetch/"

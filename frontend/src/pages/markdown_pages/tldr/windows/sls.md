@@ -1,5 +1,5 @@
 ---
-title: "Select-String - Search Text | Free DevTools"
+title: "Select-String - Search Text | Online Free DevTools by Hexmos"
 name: sls
 path: /freedevtools/tldr/windows/sls
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sls/"

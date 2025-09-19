@@ -1,5 +1,5 @@
 ---
-title: "Generate Checksums - gcksum Command | Free DevTools"
+title: "Generate Checksums - gcksum Command | Online Free DevTools by Hexmos"
 name: gcksum
 path: /freedevtools/tldr/osx/gcksum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcksum/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Kubernetes Resources with Kustomize | Free DevTools"
+title: "Create Kubernetes Resources with Kustomize | Online Free DevTools by Hexmos"
 name: kustomize
 path: /freedevtools/tldr/common/kustomize
 canonical: "https://hexmos.com/freedevtools/tldr/common/kustomize/"

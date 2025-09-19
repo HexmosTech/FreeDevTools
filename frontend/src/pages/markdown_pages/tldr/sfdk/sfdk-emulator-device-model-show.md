@@ -1,5 +1,5 @@
 ---
-title: "Emulator Device Model - Show Device Properties | Free DevTools"
+title: "Emulator Device Model - Show Device Properties | Online Free DevTools by Hexmos"
 name: sfdk-emulator-device-model-show
 path: /freedevtools/tldr/sfdk/sfdk-emulator-device-model-show
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/"

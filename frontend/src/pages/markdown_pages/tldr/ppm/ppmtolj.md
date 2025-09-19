@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to LJ - Generate LaserJet Files | Free DevTools"
+title: "Convert PPM to LJ - Generate LaserJet Files | Online Free DevTools by Hexmos"
 name: ppmtolj
 path: /freedevtools/tldr/ppm/ppmtolj
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtolj/"

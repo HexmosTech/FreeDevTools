@@ -1,5 +1,5 @@
 ---
-title: "View Slurm Info - Control Cluster Status | Free DevTools"
+title: "View Slurm Info - Control Cluster Status | Online Free DevTools by Hexmos"
 name: sinfo
 path: /freedevtools/tldr/linux/sinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sinfo/"

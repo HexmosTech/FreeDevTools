@@ -1,5 +1,5 @@
 ---
-title: "Sync iCloud - Control iCloud & iCloud Drive | Free DevTools"
+title: "Sync iCloud - Control iCloud & iCloud Drive | Online Free DevTools by Hexmos"
 name: bird
 path: /freedevtools/tldr/osx/bird
 canonical: "https://hexmos.com/freedevtools/tldr/osx/bird/"

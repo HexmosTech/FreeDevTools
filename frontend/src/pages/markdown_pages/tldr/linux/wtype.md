@@ -1,5 +1,5 @@
 ---
-title: "Simulate Keyboard Input - Control Text with wtype | Free DevTools"
+title: "Simulate Keyboard Input - Control Text with wtype | Online Free DevTools by Hexmos"
 name: wtype
 path: /freedevtools/tldr/linux/wtype
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wtype/"

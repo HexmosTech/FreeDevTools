@@ -1,5 +1,5 @@
 ---
-title: "RTL-SDR Recorder - Capture Raw I/Q Data | Free DevTools"
+title: "RTL-SDR Recorder - Capture Raw I/Q Data | Online Free DevTools by Hexmos"
 name: rtl_sdr
 path: /freedevtools/tldr/common/rtl_sdr
 canonical: "https://hexmos.com/freedevtools/tldr/common/rtl_sdr/"

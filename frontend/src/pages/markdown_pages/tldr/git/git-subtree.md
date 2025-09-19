@@ -1,5 +1,5 @@
 ---
-title: "Manage Git Subtrees - Dependency Management | Free DevTools"
+title: "Manage Git Subtrees - Dependency Management | Online Free DevTools by Hexmos"
 name: git-subtree
 path: /freedevtools/tldr/git/git-subtree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-subtree/"

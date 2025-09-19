@@ -1,5 +1,5 @@
 ---
-title: "Screenshot Capture - Create Linux Screenshots | Free DevTools"
+title: "Screenshot Capture - Create Linux Screenshots | Online Free DevTools by Hexmos"
 name: maim
 path: /freedevtools/tldr/linux/maim
 canonical: "https://hexmos.com/freedevtools/tldr/linux/maim/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Bug Tracker - Manage Bugs in Git | Free DevTools"
+title: "Git Bug Tracker - Manage Bugs in Git | Online Free DevTools by Hexmos"
 name: git-bug
 path: /freedevtools/tldr/git/git-bug
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-bug/"

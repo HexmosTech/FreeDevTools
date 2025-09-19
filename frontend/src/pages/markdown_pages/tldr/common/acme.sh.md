@@ -1,5 +1,5 @@
 ---
-title: "Generate Certificates - Control ACME DNS with acme.sh | Free DevTools"
+title: "Generate Certificates - Control ACME DNS with acme.sh | Online Free DevTools by Hexmos"
 name: acme.sh
 path: /freedevtools/tldr/common/acme.sh
 canonical: "https://hexmos.com/freedevtools/tldr/common/acme.sh/"

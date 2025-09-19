@@ -1,5 +1,5 @@
 ---
-title: "Display X Properties - Inspect Windows & Fonts | Free DevTools"
+title: "Display X Properties - Inspect Windows & Fonts | Online Free DevTools by Hexmos"
 name: xprop
 path: /freedevtools/tldr/common/xprop
 canonical: "https://hexmos.com/freedevtools/tldr/common/xprop/"

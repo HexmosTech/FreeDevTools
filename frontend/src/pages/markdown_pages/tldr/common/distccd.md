@@ -1,5 +1,5 @@
 ---
-title: "Create Distributed Compiler - Distccd Server | Free DevTools"
+title: "Create Distributed Compiler - Distccd Server | Online Free DevTools by Hexmos"
 name: distccd
 path: /freedevtools/tldr/common/distccd
 canonical: "https://hexmos.com/freedevtools/tldr/common/distccd/"

@@ -1,5 +1,5 @@
 ---
-title: "GPG - Manage Encryption Keys | Free DevTools"
+title: "GPG - Manage Encryption Keys | Online Free DevTools by Hexmos"
 name: gpg2
 path: /freedevtools/tldr/gpg/gpg2
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg2/"

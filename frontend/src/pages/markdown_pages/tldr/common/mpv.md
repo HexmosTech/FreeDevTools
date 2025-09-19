@@ -1,5 +1,5 @@
 ---
-title: "Play Video - Control Audio/Video Playback with MPV | Free DevTools"
+title: "Play Video - Control Audio/Video Playback with MPV | Online Free DevTools by Hexmos"
 name: mpv
 path: /freedevtools/tldr/common/mpv
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpv/"

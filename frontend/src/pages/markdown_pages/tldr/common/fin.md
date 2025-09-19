@@ -1,5 +1,5 @@
 ---
-title: "Docksal Fin - Control Docksal Projects | Free DevTools"
+title: "Docksal Fin - Control Docksal Projects | Online Free DevTools by Hexmos"
 name: fin
 path: /freedevtools/tldr/common/fin
 canonical: "https://hexmos.com/freedevtools/tldr/common/fin/"

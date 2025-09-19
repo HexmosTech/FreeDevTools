@@ -1,5 +1,5 @@
 ---
-title: "Display Partition Layout - Mmls Tool | Free DevTools"
+title: "Display Partition Layout - Mmls Tool | Online Free DevTools by Hexmos"
 name: mmls
 path: /freedevtools/tldr/common/mmls
 canonical: "https://hexmos.com/freedevtools/tldr/common/mmls/"

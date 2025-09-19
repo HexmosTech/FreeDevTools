@@ -1,5 +1,5 @@
 ---
-title: "Hledger Print - Show Journal Entries | Free DevTools"
+title: "Hledger Print - Show Journal Entries | Online Free DevTools by Hexmos"
 name: hledger-print
 path: /freedevtools/tldr/hledger/hledger-print
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-print/"

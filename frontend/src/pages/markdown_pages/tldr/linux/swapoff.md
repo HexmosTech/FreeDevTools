@@ -1,5 +1,5 @@
 ---
-title: "Disable Swap Area - Manage Memory with Swapoff | Free DevTools"
+title: "Disable Swap Area - Manage Memory with Swapoff | Online Free DevTools by Hexmos"
 name: swapoff
 path: /freedevtools/tldr/linux/swapoff
 canonical: "https://hexmos.com/freedevtools/tldr/linux/swapoff/"

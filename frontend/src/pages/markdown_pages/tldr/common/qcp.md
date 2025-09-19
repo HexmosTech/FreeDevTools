@@ -1,5 +1,5 @@
 ---
-title: "Qcp - Copy Files with Editor | Free DevTools"
+title: "Qcp - Copy Files with Editor | Online Free DevTools by Hexmos"
 name: qcp
 path: /freedevtools/tldr/common/qcp
 canonical: "https://hexmos.com/freedevtools/tldr/common/qcp/"

@@ -1,5 +1,5 @@
 ---
-title: "Xsan Daemon - Control File System Services | Free DevTools"
+title: "Xsan Daemon - Control File System Services | Online Free DevTools by Hexmos"
 name: xsand
 path: /freedevtools/tldr/osx/xsand
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xsand/"

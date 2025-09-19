@@ -1,5 +1,5 @@
 ---
-title: "Manage Default Apps - Control Application Settings | Free DevTools"
+title: "Manage Default Apps - Control Application Settings | Online Free DevTools by Hexmos"
 name: handlr
 path: /freedevtools/tldr/linux/handlr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/handlr/"

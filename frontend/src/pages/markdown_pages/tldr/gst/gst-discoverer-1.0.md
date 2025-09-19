@@ -1,5 +1,5 @@
 ---
-title: "Discover Metadata - Analyze Media Files | Free DevTools"
+title: "Discover Metadata - Analyze Media Files | Online Free DevTools by Hexmos"
 name: gst-discoverer-1.0
 path: /freedevtools/tldr/gst/gst-discoverer-1.0
 canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-discoverer-1.0/"

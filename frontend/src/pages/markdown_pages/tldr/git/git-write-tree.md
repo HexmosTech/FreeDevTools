@@ -1,5 +1,5 @@
 ---
-title: "Create Git Tree - Manage Index | Free DevTools"
+title: "Create Git Tree - Manage Index | Online Free DevTools by Hexmos"
 name: git-write-tree
 path: /freedevtools/tldr/git/git-write-tree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-write-tree/"

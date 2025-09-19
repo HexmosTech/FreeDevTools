@@ -1,5 +1,5 @@
 ---
-title: "Kubectl API Resources - Generate Server Resources | Free DevTools"
+title: "Kubectl API Resources - Generate Server Resources | Online Free DevTools by Hexmos"
 name: kubectl-api-resources
 path: /freedevtools/tldr/kubectl/kubectl-api-resources
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-api-resources/"

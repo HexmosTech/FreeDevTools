@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Thaw - Control Frozen Units | Free DevTools"
+title: "Systemctl Thaw - Control Frozen Units | Online Free DevTools by Hexmos"
 name: systemctl-thaw
 path: /freedevtools/tldr/linux/systemctl-thaw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-thaw/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Azure DevOps - Control Organizations | Free DevTools"
+title: "Manage Azure DevOps - Control Organizations | Online Free DevTools by Hexmos"
 name: az-devops
 path: /freedevtools/tldr/az/az-devops
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-devops/"

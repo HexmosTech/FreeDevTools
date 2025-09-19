@@ -1,5 +1,5 @@
 ---
-title: "Generate C Code - wasm2c WebAssembly to C | Free DevTools"
+title: "Generate C Code - wasm2c WebAssembly to C | Online Free DevTools by Hexmos"
 name: wasm2c
 path: /freedevtools/tldr/wasm/wasm2c
 canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm2c/"

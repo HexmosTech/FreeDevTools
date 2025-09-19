@@ -1,5 +1,5 @@
 ---
-title: "Control Raspberry Pi Camera Stream - rpicam-hello | Free DevTools"
+title: "Control Raspberry Pi Camera Stream - rpicam-hello | Online Free DevTools by Hexmos"
 name: rpicam-hello
 path: /freedevtools/tldr/linux/rpicam-hello
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-hello/"

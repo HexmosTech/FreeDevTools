@@ -1,5 +1,5 @@
 ---
-title: "Disassemble Java - Inspect Class Files | Free DevTools"
+title: "Disassemble Java - Inspect Class Files | Online Free DevTools by Hexmos"
 name: javap
 path: /freedevtools/tldr/common/javap
 canonical: "https://hexmos.com/freedevtools/tldr/common/javap/"

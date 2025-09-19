@@ -1,5 +1,5 @@
 ---
-title: "Fakeroot - Run Commands as Root | Free DevTools"
+title: "Fakeroot - Run Commands as Root | Online Free DevTools by Hexmos"
 name: fakeroot
 path: /freedevtools/tldr/linux/fakeroot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fakeroot/"

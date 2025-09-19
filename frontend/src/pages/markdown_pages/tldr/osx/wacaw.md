@@ -1,5 +1,5 @@
 ---
-title: "Capture Webcam Images - Control Camera | Free DevTools"
+title: "Capture Webcam Images - Control Camera | Online Free DevTools by Hexmos"
 name: wacaw
 path: /freedevtools/tldr/osx/wacaw
 canonical: "https://hexmos.com/freedevtools/tldr/osx/wacaw/"

@@ -1,5 +1,5 @@
 ---
-title: "Chmem - Modify Memory Blocks in Linux | Free DevTools"
+title: "Chmem - Modify Memory Blocks in Linux | Online Free DevTools by Hexmos"
 name: chmem
 path: /freedevtools/tldr/linux/chmem
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chmem/"

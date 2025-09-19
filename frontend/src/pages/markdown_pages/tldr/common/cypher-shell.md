@@ -1,5 +1,5 @@
 ---
-title: "Cypher Query - Run Queries on Neo4j | Free DevTools"
+title: "Cypher Query - Run Queries on Neo4j | Online Free DevTools by Hexmos"
 name: cypher-shell
 path: /freedevtools/tldr/common/cypher-shell
 canonical: "https://hexmos.com/freedevtools/tldr/common/cypher-shell/"

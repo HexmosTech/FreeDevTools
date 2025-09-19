@@ -1,5 +1,5 @@
 ---
-title: "PM2 - Manage Node.js Processes | Free DevTools"
+title: "PM2 - Manage Node.js Processes | Online Free DevTools by Hexmos"
 name: pm2
 path: /freedevtools/tldr/common/pm2
 canonical: "https://hexmos.com/freedevtools/tldr/common/pm2/"

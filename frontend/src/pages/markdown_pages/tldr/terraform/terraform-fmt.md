@@ -1,5 +1,5 @@
 ---
-title: "Terraform Format - Format Infrastructure Code | Free DevTools"
+title: "Terraform Format - Format Infrastructure Code | Online Free DevTools by Hexmos"
 name: terraform-fmt
 path: /freedevtools/tldr/terraform/terraform-fmt
 canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform-fmt/"

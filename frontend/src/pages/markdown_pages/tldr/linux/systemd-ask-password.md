@@ -1,5 +1,5 @@
 ---
-title: "Systemd Password Query - Ask System Passwords | Free DevTools"
+title: "Systemd Password Query - Ask System Passwords | Online Free DevTools by Hexmos"
 name: systemd-ask-password
 path: /freedevtools/tldr/linux/systemd-ask-password
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-ask-password/"

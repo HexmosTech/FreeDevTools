@@ -1,5 +1,5 @@
 ---
-title: "Create Git Alias - Command Shortcuts | Free DevTools"
+title: "Create Git Alias - Command Shortcuts | Online Free DevTools by Hexmos"
 name: git-alias
 path: /freedevtools/tldr/git/git-alias
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-alias/"

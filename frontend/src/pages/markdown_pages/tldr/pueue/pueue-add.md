@@ -1,5 +1,5 @@
 ---
-title: "Pueue Add - Enqueue Tasks | Free DevTools"
+title: "Pueue Add - Enqueue Tasks | Online Free DevTools by Hexmos"
 name: pueue-add
 path: /freedevtools/tldr/pueue/pueue-add
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-add/"

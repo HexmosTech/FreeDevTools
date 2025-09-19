@@ -1,5 +1,5 @@
 ---
-title: "Generate xxHash Checksums - Verify File Integrity | Free DevTools"
+title: "Generate xxHash Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: xxhsum
 path: /freedevtools/tldr/linux/xxhsum
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xxhsum/"

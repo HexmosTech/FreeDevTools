@@ -1,5 +1,5 @@
 ---
-title: "Generate Protobuf - Compile .proto Files | Free DevTools"
+title: "Generate Protobuf - Compile .proto Files | Online Free DevTools by Hexmos"
 name: protoc
 path: /freedevtools/tldr/common/protoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/protoc/"

@@ -1,5 +1,5 @@
 ---
-title: "GNMIC Subscribe - Stream Network Telemetry | Free DevTools"
+title: "GNMIC Subscribe - Stream Network Telemetry | Online Free DevTools by Hexmos"
 name: gnmic-sub
 path: /freedevtools/tldr/gnmic/gnmic-sub
 canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-sub/"

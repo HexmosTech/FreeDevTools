@@ -1,5 +1,5 @@
 ---
-title: "Print Text - Echo Command | Free DevTools"
+title: "Print Text - Echo Command | Online Free DevTools by Hexmos"
 name: echo
 path: /freedevtools/tldr/common/echo
 canonical: "https://hexmos.com/freedevtools/tldr/common/echo/"

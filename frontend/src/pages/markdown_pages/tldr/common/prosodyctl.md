@@ -1,5 +1,5 @@
 ---
-title: "Prosodyctl - Control Prosody Server | Free DevTools"
+title: "Prosodyctl - Control Prosody Server | Online Free DevTools by Hexmos"
 name: prosodyctl
 path: /freedevtools/tldr/common/prosodyctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/prosodyctl/"

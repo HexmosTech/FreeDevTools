@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Commits - View Commits Since Date | Free DevTools"
+title: "Generate Git Commits - View Commits Since Date | Online Free DevTools by Hexmos"
 name: git-commits-since
 path: /freedevtools/tldr/git/git-commits-since
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-commits-since/"

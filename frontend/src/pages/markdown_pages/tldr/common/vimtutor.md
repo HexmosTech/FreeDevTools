@@ -1,5 +1,5 @@
 ---
-title: "Master Vim Editor - Learn Vim Commands | Free DevTools"
+title: "Master Vim Editor - Learn Vim Commands | Online Free DevTools by Hexmos"
 name: vimtutor
 path: /freedevtools/tldr/common/vimtutor
 canonical: "https://hexmos.com/freedevtools/tldr/common/vimtutor/"

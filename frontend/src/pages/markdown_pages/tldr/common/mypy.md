@@ -1,5 +1,5 @@
 ---
-title: "Mypy - Type Check Python Code | Free DevTools"
+title: "Mypy - Type Check Python Code | Online Free DevTools by Hexmos"
 name: mypy
 path: /freedevtools/tldr/common/mypy
 canonical: "https://hexmos.com/freedevtools/tldr/common/mypy/"

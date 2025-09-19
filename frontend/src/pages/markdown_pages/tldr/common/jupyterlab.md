@@ -1,5 +1,5 @@
 ---
-title: "JupyterLab - Launch Interactive Computing | Free DevTools"
+title: "JupyterLab - Launch Interactive Computing | Online Free DevTools by Hexmos"
 name: jupyterlab
 path: /freedevtools/tldr/common/jupyterlab
 canonical: "https://hexmos.com/freedevtools/tldr/common/jupyterlab/"

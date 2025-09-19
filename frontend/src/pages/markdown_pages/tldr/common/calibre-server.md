@@ -1,5 +1,5 @@
 ---
-title: "Control Calibre Server - Distribute E-books | Free DevTools"
+title: "Control Calibre Server - Distribute E-books | Online Free DevTools by Hexmos"
 name: calibre-server
 path: /freedevtools/tldr/common/calibre-server
 canonical: "https://hexmos.com/freedevtools/tldr/common/calibre-server/"

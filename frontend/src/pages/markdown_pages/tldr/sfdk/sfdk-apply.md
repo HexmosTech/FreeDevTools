@@ -1,5 +1,5 @@
 ---
-title: "SFDK Apply - Apply Patches Easily | Free DevTools"
+title: "SFDK Apply - Apply Patches Easily | Online Free DevTools by Hexmos"
 name: sfdk-apply
 path: /freedevtools/tldr/sfdk/sfdk-apply
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-apply/"

@@ -1,5 +1,5 @@
 ---
-title: "Query Packages - pacsift Filter | Free DevTools"
+title: "Query Packages - pacsift Filter | Online Free DevTools by Hexmos"
 name: pacsift
 path: /freedevtools/tldr/linux/pacsift
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacsift/"

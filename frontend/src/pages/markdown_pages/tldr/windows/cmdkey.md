@@ -1,5 +1,5 @@
 ---
-title: "Cmdkey - Create User Credentials | Free DevTools"
+title: "Cmdkey - Create User Credentials | Online Free DevTools by Hexmos"
 name: cmdkey
 path: /freedevtools/tldr/windows/cmdkey
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cmdkey/"

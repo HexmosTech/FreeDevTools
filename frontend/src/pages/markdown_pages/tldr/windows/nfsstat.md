@@ -1,5 +1,5 @@
 ---
-title: "NFSstat - Control NFS Server Calls | Free DevTools"
+title: "NFSstat - Control NFS Server Calls | Online Free DevTools by Hexmos"
 name: nfsstat
 path: /freedevtools/tldr/windows/nfsstat
 canonical: "https://hexmos.com/freedevtools/tldr/windows/nfsstat/"

@@ -1,5 +1,5 @@
 ---
-title: "Reload Go Programs - Live Reload with Goreload | Free DevTools"
+title: "Reload Go Programs - Live Reload with Goreload | Online Free DevTools by Hexmos"
 name: goreload
 path: /freedevtools/tldr/common/goreload
 canonical: "https://hexmos.com/freedevtools/tldr/common/goreload/"

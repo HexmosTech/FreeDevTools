@@ -1,5 +1,5 @@
 ---
-title: "Rust Toolchain - Control Rust Versions with Rustup | Free DevTools"
+title: "Rust Toolchain - Control Rust Versions with Rustup | Online Free DevTools by Hexmos"
 name: rustup-default
 path: /freedevtools/tldr/rustup/rustup-default
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-default/"

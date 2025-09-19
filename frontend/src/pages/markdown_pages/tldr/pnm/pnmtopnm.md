@@ -1,5 +1,5 @@
 ---
-title: "PNM Converter - Format Images with PNMtoPNM | Free DevTools"
+title: "PNM Converter - Format Images with PNMtoPNM | Online Free DevTools by Hexmos"
 name: pnmtopnm
 path: /freedevtools/tldr/pnm/pnmtopnm
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopnm/"

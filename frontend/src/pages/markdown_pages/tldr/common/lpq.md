@@ -1,5 +1,5 @@
 ---
-title: "LPQ - Control Printer Queue Status | Free DevTools"
+title: "LPQ - Control Printer Queue Status | Online Free DevTools by Hexmos"
 name: lpq
 path: /freedevtools/tldr/common/lpq
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpq/"

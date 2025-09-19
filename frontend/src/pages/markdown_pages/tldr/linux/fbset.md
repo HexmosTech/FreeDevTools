@@ -1,5 +1,5 @@
 ---
-title: "Framebuffer Control - Modify Display Settings | Free DevTools"
+title: "Framebuffer Control - Modify Display Settings | Online Free DevTools by Hexmos"
 name: fbset
 path: /freedevtools/tldr/linux/fbset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fbset/"

@@ -1,5 +1,5 @@
 ---
-title: "Notmuch - Index and Search Email | Free DevTools"
+title: "Notmuch - Index and Search Email | Online Free DevTools by Hexmos"
 name: notmuch
 path: /freedevtools/tldr/common/notmuch
 canonical: "https://hexmos.com/freedevtools/tldr/common/notmuch/"

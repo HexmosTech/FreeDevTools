@@ -1,5 +1,5 @@
 ---
-title: "Lint JavaScript - Validate Code with XO | Free DevTools"
+title: "Lint JavaScript - Validate Code with XO | Online Free DevTools by Hexmos"
 name: xo
 path: /freedevtools/tldr/common/xo
 canonical: "https://hexmos.com/freedevtools/tldr/common/xo/"

@@ -1,5 +1,5 @@
 ---
-title: "TypeORM - Generate Database Structures | Free DevTools"
+title: "TypeORM - Generate Database Structures | Online Free DevTools by Hexmos"
 name: typeorm
 path: /freedevtools/tldr/common/typeorm
 canonical: "https://hexmos.com/freedevtools/tldr/common/typeorm/"

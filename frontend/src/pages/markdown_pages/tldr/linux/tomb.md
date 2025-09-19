@@ -1,5 +1,5 @@
 ---
-title: "Manage Encrypted Storage - Tomb Command | Free DevTools"
+title: "Manage Encrypted Storage - Tomb Command | Online Free DevTools by Hexmos"
 name: tomb
 path: /freedevtools/tldr/linux/tomb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tomb/"

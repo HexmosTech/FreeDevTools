@@ -1,5 +1,5 @@
 ---
-title: "Eval Command - Execute Shell Commands | Free DevTools"
+title: "Eval Command - Execute Shell Commands | Online Free DevTools by Hexmos"
 name: eval
 path: /freedevtools/tldr/common/eval
 canonical: "https://hexmos.com/freedevtools/tldr/common/eval/"

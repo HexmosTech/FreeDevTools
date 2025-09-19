@@ -1,5 +1,5 @@
 ---
-title: "Link Objects - Create Executables with ld | Free DevTools"
+title: "Link Objects - Create Executables with ld | Online Free DevTools by Hexmos"
 name: ld
 path: /freedevtools/tldr/common/ld
 canonical: "https://hexmos.com/freedevtools/tldr/common/ld/"

@@ -1,5 +1,5 @@
 ---
-title: "Check NPM Outdated - Analyze Package Versions | Free DevTools"
+title: "Check NPM Outdated - Analyze Package Versions | Online Free DevTools by Hexmos"
 name: npm-outdated
 path: /freedevtools/tldr/npm/npm-outdated
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-outdated/"

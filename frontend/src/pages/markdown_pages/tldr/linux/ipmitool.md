@@ -1,5 +1,5 @@
 ---
-title: "IPMI Control - Manage Servers with ipmitool | Free DevTools"
+title: "IPMI Control - Manage Servers with ipmitool | Online Free DevTools by Hexmos"
 name: ipmitool
 path: /freedevtools/tldr/linux/ipmitool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ipmitool/"

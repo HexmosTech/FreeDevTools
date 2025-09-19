@@ -1,5 +1,5 @@
 ---
-title: "Browse Git Repo - View Upstream Repositories | Free DevTools"
+title: "Browse Git Repo - View Upstream Repositories | Online Free DevTools by Hexmos"
 name: git-browse
 path: /freedevtools/tldr/git/git-browse
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-browse/"

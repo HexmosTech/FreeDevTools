@@ -1,5 +1,5 @@
 ---
-title: "Create Pulumi Project - Generate New Infrastructure | Free DevTools"
+title: "Create Pulumi Project - Generate New Infrastructure | Online Free DevTools by Hexmos"
 name: pulumi-new
 path: /freedevtools/tldr/pulumi/pulumi-new
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-new/"

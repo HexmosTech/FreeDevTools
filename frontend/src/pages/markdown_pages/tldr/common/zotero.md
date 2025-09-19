@@ -1,5 +1,5 @@
 ---
-title: "Zotero - Manage Bibliographies | Free DevTools"
+title: "Zotero - Manage Bibliographies | Online Free DevTools by Hexmos"
 name: zotero
 path: /freedevtools/tldr/common/zotero
 canonical: "https://hexmos.com/freedevtools/tldr/common/zotero/"

@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Inspect - Query Filesystem | Free DevTools"
+title: "Btrfs Inspect - Query Filesystem | Online Free DevTools by Hexmos"
 name: btrfs-inspect-internal
 path: /freedevtools/tldr/linux/btrfs-inspect-internal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-inspect-internal/"

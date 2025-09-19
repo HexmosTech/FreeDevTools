@@ -1,5 +1,5 @@
 ---
-title: "SVN Changelist - Control File Lists | Free DevTools"
+title: "SVN Changelist - Control File Lists | Online Free DevTools by Hexmos"
 name: svn-changelist
 path: /freedevtools/tldr/common/svn-changelist
 canonical: "https://hexmos.com/freedevtools/tldr/common/svn-changelist/"

@@ -1,5 +1,5 @@
 ---
-title: "RSSTail - Monitor RSS Feeds | Free DevTools"
+title: "RSSTail - Monitor RSS Feeds | Online Free DevTools by Hexmos"
 name: rsstail
 path: /freedevtools/tldr/common/rsstail
 canonical: "https://hexmos.com/freedevtools/tldr/common/rsstail/"

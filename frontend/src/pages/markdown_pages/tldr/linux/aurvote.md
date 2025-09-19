@@ -1,5 +1,5 @@
 ---
-title: "AUR Vote - Manage Arch User Repository Votes | Free DevTools"
+title: "AUR Vote - Manage Arch User Repository Votes | Online Free DevTools by Hexmos"
 name: aurvote
 path: /freedevtools/tldr/linux/aurvote
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aurvote/"

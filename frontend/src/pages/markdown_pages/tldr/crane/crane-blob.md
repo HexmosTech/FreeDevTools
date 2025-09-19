@@ -1,5 +1,5 @@
 ---
-title: "Crane Blob - Read Registry Blobs | Free DevTools"
+title: "Crane Blob - Read Registry Blobs | Online Free DevTools by Hexmos"
 name: crane-blob
 path: /freedevtools/tldr/crane/crane-blob
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-blob/"

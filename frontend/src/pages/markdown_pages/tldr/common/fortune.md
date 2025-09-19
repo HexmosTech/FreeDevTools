@@ -1,5 +1,5 @@
 ---
-title: "Generate Fortune - Print Random Quotations | Free DevTools"
+title: "Generate Fortune - Print Random Quotations | Online Free DevTools by Hexmos"
 name: fortune
 path: /freedevtools/tldr/common/fortune
 canonical: "https://hexmos.com/freedevtools/tldr/common/fortune/"

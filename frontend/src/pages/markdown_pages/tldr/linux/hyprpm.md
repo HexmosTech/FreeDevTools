@@ -1,5 +1,5 @@
 ---
-title: "Hyprpm - Control Hyprland Plugins | Free DevTools"
+title: "Hyprpm - Control Hyprland Plugins | Online Free DevTools by Hexmos"
 name: hyprpm
 path: /freedevtools/tldr/linux/hyprpm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hyprpm/"

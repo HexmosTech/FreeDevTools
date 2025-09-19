@@ -1,5 +1,5 @@
 ---
-title: "Control Git Repositories - Lazygit Terminal UI | Free DevTools"
+title: "Control Git Repositories - Lazygit Terminal UI | Online Free DevTools by Hexmos"
 name: lazygit
 path: /freedevtools/tldr/common/lazygit
 canonical: "https://hexmos.com/freedevtools/tldr/common/lazygit/"

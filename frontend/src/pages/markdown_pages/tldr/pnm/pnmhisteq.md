@@ -1,5 +1,5 @@
 ---
-title: "Equalize PNM Image - Enhance Contrast | Free DevTools"
+title: "Equalize PNM Image - Enhance Contrast | Online Free DevTools by Hexmos"
 name: pnmhisteq
 path: /freedevtools/tldr/pnm/pnmhisteq
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmhisteq/"

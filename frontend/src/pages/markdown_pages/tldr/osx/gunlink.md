@@ -1,5 +1,5 @@
 ---
-title: "Unlink File - Remove Files with GNU Unlink | Free DevTools"
+title: "Unlink File - Remove Files with GNU Unlink | Online Free DevTools by Hexmos"
 name: gunlink
 path: /freedevtools/tldr/osx/gunlink
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gunlink/"

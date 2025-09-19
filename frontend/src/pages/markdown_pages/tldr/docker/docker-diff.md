@@ -1,5 +1,5 @@
 ---
-title: "Docker Diff - Inspect Container File Changes | Free DevTools"
+title: "Docker Diff - Inspect Container File Changes | Online Free DevTools by Hexmos"
 name: docker-diff
 path: /freedevtools/tldr/docker/docker-diff
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-diff/"

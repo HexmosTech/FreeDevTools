@@ -1,5 +1,5 @@
 ---
-title: "Create htpasswd Files - Manage Basic Authentication | Free DevTools"
+title: "Create htpasswd Files - Manage Basic Authentication | Online Free DevTools by Hexmos"
 name: htpasswd
 path: /freedevtools/tldr/common/htpasswd
 canonical: "https://hexmos.com/freedevtools/tldr/common/htpasswd/"

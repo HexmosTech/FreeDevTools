@@ -1,5 +1,5 @@
 ---
-title: "SQS Client - Manage AWS Queues | Free DevTools"
+title: "SQS Client - Manage AWS Queues | Online Free DevTools by Hexmos"
 name: sqsc
 path: /freedevtools/tldr/common/sqsc
 canonical: "https://hexmos.com/freedevtools/tldr/common/sqsc/"

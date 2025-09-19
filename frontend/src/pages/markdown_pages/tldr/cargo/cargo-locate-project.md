@@ -1,5 +1,5 @@
 ---
-title: "Locate Cargo Project - Find Cargo.toml Manifest | Free DevTools"
+title: "Locate Cargo Project - Find Cargo.toml Manifest | Online Free DevTools by Hexmos"
 name: cargo-locate-project
 path: /freedevtools/tldr/cargo/cargo-locate-project
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-locate-project/"

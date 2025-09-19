@@ -1,5 +1,5 @@
 ---
-title: "Snap Package Manager - Install Apps on Linux | Free DevTools"
+title: "Snap Package Manager - Install Apps on Linux | Online Free DevTools by Hexmos"
 name: snap
 path: /freedevtools/tldr/linux/snap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snap/"

@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Locate Files on macOS | Free DevTools"
+title: "Find Files - Locate Files on macOS | Online Free DevTools by Hexmos"
 name: gfind
 path: /freedevtools/tldr/osx/gfind
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfind/"

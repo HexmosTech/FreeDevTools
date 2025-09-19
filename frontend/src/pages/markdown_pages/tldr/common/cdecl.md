@@ -1,5 +1,5 @@
 ---
-title: "C Declaration Tool - Compose C Declarations | Free DevTools"
+title: "C Declaration Tool - Compose C Declarations | Online Free DevTools by Hexmos"
 name: cdecl
 path: /freedevtools/tldr/common/cdecl
 canonical: "https://hexmos.com/freedevtools/tldr/common/cdecl/"

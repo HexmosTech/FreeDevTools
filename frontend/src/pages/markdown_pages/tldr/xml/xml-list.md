@@ -1,5 +1,5 @@
 ---
-title: "XML List - Generate XML Directory Listings | Free DevTools"
+title: "XML List - Generate XML Directory Listings | Online Free DevTools by Hexmos"
 name: xml-list
 path: /freedevtools/tldr/xml/xml-list
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-list/"

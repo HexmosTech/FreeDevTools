@@ -1,5 +1,5 @@
 ---
-title: "Pytest - Run Python Tests | Free DevTools"
+title: "Pytest - Run Python Tests | Online Free DevTools by Hexmos"
 name: pytest
 path: /freedevtools/tldr/common/pytest
 canonical: "https://hexmos.com/freedevtools/tldr/common/pytest/"

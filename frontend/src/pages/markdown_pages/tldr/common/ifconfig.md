@@ -1,5 +1,5 @@
 ---
-title: "Ifconfig - Control Network Interfaces | Free DevTools"
+title: "Ifconfig - Control Network Interfaces | Online Free DevTools by Hexmos"
 name: ifconfig
 path: /freedevtools/tldr/common/ifconfig
 canonical: "https://hexmos.com/freedevtools/tldr/common/ifconfig/"

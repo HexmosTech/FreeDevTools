@@ -1,5 +1,5 @@
 ---
-title: "Manage Azure Pipelines - Control CI/CD Flows | Free DevTools"
+title: "Manage Azure Pipelines - Control CI/CD Flows | Online Free DevTools by Hexmos"
 name: az-pipelines
 path: /freedevtools/tldr/az/az-pipelines
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-pipelines/"

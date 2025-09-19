@@ -1,5 +1,5 @@
 ---
-title: "Git Tag - Create and Manage Tags | Free DevTools"
+title: "Git Tag - Create and Manage Tags | Online Free DevTools by Hexmos"
 name: git-tag
 path: /freedevtools/tldr/git/git-tag
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-tag/"

@@ -1,5 +1,5 @@
 ---
-title: "pkgctl Auth - Authenticate GitLab | Free DevTools"
+title: "pkgctl Auth - Authenticate GitLab | Online Free DevTools by Hexmos"
 name: pkgctl-auth
 path: /freedevtools/tldr/linux/pkgctl-auth
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-auth/"

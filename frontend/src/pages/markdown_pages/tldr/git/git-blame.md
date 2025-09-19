@@ -1,5 +1,5 @@
 ---
-title: "Git Blame - Track Code Authorship | Free DevTools"
+title: "Git Blame - Track Code Authorship | Online Free DevTools by Hexmos"
 name: git-blame
 path: /freedevtools/tldr/git/git-blame
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-blame/"

@@ -1,5 +1,5 @@
 ---
-title: "Lspci - List PCI Devices | Free DevTools"
+title: "Lspci - List PCI Devices | Online Free DevTools by Hexmos"
 name: lspci
 path: /freedevtools/tldr/linux/lspci
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lspci/"

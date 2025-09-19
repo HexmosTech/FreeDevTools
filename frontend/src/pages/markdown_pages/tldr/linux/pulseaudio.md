@@ -1,5 +1,5 @@
 ---
-title: "Control PulseAudio - Manage Audio on Linux | Free DevTools"
+title: "Control PulseAudio - Manage Audio on Linux | Online Free DevTools by Hexmos"
 name: pulseaudio
 path: /freedevtools/tldr/linux/pulseaudio
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pulseaudio/"

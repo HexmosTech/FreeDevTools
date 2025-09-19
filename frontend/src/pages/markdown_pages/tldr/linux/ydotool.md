@@ -1,5 +1,5 @@
 ---
-title: "Control Mouse & Keyboard - ydotool Commands | Free DevTools"
+title: "Control Mouse & Keyboard - ydotool Commands | Online Free DevTools by Hexmos"
 name: ydotool
 path: /freedevtools/tldr/linux/ydotool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ydotool/"

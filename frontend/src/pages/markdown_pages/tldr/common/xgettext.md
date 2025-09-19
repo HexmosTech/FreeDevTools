@@ -1,5 +1,5 @@
 ---
-title: "xgettext - Extract Text Strings | Free DevTools"
+title: "xgettext - Extract Text Strings | Online Free DevTools by Hexmos"
 name: xgettext
 path: /freedevtools/tldr/common/xgettext
 canonical: "https://hexmos.com/freedevtools/tldr/common/xgettext/"

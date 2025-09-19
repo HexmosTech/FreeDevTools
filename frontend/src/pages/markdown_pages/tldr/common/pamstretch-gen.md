@@ -1,5 +1,5 @@
 ---
-title: "Generate PAM Image Scale - pamstretch-gen | Free DevTools"
+title: "Generate PAM Image Scale - pamstretch-gen | Online Free DevTools by Hexmos"
 name: pamstretch-gen
 path: /freedevtools/tldr/common/pamstretch-gen
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamstretch-gen/"

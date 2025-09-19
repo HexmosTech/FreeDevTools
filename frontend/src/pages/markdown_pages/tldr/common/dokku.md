@@ -1,5 +1,5 @@
 ---
-title: "Create Dokku Apps - PaaS Deployment | Free DevTools"
+title: "Create Dokku Apps - PaaS Deployment | Online Free DevTools by Hexmos"
 name: dokku
 path: /freedevtools/tldr/common/dokku
 canonical: "https://hexmos.com/freedevtools/tldr/common/dokku/"

@@ -1,5 +1,5 @@
 ---
-title: "Semanage Permissive - Control SELinux Domains | Free DevTools"
+title: "Semanage Permissive - Control SELinux Domains | Online Free DevTools by Hexmos"
 name: semanage-permissive
 path: /freedevtools/tldr/linux/semanage-permissive
 canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage-permissive/"

@@ -1,5 +1,5 @@
 ---
-title: "Lookandfeeltool - Apply Linux Themes | Free DevTools"
+title: "Lookandfeeltool - Apply Linux Themes | Online Free DevTools by Hexmos"
 name: lookandfeeltool
 path: /freedevtools/tldr/linux/lookandfeeltool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lookandfeeltool/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Partitions - Control Disk Space with systemd-repart | Free DevTools"
+title: "Manage Partitions - Control Disk Space with systemd-repart | Online Free DevTools by Hexmos"
 name: systemd-repart
 path: /freedevtools/tldr/linux/systemd-repart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-repart/"

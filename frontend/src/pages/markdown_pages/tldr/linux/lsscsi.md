@@ -1,5 +1,5 @@
 ---
-title: "List SCSI Devices - Inspect Device Attributes | Free DevTools"
+title: "List SCSI Devices - Inspect Device Attributes | Online Free DevTools by Hexmos"
 name: lsscsi
 path: /freedevtools/tldr/linux/lsscsi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsscsi/"

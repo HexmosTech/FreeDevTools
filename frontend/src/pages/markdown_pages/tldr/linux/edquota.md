@@ -1,5 +1,5 @@
 ---
-title: "Edit Quotas - Manage Disk Usage with edquota | Free DevTools"
+title: "Edit Quotas - Manage Disk Usage with edquota | Online Free DevTools by Hexmos"
 name: edquota
 path: /freedevtools/tldr/linux/edquota
 canonical: "https://hexmos.com/freedevtools/tldr/linux/edquota/"

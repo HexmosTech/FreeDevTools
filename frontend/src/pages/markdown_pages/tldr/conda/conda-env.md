@@ -1,5 +1,5 @@
 ---
-title: "Conda Env - Manage Environments | Free DevTools"
+title: "Conda Env - Manage Environments | Online Free DevTools by Hexmos"
 name: conda-env
 path: /freedevtools/tldr/conda/conda-env
 canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-env/"

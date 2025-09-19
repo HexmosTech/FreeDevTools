@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to Text - Generate Text from PPM Images | Free DevTools"
+title: "Convert PPM to Text - Generate Text from PPM Images | Online Free DevTools by Hexmos"
 name: ppmtoarbtxt
 path: /freedevtools/tldr/ppm/ppmtoarbtxt
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoarbtxt/"

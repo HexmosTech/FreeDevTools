@@ -1,5 +1,5 @@
 ---
-title: "Convert SBIG to PGM - Create CCDOPS Images | Free DevTools"
+title: "Convert SBIG to PGM - Create CCDOPS Images | Online Free DevTools by Hexmos"
 name: sbigtopgm
 path: /freedevtools/tldr/common/sbigtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/sbigtopgm/"

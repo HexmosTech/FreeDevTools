@@ -1,5 +1,5 @@
 ---
-title: "Obliterate Git History - Remove Files | Free DevTools"
+title: "Obliterate Git History - Remove Files | Online Free DevTools by Hexmos"
 name: git-obliterate
 path: /freedevtools/tldr/git/git-obliterate
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-obliterate/"

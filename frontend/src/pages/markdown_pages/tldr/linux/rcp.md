@@ -1,5 +1,5 @@
 ---
-title: "RCP - Copy Files Between Systems | Free DevTools"
+title: "RCP - Copy Files Between Systems | Online Free DevTools by Hexmos"
 name: rcp
 path: /freedevtools/tldr/linux/rcp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rcp/"

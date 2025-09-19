@@ -1,5 +1,5 @@
 ---
-title: "Enumerate AD Users - Find Roasting Targets | Free DevTools"
+title: "Enumerate AD Users - Find Roasting Targets | Online Free DevTools by Hexmos"
 name: getnpusers.py
 path: /freedevtools/tldr/get/getnpusers.py
 canonical: "https://hexmos.com/freedevtools/tldr/get/getnpusers.py/"

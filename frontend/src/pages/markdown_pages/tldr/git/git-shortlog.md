@@ -1,5 +1,5 @@
 ---
-title: "Git Shortlog - Summarize Git Log Output | Free DevTools"
+title: "Git Shortlog - Summarize Git Log Output | Online Free DevTools by Hexmos"
 name: git-shortlog
 path: /freedevtools/tldr/git/git-shortlog
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-shortlog/"

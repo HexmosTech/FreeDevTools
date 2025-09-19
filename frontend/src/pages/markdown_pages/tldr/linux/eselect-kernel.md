@@ -1,5 +1,5 @@
 ---
-title: "Manage Linux Kernel - eselect Kernel Control | Free DevTools"
+title: "Manage Linux Kernel - eselect Kernel Control | Online Free DevTools by Hexmos"
 name: eselect-kernel
 path: /freedevtools/tldr/linux/eselect-kernel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-kernel/"

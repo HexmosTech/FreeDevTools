@@ -1,5 +1,5 @@
 ---
-title: "GBP - Build Debian Packages with Git | Free DevTools"
+title: "GBP - Build Debian Packages with Git | Online Free DevTools by Hexmos"
 name: gbp
 path: "/freedevtools/tldr/linux/gbp"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gbp/"

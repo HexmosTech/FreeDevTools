@@ -1,5 +1,5 @@
 ---
-title: "UV - Remove Dependencies | Free DevTools"
+title: "UV - Remove Dependencies | Online Free DevTools by Hexmos"
 name: uv-remove
 path: "/freedevtools/tldr/uv/uv-remove"
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-remove/"

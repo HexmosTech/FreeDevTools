@@ -1,5 +1,5 @@
 ---
-title: "Pkcon Package Manager - Manage Linux Packages | Free DevTools"
+title: "Pkcon Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos"
 name: pkcon
 path: /freedevtools/tldr/linux/pkcon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkcon/"

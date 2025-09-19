@@ -1,5 +1,5 @@
 ---
-title: "Decode Strings - Recursively Decode Text Online | Free DevTools"
+title: "Decode Strings - Recursively Decode Text Online | Online Free DevTools by Hexmos"
 name: dcode
 path: /freedevtools/tldr/common/dcode
 canonical: "https://hexmos.com/freedevtools/tldr/common/dcode/"

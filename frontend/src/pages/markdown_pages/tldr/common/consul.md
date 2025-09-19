@@ -1,5 +1,5 @@
 ---
-title: "Manage Consul - Distributed Key-Value Store | Free DevTools"
+title: "Manage Consul - Distributed Key-Value Store | Online Free DevTools by Hexmos"
 name: consul
 path: /freedevtools/tldr/common/consul
 canonical: "https://hexmos.com/freedevtools/tldr/common/consul/"

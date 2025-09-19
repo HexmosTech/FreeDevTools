@@ -1,5 +1,5 @@
 ---
-title: "NPM Restart - Execute Package Restart Script | Free DevTools"
+title: "NPM Restart - Execute Package Restart Script | Online Free DevTools by Hexmos"
 name: npm-restart
 path: /freedevtools/tldr/npm/npm-restart
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-restart/"

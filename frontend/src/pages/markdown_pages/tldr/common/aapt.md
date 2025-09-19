@@ -1,5 +1,5 @@
 ---
-title: "Android AAPT - Package and Compile Resources | Free DevTools"
+title: "Android AAPT - Package and Compile Resources | Online Free DevTools by Hexmos"
 name: aapt
 path: /freedevtools/tldr/common/aapt
 canonical: "https://hexmos.com/freedevtools/tldr/common/aapt/"

@@ -1,5 +1,5 @@
 ---
-title: "Control iOS Date - Set Device Time with idevicedate | Free DevTools"
+title: "Control iOS Date - Set Device Time with idevicedate | Online Free DevTools by Hexmos"
 name: idevicedate
 path: /freedevtools/tldr/common/idevicedate
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicedate/"

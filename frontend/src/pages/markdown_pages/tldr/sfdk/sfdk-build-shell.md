@@ -1,5 +1,5 @@
 ---
-title: "SFDK Build-Shell - Execute Build Steps | Free DevTools"
+title: "SFDK Build-Shell - Execute Build Steps | Online Free DevTools by Hexmos"
 name: sfdk-build-shell
 path: /freedevtools/tldr/sfdk/sfdk-build-shell
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-shell/"

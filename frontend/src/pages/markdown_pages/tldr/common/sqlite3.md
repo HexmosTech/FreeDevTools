@@ -1,5 +1,5 @@
 ---
-title: "SQLite3 - Query Databases | Free DevTools"
+title: "SQLite3 - Query Databases | Online Free DevTools by Hexmos"
 name: sqlite3
 path: /freedevtools/tldr/common/sqlite3
 canonical: "https://hexmos.com/freedevtools/tldr/common/sqlite3/"

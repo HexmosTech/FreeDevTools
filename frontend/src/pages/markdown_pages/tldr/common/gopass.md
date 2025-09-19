@@ -1,5 +1,5 @@
 ---
-title: "Gopass Password Manager - Securely Manage Passwords | Free DevTools"
+title: "Gopass Password Manager - Securely Manage Passwords | Online Free DevTools by Hexmos"
 name: gopass
 path: /freedevtools/tldr/common/gopass
 canonical: "https://hexmos.com/freedevtools/tldr/common/gopass/"

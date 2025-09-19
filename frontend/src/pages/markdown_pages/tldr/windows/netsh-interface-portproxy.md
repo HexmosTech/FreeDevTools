@@ -1,5 +1,5 @@
 ---
-title: "Port Forwarding - Configure Netsh Interface Portproxy | Free DevTools"
+title: "Port Forwarding - Configure Netsh Interface Portproxy | Online Free DevTools by Hexmos"
 name: netsh-interface-portproxy
 path: /freedevtools/tldr/windows/netsh-interface-portproxy
 canonical: "https://hexmos.com/freedevtools/tldr/windows/netsh-interface-portproxy/"

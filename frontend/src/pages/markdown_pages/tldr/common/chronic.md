@@ -1,5 +1,5 @@
 ---
-title: "Chronic - Suppress Command Output | Free DevTools"
+title: "Chronic - Suppress Command Output | Online Free DevTools by Hexmos"
 name: chronic
 path: /freedevtools/tldr/common/chronic
 canonical: "https://hexmos.com/freedevtools/tldr/common/chronic/"

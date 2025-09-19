@@ -1,5 +1,5 @@
 ---
-title: "Connect VPN - Control Cisco VPNs with VPNC | Free DevTools"
+title: "Connect VPN - Control Cisco VPNs with VPNC | Online Free DevTools by Hexmos"
 name: vpnc
 path: /freedevtools/tldr/linux/vpnc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vpnc/"

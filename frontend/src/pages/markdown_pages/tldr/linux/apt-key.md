@@ -1,5 +1,5 @@
 ---
-title: "APT Key Manager - Secure Package Updates | Free DevTools"
+title: "APT Key Manager - Secure Package Updates | Online Free DevTools by Hexmos"
 name: apt-key
 path: /freedevtools/tldr/linux/apt-key
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-key/"

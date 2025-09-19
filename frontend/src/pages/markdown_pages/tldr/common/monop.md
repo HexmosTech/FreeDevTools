@@ -1,5 +1,5 @@
 ---
-title: "Monop - Inspect .NET Assemblies | Free DevTools"
+title: "Monop - Inspect .NET Assemblies | Online Free DevTools by Hexmos"
 name: monop
 path: /freedevtools/tldr/common/monop
 canonical: "https://hexmos.com/freedevtools/tldr/common/monop/"

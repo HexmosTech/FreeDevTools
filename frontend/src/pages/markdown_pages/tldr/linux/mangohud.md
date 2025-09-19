@@ -1,5 +1,5 @@
 ---
-title: "MangoHud - Control Game Overlay Display | Free DevTools"
+title: "MangoHud - Control Game Overlay Display | Online Free DevTools by Hexmos"
 name: mangohud
 path: /freedevtools/tldr/linux/mangohud
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mangohud/"

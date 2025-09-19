@@ -1,5 +1,5 @@
 ---
-title: "Manage GNOME Extensions - Control Shell Extensions | Free DevTools"
+title: "Manage GNOME Extensions - Control Shell Extensions | Online Free DevTools by Hexmos"
 name: gnome-extensions
 path: /freedevtools/tldr/linux/gnome-extensions
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-extensions/"

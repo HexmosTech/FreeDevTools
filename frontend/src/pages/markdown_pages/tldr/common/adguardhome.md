@@ -1,5 +1,5 @@
 ---
-title: "Control AdGuardHome - Block Ads Network-Wide | Free DevTools"
+title: "Control AdGuardHome - Block Ads Network-Wide | Online Free DevTools by Hexmos"
 name: adguardhome
 path: /freedevtools/tldr/common/adguardhome
 canonical: "https://hexmos.com/freedevtools/tldr/common/adguardhome/"

@@ -1,5 +1,5 @@
 ---
-title: "Get-Content - Display File Content | Free DevTools"
+title: "Get-Content - Display File Content | Online Free DevTools by Hexmos"
 name: get-content
 path: /freedevtools/tldr/windows/get-content
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-content/"

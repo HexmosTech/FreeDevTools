@@ -1,5 +1,5 @@
 ---
-title: "Nginx Web Server - Control Configuration | Free DevTools"
+title: "Nginx Web Server - Control Configuration | Online Free DevTools by Hexmos"
 name: nginx
 path: /freedevtools/tldr/common/nginx
 canonical: "https://hexmos.com/freedevtools/tldr/common/nginx/"

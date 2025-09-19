@@ -1,5 +1,5 @@
 ---
-title: "Structural Search - Rewrite Code with Ast-grep | Free DevTools"
+title: "Structural Search - Rewrite Code with Ast-grep | Online Free DevTools by Hexmos"
 name: sg
 path: /freedevtools/tldr/common/sg
 canonical: "https://hexmos.com/freedevtools/tldr/common/sg/"

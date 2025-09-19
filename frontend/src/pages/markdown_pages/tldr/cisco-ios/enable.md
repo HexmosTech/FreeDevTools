@@ -1,5 +1,5 @@
 ---
-title: "Enable Privileged Mode - Control Device Access | Free DevTools"
+title: "Enable Privileged Mode - Control Device Access | Online Free DevTools by Hexmos"
 name: enable
 path: /freedevtools/tldr/cisco-ios/enable
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/enable/"

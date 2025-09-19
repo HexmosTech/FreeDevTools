@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Reformat Text Files with fmt | Free DevTools"
+title: "Format Text - Reformat Text Files with fmt | Online Free DevTools by Hexmos"
 name: fmt
 path: /freedevtools/tldr/common/fmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/fmt/"

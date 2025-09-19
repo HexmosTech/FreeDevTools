@@ -1,5 +1,5 @@
 ---
-title: "CUPS Disable - Stop Printers & Classes | Free DevTools"
+title: "CUPS Disable - Stop Printers & Classes | Online Free DevTools by Hexmos"
 name: cupsdisable
 path: /freedevtools/tldr/common/cupsdisable
 canonical: "https://hexmos.com/freedevtools/tldr/common/cupsdisable/"

@@ -1,5 +1,5 @@
 ---
-title: "ARP Cache - Control Network Interfaces | Free DevTools"
+title: "ARP Cache - Control Network Interfaces | Online Free DevTools by Hexmos"
 name: arp
 path: /freedevtools/tldr/common/arp
 canonical: "https://hexmos.com/freedevtools/tldr/common/arp/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Tor Network - Enable Anonymous Communication | Free DevTools"
+title: "Control Tor Network - Enable Anonymous Communication | Online Free DevTools by Hexmos"
 name: tor
 path: /freedevtools/tldr/linux/tor
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tor/"

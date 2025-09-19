@@ -1,5 +1,5 @@
 ---
-title: "Control Helix Editor - Post-Modern Text Editor | Free DevTools"
+title: "Control Helix Editor - Post-Modern Text Editor | Online Free DevTools by Hexmos"
 name: helix
 path: /freedevtools/tldr/common/helix
 canonical: "https://hexmos.com/freedevtools/tldr/common/helix/"

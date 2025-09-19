@@ -1,5 +1,5 @@
 ---
-title: "Aria2 Download Manager - Control Downloads | Free DevTools"
+title: "Aria2 Download Manager - Control Downloads | Online Free DevTools by Hexmos"
 name: aria2
 path: /freedevtools/tldr/common/aria2
 canonical: "https://hexmos.com/freedevtools/tldr/common/aria2/"

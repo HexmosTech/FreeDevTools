@@ -1,5 +1,5 @@
 ---
-title: "Skaffold - Develop Kubernetes Applications | Free DevTools"
+title: "Skaffold - Develop Kubernetes Applications | Online Free DevTools by Hexmos"
 name: skaffold
 path: /freedevtools/tldr/common/skaffold
 canonical: "https://hexmos.com/freedevtools/tldr/common/skaffold/"

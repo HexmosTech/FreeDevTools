@@ -1,5 +1,5 @@
 ---
-title: "Bazel Build Tool - Control Build Processes | Free DevTools"
+title: "Bazel Build Tool - Control Build Processes | Online Free DevTools by Hexmos"
 name: bazel
 path: /freedevtools/tldr/common/bazel
 canonical: "https://hexmos.com/freedevtools/tldr/common/bazel/"

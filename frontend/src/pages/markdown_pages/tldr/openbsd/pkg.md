@@ -1,5 +1,5 @@
 ---
-title: "Package Manager - Manage OpenBSD Packages | Free DevTools"
+title: "Package Manager - Manage OpenBSD Packages | Online Free DevTools by Hexmos"
 name: pkg
 path: /freedevtools/tldr/openbsd/pkg
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg/"

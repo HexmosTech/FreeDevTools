@@ -1,5 +1,5 @@
 ---
-title: "Remove Directory - Delete Folders with RD | Free DevTools"
+title: "Remove Directory - Delete Folders with RD | Online Free DevTools by Hexmos"
 name: rd
 path: /freedevtools/tldr/windows/rd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/rd/"

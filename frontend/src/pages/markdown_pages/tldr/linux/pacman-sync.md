@@ -1,5 +1,5 @@
 ---
-title: "Pacman Sync - Manage Arch Linux Packages | Free DevTools"
+title: "Pacman Sync - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: pacman-sync
 path: /freedevtools/tldr/linux/pacman-sync
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-sync/"

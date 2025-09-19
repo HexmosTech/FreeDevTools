@@ -1,5 +1,5 @@
 ---
-title: "Arthas Watch - Observe Method Data | Free DevTools"
+title: "Arthas Watch - Observe Method Data | Online Free DevTools by Hexmos"
 name: arthas-watch
 path: /freedevtools/tldr/arthas/arthas-watch
 canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas-watch/"

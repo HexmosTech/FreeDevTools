@@ -1,5 +1,5 @@
 ---
-title: "Control XDG User Directories - Linux Command | Free DevTools"
+title: "Control XDG User Directories - Linux Command | Online Free DevTools by Hexmos"
 name: xdg-user-dir
 path: /freedevtools/tldr/linux/xdg-user-dir
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-user-dir/"

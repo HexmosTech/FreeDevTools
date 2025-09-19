@@ -1,5 +1,5 @@
 ---
-title: "Chkrootkit - Scan System for Rootkits | Free DevTools"
+title: "Chkrootkit - Scan System for Rootkits | Online Free DevTools by Hexmos"
 name: chkrootkit
 path: /freedevtools/tldr/common/chkrootkit
 canonical: "https://hexmos.com/freedevtools/tldr/common/chkrootkit/"

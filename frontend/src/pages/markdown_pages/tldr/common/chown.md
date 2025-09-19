@@ -1,5 +1,5 @@
 ---
-title: "Chown - Change File Ownership | Free DevTools"
+title: "Chown - Change File Ownership | Online Free DevTools by Hexmos"
 name: chown
 path: /freedevtools/tldr/common/chown
 canonical: "https://hexmos.com/freedevtools/tldr/common/chown/"

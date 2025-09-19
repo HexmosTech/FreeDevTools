@@ -1,5 +1,5 @@
 ---
-title: "Generate Rust Docs - cargo-rustdoc | Free DevTools"
+title: "Generate Rust Docs - cargo-rustdoc | Online Free DevTools by Hexmos"
 name: cargo-rustdoc
 path: /freedevtools/tldr/cargo/cargo-rustdoc
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-rustdoc/"

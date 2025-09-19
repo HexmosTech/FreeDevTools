@@ -1,5 +1,5 @@
 ---
-title: "Develop Kubernetes Apps - Control DevSpace Workflow | Free DevTools"
+title: "Develop Kubernetes Apps - Control DevSpace Workflow | Online Free DevTools by Hexmos"
 name: devspace
 path: /freedevtools/tldr/common/devspace
 canonical: "https://hexmos.com/freedevtools/tldr/common/devspace/"

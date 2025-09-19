@@ -1,5 +1,5 @@
 ---
-title: "Control Wireless Devices - Using Linux 'iw' | Free DevTools"
+title: "Control Wireless Devices - Using Linux 'iw' | Online Free DevTools by Hexmos"
 name: iw
 path: /freedevtools/tldr/linux/iw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iw/"

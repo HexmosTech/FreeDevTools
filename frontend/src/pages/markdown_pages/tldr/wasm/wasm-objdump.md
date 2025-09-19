@@ -1,5 +1,5 @@
 ---
-title: "Wasm Objdump - Inspect WebAssembly Binaries | Free DevTools"
+title: "Wasm Objdump - Inspect WebAssembly Binaries | Online Free DevTools by Hexmos"
 name: wasm-objdump
 path: /freedevtools/tldr/wasm/wasm-objdump
 canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm-objdump/"

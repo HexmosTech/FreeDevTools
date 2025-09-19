@@ -1,5 +1,5 @@
 ---
-title: "File Pager - Display Files Interactively with More | Free DevTools"
+title: "File Pager - Display Files Interactively with More | Online Free DevTools by Hexmos"
 name: more
 path: /freedevtools/tldr/common/more
 canonical: "https://hexmos.com/freedevtools/tldr/common/more/"

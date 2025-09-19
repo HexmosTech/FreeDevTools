@@ -1,5 +1,5 @@
 ---
-title: "Kiterunner Scan - Discover API Endpoints | Free DevTools"
+title: "Kiterunner Scan - Discover API Endpoints | Online Free DevTools by Hexmos"
 name: kiterunner-scan
 path: /freedevtools/tldr/kiterunner/kiterunner-scan
 canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-scan/"

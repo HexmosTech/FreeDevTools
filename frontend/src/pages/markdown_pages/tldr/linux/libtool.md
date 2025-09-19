@@ -1,5 +1,5 @@
 ---
-title: "Libtool - Create Libraries Portably | Free DevTools"
+title: "Libtool - Create Libraries Portably | Online Free DevTools by Hexmos"
 name: libtool
 path: "/freedevtools/tldr/linux/libtool"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/libtool/"

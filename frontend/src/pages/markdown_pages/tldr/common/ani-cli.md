@@ -1,5 +1,5 @@
 ---
-title: "Anime Browser - Watch Anime from Command Line | Free DevTools"
+title: "Anime Browser - Watch Anime from Command Line | Online Free DevTools by Hexmos"
 name: ani-cli
 path: /freedevtools/tldr/common/ani-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/ani-cli/"

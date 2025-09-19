@@ -1,5 +1,5 @@
 ---
-title: "i7z - Monitor Intel CPU Performance | Free DevTools"
+title: "i7z - Monitor Intel CPU Performance | Online Free DevTools by Hexmos"
 name: i7z
 path: /freedevtools/tldr/linux/i7z
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i7z/"

@@ -1,5 +1,5 @@
 ---
-title: "Kopia Backup - Create Secure Snapshots | Free DevTools"
+title: "Kopia Backup - Create Secure Snapshots | Online Free DevTools by Hexmos"
 name: kopia
 path: /freedevtools/tldr/common/kopia
 canonical: "https://hexmos.com/freedevtools/tldr/common/kopia/"

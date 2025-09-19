@@ -1,5 +1,5 @@
 ---
-title: "Haxelib - Manage Haxe Libraries | Free DevTools"
+title: "Haxelib - Manage Haxe Libraries | Online Free DevTools by Hexmos"
 name: haxelib
 path: /freedevtools/tldr/common/haxelib
 canonical: "https://hexmos.com/freedevtools/tldr/common/haxelib/"

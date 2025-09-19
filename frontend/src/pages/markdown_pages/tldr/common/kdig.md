@@ -1,5 +1,5 @@
 ---
-title: "DNS Lookup - Query DNS Records with kdig | Free DevTools"
+title: "DNS Lookup - Query DNS Records with kdig | Online Free DevTools by Hexmos"
 name: kdig
 path: /freedevtools/tldr/common/kdig
 canonical: "https://hexmos.com/freedevtools/tldr/common/kdig/"

@@ -1,5 +1,5 @@
 ---
-title: "Create GitHub Issues - Manage Repository Issues | Free DevTools"
+title: "Create GitHub Issues - Manage Repository Issues | Online Free DevTools by Hexmos"
 name: gh-issue-create
 path: /freedevtools/tldr/gh/gh-issue-create
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-issue-create/"

@@ -1,5 +1,5 @@
 ---
-title: "SecretHub - Manage Secrets Securely | Free DevTools"
+title: "SecretHub - Manage Secrets Securely | Online Free DevTools by Hexmos"
 name: secrethub
 path: "/freedevtools/tldr/common/secrethub"
 canonical: "https://hexmos.com/freedevtools/tldr/common/secrethub/"

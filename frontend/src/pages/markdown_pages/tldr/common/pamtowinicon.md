@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to ICO - Create Windows Icons | Free DevTools"
+title: "Convert PAM to ICO - Create Windows Icons | Online Free DevTools by Hexmos"
 name: pamtowinicon
 path: /freedevtools/tldr/common/pamtowinicon
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtowinicon/"

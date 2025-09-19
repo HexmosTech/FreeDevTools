@@ -1,5 +1,5 @@
 ---
-title: "Manage Files - Browse Directories with Filebrowser | Free DevTools"
+title: "Manage Files - Browse Directories with Filebrowser | Online Free DevTools by Hexmos"
 name: filebrowser
 path: /freedevtools/tldr/common/filebrowser
 canonical: "https://hexmos.com/freedevtools/tldr/common/filebrowser/"

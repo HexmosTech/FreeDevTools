@@ -1,5 +1,5 @@
 ---
-title: "Access KJV Bible - Read Scriptures on Your Desktop | Free DevTools"
+title: "Access KJV Bible - Read Scriptures on Your Desktop | Online Free DevTools by Hexmos"
 name: kjv
 path: /freedevtools/tldr/linux/kjv
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kjv/"

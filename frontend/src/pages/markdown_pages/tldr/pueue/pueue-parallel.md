@@ -1,5 +1,5 @@
 ---
-title: "Pueue Parallel - Control Task Parallelism | Free DevTools"
+title: "Pueue Parallel - Control Task Parallelism | Online Free DevTools by Hexmos"
 name: pueue-parallel
 path: /freedevtools/tldr/pueue/pueue-parallel
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-parallel/"

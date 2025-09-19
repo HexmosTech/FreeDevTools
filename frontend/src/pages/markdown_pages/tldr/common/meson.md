@@ -1,5 +1,5 @@
 ---
-title: "Meson Build - Generate Projects | Free DevTools"
+title: "Meson Build - Generate Projects | Online Free DevTools by Hexmos"
 name: meson
 path: /freedevtools/tldr/common/meson
 canonical: "https://hexmos.com/freedevtools/tldr/common/meson/"

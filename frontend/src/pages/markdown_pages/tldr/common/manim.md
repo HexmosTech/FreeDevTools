@@ -1,5 +1,5 @@
 ---
-title: "Render Manim Animation - Create Explanatory Math Videos | Free DevTools"
+title: "Render Manim Animation - Create Explanatory Math Videos | Online Free DevTools by Hexmos"
 name: manim
 path: /freedevtools/tldr/common/manim
 canonical: "https://hexmos.com/freedevtools/tldr/common/manim/"

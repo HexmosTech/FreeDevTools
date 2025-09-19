@@ -1,5 +1,5 @@
 ---
-title: "Git Prune - Remove Unreachable Objects | Free DevTools"
+title: "Git Prune - Remove Unreachable Objects | Online Free DevTools by Hexmos"
 name: git-prune
 path: /freedevtools/tldr/git/git-prune
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-prune/"

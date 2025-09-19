@@ -1,5 +1,5 @@
 ---
-title: "GitHub Environment - Display Variables | Free DevTools"
+title: "GitHub Environment - Display Variables | Online Free DevTools by Hexmos"
 name: gh-environment
 path: /freedevtools/tldr/gh/gh-environment
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-environment/"

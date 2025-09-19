@@ -1,5 +1,5 @@
 ---
-title: "ADB Devices - List Connected Devices | Free DevTools"
+title: "ADB Devices - List Connected Devices | Online Free DevTools by Hexmos"
 name: adb-devices
 path: /freedevtools/tldr/adb/adb-devices
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-devices/"

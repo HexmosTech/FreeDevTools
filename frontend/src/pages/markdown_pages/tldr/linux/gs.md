@@ -1,5 +1,5 @@
 ---
-title: "GhostScript PDF Control - Manage PDFs with gs | Free DevTools"
+title: "GhostScript PDF Control - Manage PDFs with gs | Online Free DevTools by Hexmos"
 name: gs
 path: /freedevtools/tldr/linux/gs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gs/"

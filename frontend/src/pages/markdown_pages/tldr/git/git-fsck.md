@@ -1,5 +1,5 @@
 ---
-title: "Validate Git Repository - Check Integrity with git fsck | Free DevTools"
+title: "Validate Git Repository - Check Integrity with git fsck | Online Free DevTools by Hexmos"
 name: git-fsck
 path: /freedevtools/tldr/git/git-fsck
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-fsck/"

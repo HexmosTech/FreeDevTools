@@ -1,5 +1,5 @@
 ---
-title: "Locate Country - Identify IP Location with acountry | Free DevTools"
+title: "Locate Country - Identify IP Location with acountry | Online Free DevTools by Hexmos"
 name: acountry
 path: /freedevtools/tldr/linux/acountry
 canonical: "https://hexmos.com/freedevtools/tldr/linux/acountry/"

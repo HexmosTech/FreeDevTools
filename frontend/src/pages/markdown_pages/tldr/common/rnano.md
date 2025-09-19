@@ -1,5 +1,5 @@
 ---
-title: "RNano Editor - Control Restricted Nano Sessions | Free DevTools"
+title: "RNano Editor - Control Restricted Nano Sessions | Online Free DevTools by Hexmos"
 name: rnano
 path: /freedevtools/tldr/common/rnano
 canonical: "https://hexmos.com/freedevtools/tldr/common/rnano/"

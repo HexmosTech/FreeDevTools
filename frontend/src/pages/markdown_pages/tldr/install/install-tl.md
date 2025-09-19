@@ -1,5 +1,5 @@
 ---
-title: "Install TeX Live - Cross-Platform Installation | Free DevTools"
+title: "Install TeX Live - Cross-Platform Installation | Online Free DevTools by Hexmos"
 name: install-tl
 path: /freedevtools/tldr/install/install-tl
 canonical: "https://hexmos.com/freedevtools/tldr/install/install-tl/"

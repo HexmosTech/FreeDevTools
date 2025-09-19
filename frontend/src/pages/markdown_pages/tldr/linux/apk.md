@@ -1,5 +1,5 @@
 ---
-title: "Control Packages - APK Package Manager | Free DevTools"
+title: "Control Packages - APK Package Manager | Online Free DevTools by Hexmos"
 name: apk
 path: /freedevtools/tldr/linux/apk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apk/"

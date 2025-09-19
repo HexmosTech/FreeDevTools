@@ -1,5 +1,5 @@
 ---
-title: "Python Execute Scripts - Run Code | Free DevTools"
+title: "Python Execute Scripts - Run Code | Online Free DevTools by Hexmos"
 name: python3
 path: /freedevtools/tldr/common/python3
 canonical: "https://hexmos.com/freedevtools/tldr/common/python3/"

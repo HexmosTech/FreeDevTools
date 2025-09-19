@@ -1,5 +1,5 @@
 ---
-title: "VGChange - Control LVM Volume Groups | Free DevTools"
+title: "VGChange - Control LVM Volume Groups | Online Free DevTools by Hexmos"
 name: vgchange
 path: /freedevtools/tldr/linux/vgchange
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgchange/"

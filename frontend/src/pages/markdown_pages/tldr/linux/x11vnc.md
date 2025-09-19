@@ -1,5 +1,5 @@
 ---
-title: "X11VNC Control - Remote Linux Desktops | Free DevTools"
+title: "X11VNC Control - Remote Linux Desktops | Online Free DevTools by Hexmos"
 name: x11vnc
 path: /freedevtools/tldr/linux/x11vnc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/x11vnc/"

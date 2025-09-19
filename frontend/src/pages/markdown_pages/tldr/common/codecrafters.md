@@ -1,5 +1,5 @@
 ---
-title: "Codecrafters - Practice Software Development | Free DevTools"
+title: "Codecrafters - Practice Software Development | Online Free DevTools by Hexmos"
 name: codecrafters
 path: /freedevtools/tldr/common/codecrafters
 canonical: "https://hexmos.com/freedevtools/tldr/common/codecrafters/"

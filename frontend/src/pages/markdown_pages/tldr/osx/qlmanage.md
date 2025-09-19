@@ -1,5 +1,5 @@
 ---
-title: "QuickLook Manager - Generate File Previews | Free DevTools"
+title: "QuickLook Manager - Generate File Previews | Online Free DevTools by Hexmos"
 name: qlmanage
 path: /freedevtools/tldr/osx/qlmanage
 canonical: "https://hexmos.com/freedevtools/tldr/osx/qlmanage/"

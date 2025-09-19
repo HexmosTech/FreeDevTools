@@ -1,5 +1,5 @@
 ---
-title: "Deno Runtime - Execute JavaScript & TypeScript | Free DevTools"
+title: "Deno Runtime - Execute JavaScript & TypeScript | Online Free DevTools by Hexmos"
 name: deno
 path: /freedevtools/tldr/common/deno
 canonical: "https://hexmos.com/freedevtools/tldr/common/deno/"

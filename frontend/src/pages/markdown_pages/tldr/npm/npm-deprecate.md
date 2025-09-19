@@ -1,5 +1,5 @@
 ---
-title: "NPM Deprecate - Mark Package Versions as Deprecated | Free DevTools"
+title: "NPM Deprecate - Mark Package Versions as Deprecated | Online Free DevTools by Hexmos"
 name: npm-deprecate
 path: /freedevtools/tldr/npm/npm-deprecate
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-deprecate/"

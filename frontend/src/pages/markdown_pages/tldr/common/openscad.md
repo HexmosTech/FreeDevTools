@@ -1,5 +1,5 @@
 ---
-title: "Create 3D Models - OpenSCAD | Free DevTools"
+title: "Create 3D Models - OpenSCAD | Online Free DevTools by Hexmos"
 name: openscad
 path: /freedevtools/tldr/common/openscad
 canonical: "https://hexmos.com/freedevtools/tldr/common/openscad/"

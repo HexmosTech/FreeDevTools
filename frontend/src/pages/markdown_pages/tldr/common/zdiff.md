@@ -1,5 +1,5 @@
 ---
-title: "Compare Gzip Files - Diff Gzip Archives | Free DevTools"
+title: "Compare Gzip Files - Diff Gzip Archives | Online Free DevTools by Hexmos"
 name: zdiff
 path: /freedevtools/tldr/common/zdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/zdiff/"

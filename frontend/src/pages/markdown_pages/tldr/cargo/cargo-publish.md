@@ -1,5 +1,5 @@
 ---
-title: "Cargo Publish - Upload Rust Packages | Free DevTools"
+title: "Cargo Publish - Upload Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-publish
 path: /freedevtools/tldr/cargo/cargo-publish
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-publish/"

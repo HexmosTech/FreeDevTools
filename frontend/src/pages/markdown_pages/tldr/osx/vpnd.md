@@ -1,5 +1,5 @@
 ---
-title: "Control VPN Daemon - Manage VPN Connections | Free DevTools"
+title: "Control VPN Daemon - Manage VPN Connections | Online Free DevTools by Hexmos"
 name: vpnd
 path: /freedevtools/tldr/osx/vpnd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/vpnd/"

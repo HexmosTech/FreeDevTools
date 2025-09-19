@@ -1,5 +1,5 @@
 ---
-title: "Edit Revision - Control Jujutsu Version History | Free DevTools"
+title: "Edit Revision - Control Jujutsu Version History | Online Free DevTools by Hexmos"
 name: jj-edit
 path: /freedevtools/tldr/jj/jj-edit
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-edit/"

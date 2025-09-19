@@ -1,5 +1,5 @@
 ---
-title: "Git Summary - Analyze Repository Activity | Free DevTools"
+title: "Git Summary - Analyze Repository Activity | Online Free DevTools by Hexmos"
 name: git-summary
 path: /freedevtools/tldr/git/git-summary
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-summary/"

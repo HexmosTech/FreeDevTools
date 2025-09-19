@@ -1,5 +1,5 @@
 ---
-title: "Compute Pi - Calculate Archimedes' Constant on Linux | Free DevTools"
+title: "Compute Pi - Calculate Archimedes' Constant on Linux | Online Free DevTools by Hexmos"
 name: pi
 path: /freedevtools/tldr/linux/pi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pi/"

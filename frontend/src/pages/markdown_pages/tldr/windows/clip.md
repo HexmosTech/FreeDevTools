@@ -1,5 +1,5 @@
 ---
-title: "Control Clipboard - Copy Text to Clipboard | Free DevTools"
+title: "Control Clipboard - Copy Text to Clipboard | Online Free DevTools by Hexmos"
 name: clip
 path: /freedevtools/tldr/windows/clip
 canonical: "https://hexmos.com/freedevtools/tldr/windows/clip/"

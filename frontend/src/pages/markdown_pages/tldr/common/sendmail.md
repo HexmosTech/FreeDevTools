@@ -1,5 +1,5 @@
 ---
-title: "Send Email - Send Email Messages | Free DevTools"
+title: "Send Email - Send Email Messages | Online Free DevTools by Hexmos"
 name: sendmail
 path: /freedevtools/tldr/common/sendmail
 canonical: "https://hexmos.com/freedevtools/tldr/common/sendmail/"

@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Wrap Lines with Fold Command | Free DevTools"
+title: "Format Text - Wrap Lines with Fold Command | Online Free DevTools by Hexmos"
 name: fold
 path: /freedevtools/tldr/common/fold
 canonical: "https://hexmos.com/freedevtools/tldr/common/fold/"

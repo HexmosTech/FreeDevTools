@@ -1,5 +1,5 @@
 ---
-title: "Syncthing - Synchronize Folders Bidirectionally | Free DevTools"
+title: "Syncthing - Synchronize Folders Bidirectionally | Online Free DevTools by Hexmos"
 name: syncthing
 path: /freedevtools/tldr/common/syncthing
 canonical: "https://hexmos.com/freedevtools/tldr/common/syncthing/"

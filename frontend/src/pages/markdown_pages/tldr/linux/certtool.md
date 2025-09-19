@@ -1,5 +1,5 @@
 ---
-title: "Generate Certificates with certtool - Secure X.509 Management | Free DevTools"
+title: "Generate Certificates with certtool - Secure X.509 Management | Online Free DevTools by Hexmos"
 name: certtool
 path: /freedevtools/tldr/linux/certtool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/certtool/"

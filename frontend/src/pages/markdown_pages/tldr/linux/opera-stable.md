@@ -1,5 +1,5 @@
 ---
-title: "Opera Browser - Control Web Browsing with Chromium | Free DevTools"
+title: "Opera Browser - Control Web Browsing with Chromium | Online Free DevTools by Hexmos"
 name: opera-stable
 path: /freedevtools/tldr/linux/opera-stable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/opera-stable/"

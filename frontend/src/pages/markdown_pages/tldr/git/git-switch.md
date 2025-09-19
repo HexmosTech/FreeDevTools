@@ -1,5 +1,5 @@
 ---
-title: "Git Switch - Switch Branches | Free DevTools"
+title: "Git Switch - Switch Branches | Online Free DevTools by Hexmos"
 name: git-switch
 path: /freedevtools/tldr/git/git-switch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-switch/"

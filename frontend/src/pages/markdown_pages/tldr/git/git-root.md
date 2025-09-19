@@ -1,5 +1,5 @@
 ---
-title: "Locate Git Root - Find Repository Root Directory | Free DevTools"
+title: "Locate Git Root - Find Repository Root Directory | Online Free DevTools by Hexmos"
 name: git-root
 path: /freedevtools/tldr/git/git-root
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-root/"

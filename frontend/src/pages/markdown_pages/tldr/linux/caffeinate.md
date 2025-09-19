@@ -1,5 +1,5 @@
 ---
-title: "Control Sleeping - Caffeinate Desktop | Free DevTools"
+title: "Control Sleeping - Caffeinate Desktop | Online Free DevTools by Hexmos"
 name: caffeinate
 path: /freedevtools/tldr/linux/caffeinate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/caffeinate/"

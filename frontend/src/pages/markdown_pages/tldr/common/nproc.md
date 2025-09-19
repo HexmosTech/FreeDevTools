@@ -1,5 +1,5 @@
 ---
-title: "Display CPU Cores - Control Processor Count | Free DevTools"
+title: "Display CPU Cores - Control Processor Count | Online Free DevTools by Hexmos"
 name: nproc
 path: /freedevtools/tldr/common/nproc
 canonical: "https://hexmos.com/freedevtools/tldr/common/nproc/"

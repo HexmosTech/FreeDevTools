@@ -1,5 +1,5 @@
 ---
-title: "Execute WirePlumber Scripts - Control Lua Scripts | Free DevTools"
+title: "Execute WirePlumber Scripts - Control Lua Scripts | Online Free DevTools by Hexmos"
 name: wpexec
 path: /freedevtools/tldr/linux/wpexec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wpexec/"

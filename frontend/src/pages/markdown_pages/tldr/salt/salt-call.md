@@ -1,5 +1,5 @@
 ---
-title: "Control Salt Minion - Invoke Salt Commands Locally | Free DevTools"
+title: "Control Salt Minion - Invoke Salt Commands Locally | Online Free DevTools by Hexmos"
 name: salt-call
 path: /freedevtools/tldr/salt/salt-call
 canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-call/"

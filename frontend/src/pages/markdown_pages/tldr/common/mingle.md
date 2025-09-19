@@ -1,5 +1,5 @@
 ---
-title: "Mingle - Bundle Graph Edges | Free DevTools"
+title: "Mingle - Bundle Graph Edges | Online Free DevTools by Hexmos"
 name: mingle
 path: /freedevtools/tldr/common/mingle
 canonical: "https://hexmos.com/freedevtools/tldr/common/mingle/"

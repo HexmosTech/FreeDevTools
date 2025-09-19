@@ -1,5 +1,5 @@
 ---
-title: "Resolve Path - Display Absolute Paths | Free DevTools"
+title: "Resolve Path - Display Absolute Paths | Online Free DevTools by Hexmos"
 name: realpath
 path: /freedevtools/tldr/common/realpath
 canonical: "https://hexmos.com/freedevtools/tldr/common/realpath/"

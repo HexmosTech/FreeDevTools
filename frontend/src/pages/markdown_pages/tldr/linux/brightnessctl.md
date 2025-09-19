@@ -1,5 +1,5 @@
 ---
-title: "Brightness Control - Manage Display Brightness | Free DevTools"
+title: "Brightness Control - Manage Display Brightness | Online Free DevTools by Hexmos"
 name: brightnessctl
 path: /freedevtools/tldr/linux/brightnessctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/brightnessctl/"

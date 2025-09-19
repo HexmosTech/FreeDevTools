@@ -1,5 +1,5 @@
 ---
-title: "Anime Downloader - Download Anime Easily | Free DevTools"
+title: "Anime Downloader - Download Anime Easily | Online Free DevTools by Hexmos"
 name: animdl
 path: /freedevtools/tldr/common/animdl
 canonical: "https://hexmos.com/freedevtools/tldr/common/animdl/"

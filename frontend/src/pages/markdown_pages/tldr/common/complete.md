@@ -1,5 +1,5 @@
 ---
-title: "Complete - Autocomplete Shell Commands | Free DevTools"
+title: "Complete - Autocomplete Shell Commands | Online Free DevTools by Hexmos"
 name: complete
 path: /freedevtools/tldr/common/complete
 canonical: "https://hexmos.com/freedevtools/tldr/common/complete/"

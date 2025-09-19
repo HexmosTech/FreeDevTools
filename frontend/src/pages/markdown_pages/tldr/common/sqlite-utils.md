@@ -1,5 +1,5 @@
 ---
-title: "SQLite Utils - Manipulate SQLite Databases | Free DevTools"
+title: "SQLite Utils - Manipulate SQLite Databases | Online Free DevTools by Hexmos"
 name: sqlite-utils
 path: /freedevtools/tldr/common/sqlite-utils
 canonical: "https://hexmos.com/freedevtools/tldr/common/sqlite-utils/"

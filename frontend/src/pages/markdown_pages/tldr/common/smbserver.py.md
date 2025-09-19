@@ -1,5 +1,5 @@
 ---
-title: "SMB Server - Create Shares | Free DevTools"
+title: "SMB Server - Create Shares | Online Free DevTools by Hexmos"
 name: smbserver.py
 path: /freedevtools/tldr/common/smbserver.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/smbserver.py/"

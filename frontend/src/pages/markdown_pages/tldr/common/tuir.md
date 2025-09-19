@@ -1,5 +1,5 @@
 ---
-title: "Control Reddit with tuir - TUI Reddit Viewer | Free DevTools"
+title: "Control Reddit with tuir - TUI Reddit Viewer | Online Free DevTools by Hexmos"
 name: tuir
 path: /freedevtools/tldr/common/tuir
 canonical: "https://hexmos.com/freedevtools/tldr/common/tuir/"

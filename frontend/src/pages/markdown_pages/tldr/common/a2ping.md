@@ -1,5 +1,5 @@
 ---
-title: "Convert Image to PDF - a2ping | Free DevTools"
+title: "Convert Image to PDF - a2ping | Online Free DevTools by Hexmos"
 name: a2ping
 path: /freedevtools/tldr/common/a2ping
 canonical: "https://hexmos.com/freedevtools/tldr/common/a2ping/"

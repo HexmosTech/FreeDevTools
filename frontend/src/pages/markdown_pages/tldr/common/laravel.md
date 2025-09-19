@@ -1,5 +1,5 @@
 ---
-title: "Create Laravel Projects - Installer | Free DevTools"
+title: "Create Laravel Projects - Installer | Online Free DevTools by Hexmos"
 name: laravel
 path: /freedevtools/tldr/common/laravel
 canonical: "https://hexmos.com/freedevtools/tldr/common/laravel/"

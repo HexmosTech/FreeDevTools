@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Logs - Show Pod Logs | Free DevTools"
+title: "Kubectl Logs - Show Pod Logs | Online Free DevTools by Hexmos"
 name: kubectl-logs
 path: /freedevtools/tldr/kubectl/kubectl-logs
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-logs/"

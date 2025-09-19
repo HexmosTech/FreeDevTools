@@ -1,5 +1,5 @@
 ---
-title: "Poetry Env - Manage Python Virtualenvs | Free DevTools"
+title: "Poetry Env - Manage Python Virtualenvs | Online Free DevTools by Hexmos"
 name: poetry-env
 path: /freedevtools/tldr/common/poetry-env
 canonical: "https://hexmos.com/freedevtools/tldr/common/poetry-env/"

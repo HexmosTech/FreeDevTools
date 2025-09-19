@@ -1,5 +1,5 @@
 ---
-title: "Create Azure Group - Manage Resources | Free DevTools"
+title: "Create Azure Group - Manage Resources | Online Free DevTools by Hexmos"
 name: az-group
 path: /freedevtools/tldr/az/az-group
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-group/"

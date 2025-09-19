@@ -1,5 +1,5 @@
 ---
-title: "Extract Package Data - Control Alpm Databases with expac | Free DevTools"
+title: "Extract Package Data - Control Alpm Databases with expac | Online Free DevTools by Hexmos"
 name: expac
 path: /freedevtools/tldr/linux/expac
 canonical: "https://hexmos.com/freedevtools/tldr/linux/expac/"

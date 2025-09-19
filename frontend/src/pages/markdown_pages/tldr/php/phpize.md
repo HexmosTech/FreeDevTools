@@ -1,5 +1,5 @@
 ---
-title: "Create PHP Extension - Prepare for Compiling | Free DevTools"
+title: "Create PHP Extension - Prepare for Compiling | Online Free DevTools by Hexmos"
 name: phpize
 path: /freedevtools/tldr/php/phpize
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpize/"

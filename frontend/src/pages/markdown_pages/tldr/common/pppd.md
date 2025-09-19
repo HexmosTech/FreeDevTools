@@ -1,5 +1,5 @@
 ---
-title: "PPP Daemon - Establish Point-to-Point Connections | Free DevTools"
+title: "PPP Daemon - Establish Point-to-Point Connections | Online Free DevTools by Hexmos"
 name: pppd
 path: /freedevtools/tldr/common/pppd
 canonical: "https://hexmos.com/freedevtools/tldr/common/pppd/"

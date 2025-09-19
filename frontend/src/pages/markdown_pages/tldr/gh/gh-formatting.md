@@ -1,5 +1,5 @@
 ---
-title: "Format GitHub CLI - GH JSON Formatting | Free DevTools"
+title: "Format GitHub CLI - GH JSON Formatting | Online Free DevTools by Hexmos"
 name: gh-formatting
 path: /freedevtools/tldr/gh/gh-formatting
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-formatting/"

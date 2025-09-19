@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to YUV - Split Image Files | Free DevTools"
+title: "Convert PPM to YUV - Split Image Files | Online Free DevTools by Hexmos"
 name: ppmtoyuvsplit
 path: /freedevtools/tldr/ppm/ppmtoyuvsplit
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoyuvsplit/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Command History - Control Bash History | Free DevTools"
+title: "Manage Command History - Control Bash History | Online Free DevTools by Hexmos"
 name: history
 path: /freedevtools/tldr/common/history
 canonical: "https://hexmos.com/freedevtools/tldr/common/history/"

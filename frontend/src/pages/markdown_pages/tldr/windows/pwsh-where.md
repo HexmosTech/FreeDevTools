@@ -1,5 +1,5 @@
 ---
-title: "PowerShell Where - Filter Objects | Free DevTools"
+title: "PowerShell Where - Filter Objects | Online Free DevTools by Hexmos"
 name: pwsh-where
 path: /freedevtools/tldr/windows/pwsh-where
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pwsh-where/"

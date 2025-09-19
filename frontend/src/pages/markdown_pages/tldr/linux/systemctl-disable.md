@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Disable - Control Services | Free DevTools"
+title: "Systemctl Disable - Control Services | Online Free DevTools by Hexmos"
 name: systemctl-disable
 path: /freedevtools/tldr/linux/systemctl-disable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-disable/"

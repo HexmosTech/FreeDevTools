@@ -1,5 +1,5 @@
 ---
-title: "Torify - Route Network Traffic Through Tor | Free DevTools"
+title: "Torify - Route Network Traffic Through Tor | Online Free DevTools by Hexmos"
 name: torify
 path: /freedevtools/tldr/linux/torify
 canonical: "https://hexmos.com/freedevtools/tldr/linux/torify/"

@@ -1,5 +1,5 @@
 ---
-title: "Ripgrep All - Search Files Easily | Free DevTools"
+title: "Ripgrep All - Search Files Easily | Online Free DevTools by Hexmos"
 name: rga
 path: /freedevtools/tldr/common/rga
 canonical: "https://hexmos.com/freedevtools/tldr/common/rga/"

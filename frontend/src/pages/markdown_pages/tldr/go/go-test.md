@@ -1,5 +1,5 @@
 ---
-title: "Go Test - Test Go Packages | Free DevTools"
+title: "Go Test - Test Go Packages | Online Free DevTools by Hexmos"
 name: go-test
 path: /freedevtools/tldr/go/go-test
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-test/"

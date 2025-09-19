@@ -1,5 +1,5 @@
 ---
-title: "Guacamole Proxy - Control Remote Desktops | Free DevTools"
+title: "Guacamole Proxy - Control Remote Desktops | Online Free DevTools by Hexmos"
 name: guacd
 path: /freedevtools/tldr/common/guacd
 canonical: "https://hexmos.com/freedevtools/tldr/common/guacd/"

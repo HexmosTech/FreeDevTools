@@ -1,5 +1,5 @@
 ---
-title: "Xattr - Control File Attributes | Free DevTools"
+title: "Xattr - Control File Attributes | Online Free DevTools by Hexmos"
 name: xattr
 path: /freedevtools/tldr/osx/xattr
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xattr/"

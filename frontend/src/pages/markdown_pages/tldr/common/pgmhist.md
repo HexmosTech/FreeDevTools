@@ -1,5 +1,5 @@
 ---
-title: "Generate PGM Histogram - Analyze Image Values | Free DevTools"
+title: "Generate PGM Histogram - Analyze Image Values | Online Free DevTools by Hexmos"
 name: pgmhist
 path: /freedevtools/tldr/common/pgmhist
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmhist/"

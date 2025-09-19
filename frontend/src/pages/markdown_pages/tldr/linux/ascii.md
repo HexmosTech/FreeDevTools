@@ -1,5 +1,5 @@
 ---
-title: "ASCII Table - Show Character Aliases | Free DevTools"
+title: "ASCII Table - Show Character Aliases | Online Free DevTools by Hexmos"
 name: ascii
 path: /freedevtools/tldr/linux/ascii
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ascii/"

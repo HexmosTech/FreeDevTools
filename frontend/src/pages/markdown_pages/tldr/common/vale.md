@@ -1,5 +1,5 @@
 ---
-title: "Vale - Validate Style with CLI Tool | Free DevTools"
+title: "Vale - Validate Style with CLI Tool | Online Free DevTools by Hexmos"
 name: vale
 path: /freedevtools/tldr/common/vale
 canonical: "https://hexmos.com/freedevtools/tldr/common/vale/"

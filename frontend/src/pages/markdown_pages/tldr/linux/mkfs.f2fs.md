@@ -1,5 +1,5 @@
 ---
-title: "Create F2FS Filesystem - Format Partitions with mkfs.f2fs | Free DevTools"
+title: "Create F2FS Filesystem - Format Partitions with mkfs.f2fs | Online Free DevTools by Hexmos"
 name: mkfs.f2fs
 path: /freedevtools/tldr/linux/mkfs.f2fs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.f2fs/"

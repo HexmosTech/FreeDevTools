@@ -1,5 +1,5 @@
 ---
-title: "Manage Gentoo News - eselect news Control | Free DevTools"
+title: "Manage Gentoo News - eselect news Control | Online Free DevTools by Hexmos"
 name: eselect-news
 path: /freedevtools/tldr/linux/eselect-news
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-news/"

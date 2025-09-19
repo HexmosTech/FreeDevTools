@@ -1,5 +1,5 @@
 ---
-title: "doctl Balance - Show Account Balance | Free DevTools"
+title: "doctl Balance - Show Account Balance | Online Free DevTools by Hexmos"
 name: doctl-balance
 path: /freedevtools/tldr/doctl/doctl-balance
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-balance/"

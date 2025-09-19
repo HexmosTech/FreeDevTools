@@ -1,5 +1,5 @@
 ---
-title: "Generate Password - Encrypt Passwords with makepasswd | Free DevTools"
+title: "Generate Password - Encrypt Passwords with makepasswd | Online Free DevTools by Hexmos"
 name: makepasswd
 path: /freedevtools/tldr/common/makepasswd
 canonical: "https://hexmos.com/freedevtools/tldr/common/makepasswd/"

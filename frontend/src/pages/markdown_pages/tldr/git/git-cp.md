@@ -1,5 +1,5 @@
 ---
-title: "Git Copy - Copy Files with History | Free DevTools"
+title: "Git Copy - Copy Files with History | Online Free DevTools by Hexmos"
 name: git-cp
 path: /freedevtools/tldr/git/git-cp
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cp/"

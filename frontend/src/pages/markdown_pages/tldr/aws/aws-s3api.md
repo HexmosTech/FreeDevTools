@@ -1,5 +1,5 @@
 ---
-title: "Create S3 Buckets - Manage AWS S3 Buckets | Free DevTools"
+title: "Create S3 Buckets - Manage AWS S3 Buckets | Online Free DevTools by Hexmos"
 name: aws-s3api
 path: /freedevtools/tldr/aws/aws-s3api
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3api/"

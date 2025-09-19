@@ -1,5 +1,5 @@
 ---
-title: "Control CloudKit Daemon - Manage Data | Free DevTools"
+title: "Control CloudKit Daemon - Manage Data | Online Free DevTools by Hexmos"
 name: cloudd
 path: /freedevtools/tldr/osx/cloudd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cloudd/"

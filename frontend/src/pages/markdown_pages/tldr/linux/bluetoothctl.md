@@ -1,5 +1,5 @@
 ---
-title: "Bluetooth Control - Manage Bluetooth Devices | Free DevTools"
+title: "Bluetooth Control - Manage Bluetooth Devices | Online Free DevTools by Hexmos"
 name: bluetoothctl
 path: /freedevtools/tldr/linux/bluetoothctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bluetoothctl/"

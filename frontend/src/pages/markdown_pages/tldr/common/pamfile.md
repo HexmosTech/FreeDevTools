@@ -1,5 +1,5 @@
 ---
-title: "Describe PAM Files - Analyze Netpbm Images | Free DevTools"
+title: "Describe PAM Files - Analyze Netpbm Images | Online Free DevTools by Hexmos"
 name: pamfile
 path: /freedevtools/tldr/common/pamfile
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamfile/"

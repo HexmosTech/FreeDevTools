@@ -1,5 +1,5 @@
 ---
-title: "PDF Attachments - Extract PDF Files | Free DevTools"
+title: "PDF Attachments - Extract PDF Files | Online Free DevTools by Hexmos"
 name: pdfdetach
 path: /freedevtools/tldr/linux/pdfdetach
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfdetach/"

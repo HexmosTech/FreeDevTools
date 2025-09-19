@@ -1,5 +1,5 @@
 ---
-title: "PNM Interpolation - Resample Images | Free DevTools"
+title: "PNM Interpolation - Resample Images | Online Free DevTools by Hexmos"
 name: pnminterp
 path: /freedevtools/tldr/pnm/pnminterp
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnminterp/"

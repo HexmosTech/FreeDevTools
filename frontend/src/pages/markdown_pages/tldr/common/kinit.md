@@ -1,5 +1,5 @@
 ---
-title: "Authenticate Kerberos - Get Tickets with kinit | Free DevTools"
+title: "Authenticate Kerberos - Get Tickets with kinit | Online Free DevTools by Hexmos"
 name: kinit
 path: /freedevtools/tldr/common/kinit
 canonical: "https://hexmos.com/freedevtools/tldr/common/kinit/"

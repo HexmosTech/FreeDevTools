@@ -1,5 +1,5 @@
 ---
-title: "Format Data with Git Column - Display Data in Columns | Free DevTools"
+title: "Format Data with Git Column - Display Data in Columns | Online Free DevTools by Hexmos"
 name: git-column
 path: /freedevtools/tldr/git/git-column
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-column/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage DNF Modules - Control Packages with dnf-module | Free DevTools"
+title: "Manage DNF Modules - Control Packages with dnf-module | Online Free DevTools by Hexmos"
 name: dnf-module
 path: /freedevtools/tldr/linux/dnf-module
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-module/"

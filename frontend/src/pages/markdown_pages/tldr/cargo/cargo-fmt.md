@@ -1,5 +1,5 @@
 ---
-title: "Format Rust Code - cargo-fmt | Free DevTools"
+title: "Format Rust Code - cargo-fmt | Online Free DevTools by Hexmos"
 name: cargo-fmt
 path: /freedevtools/tldr/cargo/cargo-fmt
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-fmt/"

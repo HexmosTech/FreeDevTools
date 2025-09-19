@@ -1,5 +1,5 @@
 ---
-title: "Convert YUV to PPM - Image Format Conversion | Free DevTools"
+title: "Convert YUV to PPM - Image Format Conversion | Online Free DevTools by Hexmos"
 name: yuvtoppm
 path: /freedevtools/tldr/common/yuvtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/yuvtoppm/"

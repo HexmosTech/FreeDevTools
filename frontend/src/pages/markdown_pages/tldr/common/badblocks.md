@@ -1,5 +1,5 @@
 ---
-title: "Find Bad Blocks - Scan Disks for Errors | Free DevTools"
+title: "Find Bad Blocks - Scan Disks for Errors | Online Free DevTools by Hexmos"
 name: badblocks
 path: /freedevtools/tldr/common/badblocks
 canonical: "https://hexmos.com/freedevtools/tldr/common/badblocks/"

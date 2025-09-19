@@ -1,5 +1,5 @@
 ---
-title: "Pake - Create Desktop Apps from Webpages | Free DevTools"
+title: "Pake - Create Desktop Apps from Webpages | Online Free DevTools by Hexmos"
 name: pake
 path: /freedevtools/tldr/common/pake
 canonical: "https://hexmos.com/freedevtools/tldr/common/pake/"

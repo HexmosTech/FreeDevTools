@@ -1,5 +1,5 @@
 ---
-title: "Onion Search - Scrape Onion URLs | Free DevTools"
+title: "Onion Search - Scrape Onion URLs | Online Free DevTools by Hexmos"
 name: onionsearch
 path: /freedevtools/tldr/common/onionsearch
 canonical: "https://hexmos.com/freedevtools/tldr/common/onionsearch/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Google Drive - Skicka File Transfer | Free DevTools"
+title: "Manage Google Drive - Skicka File Transfer | Online Free DevTools by Hexmos"
 name: skicka
 path: /freedevtools/tldr/common/skicka
 canonical: "https://hexmos.com/freedevtools/tldr/common/skicka/"

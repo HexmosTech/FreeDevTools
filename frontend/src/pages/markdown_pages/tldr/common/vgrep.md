@@ -1,5 +1,5 @@
 ---
-title: "Vgrep - Search Text with Pager | Free DevTools"
+title: "Vgrep - Search Text with Pager | Online Free DevTools by Hexmos"
 name: vgrep
 path: /freedevtools/tldr/common/vgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/vgrep/"

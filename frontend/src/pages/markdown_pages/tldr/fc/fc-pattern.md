@@ -1,5 +1,5 @@
 ---
-title: "Font Pattern - Display Font Information | Free DevTools"
+title: "Font Pattern - Display Font Information | Online Free DevTools by Hexmos"
 name: fc-pattern
 path: /freedevtools/tldr/fc/fc-pattern
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-pattern/"

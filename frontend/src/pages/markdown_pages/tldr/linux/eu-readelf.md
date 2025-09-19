@@ -1,5 +1,5 @@
 ---
-title: "Read ELF Files - Display ELF Data | Free DevTools"
+title: "Read ELF Files - Display ELF Data | Online Free DevTools by Hexmos"
 name: eu-readelf
 path: /freedevtools/tldr/linux/eu-readelf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eu-readelf/"

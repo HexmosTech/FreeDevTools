@@ -1,5 +1,5 @@
 ---
-title: "Fuzzel Launcher - Run Applications | Free DevTools"
+title: "Fuzzel Launcher - Run Applications | Online Free DevTools by Hexmos"
 name: fuzzel
 path: /freedevtools/tldr/linux/fuzzel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fuzzel/"

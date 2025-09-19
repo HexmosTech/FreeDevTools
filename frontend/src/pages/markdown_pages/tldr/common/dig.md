@@ -1,5 +1,5 @@
 ---
-title: "DNS Lookup - Analyze DNS Records | Free DevTools"
+title: "DNS Lookup - Analyze DNS Records | Online Free DevTools by Hexmos"
 name: dig
 path: /freedevtools/tldr/common/dig
 canonical: "https://hexmos.com/freedevtools/tldr/common/dig/"

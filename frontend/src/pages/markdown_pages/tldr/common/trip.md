@@ -1,5 +1,5 @@
 ---
-title: "Network Trip - Diagnose Network Issues | Free DevTools"
+title: "Network Trip - Diagnose Network Issues | Online Free DevTools by Hexmos"
 name: trip
 path: /freedevtools/tldr/common/trip
 canonical: "https://hexmos.com/freedevtools/tldr/common/trip/"

@@ -1,5 +1,5 @@
 ---
-title: "Bison - Generate Parsers from Grammar Files | Free DevTools"
+title: "Bison - Generate Parsers from Grammar Files | Online Free DevTools by Hexmos"
 name: bison
 path: /freedevtools/tldr/common/bison
 canonical: "https://hexmos.com/freedevtools/tldr/common/bison/"

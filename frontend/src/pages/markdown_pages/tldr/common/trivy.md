@@ -1,5 +1,5 @@
 ---
-title: "Scan Vulnerabilities - Trivy Security Scanner | Free DevTools"
+title: "Scan Vulnerabilities - Trivy Security Scanner | Online Free DevTools by Hexmos"
 name: trivy
 path: /freedevtools/tldr/common/trivy
 canonical: "https://hexmos.com/freedevtools/tldr/common/trivy/"

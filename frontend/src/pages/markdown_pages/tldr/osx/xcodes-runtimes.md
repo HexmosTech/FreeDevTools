@@ -1,5 +1,5 @@
 ---
-title: "Xcode Runtimes - Manage iOS Simulators | Free DevTools"
+title: "Xcode Runtimes - Manage iOS Simulators | Online Free DevTools by Hexmos"
 name: xcodes-runtimes
 path: /freedevtools/tldr/osx/xcodes-runtimes
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xcodes-runtimes/"

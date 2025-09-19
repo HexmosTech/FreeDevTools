@@ -1,5 +1,5 @@
 ---
-title: "Generate Open-Source Licenses | Free DevTools"
+title: "Generate Open-Source Licenses | Online Free DevTools by Hexmos"
 name: license
 path: /freedevtools/tldr/common/license
 canonical: "https://hexmos.com/freedevtools/tldr/common/license/"

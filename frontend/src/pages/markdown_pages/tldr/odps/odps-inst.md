@@ -1,5 +1,5 @@
 ---
-title: "ODPS Instance Manager - Control ODPS Instances | Free DevTools"
+title: "ODPS Instance Manager - Control ODPS Instances | Online Free DevTools by Hexmos"
 name: odps-inst
 path: /freedevtools/tldr/odps/odps-inst
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-inst/"

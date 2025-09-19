@@ -1,5 +1,5 @@
 ---
-title: "Generate Timestamp - OpenSSL TS | Free DevTools"
+title: "Generate Timestamp - OpenSSL TS | Online Free DevTools by Hexmos"
 name: openssl-ts
 path: /freedevtools/tldr/openssl/openssl-ts
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-ts/"

@@ -1,5 +1,5 @@
 ---
-title: "Flask-Unsign - Control Flask Sessions | Free DevTools"
+title: "Flask-Unsign - Control Flask Sessions | Online Free DevTools by Hexmos"
 name: flask-unsign
 path: /freedevtools/tldr/common/flask-unsign
 canonical: "https://hexmos.com/freedevtools/tldr/common/flask-unsign/"

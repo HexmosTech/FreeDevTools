@@ -1,5 +1,5 @@
 ---
-title: "Particle Control - Interact with IoT Devices | Free DevTools"
+title: "Particle Control - Interact with IoT Devices | Online Free DevTools by Hexmos"
 name: particle
 path: /freedevtools/tldr/common/particle
 canonical: "https://hexmos.com/freedevtools/tldr/common/particle/"

@@ -1,5 +1,5 @@
 ---
-title: "VMStat - Monitor Virtual Memory Statistics | Free DevTools"
+title: "VMStat - Monitor Virtual Memory Statistics | Online Free DevTools by Hexmos"
 name: vm_stat
 path: /freedevtools/tldr/osx/vm_stat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/vm_stat/"

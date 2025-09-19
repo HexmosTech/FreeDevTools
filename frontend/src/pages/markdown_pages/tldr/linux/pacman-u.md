@@ -1,5 +1,5 @@
 ---
-title: "Pacman Upgrade - Update Packages | Free DevTools"
+title: "Pacman Upgrade - Update Packages | Online Free DevTools by Hexmos"
 name: pacman-u
 path: /freedevtools/tldr/linux/pacman-u
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-u/"

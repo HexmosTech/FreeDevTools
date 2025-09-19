@@ -1,5 +1,5 @@
 ---
-title: "NPM Username - Display NPM Username | Free DevTools"
+title: "NPM Username - Display NPM Username | Online Free DevTools by Hexmos"
 name: npm-whoami
 path: /freedevtools/tldr/npm/npm-whoami
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-whoami/"

@@ -1,5 +1,5 @@
 ---
-title: "KubeTail - Tail Kubernetes Logs | Free DevTools"
+title: "KubeTail - Tail Kubernetes Logs | Online Free DevTools by Hexmos"
 name: kubetail
 path: /freedevtools/tldr/kube/kubetail
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kubetail/"

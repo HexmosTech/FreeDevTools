@@ -1,5 +1,5 @@
 ---
-title: "DNF Config Manager - Control Repositories on Linux | Free DevTools"
+title: "DNF Config Manager - Control Repositories on Linux | Online Free DevTools by Hexmos"
 name: dnf-config-manager
 path: /freedevtools/tldr/linux/dnf-config-manager
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-config-manager/"

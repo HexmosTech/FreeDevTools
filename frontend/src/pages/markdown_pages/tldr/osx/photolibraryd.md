@@ -1,5 +1,5 @@
 ---
-title: "Photo Library Daemon - Handle Photo Requests | Free DevTools"
+title: "Photo Library Daemon - Handle Photo Requests | Online Free DevTools by Hexmos"
 name: photolibraryd
 path: /freedevtools/tldr/osx/photolibraryd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/photolibraryd/"

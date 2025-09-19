@@ -1,5 +1,5 @@
 ---
-title: "Format Python Code - YAPF Style Guide | Free DevTools"
+title: "Format Python Code - YAPF Style Guide | Online Free DevTools by Hexmos"
 name: yapf
 path: /freedevtools/tldr/common/yapf
 canonical: "https://hexmos.com/freedevtools/tldr/common/yapf/"

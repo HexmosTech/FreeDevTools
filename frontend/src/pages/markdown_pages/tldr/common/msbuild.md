@@ -1,5 +1,5 @@
 ---
-title: "MSBuild - Build Visual Studio Projects | Free DevTools"
+title: "MSBuild - Build Visual Studio Projects | Online Free DevTools by Hexmos"
 name: msbuild
 path: /freedevtools/tldr/common/msbuild
 canonical: "https://hexmos.com/freedevtools/tldr/common/msbuild/"

@@ -1,5 +1,5 @@
 ---
-title: "Edit Images - Edit Images with GIMP | Free DevTools"
+title: "Edit Images - Edit Images with GIMP | Online Free DevTools by Hexmos"
 name: gimp
 path: /freedevtools/tldr/common/gimp
 canonical: "https://hexmos.com/freedevtools/tldr/common/gimp/"

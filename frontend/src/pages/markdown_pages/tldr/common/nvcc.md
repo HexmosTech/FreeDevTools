@@ -1,5 +1,5 @@
 ---
-title: "NVCC Compiler - Compile CUDA Programs | Free DevTools"
+title: "NVCC Compiler - Compile CUDA Programs | Online Free DevTools by Hexmos"
 name: nvcc
 path: /freedevtools/tldr/common/nvcc
 canonical: "https://hexmos.com/freedevtools/tldr/common/nvcc/"

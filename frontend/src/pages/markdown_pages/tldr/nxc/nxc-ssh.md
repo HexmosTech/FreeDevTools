@@ -1,5 +1,5 @@
 ---
-title: "Control SSH Servers - nxc-ssh Exploitation | Free DevTools"
+title: "Control SSH Servers - nxc-ssh Exploitation | Online Free DevTools by Hexmos"
 name: nxc-ssh
 path: /freedevtools/tldr/nxc/nxc-ssh
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ssh/"

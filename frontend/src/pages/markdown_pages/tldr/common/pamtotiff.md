@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to TIFF - Image Converter | Free DevTools"
+title: "Convert PAM to TIFF - Image Converter | Online Free DevTools by Hexmos"
 name: pamtotiff
 path: /freedevtools/tldr/common/pamtotiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtotiff/"

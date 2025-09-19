@@ -1,5 +1,5 @@
 ---
-title: "CMake - Generate Build Recipes | Free DevTools"
+title: "CMake - Generate Build Recipes | Online Free DevTools by Hexmos"
 name: cmake
 path: /freedevtools/tldr/common/cmake
 canonical: "https://hexmos.com/freedevtools/tldr/common/cmake/"

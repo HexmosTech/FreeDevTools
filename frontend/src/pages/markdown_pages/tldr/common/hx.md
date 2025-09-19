@@ -1,5 +1,5 @@
 ---
-title: "Helix Editor - Edit Code Quickly | Free DevTools"
+title: "Helix Editor - Edit Code Quickly | Online Free DevTools by Hexmos"
 name: hx
 path: /freedevtools/tldr/common/hx
 canonical: "https://hexmos.com/freedevtools/tldr/common/hx/"

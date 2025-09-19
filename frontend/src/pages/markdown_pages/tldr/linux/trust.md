@@ -1,5 +1,5 @@
 ---
-title: "Manage Trust Policy - Control Security with trust | Free DevTools"
+title: "Manage Trust Policy - Control Security with trust | Online Free DevTools by Hexmos"
 name: trust
 path: /freedevtools/tldr/linux/trust
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trust/"

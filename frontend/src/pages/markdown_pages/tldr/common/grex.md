@@ -1,5 +1,5 @@
 ---
-title: "Generate Regex - Create Regular Expressions | Free DevTools"
+title: "Generate Regex - Create Regular Expressions | Online Free DevTools by Hexmos"
 name: grex
 path: /freedevtools/tldr/common/grex
 canonical: "https://hexmos.com/freedevtools/tldr/common/grex/"

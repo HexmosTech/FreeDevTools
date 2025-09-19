@@ -1,5 +1,5 @@
 ---
-title: "Kreadconfig5 - Read KDE Config | Free DevTools"
+title: "Kreadconfig5 - Read KDE Config | Online Free DevTools by Hexmos"
 name: kreadconfig5
 path: /freedevtools/tldr/linux/kreadconfig5
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kreadconfig5/"

@@ -1,5 +1,5 @@
 ---
-title: "Wezterm Emulator - Create Terminal Windows | Free DevTools"
+title: "Wezterm Emulator - Create Terminal Windows | Online Free DevTools by Hexmos"
 name: wezterm
 path: /freedevtools/tldr/common/wezterm
 canonical: "https://hexmos.com/freedevtools/tldr/common/wezterm/"

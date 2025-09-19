@@ -1,5 +1,5 @@
 ---
-title: "Fisher Plugin Manager - Install Fish Shell Plugins | Free DevTools"
+title: "Fisher Plugin Manager - Install Fish Shell Plugins | Online Free DevTools by Hexmos"
 name: fisher
 path: /freedevtools/tldr/common/fisher
 canonical: "https://hexmos.com/freedevtools/tldr/common/fisher/"

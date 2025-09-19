@@ -1,5 +1,5 @@
 ---
-title: "pkg-config - Control Library Details | Free DevTools"
+title: "pkg-config - Control Library Details | Online Free DevTools by Hexmos"
 name: pkg-config
 path: /freedevtools/tldr/common/pkg-config
 canonical: "https://hexmos.com/freedevtools/tldr/common/pkg-config/"

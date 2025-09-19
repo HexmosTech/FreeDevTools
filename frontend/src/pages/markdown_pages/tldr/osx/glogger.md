@@ -1,5 +1,5 @@
 ---
-title: "Logger - Generate System Log Messages with Glogger | Free DevTools"
+title: "Logger - Generate System Log Messages with Glogger | Online Free DevTools by Hexmos"
 name: glogger
 path: /freedevtools/tldr/osx/glogger
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glogger/"

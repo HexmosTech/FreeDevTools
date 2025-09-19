@@ -1,5 +1,5 @@
 ---
-title: "Singularity - Manage Containers | Free DevTools"
+title: "Singularity - Manage Containers | Online Free DevTools by Hexmos"
 name: singularity
 path: /freedevtools/tldr/common/singularity
 canonical: "https://hexmos.com/freedevtools/tldr/common/singularity/"

@@ -1,5 +1,5 @@
 ---
-title: "Time Tracker - Track Time with Timetrap | Free DevTools"
+title: "Time Tracker - Track Time with Timetrap | Online Free DevTools by Hexmos"
 name: timetrap
 path: /freedevtools/tldr/common/timetrap
 canonical: "https://hexmos.com/freedevtools/tldr/common/timetrap/"

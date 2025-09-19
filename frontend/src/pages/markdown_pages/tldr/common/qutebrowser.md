@@ -1,5 +1,5 @@
 ---
-title: "Control Qutebrowser - Keyboard-Driven Browser | Free DevTools"
+title: "Control Qutebrowser - Keyboard-Driven Browser | Online Free DevTools by Hexmos"
 name: qutebrowser
 path: /freedevtools/tldr/common/qutebrowser
 canonical: "https://hexmos.com/freedevtools/tldr/common/qutebrowser/"

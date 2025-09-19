@@ -1,5 +1,5 @@
 ---
-title: "Sherlock - Find Usernames | Social Network Search | Free DevTools"
+title: "Sherlock - Find Usernames | Social Network Search | Online Free DevTools by Hexmos"
 name: sherlock
 path: /freedevtools/tldr/linux/sherlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sherlock/"

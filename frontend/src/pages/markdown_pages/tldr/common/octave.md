@@ -1,5 +1,5 @@
 ---
-title: "Octave Script Execution - Run Scientific Programs | Free DevTools"
+title: "Octave Script Execution - Run Scientific Programs | Online Free DevTools by Hexmos"
 name: octave
 path: /freedevtools/tldr/common/octave
 canonical: "https://hexmos.com/freedevtools/tldr/common/octave/"

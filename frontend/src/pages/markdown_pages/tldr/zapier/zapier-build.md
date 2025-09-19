@@ -1,5 +1,5 @@
 ---
-title: "Zapier Build - Create Integration Package | Free DevTools"
+title: "Zapier Build - Create Integration Package | Online Free DevTools by Hexmos"
 name: zapier-build
 path: /freedevtools/tldr/zapier/zapier-build
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-build/"

@@ -1,5 +1,5 @@
 ---
-title: "Conda Install - Manage Packages | Free DevTools"
+title: "Conda Install - Manage Packages | Online Free DevTools by Hexmos"
 name: conda-install
 path: /freedevtools/tldr/conda/conda-install
 canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-install/"

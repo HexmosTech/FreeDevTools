@@ -1,5 +1,5 @@
 ---
-title: "HDD Temperature - Display Drive Temps | Free DevTools"
+title: "HDD Temperature - Display Drive Temps | Online Free DevTools by Hexmos"
 name: hddtemp
 path: /freedevtools/tldr/linux/hddtemp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hddtemp/"

@@ -1,5 +1,5 @@
 ---
-title: "System Fetch - Display System Info with Nitch | Free DevTools"
+title: "System Fetch - Display System Info with Nitch | Online Free DevTools by Hexmos"
 name: nitch
 path: /freedevtools/tldr/linux/nitch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nitch/"

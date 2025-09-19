@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Property - Control Filesystem Properties | Free DevTools"
+title: "Btrfs Property - Control Filesystem Properties | Online Free DevTools by Hexmos"
 name: btrfs-property
 path: /freedevtools/tldr/linux/btrfs-property
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-property/"

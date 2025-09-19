@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Locate Files and Directories | Free DevTools"
+title: "Find Files - Locate Files and Directories | Online Free DevTools by Hexmos"
 name: find
 path: /freedevtools/tldr/common/find
 canonical: "https://hexmos.com/freedevtools/tldr/common/find/"

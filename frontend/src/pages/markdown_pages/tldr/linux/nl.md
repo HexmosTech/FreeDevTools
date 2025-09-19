@@ -1,5 +1,5 @@
 ---
-title: "Number Lines - Format Text Output | Free DevTools"
+title: "Number Lines - Format Text Output | Online Free DevTools by Hexmos"
 name: nl
 path: /freedevtools/tldr/linux/nl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nl/"

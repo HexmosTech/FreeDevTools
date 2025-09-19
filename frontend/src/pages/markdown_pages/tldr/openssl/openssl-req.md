@@ -1,5 +1,5 @@
 ---
-title: "Generate CSR - OpenSSL Certificate Requests | Free DevTools"
+title: "Generate CSR - OpenSSL Certificate Requests | Online Free DevTools by Hexmos"
 name: openssl-req
 path: /freedevtools/tldr/openssl/openssl-req
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-req/"

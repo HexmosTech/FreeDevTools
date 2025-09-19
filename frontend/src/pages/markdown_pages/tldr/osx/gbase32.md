@@ -1,5 +1,5 @@
 ---
-title: "Base32 Encode - Encode Data to Base32 Format | Free DevTools"
+title: "Base32 Encode - Encode Data to Base32 Format | Online Free DevTools by Hexmos"
 name: gbase32
 path: /freedevtools/tldr/osx/gbase32
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gbase32/"

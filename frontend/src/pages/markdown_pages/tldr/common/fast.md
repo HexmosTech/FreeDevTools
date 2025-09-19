@@ -1,5 +1,5 @@
 ---
-title: "Measure Internet Speed - Fast CLI | Free DevTools"
+title: "Measure Internet Speed - Fast CLI | Online Free DevTools by Hexmos"
 name: fast
 path: "/freedevtools/tldr/common/fast"
 canonical: "https://hexmos.com/freedevtools/tldr/common/fast/"

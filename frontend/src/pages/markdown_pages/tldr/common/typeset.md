@@ -1,5 +1,5 @@
 ---
-title: "Typeset - Alias Command Declaration | Free DevTools"
+title: "Typeset - Alias Command Declaration | Online Free DevTools by Hexmos"
 name: typeset
 path: /freedevtools/tldr/common/typeset
 canonical: "https://hexmos.com/freedevtools/tldr/common/typeset/"

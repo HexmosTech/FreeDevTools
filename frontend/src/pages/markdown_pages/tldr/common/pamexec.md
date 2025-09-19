@@ -1,5 +1,5 @@
 ---
-title: "Execute Netpbm Command - Process Images | Free DevTools"
+title: "Execute Netpbm Command - Process Images | Online Free DevTools by Hexmos"
 name: pamexec
 path: /freedevtools/tldr/common/pamexec
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamexec/"

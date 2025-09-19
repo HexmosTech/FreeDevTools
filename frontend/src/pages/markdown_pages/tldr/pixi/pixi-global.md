@@ -1,5 +1,5 @@
 ---
-title: "Pixi Global - Manage Packages Globally | Free DevTools"
+title: "Pixi Global - Manage Packages Globally | Online Free DevTools by Hexmos"
 name: pixi-global
 path: /freedevtools/tldr/pixi/pixi-global
 canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-global/"

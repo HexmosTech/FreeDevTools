@@ -1,5 +1,5 @@
 ---
-title: "Gnuplot - Generate Graphs in Multiple Formats | Free DevTools"
+title: "Gnuplot - Generate Graphs in Multiple Formats | Online Free DevTools by Hexmos"
 name: gnuplot
 path: /freedevtools/tldr/common/gnuplot
 canonical: "https://hexmos.com/freedevtools/tldr/common/gnuplot/"

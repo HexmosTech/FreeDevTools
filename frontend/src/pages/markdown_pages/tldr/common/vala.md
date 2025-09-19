@@ -1,5 +1,5 @@
 ---
-title: "Compile Vala Code - Run Vala Programs | Free DevTools"
+title: "Compile Vala Code - Run Vala Programs | Online Free DevTools by Hexmos"
 name: vala
 path: /freedevtools/tldr/common/vala
 canonical: "https://hexmos.com/freedevtools/tldr/common/vala/"

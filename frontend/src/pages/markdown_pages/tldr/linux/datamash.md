@@ -1,5 +1,5 @@
 ---
-title: "Datamash - Process Data with Command Line | Free DevTools"
+title: "Datamash - Process Data with Command Line | Online Free DevTools by Hexmos"
 name: datamash
 path: /freedevtools/tldr/linux/datamash
 canonical: "https://hexmos.com/freedevtools/tldr/linux/datamash/"

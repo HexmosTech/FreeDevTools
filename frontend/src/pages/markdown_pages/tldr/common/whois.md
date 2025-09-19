@@ -1,5 +1,5 @@
 ---
-title: "Lookup WHOIS - Query Domain Information | Free DevTools"
+title: "Lookup WHOIS - Query Domain Information | Online Free DevTools by Hexmos"
 name: whois
 path: /freedevtools/tldr/common/whois
 canonical: "https://hexmos.com/freedevtools/tldr/common/whois/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Git Worktrees - Manage Branches | Free DevTools"
+title: "Create Git Worktrees - Manage Branches | Online Free DevTools by Hexmos"
 name: git-worktree
 path: /freedevtools/tldr/git/git-worktree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-worktree/"

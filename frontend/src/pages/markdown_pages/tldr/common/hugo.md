@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Sites - Control Site Building with Hugo | Free DevTools"
+title: "Generate Static Sites - Control Site Building with Hugo | Online Free DevTools by Hexmos"
 name: hugo
 path: /freedevtools/tldr/common/hugo
 canonical: "https://hexmos.com/freedevtools/tldr/common/hugo/"

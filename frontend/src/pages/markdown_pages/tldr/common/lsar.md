@@ -1,5 +1,5 @@
 ---
-title: "List Archive - View Archive Contents | Free DevTools"
+title: "List Archive - View Archive Contents | Online Free DevTools by Hexmos"
 name: lsar
 path: /freedevtools/tldr/common/lsar
 canonical: "https://hexmos.com/freedevtools/tldr/common/lsar/"

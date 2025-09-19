@@ -1,5 +1,5 @@
 ---
-title: "GitHub Codespace - Manage Cloud Dev Environments | Free DevTools"
+title: "GitHub Codespace - Manage Cloud Dev Environments | Online Free DevTools by Hexmos"
 name: gh-codespace
 path: /freedevtools/tldr/gh/gh-codespace
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-codespace/"

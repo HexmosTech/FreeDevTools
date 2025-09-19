@@ -1,5 +1,5 @@
 ---
-title: "Download Packages - Access YUM Packages | Free DevTools"
+title: "Download Packages - Access YUM Packages | Online Free DevTools by Hexmos"
 name: yumdownloader
 path: /freedevtools/tldr/linux/yumdownloader
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yumdownloader/"

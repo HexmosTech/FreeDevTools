@@ -1,5 +1,5 @@
 ---
-title: "Manage AWS ECR - Push & Pull Images | Free DevTools"
+title: "Manage AWS ECR - Push & Pull Images | Online Free DevTools by Hexmos"
 name: aws-ecr
 path: /freedevtools/tldr/aws/aws-ecr
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ecr/"

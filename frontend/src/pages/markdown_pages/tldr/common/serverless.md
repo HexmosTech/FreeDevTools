@@ -1,5 +1,5 @@
 ---
-title: "Create Serverless Projects - Deploy Cloud Architectures | Free DevTools"
+title: "Create Serverless Projects - Deploy Cloud Architectures | Online Free DevTools by Hexmos"
 name: serverless
 path: /freedevtools/tldr/common/serverless
 canonical: "https://hexmos.com/freedevtools/tldr/common/serverless/"

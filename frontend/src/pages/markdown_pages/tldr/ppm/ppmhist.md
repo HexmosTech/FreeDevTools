@@ -1,5 +1,5 @@
 ---
-title: "Generate PPM Histogram - Analyze Image Colors | Free DevTools"
+title: "Generate PPM Histogram - Analyze Image Colors | Online Free DevTools by Hexmos"
 name: ppmhist
 path: /freedevtools/tldr/ppm/ppmhist
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmhist/"

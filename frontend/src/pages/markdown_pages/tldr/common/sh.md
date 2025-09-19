@@ -1,5 +1,5 @@
 ---
-title: "Bourne Shell - Execute Commands | Free DevTools"
+title: "Bourne Shell - Execute Commands | Online Free DevTools by Hexmos"
 name: sh
 path: "/freedevtools/tldr/common/sh"
 canonical: "https://hexmos.com/freedevtools/tldr/common/sh/"

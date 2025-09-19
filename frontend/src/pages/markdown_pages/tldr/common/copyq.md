@@ -1,5 +1,5 @@
 ---
-title: "CopyQ Clipboard Manager - Control Clipboard History | Free DevTools"
+title: "CopyQ Clipboard Manager - Control Clipboard History | Online Free DevTools by Hexmos"
 name: copyq
 path: /freedevtools/tldr/common/copyq
 canonical: "https://hexmos.com/freedevtools/tldr/common/copyq/"

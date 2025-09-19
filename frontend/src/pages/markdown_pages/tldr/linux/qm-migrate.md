@@ -1,5 +1,5 @@
 ---
-title: "Migrate VMs - Control Proxmox Virtual Machines | Free DevTools"
+title: "Migrate VMs - Control Proxmox Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-migrate
 path: /freedevtools/tldr/linux/qm-migrate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-migrate/"

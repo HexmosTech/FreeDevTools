@@ -1,5 +1,5 @@
 ---
-title: "Speedtest CLI - Test Internet Bandwidth | Free DevTools"
+title: "Speedtest CLI - Test Internet Bandwidth | Online Free DevTools by Hexmos"
 name: speedtest-cli
 path: /freedevtools/tldr/speedtest/speedtest-cli
 canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest-cli/"

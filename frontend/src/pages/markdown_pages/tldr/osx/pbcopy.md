@@ -1,5 +1,5 @@
 ---
-title: "Copy Clipboard - Transfer Data from Stdin | Free DevTools"
+title: "Copy Clipboard - Transfer Data from Stdin | Online Free DevTools by Hexmos"
 name: pbcopy
 path: /freedevtools/tldr/osx/pbcopy
 canonical: "https://hexmos.com/freedevtools/tldr/osx/pbcopy/"

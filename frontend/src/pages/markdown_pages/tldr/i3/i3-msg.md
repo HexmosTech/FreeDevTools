@@ -1,5 +1,5 @@
 ---
-title: "Control i3 Windows - Send i3 Messages | Free DevTools"
+title: "Control i3 Windows - Send i3 Messages | Online Free DevTools by Hexmos"
 name: i3-msg
 path: /freedevtools/tldr/i3/i3-msg
 canonical: "https://hexmos.com/freedevtools/tldr/i3/i3-msg/"

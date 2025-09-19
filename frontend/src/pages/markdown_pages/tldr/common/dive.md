@@ -1,5 +1,5 @@
 ---
-title: "Dive - Analyze Docker Images | Free DevTools"
+title: "Dive - Analyze Docker Images | Online Free DevTools by Hexmos"
 name: dive
 path: /freedevtools/tldr/common/dive
 canonical: "https://hexmos.com/freedevtools/tldr/common/dive/"

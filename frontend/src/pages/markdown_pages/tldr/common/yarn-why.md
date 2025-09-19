@@ -1,5 +1,5 @@
 ---
-title: "Identify Yarn Packages - Find Installation Reasons | Free DevTools"
+title: "Identify Yarn Packages - Find Installation Reasons | Online Free DevTools by Hexmos"
 name: yarn-why
 path: /freedevtools/tldr/common/yarn-why
 canonical: "https://hexmos.com/freedevtools/tldr/common/yarn-why/"

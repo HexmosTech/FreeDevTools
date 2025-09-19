@@ -1,5 +1,5 @@
 ---
-title: "Volta - Manage Node.js Versions | Free DevTools"
+title: "Volta - Manage Node.js Versions | Online Free DevTools by Hexmos"
 name: volta
 path: /freedevtools/tldr/common/volta
 canonical: "https://hexmos.com/freedevtools/tldr/common/volta/"

@@ -1,5 +1,5 @@
 ---
-title: "Detect Laptop - Identify Device Type | Free DevTools"
+title: "Detect Laptop - Identify Device Type | Online Free DevTools by Hexmos"
 name: laptop-detect
 path: /freedevtools/tldr/linux/laptop-detect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/laptop-detect/"

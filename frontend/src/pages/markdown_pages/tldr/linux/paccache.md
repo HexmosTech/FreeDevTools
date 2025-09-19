@@ -1,5 +1,5 @@
 ---
-title: "Paccache - Clean Pacman Cache | Free DevTools"
+title: "Paccache - Clean Pacman Cache | Online Free DevTools by Hexmos"
 name: paccache
 path: /freedevtools/tldr/linux/paccache
 canonical: "https://hexmos.com/freedevtools/tldr/linux/paccache/"

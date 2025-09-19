@@ -1,5 +1,5 @@
 ---
-title: "Compose Email - Create Emails with Mailcap | Free DevTools"
+title: "Compose Email - Create Emails with Mailcap | Online Free DevTools by Hexmos"
 name: compose
 path: /freedevtools/tldr/linux/compose
 canonical: "https://hexmos.com/freedevtools/tldr/linux/compose/"

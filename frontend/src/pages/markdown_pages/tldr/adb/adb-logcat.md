@@ -1,5 +1,5 @@
 ---
-title: "ADB Logcat - Display System Logs | Free DevTools"
+title: "ADB Logcat - Display System Logs | Online Free DevTools by Hexmos"
 name: adb-logcat
 path: /freedevtools/tldr/adb/adb-logcat
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-logcat/"

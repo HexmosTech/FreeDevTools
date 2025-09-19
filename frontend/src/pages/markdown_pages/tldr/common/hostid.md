@@ -1,5 +1,5 @@
 ---
-title: "Generate Host ID - Get System Identifier | Free DevTools"
+title: "Generate Host ID - Get System Identifier | Online Free DevTools by Hexmos"
 name: hostid
 path: /freedevtools/tldr/common/hostid
 canonical: "https://hexmos.com/freedevtools/tldr/common/hostid/"

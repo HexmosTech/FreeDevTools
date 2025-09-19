@@ -1,5 +1,5 @@
 ---
-title: "Create Git Files - Add to Index with Git Touch | Free DevTools"
+title: "Create Git Files - Add to Index with Git Touch | Online Free DevTools by Hexmos"
 name: git-touch
 path: /freedevtools/tldr/git/git-touch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-touch/"

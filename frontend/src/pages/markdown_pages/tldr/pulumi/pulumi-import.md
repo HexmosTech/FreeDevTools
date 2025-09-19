@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Import - Import Resources | Free DevTools"
+title: "Pulumi Import - Import Resources | Online Free DevTools by Hexmos"
 name: pulumi-import
 path: /freedevtools/tldr/pulumi/pulumi-import
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-import/"

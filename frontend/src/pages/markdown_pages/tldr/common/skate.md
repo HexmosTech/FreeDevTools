@@ -1,5 +1,5 @@
 ---
-title: "Manage Key-Value Store - Skate | Free DevTools"
+title: "Manage Key-Value Store - Skate | Online Free DevTools by Hexmos"
 name: skate
 path: /freedevtools/tldr/common/skate
 canonical: "https://hexmos.com/freedevtools/tldr/common/skate/"

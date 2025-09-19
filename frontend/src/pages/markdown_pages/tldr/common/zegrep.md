@@ -1,5 +1,5 @@
 ---
-title: "Zegrep - Search Compressed Files with Regex | Free DevTools"
+title: "Zegrep - Search Compressed Files with Regex | Online Free DevTools by Hexmos"
 name: zegrep
 path: /freedevtools/tldr/common/zegrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/zegrep/"

@@ -1,5 +1,5 @@
 ---
-title: "List Go Packages - Discover Dependencies | Free DevTools"
+title: "List Go Packages - Discover Dependencies | Online Free DevTools by Hexmos"
 name: go-list
 path: /freedevtools/tldr/go/go-list
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-list/"

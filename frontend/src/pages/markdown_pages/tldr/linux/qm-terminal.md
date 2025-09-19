@@ -1,5 +1,5 @@
 ---
-title: "QM Terminal - Control VM Serial Console | Free DevTools"
+title: "QM Terminal - Control VM Serial Console | Online Free DevTools by Hexmos"
 name: qm-terminal
 path: /freedevtools/tldr/linux/qm-terminal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-terminal/"

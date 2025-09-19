@@ -1,5 +1,5 @@
 ---
-title: "PHP Copy Paste Detector - Analyze Duplicate PHP Code | Free DevTools"
+title: "PHP Copy Paste Detector - Analyze Duplicate PHP Code | Online Free DevTools by Hexmos"
 name: phpcpd
 path: /freedevtools/tldr/php/phpcpd
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpcpd/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage RSS Feed - Create Articles with sup | Free DevTools"
+title: "Manage RSS Feed - Create Articles with sup | Online Free DevTools by Hexmos"
 name: sup
 path: /freedevtools/tldr/common/sup
 canonical: "https://hexmos.com/freedevtools/tldr/common/sup/"

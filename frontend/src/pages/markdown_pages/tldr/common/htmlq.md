@@ -1,5 +1,5 @@
 ---
-title: "Extract HTML Content - Control with htmlq | Free DevTools"
+title: "Extract HTML Content - Control with htmlq | Online Free DevTools by Hexmos"
 name: htmlq
 path: /freedevtools/tldr/common/htmlq
 canonical: "https://hexmos.com/freedevtools/tldr/common/htmlq/"

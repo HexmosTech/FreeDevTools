@@ -1,5 +1,5 @@
 ---
-title: "Display Kernel Messages - Analyze System Startup | Free DevTools"
+title: "Display Kernel Messages - Analyze System Startup | Online Free DevTools by Hexmos"
 name: dmesg
 path: /freedevtools/tldr/sunos/dmesg
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/dmesg/"

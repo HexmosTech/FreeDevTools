@@ -1,5 +1,5 @@
 ---
-title: "Lint tldr Pages - Format & Validate | Free DevTools"
+title: "Lint tldr Pages - Format & Validate | Online Free DevTools by Hexmos"
 name: tldr-lint
 path: /freedevtools/tldr/common/tldr-lint
 canonical: "https://hexmos.com/freedevtools/tldr/common/tldr-lint/"

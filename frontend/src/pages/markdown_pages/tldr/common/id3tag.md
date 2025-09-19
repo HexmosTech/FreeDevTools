@@ -1,5 +1,5 @@
 ---
-title: "ID3 Tag Editor - Manipulate MP3 Tags | Free DevTools"
+title: "ID3 Tag Editor - Manipulate MP3 Tags | Online Free DevTools by Hexmos"
 name: id3tag
 path: /freedevtools/tldr/common/id3tag
 canonical: "https://hexmos.com/freedevtools/tldr/common/id3tag/"

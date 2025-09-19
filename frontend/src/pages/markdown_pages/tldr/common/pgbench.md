@@ -1,5 +1,5 @@
 ---
-title: "Pgbench - Benchmark PostgreSQL Databases | Free DevTools"
+title: "Pgbench - Benchmark PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: pgbench
 path: /freedevtools/tldr/common/pgbench
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgbench/"

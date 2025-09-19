@@ -1,5 +1,5 @@
 ---
-title: "Hg Update - Control Mercurial Changesets | Free DevTools"
+title: "Hg Update - Control Mercurial Changesets | Online Free DevTools by Hexmos"
 name: hg-update
 path: /freedevtools/tldr/hg/hg-update
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-update/"

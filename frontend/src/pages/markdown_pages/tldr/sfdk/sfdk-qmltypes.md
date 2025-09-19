@@ -1,5 +1,5 @@
 ---
-title: "Generate QML Types - Create QML Definitions | Free DevTools"
+title: "Generate QML Types - Create QML Definitions | Online Free DevTools by Hexmos"
 name: sfdk-qmltypes
 path: /freedevtools/tldr/sfdk/sfdk-qmltypes
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmltypes/"

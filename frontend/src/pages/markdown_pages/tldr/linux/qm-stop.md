@@ -1,5 +1,5 @@
 ---
-title: "QM Stop - Control Virtual Machines | Free DevTools"
+title: "QM Stop - Control Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-stop
 path: /freedevtools/tldr/linux/qm-stop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-stop/"

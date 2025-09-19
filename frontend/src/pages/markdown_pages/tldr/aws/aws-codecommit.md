@@ -1,5 +1,5 @@
 ---
-title: "CodeCommit - Control Git Repositories | Free DevTools"
+title: "CodeCommit - Control Git Repositories | Online Free DevTools by Hexmos"
 name: aws-codecommit
 path: /freedevtools/tldr/aws/aws-codecommit
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-codecommit/"

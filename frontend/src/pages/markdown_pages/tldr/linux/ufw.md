@@ -1,5 +1,5 @@
 ---
-title: "UFW Firewall - Control Network Traffic with UFW | Free DevTools"
+title: "UFW Firewall - Control Network Traffic with UFW | Online Free DevTools by Hexmos"
 name: ufw
 path: /freedevtools/tldr/linux/ufw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ufw/"

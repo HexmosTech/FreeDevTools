@@ -1,5 +1,5 @@
 ---
-title: "Android Input - Control Device via ADB | Free DevTools"
+title: "Android Input - Control Device via ADB | Online Free DevTools by Hexmos"
 name: input
 path: /freedevtools/tldr/android/input
 canonical: "https://hexmos.com/freedevtools/tldr/android/input/"

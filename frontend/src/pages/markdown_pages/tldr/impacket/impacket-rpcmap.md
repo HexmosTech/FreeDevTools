@@ -1,5 +1,5 @@
 ---
-title: "Impacket RPCMap - Discover RPC Services | Free DevTools"
+title: "Impacket RPCMap - Discover RPC Services | Online Free DevTools by Hexmos"
 name: impacket-rpcmap
 path: /freedevtools/tldr/impacket/impacket-rpcmap
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-rpcmap/"

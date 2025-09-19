@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Init - Create Google Cloud Configurations | Free DevTools"
+title: "Gcloud Init - Create Google Cloud Configurations | Online Free DevTools by Hexmos"
 name: gcloud-init
 path: /freedevtools/tldr/gcloud/gcloud-init
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-init/"

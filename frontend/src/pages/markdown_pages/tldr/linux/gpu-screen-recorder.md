@@ -1,5 +1,5 @@
 ---
-title: "Screen Recorder - GPU Encode Video | Free DevTools"
+title: "Screen Recorder - GPU Encode Video | Online Free DevTools by Hexmos"
 name: gpu-screen-recorder
 path: /freedevtools/tldr/linux/gpu-screen-recorder
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gpu-screen-recorder/"

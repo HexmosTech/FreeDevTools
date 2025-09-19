@@ -1,5 +1,5 @@
 ---
-title: "Zig Compiler - Build and Format Code | Free DevTools"
+title: "Zig Compiler - Build and Format Code | Online Free DevTools by Hexmos"
 name: zig
 path: /freedevtools/tldr/common/zig
 canonical: "https://hexmos.com/freedevtools/tldr/common/zig/"

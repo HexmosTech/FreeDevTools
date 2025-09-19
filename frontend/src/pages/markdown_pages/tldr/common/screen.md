@@ -1,5 +1,5 @@
 ---
-title: "Control Screen Sessions - Manage SSH Connections | Free DevTools"
+title: "Control Screen Sessions - Manage SSH Connections | Online Free DevTools by Hexmos"
 name: screen
 path: /freedevtools/tldr/common/screen
 canonical: "https://hexmos.com/freedevtools/tldr/common/screen/"

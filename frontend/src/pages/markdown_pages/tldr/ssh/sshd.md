@@ -1,5 +1,5 @@
 ---
-title: "Control SSH Daemon - Secure Remote Access | Free DevTools"
+title: "Control SSH Daemon - Secure Remote Access | Online Free DevTools by Hexmos"
 name: sshd
 path: /freedevtools/tldr/ssh/sshd
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshd/"

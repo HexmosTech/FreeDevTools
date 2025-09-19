@@ -1,5 +1,5 @@
 ---
-title: "Toolbox Enter - Enter Containers Interactively | Free DevTools"
+title: "Toolbox Enter - Enter Containers Interactively | Online Free DevTools by Hexmos"
 name: toolbox-enter
 path: "/freedevtools/tldr/linux/toolbox-enter"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-enter/"

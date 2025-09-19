@@ -1,5 +1,5 @@
 ---
-title: "Control Lock Screen - Betterlockscreen Command | Free DevTools"
+title: "Control Lock Screen - Betterlockscreen Command | Online Free DevTools by Hexmos"
 name: betterlockscreen
 path: /freedevtools/tldr/linux/betterlockscreen
 canonical: "https://hexmos.com/freedevtools/tldr/linux/betterlockscreen/"

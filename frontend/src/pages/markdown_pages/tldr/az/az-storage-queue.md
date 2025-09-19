@@ -1,5 +1,5 @@
 ---
-title: "Storage Queue - Manage Azure Queues | Free DevTools"
+title: "Storage Queue - Manage Azure Queues | Online Free DevTools by Hexmos"
 name: az-storage-queue
 path: /freedevtools/tldr/az/az-storage-queue
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-queue/"

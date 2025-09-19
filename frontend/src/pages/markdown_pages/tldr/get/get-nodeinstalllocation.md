@@ -1,5 +1,5 @@
 ---
-title: "Get Node Install Location - Determine Path | Free DevTools"
+title: "Get Node Install Location - Determine Path | Online Free DevTools by Hexmos"
 name: get-nodeinstalllocation
 path: /freedevtools/tldr/get/get-nodeinstalllocation
 canonical: "https://hexmos.com/freedevtools/tldr/get/get-nodeinstalllocation/"

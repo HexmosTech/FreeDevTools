@@ -1,5 +1,5 @@
 ---
-title: "Qmake - Generate Makefiles from Qt Projects | Free DevTools"
+title: "Qmake - Generate Makefiles from Qt Projects | Online Free DevTools by Hexmos"
 name: qmake
 path: /freedevtools/tldr/linux/qmake
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qmake/"

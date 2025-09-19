@@ -1,5 +1,5 @@
 ---
-title: "Convert to JSON - Format Command Output | Free DevTools"
+title: "Convert to JSON - Format Command Output | Online Free DevTools by Hexmos"
 name: jc.json
 path: /freedevtools/tldr/common/jc.json
 canonical: "https://hexmos.com/freedevtools/tldr/common/jc.json/"

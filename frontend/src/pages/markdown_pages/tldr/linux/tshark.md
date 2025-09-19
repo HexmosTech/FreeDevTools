@@ -1,5 +1,5 @@
 ---
-title: "Analyze Packets with tshark - Network Monitoring | Free DevTools"
+title: "Analyze Packets with tshark - Network Monitoring | Online Free DevTools by Hexmos"
 name: tshark
 path: /freedevtools/tldr/linux/tshark
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tshark/"

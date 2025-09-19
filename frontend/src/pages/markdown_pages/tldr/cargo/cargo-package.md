@@ -1,5 +1,5 @@
 ---
-title: "Package Rust Code - Create Cargo Package | Free DevTools"
+title: "Package Rust Code - Create Cargo Package | Online Free DevTools by Hexmos"
 name: cargo-package
 path: /freedevtools/tldr/cargo/cargo-package
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-package/"

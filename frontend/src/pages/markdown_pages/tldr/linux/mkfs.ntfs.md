@@ -1,5 +1,5 @@
 ---
-title: "Create NTFS Filesystem - mkfs.ntfs Command | Free DevTools"
+title: "Create NTFS Filesystem - mkfs.ntfs Command | Online Free DevTools by Hexmos"
 name: mkfs.ntfs
 path: /freedevtools/tldr/linux/mkfs.ntfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.ntfs/"

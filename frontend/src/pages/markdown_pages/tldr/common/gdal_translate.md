@@ -1,5 +1,5 @@
 ---
-title: "GDAL Translate - Convert Raster Data | Free DevTools"
+title: "GDAL Translate - Convert Raster Data | Online Free DevTools by Hexmos"
 name: gdal_translate
 path: /freedevtools/tldr/common/gdal_translate
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdal_translate/"

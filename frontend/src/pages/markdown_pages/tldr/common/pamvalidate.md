@@ -1,5 +1,5 @@
 ---
-title: "PAM Validate - Validate Netpbm Images | Free DevTools"
+title: "PAM Validate - Validate Netpbm Images | Online Free DevTools by Hexmos"
 name: pamvalidate
 path: /freedevtools/tldr/common/pamvalidate
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamvalidate/"

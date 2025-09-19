@@ -1,5 +1,5 @@
 ---
-title: "Control Thunderbird - Email Client | Free DevTools"
+title: "Control Thunderbird - Email Client | Online Free DevTools by Hexmos"
 name: thunderbird
 path: /freedevtools/tldr/common/thunderbird
 canonical: "https://hexmos.com/freedevtools/tldr/common/thunderbird/"

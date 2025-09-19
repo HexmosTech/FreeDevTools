@@ -1,5 +1,5 @@
 ---
-title: "Generate Shaded Relief - PAM Elevation to Relief | Free DevTools"
+title: "Generate Shaded Relief - PAM Elevation to Relief | Online Free DevTools by Hexmos"
 name: pamshadedrelief
 path: /freedevtools/tldr/common/pamshadedrelief
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamshadedrelief/"

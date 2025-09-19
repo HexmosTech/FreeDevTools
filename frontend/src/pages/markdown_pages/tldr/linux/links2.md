@@ -1,5 +1,5 @@
 ---
-title: "Links2 Browser - Navigate Websites via Command Line | Free DevTools"
+title: "Links2 Browser - Navigate Websites via Command Line | Online Free DevTools by Hexmos"
 name: links2
 path: /freedevtools/tldr/linux/links2
 canonical: "https://hexmos.com/freedevtools/tldr/linux/links2/"

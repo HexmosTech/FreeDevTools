@@ -1,5 +1,5 @@
 ---
-title: "Shear PNM Image - Control Image Shearing | Free DevTools"
+title: "Shear PNM Image - Control Image Shearing | Online Free DevTools by Hexmos"
 name: pnmshear
 path: /freedevtools/tldr/pnm/pnmshear
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmshear/"

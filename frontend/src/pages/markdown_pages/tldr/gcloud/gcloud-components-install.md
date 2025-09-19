@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Install - Manage CLI Components | Free DevTools"
+title: "Gcloud Install - Manage CLI Components | Online Free DevTools by Hexmos"
 name: gcloud-components-install
 path: /freedevtools/tldr/gcloud/gcloud-components-install
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-components-install/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate rustup Completions - Shell Scripts | Free DevTools"
+title: "Generate rustup Completions - Shell Scripts | Online Free DevTools by Hexmos"
 name: rustup-completions
 path: /freedevtools/tldr/rustup/rustup-completions
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-completions/"

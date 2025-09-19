@@ -1,5 +1,5 @@
 ---
-title: "Verify Git Pack - Validate Archive Files | Free DevTools"
+title: "Verify Git Pack - Validate Archive Files | Online Free DevTools by Hexmos"
 name: git-verify-pack
 path: /freedevtools/tldr/git/git-verify-pack
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-pack/"

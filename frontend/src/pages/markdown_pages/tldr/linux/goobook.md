@@ -1,5 +1,5 @@
 ---
-title: "Access Goobook Contacts - Manage Google Contacts | Free DevTools"
+title: "Access Goobook Contacts - Manage Google Contacts | Online Free DevTools by Hexmos"
 name: goobook
 path: /freedevtools/tldr/linux/goobook
 canonical: "https://hexmos.com/freedevtools/tldr/linux/goobook/"

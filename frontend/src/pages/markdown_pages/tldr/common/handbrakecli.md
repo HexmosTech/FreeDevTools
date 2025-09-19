@@ -1,5 +1,5 @@
 ---
-title: "HandBrakeCLI - Convert Videos | Free DevTools"
+title: "HandBrakeCLI - Convert Videos | Online Free DevTools by Hexmos"
 name: handbrakecli
 path: /freedevtools/tldr/common/handbrakecli
 canonical: "https://hexmos.com/freedevtools/tldr/common/handbrakecli/"

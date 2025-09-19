@@ -1,5 +1,5 @@
 ---
-title: "Route Command - Manage Network Routes | Free DevTools"
+title: "Route Command - Manage Network Routes | Online Free DevTools by Hexmos"
 name: route
 path: /freedevtools/tldr/common/route
 canonical: "https://hexmos.com/freedevtools/tldr/common/route/"

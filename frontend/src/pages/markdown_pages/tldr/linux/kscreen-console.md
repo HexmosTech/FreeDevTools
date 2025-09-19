@@ -1,5 +1,5 @@
 ---
-title: "KScreen Console - Query KScreen Status | Free DevTools"
+title: "KScreen Console - Query KScreen Status | Online Free DevTools by Hexmos"
 name: kscreen-console
 path: /freedevtools/tldr/linux/kscreen-console
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kscreen-console/"

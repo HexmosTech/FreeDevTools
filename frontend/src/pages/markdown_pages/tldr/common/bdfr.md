@@ -1,5 +1,5 @@
 ---
-title: "BDfr Downloader - Download Reddit Content | Free DevTools"
+title: "BDfr Downloader - Download Reddit Content | Online Free DevTools by Hexmos"
 name: bdfr
 path: /freedevtools/tldr/common/bdfr
 canonical: "https://hexmos.com/freedevtools/tldr/common/bdfr/"

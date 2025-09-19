@@ -1,5 +1,5 @@
 ---
-title: "Control Linode NodeBalancers - Manage Load Balancers | Free DevTools"
+title: "Control Linode NodeBalancers - Manage Load Balancers | Online Free DevTools by Hexmos"
 name: linode-cli-nodebalancers
 path: /freedevtools/tldr/linode/linode-cli-nodebalancers
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-nodebalancers/"

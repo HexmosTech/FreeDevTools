@@ -1,5 +1,5 @@
 ---
-title: "Cluster SSH - Control Multiple Servers on macOS | Free DevTools"
+title: "Cluster SSH - Control Multiple Servers on macOS | Online Free DevTools by Hexmos"
 name: csshx
 path: "/freedevtools/tldr/osx/csshx"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/csshx/"

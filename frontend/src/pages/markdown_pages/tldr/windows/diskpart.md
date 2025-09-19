@@ -1,5 +1,5 @@
 ---
-title: "Diskpart - Manage Disks, Volumes, and Partitions | Free DevTools"
+title: "Diskpart - Manage Disks, Volumes, and Partitions | Online Free DevTools by Hexmos"
 name: diskpart
 path: /freedevtools/tldr/windows/diskpart
 canonical: "https://hexmos.com/freedevtools/tldr/windows/diskpart/"

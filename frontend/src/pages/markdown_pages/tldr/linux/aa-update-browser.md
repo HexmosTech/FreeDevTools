@@ -1,5 +1,5 @@
 ---
-title: "Update AppArmor - Control Browser Profiles | Free DevTools"
+title: "Update AppArmor - Control Browser Profiles | Online Free DevTools by Hexmos"
 name: aa-update-browser
 path: /freedevtools/tldr/linux/aa-update-browser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-update-browser/"

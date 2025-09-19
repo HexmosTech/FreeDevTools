@@ -1,5 +1,5 @@
 ---
-title: "Analyze Nginx Configs - Gixy Nginx Analyzer | Free DevTools"
+title: "Analyze Nginx Configs - Gixy Nginx Analyzer | Online Free DevTools by Hexmos"
 name: gixy
 path: /freedevtools/tldr/common/gixy
 canonical: "https://hexmos.com/freedevtools/tldr/common/gixy/"

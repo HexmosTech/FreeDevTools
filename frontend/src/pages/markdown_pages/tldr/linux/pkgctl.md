@@ -1,5 +1,5 @@
 ---
-title: "Pkgctl - Control Arch Devtools | Free DevTools"
+title: "Pkgctl - Control Arch Devtools | Online Free DevTools by Hexmos"
 name: pkgctl
 path: /freedevtools/tldr/linux/pkgctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl/"

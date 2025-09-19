@@ -1,5 +1,5 @@
 ---
-title: "Scrcpy - Control Android Device on Desktop | Free DevTools"
+title: "Scrcpy - Control Android Device on Desktop | Online Free DevTools by Hexmos"
 name: scrcpy
 path: /freedevtools/tldr/common/scrcpy
 canonical: "https://hexmos.com/freedevtools/tldr/common/scrcpy/"

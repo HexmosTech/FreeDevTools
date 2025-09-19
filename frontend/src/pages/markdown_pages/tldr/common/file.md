@@ -1,5 +1,5 @@
 ---
-title: "File Type - Determine File Type with File Command | Free DevTools"
+title: "File Type - Determine File Type with File Command | Online Free DevTools by Hexmos"
 name: file
 path: /freedevtools/tldr/common/file
 canonical: "https://hexmos.com/freedevtools/tldr/common/file/"

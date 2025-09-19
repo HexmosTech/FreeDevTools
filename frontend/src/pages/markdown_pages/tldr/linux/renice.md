@@ -1,5 +1,5 @@
 ---
-title: "Renice Command - Control Process Priority | Free DevTools"
+title: "Renice Command - Control Process Priority | Online Free DevTools by Hexmos"
 name: renice
 path: /freedevtools/tldr/linux/renice
 canonical: "https://hexmos.com/freedevtools/tldr/linux/renice/"

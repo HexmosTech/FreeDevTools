@@ -1,5 +1,5 @@
 ---
-title: "Clear Screen - Control Command Prompt Output | Free DevTools"
+title: "Clear Screen - Control Command Prompt Output | Online Free DevTools by Hexmos"
 name: cls
 path: /freedevtools/tldr/windows/cls
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cls/"

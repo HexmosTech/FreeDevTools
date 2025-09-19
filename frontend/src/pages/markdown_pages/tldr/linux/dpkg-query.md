@@ -1,5 +1,5 @@
 ---
-title: "dpkg-query - Display Package Information | Free DevTools"
+title: "dpkg-query - Display Package Information | Online Free DevTools by Hexmos"
 name: dpkg-query
 path: /freedevtools/tldr/linux/dpkg-query
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg-query/"

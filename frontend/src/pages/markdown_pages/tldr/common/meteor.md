@@ -1,5 +1,5 @@
 ---
-title: "Create Meteor Projects - Full-Stack App Development | Free DevTools"
+title: "Create Meteor Projects - Full-Stack App Development | Online Free DevTools by Hexmos"
 name: meteor
 path: "/freedevtools/tldr/common/meteor"
 canonical: "https://hexmos.com/freedevtools/tldr/common/meteor/"

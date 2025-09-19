@@ -1,5 +1,5 @@
 ---
-title: "Generate AppArmor Profiles - Monitor Linux Programs | Free DevTools"
+title: "Generate AppArmor Profiles - Monitor Linux Programs | Online Free DevTools by Hexmos"
 name: aa-genprof
 path: /freedevtools/tldr/linux/aa-genprof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-genprof/"

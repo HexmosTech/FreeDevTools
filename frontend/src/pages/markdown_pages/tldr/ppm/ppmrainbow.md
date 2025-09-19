@@ -1,5 +1,5 @@
 ---
-title: "Generate Rainbow Images - ppmrainbow | Free DevTools"
+title: "Generate Rainbow Images - ppmrainbow | Online Free DevTools by Hexmos"
 name: ppmrainbow
 path: /freedevtools/tldr/ppm/ppmrainbow
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmrainbow/"

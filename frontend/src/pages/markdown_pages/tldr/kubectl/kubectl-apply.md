@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Apply - Create K8s Resources | Free DevTools"
+title: "Kubectl Apply - Create K8s Resources | Online Free DevTools by Hexmos"
 name: kubectl-apply
 path: /freedevtools/tldr/kubectl/kubectl-apply
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-apply/"

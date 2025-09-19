@@ -1,5 +1,5 @@
 ---
-title: "Usernoted - Provide Notifications | Free DevTools"
+title: "Usernoted - Provide Notifications | Online Free DevTools by Hexmos"
 name: usernoted
 path: /freedevtools/tldr/osx/usernoted
 canonical: "https://hexmos.com/freedevtools/tldr/osx/usernoted/"

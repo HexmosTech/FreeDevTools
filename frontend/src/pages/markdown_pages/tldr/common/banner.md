@@ -1,5 +1,5 @@
 ---
-title: "Generate Banner Text Art - ASCII Art Generator | Free DevTools"
+title: "Generate Banner Text Art - ASCII Art Generator | Online Free DevTools by Hexmos"
 name: banner
 path: /freedevtools/tldr/common/banner
 canonical: "https://hexmos.com/freedevtools/tldr/common/banner/"

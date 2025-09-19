@@ -1,5 +1,5 @@
 ---
-title: "Manage Files with Ranger - VI Key Bindings | Free DevTools"
+title: "Manage Files with Ranger - VI Key Bindings | Online Free DevTools by Hexmos"
 name: ranger
 path: "/freedevtools/tldr/common/ranger"
 canonical: "https://hexmos.com/freedevtools/tldr/common/ranger/"

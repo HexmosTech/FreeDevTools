@@ -1,5 +1,5 @@
 ---
-title: "Erase Cisco Configuration - Delete Files | Free DevTools"
+title: "Erase Cisco Configuration - Delete Files | Online Free DevTools by Hexmos"
 name: erase
 path: /freedevtools/tldr/cisco-ios/erase
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/erase/"

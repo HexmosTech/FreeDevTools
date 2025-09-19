@@ -1,5 +1,5 @@
 ---
-title: "MySQL Backup - Create Database Backups | Free DevTools"
+title: "MySQL Backup - Create Database Backups | Online Free DevTools by Hexmos"
 name: mysqldump
 path: /freedevtools/tldr/common/mysqldump
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysqldump/"

@@ -1,5 +1,5 @@
 ---
-title: "XSS Scan Automation - Find Vulnerabilities with Dalfox | Free DevTools"
+title: "XSS Scan Automation - Find Vulnerabilities with Dalfox | Online Free DevTools by Hexmos"
 name: dalfox
 path: /freedevtools/tldr/common/dalfox
 canonical: "https://hexmos.com/freedevtools/tldr/common/dalfox/"

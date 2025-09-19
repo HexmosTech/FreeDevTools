@@ -1,5 +1,5 @@
 ---
-title: "Create GitHub Pages - Manage Website Branch | Free DevTools"
+title: "Create GitHub Pages - Manage Website Branch | Online Free DevTools by Hexmos"
 name: git-gh-pages
 path: /freedevtools/tldr/git/git-gh-pages
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-gh-pages/"

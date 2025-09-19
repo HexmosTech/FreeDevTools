@@ -1,5 +1,5 @@
 ---
-title: "Deshadow PGM Image - Remove Shadows | Free DevTools"
+title: "Deshadow PGM Image - Remove Shadows | Online Free DevTools by Hexmos"
 name: pgmdeshadow
 path: /freedevtools/tldr/common/pgmdeshadow
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmdeshadow/"

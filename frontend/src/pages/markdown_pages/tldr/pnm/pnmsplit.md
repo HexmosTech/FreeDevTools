@@ -1,5 +1,5 @@
 ---
-title: "PNM Split - Divide PNM Images | Free DevTools"
+title: "PNM Split - Divide PNM Images | Online Free DevTools by Hexmos"
 name: pnmsplit
 path: /freedevtools/tldr/pnm/pnmsplit
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmsplit/"

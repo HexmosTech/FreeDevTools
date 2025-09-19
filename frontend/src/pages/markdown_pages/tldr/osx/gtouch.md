@@ -1,5 +1,5 @@
 ---
-title: "Gtouch - Create Files | Free DevTools"
+title: "Gtouch - Create Files | Online Free DevTools by Hexmos"
 name: gtouch
 path: /freedevtools/tldr/osx/gtouch
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtouch/"

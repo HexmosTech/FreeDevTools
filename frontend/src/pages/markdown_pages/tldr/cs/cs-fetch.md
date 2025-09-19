@@ -1,5 +1,5 @@
 ---
-title: "Fetch JARs - Resolve Dependencies with cs-fetch | Free DevTools"
+title: "Fetch JARs - Resolve Dependencies with cs-fetch | Online Free DevTools by Hexmos"
 name: cs-fetch
 path: /freedevtools/tldr/cs/cs-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-fetch/"

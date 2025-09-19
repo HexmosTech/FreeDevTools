@@ -1,5 +1,5 @@
 ---
-title: "SMTP Tester - Test Email Deliverability with swaks | Free DevTools"
+title: "SMTP Tester - Test Email Deliverability with swaks | Online Free DevTools by Hexmos"
 name: swaks
 path: /freedevtools/tldr/linux/swaks
 canonical: "https://hexmos.com/freedevtools/tldr/linux/swaks/"

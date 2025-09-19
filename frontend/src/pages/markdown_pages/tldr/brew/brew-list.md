@@ -1,5 +1,5 @@
 ---
-title: "Brew List - Control Package Installations | Free DevTools"
+title: "Brew List - Control Package Installations | Online Free DevTools by Hexmos"
 name: brew-list
 path: /freedevtools/tldr/brew/brew-list
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-list/"

@@ -1,5 +1,5 @@
 ---
-title: "Trawl - Display Network Interfaces | Free DevTools"
+title: "Trawl - Display Network Interfaces | Online Free DevTools by Hexmos"
 name: trawl
 path: /freedevtools/tldr/common/trawl
 canonical: "https://hexmos.com/freedevtools/tldr/common/trawl/"

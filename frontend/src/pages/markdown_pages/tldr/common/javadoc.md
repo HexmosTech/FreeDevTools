@@ -1,5 +1,5 @@
 ---
-title: "Generate Java Documentation - Javadoc | Free DevTools"
+title: "Generate Java Documentation - Javadoc | Online Free DevTools by Hexmos"
 name: javadoc
 path: /freedevtools/tldr/common/javadoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/javadoc/"

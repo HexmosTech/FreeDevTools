@@ -1,5 +1,5 @@
 ---
-title: "Argon2 Hash Generator - Create Secure Hashes | Free DevTools"
+title: "Argon2 Hash Generator - Create Secure Hashes | Online Free DevTools by Hexmos"
 name: argon2
 path: /freedevtools/tldr/common/argon2
 canonical: "https://hexmos.com/freedevtools/tldr/common/argon2/"

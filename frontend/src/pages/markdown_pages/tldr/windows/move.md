@@ -1,5 +1,5 @@
 ---
-title: "Move Files - Rename and Relocate Files on Windows | Free DevTools"
+title: "Move Files - Rename and Relocate Files on Windows | Online Free DevTools by Hexmos"
 name: move
 path: /freedevtools/tldr/windows/move
 canonical: "https://hexmos.com/freedevtools/tldr/windows/move/"

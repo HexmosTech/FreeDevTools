@@ -1,5 +1,5 @@
 ---
-title: "DBX - Interact with Databricks | Free DevTools"
+title: "DBX - Interact with Databricks | Online Free DevTools by Hexmos"
 name: dbx
 path: /freedevtools/tldr/common/dbx
 canonical: "https://hexmos.com/freedevtools/tldr/common/dbx/"

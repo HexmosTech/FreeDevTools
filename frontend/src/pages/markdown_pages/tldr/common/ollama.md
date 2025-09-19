@@ -1,5 +1,5 @@
 ---
-title: "Run Language Models - Control with Ollama | Free DevTools"
+title: "Run Language Models - Control with Ollama | Online Free DevTools by Hexmos"
 name: ollama
 path: /freedevtools/tldr/common/ollama
 canonical: "https://hexmos.com/freedevtools/tldr/common/ollama/"

@@ -1,5 +1,5 @@
 ---
-title: "Timestamp Lines - Add Timestamps to Text | Free DevTools"
+title: "Timestamp Lines - Add Timestamps to Text | Online Free DevTools by Hexmos"
 name: ts
 path: /freedevtools/tldr/common/ts
 canonical: "https://hexmos.com/freedevtools/tldr/common/ts/"

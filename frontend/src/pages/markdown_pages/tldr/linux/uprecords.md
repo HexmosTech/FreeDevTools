@@ -1,5 +1,5 @@
 ---
-title: "View Uptime Records - Display System History | Free DevTools"
+title: "View Uptime Records - Display System History | Online Free DevTools by Hexmos"
 name: uprecords
 path: /freedevtools/tldr/linux/uprecords
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uprecords/"

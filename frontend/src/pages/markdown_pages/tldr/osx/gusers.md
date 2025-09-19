@@ -1,5 +1,5 @@
 ---
-title: "Users - List Logged-in Users | Free DevTools"
+title: "Users - List Logged-in Users | Online Free DevTools by Hexmos"
 name: gusers
 path: /freedevtools/tldr/osx/gusers
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gusers/"

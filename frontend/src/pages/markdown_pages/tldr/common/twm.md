@@ -1,5 +1,5 @@
 ---
-title: "Control twm - X Window Manager | Free DevTools"
+title: "Control twm - X Window Manager | Online Free DevTools by Hexmos"
 name: twm
 path: /freedevtools/tldr/common/twm
 canonical: "https://hexmos.com/freedevtools/tldr/common/twm/"

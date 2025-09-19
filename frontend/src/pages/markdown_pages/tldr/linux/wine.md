@@ -1,5 +1,5 @@
 ---
-title: "Wine Executable Runner - Run Windows Apps on Linux | Free DevTools"
+title: "Wine Executable Runner - Run Windows Apps on Linux | Online Free DevTools by Hexmos"
 name: wine
 path: /freedevtools/tldr/linux/wine
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wine/"

@@ -1,5 +1,5 @@
 ---
-title: "Debian Changelog - Maintain Package Changelog | Free DevTools"
+title: "Debian Changelog - Maintain Package Changelog | Online Free DevTools by Hexmos"
 name: debchange
 path: /freedevtools/tldr/linux/debchange
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debchange/"

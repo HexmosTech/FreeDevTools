@@ -1,5 +1,5 @@
 ---
-title: "VMware CheckVM - Detect VMware Virtual Machine | Free DevTools"
+title: "VMware CheckVM - Detect VMware Virtual Machine | Online Free DevTools by Hexmos"
 name: vmware-checkvm
 path: /freedevtools/tldr/linux/vmware-checkvm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vmware-checkvm/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to MacPaint - Create MacPaint Files | Free DevTools"
+title: "Convert PBM to MacPaint - Create MacPaint Files | Online Free DevTools by Hexmos"
 name: pbmtomacp
 path: /freedevtools/tldr/common/pbmtomacp
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtomacp/"

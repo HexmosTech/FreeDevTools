@@ -1,5 +1,5 @@
 ---
-title: "ST Command - View Linux Documentation | Free DevTools"
+title: "ST Command - View Linux Documentation | Online Free DevTools by Hexmos"
 name: st
 path: /freedevtools/tldr/linux/st
 canonical: "https://hexmos.com/freedevtools/tldr/linux/st/"

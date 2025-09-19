@@ -1,5 +1,5 @@
 ---
-title: "Textutil - Format Text Files on macOS | Free DevTools"
+title: "Textutil - Format Text Files on macOS | Online Free DevTools by Hexmos"
 name: textutil
 path: /freedevtools/tldr/osx/textutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/textutil/"

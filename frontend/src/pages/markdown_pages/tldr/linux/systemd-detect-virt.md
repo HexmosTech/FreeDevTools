@@ -1,5 +1,5 @@
 ---
-title: "Detect Virtualization - Systemd Tool | Free DevTools"
+title: "Detect Virtualization - Systemd Tool | Online Free DevTools by Hexmos"
 name: systemd-detect-virt
 path: /freedevtools/tldr/linux/systemd-detect-virt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-detect-virt/"

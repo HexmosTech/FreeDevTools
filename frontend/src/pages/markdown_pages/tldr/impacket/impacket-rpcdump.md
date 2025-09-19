@@ -1,5 +1,5 @@
 ---
-title: "RPC Dump - Control RPC Interfaces with Impacket | Free DevTools"
+title: "RPC Dump - Control RPC Interfaces with Impacket | Online Free DevTools by Hexmos"
 name: impacket-rpcdump
 path: /freedevtools/tldr/impacket/impacket-rpcdump
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-rpcdump/"

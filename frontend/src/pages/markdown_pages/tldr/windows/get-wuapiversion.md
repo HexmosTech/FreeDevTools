@@ -1,5 +1,5 @@
 ---
-title: "Get WUApiVersion - Control Windows Update Agent | Free DevTools"
+title: "Get WUApiVersion - Control Windows Update Agent | Online Free DevTools by Hexmos"
 name: get-wuapiversion
 path: /freedevtools/tldr/windows/get-wuapiversion
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-wuapiversion/"

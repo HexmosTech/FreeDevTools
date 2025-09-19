@@ -1,5 +1,5 @@
 ---
-title: "Bootctl - Control EFI Boot Settings | Free DevTools"
+title: "Bootctl - Control EFI Boot Settings | Online Free DevTools by Hexmos"
 name: bootctl
 path: /freedevtools/tldr/linux/bootctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bootctl/"

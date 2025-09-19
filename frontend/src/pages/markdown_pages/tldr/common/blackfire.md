@@ -1,5 +1,5 @@
 ---
-title: "Blackfire Profiler - Monitor PHP Apps | Free DevTools"
+title: "Blackfire Profiler - Monitor PHP Apps | Online Free DevTools by Hexmos"
 name: blackfire
 path: /freedevtools/tldr/common/blackfire
 canonical: "https://hexmos.com/freedevtools/tldr/common/blackfire/"

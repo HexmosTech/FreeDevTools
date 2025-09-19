@@ -1,5 +1,5 @@
 ---
-title: "GitHub Issue Manager - Manage Issues | Free DevTools"
+title: "GitHub Issue Manager - Manage Issues | Online Free DevTools by Hexmos"
 name: gh-issue
 path: /freedevtools/tldr/gh/gh-issue
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-issue/"

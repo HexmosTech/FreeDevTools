@@ -1,5 +1,5 @@
 ---
-title: "Procstat - Analyze FreeBSD Processes | Free DevTools"
+title: "Procstat - Analyze FreeBSD Processes | Online Free DevTools by Hexmos"
 name: procstat
 path: /freedevtools/tldr/freebsd/procstat
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/procstat/"

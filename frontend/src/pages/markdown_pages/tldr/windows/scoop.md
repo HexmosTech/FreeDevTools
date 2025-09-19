@@ -1,5 +1,5 @@
 ---
-title: "Scoop - Manage Windows Packages | Free DevTools"
+title: "Scoop - Manage Windows Packages | Online Free DevTools by Hexmos"
 name: scoop
 path: /freedevtools/tldr/windows/scoop
 canonical: "https://hexmos.com/freedevtools/tldr/windows/scoop/"

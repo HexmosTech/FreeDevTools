@@ -1,5 +1,5 @@
 ---
-title: "Install Python Packages - Manage Dependencies | Free DevTools"
+title: "Install Python Packages - Manage Dependencies | Online Free DevTools by Hexmos"
 name: pip-install
 path: /freedevtools/tldr/pip/pip-install
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pip-install/"

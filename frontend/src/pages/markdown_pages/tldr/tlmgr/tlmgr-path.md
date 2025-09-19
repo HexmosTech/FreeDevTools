@@ -1,5 +1,5 @@
 ---
-title: "Manage TeX Live Paths - Control Symlinks | Free DevTools"
+title: "Manage TeX Live Paths - Control Symlinks | Online Free DevTools by Hexmos"
 name: tlmgr-path
 path: /freedevtools/tldr/tlmgr/tlmgr-path
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-path/"

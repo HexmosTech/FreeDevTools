@@ -1,5 +1,5 @@
 ---
-title: "Extract CSV Data - Filter Columns with csvcut | Free DevTools"
+title: "Extract CSV Data - Filter Columns with csvcut | Online Free DevTools by Hexmos"
 name: csvcut
 path: /freedevtools/tldr/cs/csvcut
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvcut/"

@@ -1,5 +1,5 @@
 ---
-title: "Control LXC Container - Attach to Container | Free DevTools"
+title: "Control LXC Container - Attach to Container | Online Free DevTools by Hexmos"
 name: lxc-console
 path: /freedevtools/tldr/linux/lxc-console
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-console/"

@@ -1,5 +1,5 @@
 ---
-title: "LaTeX Compiler - Generate Documents with latexmk | Free DevTools"
+title: "LaTeX Compiler - Generate Documents with latexmk | Online Free DevTools by Hexmos"
 name: latexmk
 path: /freedevtools/tldr/common/latexmk
 canonical: "https://hexmos.com/freedevtools/tldr/common/latexmk/"

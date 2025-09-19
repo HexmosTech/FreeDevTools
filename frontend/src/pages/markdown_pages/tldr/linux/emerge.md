@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages with emerge - Gentoo Package Management | Free DevTools"
+title: "Manage Packages with emerge - Gentoo Package Management | Online Free DevTools by Hexmos"
 name: emerge
 path: /freedevtools/tldr/linux/emerge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/emerge/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Init - Create New Git Repository | Free DevTools"
+title: "Git Init - Create New Git Repository | Online Free DevTools by Hexmos"
 name: git-init
 path: /freedevtools/tldr/git/git-init
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-init/"

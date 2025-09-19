@@ -1,5 +1,5 @@
 ---
-title: "Name Hash - Identify Hash Types Instantly | Free DevTools"
+title: "Name Hash - Identify Hash Types Instantly | Online Free DevTools by Hexmos"
 name: nth
 path: /freedevtools/tldr/common/nth
 canonical: "https://hexmos.com/freedevtools/tldr/common/nth/"

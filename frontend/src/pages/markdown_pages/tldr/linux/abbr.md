@@ -1,5 +1,5 @@
 ---
-title: "Control Abbreviations - Manage Shell Aliases | Free DevTools"
+title: "Control Abbreviations - Manage Shell Aliases | Online Free DevTools by Hexmos"
 name: abbr
 path: /freedevtools/tldr/linux/abbr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/abbr/"

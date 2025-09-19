@@ -1,5 +1,5 @@
 ---
-title: "Bpython Interpreter - Enhance Python REPL | Free DevTools"
+title: "Bpython Interpreter - Enhance Python REPL | Online Free DevTools by Hexmos"
 name: bpython
 path: /freedevtools/tldr/common/bpython
 canonical: "https://hexmos.com/freedevtools/tldr/common/bpython/"

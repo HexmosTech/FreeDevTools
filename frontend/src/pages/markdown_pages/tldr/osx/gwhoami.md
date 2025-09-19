@@ -1,5 +1,5 @@
 ---
-title: "Whoami Command - Identify User | Free DevTools"
+title: "Whoami Command - Identify User | Online Free DevTools by Hexmos"
 name: gwhoami
 path: /freedevtools/tldr/osx/gwhoami
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gwhoami/"

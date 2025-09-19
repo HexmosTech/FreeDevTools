@@ -1,5 +1,5 @@
 ---
-title: "Reset Elasticsearch Password - Manage User Credentials | Free DevTools"
+title: "Reset Elasticsearch Password - Manage User Credentials | Online Free DevTools by Hexmos"
 name: elasticsearch-reset-password
 path: /freedevtools/tldr/elasticsearch/elasticsearch-reset-password
 canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-reset-password/"

@@ -1,5 +1,5 @@
 ---
-title: "Libinput - Interface with Input Devices | Free DevTools"
+title: "Libinput - Interface with Input Devices | Online Free DevTools by Hexmos"
 name: libinput
 path: /freedevtools/tldr/linux/libinput
 canonical: "https://hexmos.com/freedevtools/tldr/linux/libinput/"

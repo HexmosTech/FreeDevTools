@@ -1,5 +1,5 @@
 ---
-title: "Larasail - Manage Laravel Servers | Free DevTools"
+title: "Larasail - Manage Laravel Servers | Online Free DevTools by Hexmos"
 name: larasail
 path: /freedevtools/tldr/linux/larasail
 canonical: "https://hexmos.com/freedevtools/tldr/linux/larasail/"

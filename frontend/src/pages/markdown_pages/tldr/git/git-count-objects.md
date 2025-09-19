@@ -1,5 +1,5 @@
 ---
-title: "Git Count Objects - Analyze Disk Usage | Free DevTools"
+title: "Git Count Objects - Analyze Disk Usage | Online Free DevTools by Hexmos"
 name: git-count-objects
 path: /freedevtools/tldr/git/git-count-objects
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-count-objects/"

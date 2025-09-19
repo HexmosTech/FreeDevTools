@@ -1,5 +1,5 @@
 ---
-title: "Liquid Cooler Control - Manage Cooling Systems | Free DevTools"
+title: "Liquid Cooler Control - Manage Cooling Systems | Online Free DevTools by Hexmos"
 name: liquidctl
 path: /freedevtools/tldr/common/liquidctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/liquidctl/"

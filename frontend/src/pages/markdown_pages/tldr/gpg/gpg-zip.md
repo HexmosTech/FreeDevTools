@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Files - Create GPG Archive with gpg-zip | Free DevTools"
+title: "Encrypt Files - Create GPG Archive with gpg-zip | Online Free DevTools by Hexmos"
 name: gpg-zip
 path: /freedevtools/tldr/gpg/gpg-zip
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-zip/"

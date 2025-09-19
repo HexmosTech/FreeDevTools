@@ -1,5 +1,5 @@
 ---
-title: "GitHub API - Execute Authenticated API Requests | Free DevTools"
+title: "GitHub API - Execute Authenticated API Requests | Online Free DevTools by Hexmos"
 name: gh-api
 path: /freedevtools/tldr/gh/gh-api
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-api/"

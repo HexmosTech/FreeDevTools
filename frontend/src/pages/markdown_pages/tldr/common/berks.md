@@ -1,5 +1,5 @@
 ---
-title: "Manage Cookbooks - Control Chef Cookbooks with Berks | Free DevTools"
+title: "Manage Cookbooks - Control Chef Cookbooks with Berks | Online Free DevTools by Hexmos"
 name: berks
 path: /freedevtools/tldr/common/berks
 canonical: "https://hexmos.com/freedevtools/tldr/common/berks/"

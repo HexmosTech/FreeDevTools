@@ -1,5 +1,5 @@
 ---
-title: "Varnishlog - Display Varnish Logs | Free DevTools"
+title: "Varnishlog - Display Varnish Logs | Online Free DevTools by Hexmos"
 name: varnishlog
 path: /freedevtools/tldr/common/varnishlog
 canonical: "https://hexmos.com/freedevtools/tldr/common/varnishlog/"

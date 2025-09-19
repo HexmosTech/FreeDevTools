@@ -1,5 +1,5 @@
 ---
-title: "LVChange - Control Logical Volumes | Free DevTools"
+title: "LVChange - Control Logical Volumes | Online Free DevTools by Hexmos"
 name: lvchange
 path: /freedevtools/tldr/linux/lvchange
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvchange/"

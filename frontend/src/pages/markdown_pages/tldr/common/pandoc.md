@@ -1,5 +1,5 @@
 ---
-title: "Convert Documents - Pandoc File Converter | Free DevTools"
+title: "Convert Documents - Pandoc File Converter | Online Free DevTools by Hexmos"
 name: pandoc
 path: /freedevtools/tldr/common/pandoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/pandoc/"

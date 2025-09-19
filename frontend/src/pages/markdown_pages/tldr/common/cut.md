@@ -1,5 +1,5 @@
 ---
-title: "Cut Data - Extract Fields with cut | Free DevTools"
+title: "Cut Data - Extract Fields with cut | Online Free DevTools by Hexmos"
 name: cut
 path: /freedevtools/tldr/common/cut
 canonical: "https://hexmos.com/freedevtools/tldr/common/cut/"

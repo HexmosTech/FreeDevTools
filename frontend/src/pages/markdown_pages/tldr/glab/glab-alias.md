@@ -1,5 +1,5 @@
 ---
-title: "GLab Alias - Manage GitLab CLI Aliases | Free DevTools"
+title: "GLab Alias - Manage GitLab CLI Aliases | Online Free DevTools by Hexmos"
 name: glab-alias
 path: /freedevtools/tldr/glab/glab-alias
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-alias/"

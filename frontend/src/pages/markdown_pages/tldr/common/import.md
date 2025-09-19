@@ -1,5 +1,5 @@
 ---
-title: "Import Image - Convert Image Formats | Free DevTools"
+title: "Import Image - Convert Image Formats | Online Free DevTools by Hexmos"
 name: import
 path: /freedevtools/tldr/common/import
 canonical: "https://hexmos.com/freedevtools/tldr/common/import/"

@@ -1,5 +1,5 @@
 ---
-title: "View Pinout - Raspberry Pi GPIO Diagram | Free DevTools"
+title: "View Pinout - Raspberry Pi GPIO Diagram | Online Free DevTools by Hexmos"
 name: pinout
 path: /freedevtools/tldr/linux/pinout
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pinout/"

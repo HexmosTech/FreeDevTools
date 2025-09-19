@@ -1,5 +1,5 @@
 ---
-title: "Ebook Converter - Format Ebooks Quickly | Free DevTools"
+title: "Ebook Converter - Format Ebooks Quickly | Online Free DevTools by Hexmos"
 name: ebook-convert
 path: /freedevtools/tldr/common/ebook-convert
 canonical: "https://hexmos.com/freedevtools/tldr/common/ebook-convert/"

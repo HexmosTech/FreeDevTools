@@ -1,5 +1,5 @@
 ---
-title: "Redirect Input - Control Input Streams | Free DevTools"
+title: "Redirect Input - Control Input Streams | Online Free DevTools by Hexmos"
 name: less-than
 path: /freedevtools/tldr/less/less-than
 canonical: "https://hexmos.com/freedevtools/tldr/less/less-than/"

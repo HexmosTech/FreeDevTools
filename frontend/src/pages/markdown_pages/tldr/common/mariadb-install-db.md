@@ -1,5 +1,5 @@
 ---
-title: "MariaDB Initialize - Create Databases | Free DevTools"
+title: "MariaDB Initialize - Create Databases | Online Free DevTools by Hexmos"
 name: mariadb-install-db
 path: /freedevtools/tldr/common/mariadb-install-db
 canonical: "https://hexmos.com/freedevtools/tldr/common/mariadb-install-db/"

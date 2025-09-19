@@ -1,5 +1,5 @@
 ---
-title: "Rotate Logs - Control System Logs with Logrotate | Free DevTools"
+title: "Rotate Logs - Control System Logs with Logrotate | Online Free DevTools by Hexmos"
 name: logrotate
 path: /freedevtools/tldr/linux/logrotate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/logrotate/"

@@ -1,5 +1,5 @@
 ---
-title: "Azure Config - Manage CLI Configuration | Free DevTools"
+title: "Azure Config - Manage CLI Configuration | Online Free DevTools by Hexmos"
 name: az-config
 path: /freedevtools/tldr/az/az-config
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-config/"

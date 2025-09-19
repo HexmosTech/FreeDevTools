@@ -1,5 +1,5 @@
 ---
-title: "Control Argo CD - Manage Applications | Free DevTools"
+title: "Control Argo CD - Manage Applications | Online Free DevTools by Hexmos"
 name: argocd
 path: /freedevtools/tldr/common/argocd
 canonical: "https://hexmos.com/freedevtools/tldr/common/argocd/"

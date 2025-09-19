@@ -1,5 +1,5 @@
 ---
-title: "Salt-Key - Control Salt Minion Keys | Free DevTools"
+title: "Salt-Key - Control Salt Minion Keys | Online Free DevTools by Hexmos"
 name: salt-key
 path: /freedevtools/tldr/salt/salt-key
 canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-key/"

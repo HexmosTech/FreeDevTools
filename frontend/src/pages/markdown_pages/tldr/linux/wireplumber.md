@@ -1,5 +1,5 @@
 ---
-title: "WirePlumber - Manage PipeWire Sessions | Free DevTools"
+title: "WirePlumber - Manage PipeWire Sessions | Online Free DevTools by Hexmos"
 name: wireplumber
 path: /freedevtools/tldr/linux/wireplumber
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wireplumber/"

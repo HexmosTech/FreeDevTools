@@ -1,5 +1,5 @@
 ---
-title: "Dir - List Directory Contents | Free DevTools"
+title: "Dir - List Directory Contents | Online Free DevTools by Hexmos"
 name: dir
 path: /freedevtools/tldr/windows/dir
 canonical: "https://hexmos.com/freedevtools/tldr/windows/dir/"

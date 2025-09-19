@@ -1,5 +1,5 @@
 ---
-title: "LPSTAT Printer Status - Show Printer Info | Free DevTools"
+title: "LPSTAT Printer Status - Show Printer Info | Online Free DevTools by Hexmos"
 name: lpstat
 path: /freedevtools/tldr/common/lpstat
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpstat/"

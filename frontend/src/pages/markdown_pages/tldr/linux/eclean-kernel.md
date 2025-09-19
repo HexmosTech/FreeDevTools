@@ -1,5 +1,5 @@
 ---
-title: "Eclean-kernel - Remove Old Kernels | Free DevTools"
+title: "Eclean-kernel - Remove Old Kernels | Online Free DevTools by Hexmos"
 name: eclean-kernel
 path: /freedevtools/tldr/linux/eclean-kernel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eclean-kernel/"

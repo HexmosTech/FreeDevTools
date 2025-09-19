@@ -1,5 +1,5 @@
 ---
-title: "Charm Account Manager - Control SSH Keys | Free DevTools"
+title: "Charm Account Manager - Control SSH Keys | Online Free DevTools by Hexmos"
 name: charm
 path: /freedevtools/tldr/common/charm
 canonical: "https://hexmos.com/freedevtools/tldr/common/charm/"

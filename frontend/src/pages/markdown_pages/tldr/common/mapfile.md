@@ -1,5 +1,5 @@
 ---
-title: "Mapfile - Read Arrays from Standard Input | Free DevTools"
+title: "Mapfile - Read Arrays from Standard Input | Online Free DevTools by Hexmos"
 name: mapfile
 path: /freedevtools/tldr/common/mapfile
 canonical: "https://hexmos.com/freedevtools/tldr/common/mapfile/"

@@ -1,5 +1,5 @@
 ---
-title: "Gnome Terminal - Control Linux Shell Sessions | Free DevTools"
+title: "Gnome Terminal - Control Linux Shell Sessions | Online Free DevTools by Hexmos"
 name: gnome-terminal
 path: /freedevtools/tldr/linux/gnome-terminal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-terminal/"

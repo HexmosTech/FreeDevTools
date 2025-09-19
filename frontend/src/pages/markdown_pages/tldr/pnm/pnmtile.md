@@ -1,5 +1,5 @@
 ---
-title: "Generate Image Tiles - PNMTILE Image Replication | Free DevTools"
+title: "Generate Image Tiles - PNMTILE Image Replication | Online Free DevTools by Hexmos"
 name: pnmtile
 path: /freedevtools/tldr/pnm/pnmtile
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtile/"

@@ -1,5 +1,5 @@
 ---
-title: "XMLStarlet - Query & Transform XML Documents | Free DevTools"
+title: "XMLStarlet - Query & Transform XML Documents | Online Free DevTools by Hexmos"
 name: xml
 path: /freedevtools/tldr/xml/xml
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml/"

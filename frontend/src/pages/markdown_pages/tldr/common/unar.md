@@ -1,5 +1,5 @@
 ---
-title: "Extract Archive - Extract Files from Archives | Free DevTools"
+title: "Extract Archive - Extract Files from Archives | Online Free DevTools by Hexmos"
 name: unar
 path: /freedevtools/tldr/common/unar
 canonical: "https://hexmos.com/freedevtools/tldr/common/unar/"

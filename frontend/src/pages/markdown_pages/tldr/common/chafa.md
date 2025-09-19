@@ -1,5 +1,5 @@
 ---
-title: "Chafa - Render Images in Terminal | Free DevTools"
+title: "Chafa - Render Images in Terminal | Online Free DevTools by Hexmos"
 name: chafa
 path: /freedevtools/tldr/common/chafa
 canonical: "https://hexmos.com/freedevtools/tldr/common/chafa/"

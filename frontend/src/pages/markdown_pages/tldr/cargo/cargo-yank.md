@@ -1,5 +1,5 @@
 ---
-title: "Yank Crate - Remove Package Versions with Cargo | Free DevTools"
+title: "Yank Crate - Remove Package Versions with Cargo | Online Free DevTools by Hexmos"
 name: cargo-yank
 path: /freedevtools/tldr/cargo/cargo-yank
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-yank/"

@@ -1,5 +1,5 @@
 ---
-title: "Systemd-Cgls - Control Linux Control Groups | Free DevTools"
+title: "Systemd-Cgls - Control Linux Control Groups | Online Free DevTools by Hexmos"
 name: systemd-cgls
 path: /freedevtools/tldr/linux/systemd-cgls
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cgls/"

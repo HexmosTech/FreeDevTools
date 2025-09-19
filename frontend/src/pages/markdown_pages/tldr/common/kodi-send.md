@@ -1,5 +1,5 @@
 ---
-title: "Control Kodi - Send Actions to Kodi | Free DevTools"
+title: "Control Kodi - Send Actions to Kodi | Online Free DevTools by Hexmos"
 name: kodi-send
 path: /freedevtools/tldr/common/kodi-send
 canonical: "https://hexmos.com/freedevtools/tldr/common/kodi-send/"

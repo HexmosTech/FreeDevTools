@@ -1,5 +1,5 @@
 ---
-title: "Kompose - Convert Docker Compose to Kubernetes | Free DevTools"
+title: "Kompose - Convert Docker Compose to Kubernetes | Online Free DevTools by Hexmos"
 name: kompose
 path: /freedevtools/tldr/common/kompose
 canonical: "https://hexmos.com/freedevtools/tldr/common/kompose/"

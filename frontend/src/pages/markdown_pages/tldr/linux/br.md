@@ -1,5 +1,5 @@
 ---
-title: "Navigate Directory Trees - Interactive Control with br | Free DevTools"
+title: "Navigate Directory Trees - Interactive Control with br | Online Free DevTools by Hexmos"
 name: br
 path: /freedevtools/tldr/linux/br
 canonical: "https://hexmos.com/freedevtools/tldr/linux/br/"

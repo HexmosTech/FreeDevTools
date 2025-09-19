@@ -1,5 +1,5 @@
 ---
-title: "Validate MATLAB Code - Find Bugs with mh_lint | Free DevTools"
+title: "Validate MATLAB Code - Find Bugs with mh_lint | Online Free DevTools by Hexmos"
 name: mh_lint
 path: /freedevtools/tldr/common/mh_lint
 canonical: "https://hexmos.com/freedevtools/tldr/common/mh_lint/"

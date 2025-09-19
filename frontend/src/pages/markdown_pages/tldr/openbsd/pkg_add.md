@@ -1,5 +1,5 @@
 ---
-title: "Install Packages - Update Software in OpenBSD | Free DevTools"
+title: "Install Packages - Update Software in OpenBSD | Online Free DevTools by Hexmos"
 name: pkg_add
 path: /freedevtools/tldr/openbsd/pkg_add
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg_add/"

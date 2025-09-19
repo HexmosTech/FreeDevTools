@@ -1,5 +1,5 @@
 ---
-title: "Validate MQTT Credentials - Verify Login Details | Free DevTools"
+title: "Validate MQTT Credentials - Verify Login Details | Online Free DevTools by Hexmos"
 name: mqtt_check.py
 path: /freedevtools/tldr/common/mqtt_check.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/mqtt_check.py/"

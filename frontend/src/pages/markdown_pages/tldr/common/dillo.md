@@ -1,5 +1,5 @@
 ---
-title: "Launch Browser - Control Dillo Lightweight Browser | Free DevTools"
+title: "Launch Browser - Control Dillo Lightweight Browser | Online Free DevTools by Hexmos"
 name: dillo
 path: /freedevtools/tldr/common/dillo
 canonical: "https://hexmos.com/freedevtools/tldr/common/dillo/"

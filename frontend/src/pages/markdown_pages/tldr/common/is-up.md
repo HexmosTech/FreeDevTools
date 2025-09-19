@@ -1,5 +1,5 @@
 ---
-title: "Is-Up Check - Validate Website Status | Free DevTools"
+title: "Is-Up Check - Validate Website Status | Online Free DevTools by Hexmos"
 name: is-up
 path: /freedevtools/tldr/common/is-up
 canonical: "https://hexmos.com/freedevtools/tldr/common/is-up/"

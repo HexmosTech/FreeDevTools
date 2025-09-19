@@ -1,5 +1,5 @@
 ---
-title: "uv - Publish Python Packages | Free DevTools"
+title: "uv - Publish Python Packages | Online Free DevTools by Hexmos"
 name: uv-publish
 path: /freedevtools/tldr/uv/uv-publish
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-publish/"

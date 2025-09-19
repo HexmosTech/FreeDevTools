@@ -1,5 +1,5 @@
 ---
-title: "Evaluate Expressions - Calculate with Let Command | Free DevTools"
+title: "Evaluate Expressions - Calculate with Let Command | Online Free DevTools by Hexmos"
 name: let
 path: /freedevtools/tldr/common/let
 canonical: "https://hexmos.com/freedevtools/tldr/common/let/"

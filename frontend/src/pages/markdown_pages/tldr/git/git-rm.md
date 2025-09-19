@@ -1,5 +1,5 @@
 ---
-title: "Git Remove - Remove Files from Git Index | Free DevTools"
+title: "Git Remove - Remove Files from Git Index | Online Free DevTools by Hexmos"
 name: git-rm
 path: /freedevtools/tldr/git/git-rm
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rm/"

@@ -1,5 +1,5 @@
 ---
-title: "Times - Print CPU Usage | Free DevTools"
+title: "Times - Print CPU Usage | Online Free DevTools by Hexmos"
 name: times
 path: /freedevtools/tldr/common/times
 canonical: "https://hexmos.com/freedevtools/tldr/common/times/"

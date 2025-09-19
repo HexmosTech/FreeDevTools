@@ -1,5 +1,5 @@
 ---
-title: "Bundletool Dump - Inspect Android App Bundles | Free DevTools"
+title: "Bundletool Dump - Inspect Android App Bundles | Online Free DevTools by Hexmos"
 name: bundletool-dump
 path: /freedevtools/tldr/bundletool/bundletool-dump
 canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool-dump/"

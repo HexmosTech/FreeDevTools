@@ -1,5 +1,5 @@
 ---
-title: "Display Disk Usage - Monitor Filesystem Space | Free DevTools"
+title: "Display Disk Usage - Monitor Filesystem Space | Online Free DevTools by Hexmos"
 name: dfc
 path: /freedevtools/tldr/common/dfc
 canonical: "https://hexmos.com/freedevtools/tldr/common/dfc/"

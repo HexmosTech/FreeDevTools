@@ -1,5 +1,5 @@
 ---
-title: "Env - Control Environment Variables on OSX | Free DevTools"
+title: "Env - Control Environment Variables on OSX | Online Free DevTools by Hexmos"
 name: genv
 path: /freedevtools/tldr/osx/genv
 canonical: "https://hexmos.com/freedevtools/tldr/osx/genv/"

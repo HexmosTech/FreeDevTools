@@ -1,5 +1,5 @@
 ---
-title: "Control Rustup - Update and Uninstall | Free DevTools"
+title: "Control Rustup - Update and Uninstall | Online Free DevTools by Hexmos"
 name: rustup-self
 path: /freedevtools/tldr/rustup/rustup-self
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-self/"

@@ -1,5 +1,5 @@
 ---
-title: "Virus Scan - Analyze Files and URLs with VirusTotal | Free DevTools"
+title: "Virus Scan - Analyze Files and URLs with VirusTotal | Online Free DevTools by Hexmos"
 name: vt
 path: /freedevtools/tldr/common/vt
 canonical: "https://hexmos.com/freedevtools/tldr/common/vt/"

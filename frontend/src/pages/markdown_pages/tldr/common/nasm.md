@@ -1,5 +1,5 @@
 ---
-title: "NASM Assembler - Assemble Code | Free DevTools"
+title: "NASM Assembler - Assemble Code | Online Free DevTools by Hexmos"
 name: nasm
 path: /freedevtools/tldr/common/nasm
 canonical: "https://hexmos.com/freedevtools/tldr/common/nasm/"

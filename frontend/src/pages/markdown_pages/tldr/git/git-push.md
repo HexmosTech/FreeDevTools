@@ -1,5 +1,5 @@
 ---
-title: "Git Push - Send Commits to Remote Repository | Free DevTools"
+title: "Git Push - Send Commits to Remote Repository | Online Free DevTools by Hexmos"
 name: git-push
 path: /freedevtools/tldr/git/git-push
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-push/"

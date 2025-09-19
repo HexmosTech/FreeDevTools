@@ -1,5 +1,5 @@
 ---
-title: "JJ Squash - Combine Changes Effortlessly | Free DevTools"
+title: "JJ Squash - Combine Changes Effortlessly | Online Free DevTools by Hexmos"
 name: jj-squash
 path: /freedevtools/tldr/jj/jj-squash
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-squash/"

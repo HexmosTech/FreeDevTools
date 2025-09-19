@@ -1,5 +1,5 @@
 ---
-title: "Type Command - Display Command Type | Free DevTools"
+title: "Type Command - Display Command Type | Online Free DevTools by Hexmos"
 name: type
 path: /freedevtools/tldr/common/type
 canonical: "https://hexmos.com/freedevtools/tldr/common/type/"

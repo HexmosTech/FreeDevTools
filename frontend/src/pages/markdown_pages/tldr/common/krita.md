@@ -1,5 +1,5 @@
 ---
-title: "Krita Image Editor - Create Digital Art | Free DevTools"
+title: "Krita Image Editor - Create Digital Art | Online Free DevTools by Hexmos"
 name: krita
 path: /freedevtools/tldr/common/krita
 canonical: "https://hexmos.com/freedevtools/tldr/common/krita/"

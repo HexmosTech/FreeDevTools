@@ -1,5 +1,5 @@
 ---
-title: "Control ncmpcpp - MPD Client | Free DevTools"
+title: "Control ncmpcpp - MPD Client | Online Free DevTools by Hexmos"
 name: ncmpcpp
 path: "/freedevtools/tldr/common/ncmpcpp"
 canonical: "https://hexmos.com/freedevtools/tldr/common/ncmpcpp/"

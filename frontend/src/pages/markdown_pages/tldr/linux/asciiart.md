@@ -1,5 +1,5 @@
 ---
-title: "ASCII Art Generator - Convert Images to ASCII | Free DevTools"
+title: "ASCII Art Generator - Convert Images to ASCII | Online Free DevTools by Hexmos"
 name: asciiart
 path: /freedevtools/tldr/linux/asciiart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/asciiart/"

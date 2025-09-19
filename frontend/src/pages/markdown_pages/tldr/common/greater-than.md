@@ -1,5 +1,5 @@
 ---
-title: "Redirect Output - Control File Output with '>' | Free DevTools"
+title: "Redirect Output - Control File Output with '>' | Online Free DevTools by Hexmos"
 name: greater-than
 path: /freedevtools/tldr/common/greater-than
 canonical: "https://hexmos.com/freedevtools/tldr/common/greater-than/"

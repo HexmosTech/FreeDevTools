@@ -1,5 +1,5 @@
 ---
-title: "Format exFAT Label - Manage Filesystem Labels | Free DevTools"
+title: "Format exFAT Label - Manage Filesystem Labels | Online Free DevTools by Hexmos"
 name: exfatlabel
 path: /freedevtools/tldr/common/exfatlabel
 canonical: "https://hexmos.com/freedevtools/tldr/common/exfatlabel/"

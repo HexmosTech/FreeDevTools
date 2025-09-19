@@ -1,5 +1,5 @@
 ---
-title: "Sublime Text - Edit Files Quickly | Free DevTools"
+title: "Sublime Text - Edit Files Quickly | Online Free DevTools by Hexmos"
 name: subl
 path: /freedevtools/tldr/common/subl
 canonical: "https://hexmos.com/freedevtools/tldr/common/subl/"

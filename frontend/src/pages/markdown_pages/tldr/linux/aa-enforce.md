@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Enforce - Enable Profiles | Free DevTools"
+title: "AppArmor Enforce - Enable Profiles | Online Free DevTools by Hexmos"
 name: aa-enforce
 path: /freedevtools/tldr/linux/aa-enforce
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-enforce/"

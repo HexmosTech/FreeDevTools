@@ -1,5 +1,5 @@
 ---
-title: "Convert Raw Image to PGM - Greyscale Converter | Free DevTools"
+title: "Convert Raw Image to PGM - Greyscale Converter | Online Free DevTools by Hexmos"
 name: rawtopgm
 path: /freedevtools/tldr/common/rawtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/rawtopgm/"

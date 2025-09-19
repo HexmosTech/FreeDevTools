@@ -1,5 +1,5 @@
 ---
-title: "Edit Text with GVim - Command Line Editor | Free DevTools"
+title: "Edit Text with GVim - Command Line Editor | Online Free DevTools by Hexmos"
 name: gvim
 path: /freedevtools/tldr/common/gvim
 canonical: "https://hexmos.com/freedevtools/tldr/common/gvim/"

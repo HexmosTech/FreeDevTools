@@ -1,5 +1,5 @@
 ---
-title: "BMP to PPM - Format Bitmap Images | Free DevTools"
+title: "BMP to PPM - Format Bitmap Images | Online Free DevTools by Hexmos"
 name: bmptoppm
 path: /freedevtools/tldr/common/bmptoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/bmptoppm/"

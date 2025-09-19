@@ -1,5 +1,5 @@
 ---
-title: "Manage Zsh Plugins - Control Zinit Configuration | Free DevTools"
+title: "Manage Zsh Plugins - Control Zinit Configuration | Online Free DevTools by Hexmos"
 name: zinit
 path: /freedevtools/tldr/common/zinit
 canonical: "https://hexmos.com/freedevtools/tldr/common/zinit/"

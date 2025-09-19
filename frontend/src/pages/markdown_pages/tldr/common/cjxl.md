@@ -1,5 +1,5 @@
 ---
-title: "Compress Images to JPEG XL - cjxl | Free DevTools"
+title: "Compress Images to JPEG XL - cjxl | Online Free DevTools by Hexmos"
 name: cjxl
 path: /freedevtools/tldr/common/cjxl
 canonical: "https://hexmos.com/freedevtools/tldr/common/cjxl/"

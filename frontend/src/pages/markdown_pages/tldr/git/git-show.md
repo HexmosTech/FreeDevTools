@@ -1,5 +1,5 @@
 ---
-title: "Git Show - Display Commit Details | Free DevTools"
+title: "Git Show - Display Commit Details | Online Free DevTools by Hexmos"
 name: git-show
 path: /freedevtools/tldr/git/git-show
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate PBM Image - Render Text as PBM | Free DevTools"
+title: "Generate PBM Image - Render Text as PBM | Online Free DevTools by Hexmos"
 name: pbmtext
 path: /freedevtools/tldr/common/pbmtext
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtext/"

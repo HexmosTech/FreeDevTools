@@ -1,5 +1,5 @@
 ---
-title: "XFCE4 Terminal - Control Linux Terminal | Free DevTools"
+title: "XFCE4 Terminal - Control Linux Terminal | Online Free DevTools by Hexmos"
 name: xfce4-terminal
 path: /freedevtools/tldr/linux/xfce4-terminal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xfce4-terminal/"

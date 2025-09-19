@@ -1,5 +1,5 @@
 ---
-title: "Terraform - Create Infrastructure as Code | Free DevTools"
+title: "Terraform - Create Infrastructure as Code | Online Free DevTools by Hexmos"
 name: terraform
 path: /freedevtools/tldr/terraform/terraform
 canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform/"

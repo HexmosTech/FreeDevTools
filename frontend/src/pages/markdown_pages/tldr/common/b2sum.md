@@ -1,5 +1,5 @@
 ---
-title: "Calculate BLAKE2 Checksums - Verify File Integrity | Free DevTools"
+title: "Calculate BLAKE2 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: b2sum
 path: /freedevtools/tldr/common/b2sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/b2sum/"

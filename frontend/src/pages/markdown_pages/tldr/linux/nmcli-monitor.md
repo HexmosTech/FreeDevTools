@@ -1,5 +1,5 @@
 ---
-title: "Monitor NetworkManager - Track Connection Status | Free DevTools"
+title: "Monitor NetworkManager - Track Connection Status | Online Free DevTools by Hexmos"
 name: nmcli-monitor
 path: /freedevtools/tldr/linux/nmcli-monitor
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-monitor/"

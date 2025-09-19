@@ -1,5 +1,5 @@
 ---
-title: "Schedule Leave - Set Leave Reminders | Free DevTools"
+title: "Schedule Leave - Set Leave Reminders | Online Free DevTools by Hexmos"
 name: leave
 path: /freedevtools/tldr/common/leave
 canonical: "https://hexmos.com/freedevtools/tldr/common/leave/"

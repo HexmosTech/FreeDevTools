@@ -1,5 +1,5 @@
 ---
-title: "AVRdude Programmer - Program Atmel AVR Microcontrollers | Free DevTools"
+title: "AVRdude Programmer - Program Atmel AVR Microcontrollers | Online Free DevTools by Hexmos"
 name: avrdude
 path: /freedevtools/tldr/common/avrdude
 canonical: "https://hexmos.com/freedevtools/tldr/common/avrdude/"

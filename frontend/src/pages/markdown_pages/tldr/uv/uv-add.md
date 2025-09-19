@@ -1,5 +1,5 @@
 ---
-title: "UV - Add Package Dependencies | Free DevTools"
+title: "UV - Add Package Dependencies | Online Free DevTools by Hexmos"
 name: uv-add
 path: /freedevtools/tldr/uv/uv-add
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-add/"

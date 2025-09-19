@@ -1,5 +1,5 @@
 ---
-title: "Generate UUIDs - Create Unique Identifiers | Free DevTools"
+title: "Generate UUIDs - Create Unique Identifiers | Online Free DevTools by Hexmos"
 name: uuid
 path: /freedevtools/tldr/linux/uuid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uuid/"

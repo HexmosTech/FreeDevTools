@@ -1,5 +1,5 @@
 ---
-title: "Format Message Catalog - Compile PO Files with msgfmt | Free DevTools"
+title: "Format Message Catalog - Compile PO Files with msgfmt | Online Free DevTools by Hexmos"
 name: msgfmt
 path: /freedevtools/tldr/common/msgfmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/msgfmt/"

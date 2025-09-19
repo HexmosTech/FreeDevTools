@@ -1,5 +1,5 @@
 ---
-title: "Xwininfo - Display Window Information | Free DevTools"
+title: "Xwininfo - Display Window Information | Online Free DevTools by Hexmos"
 name: xwininfo
 path: /freedevtools/tldr/common/xwininfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/xwininfo/"

@@ -1,5 +1,5 @@
 ---
-title: "AWS Kendra - Manage Knowledge Base | Free DevTools"
+title: "AWS Kendra - Manage Knowledge Base | Online Free DevTools by Hexmos"
 name: aws-kendra
 path: /freedevtools/tldr/aws/aws-kendra
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kendra/"

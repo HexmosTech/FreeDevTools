@@ -1,5 +1,5 @@
 ---
-title: "Number Lines - Format Text Files with nl | Free DevTools"
+title: "Number Lines - Format Text Files with nl | Online Free DevTools by Hexmos"
 name: nl
 path: /freedevtools/tldr/common/nl
 canonical: "https://hexmos.com/freedevtools/tldr/common/nl/"

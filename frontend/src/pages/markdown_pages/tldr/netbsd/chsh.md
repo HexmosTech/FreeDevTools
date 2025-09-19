@@ -1,5 +1,5 @@
 ---
-title: "Change User Shell - Alter Shell Settings | Free DevTools"
+title: "Change User Shell - Alter Shell Settings | Online Free DevTools by Hexmos"
 name: chsh
 path: /freedevtools/tldr/netbsd/chsh
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chsh/"

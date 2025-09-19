@@ -1,5 +1,5 @@
 ---
-title: "Slackcat - Send Files and Output to Slack | Free DevTools"
+title: "Slackcat - Send Files and Output to Slack | Online Free DevTools by Hexmos"
 name: slackcat
 path: /freedevtools/tldr/common/slackcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/slackcat/"

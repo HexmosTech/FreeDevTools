@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Authors List - Find Repository Committers | Free DevTools"
+title: "Generate Git Authors List - Find Repository Committers | Online Free DevTools by Hexmos"
 name: git-authors
 path: /freedevtools/tldr/git/git-authors
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-authors/"

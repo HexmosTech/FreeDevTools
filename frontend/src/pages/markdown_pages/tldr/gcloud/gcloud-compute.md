@@ -1,5 +1,5 @@
 ---
-title: "Create GCP VMs - Manage Instances with gcloud compute | Free DevTools"
+title: "Create GCP VMs - Manage Instances with gcloud compute | Online Free DevTools by Hexmos"
 name: gcloud-compute
 path: /freedevtools/tldr/gcloud/gcloud-compute
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-compute/"

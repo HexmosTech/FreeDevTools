@@ -1,5 +1,5 @@
 ---
-title: "Merge Requests - Merge with glab | Free DevTools"
+title: "Merge Requests - Merge with glab | Online Free DevTools by Hexmos"
 name: glab-mr-merge
 path: /freedevtools/tldr/glab/glab-mr-merge
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr-merge/"

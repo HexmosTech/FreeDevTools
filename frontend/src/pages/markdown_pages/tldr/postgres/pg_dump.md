@@ -1,5 +1,5 @@
 ---
-title: "pg_dump - Extract PostgreSQL Databases | Free DevTools"
+title: "pg_dump - Extract PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: pg_dump
 path: /freedevtools/tldr/postgres/pg_dump
 canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dump/"

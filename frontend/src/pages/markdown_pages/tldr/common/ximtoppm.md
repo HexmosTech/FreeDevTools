@@ -1,5 +1,5 @@
 ---
-title: "XIM to PPM - Convert Image Format | Free DevTools"
+title: "XIM to PPM - Convert Image Format | Online Free DevTools by Hexmos"
 name: ximtoppm
 path: /freedevtools/tldr/common/ximtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/ximtoppm/"

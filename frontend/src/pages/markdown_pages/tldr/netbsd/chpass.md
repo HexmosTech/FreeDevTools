@@ -1,5 +1,5 @@
 ---
-title: "Change Password - Manage User Passwords | Free DevTools"
+title: "Change Password - Manage User Passwords | Online Free DevTools by Hexmos"
 name: chpass
 path: /freedevtools/tldr/netbsd/chpass
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chpass/"

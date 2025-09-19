@@ -1,5 +1,5 @@
 ---
-title: "Ifdata - Display Interface Data | Free DevTools"
+title: "Ifdata - Display Interface Data | Online Free DevTools by Hexmos"
 name: ifdata
 path: /freedevtools/tldr/common/ifdata
 canonical: "https://hexmos.com/freedevtools/tldr/common/ifdata/"

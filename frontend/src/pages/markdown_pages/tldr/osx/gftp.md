@@ -1,5 +1,5 @@
 ---
-title: "FTP Control - Transfer Files on MacOS | Free DevTools"
+title: "FTP Control - Transfer Files on MacOS | Online Free DevTools by Hexmos"
 name: gftp
 path: /freedevtools/tldr/osx/gftp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gftp/"

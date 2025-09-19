@@ -1,5 +1,5 @@
 ---
-title: "Cgroup Create - Control Resource Groups | Free DevTools"
+title: "Cgroup Create - Control Resource Groups | Online Free DevTools by Hexmos"
 name: cgcreate
 path: /freedevtools/tldr/linux/cgcreate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cgcreate/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Bash Scripts - Manage Bash-it | Free DevTools"
+title: "Control Bash Scripts - Manage Bash-it | Online Free DevTools by Hexmos"
 name: bash-it
 path: /freedevtools/tldr/common/bash-it
 canonical: "https://hexmos.com/freedevtools/tldr/common/bash-it/"

@@ -1,5 +1,5 @@
 ---
-title: "Create HTTP Server - Simple File Sharing | Free DevTools"
+title: "Create HTTP Server - Simple File Sharing | Online Free DevTools by Hexmos"
 name: simplehttpserver
 path: /freedevtools/tldr/common/simplehttpserver
 canonical: "https://hexmos.com/freedevtools/tldr/common/simplehttpserver/"

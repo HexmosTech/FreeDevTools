@@ -1,5 +1,5 @@
 ---
-title: "DVC Fetch - Download DVC Tracked Files | Free DevTools"
+title: "DVC Fetch - Download DVC Tracked Files | Online Free DevTools by Hexmos"
 name: dvc-fetch
 path: /freedevtools/tldr/dvc/dvc-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-fetch/"

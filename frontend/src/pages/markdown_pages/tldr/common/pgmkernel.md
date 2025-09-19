@@ -1,5 +1,5 @@
 ---
-title: "Generate PGM Kernel - Create Image Kernels | Free DevTools"
+title: "Generate PGM Kernel - Create Image Kernels | Online Free DevTools by Hexmos"
 name: pgmkernel
 path: /freedevtools/tldr/common/pgmkernel
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmkernel/"

@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Create - Generate Kubernetes Resources | Free DevTools"
+title: "Kubectl Create - Generate Kubernetes Resources | Online Free DevTools by Hexmos"
 name: kubectl-create
 path: /freedevtools/tldr/kubectl/kubectl-create
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-create/"

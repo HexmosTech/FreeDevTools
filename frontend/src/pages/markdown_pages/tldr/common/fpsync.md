@@ -1,5 +1,5 @@
 ---
-title: "FileSync - Synchronize Files Recursively | Free DevTools"
+title: "FileSync - Synchronize Files Recursively | Online Free DevTools by Hexmos"
 name: fpsync
 path: /freedevtools/tldr/common/fpsync
 canonical: "https://hexmos.com/freedevtools/tldr/common/fpsync/"

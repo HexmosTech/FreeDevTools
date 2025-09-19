@@ -1,5 +1,5 @@
 ---
-title: "Pridecat - Format Text with Pride Flags | Free DevTools"
+title: "Pridecat - Format Text with Pride Flags | Online Free DevTools by Hexmos"
 name: pridecat
 path: /freedevtools/tldr/linux/pridecat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pridecat/"

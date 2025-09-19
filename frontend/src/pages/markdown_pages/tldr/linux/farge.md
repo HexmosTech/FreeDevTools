@@ -1,5 +1,5 @@
 ---
-title: "Pixel Color - Display Screen Color with Farge | Free DevTools"
+title: "Pixel Color - Display Screen Color with Farge | Online Free DevTools by Hexmos"
 name: farge
 path: /freedevtools/tldr/linux/farge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/farge/"

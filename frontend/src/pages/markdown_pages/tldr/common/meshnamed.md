@@ -1,5 +1,5 @@
 ---
-title: "Resolve Meshnames - Distributed Naming with Meshnamed | Free DevTools"
+title: "Resolve Meshnames - Distributed Naming with Meshnamed | Online Free DevTools by Hexmos"
 name: meshnamed
 path: /freedevtools/tldr/common/meshnamed
 canonical: "https://hexmos.com/freedevtools/tldr/common/meshnamed/"

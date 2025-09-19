@@ -1,5 +1,5 @@
 ---
-title: "Quickemu - Create VMs Quickly | Free DevTools"
+title: "Quickemu - Create VMs Quickly | Online Free DevTools by Hexmos"
 name: quickemu
 path: /freedevtools/tldr/linux/quickemu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/quickemu/"

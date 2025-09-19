@@ -1,5 +1,5 @@
 ---
-title: "Generate PBM Image - Text to PBM with PostScript | Free DevTools"
+title: "Generate PBM Image - Text to PBM with PostScript | Online Free DevTools by Hexmos"
 name: pbmtextps
 path: /freedevtools/tldr/common/pbmtextps
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtextps/"

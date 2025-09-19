@@ -1,5 +1,5 @@
 ---
-title: "Remove Directory - Erase Folders with Rmdir | Free DevTools"
+title: "Remove Directory - Erase Folders with Rmdir | Online Free DevTools by Hexmos"
 name: rmdir
 path: /freedevtools/tldr/windows/rmdir
 canonical: "https://hexmos.com/freedevtools/tldr/windows/rmdir/"

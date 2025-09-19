@@ -1,5 +1,5 @@
 ---
-title: "Plasmashell - Restart Plasma Desktop | Free DevTools"
+title: "Plasmashell - Restart Plasma Desktop | Online Free DevTools by Hexmos"
 name: plasmashell
 path: /freedevtools/tldr/linux/plasmashell
 canonical: "https://hexmos.com/freedevtools/tldr/linux/plasmashell/"

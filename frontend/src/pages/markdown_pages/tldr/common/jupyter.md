@@ -1,5 +1,5 @@
 ---
-title: "Create Jupyter Notebooks - Analyze Data | Free DevTools"
+title: "Create Jupyter Notebooks - Analyze Data | Online Free DevTools by Hexmos"
 name: jupyter
 path: /freedevtools/tldr/common/jupyter
 canonical: "https://hexmos.com/freedevtools/tldr/common/jupyter/"

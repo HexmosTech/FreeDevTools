@@ -1,5 +1,5 @@
 ---
-title: "Knotc - Control Knot DNS Server Configuration | Free DevTools"
+title: "Knotc - Control Knot DNS Server Configuration | Online Free DevTools by Hexmos"
 name: knotc
 path: /freedevtools/tldr/common/knotc
 canonical: "https://hexmos.com/freedevtools/tldr/common/knotc/"

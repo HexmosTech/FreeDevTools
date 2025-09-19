@@ -1,5 +1,5 @@
 ---
-title: "AWS Lambda - Run Serverless Functions | Free DevTools"
+title: "AWS Lambda - Run Serverless Functions | Online Free DevTools by Hexmos"
 name: aws-lambda
 path: /freedevtools/tldr/aws/aws-lambda
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-lambda/"

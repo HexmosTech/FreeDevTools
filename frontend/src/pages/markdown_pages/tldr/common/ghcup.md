@@ -1,5 +1,5 @@
 ---
-title: "GHCup - Manage Haskell Toolchains | Free DevTools"
+title: "GHCup - Manage Haskell Toolchains | Online Free DevTools by Hexmos"
 name: ghcup
 path: /freedevtools/tldr/common/ghcup
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghcup/"

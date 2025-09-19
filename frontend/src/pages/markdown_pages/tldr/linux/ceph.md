@@ -1,5 +1,5 @@
 ---
-title: "Ceph Storage - Manage Ceph Clusters | Free DevTools"
+title: "Ceph Storage - Manage Ceph Clusters | Online Free DevTools by Hexmos"
 name: ceph
 path: /freedevtools/tldr/linux/ceph
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ceph/"

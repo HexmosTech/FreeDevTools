@@ -1,5 +1,5 @@
 ---
-title: "Cotton - Validate Markdown Test Specifications | Free DevTools"
+title: "Cotton - Validate Markdown Test Specifications | Online Free DevTools by Hexmos"
 name: cotton
 path: /freedevtools/tldr/common/cotton
 canonical: "https://hexmos.com/freedevtools/tldr/common/cotton/"

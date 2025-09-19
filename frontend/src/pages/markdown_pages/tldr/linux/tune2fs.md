@@ -1,5 +1,5 @@
 ---
-title: "Control Filesystem Parameters with tune2fs | Free DevTools"
+title: "Control Filesystem Parameters with tune2fs | Online Free DevTools by Hexmos"
 name: tune2fs
 path: /freedevtools/tldr/linux/tune2fs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tune2fs/"

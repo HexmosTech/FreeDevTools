@@ -1,5 +1,5 @@
 ---
-title: "PAMRGBAToPNG Converter - Convert PAM to PNG | Free DevTools"
+title: "PAMRGBAToPNG Converter - Convert PAM to PNG | Online Free DevTools by Hexmos"
 name: pamrgbatopng
 path: /freedevtools/tldr/common/pamrgbatopng
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamrgbatopng/"

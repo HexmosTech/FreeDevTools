@@ -1,5 +1,5 @@
 ---
-title: "Control Databases User - Manage Users with doctl | Free DevTools"
+title: "Control Databases User - Manage Users with doctl | Online Free DevTools by Hexmos"
 name: doctl-databases-user
 path: /freedevtools/tldr/doctl/doctl-databases-user
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-user/"

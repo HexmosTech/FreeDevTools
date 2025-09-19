@@ -1,5 +1,5 @@
 ---
-title: "Rustup Which - Locate Rust Binaries | Free DevTools"
+title: "Rustup Which - Locate Rust Binaries | Online Free DevTools by Hexmos"
 name: rustup-which
 path: /freedevtools/tldr/rustup/rustup-which
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-which/"

@@ -1,5 +1,5 @@
 ---
-title: "Change User Information - Manage Account Details with chfn | Free DevTools"
+title: "Change User Information - Manage Account Details with chfn | Online Free DevTools by Hexmos"
 name: chfn
 path: /freedevtools/tldr/freebsd/chfn
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/chfn/"

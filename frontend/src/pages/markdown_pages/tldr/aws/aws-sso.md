@@ -1,5 +1,5 @@
 ---
-title: "AWS SSO - Manage AWS Credentials | Free DevTools"
+title: "AWS SSO - Manage AWS Credentials | Online Free DevTools by Hexmos"
 name: aws-sso
 path: /freedevtools/tldr/aws/aws-sso
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sso/"

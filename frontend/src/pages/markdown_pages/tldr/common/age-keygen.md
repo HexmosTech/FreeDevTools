@@ -1,5 +1,5 @@
 ---
-title: "Generate age Key Pairs - Encryption Keys | Free DevTools"
+title: "Generate age Key Pairs - Encryption Keys | Online Free DevTools by Hexmos"
 name: age-keygen
 path: /freedevtools/tldr/common/age-keygen
 canonical: "https://hexmos.com/freedevtools/tldr/common/age-keygen/"

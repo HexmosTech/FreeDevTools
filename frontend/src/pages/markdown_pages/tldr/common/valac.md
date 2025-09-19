@@ -1,5 +1,5 @@
 ---
-title: "Compile Vala Code - Generate Vala Executables | Free DevTools"
+title: "Compile Vala Code - Generate Vala Executables | Online Free DevTools by Hexmos"
 name: valac
 path: /freedevtools/tldr/common/valac
 canonical: "https://hexmos.com/freedevtools/tldr/common/valac/"

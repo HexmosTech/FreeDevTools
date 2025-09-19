@@ -1,5 +1,5 @@
 ---
-title: "Text Editor - Create and Edit Files with Joe | Free DevTools"
+title: "Text Editor - Create and Edit Files with Joe | Online Free DevTools by Hexmos"
 name: joe
 path: /freedevtools/tldr/common/joe
 canonical: "https://hexmos.com/freedevtools/tldr/common/joe/"

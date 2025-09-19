@@ -1,5 +1,5 @@
 ---
-title: "Install SteamOS Boot - Finalize System | Free DevTools"
+title: "Install SteamOS Boot - Finalize System | Online Free DevTools by Hexmos"
 name: steamos-boot-install
 path: /freedevtools/tldr/linux/steamos-boot-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-boot-install/"

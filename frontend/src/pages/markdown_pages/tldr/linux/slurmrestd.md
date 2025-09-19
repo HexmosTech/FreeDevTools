@@ -1,5 +1,5 @@
 ---
-title: "Slurm REST API - Control Slurm via REST | Free DevTools"
+title: "Slurm REST API - Control Slurm via REST | Online Free DevTools by Hexmos"
 name: slurmrestd
 path: /freedevtools/tldr/linux/slurmrestd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmrestd/"

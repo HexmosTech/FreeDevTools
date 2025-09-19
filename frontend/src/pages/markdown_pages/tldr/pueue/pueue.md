@@ -1,5 +1,5 @@
 ---
-title: "Pueue - Control Task Execution | Free DevTools"
+title: "Pueue - Control Task Execution | Online Free DevTools by Hexmos"
 name: pueue
 path: /freedevtools/tldr/pueue/pueue
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue/"

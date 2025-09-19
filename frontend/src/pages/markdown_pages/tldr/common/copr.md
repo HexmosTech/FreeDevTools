@@ -1,5 +1,5 @@
 ---
-title: "COPR - Build Custom Software Repositories | Free DevTools"
+title: "COPR - Build Custom Software Repositories | Online Free DevTools by Hexmos"
 name: copr
 path: /freedevtools/tldr/common/copr
 canonical: "https://hexmos.com/freedevtools/tldr/common/copr/"

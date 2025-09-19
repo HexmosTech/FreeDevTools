@@ -1,5 +1,5 @@
 ---
-title: "List Git Locked Files - Manage Repository Locks | Free DevTools"
+title: "List Git Locked Files - Manage Repository Locks | Online Free DevTools by Hexmos"
 name: git-locked
 path: /freedevtools/tldr/git/git-locked
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-locked/"

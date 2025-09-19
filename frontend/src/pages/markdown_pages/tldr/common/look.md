@@ -1,5 +1,5 @@
 ---
-title: "Look - Search Sorted File Lines | Free DevTools"
+title: "Look - Search Sorted File Lines | Online Free DevTools by Hexmos"
 name: look
 path: /freedevtools/tldr/common/look
 canonical: "https://hexmos.com/freedevtools/tldr/common/look/"

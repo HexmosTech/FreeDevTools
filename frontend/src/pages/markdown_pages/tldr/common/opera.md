@@ -1,5 +1,5 @@
 ---
-title: "Opera - View Chromium Documentation | Free DevTools"
+title: "Opera - View Chromium Documentation | Online Free DevTools by Hexmos"
 name: opera
 path: /freedevtools/tldr/common/opera
 canonical: "https://hexmos.com/freedevtools/tldr/common/opera/"

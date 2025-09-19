@@ -1,5 +1,5 @@
 ---
-title: "VLC Player - Play Multimedia Files | Free DevTools"
+title: "VLC Player - Play Multimedia Files | Online Free DevTools by Hexmos"
 name: vlc
 path: /freedevtools/tldr/common/vlc
 canonical: "https://hexmos.com/freedevtools/tldr/common/vlc/"

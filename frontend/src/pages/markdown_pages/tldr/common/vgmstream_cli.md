@@ -1,5 +1,5 @@
 ---
-title: "Convert Audio Files - vgmstream_cli Audio Converter | Free DevTools"
+title: "Convert Audio Files - vgmstream_cli Audio Converter | Online Free DevTools by Hexmos"
 name: vgmstream_cli
 path: /freedevtools/tldr/common/vgmstream_cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/vgmstream_cli/"

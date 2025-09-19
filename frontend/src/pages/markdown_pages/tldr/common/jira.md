@@ -1,5 +1,5 @@
 ---
-title: "Jira - Control Project Issues | Free DevTools"
+title: "Jira - Control Project Issues | Online Free DevTools by Hexmos"
 name: jira
 path: /freedevtools/tldr/common/jira
 canonical: "https://hexmos.com/freedevtools/tldr/common/jira/"

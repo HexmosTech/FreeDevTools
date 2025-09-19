@@ -1,5 +1,5 @@
 ---
-title: "Convert SPU to PPM - Image Conversion | Free DevTools"
+title: "Convert SPU to PPM - Image Conversion | Online Free DevTools by Hexmos"
 name: sputoppm
 path: /freedevtools/tldr/common/sputoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/sputoppm/"

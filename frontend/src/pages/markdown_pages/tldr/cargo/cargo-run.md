@@ -1,5 +1,5 @@
 ---
-title: "Run Cargo Package - Execute Rust Code | Free DevTools"
+title: "Run Cargo Package - Execute Rust Code | Online Free DevTools by Hexmos"
 name: cargo-run
 path: /freedevtools/tldr/cargo/cargo-run
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-run/"

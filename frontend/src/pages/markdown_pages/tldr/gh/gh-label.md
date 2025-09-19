@@ -1,5 +1,5 @@
 ---
-title: "Create GitHub Labels - Manage repository labels | Free DevTools"
+title: "Create GitHub Labels - Manage repository labels | Online Free DevTools by Hexmos"
 name: gh-label
 path: /freedevtools/tldr/gh/gh-label
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-label/"

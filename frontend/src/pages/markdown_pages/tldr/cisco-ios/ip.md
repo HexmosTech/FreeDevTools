@@ -1,5 +1,5 @@
 ---
-title: "Cisco IP Command - Manage Network Configurations | Free DevTools"
+title: "Cisco IP Command - Manage Network Configurations | Online Free DevTools by Hexmos"
 name: ip
 path: /freedevtools/tldr/cisco-ios/ip
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/ip/"

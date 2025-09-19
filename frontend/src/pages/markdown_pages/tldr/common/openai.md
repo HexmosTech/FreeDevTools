@@ -1,5 +1,5 @@
 ---
-title: "OpenAI CLI - Create AI Content | Free DevTools"
+title: "OpenAI CLI - Create AI Content | Online Free DevTools by Hexmos"
 name: openai
 path: /freedevtools/tldr/common/openai
 canonical: "https://hexmos.com/freedevtools/tldr/common/openai/"

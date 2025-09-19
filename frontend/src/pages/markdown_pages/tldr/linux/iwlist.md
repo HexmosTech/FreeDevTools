@@ -1,5 +1,5 @@
 ---
-title: "Iwlist Wireless Interface - Scan Networks | Free DevTools"
+title: "Iwlist Wireless Interface - Scan Networks | Online Free DevTools by Hexmos"
 name: iwlist
 path: /freedevtools/tldr/linux/iwlist
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iwlist/"

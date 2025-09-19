@@ -1,5 +1,5 @@
 ---
-title: "Fail2ban-client - Control Fail2ban Server | Free DevTools"
+title: "Fail2ban-client - Control Fail2ban Server | Online Free DevTools by Hexmos"
 name: fail2ban-client
 path: /freedevtools/tldr/linux/fail2ban-client
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fail2ban-client/"

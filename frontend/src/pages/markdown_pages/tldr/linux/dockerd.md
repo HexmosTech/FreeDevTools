@@ -1,5 +1,5 @@
 ---
-title: "Docker Daemon - Manage Containers | Free DevTools"
+title: "Docker Daemon - Manage Containers | Online Free DevTools by Hexmos"
 name: dockerd
 path: /freedevtools/tldr/linux/dockerd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dockerd/"

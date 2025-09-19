@@ -1,5 +1,5 @@
 ---
-title: "OpenSSL Toolkit - Generate Certificates | Free DevTools"
+title: "OpenSSL Toolkit - Generate Certificates | Online Free DevTools by Hexmos"
 name: openssl
 path: /freedevtools/tldr/openssl/openssl
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl/"

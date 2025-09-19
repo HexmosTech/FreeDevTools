@@ -1,5 +1,5 @@
 ---
-title: "VHDL Simulator - Simulate VHDL Designs | Free DevTools"
+title: "VHDL Simulator - Simulate VHDL Designs | Online Free DevTools by Hexmos"
 name: ghdl
 path: /freedevtools/tldr/common/ghdl
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghdl/"

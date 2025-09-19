@@ -1,5 +1,5 @@
 ---
-title: "Filter Files - Interactive Filtering with Peco | Free DevTools"
+title: "Filter Files - Interactive Filtering with Peco | Online Free DevTools by Hexmos"
 name: peco
 path: /freedevtools/tldr/common/peco
 canonical: "https://hexmos.com/freedevtools/tldr/common/peco/"

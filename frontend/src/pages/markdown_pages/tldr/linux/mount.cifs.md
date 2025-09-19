@@ -1,5 +1,5 @@
 ---
-title: "Mount CIFS - Access Network Shares on Linux | Free DevTools"
+title: "Mount CIFS - Access Network Shares on Linux | Online Free DevTools by Hexmos"
 name: mount.cifs
 path: /freedevtools/tldr/linux/mount.cifs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mount.cifs/"

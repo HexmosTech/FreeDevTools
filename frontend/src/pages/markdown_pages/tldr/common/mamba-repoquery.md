@@ -1,5 +1,5 @@
 ---
-title: "Mamba Repoquery - Query Conda Packages | Free DevTools"
+title: "Mamba Repoquery - Query Conda Packages | Online Free DevTools by Hexmos"
 name: mamba-repoquery
 path: /freedevtools/tldr/common/mamba-repoquery
 canonical: "https://hexmos.com/freedevtools/tldr/common/mamba-repoquery/"

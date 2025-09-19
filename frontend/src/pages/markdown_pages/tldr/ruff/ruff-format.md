@@ -1,5 +1,5 @@
 ---
-title: "Ruff Format - Format Python Code | Free DevTools"
+title: "Ruff Format - Format Python Code | Online Free DevTools by Hexmos"
 name: ruff-format
 path: /freedevtools/tldr/ruff/ruff-format
 canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-format/"

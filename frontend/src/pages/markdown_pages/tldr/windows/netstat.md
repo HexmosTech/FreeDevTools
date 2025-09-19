@@ -1,5 +1,5 @@
 ---
-title: "Netstat - Control Network Connections | Free DevTools"
+title: "Netstat - Control Network Connections | Online Free DevTools by Hexmos"
 name: netstat
 path: /freedevtools/tldr/windows/netstat
 canonical: "https://hexmos.com/freedevtools/tldr/windows/netstat/"

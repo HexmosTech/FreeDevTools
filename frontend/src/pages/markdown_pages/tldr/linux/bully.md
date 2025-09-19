@@ -1,5 +1,5 @@
 ---
-title: "Bully WPS Pin Cracker - Brute-force Wireless Networks | Free DevTools"
+title: "Bully WPS Pin Cracker - Brute-force Wireless Networks | Online Free DevTools by Hexmos"
 name: bully
 path: /freedevtools/tldr/linux/bully
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bully/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Hugging Face Hub - Manage Models and Data | Free DevTools"
+title: "Control Hugging Face Hub - Manage Models and Data | Online Free DevTools by Hexmos"
 name: huggingface-cli
 path: /freedevtools/tldr/common/huggingface-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/huggingface-cli/"

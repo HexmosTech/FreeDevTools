@@ -1,5 +1,5 @@
 ---
-title: "Control Optimus GPU - Switch Graphics with optimus-manager | Free DevTools"
+title: "Control Optimus GPU - Switch Graphics with optimus-manager | Online Free DevTools by Hexmos"
 name: optimus-manager
 path: /freedevtools/tldr/linux/optimus-manager
 canonical: "https://hexmos.com/freedevtools/tldr/linux/optimus-manager/"

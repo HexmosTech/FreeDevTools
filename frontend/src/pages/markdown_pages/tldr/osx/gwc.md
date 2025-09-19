@@ -1,5 +1,5 @@
 ---
-title: "GWC - Count Words Quickly | Free DevTools"
+title: "GWC - Count Words Quickly | Online Free DevTools by Hexmos"
 name: gwc
 path: /freedevtools/tldr/osx/gwc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gwc/"

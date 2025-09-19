@@ -1,5 +1,5 @@
 ---
-title: "JSON Converter - Format JSON Data | Free DevTools"
+title: "JSON Converter - Format JSON Data | Online Free DevTools by Hexmos"
 name: jc
 path: /freedevtools/tldr/common/jc
 canonical: "https://hexmos.com/freedevtools/tldr/common/jc/"

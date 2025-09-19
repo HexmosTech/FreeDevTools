@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages with apt-get - Linux Package Management | Free DevTools"
+title: "Manage Packages with apt-get - Linux Package Management | Online Free DevTools by Hexmos"
 name: apt-get
 path: /freedevtools/tldr/linux/apt-get
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-get/"

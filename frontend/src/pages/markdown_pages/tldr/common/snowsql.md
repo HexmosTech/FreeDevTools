@@ -1,5 +1,5 @@
 ---
-title: "SnowSQL Client - Execute SQL Commands | Free DevTools"
+title: "SnowSQL Client - Execute SQL Commands | Online Free DevTools by Hexmos"
 name: snowsql
 path: /freedevtools/tldr/common/snowsql
 canonical: "https://hexmos.com/freedevtools/tldr/common/snowsql/"

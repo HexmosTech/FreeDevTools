@@ -1,5 +1,5 @@
 ---
-title: "Control Git REPL - Interactive Git Shell | Free DevTools"
+title: "Control Git REPL - Interactive Git Shell | Online Free DevTools by Hexmos"
 name: git-repl
 path: /freedevtools/tldr/git/git-repl
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-repl/"

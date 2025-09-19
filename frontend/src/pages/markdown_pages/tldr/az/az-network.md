@@ -1,5 +1,5 @@
 ---
-title: "Azure Network - Manage Network Resources | Free DevTools"
+title: "Azure Network - Manage Network Resources | Online Free DevTools by Hexmos"
 name: az-network
 path: /freedevtools/tldr/az/az-network
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-network/"

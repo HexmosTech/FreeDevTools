@@ -1,5 +1,5 @@
 ---
-title: "Get Linux Distro Info - lsb_release Command | Free DevTools"
+title: "Get Linux Distro Info - lsb_release Command | Online Free DevTools by Hexmos"
 name: lsb_release
 path: /freedevtools/tldr/linux/lsb_release
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsb_release/"

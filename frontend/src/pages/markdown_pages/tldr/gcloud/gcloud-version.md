@@ -1,5 +1,5 @@
 ---
-title: "GCloud Version - Generate CLI Info | Free DevTools"
+title: "GCloud Version - Generate CLI Info | Online Free DevTools by Hexmos"
 name: gcloud-version
 path: /freedevtools/tldr/gcloud/gcloud-version
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-version/"

@@ -1,5 +1,5 @@
 ---
-title: "Lex Grammar Generator - Create Scanners with Lex | Free DevTools"
+title: "Lex Grammar Generator - Create Scanners with Lex | Online Free DevTools by Hexmos"
 name: lex
 path: /freedevtools/tldr/linux/lex
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lex/"

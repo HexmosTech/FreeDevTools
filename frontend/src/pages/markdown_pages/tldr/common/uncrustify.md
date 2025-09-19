@@ -1,5 +1,5 @@
 ---
-title: "Format Code - Uncrustify Code | Free DevTools"
+title: "Format Code - Uncrustify Code | Online Free DevTools by Hexmos"
 name: uncrustify
 path: /freedevtools/tldr/common/uncrustify
 canonical: "https://hexmos.com/freedevtools/tldr/common/uncrustify/"

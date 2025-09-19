@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Privilege - Control Security Privileges | Free DevTools"
+title: "Mimikatz Privilege - Control Security Privileges | Online Free DevTools by Hexmos"
 name: mimikatz-privilege
 path: /freedevtools/tldr/windows/mimikatz-privilege
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-privilege/"

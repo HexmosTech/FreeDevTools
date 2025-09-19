@@ -1,5 +1,5 @@
 ---
-title: "IDNits Validator - Check Internet-Drafts | Free DevTools"
+title: "IDNits Validator - Check Internet-Drafts | Online Free DevTools by Hexmos"
 name: idnits
 path: /freedevtools/tldr/common/idnits
 canonical: "https://hexmos.com/freedevtools/tldr/common/idnits/"

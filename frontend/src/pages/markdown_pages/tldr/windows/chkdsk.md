@@ -1,5 +1,5 @@
 ---
-title: "Check Disk - Control File System Errors | Free DevTools"
+title: "Check Disk - Control File System Errors | Online Free DevTools by Hexmos"
 name: chkdsk
 path: /freedevtools/tldr/windows/chkdsk
 canonical: "https://hexmos.com/freedevtools/tldr/windows/chkdsk/"

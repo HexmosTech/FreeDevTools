@@ -1,5 +1,5 @@
 ---
-title: "Control Transmission Remotely - Manage Torrents | Free DevTools"
+title: "Control Transmission Remotely - Manage Torrents | Online Free DevTools by Hexmos"
 name: transmission-remote
 path: /freedevtools/tldr/transmission/transmission-remote
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-remote/"

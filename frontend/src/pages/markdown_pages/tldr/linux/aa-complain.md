@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Policy - Control AppArmor with aa-complain | Free DevTools"
+title: "AppArmor Policy - Control AppArmor with aa-complain | Online Free DevTools by Hexmos"
 name: aa-complain
 path: /freedevtools/tldr/linux/aa-complain
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-complain/"

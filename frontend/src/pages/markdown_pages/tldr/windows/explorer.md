@@ -1,5 +1,5 @@
 ---
-title: "Control File Explorer - Manage Files with Windows | Free DevTools"
+title: "Control File Explorer - Manage Files with Windows | Online Free DevTools by Hexmos"
 name: explorer
 path: /freedevtools/tldr/windows/explorer
 canonical: "https://hexmos.com/freedevtools/tldr/windows/explorer/"

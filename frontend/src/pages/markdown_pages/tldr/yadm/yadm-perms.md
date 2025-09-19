@@ -1,5 +1,5 @@
 ---
-title: "Manage Yadm Permissions - Update Configuration | Free DevTools"
+title: "Manage Yadm Permissions - Update Configuration | Online Free DevTools by Hexmos"
 name: yadm-perms
 path: /freedevtools/tldr/yadm/yadm-perms
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-perms/"

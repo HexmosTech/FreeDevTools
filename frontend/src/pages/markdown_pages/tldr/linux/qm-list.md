@@ -1,5 +1,5 @@
 ---
-title: "Proxmox VM List - Manage Virtual Machines with qm | Free DevTools"
+title: "Proxmox VM List - Manage Virtual Machines with qm | Online Free DevTools by Hexmos"
 name: qm-list
 path: /freedevtools/tldr/linux/qm-list
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-list/"

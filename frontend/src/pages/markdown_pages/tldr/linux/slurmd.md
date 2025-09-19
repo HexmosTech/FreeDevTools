@@ -1,5 +1,5 @@
 ---
-title: "Slurmd Control - Manage Slurm Compute Nodes | Free DevTools"
+title: "Slurmd Control - Manage Slurm Compute Nodes | Online Free DevTools by Hexmos"
 name: slurmd
 path: /freedevtools/tldr/linux/slurmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmd/"

@@ -1,5 +1,5 @@
 ---
-title: "Install GRUB - Bootloader Configuration | Free DevTools"
+title: "Install GRUB - Bootloader Configuration | Online Free DevTools by Hexmos"
 name: grub-install
 path: /freedevtools/tldr/linux/grub-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-install/"

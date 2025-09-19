@@ -1,5 +1,5 @@
 ---
-title: "Git Control - Manage Versions with Git Commands | Free DevTools"
+title: "Git Control - Manage Versions with Git Commands | Online Free DevTools by Hexmos"
 name: git
 path: /freedevtools/tldr/git/git
 canonical: "https://hexmos.com/freedevtools/tldr/git/git/"

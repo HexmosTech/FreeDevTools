@@ -1,5 +1,5 @@
 ---
-title: "Generate Package List - pip freeze | Free DevTools"
+title: "Generate Package List - pip freeze | Online Free DevTools by Hexmos"
 name: pip-freeze
 path: /freedevtools/tldr/pip/pip-freeze
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pip-freeze/"

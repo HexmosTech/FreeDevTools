@@ -1,5 +1,5 @@
 ---
-title: "Guetzli - Compress JPEG Images | Free DevTools"
+title: "Guetzli - Compress JPEG Images | Online Free DevTools by Hexmos"
 name: guetzli
 path: /freedevtools/tldr/common/guetzli
 canonical: "https://hexmos.com/freedevtools/tldr/common/guetzli/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - Generate Plot Files | Free DevTools"
+title: "Convert PBM Image - Generate Plot Files | Online Free DevTools by Hexmos"
 name: pbmtoplot
 path: /freedevtools/tldr/common/pbmtoplot
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoplot/"

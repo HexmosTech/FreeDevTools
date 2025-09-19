@@ -1,5 +1,5 @@
 ---
-title: "Neo4j Admin - Manage Database Instances | Free DevTools"
+title: "Neo4j Admin - Manage Database Instances | Online Free DevTools by Hexmos"
 name: neo4j-admin
 path: /freedevtools/tldr/common/neo4j-admin
 canonical: "https://hexmos.com/freedevtools/tldr/common/neo4j-admin/"

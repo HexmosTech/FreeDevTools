@@ -1,5 +1,5 @@
 ---
-title: "AirShare - Transfer Data Locally | Free DevTools"
+title: "AirShare - Transfer Data Locally | Online Free DevTools by Hexmos"
 name: airshare
 path: /freedevtools/tldr/common/airshare
 canonical: "https://hexmos.com/freedevtools/tldr/common/airshare/"

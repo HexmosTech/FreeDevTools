@@ -1,5 +1,5 @@
 ---
-title: "AWS S3 Copy - Transfer Files | Free DevTools"
+title: "AWS S3 Copy - Transfer Files | Online Free DevTools by Hexmos"
 name: aws-s3-cp
 path: /freedevtools/tldr/aws/aws-s3-cp
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-cp/"

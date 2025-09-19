@@ -1,5 +1,5 @@
 ---
-title: "Homesick - Synchronize Git Dotfiles | Free DevTools"
+title: "Homesick - Synchronize Git Dotfiles | Online Free DevTools by Hexmos"
 name: homeshick
 path: /freedevtools/tldr/linux/homeshick
 canonical: "https://hexmos.com/freedevtools/tldr/linux/homeshick/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Nyxt Browser - Keyboard-Driven Web Navigation | Free DevTools"
+title: "Control Nyxt Browser - Keyboard-Driven Web Navigation | Online Free DevTools by Hexmos"
 name: nyxt
 path: /freedevtools/tldr/common/nyxt
 canonical: "https://hexmos.com/freedevtools/tldr/common/nyxt/"

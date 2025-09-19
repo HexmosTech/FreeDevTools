@@ -1,5 +1,5 @@
 ---
-title: "Fastd - Control VPN Daemon | Free DevTools"
+title: "Fastd - Control VPN Daemon | Online Free DevTools by Hexmos"
 name: fastd
 path: /freedevtools/tldr/common/fastd
 canonical: "https://hexmos.com/freedevtools/tldr/common/fastd/"

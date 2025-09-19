@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to Plain PNM - Format Images | Free DevTools"
+title: "Convert PNM to Plain PNM - Format Images | Online Free DevTools by Hexmos"
 name: pnmtoplainpnm
 path: /freedevtools/tldr/pnm/pnmtoplainpnm
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoplainpnm/"

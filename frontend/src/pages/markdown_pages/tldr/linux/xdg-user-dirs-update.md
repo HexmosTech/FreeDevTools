@@ -1,5 +1,5 @@
 ---
-title: "Update XDG User Directories - Control File Paths | Free DevTools"
+title: "Update XDG User Directories - Control File Paths | Online Free DevTools by Hexmos"
 name: xdg-user-dirs-update
 path: /freedevtools/tldr/linux/xdg-user-dirs-update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-user-dirs-update/"

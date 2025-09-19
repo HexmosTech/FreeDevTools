@@ -1,5 +1,5 @@
 ---
-title: "Gamescope Control - Manage Game Layering | Free DevTools"
+title: "Gamescope Control - Manage Game Layering | Online Free DevTools by Hexmos"
 name: gamescope
 path: /freedevtools/tldr/linux/gamescope
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gamescope/"

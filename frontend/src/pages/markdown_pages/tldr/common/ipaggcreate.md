@@ -1,5 +1,5 @@
 ---
-title: "Create IP Aggregate Stats - Analyze Network Traffic | Free DevTools"
+title: "Create IP Aggregate Stats - Analyze Network Traffic | Online Free DevTools by Hexmos"
 name: ipaggcreate
 path: /freedevtools/tldr/common/ipaggcreate
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipaggcreate/"

@@ -1,5 +1,5 @@
 ---
-title: "AUR Package Manager - Build Arch Packages | Free DevTools"
+title: "AUR Package Manager - Build Arch Packages | Online Free DevTools by Hexmos"
 name: aur
 path: /freedevtools/tldr/linux/aur
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aur/"

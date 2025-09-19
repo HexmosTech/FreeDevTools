@@ -1,5 +1,5 @@
 ---
-title: "Manage Nim Packages - Nimble Package Manager | Free DevTools"
+title: "Manage Nim Packages - Nimble Package Manager | Online Free DevTools by Hexmos"
 name: nimble
 path: /freedevtools/tldr/common/nimble
 canonical: "https://hexmos.com/freedevtools/tldr/common/nimble/"

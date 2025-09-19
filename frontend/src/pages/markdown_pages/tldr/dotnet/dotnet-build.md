@@ -1,5 +1,5 @@
 ---
-title: "Dotnet Build - Compile .NET Applications | Free DevTools"
+title: "Dotnet Build - Compile .NET Applications | Online Free DevTools by Hexmos"
 name: dotnet-build
 path: /freedevtools/tldr/dotnet/dotnet-build
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-build/"

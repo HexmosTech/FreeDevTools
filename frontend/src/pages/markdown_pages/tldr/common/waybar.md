@@ -1,5 +1,5 @@
 ---
-title: "Waybar - Control Wayland Bar Customization | Free DevTools"
+title: "Waybar - Control Wayland Bar Customization | Online Free DevTools by Hexmos"
 name: waybar
 path: /freedevtools/tldr/common/waybar
 canonical: "https://hexmos.com/freedevtools/tldr/common/waybar/"

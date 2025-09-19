@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Config Set - Control CLI Properties | Free DevTools"
+title: "Gcloud Config Set - Control CLI Properties | Online Free DevTools by Hexmos"
 name: gcloud-config-set
 path: /freedevtools/tldr/gcloud/gcloud-config-set
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config-set/"

@@ -1,5 +1,5 @@
 ---
-title: "Virsh Connect - Manage Virtual Machines | Free DevTools"
+title: "Virsh Connect - Manage Virtual Machines | Online Free DevTools by Hexmos"
 name: virsh-connect
 path: /freedevtools/tldr/virsh/virsh-connect
 canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-connect/"

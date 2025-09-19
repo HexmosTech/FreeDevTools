@@ -1,5 +1,5 @@
 ---
-title: "Debian Package Builder - Create Packages from Source | Free DevTools"
+title: "Debian Package Builder - Create Packages from Source | Online Free DevTools by Hexmos"
 name: debuild
 path: /freedevtools/tldr/linux/debuild
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debuild/"

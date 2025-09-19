@@ -1,5 +1,5 @@
 ---
-title: "Convert PaintJet to PPM - Generate Image Files | Free DevTools"
+title: "Convert PaintJet to PPM - Generate Image Files | Online Free DevTools by Hexmos"
 name: pjtoppm
 path: /freedevtools/tldr/common/pjtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pjtoppm/"

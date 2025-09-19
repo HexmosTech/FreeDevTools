@@ -1,5 +1,5 @@
 ---
-title: "sstat Command - View Job Status | Free DevTools"
+title: "sstat Command - View Job Status | Online Free DevTools by Hexmos"
 name: sstat
 path: /freedevtools/tldr/linux/sstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sstat/"

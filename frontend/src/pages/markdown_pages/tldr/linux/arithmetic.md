@@ -1,5 +1,5 @@
 ---
-title: "Arithmetic Quiz - Generate Math Problems | Free DevTools"
+title: "Arithmetic Quiz - Generate Math Problems | Online Free DevTools by Hexmos"
 name: arithmetic
 path: /freedevtools/tldr/linux/arithmetic
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arithmetic/"

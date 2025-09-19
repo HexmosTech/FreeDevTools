@@ -1,5 +1,5 @@
 ---
-title: "Control Elasticsearch Node - Manage Operations | Free DevTools"
+title: "Control Elasticsearch Node - Manage Operations | Online Free DevTools by Hexmos"
 name: elasticsearch-node
 path: /freedevtools/tldr/elasticsearch/elasticsearch-node
 canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-node/"

@@ -1,5 +1,5 @@
 ---
-title: "Paste Command - Combine Text Files | Free DevTools"
+title: "Paste Command - Combine Text Files | Online Free DevTools by Hexmos"
 name: gpaste
 path: /freedevtools/tldr/osx/gpaste
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gpaste/"

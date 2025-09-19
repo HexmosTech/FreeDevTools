@@ -1,5 +1,5 @@
 ---
-title: "Format PHP Code - Pint Code Style Fixer | Free DevTools"
+title: "Format PHP Code - Pint Code Style Fixer | Online Free DevTools by Hexmos"
 name: pint
 path: /freedevtools/tldr/common/pint
 canonical: "https://hexmos.com/freedevtools/tldr/common/pint/"

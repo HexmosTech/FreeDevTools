@@ -1,5 +1,5 @@
 ---
-title: "Manage Device Filesystem - Control /dev | Free DevTools"
+title: "Manage Device Filesystem - Control /dev | Online Free DevTools by Hexmos"
 name: devfsadm
 path: /freedevtools/tldr/sunos/devfsadm
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/devfsadm/"

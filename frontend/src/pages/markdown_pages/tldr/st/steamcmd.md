@@ -1,5 +1,5 @@
 ---
-title: "SteamCMD - Control Steam Applications | Free DevTools"
+title: "SteamCMD - Control Steam Applications | Online Free DevTools by Hexmos"
 name: steamcmd
 path: /freedevtools/tldr/st/steamcmd
 canonical: "https://hexmos.com/freedevtools/tldr/st/steamcmd/"

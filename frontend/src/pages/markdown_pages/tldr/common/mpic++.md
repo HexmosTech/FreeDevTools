@@ -1,5 +1,5 @@
 ---
-title: "MPI C++ Compiler - Compile Parallel C++ Code | Free DevTools"
+title: "MPI C++ Compiler - Compile Parallel C++ Code | Online Free DevTools by Hexmos"
 name: mpic++
 path: /freedevtools/tldr/common/mpic++
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpic++/"

@@ -1,5 +1,5 @@
 ---
-title: "Docker Update - Control Container Configuration | Free DevTools"
+title: "Docker Update - Control Container Configuration | Online Free DevTools by Hexmos"
 name: docker-update
 path: /freedevtools/tldr/docker/docker-update
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-update/"

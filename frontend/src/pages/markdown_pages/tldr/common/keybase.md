@@ -1,5 +1,5 @@
 ---
-title: "Manage Keybase Identities - Control Key Directory | Free DevTools"
+title: "Manage Keybase Identities - Control Key Directory | Online Free DevTools by Hexmos"
 name: keybase
 path: /freedevtools/tldr/common/keybase
 canonical: "https://hexmos.com/freedevtools/tldr/common/keybase/"

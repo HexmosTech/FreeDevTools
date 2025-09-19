@@ -1,5 +1,5 @@
 ---
-title: "Control Git References - Git Symbolic-Ref | Free DevTools"
+title: "Control Git References - Git Symbolic-Ref | Online Free DevTools by Hexmos"
 name: git-symbolic-ref
 path: /freedevtools/tldr/git/git-symbolic-ref
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-symbolic-ref/"

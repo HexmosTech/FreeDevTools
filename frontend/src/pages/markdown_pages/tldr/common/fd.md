@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Search Files Quickly with fd | Free DevTools"
+title: "Find Files - Search Files Quickly with fd | Online Free DevTools by Hexmos"
 name: fd
 path: /freedevtools/tldr/common/fd
 canonical: "https://hexmos.com/freedevtools/tldr/common/fd/"

@@ -1,5 +1,5 @@
 ---
-title: "Remote Shell - Execute Remote Commands | Free DevTools"
+title: "Remote Shell - Execute Remote Commands | Online Free DevTools by Hexmos"
 name: grsh
 path: /freedevtools/tldr/osx/grsh
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grsh/"

@@ -1,5 +1,5 @@
 ---
-title: "Control VirtualBox - Control VM State | Free DevTools"
+title: "Control VirtualBox - Control VM State | Online Free DevTools by Hexmos"
 name: vboxmanage-controlvm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-controlvm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/"

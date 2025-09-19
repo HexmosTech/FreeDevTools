@@ -1,5 +1,5 @@
 ---
-title: "Vulkan Info - Print System Information | Free DevTools"
+title: "Vulkan Info - Print System Information | Online Free DevTools by Hexmos"
 name: vulkaninfo
 path: /freedevtools/tldr/common/vulkaninfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/vulkaninfo/"

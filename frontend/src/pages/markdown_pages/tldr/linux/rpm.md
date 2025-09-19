@@ -1,5 +1,5 @@
 ---
-title: "RPM Package Manager - Manage Packages with rpm | Free DevTools"
+title: "RPM Package Manager - Manage Packages with rpm | Online Free DevTools by Hexmos"
 name: rpm
 path: /freedevtools/tldr/linux/rpm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm/"

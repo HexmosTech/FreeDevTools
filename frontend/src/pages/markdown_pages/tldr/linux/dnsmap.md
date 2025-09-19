@@ -1,5 +1,5 @@
 ---
-title: "DNSmap - Scan Subdomains | Free DevTools"
+title: "DNSmap - Scan Subdomains | Online Free DevTools by Hexmos"
 name: dnsmap
 path: /freedevtools/tldr/linux/dnsmap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsmap/"

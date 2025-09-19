@@ -1,5 +1,5 @@
 ---
-title: "PSSH Control - Parallel SSH Execution | Free DevTools"
+title: "PSSH Control - Parallel SSH Execution | Online Free DevTools by Hexmos"
 name: pssh
 path: /freedevtools/tldr/common/pssh
 canonical: "https://hexmos.com/freedevtools/tldr/common/pssh/"

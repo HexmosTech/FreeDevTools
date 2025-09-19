@@ -1,5 +1,5 @@
 ---
-title: "Log Messages - Control System Log with Logger | Free DevTools"
+title: "Log Messages - Control System Log with Logger | Online Free DevTools by Hexmos"
 name: logger
 path: /freedevtools/tldr/linux/logger
 canonical: "https://hexmos.com/freedevtools/tldr/linux/logger/"

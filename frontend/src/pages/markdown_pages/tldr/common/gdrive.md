@@ -1,5 +1,5 @@
 ---
-title: "GDrive Manager - Control Google Drive Files | Free DevTools"
+title: "GDrive Manager - Control Google Drive Files | Online Free DevTools by Hexmos"
 name: gdrive
 path: /freedevtools/tldr/common/gdrive
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdrive/"

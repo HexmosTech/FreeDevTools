@@ -1,5 +1,5 @@
 ---
-title: "Bunzip2 - Decompress BZIP2 Archives | Free DevTools"
+title: "Bunzip2 - Decompress BZIP2 Archives | Online Free DevTools by Hexmos"
 name: bunzip2
 path: /freedevtools/tldr/common/bunzip2
 canonical: "https://hexmos.com/freedevtools/tldr/common/bunzip2/"

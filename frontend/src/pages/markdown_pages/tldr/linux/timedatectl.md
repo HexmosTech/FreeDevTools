@@ -1,5 +1,5 @@
 ---
-title: "Timedatectl - Control System Time & Date | Free DevTools"
+title: "Timedatectl - Control System Time & Date | Online Free DevTools by Hexmos"
 name: timedatectl
 path: /freedevtools/tldr/linux/timedatectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/timedatectl/"

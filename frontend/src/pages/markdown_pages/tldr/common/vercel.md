@@ -1,5 +1,5 @@
 ---
-title: "Vercel Deploy - Manage Vercel Deployments | Free DevTools"
+title: "Vercel Deploy - Manage Vercel Deployments | Online Free DevTools by Hexmos"
 name: vercel
 path: /freedevtools/tldr/common/vercel
 canonical: "https://hexmos.com/freedevtools/tldr/common/vercel/"

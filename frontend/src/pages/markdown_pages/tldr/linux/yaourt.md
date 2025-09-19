@@ -1,5 +1,5 @@
 ---
-title: "Yaourt Package Manager - Manage Arch Linux Packages | Free DevTools"
+title: "Yaourt Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: yaourt
 path: /freedevtools/tldr/linux/yaourt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yaourt/"

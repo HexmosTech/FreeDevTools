@@ -1,5 +1,5 @@
 ---
-title: "PHP Code Style Fixer - Format PHP Code | Free DevTools"
+title: "PHP Code Style Fixer - Format PHP Code | Online Free DevTools by Hexmos"
 name: php-cs-fixer
 path: /freedevtools/tldr/php/php-cs-fixer
 canonical: "https://hexmos.com/freedevtools/tldr/php/php-cs-fixer/"

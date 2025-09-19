@@ -1,5 +1,5 @@
 ---
-title: "Gamma Correction - Adjust PNM Images | Free DevTools"
+title: "Gamma Correction - Adjust PNM Images | Online Free DevTools by Hexmos"
 name: pnmgamma
 path: /freedevtools/tldr/pnm/pnmgamma
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmgamma/"

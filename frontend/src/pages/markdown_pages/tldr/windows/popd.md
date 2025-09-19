@@ -1,5 +1,5 @@
 ---
-title: "Control Directory Stack - popd Command | Free DevTools"
+title: "Control Directory Stack - popd Command | Online Free DevTools by Hexmos"
 name: popd
 path: /freedevtools/tldr/windows/popd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/popd/"

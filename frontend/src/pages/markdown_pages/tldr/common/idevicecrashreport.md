@@ -1,5 +1,5 @@
 ---
-title: "Generate iOS Crash Reports - idevicecrashreport | Free DevTools"
+title: "Generate iOS Crash Reports - idevicecrashreport | Online Free DevTools by Hexmos"
 name: idevicecrashreport
 path: /freedevtools/tldr/common/idevicecrashreport
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicecrashreport/"

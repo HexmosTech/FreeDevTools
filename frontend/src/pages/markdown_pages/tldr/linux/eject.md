@@ -1,5 +1,5 @@
 ---
-title: "Eject Command - Control Device Ejection | Free DevTools"
+title: "Eject Command - Control Device Ejection | Online Free DevTools by Hexmos"
 name: eject
 path: /freedevtools/tldr/linux/eject
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eject/"

@@ -1,5 +1,5 @@
 ---
-title: "Wiggle - Patch Application Tool | Free DevTools"
+title: "Wiggle - Patch Application Tool | Online Free DevTools by Hexmos"
 name: wiggle
 path: /freedevtools/tldr/common/wiggle
 canonical: "https://hexmos.com/freedevtools/tldr/common/wiggle/"

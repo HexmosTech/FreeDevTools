@@ -1,5 +1,5 @@
 ---
-title: "Commit Changes - Track File Changes with gitwatch | Free DevTools"
+title: "Commit Changes - Track File Changes with gitwatch | Online Free DevTools by Hexmos"
 name: gitwatch
 path: /freedevtools/tldr/git/gitwatch
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitwatch/"

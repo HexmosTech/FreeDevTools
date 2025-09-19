@@ -1,5 +1,5 @@
 ---
-title: "Nix Build - Generate Packages Effortlessly | Free DevTools"
+title: "Nix Build - Generate Packages Effortlessly | Online Free DevTools by Hexmos"
 name: nix-build.3
 path: /freedevtools/tldr/nix/nix-build.3
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-build.3/"

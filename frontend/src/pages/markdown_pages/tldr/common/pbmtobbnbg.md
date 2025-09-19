@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to BitGraph - Image Conversion | Free DevTools"
+title: "Convert PBM to BitGraph - Image Conversion | Online Free DevTools by Hexmos"
 name: pbmtobbnbg
 path: /freedevtools/tldr/common/pbmtobbnbg
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtobbnbg/"

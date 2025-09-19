@@ -1,5 +1,5 @@
 ---
-title: "GetNPUsers - Enumerate Kerberos Users | Free DevTools"
+title: "GetNPUsers - Enumerate Kerberos Users | Online Free DevTools by Hexmos"
 name: impacket-getnpusers
 path: /freedevtools/tldr/impacket/impacket-getnpusers
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getnpusers/"

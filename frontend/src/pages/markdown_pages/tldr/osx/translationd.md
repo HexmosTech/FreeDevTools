@@ -1,5 +1,5 @@
 ---
-title: "Translation Daemon - Enable Translations | Free DevTools"
+title: "Translation Daemon - Enable Translations | Online Free DevTools by Hexmos"
 name: translationd
 path: /freedevtools/tldr/osx/translationd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/translationd/"

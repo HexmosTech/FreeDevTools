@@ -1,5 +1,5 @@
 ---
-title: "Rebase Image - Modify Container Images | Free DevTools"
+title: "Rebase Image - Modify Container Images | Online Free DevTools by Hexmos"
 name: crane-rebase
 path: /freedevtools/tldr/crane/crane-rebase
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-rebase/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Plasma Packages - KPackageTool6 | Free DevTools"
+title: "Manage Plasma Packages - KPackageTool6 | Online Free DevTools by Hexmos"
 name: kpackagetool6
 path: /freedevtools/tldr/linux/kpackagetool6
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kpackagetool6/"

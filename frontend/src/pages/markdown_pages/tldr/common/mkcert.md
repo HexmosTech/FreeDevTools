@@ -1,5 +1,5 @@
 ---
-title: "Generate Certificates - mkcert | Free DevTools"
+title: "Generate Certificates - mkcert | Online Free DevTools by Hexmos"
 name: mkcert
 path: /freedevtools/tldr/common/mkcert
 canonical: "https://hexmos.com/freedevtools/tldr/common/mkcert/"

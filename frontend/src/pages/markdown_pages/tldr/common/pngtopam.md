@@ -1,5 +1,5 @@
 ---
-title: "Convert PNG to PAM - Create Netpbm Images | Free DevTools"
+title: "Convert PNG to PAM - Create Netpbm Images | Online Free DevTools by Hexmos"
 name: pngtopam
 path: /freedevtools/tldr/common/pngtopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/pngtopam/"

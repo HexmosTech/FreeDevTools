@@ -1,5 +1,5 @@
 ---
-title: "Run Architecture - Execute Commands on Specific CPU Arch | Free DevTools"
+title: "Run Architecture - Execute Commands on Specific CPU Arch | Online Free DevTools by Hexmos"
 name: arch
 path: /freedevtools/tldr/osx/arch
 canonical: "https://hexmos.com/freedevtools/tldr/osx/arch/"

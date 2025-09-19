@@ -1,5 +1,5 @@
 ---
-title: "Highlight Syntax - Format Code with Highlight | Free DevTools"
+title: "Highlight Syntax - Format Code with Highlight | Online Free DevTools by Hexmos"
 name: highlight
 path: /freedevtools/tldr/common/highlight
 canonical: "https://hexmos.com/freedevtools/tldr/common/highlight/"

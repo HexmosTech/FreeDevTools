@@ -1,5 +1,5 @@
 ---
-title: "Uudecode - Decode Uuencoded Files | Free DevTools"
+title: "Uudecode - Decode Uuencoded Files | Online Free DevTools by Hexmos"
 name: uudecode
 path: /freedevtools/tldr/common/uudecode
 canonical: "https://hexmos.com/freedevtools/tldr/common/uudecode/"

@@ -1,5 +1,5 @@
 ---
-title: "Command Alias - Execute Commands Easily | Free DevTools"
+title: "Command Alias - Execute Commands Easily | Online Free DevTools by Hexmos"
 name: comma
 path: /freedevtools/tldr/common/comma
 canonical: "https://hexmos.com/freedevtools/tldr/common/comma/"

@@ -1,5 +1,5 @@
 ---
-title: "Control CUPS Daemon - Manage Print Server | Free DevTools"
+title: "Control CUPS Daemon - Manage Print Server | Online Free DevTools by Hexmos"
 name: cupsd
 path: /freedevtools/tldr/common/cupsd
 canonical: "https://hexmos.com/freedevtools/tldr/common/cupsd/"

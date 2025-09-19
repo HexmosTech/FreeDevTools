@@ -1,5 +1,5 @@
 ---
-title: "PVScan - List Physical Volumes | Free DevTools"
+title: "PVScan - List Physical Volumes | Online Free DevTools by Hexmos"
 name: pvscan
 path: /freedevtools/tldr/linux/pvscan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pvscan/"

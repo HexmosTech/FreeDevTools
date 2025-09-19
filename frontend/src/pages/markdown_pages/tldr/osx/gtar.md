@@ -1,5 +1,5 @@
 ---
-title: "Create Tar Archives - Compress Files with GTAR | Free DevTools"
+title: "Create Tar Archives - Compress Files with GTAR | Online Free DevTools by Hexmos"
 name: gtar
 path: /freedevtools/tldr/osx/gtar
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtar/"

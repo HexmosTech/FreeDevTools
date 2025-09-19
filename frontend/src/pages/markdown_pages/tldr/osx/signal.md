@@ -1,5 +1,5 @@
 ---
-title: "Control Software Signals - Simplified Signal Handling | Free DevTools"
+title: "Control Software Signals - Simplified Signal Handling | Online Free DevTools by Hexmos"
 name: signal
 path: /freedevtools/tldr/osx/signal
 canonical: "https://hexmos.com/freedevtools/tldr/osx/signal/"

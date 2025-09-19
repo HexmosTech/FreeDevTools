@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to TGA - Format Images | Free DevTools"
+title: "Convert PPM to TGA - Format Images | Online Free DevTools by Hexmos"
 name: ppmtotga
 path: /freedevtools/tldr/ppm/ppmtotga
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtotga/"

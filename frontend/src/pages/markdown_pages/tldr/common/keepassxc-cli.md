@@ -1,5 +1,5 @@
 ---
-title: "KeePassXC Password Manager - Control Secrets | Free DevTools"
+title: "KeePassXC Password Manager - Control Secrets | Online Free DevTools by Hexmos"
 name: keepassxc-cli
 path: /freedevtools/tldr/common/keepassxc-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/keepassxc-cli/"

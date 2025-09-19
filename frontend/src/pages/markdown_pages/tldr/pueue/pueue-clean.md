@@ -1,5 +1,5 @@
 ---
-title: "Pueue Clean - Remove Tasks and Logs | Free DevTools"
+title: "Pueue Clean - Remove Tasks and Logs | Online Free DevTools by Hexmos"
 name: pueue-clean
 path: /freedevtools/tldr/pueue/pueue-clean
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-clean/"

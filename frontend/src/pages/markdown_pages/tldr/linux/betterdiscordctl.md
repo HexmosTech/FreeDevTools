@@ -1,5 +1,5 @@
 ---
-title: "BetterDiscord Control - Manage BetterDiscord on Linux | Free DevTools"
+title: "BetterDiscord Control - Manage BetterDiscord on Linux | Online Free DevTools by Hexmos"
 name: betterdiscordctl
 path: /freedevtools/tldr/linux/betterdiscordctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/betterdiscordctl/"

@@ -1,5 +1,5 @@
 ---
-title: "Firejail Sandbox - Securely Control Processes | Free DevTools"
+title: "Firejail Sandbox - Securely Control Processes | Online Free DevTools by Hexmos"
 name: firejail
 path: /freedevtools/tldr/linux/firejail
 canonical: "https://hexmos.com/freedevtools/tldr/linux/firejail/"

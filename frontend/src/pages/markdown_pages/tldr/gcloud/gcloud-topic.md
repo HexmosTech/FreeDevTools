@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Topic - Display Google Cloud Topics | Free DevTools"
+title: "Gcloud Topic - Display Google Cloud Topics | Online Free DevTools by Hexmos"
 name: gcloud-topic
 path: /freedevtools/tldr/gcloud/gcloud-topic
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-topic/"

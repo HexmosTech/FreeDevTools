@@ -1,5 +1,5 @@
 ---
-title: "Control iOS Screenshot - Capture Device Images | Free DevTools"
+title: "Control iOS Screenshot - Capture Device Images | Online Free DevTools by Hexmos"
 name: idevicescreenshot
 path: /freedevtools/tldr/common/idevicescreenshot
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicescreenshot/"

@@ -1,5 +1,5 @@
 ---
-title: "IntelliJ IDEA - Open Projects & Diff Files | Free DevTools"
+title: "IntelliJ IDEA - Open Projects & Diff Files | Online Free DevTools by Hexmos"
 name: idea
 path: /freedevtools/tldr/common/idea
 canonical: "https://hexmos.com/freedevtools/tldr/common/idea/"

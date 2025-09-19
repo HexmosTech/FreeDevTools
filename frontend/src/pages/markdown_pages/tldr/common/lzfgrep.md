@@ -1,5 +1,5 @@
 ---
-title: "LZFGrep - Search Files with Fixed Strings | Free DevTools"
+title: "LZFGrep - Search Files with Fixed Strings | Online Free DevTools by Hexmos"
 name: lzfgrep
 path: /freedevtools/tldr/common/lzfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzfgrep/"

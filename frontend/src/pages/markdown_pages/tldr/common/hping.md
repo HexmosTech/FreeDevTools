@@ -1,5 +1,5 @@
 ---
-title: "HPing - Generate Custom Network Packets | Free DevTools"
+title: "HPing - Generate Custom Network Packets | Online Free DevTools by Hexmos"
 name: hping
 path: /freedevtools/tldr/common/hping
 canonical: "https://hexmos.com/freedevtools/tldr/common/hping/"

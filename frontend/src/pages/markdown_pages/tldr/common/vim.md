@@ -1,5 +1,5 @@
 ---
-title: "Vim Editor - Control Text Editing with Vim | Free DevTools"
+title: "Vim Editor - Control Text Editing with Vim | Online Free DevTools by Hexmos"
 name: vim
 path: /freedevtools/tldr/common/vim
 canonical: "https://hexmos.com/freedevtools/tldr/common/vim/"

@@ -1,5 +1,5 @@
 ---
-title: "Hostname - Show or Set Host Name | Free DevTools"
+title: "Hostname - Show or Set Host Name | Online Free DevTools by Hexmos"
 name: hostname
 path: /freedevtools/tldr/common/hostname
 canonical: "https://hexmos.com/freedevtools/tldr/common/hostname/"

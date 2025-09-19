@@ -1,5 +1,5 @@
 ---
-title: "ABRoot - Manage Linux Root Partitions | Free DevTools"
+title: "ABRoot - Manage Linux Root Partitions | Online Free DevTools by Hexmos"
 name: abroot
 path: /freedevtools/tldr/linux/abroot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/abroot/"

@@ -1,5 +1,5 @@
 ---
-title: "Delete VM Snapshot - Control Virtual Machine Snapshots | Free DevTools"
+title: "Delete VM Snapshot - Control Virtual Machine Snapshots | Online Free DevTools by Hexmos"
 name: qm-delsnapshot
 path: /freedevtools/tldr/linux/qm-delsnapshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-delsnapshot/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to PGM - Image Conversion | Free DevTools"
+title: "Convert PPM to PGM - Image Conversion | Online Free DevTools by Hexmos"
 name: ppmtopgm
 path: /freedevtools/tldr/ppm/ppmtopgm
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopgm/"

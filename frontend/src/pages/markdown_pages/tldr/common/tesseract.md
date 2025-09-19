@@ -1,5 +1,5 @@
 ---
-title: "Tesseract OCR - Extract Text from Images | Free DevTools"
+title: "Tesseract OCR - Extract Text from Images | Online Free DevTools by Hexmos"
 name: tesseract
 path: /freedevtools/tldr/common/tesseract
 canonical: "https://hexmos.com/freedevtools/tldr/common/tesseract/"

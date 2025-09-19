@@ -1,5 +1,5 @@
 ---
-title: "GitLab MR - Manage Merge Requests | Free DevTools"
+title: "GitLab MR - Manage Merge Requests | Online Free DevTools by Hexmos"
 name: glab-mr
 path: /freedevtools/tldr/glab/glab-mr
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr/"

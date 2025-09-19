@@ -1,5 +1,5 @@
 ---
-title: "Crystal Compiler - Manage Crystal Source Code | Free DevTools"
+title: "Crystal Compiler - Manage Crystal Source Code | Online Free DevTools by Hexmos"
 name: crystal
 path: /freedevtools/tldr/common/crystal
 canonical: "https://hexmos.com/freedevtools/tldr/common/crystal/"

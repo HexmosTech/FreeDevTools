@@ -1,5 +1,5 @@
 ---
-title: "JMeter Load Testing - Measure Performance | Free DevTools"
+title: "JMeter Load Testing - Measure Performance | Online Free DevTools by Hexmos"
 name: jmeter
 path: /freedevtools/tldr/common/jmeter
 canonical: "https://hexmos.com/freedevtools/tldr/common/jmeter/"

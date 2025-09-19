@@ -1,5 +1,5 @@
 ---
-title: "Locust Load Test - Measure System Performance | Free DevTools"
+title: "Locust Load Test - Measure System Performance | Online Free DevTools by Hexmos"
 name: locust
 path: /freedevtools/tldr/common/locust
 canonical: "https://hexmos.com/freedevtools/tldr/common/locust/"

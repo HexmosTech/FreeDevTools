@@ -1,5 +1,5 @@
 ---
-title: "Convert JPEG to ASCII - Generate Art | Free DevTools"
+title: "Convert JPEG to ASCII - Generate Art | Online Free DevTools by Hexmos"
 name: jp2a
 path: /freedevtools/tldr/common/jp2a
 canonical: "https://hexmos.com/freedevtools/tldr/common/jp2a/"

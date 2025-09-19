@@ -1,5 +1,5 @@
 ---
-title: "Nixos Rebuild - Control System Configuration | Free DevTools"
+title: "Nixos Rebuild - Control System Configuration | Online Free DevTools by Hexmos"
 name: nixos-rebuild
 path: /freedevtools/tldr/linux/nixos-rebuild
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-rebuild/"

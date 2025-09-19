@@ -1,5 +1,5 @@
 ---
-title: "Flash Rockchip Devices - Control Boot Firmware | Free DevTools"
+title: "Flash Rockchip Devices - Control Boot Firmware | Online Free DevTools by Hexmos"
 name: rkdeveloptool
 path: /freedevtools/tldr/common/rkdeveloptool
 canonical: "https://hexmos.com/freedevtools/tldr/common/rkdeveloptool/"

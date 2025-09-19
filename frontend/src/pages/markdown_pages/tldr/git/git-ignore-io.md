@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Ignore - Create .gitignore Files | Free DevTools"
+title: "Generate Git Ignore - Create .gitignore Files | Online Free DevTools by Hexmos"
 name: git-ignore-io
 path: /freedevtools/tldr/git/git-ignore-io
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-ignore-io/"

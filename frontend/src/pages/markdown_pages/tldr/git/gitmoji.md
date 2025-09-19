@@ -1,5 +1,5 @@
 ---
-title: "Generate Gitmojis - Enhance Commits | Free DevTools"
+title: "Generate Gitmojis - Enhance Commits | Online Free DevTools by Hexmos"
 name: gitmoji
 path: /freedevtools/tldr/git/gitmoji
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitmoji/"

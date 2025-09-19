@@ -1,5 +1,5 @@
 ---
-title: "Calculate SHA1 Checksum - Verify File Integrity | Free DevTools"
+title: "Calculate SHA1 Checksum - Verify File Integrity | Online Free DevTools by Hexmos"
 name: sha1sum
 path: /freedevtools/tldr/common/sha1sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/sha1sum/"

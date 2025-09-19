@@ -1,5 +1,5 @@
 ---
-title: "Busctl - Introspect D-Bus Bus | Free DevTools"
+title: "Busctl - Introspect D-Bus Bus | Online Free DevTools by Hexmos"
 name: busctl
 path: /freedevtools/tldr/linux/busctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/busctl/"

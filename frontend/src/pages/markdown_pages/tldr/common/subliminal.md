@@ -1,5 +1,5 @@
 ---
-title: "Subtitles Downloader - Find Subtitles with Subliminal | Free DevTools"
+title: "Subtitles Downloader - Find Subtitles with Subliminal | Online Free DevTools by Hexmos"
 name: subliminal
 path: /freedevtools/tldr/common/subliminal
 canonical: "https://hexmos.com/freedevtools/tldr/common/subliminal/"

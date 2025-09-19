@@ -1,5 +1,5 @@
 ---
-title: "Create Screenshots - Flameshot GUI | Free DevTools"
+title: "Create Screenshots - Flameshot GUI | Online Free DevTools by Hexmos"
 name: flameshot
 path: /freedevtools/tldr/linux/flameshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flameshot/"

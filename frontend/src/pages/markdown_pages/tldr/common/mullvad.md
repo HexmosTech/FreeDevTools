@@ -1,5 +1,5 @@
 ---
-title: "Mullvad VPN - Control Privacy with CLI | Free DevTools"
+title: "Mullvad VPN - Control Privacy with CLI | Online Free DevTools by Hexmos"
 name: mullvad
 path: /freedevtools/tldr/common/mullvad
 canonical: "https://hexmos.com/freedevtools/tldr/common/mullvad/"

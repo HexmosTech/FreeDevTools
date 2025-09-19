@@ -1,5 +1,5 @@
 ---
-title: "Capture Network Packets with Snoop | Free DevTools"
+title: "Capture Network Packets with Snoop | Online Free DevTools by Hexmos"
 name: snoop
 path: /freedevtools/tldr/sunos/snoop
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/snoop/"

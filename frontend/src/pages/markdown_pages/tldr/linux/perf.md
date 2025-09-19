@@ -1,5 +1,5 @@
 ---
-title: "Perf - Analyze Linux Performance | Free DevTools"
+title: "Perf - Analyze Linux Performance | Online Free DevTools by Hexmos"
 name: perf
 path: /freedevtools/tldr/linux/perf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/perf/"

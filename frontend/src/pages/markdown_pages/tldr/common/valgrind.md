@@ -1,5 +1,5 @@
 ---
-title: "Valgrind Debugging - Analyze Memory Usage | Free DevTools"
+title: "Valgrind Debugging - Analyze Memory Usage | Online Free DevTools by Hexmos"
 name: valgrind
 path: /freedevtools/tldr/common/valgrind
 canonical: "https://hexmos.com/freedevtools/tldr/common/valgrind/"

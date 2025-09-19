@@ -1,5 +1,5 @@
 ---
-title: "Turbostat - Control Processor Stats | Free DevTools"
+title: "Turbostat - Control Processor Stats | Online Free DevTools by Hexmos"
 name: turbostat
 path: /freedevtools/tldr/linux/turbostat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/turbostat/"

@@ -1,5 +1,5 @@
 ---
-title: "Reset Terminal - Reinitialize Terminal Screen | Free DevTools"
+title: "Reset Terminal - Reinitialize Terminal Screen | Online Free DevTools by Hexmos"
 name: reset
 path: /freedevtools/tldr/linux/reset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/reset/"

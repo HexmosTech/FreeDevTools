@@ -1,5 +1,5 @@
 ---
-title: "Create Progress Bars - Tqdm Command | Free DevTools"
+title: "Create Progress Bars - Tqdm Command | Online Free DevTools by Hexmos"
 name: tqdm
 path: /freedevtools/tldr/common/tqdm
 canonical: "https://hexmos.com/freedevtools/tldr/common/tqdm/"

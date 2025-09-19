@@ -1,5 +1,5 @@
 ---
-title: "Secure File Transfer - Transfer Files Securely with SFTP | Free DevTools"
+title: "Secure File Transfer - Transfer Files Securely with SFTP | Online Free DevTools by Hexmos"
 name: sftp
 path: /freedevtools/tldr/common/sftp
 canonical: "https://hexmos.com/freedevtools/tldr/common/sftp/"

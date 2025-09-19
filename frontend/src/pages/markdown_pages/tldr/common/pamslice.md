@@ -1,5 +1,5 @@
 ---
-title: "PAM Slice - Extract Image Data | Free DevTools"
+title: "PAM Slice - Extract Image Data | Online Free DevTools by Hexmos"
 name: pamslice
 path: /freedevtools/tldr/common/pamslice
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamslice/"

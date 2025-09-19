@@ -1,5 +1,5 @@
 ---
-title: "Launchctl - Control Launch Daemons & Agents | Free DevTools"
+title: "Launchctl - Control Launch Daemons & Agents | Online Free DevTools by Hexmos"
 name: launchctl
 path: /freedevtools/tldr/osx/launchctl
 canonical: "https://hexmos.com/freedevtools/tldr/osx/launchctl/"

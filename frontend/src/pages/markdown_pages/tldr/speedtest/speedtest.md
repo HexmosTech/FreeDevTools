@@ -1,5 +1,5 @@
 ---
-title: "Speedtest - Test Internet Speed | Free DevTools"
+title: "Speedtest - Test Internet Speed | Online Free DevTools by Hexmos"
 name: speedtest
 path: /freedevtools/tldr/speedtest/speedtest
 canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest/"

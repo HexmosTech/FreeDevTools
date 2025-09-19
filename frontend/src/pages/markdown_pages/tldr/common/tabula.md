@@ -1,5 +1,5 @@
 ---
-title: "Extract Tables - Tabula PDF Extractor | Free DevTools"
+title: "Extract Tables - Tabula PDF Extractor | Online Free DevTools by Hexmos"
 name: tabula
 path: /freedevtools/tldr/common/tabula
 canonical: "https://hexmos.com/freedevtools/tldr/common/tabula/"

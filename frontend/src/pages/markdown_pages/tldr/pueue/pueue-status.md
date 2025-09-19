@@ -1,5 +1,5 @@
 ---
-title: "Pueue Status - Check Task Status | Free DevTools"
+title: "Pueue Status - Check Task Status | Online Free DevTools by Hexmos"
 name: pueue-status
 path: /freedevtools/tldr/pueue/pueue-status
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-status/"

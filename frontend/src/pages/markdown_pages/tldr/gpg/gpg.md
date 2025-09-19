@@ -1,5 +1,5 @@
 ---
-title: "GPG - Create Encryption Keys and Sign Files | Free DevTools"
+title: "GPG - Create Encryption Keys and Sign Files | Online Free DevTools by Hexmos"
 name: gpg
 path: /freedevtools/tldr/gpg/gpg
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg/"

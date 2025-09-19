@@ -1,5 +1,5 @@
 ---
-title: "Pixi Project - Modify Project Config | Free DevTools"
+title: "Pixi Project - Modify Project Config | Online Free DevTools by Hexmos"
 name: pixi-project
 path: /freedevtools/tldr/pixi/pixi-project
 canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-project/"

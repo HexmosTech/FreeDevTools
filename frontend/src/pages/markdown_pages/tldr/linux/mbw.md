@@ -1,5 +1,5 @@
 ---
-title: "Benchmark Memory Bandwidth - Measure System Performance | Free DevTools"
+title: "Benchmark Memory Bandwidth - Measure System Performance | Online Free DevTools by Hexmos"
 name: mbw
 path: /freedevtools/tldr/linux/mbw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mbw/"

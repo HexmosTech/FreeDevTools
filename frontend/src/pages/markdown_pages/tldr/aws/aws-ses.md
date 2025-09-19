@@ -1,5 +1,5 @@
 ---
-title: "AWS SES - Control Cloud Emails | Free DevTools"
+title: "AWS SES - Control Cloud Emails | Online Free DevTools by Hexmos"
 name: aws-ses
 path: /freedevtools/tldr/aws/aws-ses
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ses/"

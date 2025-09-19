@@ -1,5 +1,5 @@
 ---
-title: "GitHub Secret Set - Create Secrets | Free DevTools"
+title: "GitHub Secret Set - Create Secrets | Online Free DevTools by Hexmos"
 name: gh-secret-set
 path: /freedevtools/tldr/gh/gh-secret-set
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-secret-set/"

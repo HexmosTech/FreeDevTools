@@ -1,5 +1,5 @@
 ---
-title: "GDM Setup - Configure GNOME Display Manager | Free DevTools"
+title: "GDM Setup - Configure GNOME Display Manager | Online Free DevTools by Hexmos"
 name: gdmsetup
 path: /freedevtools/tldr/gdm/gdmsetup
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdmsetup/"

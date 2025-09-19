@@ -1,5 +1,5 @@
 ---
-title: "Convert JPEG to PNM - Format Images | Free DevTools"
+title: "Convert JPEG to PNM - Format Images | Online Free DevTools by Hexmos"
 name: jpegtopnm
 path: /freedevtools/tldr/common/jpegtopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/jpegtopnm/"

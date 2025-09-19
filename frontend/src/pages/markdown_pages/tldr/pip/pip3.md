@@ -1,5 +1,5 @@
 ---
-title: "Install Python Packages - Manage with pip3 | Free DevTools"
+title: "Install Python Packages - Manage with pip3 | Online Free DevTools by Hexmos"
 name: pip3
 path: /freedevtools/tldr/pip/pip3
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pip3/"

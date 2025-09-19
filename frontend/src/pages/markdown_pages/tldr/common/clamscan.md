@@ -1,5 +1,5 @@
 ---
-title: "Scan Viruses - Find and Remove Malware with Clamscan | Free DevTools"
+title: "Scan Viruses - Find and Remove Malware with Clamscan | Online Free DevTools by Hexmos"
 name: clamscan
 path: /freedevtools/tldr/common/clamscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/clamscan/"

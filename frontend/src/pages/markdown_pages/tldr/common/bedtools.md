@@ -1,5 +1,5 @@
 ---
-title: "Bedtools Analysis - Intersect Genomic Data | Free DevTools"
+title: "Bedtools Analysis - Intersect Genomic Data | Online Free DevTools by Hexmos"
 name: bedtools
 path: /freedevtools/tldr/common/bedtools
 canonical: "https://hexmos.com/freedevtools/tldr/common/bedtools/"

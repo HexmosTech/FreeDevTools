@@ -1,5 +1,5 @@
 ---
-title: "Compress PNG Images - Optimize Images | Free DevTools"
+title: "Compress PNG Images - Optimize Images | Online Free DevTools by Hexmos"
 name: pngquant
 path: /freedevtools/tldr/common/pngquant
 canonical: "https://hexmos.com/freedevtools/tldr/common/pngquant/"

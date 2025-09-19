@@ -1,5 +1,5 @@
 ---
-title: "Control Cron Jobs - Prevent Email Overload | Free DevTools"
+title: "Control Cron Jobs - Prevent Email Overload | Online Free DevTools by Hexmos"
 name: cronic
 path: /freedevtools/tldr/common/cronic
 canonical: "https://hexmos.com/freedevtools/tldr/common/cronic/"

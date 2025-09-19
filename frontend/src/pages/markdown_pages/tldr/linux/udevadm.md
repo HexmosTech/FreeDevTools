@@ -1,5 +1,5 @@
 ---
-title: "udevadm - Manage Linux Devices | Free DevTools"
+title: "udevadm - Manage Linux Devices | Online Free DevTools by Hexmos"
 name: udevadm
 path: /freedevtools/tldr/linux/udevadm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/udevadm/"

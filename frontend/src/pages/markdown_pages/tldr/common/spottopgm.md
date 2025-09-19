@@ -1,5 +1,5 @@
 ---
-title: "Convert SPOT to PGM - Image Conversion | Free DevTools"
+title: "Convert SPOT to PGM - Image Conversion | Online Free DevTools by Hexmos"
 name: spottopgm
 path: /freedevtools/tldr/common/spottopgm
 canonical: "https://hexmos.com/freedevtools/tldr/common/spottopgm/"

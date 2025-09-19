@@ -1,5 +1,5 @@
 ---
-title: "Shred File - Securely Delete Data | Free DevTools"
+title: "Shred File - Securely Delete Data | Online Free DevTools by Hexmos"
 name: shred
 path: /freedevtools/tldr/common/shred
 canonical: "https://hexmos.com/freedevtools/tldr/common/shred/"

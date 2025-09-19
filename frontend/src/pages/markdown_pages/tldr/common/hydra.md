@@ -1,5 +1,5 @@
 ---
-title: "Crack Passwords - Brute-Force with Hydra | Free DevTools"
+title: "Crack Passwords - Brute-Force with Hydra | Online Free DevTools by Hexmos"
 name: hydra
 path: /freedevtools/tldr/common/hydra
 canonical: "https://hexmos.com/freedevtools/tldr/common/hydra/"

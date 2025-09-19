@@ -1,5 +1,5 @@
 ---
-title: "Bundle JavaScript - Build and Minify with esbuild | Free DevTools"
+title: "Bundle JavaScript - Build and Minify with esbuild | Online Free DevTools by Hexmos"
 name: esbuild
 path: /freedevtools/tldr/common/esbuild
 canonical: "https://hexmos.com/freedevtools/tldr/common/esbuild/"

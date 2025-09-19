@@ -1,5 +1,5 @@
 ---
-title: "WPAclean - Clean Capture Files | Free DevTools"
+title: "WPAclean - Clean Capture Files | Online Free DevTools by Hexmos"
 name: wpaclean
 path: /freedevtools/tldr/common/wpaclean
 canonical: "https://hexmos.com/freedevtools/tldr/common/wpaclean/"

@@ -1,5 +1,5 @@
 ---
-title: "Service Control - Manage Init Scripts | Free DevTools"
+title: "Service Control - Manage Init Scripts | Online Free DevTools by Hexmos"
 name: service
 path: /freedevtools/tldr/linux/service
 canonical: "https://hexmos.com/freedevtools/tldr/linux/service/"

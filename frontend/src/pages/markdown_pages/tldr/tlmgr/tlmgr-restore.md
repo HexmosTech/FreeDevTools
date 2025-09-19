@@ -1,5 +1,5 @@
 ---
-title: "TLMGR Restore - Manage TeX Live Backups | Free DevTools"
+title: "TLMGR Restore - Manage TeX Live Backups | Online Free DevTools by Hexmos"
 name: tlmgr-restore
 path: /freedevtools/tldr/tlmgr/tlmgr-restore
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-restore/"

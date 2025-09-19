@@ -1,5 +1,5 @@
 ---
-title: "Create Git Commit - Build Objects Easily | Free DevTools"
+title: "Create Git Commit - Build Objects Easily | Online Free DevTools by Hexmos"
 name: git-commit-tree
 path: /freedevtools/tldr/git/git-commit-tree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit-tree/"

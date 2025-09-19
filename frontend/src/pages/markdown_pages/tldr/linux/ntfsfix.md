@@ -1,5 +1,5 @@
 ---
-title: "NTFS Fix - Repair NTFS Partitions | Free DevTools"
+title: "NTFS Fix - Repair NTFS Partitions | Online Free DevTools by Hexmos"
 name: ntfsfix
 path: /freedevtools/tldr/linux/ntfsfix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ntfsfix/"

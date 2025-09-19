@@ -1,5 +1,5 @@
 ---
-title: "DynamoDB Control - Manage AWS NoSQL Database | Free DevTools"
+title: "DynamoDB Control - Manage AWS NoSQL Database | Online Free DevTools by Hexmos"
 name: aws-dynamodb
 path: /freedevtools/tldr/aws/aws-dynamodb
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-dynamodb/"

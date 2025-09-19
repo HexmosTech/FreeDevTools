@@ -1,5 +1,5 @@
 ---
-title: "GitHub Release - Manage Releases | Free DevTools"
+title: "GitHub Release - Manage Releases | Online Free DevTools by Hexmos"
 name: gh-release
 path: /freedevtools/tldr/gh/gh-release
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-release/"

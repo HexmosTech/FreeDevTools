@@ -1,5 +1,5 @@
 ---
-title: "Watch Files - Trigger Actions with Watchman | Free DevTools"
+title: "Watch Files - Trigger Actions with Watchman | Online Free DevTools by Hexmos"
 name: watchman
 path: /freedevtools/tldr/common/watchman
 canonical: "https://hexmos.com/freedevtools/tldr/common/watchman/"

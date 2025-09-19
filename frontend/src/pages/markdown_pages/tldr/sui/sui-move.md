@@ -1,5 +1,5 @@
 ---
-title: "Sui Move - Create and Build Move Projects | Free DevTools"
+title: "Sui Move - Create and Build Move Projects | Online Free DevTools by Hexmos"
 name: sui-move
 path: /freedevtools/tldr/sui/sui-move
 canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-move/"

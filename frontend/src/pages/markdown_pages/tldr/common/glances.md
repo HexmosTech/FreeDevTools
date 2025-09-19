@@ -1,5 +1,5 @@
 ---
-title: "Monitor System - Analyze System Performance with Glances | Free DevTools"
+title: "Monitor System - Analyze System Performance with Glances | Online Free DevTools by Hexmos"
 name: glances
 path: /freedevtools/tldr/common/glances
 canonical: "https://hexmos.com/freedevtools/tldr/common/glances/"

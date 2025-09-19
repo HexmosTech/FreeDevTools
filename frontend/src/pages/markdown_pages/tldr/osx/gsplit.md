@@ -1,5 +1,5 @@
 ---
-title: "Split Files - Create Smaller Chunks with gsplit | Free DevTools"
+title: "Split Files - Create Smaller Chunks with gsplit | Online Free DevTools by Hexmos"
 name: gsplit
 path: /freedevtools/tldr/osx/gsplit
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsplit/"

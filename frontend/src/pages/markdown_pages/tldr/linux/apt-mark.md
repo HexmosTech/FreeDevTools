@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Control Apt with apt-mark | Free DevTools"
+title: "Manage Packages - Control Apt with apt-mark | Online Free DevTools by Hexmos"
 name: apt-mark
 path: /freedevtools/tldr/linux/apt-mark
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-mark/"

@@ -1,5 +1,5 @@
 ---
-title: "Lvextend - Increase Logical Volume Size | Free DevTools"
+title: "Lvextend - Increase Logical Volume Size | Online Free DevTools by Hexmos"
 name: lvextend
 path: /freedevtools/tldr/linux/lvextend
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvextend/"

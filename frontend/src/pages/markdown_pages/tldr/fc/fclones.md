@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - fclones | Free DevTools"
+title: "Find Duplicate Files - fclones | Online Free DevTools by Hexmos"
 name: fclones
 path: /freedevtools/tldr/fc/fclones
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fclones/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to SPU - Create Atari Images | Free DevTools"
+title: "Convert PPM to SPU - Create Atari Images | Online Free DevTools by Hexmos"
 name: ppmtospu
 path: /freedevtools/tldr/ppm/ppmtospu
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtospu/"

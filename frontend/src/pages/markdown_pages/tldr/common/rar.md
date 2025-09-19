@@ -1,5 +1,5 @@
 ---
-title: "RAR Archiver - Create and Manage Archives | Free DevTools"
+title: "RAR Archiver - Create and Manage Archives | Online Free DevTools by Hexmos"
 name: rar
 path: /freedevtools/tldr/common/rar
 canonical: "https://hexmos.com/freedevtools/tldr/common/rar/"

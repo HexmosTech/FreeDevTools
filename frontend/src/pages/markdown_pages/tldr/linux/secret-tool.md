@@ -1,5 +1,5 @@
 ---
-title: "Secret Tool - Manage Passwords Securely | Free DevTools"
+title: "Secret Tool - Manage Passwords Securely | Online Free DevTools by Hexmos"
 name: secret-tool
 path: /freedevtools/tldr/linux/secret-tool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/secret-tool/"

@@ -1,5 +1,5 @@
 ---
-title: "Uninstall Homebrew - Remove Packages Easily | Free DevTools"
+title: "Uninstall Homebrew - Remove Packages Easily | Online Free DevTools by Hexmos"
 name: brew-uninstall
 path: /freedevtools/tldr/brew/brew-uninstall
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-uninstall/"

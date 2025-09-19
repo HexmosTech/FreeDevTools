@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to PCLXL - Generate Printer Streams | Free DevTools"
+title: "Convert PNM to PCLXL - Generate Printer Streams | Online Free DevTools by Hexmos"
 name: pnmtopclxl
 path: /freedevtools/tldr/pnm/pnmtopclxl
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopclxl/"

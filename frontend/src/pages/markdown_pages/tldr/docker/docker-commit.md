@@ -1,5 +1,5 @@
 ---
-title: "Create Docker Image - Commit Container Changes | Free DevTools"
+title: "Create Docker Image - Commit Container Changes | Online Free DevTools by Hexmos"
 name: docker-commit
 path: /freedevtools/tldr/docker/docker-commit
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-commit/"

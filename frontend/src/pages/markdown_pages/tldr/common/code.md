@@ -1,5 +1,5 @@
 ---
-title: "Code Editor - Edit Code Files Cross-Platform | Free DevTools"
+title: "Code Editor - Edit Code Files Cross-Platform | Online Free DevTools by Hexmos"
 name: code
 path: /freedevtools/tldr/common/code
 canonical: "https://hexmos.com/freedevtools/tldr/common/code/"

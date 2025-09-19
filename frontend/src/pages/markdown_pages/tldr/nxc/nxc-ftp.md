@@ -1,5 +1,5 @@
 ---
-title: "FTP Exploitation - Pentest FTP Servers | Free DevTools"
+title: "FTP Exploitation - Pentest FTP Servers | Online Free DevTools by Hexmos"
 name: nxc-ftp
 path: /freedevtools/tldr/nxc/nxc-ftp
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ftp/"

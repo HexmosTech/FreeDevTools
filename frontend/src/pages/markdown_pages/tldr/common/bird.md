@@ -1,5 +1,5 @@
 ---
-title: "Control BIRD Routing - Manage Network Routes | Free DevTools"
+title: "Control BIRD Routing - Manage Network Routes | Online Free DevTools by Hexmos"
 name: bird
 path: /freedevtools/tldr/common/bird
 canonical: "https://hexmos.com/freedevtools/tldr/common/bird/"

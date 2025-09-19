@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Install - Install Packages | Free DevTools"
+title: "TeX Live Install - Install Packages | Online Free DevTools by Hexmos"
 name: tlmgr-install
 path: /freedevtools/tldr/tlmgr/tlmgr-install
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-install/"

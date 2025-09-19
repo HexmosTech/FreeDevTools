@@ -1,5 +1,5 @@
 ---
-title: "Control MQTT Topics - mosquitto_sub | Free DevTools"
+title: "Control MQTT Topics - mosquitto_sub | Online Free DevTools by Hexmos"
 name: mosquitto_sub
 path: /freedevtools/tldr/common/mosquitto_sub
 canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_sub/"

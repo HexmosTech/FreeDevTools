@@ -1,5 +1,5 @@
 ---
-title: "CDK - Create CloudFormation Stacks | Free DevTools"
+title: "CDK - Create CloudFormation Stacks | Online Free DevTools by Hexmos"
 name: cdk
 path: /freedevtools/tldr/common/cdk
 canonical: "https://hexmos.com/freedevtools/tldr/common/cdk/"

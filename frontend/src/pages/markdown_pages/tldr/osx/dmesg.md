@@ -1,5 +1,5 @@
 ---
-title: "Dmesg - Display Kernel Messages | Free DevTools"
+title: "Dmesg - Display Kernel Messages | Online Free DevTools by Hexmos"
 name: dmesg
 path: /freedevtools/tldr/osx/dmesg
 canonical: "https://hexmos.com/freedevtools/tldr/osx/dmesg/"

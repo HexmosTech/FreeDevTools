@@ -1,5 +1,5 @@
 ---
-title: "PVRemove - Remove LVM Labels | Free DevTools"
+title: "PVRemove - Remove LVM Labels | Online Free DevTools by Hexmos"
 name: pvremove
 path: /freedevtools/tldr/linux/pvremove
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pvremove/"

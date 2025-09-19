@@ -1,5 +1,5 @@
 ---
-title: "Pueue Send - Input To Task | Free DevTools"
+title: "Pueue Send - Input To Task | Online Free DevTools by Hexmos"
 name: pueue-send
 path: /freedevtools/tldr/pueue/pueue-send
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-send/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Text Expansion - Automate Text with Espanso | Free DevTools"
+title: "Control Text Expansion - Automate Text with Espanso | Online Free DevTools by Hexmos"
 name: espanso
 path: /freedevtools/tldr/common/espanso
 canonical: "https://hexmos.com/freedevtools/tldr/common/espanso/"

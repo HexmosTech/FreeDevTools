@@ -1,5 +1,5 @@
 ---
-title: "Git Flow - Manage Git Repositories | Free DevTools"
+title: "Git Flow - Manage Git Repositories | Online Free DevTools by Hexmos"
 name: git-flow
 path: /freedevtools/tldr/git/git-flow
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-flow/"

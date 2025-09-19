@@ -1,5 +1,5 @@
 ---
-title: "Silicon - Generate Code Images | Free DevTools"
+title: "Silicon - Generate Code Images | Online Free DevTools by Hexmos"
 name: silicon
 path: /freedevtools/tldr/common/silicon
 canonical: "https://hexmos.com/freedevtools/tldr/common/silicon/"

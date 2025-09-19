@@ -1,5 +1,5 @@
 ---
-title: "Control Trayer - Lightweight Systray | Free DevTools"
+title: "Control Trayer - Lightweight Systray | Online Free DevTools by Hexmos"
 name: trayer
 path: /freedevtools/tldr/linux/trayer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trayer/"

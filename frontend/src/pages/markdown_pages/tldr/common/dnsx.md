@@ -1,5 +1,5 @@
 ---
-title: "DNS Lookup - Perform DNS Queries with dnsx | Free DevTools"
+title: "DNS Lookup - Perform DNS Queries with dnsx | Online Free DevTools by Hexmos"
 name: dnsx
 path: /freedevtools/tldr/common/dnsx
 canonical: "https://hexmos.com/freedevtools/tldr/common/dnsx/"

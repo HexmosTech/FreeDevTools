@@ -1,5 +1,5 @@
 ---
-title: "Scan WordPress for Vulnerabilities - WPScan | Free DevTools"
+title: "Scan WordPress for Vulnerabilities - WPScan | Online Free DevTools by Hexmos"
 name: wpscan
 path: /freedevtools/tldr/common/wpscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/wpscan/"

@@ -1,5 +1,5 @@
 ---
-title: "Topgrade - Update System Applications | Free DevTools"
+title: "Topgrade - Update System Applications | Online Free DevTools by Hexmos"
 name: topgrade
 path: /freedevtools/tldr/common/topgrade
 canonical: "https://hexmos.com/freedevtools/tldr/common/topgrade/"

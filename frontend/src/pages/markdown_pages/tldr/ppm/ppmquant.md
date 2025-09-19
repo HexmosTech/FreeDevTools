@@ -1,5 +1,5 @@
 ---
-title: "Quantize PPM Images - Reduce Colors | Free DevTools"
+title: "Quantize PPM Images - Reduce Colors | Online Free DevTools by Hexmos"
 name: ppmquant
 path: /freedevtools/tldr/ppm/ppmquant
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmquant/"

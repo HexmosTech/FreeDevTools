@@ -1,5 +1,5 @@
 ---
-title: "Generate Regex Strings - Exrex | Free DevTools"
+title: "Generate Regex Strings - Exrex | Online Free DevTools by Hexmos"
 name: exrex
 path: /freedevtools/tldr/common/exrex
 canonical: "https://hexmos.com/freedevtools/tldr/common/exrex/"

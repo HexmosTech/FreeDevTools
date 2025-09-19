@@ -1,5 +1,5 @@
 ---
-title: "Runtime Manager - Control Language Versions with Mise | Free DevTools"
+title: "Runtime Manager - Control Language Versions with Mise | Online Free DevTools by Hexmos"
 name: mise
 path: /freedevtools/tldr/common/mise
 canonical: "https://hexmos.com/freedevtools/tldr/common/mise/"

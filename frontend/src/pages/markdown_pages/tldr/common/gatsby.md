@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Sites - Gatsby Site Generator | Free DevTools"
+title: "Generate Static Sites - Gatsby Site Generator | Online Free DevTools by Hexmos"
 name: gatsby
 path: /freedevtools/tldr/common/gatsby
 canonical: "https://hexmos.com/freedevtools/tldr/common/gatsby/"

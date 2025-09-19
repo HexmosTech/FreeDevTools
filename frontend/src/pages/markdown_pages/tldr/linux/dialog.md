@@ -1,5 +1,5 @@
 ---
-title: "Display Dialog Boxes - Control Terminal Interactions | Free DevTools"
+title: "Display Dialog Boxes - Control Terminal Interactions | Online Free DevTools by Hexmos"
 name: dialog
 path: /freedevtools/tldr/linux/dialog
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dialog/"

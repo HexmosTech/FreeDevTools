@@ -1,5 +1,5 @@
 ---
-title: "Rebase Patch - Find and Apply Patches with Git | Free DevTools"
+title: "Rebase Patch - Find and Apply Patches with Git | Online Free DevTools by Hexmos"
 name: git-rebase-patch
 path: /freedevtools/tldr/git/git-rebase-patch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rebase-patch/"

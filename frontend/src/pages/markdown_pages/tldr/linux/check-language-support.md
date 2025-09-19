@@ -1,5 +1,5 @@
 ---
-title: "Check Language - List Missing Packages | Free DevTools"
+title: "Check Language - List Missing Packages | Online Free DevTools by Hexmos"
 name: check-language-support
 path: /freedevtools/tldr/linux/check-language-support
 canonical: "https://hexmos.com/freedevtools/tldr/linux/check-language-support/"

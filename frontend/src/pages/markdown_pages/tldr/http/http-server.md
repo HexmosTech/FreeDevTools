@@ -1,5 +1,5 @@
 ---
-title: "HTTP Server - Serve Static Files | Free DevTools"
+title: "HTTP Server - Serve Static Files | Online Free DevTools by Hexmos"
 name: http-server
 path: /freedevtools/tldr/http/http-server
 canonical: "https://hexmos.com/freedevtools/tldr/http/http-server/"

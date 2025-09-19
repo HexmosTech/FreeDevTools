@@ -1,5 +1,5 @@
 ---
-title: "Twurl - Control Twitter API from Command Line | Free DevTools"
+title: "Twurl - Control Twitter API from Command Line | Online Free DevTools by Hexmos"
 name: twurl
 path: /freedevtools/tldr/common/twurl
 canonical: "https://hexmos.com/freedevtools/tldr/common/twurl/"

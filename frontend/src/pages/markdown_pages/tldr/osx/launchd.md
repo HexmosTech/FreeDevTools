@@ -1,5 +1,5 @@
 ---
-title: "Control Launchd - Manage macOS Processes | Free DevTools"
+title: "Control Launchd - Manage macOS Processes | Online Free DevTools by Hexmos"
 name: launchd
 path: /freedevtools/tldr/osx/launchd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/launchd/"

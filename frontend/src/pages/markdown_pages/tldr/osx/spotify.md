@@ -1,5 +1,5 @@
 ---
-title: "Spotify Control - Manage Music Playback | Free DevTools"
+title: "Spotify Control - Manage Music Playback | Online Free DevTools by Hexmos"
 name: spotify
 path: /freedevtools/tldr/osx/spotify
 canonical: "https://hexmos.com/freedevtools/tldr/osx/spotify/"

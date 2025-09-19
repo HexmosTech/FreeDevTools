@@ -1,5 +1,5 @@
 ---
-title: "JJ Git - Manage Git Repositories with JJ | Free DevTools"
+title: "JJ Git - Manage Git Repositories with JJ | Online Free DevTools by Hexmos"
 name: jj-git
 path: /freedevtools/tldr/jj/jj-git
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git/"

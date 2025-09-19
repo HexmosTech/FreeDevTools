@@ -1,5 +1,5 @@
 ---
-title: "Control Pacman Files - Manage Arch Linux Packages | Free DevTools"
+title: "Control Pacman Files - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: pacman-files
 path: /freedevtools/tldr/linux/pacman-files
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-files/"

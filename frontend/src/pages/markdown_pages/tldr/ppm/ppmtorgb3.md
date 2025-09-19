@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to RGB - Separate Image Channels | Free DevTools"
+title: "Convert PPM to RGB - Separate Image Channels | Online Free DevTools by Hexmos"
 name: ppmtorgb3
 path: /freedevtools/tldr/ppm/ppmtorgb3
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtorgb3/"

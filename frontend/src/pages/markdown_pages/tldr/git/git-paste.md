@@ -1,5 +1,5 @@
 ---
-title: "Send Git Paste - Share Commits via Pastebin | Free DevTools"
+title: "Send Git Paste - Share Commits via Pastebin | Online Free DevTools by Hexmos"
 name: git-paste
 path: /freedevtools/tldr/git/git-paste
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-paste/"

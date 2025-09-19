@@ -1,5 +1,5 @@
 ---
-title: "Transfer Data with Curl - Command-Line Tool | Free DevTools"
+title: "Transfer Data with Curl - Command-Line Tool | Online Free DevTools by Hexmos"
 name: curl
 path: /freedevtools/tldr/common/curl
 canonical: "https://hexmos.com/freedevtools/tldr/common/curl/"

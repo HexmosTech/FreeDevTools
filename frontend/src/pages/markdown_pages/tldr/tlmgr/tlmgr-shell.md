@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Manager - Control TeX Live with tlmgr | Free DevTools"
+title: "TeX Live Manager - Control TeX Live with tlmgr | Online Free DevTools by Hexmos"
 name: tlmgr-shell
 path: /freedevtools/tldr/tlmgr/tlmgr-shell
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-shell/"

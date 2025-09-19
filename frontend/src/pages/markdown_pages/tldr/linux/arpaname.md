@@ -1,5 +1,5 @@
 ---
-title: "Generate ARPA Name - Translate IP Addresses | Free DevTools"
+title: "Generate ARPA Name - Translate IP Addresses | Online Free DevTools by Hexmos"
 name: arpaname
 path: /freedevtools/tldr/linux/arpaname
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arpaname/"

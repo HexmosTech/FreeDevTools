@@ -1,5 +1,5 @@
 ---
-title: "Xvfb-run - Run Commands in Virtual X Server | Free DevTools"
+title: "Xvfb-run - Run Commands in Virtual X Server | Online Free DevTools by Hexmos"
 name: xvfb-run
 path: /freedevtools/tldr/linux/xvfb-run
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xvfb-run/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Flux v1 - Manage Kubernetes Deployments | Free DevTools"
+title: "Control Flux v1 - Manage Kubernetes Deployments | Online Free DevTools by Hexmos"
 name: fluxctl
 path: /freedevtools/tldr/common/fluxctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/fluxctl/"

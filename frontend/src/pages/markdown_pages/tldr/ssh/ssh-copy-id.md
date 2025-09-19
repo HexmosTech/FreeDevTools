@@ -1,5 +1,5 @@
 ---
-title: "SSH Copy ID - Install Public Keys | Free DevTools"
+title: "SSH Copy ID - Install Public Keys | Online Free DevTools by Hexmos"
 name: ssh-copy-id
 path: /freedevtools/tldr/ssh/ssh-copy-id
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-copy-id/"

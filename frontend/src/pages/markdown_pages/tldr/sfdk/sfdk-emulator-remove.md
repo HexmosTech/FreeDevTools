@@ -1,5 +1,5 @@
 ---
-title: "SFDK Emulator - Remove AVD | Free DevTools"
+title: "SFDK Emulator - Remove AVD | Online Free DevTools by Hexmos"
 name: sfdk-emulator-remove
 path: /freedevtools/tldr/sfdk/sfdk-emulator-remove
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-remove/"

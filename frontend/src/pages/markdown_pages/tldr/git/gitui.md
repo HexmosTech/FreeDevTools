@@ -1,5 +1,5 @@
 ---
-title: "Control Git Repositories - Gitui Keyboard TUI | Free DevTools"
+title: "Control Git Repositories - Gitui Keyboard TUI | Online Free DevTools by Hexmos"
 name: gitui
 path: /freedevtools/tldr/git/gitui
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitui/"

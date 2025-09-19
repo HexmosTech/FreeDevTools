@@ -1,5 +1,5 @@
 ---
-title: "Create Vue Projects - Generate Vue CLI Apps | Free DevTools"
+title: "Create Vue Projects - Generate Vue CLI Apps | Online Free DevTools by Hexmos"
 name: vue
 path: /freedevtools/tldr/vue/vue
 canonical: "https://hexmos.com/freedevtools/tldr/vue/vue/"

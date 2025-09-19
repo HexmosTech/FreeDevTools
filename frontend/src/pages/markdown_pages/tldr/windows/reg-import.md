@@ -1,5 +1,5 @@
 ---
-title: "Reg Import - Import Registry Files | Free DevTools"
+title: "Reg Import - Import Registry Files | Online Free DevTools by Hexmos"
 name: reg-import
 path: /freedevtools/tldr/windows/reg-import
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-import/"

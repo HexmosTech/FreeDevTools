@@ -1,5 +1,5 @@
 ---
-title: "Create WinGet Manifests - komac | Free DevTools"
+title: "Create WinGet Manifests - komac | Online Free DevTools by Hexmos"
 name: komac
 path: /freedevtools/tldr/common/komac
 canonical: "https://hexmos.com/freedevtools/tldr/common/komac/"

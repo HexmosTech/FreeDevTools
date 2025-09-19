@@ -1,5 +1,5 @@
 ---
-title: "Create Resume - Generate JSON Resume Files | Free DevTools"
+title: "Create Resume - Generate JSON Resume Files | Online Free DevTools by Hexmos"
 name: resume
 path: /freedevtools/tldr/common/resume
 canonical: "https://hexmos.com/freedevtools/tldr/common/resume/"

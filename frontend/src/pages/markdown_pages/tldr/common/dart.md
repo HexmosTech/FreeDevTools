@@ -1,5 +1,5 @@
 ---
-title: "Dart Project Manager - Create & Run Dart Projects | Free DevTools"
+title: "Dart Project Manager - Create & Run Dart Projects | Online Free DevTools by Hexmos"
 name: dart
 path: /freedevtools/tldr/common/dart
 canonical: "https://hexmos.com/freedevtools/tldr/common/dart/"

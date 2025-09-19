@@ -1,5 +1,5 @@
 ---
-title: "SpeedCrunch - Scientific Calculator | Free DevTools"
+title: "SpeedCrunch - Scientific Calculator | Online Free DevTools by Hexmos"
 name: speedcrunch
 path: /freedevtools/tldr/common/speedcrunch
 canonical: "https://hexmos.com/freedevtools/tldr/common/speedcrunch/"

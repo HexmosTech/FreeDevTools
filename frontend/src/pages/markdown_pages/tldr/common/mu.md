@@ -1,5 +1,5 @@
 ---
-title: "Index Email - Search Maildir with mu | Free DevTools"
+title: "Index Email - Search Maildir with mu | Online Free DevTools by Hexmos"
 name: mu
 path: /freedevtools/tldr/common/mu
 canonical: "https://hexmos.com/freedevtools/tldr/common/mu/"

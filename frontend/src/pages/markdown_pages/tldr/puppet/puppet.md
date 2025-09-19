@@ -1,5 +1,5 @@
 ---
-title: "Control Puppet Configurations - Automate Server Management | Free DevTools"
+title: "Control Puppet Configurations - Automate Server Management | Online Free DevTools by Hexmos"
 name: puppet
 path: /freedevtools/tldr/puppet/puppet
 canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet/"

@@ -1,5 +1,5 @@
 ---
-title: "NetExec NXC - Enumerate Network Services | Free DevTools"
+title: "NetExec NXC - Enumerate Network Services | Online Free DevTools by Hexmos"
 name: nxc
 path: /freedevtools/tldr/nxc/nxc
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc/"

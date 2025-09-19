@@ -1,5 +1,5 @@
 ---
-title: "Get Location - Control PowerShell Location | Free DevTools"
+title: "Get Location - Control PowerShell Location | Online Free DevTools by Hexmos"
 name: gl
 path: /freedevtools/tldr/windows/gl
 canonical: "https://hexmos.com/freedevtools/tldr/windows/gl/"

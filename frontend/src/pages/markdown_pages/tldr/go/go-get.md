@@ -1,5 +1,5 @@
 ---
-title: "Go Get - Manage Go Packages and Dependencies | Free DevTools"
+title: "Go Get - Manage Go Packages and Dependencies | Online Free DevTools by Hexmos"
 name: go-get
 path: /freedevtools/tldr/go/go-get
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-get/"

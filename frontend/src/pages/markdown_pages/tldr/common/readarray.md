@@ -1,5 +1,5 @@
 ---
-title: "Read Array - Populate Arrays from Input | Free DevTools"
+title: "Read Array - Populate Arrays from Input | Online Free DevTools by Hexmos"
 name: readarray
 path: /freedevtools/tldr/common/readarray
 canonical: "https://hexmos.com/freedevtools/tldr/common/readarray/"

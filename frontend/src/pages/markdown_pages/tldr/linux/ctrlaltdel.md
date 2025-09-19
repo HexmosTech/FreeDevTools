@@ -1,5 +1,5 @@
 ---
-title: "Control CtrlAltDel - Manage System Reboot | Free DevTools"
+title: "Control CtrlAltDel - Manage System Reboot | Online Free DevTools by Hexmos"
 name: ctrlaltdel
 path: /freedevtools/tldr/linux/ctrlaltdel
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ctrlaltdel/"

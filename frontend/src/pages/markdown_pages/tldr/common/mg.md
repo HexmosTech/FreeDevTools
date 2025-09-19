@@ -1,5 +1,5 @@
 ---
-title: "Control Text Files - Edit Files with mg | Free DevTools"
+title: "Control Text Files - Edit Files with mg | Online Free DevTools by Hexmos"
 name: mg
 path: /freedevtools/tldr/common/mg
 canonical: "https://hexmos.com/freedevtools/tldr/common/mg/"

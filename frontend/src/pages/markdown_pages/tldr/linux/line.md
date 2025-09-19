@@ -1,5 +1,5 @@
 ---
-title: "Read Line Input - Command Line Input Reader | Free DevTools"
+title: "Read Line Input - Command Line Input Reader | Online Free DevTools by Hexmos"
 name: line
 path: /freedevtools/tldr/linux/line
 canonical: "https://hexmos.com/freedevtools/tldr/linux/line/"

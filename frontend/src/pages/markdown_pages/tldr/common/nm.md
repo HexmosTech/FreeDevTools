@@ -1,5 +1,5 @@
 ---
-title: "List Symbols - Inspect Object Files with nm | Free DevTools"
+title: "List Symbols - Inspect Object Files with nm | Online Free DevTools by Hexmos"
 name: nm
 path: /freedevtools/tldr/common/nm
 canonical: "https://hexmos.com/freedevtools/tldr/common/nm/"

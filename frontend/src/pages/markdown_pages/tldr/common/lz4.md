@@ -1,5 +1,5 @@
 ---
-title: "LZ4 Compressor - Compress and Decompress LZ4 Files | Free DevTools"
+title: "LZ4 Compressor - Compress and Decompress LZ4 Files | Online Free DevTools by Hexmos"
 name: lz4
 path: /freedevtools/tldr/common/lz4
 canonical: "https://hexmos.com/freedevtools/tldr/common/lz4/"

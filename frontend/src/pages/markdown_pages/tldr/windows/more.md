@@ -1,5 +1,5 @@
 ---
-title: "Display Paged Output - Control Text Output with More | Free DevTools"
+title: "Display Paged Output - Control Text Output with More | Online Free DevTools by Hexmos"
 name: more
 path: /freedevtools/tldr/windows/more
 canonical: "https://hexmos.com/freedevtools/tldr/windows/more/"

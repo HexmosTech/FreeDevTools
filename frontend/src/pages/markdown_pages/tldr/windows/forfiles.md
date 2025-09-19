@@ -1,5 +1,5 @@
 ---
-title: "Forfiles - Control Files with Windows Command | Free DevTools"
+title: "Forfiles - Control Files with Windows Command | Online Free DevTools by Hexmos"
 name: forfiles
 path: /freedevtools/tldr/windows/forfiles
 canonical: "https://hexmos.com/freedevtools/tldr/windows/forfiles/"

@@ -1,5 +1,5 @@
 ---
-title: "Android Emulator - Manage Virtual Devices | Free DevTools"
+title: "Android Emulator - Manage Virtual Devices | Online Free DevTools by Hexmos"
 name: emulator
 path: /freedevtools/tldr/common/emulator
 canonical: "https://hexmos.com/freedevtools/tldr/common/emulator/"

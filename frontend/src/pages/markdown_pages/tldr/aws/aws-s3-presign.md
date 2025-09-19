@@ -1,5 +1,5 @@
 ---
-title: "Generate S3 Pre-signed URL - AWS S3 Presign | Free DevTools"
+title: "Generate S3 Pre-signed URL - AWS S3 Presign | Online Free DevTools by Hexmos"
 name: aws-s3-presign
 path: /freedevtools/tldr/aws/aws-s3-presign
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-presign/"

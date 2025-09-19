@@ -1,5 +1,5 @@
 ---
-title: "Conky System Monitor - Control System Resources | Free DevTools"
+title: "Conky System Monitor - Control System Resources | Online Free DevTools by Hexmos"
 name: conky
 path: /freedevtools/tldr/linux/conky
 canonical: "https://hexmos.com/freedevtools/tldr/linux/conky/"

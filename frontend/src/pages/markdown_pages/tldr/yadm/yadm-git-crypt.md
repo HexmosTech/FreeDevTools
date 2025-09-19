@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Files - Control Git Crypt Encryption | Free DevTools"
+title: "Encrypt Files - Control Git Crypt Encryption | Online Free DevTools by Hexmos"
 name: yadm-git-crypt
 path: /freedevtools/tldr/yadm/yadm-git-crypt
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-git-crypt/"

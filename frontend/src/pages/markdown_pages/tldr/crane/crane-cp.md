@@ -1,5 +1,5 @@
 ---
-title: "Crane Cp - Copy Files | Free DevTools"
+title: "Crane Cp - Copy Files | Online Free DevTools by Hexmos"
 name: crane-cp
 path: /freedevtools/tldr/crane/crane-cp
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-cp/"

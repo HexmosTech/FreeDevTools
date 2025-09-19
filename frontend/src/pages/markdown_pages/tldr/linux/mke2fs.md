@@ -1,5 +1,5 @@
 ---
-title: "Create Linux Filesystem - Format Partitions | Free DevTools"
+title: "Create Linux Filesystem - Format Partitions | Online Free DevTools by Hexmos"
 name: mke2fs
 path: /freedevtools/tldr/linux/mke2fs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mke2fs/"

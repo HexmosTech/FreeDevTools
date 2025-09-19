@@ -1,5 +1,5 @@
 ---
-title: "Rails Console - Interact with Rails Applications | Free DevTools"
+title: "Rails Console - Interact with Rails Applications | Online Free DevTools by Hexmos"
 name: rails-console
 path: /freedevtools/tldr/rails/rails-console
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-console/"

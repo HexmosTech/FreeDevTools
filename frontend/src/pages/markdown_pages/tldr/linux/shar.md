@@ -1,5 +1,5 @@
 ---
-title: "Create Shell Archive - Package Files | Free DevTools"
+title: "Create Shell Archive - Package Files | Online Free DevTools by Hexmos"
 name: shar
 path: /freedevtools/tldr/linux/shar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/shar/"

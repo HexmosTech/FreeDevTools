@@ -1,5 +1,5 @@
 ---
-title: "Control Serial Port - minicom Communication | Free DevTools"
+title: "Control Serial Port - minicom Communication | Online Free DevTools by Hexmos"
 name: minicom
 path: /freedevtools/tldr/linux/minicom
 canonical: "https://hexmos.com/freedevtools/tldr/linux/minicom/"

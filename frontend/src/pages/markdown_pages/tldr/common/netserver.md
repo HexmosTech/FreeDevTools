@@ -1,5 +1,5 @@
 ---
-title: "Netperf Server - Control Network Throughput | Free DevTools"
+title: "Netperf Server - Control Network Throughput | Online Free DevTools by Hexmos"
 name: netserver
 path: /freedevtools/tldr/common/netserver
 canonical: "https://hexmos.com/freedevtools/tldr/common/netserver/"

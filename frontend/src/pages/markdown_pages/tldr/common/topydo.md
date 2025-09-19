@@ -1,5 +1,5 @@
 ---
-title: "Manage To-Do Lists - Control Tasks with topydo | Free DevTools"
+title: "Manage To-Do Lists - Control Tasks with topydo | Online Free DevTools by Hexmos"
 name: topydo
 path: /freedevtools/tldr/common/topydo
 canonical: "https://hexmos.com/freedevtools/tldr/common/topydo/"

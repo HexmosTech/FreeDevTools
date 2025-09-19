@@ -1,5 +1,5 @@
 ---
-title: "Reverse Text - Reverse Files on OSX | Free DevTools"
+title: "Reverse Text - Reverse Files on OSX | Online Free DevTools by Hexmos"
 name: gtac
 path: /freedevtools/tldr/osx/gtac
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtac/"

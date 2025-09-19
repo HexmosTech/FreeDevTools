@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to Sun Icon - Create ICO Image | Free DevTools"
+title: "Convert PBM to Sun Icon - Create ICO Image | Online Free DevTools by Hexmos"
 name: pbmtosunicon
 path: /freedevtools/tldr/common/pbmtosunicon
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtosunicon/"

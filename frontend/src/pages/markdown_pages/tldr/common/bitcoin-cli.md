@@ -1,5 +1,5 @@
 ---
-title: "Bitcoin CLI - Control Bitcoin Daemon via RPC | Free DevTools"
+title: "Bitcoin CLI - Control Bitcoin Daemon via RPC | Online Free DevTools by Hexmos"
 name: bitcoin-cli
 path: /freedevtools/tldr/common/bitcoin-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/bitcoin-cli/"

@@ -1,5 +1,5 @@
 ---
-title: "Lock Screen - Secure i3lock with Commands | Free DevTools"
+title: "Lock Screen - Secure i3lock with Commands | Online Free DevTools by Hexmos"
 name: i3lock
 path: /freedevtools/tldr/i3/i3lock
 canonical: "https://hexmos.com/freedevtools/tldr/i3/i3lock/"

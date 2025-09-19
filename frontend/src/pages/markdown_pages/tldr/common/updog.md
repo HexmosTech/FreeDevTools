@@ -1,5 +1,5 @@
 ---
-title: "Serve Files - Control HTTP Server with Updog | Free DevTools"
+title: "Serve Files - Control HTTP Server with Updog | Online Free DevTools by Hexmos"
 name: updog
 path: /freedevtools/tldr/common/updog
 canonical: "https://hexmos.com/freedevtools/tldr/common/updog/"

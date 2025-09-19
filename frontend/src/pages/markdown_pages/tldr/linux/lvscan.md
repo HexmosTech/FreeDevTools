@@ -1,5 +1,5 @@
 ---
-title: "List Logical Volumes - Scan LVM Disks | Free DevTools"
+title: "List Logical Volumes - Scan LVM Disks | Online Free DevTools by Hexmos"
 name: lvscan
 path: /freedevtools/tldr/linux/lvscan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvscan/"

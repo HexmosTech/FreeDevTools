@@ -1,5 +1,5 @@
 ---
-title: "Secure Copy - Transfer Files Securely with SCP | Free DevTools"
+title: "Secure Copy - Transfer Files Securely with SCP | Online Free DevTools by Hexmos"
 name: scp
 path: /freedevtools/tldr/common/scp
 canonical: "https://hexmos.com/freedevtools/tldr/common/scp/"

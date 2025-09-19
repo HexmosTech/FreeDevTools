@@ -1,5 +1,5 @@
 ---
-title: "Git Diff - Show File Changes | Free DevTools"
+title: "Git Diff - Show File Changes | Online Free DevTools by Hexmos"
 name: git-diff
 path: /freedevtools/tldr/git/git-diff
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff/"

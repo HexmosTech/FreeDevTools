@@ -1,5 +1,5 @@
 ---
-title: "Validate Python Code - Flake8 Code Linter | Free DevTools"
+title: "Validate Python Code - Flake8 Code Linter | Online Free DevTools by Hexmos"
 name: flake8
 path: /freedevtools/tldr/common/flake8
 canonical: "https://hexmos.com/freedevtools/tldr/common/flake8/"

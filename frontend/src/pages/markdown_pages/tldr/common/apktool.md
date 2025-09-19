@@ -1,5 +1,5 @@
 ---
-title: "Apktool - Reverse Engineer APK Files | Free DevTools"
+title: "Apktool - Reverse Engineer APK Files | Online Free DevTools by Hexmos"
 name: apktool
 path: /freedevtools/tldr/common/apktool
 canonical: "https://hexmos.com/freedevtools/tldr/common/apktool/"

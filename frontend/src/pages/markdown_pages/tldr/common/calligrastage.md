@@ -1,5 +1,5 @@
 ---
-title: "Create Presentations - CalligraStage Presentation Tool | Free DevTools"
+title: "Create Presentations - CalligraStage Presentation Tool | Online Free DevTools by Hexmos"
 name: calligrastage
 path: /freedevtools/tldr/common/calligrastage
 canonical: "https://hexmos.com/freedevtools/tldr/common/calligrastage/"

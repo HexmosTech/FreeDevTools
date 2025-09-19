@@ -1,5 +1,5 @@
 ---
-title: "Convert Logical Volumes - Manage LVM Storage | Free DevTools"
+title: "Convert Logical Volumes - Manage LVM Storage | Online Free DevTools by Hexmos"
 name: lvconvert
 path: /freedevtools/tldr/linux/lvconvert
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvconvert/"

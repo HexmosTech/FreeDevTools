@@ -1,5 +1,5 @@
 ---
-title: "SELinux Status - Control Security Policies | Free DevTools"
+title: "SELinux Status - Control Security Policies | Online Free DevTools by Hexmos"
 name: sestatus
 path: /freedevtools/tldr/linux/sestatus
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sestatus/"

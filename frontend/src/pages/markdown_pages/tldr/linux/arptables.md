@@ -1,5 +1,5 @@
 ---
-title: "Arptables - Control ARP Filtering Rules | Free DevTools"
+title: "Arptables - Control ARP Filtering Rules | Online Free DevTools by Hexmos"
 name: arptables
 path: /freedevtools/tldr/linux/arptables
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arptables/"

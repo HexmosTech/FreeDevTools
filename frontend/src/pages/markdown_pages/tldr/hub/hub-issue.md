@@ -1,5 +1,5 @@
 ---
-title: "Manage GitHub Issues - Control Issues with Hub | Free DevTools"
+title: "Manage GitHub Issues - Control Issues with Hub | Online Free DevTools by Hexmos"
 name: hub-issue
 path: /freedevtools/tldr/hub/hub-issue
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-issue/"

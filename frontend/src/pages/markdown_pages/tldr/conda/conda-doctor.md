@@ -1,5 +1,5 @@
 ---
-title: "Validate Conda Environment - Conda Doctor | Free DevTools"
+title: "Validate Conda Environment - Conda Doctor | Online Free DevTools by Hexmos"
 name: conda-doctor
 path: /freedevtools/tldr/conda/conda-doctor
 canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-doctor/"

@@ -1,5 +1,5 @@
 ---
-title: "Clear Git Directory - Soft Reset Working Tree | Free DevTools"
+title: "Clear Git Directory - Soft Reset Working Tree | Online Free DevTools by Hexmos"
 name: git-clear-soft
 path: /freedevtools/tldr/git/git-clear-soft
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-clear-soft/"

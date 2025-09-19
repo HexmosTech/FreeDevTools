@@ -1,5 +1,5 @@
 ---
-title: "Naabu Port Scanner - Fast Network Scanning | Free DevTools"
+title: "Naabu Port Scanner - Fast Network Scanning | Online Free DevTools by Hexmos"
 name: naabu
 path: /freedevtools/tldr/common/naabu
 canonical: "https://hexmos.com/freedevtools/tldr/common/naabu/"

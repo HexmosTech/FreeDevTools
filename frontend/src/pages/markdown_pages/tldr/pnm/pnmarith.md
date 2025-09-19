@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM Image - Format Netpbm Images | Free DevTools"
+title: "Convert PNM Image - Format Netpbm Images | Online Free DevTools by Hexmos"
 name: pnmarith
 path: /freedevtools/tldr/pnm/pnmarith
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmarith/"

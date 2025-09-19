@@ -1,5 +1,5 @@
 ---
-title: "Sleep Command - Control Process Timing | Free DevTools"
+title: "Sleep Command - Control Process Timing | Online Free DevTools by Hexmos"
 name: sleep
 path: /freedevtools/tldr/linux/sleep
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sleep/"

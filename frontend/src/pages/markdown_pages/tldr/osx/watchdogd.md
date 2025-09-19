@@ -1,5 +1,5 @@
 ---
-title: "Control Watchdog Daemon - System Health Monitoring | Free DevTools"
+title: "Control Watchdog Daemon - System Health Monitoring | Online Free DevTools by Hexmos"
 name: watchdogd
 path: /freedevtools/tldr/osx/watchdogd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/watchdogd/"

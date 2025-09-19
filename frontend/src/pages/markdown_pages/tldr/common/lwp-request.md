@@ -1,5 +1,5 @@
 ---
-title: "HTTP Request - Generate HTTP Requests with lwp-request | Free DevTools"
+title: "HTTP Request - Generate HTTP Requests with lwp-request | Online Free DevTools by Hexmos"
 name: lwp-request
 path: /freedevtools/tldr/common/lwp-request
 canonical: "https://hexmos.com/freedevtools/tldr/common/lwp-request/"

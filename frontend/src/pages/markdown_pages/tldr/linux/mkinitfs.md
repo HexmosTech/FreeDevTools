@@ -1,5 +1,5 @@
 ---
-title: "Generate initramfs - Create Linux Boot Image | Free DevTools"
+title: "Generate initramfs - Create Linux Boot Image | Online Free DevTools by Hexmos"
 name: mkinitfs
 path: /freedevtools/tldr/linux/mkinitfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkinitfs/"

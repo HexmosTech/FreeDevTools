@@ -1,5 +1,5 @@
 ---
-title: "Bleachbit - Clean System Files | Free DevTools"
+title: "Bleachbit - Clean System Files | Online Free DevTools by Hexmos"
 name: bleachbit
 path: /freedevtools/tldr/windows/bleachbit
 canonical: "https://hexmos.com/freedevtools/tldr/windows/bleachbit/"

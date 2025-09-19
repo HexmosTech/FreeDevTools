@@ -1,5 +1,5 @@
 ---
-title: "Pirut - Manage Yum Packages on Linux | Free DevTools"
+title: "Pirut - Manage Yum Packages on Linux | Online Free DevTools by Hexmos"
 name: pirut
 path: /freedevtools/tldr/linux/pirut
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pirut/"

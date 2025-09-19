@@ -1,5 +1,5 @@
 ---
-title: "Lumen Installer - Create Micro-framework Projects | Free DevTools"
+title: "Lumen Installer - Create Micro-framework Projects | Online Free DevTools by Hexmos"
 name: lumen
 path: /freedevtools/tldr/common/lumen
 canonical: "https://hexmos.com/freedevtools/tldr/common/lumen/"

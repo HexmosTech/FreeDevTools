@@ -1,5 +1,5 @@
 ---
-title: "Create Parity Archive - File Verification with par2 | Free DevTools"
+title: "Create Parity Archive - File Verification with par2 | Online Free DevTools by Hexmos"
 name: par2
 path: "/freedevtools/tldr/common/par2"
 canonical: "https://hexmos.com/freedevtools/tldr/common/par2/"

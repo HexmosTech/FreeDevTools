@@ -1,5 +1,5 @@
 ---
-title: "LFTP File Transfer - Manage Remote Files | Free DevTools"
+title: "LFTP File Transfer - Manage Remote Files | Online Free DevTools by Hexmos"
 name: lftp
 path: /freedevtools/tldr/linux/lftp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lftp/"

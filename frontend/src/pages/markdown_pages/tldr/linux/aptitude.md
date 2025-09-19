@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages with Aptitude - Debian/Ubuntu Package Manager | Free DevTools"
+title: "Manage Packages with Aptitude - Debian/Ubuntu Package Manager | Online Free DevTools by Hexmos"
 name: aptitude
 path: /freedevtools/tldr/linux/aptitude
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aptitude/"

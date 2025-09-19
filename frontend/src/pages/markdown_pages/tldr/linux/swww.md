@@ -1,5 +1,5 @@
 ---
-title: "Control Wallpapers - SWWW Wayland Daemon | Free DevTools"
+title: "Control Wallpapers - SWWW Wayland Daemon | Online Free DevTools by Hexmos"
 name: swww
 path: /freedevtools/tldr/linux/swww
 canonical: "https://hexmos.com/freedevtools/tldr/linux/swww/"

@@ -1,5 +1,5 @@
 ---
-title: "Record Terminal - Log Sessions with Script | Free DevTools"
+title: "Record Terminal - Log Sessions with Script | Online Free DevTools by Hexmos"
 name: script
 path: /freedevtools/tldr/linux/script
 canonical: "https://hexmos.com/freedevtools/tldr/linux/script/"

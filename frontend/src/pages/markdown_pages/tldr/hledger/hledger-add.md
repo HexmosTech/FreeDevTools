@@ -1,5 +1,5 @@
 ---
-title: "Record hledger Transactions - Add Transactions Interactively | Free DevTools"
+title: "Record hledger Transactions - Add Transactions Interactively | Online Free DevTools by Hexmos"
 name: hledger-add
 path: /freedevtools/tldr/hledger/hledger-add
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-add/"

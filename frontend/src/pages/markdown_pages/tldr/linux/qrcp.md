@@ -1,5 +1,5 @@
 ---
-title: "Transfer Files via QR - qrcp | Free DevTools"
+title: "Transfer Files via QR - qrcp | Online Free DevTools by Hexmos"
 name: qrcp
 path: /freedevtools/tldr/linux/qrcp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qrcp/"

@@ -1,5 +1,5 @@
 ---
-title: "Inspect NixOS Configuration - List Options | Free DevTools"
+title: "Inspect NixOS Configuration - List Options | Online Free DevTools by Hexmos"
 name: nixos-option
 path: /freedevtools/tldr/linux/nixos-option
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-option/"

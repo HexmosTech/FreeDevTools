@@ -1,5 +1,5 @@
 ---
-title: "mdadm RAID Management - Create and Control RAID Arrays | Free DevTools"
+title: "mdadm RAID Management - Create and Control RAID Arrays | Online Free DevTools by Hexmos"
 name: mdadm
 path: /freedevtools/tldr/linux/mdadm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mdadm/"

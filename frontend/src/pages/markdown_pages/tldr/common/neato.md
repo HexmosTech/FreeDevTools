@@ -1,5 +1,5 @@
 ---
-title: "Neato Graph Generator - Render Graphviz Files | Free DevTools"
+title: "Neato Graph Generator - Render Graphviz Files | Online Free DevTools by Hexmos"
 name: neato
 path: /freedevtools/tldr/common/neato
 canonical: "https://hexmos.com/freedevtools/tldr/common/neato/"

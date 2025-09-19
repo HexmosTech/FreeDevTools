@@ -1,5 +1,5 @@
 ---
-title: "Manage Articles - zm Newspaper and Blog Tool | Free DevTools"
+title: "Manage Articles - zm Newspaper and Blog Tool | Online Free DevTools by Hexmos"
 name: zm
 path: /freedevtools/tldr/common/zm
 canonical: "https://hexmos.com/freedevtools/tldr/common/zm/"

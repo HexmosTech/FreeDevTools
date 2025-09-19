@@ -1,5 +1,5 @@
 ---
-title: "Nfcd - Control NFC Controller | Free DevTools"
+title: "Nfcd - Control NFC Controller | Online Free DevTools by Hexmos"
 name: nfcd
 path: /freedevtools/tldr/osx/nfcd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/nfcd/"

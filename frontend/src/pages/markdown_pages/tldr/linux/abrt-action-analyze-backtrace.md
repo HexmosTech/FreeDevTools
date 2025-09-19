@@ -1,5 +1,5 @@
 ---
-title: "Analyze Backtrace - Generate Crash Reports | Free DevTools"
+title: "Analyze Backtrace - Generate Crash Reports | Online Free DevTools by Hexmos"
 name: abrt-action-analyze-backtrace
 path: /freedevtools/tldr/linux/abrt-action-analyze-backtrace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/abrt-action-analyze-backtrace/"

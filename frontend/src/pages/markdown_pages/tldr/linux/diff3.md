@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Analyze Differences with diff3 | Free DevTools"
+title: "Compare Files - Analyze Differences with diff3 | Online Free DevTools by Hexmos"
 name: diff3
 path: /freedevtools/tldr/linux/diff3
 canonical: "https://hexmos.com/freedevtools/tldr/linux/diff3/"

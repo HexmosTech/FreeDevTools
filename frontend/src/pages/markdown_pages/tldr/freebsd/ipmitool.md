@@ -1,5 +1,5 @@
 ---
-title: "Control Hardware - Interface IPMI with ipmitool | Free DevTools"
+title: "Control Hardware - Interface IPMI with ipmitool | Online Free DevTools by Hexmos"
 name: ipmitool
 path: /freedevtools/tldr/freebsd/ipmitool
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ipmitool/"

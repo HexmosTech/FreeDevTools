@@ -1,5 +1,5 @@
 ---
-title: "PE File Analyzer - Inspect PE Files | Free DevTools"
+title: "PE File Analyzer - Inspect PE Files | Online Free DevTools by Hexmos"
 name: readpe
 path: /freedevtools/tldr/linux/readpe
 canonical: "https://hexmos.com/freedevtools/tldr/linux/readpe/"

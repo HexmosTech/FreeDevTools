@@ -1,5 +1,5 @@
 ---
-title: "Dolt Garbage Collection - Clean Unreferenced Data | Free DevTools"
+title: "Dolt Garbage Collection - Clean Unreferenced Data | Online Free DevTools by Hexmos"
 name: dolt-gc
 path: /freedevtools/tldr/dolt/dolt-gc
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-gc/"

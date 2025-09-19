@@ -1,5 +1,5 @@
 ---
-title: "Gfold - Format Text to Specified Width | Free DevTools"
+title: "Gfold - Format Text to Specified Width | Online Free DevTools by Hexmos"
 name: gfold
 path: /freedevtools/tldr/osx/gfold
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfold/"

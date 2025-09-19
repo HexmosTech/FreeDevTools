@@ -1,5 +1,5 @@
 ---
-title: "Clone VM - Create Virtual Machine Copies | Free DevTools"
+title: "Clone VM - Create Virtual Machine Copies | Online Free DevTools by Hexmos"
 name: qm-clone
 path: "/freedevtools/tldr/linux/qm-clone"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-clone/"

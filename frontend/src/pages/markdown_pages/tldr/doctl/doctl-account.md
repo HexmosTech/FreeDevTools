@@ -1,5 +1,5 @@
 ---
-title: "Control DigitalOcean Accounts - doctl Account | Free DevTools"
+title: "Control DigitalOcean Accounts - doctl Account | Online Free DevTools by Hexmos"
 name: doctl-account
 path: /freedevtools/tldr/doctl/doctl-account
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-account/"

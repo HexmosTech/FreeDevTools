@@ -1,5 +1,5 @@
 ---
-title: "Duplicacy Backup - Manage Cloud Storage Backups | Free DevTools"
+title: "Duplicacy Backup - Manage Cloud Storage Backups | Online Free DevTools by Hexmos"
 name: duplicacy
 path: /freedevtools/tldr/common/duplicacy
 canonical: "https://hexmos.com/freedevtools/tldr/common/duplicacy/"

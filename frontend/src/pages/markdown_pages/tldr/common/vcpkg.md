@@ -1,5 +1,5 @@
 ---
-title: "Manage C/C++ Packages - Control Libraries with vcpkg | Free DevTools"
+title: "Manage C/C++ Packages - Control Libraries with vcpkg | Online Free DevTools by Hexmos"
 name: vcpkg
 path: /freedevtools/tldr/common/vcpkg
 canonical: "https://hexmos.com/freedevtools/tldr/common/vcpkg/"

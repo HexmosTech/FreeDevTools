@@ -1,5 +1,5 @@
 ---
-title: "Control Guake - Drop-Down Terminal for Linux | Free DevTools"
+title: "Control Guake - Drop-Down Terminal for Linux | Online Free DevTools by Hexmos"
 name: guake
 path: /freedevtools/tldr/linux/guake
 canonical: "https://hexmos.com/freedevtools/tldr/linux/guake/"

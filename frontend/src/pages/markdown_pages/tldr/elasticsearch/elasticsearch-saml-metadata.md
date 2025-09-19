@@ -1,5 +1,5 @@
 ---
-title: "Generate Elasticsearch SAML Metadata - Configure IDP | Free DevTools"
+title: "Generate Elasticsearch SAML Metadata - Configure IDP | Online Free DevTools by Hexmos"
 name: elasticsearch-saml-metadata
 path: /freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata
 canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/"

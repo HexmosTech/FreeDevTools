@@ -1,5 +1,5 @@
 ---
-title: "Grep Command - Search Text Patterns | Free DevTools"
+title: "Grep Command - Search Text Patterns | Online Free DevTools by Hexmos"
 name: ggrep
 path: /freedevtools/tldr/osx/ggrep
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ggrep/"

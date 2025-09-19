@@ -1,5 +1,5 @@
 ---
-title: "Libuser-lid - Access User Information on Linux | Free DevTools"
+title: "Libuser-lid - Access User Information on Linux | Online Free DevTools by Hexmos"
 name: libuser-lid
 path: /freedevtools/tldr/linux/libuser-lid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/libuser-lid/"

@@ -1,5 +1,5 @@
 ---
-title: "Disk Space Usage - View Filesystem Usage with df | Free DevTools"
+title: "Disk Space Usage - View Filesystem Usage with df | Online Free DevTools by Hexmos"
 name: df
 path: /freedevtools/tldr/linux/df
 canonical: "https://hexmos.com/freedevtools/tldr/linux/df/"

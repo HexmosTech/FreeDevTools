@@ -1,5 +1,5 @@
 ---
-title: "Control Processes - htop Process Viewer | Free DevTools"
+title: "Control Processes - htop Process Viewer | Online Free DevTools by Hexmos"
 name: htop
 path: /freedevtools/tldr/common/htop
 canonical: "https://hexmos.com/freedevtools/tldr/common/htop/"

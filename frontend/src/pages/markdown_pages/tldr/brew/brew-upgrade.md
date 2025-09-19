@@ -1,5 +1,5 @@
 ---
-title: "Brew Upgrade - Upgrade Packages on macOS and Linux | Free DevTools"
+title: "Brew Upgrade - Upgrade Packages on macOS and Linux | Online Free DevTools by Hexmos"
 name: brew-upgrade
 path: /freedevtools/tldr/brew/brew-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-upgrade/"

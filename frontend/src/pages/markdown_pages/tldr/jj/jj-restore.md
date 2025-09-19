@@ -1,5 +1,5 @@
 ---
-title: "Restore Files - Restore JJ Files from Revisions | Free DevTools"
+title: "Restore Files - Restore JJ Files from Revisions | Online Free DevTools by Hexmos"
 name: jj-restore
 path: /freedevtools/tldr/jj/jj-restore
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-restore/"

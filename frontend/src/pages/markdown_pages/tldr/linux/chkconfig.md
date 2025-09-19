@@ -1,5 +1,5 @@
 ---
-title: "Chkconfig - Manage Service Runlevels | Free DevTools"
+title: "Chkconfig - Manage Service Runlevels | Online Free DevTools by Hexmos"
 name: chkconfig
 path: /freedevtools/tldr/linux/chkconfig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chkconfig/"

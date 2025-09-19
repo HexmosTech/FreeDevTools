@@ -1,5 +1,5 @@
 ---
-title: "Ifstatus - Display OpenWRT Status | Free DevTools"
+title: "Ifstatus - Display OpenWRT Status | Online Free DevTools by Hexmos"
 name: ifstatus
 path: /freedevtools/tldr/linux/ifstatus
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ifstatus/"

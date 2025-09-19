@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Destroy - Remove Cloud Resources with Pulumi | Free DevTools"
+title: "Pulumi Destroy - Remove Cloud Resources with Pulumi | Online Free DevTools by Hexmos"
 name: pulumi-destroy
 path: /freedevtools/tldr/pulumi/pulumi-destroy
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-destroy/"

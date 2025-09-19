@@ -1,5 +1,5 @@
 ---
-title: "Control Directories - Zoxide Directory Jumper | Free DevTools"
+title: "Control Directories - Zoxide Directory Jumper | Online Free DevTools by Hexmos"
 name: zoxide
 path: /freedevtools/tldr/common/zoxide
 canonical: "https://hexmos.com/freedevtools/tldr/common/zoxide/"

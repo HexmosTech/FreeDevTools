@@ -1,5 +1,5 @@
 ---
-title: "Create exFAT Filesystem - Format Partitions | Free DevTools"
+title: "Create exFAT Filesystem - Format Partitions | Online Free DevTools by Hexmos"
 name: mkfs.exfat
 path: /freedevtools/tldr/linux/mkfs.exfat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.exfat/"

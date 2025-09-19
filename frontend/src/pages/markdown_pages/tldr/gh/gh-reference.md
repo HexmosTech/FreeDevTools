@@ -1,5 +1,5 @@
 ---
-title: "GitHub Reference - Generate Command Help | Free DevTools"
+title: "GitHub Reference - Generate Command Help | Online Free DevTools by Hexmos"
 name: gh-reference
 path: /freedevtools/tldr/gh/gh-reference
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-reference/"

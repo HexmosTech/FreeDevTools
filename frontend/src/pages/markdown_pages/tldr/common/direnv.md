@@ -1,5 +1,5 @@
 ---
-title: "Control Environment Variables - With direnv | Free DevTools"
+title: "Control Environment Variables - With direnv | Online Free DevTools by Hexmos"
 name: direnv
 path: /freedevtools/tldr/common/direnv
 canonical: "https://hexmos.com/freedevtools/tldr/common/direnv/"

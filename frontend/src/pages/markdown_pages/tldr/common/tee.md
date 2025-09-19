@@ -1,5 +1,5 @@
 ---
-title: "Tee Command - Duplicate Standard Input Output | Free DevTools"
+title: "Tee Command - Duplicate Standard Input Output | Online Free DevTools by Hexmos"
 name: tee
 path: /freedevtools/tldr/common/tee
 canonical: "https://hexmos.com/freedevtools/tldr/common/tee/"

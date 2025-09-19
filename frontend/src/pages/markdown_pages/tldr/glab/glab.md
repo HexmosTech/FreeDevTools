@@ -1,5 +1,5 @@
 ---
-title: "GitLab CLI - Manage GitLab Repositories | Free DevTools"
+title: "GitLab CLI - Manage GitLab Repositories | Online Free DevTools by Hexmos"
 name: glab
 path: /freedevtools/tldr/glab/glab
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab/"

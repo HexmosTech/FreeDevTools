@@ -1,5 +1,5 @@
 ---
-title: "GNMI Get - Snapshot Device Data | Free DevTools"
+title: "GNMI Get - Snapshot Device Data | Online Free DevTools by Hexmos"
 name: gnmic-get
 path: /freedevtools/tldr/gnmic/gnmic-get
 canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-get/"

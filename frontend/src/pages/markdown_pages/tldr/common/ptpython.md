@@ -1,5 +1,5 @@
 ---
-title: "Better Python REPL - Enhanced Shell | Free DevTools"
+title: "Better Python REPL - Enhanced Shell | Online Free DevTools by Hexmos"
 name: ptpython
 path: /freedevtools/tldr/common/ptpython
 canonical: "https://hexmos.com/freedevtools/tldr/common/ptpython/"

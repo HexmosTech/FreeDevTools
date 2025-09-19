@@ -1,5 +1,5 @@
 ---
-title: "Repquota - Display Linux Filesystem Quotas | Free DevTools"
+title: "Repquota - Display Linux Filesystem Quotas | Online Free DevTools by Hexmos"
 name: repquota
 path: /freedevtools/tldr/linux/repquota
 canonical: "https://hexmos.com/freedevtools/tldr/linux/repquota/"

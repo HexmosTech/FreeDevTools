@@ -1,5 +1,5 @@
 ---
-title: "Clear Recycle Bin - Delete Files on Windows | Free DevTools"
+title: "Clear Recycle Bin - Delete Files on Windows | Online Free DevTools by Hexmos"
 name: clear-recyclebin
 path: /freedevtools/tldr/windows/clear-recyclebin
 canonical: "https://hexmos.com/freedevtools/tldr/windows/clear-recyclebin/"

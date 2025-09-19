@@ -1,5 +1,5 @@
 ---
-title: "Query DuckDB - Run SQL on Data Files | Free DevTools"
+title: "Query DuckDB - Run SQL on Data Files | Online Free DevTools by Hexmos"
 name: duckdb
 path: /freedevtools/tldr/common/duckdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/duckdb/"

@@ -1,5 +1,5 @@
 ---
-title: "Azurite - Emulate Azure Storage APIs | Free DevTools"
+title: "Azurite - Emulate Azure Storage APIs | Online Free DevTools by Hexmos"
 name: azurite
 path: /freedevtools/tldr/az/azurite
 canonical: "https://hexmos.com/freedevtools/tldr/az/azurite/"

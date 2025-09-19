@@ -1,5 +1,5 @@
 ---
-title: "Rustup Show - Manage Rust Toolchains | Free DevTools"
+title: "Rustup Show - Manage Rust Toolchains | Online Free DevTools by Hexmos"
 name: rustup-show
 path: /freedevtools/tldr/rustup/rustup-show
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-show/"

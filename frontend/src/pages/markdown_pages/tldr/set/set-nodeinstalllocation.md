@@ -1,5 +1,5 @@
 ---
-title: "Control Node Install Location - Set Directory | Free DevTools"
+title: "Control Node Install Location - Set Directory | Online Free DevTools by Hexmos"
 name: set-nodeinstalllocation
 path: /freedevtools/tldr/set/set-nodeinstalllocation
 canonical: "https://hexmos.com/freedevtools/tldr/set/set-nodeinstalllocation/"

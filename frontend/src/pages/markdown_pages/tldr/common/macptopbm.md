@@ -1,5 +1,5 @@
 ---
-title: "Convert MacPaint to PBM - Generate PBM Images | Free DevTools"
+title: "Convert MacPaint to PBM - Generate PBM Images | Online Free DevTools by Hexmos"
 name: macptopbm
 path: /freedevtools/tldr/common/macptopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/macptopbm/"

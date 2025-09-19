@@ -1,5 +1,5 @@
 ---
-title: "Create Package Database - Manage Packages on Linux | Free DevTools"
+title: "Create Package Database - Manage Packages on Linux | Online Free DevTools by Hexmos"
 name: repo-add
 path: /freedevtools/tldr/linux/repo-add
 canonical: "https://hexmos.com/freedevtools/tldr/linux/repo-add/"

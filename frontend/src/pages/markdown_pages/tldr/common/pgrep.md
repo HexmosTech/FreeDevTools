@@ -1,5 +1,5 @@
 ---
-title: "Pgrep - Find Processes by Name | Free DevTools"
+title: "Pgrep - Find Processes by Name | Online Free DevTools by Hexmos"
 name: pgrep
 path: /freedevtools/tldr/common/pgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgrep/"

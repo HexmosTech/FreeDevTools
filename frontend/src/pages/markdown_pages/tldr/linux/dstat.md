@@ -1,5 +1,5 @@
 ---
-title: "Dstat - Generate System Statistics | Free DevTools"
+title: "Dstat - Generate System Statistics | Online Free DevTools by Hexmos"
 name: dstat
 path: /freedevtools/tldr/linux/dstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dstat/"

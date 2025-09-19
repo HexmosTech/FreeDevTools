@@ -1,5 +1,5 @@
 ---
-title: "Scamper - Analyze Network Topology and Performance | Free DevTools"
+title: "Scamper - Analyze Network Topology and Performance | Online Free DevTools by Hexmos"
 name: scamper
 path: /freedevtools/tldr/common/scamper
 canonical: "https://hexmos.com/freedevtools/tldr/common/scamper/"

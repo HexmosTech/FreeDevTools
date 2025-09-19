@@ -1,5 +1,5 @@
 ---
-title: "Check SELinux Status - getenforce Command | Free DevTools"
+title: "Check SELinux Status - getenforce Command | Online Free DevTools by Hexmos"
 name: getenforce
 path: /freedevtools/tldr/linux/getenforce
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getenforce/"

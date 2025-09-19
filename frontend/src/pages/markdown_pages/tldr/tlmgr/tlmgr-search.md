@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Search - Find Packages with Regex | Free DevTools"
+title: "TeX Live Search - Find Packages with Regex | Online Free DevTools by Hexmos"
 name: tlmgr-search
 path: /freedevtools/tldr/tlmgr/tlmgr-search
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-search/"

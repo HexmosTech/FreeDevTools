@@ -1,5 +1,5 @@
 ---
-title: "Control Audio Volume - Pamixer Command | Free DevTools"
+title: "Control Audio Volume - Pamixer Command | Online Free DevTools by Hexmos"
 name: pamixer
 path: /freedevtools/tldr/common/pamixer
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamixer/"

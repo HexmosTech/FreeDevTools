@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM Image - Copy PPM Images | Free DevTools"
+title: "Convert PPM Image - Copy PPM Images | Online Free DevTools by Hexmos"
 name: ppmtoppm
 path: /freedevtools/tldr/ppm/ppmtoppm
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoppm/"

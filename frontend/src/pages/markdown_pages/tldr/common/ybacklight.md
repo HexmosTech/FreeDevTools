@@ -1,5 +1,5 @@
 ---
-title: "Control Backlight - Manage Screen Brightness with ybacklight | Free DevTools"
+title: "Control Backlight - Manage Screen Brightness with ybacklight | Online Free DevTools by Hexmos"
 name: ybacklight
 path: /freedevtools/tldr/common/ybacklight
 canonical: "https://hexmos.com/freedevtools/tldr/common/ybacklight/"

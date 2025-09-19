@@ -1,5 +1,5 @@
 ---
-title: "Toggle SELinux Booleans - Control SELinux Security | Free DevTools"
+title: "Toggle SELinux Booleans - Control SELinux Security | Online Free DevTools by Hexmos"
 name: togglesebool
 path: /freedevtools/tldr/linux/togglesebool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/togglesebool/"

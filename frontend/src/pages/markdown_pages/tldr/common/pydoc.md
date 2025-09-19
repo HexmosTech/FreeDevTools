@@ -1,5 +1,5 @@
 ---
-title: "Generate Python Documentation - pydoc | Free DevTools"
+title: "Generate Python Documentation - pydoc | Online Free DevTools by Hexmos"
 name: pydoc
 path: /freedevtools/tldr/common/pydoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/pydoc/"

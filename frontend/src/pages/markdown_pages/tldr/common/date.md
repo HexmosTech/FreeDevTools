@@ -1,5 +1,5 @@
 ---
-title: "Format Date - Control System Time | Free DevTools"
+title: "Format Date - Control System Time | Online Free DevTools by Hexmos"
 name: date
 path: /freedevtools/tldr/common/date
 canonical: "https://hexmos.com/freedevtools/tldr/common/date/"

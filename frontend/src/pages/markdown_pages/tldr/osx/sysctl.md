@@ -1,5 +1,5 @@
 ---
-title: "Sysctl - Control Kernel State Info | Free DevTools"
+title: "Sysctl - Control Kernel State Info | Online Free DevTools by Hexmos"
 name: sysctl
 path: /freedevtools/tldr/osx/sysctl
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sysctl/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Whatchanged - Track Recent Commits | Free DevTools"
+title: "Git Whatchanged - Track Recent Commits | Online Free DevTools by Hexmos"
 name: git-whatchanged
 path: /freedevtools/tldr/git/git-whatchanged
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-whatchanged/"

@@ -1,5 +1,5 @@
 ---
-title: "SHA224SUM - Generate SHA224 Checksums | Free DevTools"
+title: "SHA224SUM - Generate SHA224 Checksums | Online Free DevTools by Hexmos"
 name: gsha224sum
 path: /freedevtools/tldr/osx/gsha224sum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsha224sum/"

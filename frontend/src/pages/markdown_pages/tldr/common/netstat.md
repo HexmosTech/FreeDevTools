@@ -1,5 +1,5 @@
 ---
-title: "Netstat - Display Network Information | Free DevTools"
+title: "Netstat - Display Network Information | Online Free DevTools by Hexmos"
 name: netstat
 path: /freedevtools/tldr/common/netstat
 canonical: "https://hexmos.com/freedevtools/tldr/common/netstat/"

@@ -1,5 +1,5 @@
 ---
-title: "Gum - Generate Glamorous Shell Scripts | Free DevTools"
+title: "Gum - Generate Glamorous Shell Scripts | Online Free DevTools by Hexmos"
 name: gum
 path: /freedevtools/tldr/common/gum
 canonical: "https://hexmos.com/freedevtools/tldr/common/gum/"

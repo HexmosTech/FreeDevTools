@@ -1,5 +1,5 @@
 ---
-title: "Stack PAM Images - Create Image Stacks | Free DevTools"
+title: "Stack PAM Images - Create Image Stacks | Online Free DevTools by Hexmos"
 name: pamstack
 path: /freedevtools/tldr/common/pamstack
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamstack/"

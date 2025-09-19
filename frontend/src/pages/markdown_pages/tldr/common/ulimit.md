@@ -1,5 +1,5 @@
 ---
-title: "Ulimit - Control User Resource Limits | Free DevTools"
+title: "Ulimit - Control User Resource Limits | Online Free DevTools by Hexmos"
 name: ulimit
 path: /freedevtools/tldr/common/ulimit
 canonical: "https://hexmos.com/freedevtools/tldr/common/ulimit/"

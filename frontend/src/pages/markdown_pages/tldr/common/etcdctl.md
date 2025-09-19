@@ -1,5 +1,5 @@
 ---
-title: "etcdctl - Control Key-Value Data | Free DevTools"
+title: "etcdctl - Control Key-Value Data | Online Free DevTools by Hexmos"
 name: etcdctl
 path: /freedevtools/tldr/common/etcdctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/etcdctl/"

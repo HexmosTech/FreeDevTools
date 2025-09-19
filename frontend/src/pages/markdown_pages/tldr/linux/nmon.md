@@ -1,5 +1,5 @@
 ---
-title: "Control System Stats - Monitor Linux with nmon | Free DevTools"
+title: "Control System Stats - Monitor Linux with nmon | Online Free DevTools by Hexmos"
 name: nmon
 path: /freedevtools/tldr/linux/nmon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmon/"

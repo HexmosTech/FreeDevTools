@@ -1,5 +1,5 @@
 ---
-title: "Links Browser - Control Web Navigation | Free DevTools"
+title: "Links Browser - Control Web Navigation | Online Free DevTools by Hexmos"
 name: links
 path: /freedevtools/tldr/linux/links
 canonical: "https://hexmos.com/freedevtools/tldr/linux/links/"

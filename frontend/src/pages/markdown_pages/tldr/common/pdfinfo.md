@@ -1,5 +1,5 @@
 ---
-title: "PDF Info - Generate PDF Information | Free DevTools"
+title: "PDF Info - Generate PDF Information | Online Free DevTools by Hexmos"
 name: pdfinfo
 path: /freedevtools/tldr/common/pdfinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfinfo/"

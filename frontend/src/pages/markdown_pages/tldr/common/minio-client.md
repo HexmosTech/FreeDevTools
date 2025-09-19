@@ -1,5 +1,5 @@
 ---
-title: "MinIO Client - Manage Cloud Storage | Free DevTools"
+title: "MinIO Client - Manage Cloud Storage | Online Free DevTools by Hexmos"
 name: minio-client
 path: /freedevtools/tldr/common/minio-client
 canonical: "https://hexmos.com/freedevtools/tldr/common/minio-client/"

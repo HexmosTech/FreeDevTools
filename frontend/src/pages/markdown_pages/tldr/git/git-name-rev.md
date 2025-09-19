@@ -1,5 +1,5 @@
 ---
-title: "Git Name-Rev - Describe Commits | Free DevTools"
+title: "Git Name-Rev - Describe Commits | Online Free DevTools by Hexmos"
 name: git-name-rev
 path: /freedevtools/tldr/git/git-name-rev
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-name-rev/"

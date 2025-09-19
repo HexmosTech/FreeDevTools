@@ -1,5 +1,5 @@
 ---
-title: "Git Reset - Undo Commits and Changes | Free DevTools"
+title: "Git Reset - Undo Commits and Changes | Online Free DevTools by Hexmos"
 name: git-reset
 path: /freedevtools/tldr/git/git-reset
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-reset/"

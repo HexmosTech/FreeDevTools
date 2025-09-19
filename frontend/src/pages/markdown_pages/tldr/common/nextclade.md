@@ -1,5 +1,5 @@
 ---
-title: "Nextclade - Analyze Virus Genomes | Free DevTools"
+title: "Nextclade - Analyze Virus Genomes | Online Free DevTools by Hexmos"
 name: nextclade
 path: /freedevtools/tldr/common/nextclade
 canonical: "https://hexmos.com/freedevtools/tldr/common/nextclade/"

@@ -1,5 +1,5 @@
 ---
-title: "Create marimo Notebooks - Reactive Python IDE | Free DevTools"
+title: "Create marimo Notebooks - Reactive Python IDE | Online Free DevTools by Hexmos"
 name: marimo
 path: /freedevtools/tldr/common/marimo
 canonical: "https://hexmos.com/freedevtools/tldr/common/marimo/"

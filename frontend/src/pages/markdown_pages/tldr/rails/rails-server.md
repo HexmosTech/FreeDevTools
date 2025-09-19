@@ -1,5 +1,5 @@
 ---
-title: "Control Rails Server - Run App with Puma | Free DevTools"
+title: "Control Rails Server - Run App with Puma | Online Free DevTools by Hexmos"
 name: rails-server
 path: /freedevtools/tldr/rails/rails-server
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-server/"

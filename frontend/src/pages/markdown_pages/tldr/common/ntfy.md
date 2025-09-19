@@ -1,5 +1,5 @@
 ---
-title: "Control Ntfy Notifications - HTTP Post | Free DevTools"
+title: "Control Ntfy Notifications - HTTP Post | Online Free DevTools by Hexmos"
 name: ntfy
 path: /freedevtools/tldr/common/ntfy
 canonical: "https://hexmos.com/freedevtools/tldr/common/ntfy/"

@@ -1,5 +1,5 @@
 ---
-title: "Diffoscope - Compare Files and Directories | Free DevTools"
+title: "Diffoscope - Compare Files and Directories | Online Free DevTools by Hexmos"
 name: diffoscope
 path: /freedevtools/tldr/common/diffoscope
 canonical: "https://hexmos.com/freedevtools/tldr/common/diffoscope/"

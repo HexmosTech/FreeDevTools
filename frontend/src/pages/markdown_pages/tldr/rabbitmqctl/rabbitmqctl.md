@@ -1,5 +1,5 @@
 ---
-title: "RabbitMQ Control - Manage Servers | Free DevTools"
+title: "RabbitMQ Control - Manage Servers | Online Free DevTools by Hexmos"
 name: rabbitmqctl
 path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl
 canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl/"

@@ -1,5 +1,5 @@
 ---
-title: "Daemonize - Run Commands as Daemons | Free DevTools"
+title: "Daemonize - Run Commands as Daemons | Online Free DevTools by Hexmos"
 name: daemonize
 path: /freedevtools/tldr/linux/daemonize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/daemonize/"

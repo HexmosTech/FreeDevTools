@@ -1,5 +1,5 @@
 ---
-title: "Font Cache - Generate Font Cache Files | Free DevTools"
+title: "Font Cache - Generate Font Cache Files | Online Free DevTools by Hexmos"
 name: fc-cache
 path: /freedevtools/tldr/fc/fc-cache
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-cache/"

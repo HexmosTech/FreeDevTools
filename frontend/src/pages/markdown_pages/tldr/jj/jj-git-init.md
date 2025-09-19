@@ -1,5 +1,5 @@
 ---
-title: "Create Git Jujutsu Repo - Initialize JJ Repo | Free DevTools"
+title: "Create Git Jujutsu Repo - Initialize JJ Repo | Online Free DevTools by Hexmos"
 name: jj-git-init
 path: /freedevtools/tldr/jj/jj-git-init
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-init/"

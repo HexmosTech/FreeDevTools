@@ -1,5 +1,5 @@
 ---
-title: "SC Query - Control Windows Services | Free DevTools"
+title: "SC Query - Control Windows Services | Online Free DevTools by Hexmos"
 name: sc-query
 path: /freedevtools/tldr/windows/sc-query
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sc-query/"

@@ -1,5 +1,5 @@
 ---
-title: "Create EKS Clusters - Manage Kubernetes with eksctl | Free DevTools"
+title: "Create EKS Clusters - Manage Kubernetes with eksctl | Online Free DevTools by Hexmos"
 name: eksctl
 path: /freedevtools/tldr/common/eksctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/eksctl/"

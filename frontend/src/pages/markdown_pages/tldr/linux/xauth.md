@@ -1,5 +1,5 @@
 ---
-title: "Control Xauth - Manage X Server Authorizations | Free DevTools"
+title: "Control Xauth - Manage X Server Authorizations | Online Free DevTools by Hexmos"
 name: xauth
 path: /freedevtools/tldr/linux/xauth
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xauth/"

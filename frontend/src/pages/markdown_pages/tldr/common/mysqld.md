@@ -1,5 +1,5 @@
 ---
-title: "Start MySQL Server - Control Database Instances | Free DevTools"
+title: "Start MySQL Server - Control Database Instances | Online Free DevTools by Hexmos"
 name: mysqld
 path: /freedevtools/tldr/common/mysqld
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysqld/"

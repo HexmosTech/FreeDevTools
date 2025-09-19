@@ -1,5 +1,5 @@
 ---
-title: "npm Uninstall - Remove Packages | Free DevTools"
+title: "npm Uninstall - Remove Packages | Online Free DevTools by Hexmos"
 name: npm-uninstall
 path: /freedevtools/tldr/npm/npm-uninstall
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-uninstall/"

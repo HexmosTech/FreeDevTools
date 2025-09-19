@@ -1,5 +1,5 @@
 ---
-title: "Create Documents with Calligra Words | Free DevTools"
+title: "Create Documents with Calligra Words | Online Free DevTools by Hexmos"
 name: calligrawords
 path: /freedevtools/tldr/common/calligrawords
 canonical: "https://hexmos.com/freedevtools/tldr/common/calligrawords/"

@@ -1,5 +1,5 @@
 ---
-title: "Hashcat - Recover Passwords Rapidly | Free DevTools"
+title: "Hashcat - Recover Passwords Rapidly | Online Free DevTools by Hexmos"
 name: hashcat
 path: /freedevtools/tldr/common/hashcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/hashcat/"

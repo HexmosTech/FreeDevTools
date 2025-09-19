@@ -1,5 +1,5 @@
 ---
-title: "Control DNS Server - Manage DNS with dnsmasq | Free DevTools"
+title: "Control DNS Server - Manage DNS with dnsmasq | Online Free DevTools by Hexmos"
 name: dnsmasq
 path: /freedevtools/tldr/common/dnsmasq
 canonical: "https://hexmos.com/freedevtools/tldr/common/dnsmasq/"

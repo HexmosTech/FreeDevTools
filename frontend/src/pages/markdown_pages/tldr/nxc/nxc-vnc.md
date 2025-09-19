@@ -1,5 +1,5 @@
 ---
-title: "Control VNC Servers - Pentest with NXC VNC | Free DevTools"
+title: "Control VNC Servers - Pentest with NXC VNC | Online Free DevTools by Hexmos"
 name: nxc-vnc
 path: /freedevtools/tldr/nxc/nxc-vnc
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-vnc/"

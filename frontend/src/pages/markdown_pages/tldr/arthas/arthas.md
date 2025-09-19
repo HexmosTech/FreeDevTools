@@ -1,5 +1,5 @@
 ---
-title: "Arthas Diagnostic Tool - Java Debugging | Free DevTools"
+title: "Arthas Diagnostic Tool - Java Debugging | Online Free DevTools by Hexmos"
 name: arthas
 path: /freedevtools/tldr/arthas/arthas
 canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas/"

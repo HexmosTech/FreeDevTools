@@ -1,5 +1,5 @@
 ---
-title: "Generate ASCII Art - Create Text Art with Toilet | Free DevTools"
+title: "Generate ASCII Art - Create Text Art with Toilet | Online Free DevTools by Hexmos"
 name: toilet
 path: /freedevtools/tldr/linux/toilet
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toilet/"

@@ -1,5 +1,5 @@
 ---
-title: "Index Crane Images - Modify Container Registries | Free DevTools"
+title: "Index Crane Images - Modify Container Registries | Online Free DevTools by Hexmos"
 name: crane-index
 path: /freedevtools/tldr/crane/crane-index
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index/"

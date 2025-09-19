@@ -1,5 +1,5 @@
 ---
-title: "Search Documentation Offline - wikiman Search Tool | Free DevTools"
+title: "Search Documentation Offline - wikiman Search Tool | Online Free DevTools by Hexmos"
 name: wikiman
 path: /freedevtools/tldr/common/wikiman
 canonical: "https://hexmos.com/freedevtools/tldr/common/wikiman/"

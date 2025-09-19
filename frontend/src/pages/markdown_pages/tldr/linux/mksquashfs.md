@@ -1,5 +1,5 @@
 ---
-title: "Create Squashfs Filesystems - mksquashfs | Free DevTools"
+title: "Create Squashfs Filesystems - mksquashfs | Online Free DevTools by Hexmos"
 name: mksquashfs
 path: /freedevtools/tldr/linux/mksquashfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mksquashfs/"

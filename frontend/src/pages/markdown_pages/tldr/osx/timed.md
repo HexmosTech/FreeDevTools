@@ -1,5 +1,5 @@
 ---
-title: "Time Synchronization - Control System Time on macOS | Free DevTools"
+title: "Time Synchronization - Control System Time on macOS | Online Free DevTools by Hexmos"
 name: timed
 path: /freedevtools/tldr/osx/timed
 canonical: "https://hexmos.com/freedevtools/tldr/osx/timed/"

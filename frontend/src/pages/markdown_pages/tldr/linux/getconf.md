@@ -1,5 +1,5 @@
 ---
-title: "Getconf - Control System Configuration | Free DevTools"
+title: "Getconf - Control System Configuration | Online Free DevTools by Hexmos"
 name: getconf
 path: /freedevtools/tldr/linux/getconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getconf/"

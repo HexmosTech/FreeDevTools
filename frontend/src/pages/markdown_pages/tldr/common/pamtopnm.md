@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to PNM - Image Conversion | Free DevTools"
+title: "Convert PAM to PNM - Image Conversion | Online Free DevTools by Hexmos"
 name: pamtopnm
 path: /freedevtools/tldr/common/pamtopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtopnm/"

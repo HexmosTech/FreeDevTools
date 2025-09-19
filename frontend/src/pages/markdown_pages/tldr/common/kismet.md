@@ -1,5 +1,5 @@
 ---
-title: "Wireless Network Detector - Analyze Networks with Kismet | Free DevTools"
+title: "Wireless Network Detector - Analyze Networks with Kismet | Online Free DevTools by Hexmos"
 name: kismet
 path: /freedevtools/tldr/common/kismet
 canonical: "https://hexmos.com/freedevtools/tldr/common/kismet/"

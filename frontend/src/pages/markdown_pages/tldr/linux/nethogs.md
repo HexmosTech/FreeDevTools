@@ -1,5 +1,5 @@
 ---
-title: "Monitor Network Bandwidth - nethogs Usage | Free DevTools"
+title: "Monitor Network Bandwidth - nethogs Usage | Online Free DevTools by Hexmos"
 name: nethogs
 path: /freedevtools/tldr/linux/nethogs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nethogs/"

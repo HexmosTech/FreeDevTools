@@ -1,5 +1,5 @@
 ---
-title: "Eva Calculator - Calculate Expressions with Eva | Free DevTools"
+title: "Eva Calculator - Calculate Expressions with Eva | Online Free DevTools by Hexmos"
 name: eva
 path: /freedevtools/tldr/common/eva
 canonical: "https://hexmos.com/freedevtools/tldr/common/eva/"

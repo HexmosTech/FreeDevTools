@@ -1,5 +1,5 @@
 ---
-title: "Wait Process - Control Process Execution | Free DevTools"
+title: "Wait Process - Control Process Execution | Online Free DevTools by Hexmos"
 name: wait-process
 path: /freedevtools/tldr/windows/wait-process
 canonical: "https://hexmos.com/freedevtools/tldr/windows/wait-process/"

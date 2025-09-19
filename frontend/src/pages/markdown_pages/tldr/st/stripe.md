@@ -1,5 +1,5 @@
 ---
-title: "Stripe CLI - Manage Stripe Accounts | Free DevTools"
+title: "Stripe CLI - Manage Stripe Accounts | Online Free DevTools by Hexmos"
 name: stripe
 path: /freedevtools/tldr/st/stripe
 canonical: "https://hexmos.com/freedevtools/tldr/st/stripe/"

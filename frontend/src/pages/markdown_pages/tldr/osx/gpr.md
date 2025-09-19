@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Control Text Layout with GPR | Free DevTools"
+title: "Format Text - Control Text Layout with GPR | Online Free DevTools by Hexmos"
 name: gpr
 path: /freedevtools/tldr/osx/gpr
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gpr/"

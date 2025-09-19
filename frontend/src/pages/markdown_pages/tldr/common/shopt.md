@@ -1,5 +1,5 @@
 ---
-title: "Shopt - Manage Bash Shell Options | Free DevTools"
+title: "Shopt - Manage Bash Shell Options | Online Free DevTools by Hexmos"
 name: shopt
 path: /freedevtools/tldr/common/shopt
 canonical: "https://hexmos.com/freedevtools/tldr/common/shopt/"

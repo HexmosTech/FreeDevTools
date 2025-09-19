@@ -1,5 +1,5 @@
 ---
-title: "FTP Client - Control File Transfers via Command Line | Free DevTools"
+title: "FTP Client - Control File Transfers via Command Line | Online Free DevTools by Hexmos"
 name: ftp
 path: /freedevtools/tldr/common/ftp
 canonical: "https://hexmos.com/freedevtools/tldr/common/ftp/"

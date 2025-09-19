@@ -1,5 +1,5 @@
 ---
-title: "Chroot Command - Control Root Directory | Free DevTools"
+title: "Chroot Command - Control Root Directory | Online Free DevTools by Hexmos"
 name: chroot
 path: /freedevtools/tldr/common/chroot
 canonical: "https://hexmos.com/freedevtools/tldr/common/chroot/"

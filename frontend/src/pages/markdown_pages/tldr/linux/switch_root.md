@@ -1,5 +1,5 @@
 ---
-title: "Switch Root - Change Root Filesystem | Free DevTools"
+title: "Switch Root - Change Root Filesystem | Online Free DevTools by Hexmos"
 name: switch_root
 path: /freedevtools/tldr/linux/switch_root
 canonical: "https://hexmos.com/freedevtools/tldr/linux/switch_root/"

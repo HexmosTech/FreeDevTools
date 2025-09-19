@@ -1,5 +1,5 @@
 ---
-title: "SFDK Config - Configure SFDK | Free DevTools"
+title: "SFDK Config - Configure SFDK | Online Free DevTools by Hexmos"
 name: sfdk-config
 path: /freedevtools/tldr/sfdk/sfdk-config
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-config/"

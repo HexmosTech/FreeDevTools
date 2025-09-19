@@ -1,5 +1,5 @@
 ---
-title: "Open Files - Launch Applications | Free DevTools"
+title: "Open Files - Launch Applications | Online Free DevTools by Hexmos"
 name: open
 path: /freedevtools/tldr/osx/open
 canonical: "https://hexmos.com/freedevtools/tldr/osx/open/"

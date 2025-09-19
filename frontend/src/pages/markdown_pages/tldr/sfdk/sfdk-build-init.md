@@ -1,5 +1,5 @@
 ---
-title: "SFDK Build Init - Initialize Build Directory | Free DevTools"
+title: "SFDK Build Init - Initialize Build Directory | Online Free DevTools by Hexmos"
 name: sfdk-build-init
 path: /freedevtools/tldr/sfdk/sfdk-build-init
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-init/"

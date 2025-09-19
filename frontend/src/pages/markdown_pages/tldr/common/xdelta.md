@@ -1,5 +1,5 @@
 ---
-title: "Create Delta Patches - xdelta File Differencing | Free DevTools"
+title: "Create Delta Patches - xdelta File Differencing | Online Free DevTools by Hexmos"
 name: xdelta
 path: /freedevtools/tldr/common/xdelta
 canonical: "https://hexmos.com/freedevtools/tldr/common/xdelta/"

@@ -1,5 +1,5 @@
 ---
-title: "Registry Add - Create Registry Keys | Free DevTools"
+title: "Registry Add - Create Registry Keys | Online Free DevTools by Hexmos"
 name: reg-add
 path: /freedevtools/tldr/windows/reg-add
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-add/"

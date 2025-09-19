@@ -1,5 +1,5 @@
 ---
-title: "Lynis Audit - Secure Linux Systems | Free DevTools"
+title: "Lynis Audit - Secure Linux Systems | Online Free DevTools by Hexmos"
 name: lynis
 path: /freedevtools/tldr/linux/lynis
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lynis/"

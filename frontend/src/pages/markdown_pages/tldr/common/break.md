@@ -1,5 +1,5 @@
 ---
-title: "Control Loop Break - Exit Loops in Bash | Free DevTools"
+title: "Control Loop Break - Exit Loops in Bash | Online Free DevTools by Hexmos"
 name: break
 path: /freedevtools/tldr/common/break
 canonical: "https://hexmos.com/freedevtools/tldr/common/break/"

@@ -1,5 +1,5 @@
 ---
-title: "YOLO Model - Train & Infer Vision Models | Free DevTools"
+title: "YOLO Model - Train & Infer Vision Models | Online Free DevTools by Hexmos"
 name: yolo
 path: /freedevtools/tldr/common/yolo
 canonical: "https://hexmos.com/freedevtools/tldr/common/yolo/"

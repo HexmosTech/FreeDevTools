@@ -1,5 +1,5 @@
 ---
-title: "Enumerate Subdomains - Amass Enum | Free DevTools"
+title: "Enumerate Subdomains - Amass Enum | Online Free DevTools by Hexmos"
 name: amass-enum
 path: /freedevtools/tldr/amass/amass-enum
 canonical: "https://hexmos.com/freedevtools/tldr/amass/amass-enum/"

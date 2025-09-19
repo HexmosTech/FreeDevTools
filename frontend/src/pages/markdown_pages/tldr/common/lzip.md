@@ -1,5 +1,5 @@
 ---
-title: "Compress Data - Lzip Archive and Compress Files | Free DevTools"
+title: "Compress Data - Lzip Archive and Compress Files | Online Free DevTools by Hexmos"
 name: lzip
 path: /freedevtools/tldr/common/lzip
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzip/"

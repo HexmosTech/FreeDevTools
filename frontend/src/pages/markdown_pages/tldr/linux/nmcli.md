@@ -1,5 +1,5 @@
 ---
-title: "Nmcli - Manage Network Configuration | Free DevTools"
+title: "Nmcli - Manage Network Configuration | Online Free DevTools by Hexmos"
 name: nmcli
 path: /freedevtools/tldr/linux/nmcli
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli/"

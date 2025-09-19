@@ -1,5 +1,5 @@
 ---
-title: "PDF Text Search - Find Text in PDFs | Free DevTools"
+title: "PDF Text Search - Find Text in PDFs | Online Free DevTools by Hexmos"
 name: pdfgrep
 path: /freedevtools/tldr/common/pdfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfgrep/"

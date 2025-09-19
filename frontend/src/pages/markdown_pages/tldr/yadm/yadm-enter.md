@@ -1,5 +1,5 @@
 ---
-title: "Yadm Enter - Manage Git Environments | Free DevTools"
+title: "Yadm Enter - Manage Git Environments | Online Free DevTools by Hexmos"
 name: yadm-enter
 path: /freedevtools/tldr/yadm/yadm-enter
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-enter/"

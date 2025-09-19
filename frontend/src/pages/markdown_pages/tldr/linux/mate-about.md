@@ -1,5 +1,5 @@
 ---
-title: "Show MATE Version - Display Desktop Info | Free DevTools"
+title: "Show MATE Version - Display Desktop Info | Online Free DevTools by Hexmos"
 name: mate-about
 path: /freedevtools/tldr/linux/mate-about
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-about/"

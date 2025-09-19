@@ -1,5 +1,5 @@
 ---
-title: "Fastboot Commands - Control Android Bootloader | Free DevTools"
+title: "Fastboot Commands - Control Android Bootloader | Online Free DevTools by Hexmos"
 name: fastboot
 path: /freedevtools/tldr/common/fastboot
 canonical: "https://hexmos.com/freedevtools/tldr/common/fastboot/"

@@ -1,5 +1,5 @@
 ---
-title: "Control System Settings - KDE Configuration | Free DevTools"
+title: "Control System Settings - KDE Configuration | Online Free DevTools by Hexmos"
 name: systemsettings
 path: /freedevtools/tldr/linux/systemsettings
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemsettings/"

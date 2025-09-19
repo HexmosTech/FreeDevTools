@@ -1,5 +1,5 @@
 ---
-title: "Tee-Object - Save Command Output | Free DevTools"
+title: "Tee-Object - Save Command Output | Online Free DevTools by Hexmos"
 name: tee-object
 path: /freedevtools/tldr/windows/tee-object
 canonical: "https://hexmos.com/freedevtools/tldr/windows/tee-object/"

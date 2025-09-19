@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - Display on AT&T Terminal | Free DevTools"
+title: "Convert PBM Image - Display on AT&T Terminal | Online Free DevTools by Hexmos"
 name: pbmto4425
 path: /freedevtools/tldr/common/pbmto4425
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmto4425/"

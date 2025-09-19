@@ -1,5 +1,5 @@
 ---
-title: "Mongoexport - Export MongoDB Data to JSON or CSV | Free DevTools"
+title: "Mongoexport - Export MongoDB Data to JSON or CSV | Online Free DevTools by Hexmos"
 name: mongoexport
 path: /freedevtools/tldr/mongo/mongoexport
 canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongoexport/"

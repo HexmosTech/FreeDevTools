@@ -1,5 +1,5 @@
 ---
-title: "Bootc Switch - Change OS Image | Free DevTools"
+title: "Bootc Switch - Change OS Image | Online Free DevTools by Hexmos"
 name: bootc-switch
 path: /freedevtools/tldr/linux/bootc-switch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bootc-switch/"

@@ -1,5 +1,5 @@
 ---
-title: "PCT - Manage LXC Containers in Proxmox | Free DevTools"
+title: "PCT - Manage LXC Containers in Proxmox | Online Free DevTools by Hexmos"
 name: pct
 path: /freedevtools/tldr/linux/pct
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct/"

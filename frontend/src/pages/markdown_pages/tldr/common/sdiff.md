@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Find Differences with sdiff | Free DevTools"
+title: "Compare Files - Find Differences with sdiff | Online Free DevTools by Hexmos"
 name: sdiff
 path: /freedevtools/tldr/common/sdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/sdiff/"

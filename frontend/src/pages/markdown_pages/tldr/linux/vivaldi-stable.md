@@ -1,5 +1,5 @@
 ---
-title: "Control Vivaldi Browser - Launch Commands | Free DevTools"
+title: "Control Vivaldi Browser - Launch Commands | Online Free DevTools by Hexmos"
 name: vivaldi-stable
 path: /freedevtools/tldr/linux/vivaldi-stable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vivaldi-stable/"

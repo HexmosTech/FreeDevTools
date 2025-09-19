@@ -1,5 +1,5 @@
 ---
-title: "Systool - View System Devices | Free DevTools"
+title: "Systool - View System Devices | Online Free DevTools by Hexmos"
 name: systool
 path: /freedevtools/tldr/linux/systool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systool/"

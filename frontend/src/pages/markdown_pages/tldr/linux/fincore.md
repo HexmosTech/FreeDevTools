@@ -1,5 +1,5 @@
 ---
-title: "Fincore - Display Cache Memory | Free DevTools"
+title: "Fincore - Display Cache Memory | Online Free DevTools by Hexmos"
 name: fincore
 path: /freedevtools/tldr/linux/fincore
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fincore/"

@@ -1,5 +1,5 @@
 ---
-title: "NPM Search - Find Packages in the Registry | Free DevTools"
+title: "NPM Search - Find Packages in the Registry | Online Free DevTools by Hexmos"
 name: npm-search
 path: /freedevtools/tldr/npm/npm-search
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-search/"

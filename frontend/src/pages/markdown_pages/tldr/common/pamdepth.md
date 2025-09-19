@@ -1,5 +1,5 @@
 ---
-title: "Reduce Image Depth - Control PAM Images | Free DevTools"
+title: "Reduce Image Depth - Control PAM Images | Online Free DevTools by Hexmos"
 name: pamdepth
 path: /freedevtools/tldr/common/pamdepth
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamdepth/"

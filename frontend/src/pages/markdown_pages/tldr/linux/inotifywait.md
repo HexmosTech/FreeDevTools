@@ -1,5 +1,5 @@
 ---
-title: "Inotifywait - Monitor File Changes | Free DevTools"
+title: "Inotifywait - Monitor File Changes | Online Free DevTools by Hexmos"
 name: inotifywait
 path: /freedevtools/tldr/linux/inotifywait
 canonical: "https://hexmos.com/freedevtools/tldr/linux/inotifywait/"

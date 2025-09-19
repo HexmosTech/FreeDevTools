@@ -1,5 +1,5 @@
 ---
-title: "Ansible Pull - Execute Playbooks Locally | Free DevTools"
+title: "Ansible Pull - Execute Playbooks Locally | Online Free DevTools by Hexmos"
 name: ansible-pull
 path: /freedevtools/tldr/ansible/ansible-pull
 canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-pull/"

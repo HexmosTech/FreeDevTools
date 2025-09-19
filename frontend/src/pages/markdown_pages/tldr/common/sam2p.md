@@ -1,5 +1,5 @@
 ---
-title: "Convert Images - sam2p | Free DevTools"
+title: "Convert Images - sam2p | Online Free DevTools by Hexmos"
 name: sam2p
 path: /freedevtools/tldr/common/sam2p
 canonical: "https://hexmos.com/freedevtools/tldr/common/sam2p/"

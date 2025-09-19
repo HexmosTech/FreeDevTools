@@ -1,5 +1,5 @@
 ---
-title: "Set-Service - Control Windows Services | Free DevTools"
+title: "Set-Service - Control Windows Services | Online Free DevTools by Hexmos"
 name: set-service
 path: /freedevtools/tldr/windows/set-service
 canonical: "https://hexmos.com/freedevtools/tldr/windows/set-service/"

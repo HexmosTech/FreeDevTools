@@ -1,5 +1,5 @@
 ---
-title: "Manage Kernel Modules - Control Modules | Free DevTools"
+title: "Manage Kernel Modules - Control Modules | Online Free DevTools by Hexmos"
 name: kmod
 path: /freedevtools/tldr/linux/kmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kmod/"

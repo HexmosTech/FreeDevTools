@@ -1,5 +1,5 @@
 ---
-title: "Generate fstab - Create Linux fstab Entries | Free DevTools"
+title: "Generate fstab - Create Linux fstab Entries | Online Free DevTools by Hexmos"
 name: genfstab
 path: /freedevtools/tldr/linux/genfstab
 canonical: "https://hexmos.com/freedevtools/tldr/linux/genfstab/"

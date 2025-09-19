@@ -1,5 +1,5 @@
 ---
-title: "Format LaTeX - Format LaTeX Source Code | Free DevTools"
+title: "Format LaTeX - Format LaTeX Source Code | Online Free DevTools by Hexmos"
 name: tex-fmt
 path: /freedevtools/tldr/common/tex-fmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/tex-fmt/"

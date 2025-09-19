@@ -1,5 +1,5 @@
 ---
-title: "BigQuery Query - Run SQL Queries | Free DevTools"
+title: "BigQuery Query - Run SQL Queries | Online Free DevTools by Hexmos"
 name: bq
 path: /freedevtools/tldr/common/bq
 canonical: "https://hexmos.com/freedevtools/tldr/common/bq/"

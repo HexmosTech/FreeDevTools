@@ -1,5 +1,5 @@
 ---
-title: "Execute SQL on Data - trdsql Query Tool | Free DevTools"
+title: "Execute SQL on Data - trdsql Query Tool | Online Free DevTools by Hexmos"
 name: trdsql
 path: "/freedevtools/tldr/common/trdsql"
 canonical: "https://hexmos.com/freedevtools/tldr/common/trdsql/"

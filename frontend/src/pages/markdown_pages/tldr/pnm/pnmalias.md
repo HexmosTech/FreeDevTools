@@ -1,5 +1,5 @@
 ---
-title: "Antialias PNM Image - Enhance PNM Graphics | Free DevTools"
+title: "Antialias PNM Image - Enhance PNM Graphics | Online Free DevTools by Hexmos"
 name: pnmalias
 path: /freedevtools/tldr/pnm/pnmalias
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmalias/"

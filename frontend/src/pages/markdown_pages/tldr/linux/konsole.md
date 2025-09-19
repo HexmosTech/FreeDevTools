@@ -1,5 +1,5 @@
 ---
-title: "Konsole - Control Linux Terminal Sessions | Free DevTools"
+title: "Konsole - Control Linux Terminal Sessions | Online Free DevTools by Hexmos"
 name: konsole
 path: /freedevtools/tldr/linux/konsole
 canonical: "https://hexmos.com/freedevtools/tldr/linux/konsole/"

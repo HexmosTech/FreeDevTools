@@ -1,5 +1,5 @@
 ---
-title: "Control Windows CMD - Command Interpreter | Free DevTools"
+title: "Control Windows CMD - Command Interpreter | Online Free DevTools by Hexmos"
 name: cmd
 path: /freedevtools/tldr/windows/cmd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cmd/"

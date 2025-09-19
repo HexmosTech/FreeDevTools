@@ -1,5 +1,5 @@
 ---
-title: "Batch Scheduler - Execute Commands Later | Free DevTools"
+title: "Batch Scheduler - Execute Commands Later | Online Free DevTools by Hexmos"
 name: batch
 path: /freedevtools/tldr/linux/batch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/batch/"

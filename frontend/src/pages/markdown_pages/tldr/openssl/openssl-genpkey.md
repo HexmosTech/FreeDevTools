@@ -1,5 +1,5 @@
 ---
-title: "Generate Keys - OpenSSL genpkey Command | Free DevTools"
+title: "Generate Keys - OpenSSL genpkey Command | Online Free DevTools by Hexmos"
 name: openssl-genpkey
 path: /freedevtools/tldr/openssl/openssl-genpkey
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-genpkey/"

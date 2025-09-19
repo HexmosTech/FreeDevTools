@@ -1,5 +1,5 @@
 ---
-title: "Discover Subdomains - Find Website Subdomains | Free DevTools"
+title: "Discover Subdomains - Find Website Subdomains | Online Free DevTools by Hexmos"
 name: subfinder
 path: /freedevtools/tldr/common/subfinder
 canonical: "https://hexmos.com/freedevtools/tldr/common/subfinder/"

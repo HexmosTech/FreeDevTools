@@ -1,5 +1,5 @@
 ---
-title: "Analyze PHP with Psalm - Find Errors | Free DevTools"
+title: "Analyze PHP with Psalm - Find Errors | Online Free DevTools by Hexmos"
 name: psalm
 path: /freedevtools/tldr/common/psalm
 canonical: "https://hexmos.com/freedevtools/tldr/common/psalm/"

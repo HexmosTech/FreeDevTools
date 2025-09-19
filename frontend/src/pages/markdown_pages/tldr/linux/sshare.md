@@ -1,5 +1,5 @@
 ---
-title: "Sshare - Control Slurm Shares | Free DevTools"
+title: "Sshare - Control Slurm Shares | Online Free DevTools by Hexmos"
 name: sshare
 path: /freedevtools/tldr/linux/sshare
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sshare/"

@@ -1,5 +1,5 @@
 ---
-title: "Trace Route - Analyze Network Paths with Pathping | Free DevTools"
+title: "Trace Route - Analyze Network Paths with Pathping | Online Free DevTools by Hexmos"
 name: pathping
 path: /freedevtools/tldr/windows/pathping
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pathping/"

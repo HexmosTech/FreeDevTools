@@ -1,5 +1,5 @@
 ---
-title: "Iwinfo - Control Wireless Interfaces | Free DevTools"
+title: "Iwinfo - Control Wireless Interfaces | Online Free DevTools by Hexmos"
 name: iwinfo
 path: /freedevtools/tldr/linux/iwinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iwinfo/"

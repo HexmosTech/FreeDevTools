@@ -1,5 +1,5 @@
 ---
-title: "Scriptreplay - Replay Terminal Sessions | Free DevTools"
+title: "Scriptreplay - Replay Terminal Sessions | Online Free DevTools by Hexmos"
 name: scriptreplay
 path: /freedevtools/tldr/linux/scriptreplay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scriptreplay/"

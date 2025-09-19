@@ -1,5 +1,5 @@
 ---
-title: "Control Polybar - Customize Status Bar | Free DevTools"
+title: "Control Polybar - Customize Status Bar | Online Free DevTools by Hexmos"
 name: polybar
 path: /freedevtools/tldr/common/polybar
 canonical: "https://hexmos.com/freedevtools/tldr/common/polybar/"

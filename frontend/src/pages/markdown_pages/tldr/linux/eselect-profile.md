@@ -1,5 +1,5 @@
 ---
-title: "Eselect Profile - Manage System Profile | Free DevTools"
+title: "Eselect Profile - Manage System Profile | Online Free DevTools by Hexmos"
 name: eselect-profile
 path: /freedevtools/tldr/linux/eselect-profile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-profile/"

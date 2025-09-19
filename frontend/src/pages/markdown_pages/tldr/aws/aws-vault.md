@@ -1,5 +1,5 @@
 ---
-title: "Secure AWS Credentials - Manage with aws-vault | Free DevTools"
+title: "Secure AWS Credentials - Manage with aws-vault | Online Free DevTools by Hexmos"
 name: aws-vault
 path: /freedevtools/tldr/aws/aws-vault
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-vault/"

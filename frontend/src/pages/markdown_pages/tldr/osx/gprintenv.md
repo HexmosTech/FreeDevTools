@@ -1,5 +1,5 @@
 ---
-title: "Printenv - Display Environment Variables | Free DevTools"
+title: "Printenv - Display Environment Variables | Online Free DevTools by Hexmos"
 name: gprintenv
 path: /freedevtools/tldr/osx/gprintenv
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gprintenv/"

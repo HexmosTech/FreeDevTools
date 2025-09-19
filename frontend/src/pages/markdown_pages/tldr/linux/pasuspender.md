@@ -1,5 +1,5 @@
 ---
-title: "Control PulseAudio with pasuspender | Free DevTools"
+title: "Control PulseAudio with pasuspender | Online Free DevTools by Hexmos"
 name: pasuspender
 path: /freedevtools/tldr/linux/pasuspender
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pasuspender/"

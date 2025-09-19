@@ -1,5 +1,5 @@
 ---
-title: "Angular CLI - Generate Angular Apps | Free DevTools"
+title: "Angular CLI - Generate Angular Apps | Online Free DevTools by Hexmos"
 name: ng
 path: /freedevtools/tldr/common/ng
 canonical: "https://hexmos.com/freedevtools/tldr/common/ng/"

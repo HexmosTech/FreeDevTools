@@ -1,5 +1,5 @@
 ---
-title: "Certutil - Manage Certificates & Keys | Free DevTools"
+title: "Certutil - Manage Certificates & Keys | Online Free DevTools by Hexmos"
 name: certutil
 path: /freedevtools/tldr/common/certutil
 canonical: "https://hexmos.com/freedevtools/tldr/common/certutil/"

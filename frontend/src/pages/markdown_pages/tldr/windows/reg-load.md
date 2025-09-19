@@ -1,5 +1,5 @@
 ---
-title: "Reg Load - Manage Registry Keys | Free DevTools"
+title: "Reg Load - Manage Registry Keys | Online Free DevTools by Hexmos"
 name: reg-load
 path: /freedevtools/tldr/windows/reg-load
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-load/"

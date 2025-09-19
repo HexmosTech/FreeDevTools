@@ -1,5 +1,5 @@
 ---
-title: "XML Format - Format XML Documents | Free DevTools"
+title: "XML Format - Format XML Documents | Online Free DevTools by Hexmos"
 name: xml-format
 path: /freedevtools/tldr/xml/xml-format
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-format/"

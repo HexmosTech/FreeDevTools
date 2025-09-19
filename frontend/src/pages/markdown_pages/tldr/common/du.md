@@ -1,5 +1,5 @@
 ---
-title: "Disk Usage - Estimate File Space with du | Free DevTools"
+title: "Disk Usage - Estimate File Space with du | Online Free DevTools by Hexmos"
 name: du
 path: /freedevtools/tldr/common/du
 canonical: "https://hexmos.com/freedevtools/tldr/common/du/"

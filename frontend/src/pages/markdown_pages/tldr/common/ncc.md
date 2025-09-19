@@ -1,5 +1,5 @@
 ---
-title: "Bundle Node.js - Create Single File with NCC | Free DevTools"
+title: "Bundle Node.js - Create Single File with NCC | Online Free DevTools by Hexmos"
 name: ncc
 path: /freedevtools/tldr/common/ncc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ncc/"

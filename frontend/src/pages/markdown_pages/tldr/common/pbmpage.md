@@ -1,5 +1,5 @@
 ---
-title: "Generate PBM Page - Create Printing Test Patterns | Free DevTools"
+title: "Generate PBM Page - Create Printing Test Patterns | Online Free DevTools by Hexmos"
 name: pbmpage
 path: /freedevtools/tldr/common/pbmpage
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmpage/"

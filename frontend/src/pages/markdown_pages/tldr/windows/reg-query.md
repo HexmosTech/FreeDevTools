@@ -1,5 +1,5 @@
 ---
-title: "Reg Query - Display Registry Values | Free DevTools"
+title: "Reg Query - Display Registry Values | Online Free DevTools by Hexmos"
 name: reg-query
 path: /freedevtools/tldr/windows/reg-query
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-query/"

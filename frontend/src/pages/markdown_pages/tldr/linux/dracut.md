@@ -1,5 +1,5 @@
 ---
-title: "Dracut - Generate Initramfs Images | Free DevTools"
+title: "Dracut - Generate Initramfs Images | Online Free DevTools by Hexmos"
 name: dracut
 path: /freedevtools/tldr/linux/dracut
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dracut/"

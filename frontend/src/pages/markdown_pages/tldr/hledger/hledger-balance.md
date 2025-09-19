@@ -1,5 +1,5 @@
 ---
-title: "Hledger Balance - Analyze Ledger Data | Free DevTools"
+title: "Hledger Balance - Analyze Ledger Data | Online Free DevTools by Hexmos"
 name: hledger-balance
 path: /freedevtools/tldr/hledger/hledger-balance
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-balance/"

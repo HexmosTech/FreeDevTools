@@ -1,5 +1,5 @@
 ---
-title: "Git Update Ref - Create Git Refs | Free DevTools"
+title: "Git Update Ref - Create Git Refs | Online Free DevTools by Hexmos"
 name: git-update-ref
 path: /freedevtools/tldr/git/git-update-ref
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-update-ref/"

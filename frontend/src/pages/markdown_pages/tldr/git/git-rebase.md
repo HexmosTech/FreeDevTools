@@ -1,5 +1,5 @@
 ---
-title: "Git Rebase - Reapply Commits | Free DevTools"
+title: "Git Rebase - Reapply Commits | Online Free DevTools by Hexmos"
 name: git-rebase
 path: /freedevtools/tldr/git/git-rebase
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rebase/"

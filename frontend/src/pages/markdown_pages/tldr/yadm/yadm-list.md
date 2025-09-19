@@ -1,5 +1,5 @@
 ---
-title: "Yadm - List Managed Files | Free DevTools"
+title: "Yadm - List Managed Files | Online Free DevTools by Hexmos"
 name: yadm-list
 path: /freedevtools/tldr/yadm/yadm-list
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-list/"

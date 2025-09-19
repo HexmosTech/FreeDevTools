@@ -1,5 +1,5 @@
 ---
-title: "xclock Time Display - Show Analog or Digital Clocks | Free DevTools"
+title: "xclock Time Display - Show Analog or Digital Clocks | Online Free DevTools by Hexmos"
 name: xclock
 path: /freedevtools/tldr/linux/xclock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xclock/"

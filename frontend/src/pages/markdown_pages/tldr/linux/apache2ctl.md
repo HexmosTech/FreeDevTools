@@ -1,5 +1,5 @@
 ---
-title: "Apache2ctl - Control Web Server with Commands | Free DevTools"
+title: "Apache2ctl - Control Web Server with Commands | Online Free DevTools by Hexmos"
 name: apache2ctl
 path: /freedevtools/tldr/linux/apache2ctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apache2ctl/"

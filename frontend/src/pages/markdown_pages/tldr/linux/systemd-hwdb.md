@@ -1,5 +1,5 @@
 ---
-title: "Hardware Database - Manage Hardware with systemd-hwdb | Free DevTools"
+title: "Hardware Database - Manage Hardware with systemd-hwdb | Online Free DevTools by Hexmos"
 name: systemd-hwdb
 path: /freedevtools/tldr/linux/systemd-hwdb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-hwdb/"

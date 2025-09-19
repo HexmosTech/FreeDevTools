@@ -1,5 +1,5 @@
 ---
-title: "QM Unlink - Unlink Virtual Machine Disks | Free DevTools"
+title: "QM Unlink - Unlink Virtual Machine Disks | Online Free DevTools by Hexmos"
 name: qm-unlink
 path: /freedevtools/tldr/linux/qm-unlink
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-unlink/"

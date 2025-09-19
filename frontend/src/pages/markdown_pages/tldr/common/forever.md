@@ -1,5 +1,5 @@
 ---
-title: "Forever Process Manager - Control Node.js Apps | Free DevTools"
+title: "Forever Process Manager - Control Node.js Apps | Online Free DevTools by Hexmos"
 name: forever
 path: /freedevtools/tldr/common/forever
 canonical: "https://hexmos.com/freedevtools/tldr/common/forever/"

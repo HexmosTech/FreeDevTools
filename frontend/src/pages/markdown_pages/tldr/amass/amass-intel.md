@@ -1,5 +1,5 @@
 ---
-title: "Gather Intel - Amass Intel | Free DevTools"
+title: "Gather Intel - Amass Intel | Online Free DevTools by Hexmos"
 name: amass-intel
 path: /freedevtools/tldr/amass/amass-intel
 canonical: "https://hexmos.com/freedevtools/tldr/amass/amass-intel/"

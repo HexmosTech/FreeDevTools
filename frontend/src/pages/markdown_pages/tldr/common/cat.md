@@ -1,5 +1,5 @@
 ---
-title: "Cat Command - Print Files | Free DevTools"
+title: "Cat Command - Print Files | Online Free DevTools by Hexmos"
 name: cat
 path: /freedevtools/tldr/common/cat
 canonical: "https://hexmos.com/freedevtools/tldr/common/cat/"

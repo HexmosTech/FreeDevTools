@@ -1,5 +1,5 @@
 ---
-title: "Hexdump - View Files in Hexadecimal Format | Free DevTools"
+title: "Hexdump - View Files in Hexadecimal Format | Online Free DevTools by Hexmos"
 name: hd
 path: /freedevtools/tldr/common/hd
 canonical: "https://hexmos.com/freedevtools/tldr/common/hd/"

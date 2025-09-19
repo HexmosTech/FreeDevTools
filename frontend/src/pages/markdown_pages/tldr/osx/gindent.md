@@ -1,5 +1,5 @@
 ---
-title: "Format Code - Format Code with gindent | Free DevTools"
+title: "Format Code - Format Code with gindent | Online Free DevTools by Hexmos"
 name: gindent
 path: /freedevtools/tldr/osx/gindent
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gindent/"

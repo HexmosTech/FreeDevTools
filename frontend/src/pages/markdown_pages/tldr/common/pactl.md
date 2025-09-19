@@ -1,5 +1,5 @@
 ---
-title: "PulseAudio Control - Manage Sound Server with pactl | Free DevTools"
+title: "PulseAudio Control - Manage Sound Server with pactl | Online Free DevTools by Hexmos"
 name: pactl
 path: /freedevtools/tldr/common/pactl
 canonical: "https://hexmos.com/freedevtools/tldr/common/pactl/"

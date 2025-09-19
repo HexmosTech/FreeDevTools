@@ -1,5 +1,5 @@
 ---
-title: "LZegrep - Search Compressed Files | Free DevTools"
+title: "LZegrep - Search Compressed Files | Online Free DevTools by Hexmos"
 name: lzegrep
 path: /freedevtools/tldr/common/lzegrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzegrep/"

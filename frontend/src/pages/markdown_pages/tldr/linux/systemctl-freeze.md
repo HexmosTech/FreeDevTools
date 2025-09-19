@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Freeze - Control Linux Services | Free DevTools"
+title: "Systemctl Freeze - Control Linux Services | Online Free DevTools by Hexmos"
 name: systemctl-freeze
 path: /freedevtools/tldr/linux/systemctl-freeze
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-freeze/"

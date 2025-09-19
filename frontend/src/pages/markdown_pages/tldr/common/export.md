@@ -1,5 +1,5 @@
 ---
-title: "Export Variables - Set Shell Variables | Free DevTools"
+title: "Export Variables - Set Shell Variables | Online Free DevTools by Hexmos"
 name: export
 path: /freedevtools/tldr/common/export
 canonical: "https://hexmos.com/freedevtools/tldr/common/export/"

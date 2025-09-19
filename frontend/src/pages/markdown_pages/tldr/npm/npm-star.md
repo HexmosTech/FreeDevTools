@@ -1,5 +1,5 @@
 ---
-title: "NPM Star - Mark Packages as Favorites | Free DevTools"
+title: "NPM Star - Mark Packages as Favorites | Online Free DevTools by Hexmos"
 name: npm-star
 path: /freedevtools/tldr/npm/npm-star
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-star/"

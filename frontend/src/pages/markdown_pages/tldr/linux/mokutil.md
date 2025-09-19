@@ -1,5 +1,5 @@
 ---
-title: "Mokutil - Configure Secure Boot Keys | Free DevTools"
+title: "Mokutil - Configure Secure Boot Keys | Online Free DevTools by Hexmos"
 name: mokutil
 path: /freedevtools/tldr/linux/mokutil
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mokutil/"

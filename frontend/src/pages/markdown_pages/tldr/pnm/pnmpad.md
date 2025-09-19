@@ -1,5 +1,5 @@
 ---
-title: "Pad PNM Image - Add Borders | Free DevTools"
+title: "Pad PNM Image - Add Borders | Online Free DevTools by Hexmos"
 name: pnmpad
 path: "/freedevtools/tldr/pnm/pnmpad"
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpad/"

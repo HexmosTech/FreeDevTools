@@ -1,5 +1,5 @@
 ---
-title: "Change Git Committer - Blame Someone Else | Free DevTools"
+title: "Change Git Committer - Blame Someone Else | Online Free DevTools by Hexmos"
 name: git-blame-someone-else
 path: /freedevtools/tldr/git/git-blame-someone-else
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-blame-someone-else/"

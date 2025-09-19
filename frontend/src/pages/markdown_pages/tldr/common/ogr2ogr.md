@@ -1,5 +1,5 @@
 ---
-title: "Convert Geospatial Data with ogr2ogr | Free DevTools"
+title: "Convert Geospatial Data with ogr2ogr | Online Free DevTools by Hexmos"
 name: ogr2ogr
 path: /freedevtools/tldr/common/ogr2ogr
 canonical: "https://hexmos.com/freedevtools/tldr/common/ogr2ogr/"

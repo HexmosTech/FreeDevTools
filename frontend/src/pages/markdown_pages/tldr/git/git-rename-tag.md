@@ -1,5 +1,5 @@
 ---
-title: "Rename Git Tag - Control Tag Names | Free DevTools"
+title: "Rename Git Tag - Control Tag Names | Online Free DevTools by Hexmos"
 name: git-rename-tag
 path: /freedevtools/tldr/git/git-rename-tag
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rename-tag/"

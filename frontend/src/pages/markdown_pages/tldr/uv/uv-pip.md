@@ -1,5 +1,5 @@
 ---
-title: "UV Pip - Manage Python Packages | Free DevTools"
+title: "UV Pip - Manage Python Packages | Online Free DevTools by Hexmos"
 name: uv-pip
 path: /freedevtools/tldr/uv/uv-pip
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-pip/"

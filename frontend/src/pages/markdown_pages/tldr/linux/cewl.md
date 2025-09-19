@@ -1,5 +1,5 @@
 ---
-title: "Create Wordlist - Spider URLs with cewl | Free DevTools"
+title: "Create Wordlist - Spider URLs with cewl | Online Free DevTools by Hexmos"
 name: cewl
 path: /freedevtools/tldr/linux/cewl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cewl/"

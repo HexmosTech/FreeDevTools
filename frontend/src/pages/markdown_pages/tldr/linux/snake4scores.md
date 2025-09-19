@@ -1,5 +1,5 @@
 ---
-title: "View Snake4 High Scores - Display Game Scores | Free DevTools"
+title: "View Snake4 High Scores - Display Game Scores | Online Free DevTools by Hexmos"
 name: snake4scores
 path: /freedevtools/tldr/linux/snake4scores
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snake4scores/"

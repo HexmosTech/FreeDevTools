@@ -1,5 +1,5 @@
 ---
-title: "Path Analyzer - Resolve File Paths on Linux | Free DevTools"
+title: "Path Analyzer - Resolve File Paths on Linux | Online Free DevTools by Hexmos"
 name: namei
 path: /freedevtools/tldr/linux/namei
 canonical: "https://hexmos.com/freedevtools/tldr/linux/namei/"

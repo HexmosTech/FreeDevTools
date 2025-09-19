@@ -1,5 +1,5 @@
 ---
-title: "Git Squash - Combine Commits | Free DevTools"
+title: "Git Squash - Combine Commits | Online Free DevTools by Hexmos"
 name: git-squash
 path: /freedevtools/tldr/git/git-squash
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-squash/"

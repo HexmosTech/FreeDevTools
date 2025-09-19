@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - Pigz Multithreaded Compression | Free DevTools"
+title: "Compress Files - Pigz Multithreaded Compression | Online Free DevTools by Hexmos"
 name: pigz
 path: /freedevtools/tldr/common/pigz
 canonical: "https://hexmos.com/freedevtools/tldr/common/pigz/"

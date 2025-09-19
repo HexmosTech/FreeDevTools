@@ -1,5 +1,5 @@
 ---
-title: "Control NVIDIA GPUs - Monitor and Manage | Free DevTools"
+title: "Control NVIDIA GPUs - Monitor and Manage | Online Free DevTools by Hexmos"
 name: nvidia-smi
 path: /freedevtools/tldr/nvidia/nvidia-smi
 canonical: "https://hexmos.com/freedevtools/tldr/nvidia/nvidia-smi/"

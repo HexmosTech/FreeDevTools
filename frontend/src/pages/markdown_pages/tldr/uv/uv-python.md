@@ -1,5 +1,5 @@
 ---
-title: "Manage Python Versions - uv-python | Free DevTools"
+title: "Manage Python Versions - uv-python | Online Free DevTools by Hexmos"
 name: uv-python
 path: /freedevtools/tldr/uv/uv-python
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-python/"

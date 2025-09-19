@@ -1,5 +1,5 @@
 ---
-title: "Python Launcher - Run Python Versions | Free DevTools"
+title: "Python Launcher - Run Python Versions | Online Free DevTools by Hexmos"
 name: py
 path: /freedevtools/tldr/windows/py
 canonical: "https://hexmos.com/freedevtools/tldr/windows/py/"

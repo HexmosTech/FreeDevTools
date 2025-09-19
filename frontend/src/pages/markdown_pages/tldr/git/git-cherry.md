@@ -1,5 +1,5 @@
 ---
-title: "Git Cherry - Find Upstream Commits | Free DevTools"
+title: "Git Cherry - Find Upstream Commits | Online Free DevTools by Hexmos"
 name: git-cherry
 path: /freedevtools/tldr/git/git-cherry
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cherry/"

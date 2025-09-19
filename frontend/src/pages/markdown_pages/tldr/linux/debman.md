@@ -1,5 +1,5 @@
 ---
-title: "Debman - Read Man Pages Offline | Free DevTools"
+title: "Debman - Read Man Pages Offline | Online Free DevTools by Hexmos"
 name: debman
 path: /freedevtools/tldr/linux/debman
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debman/"

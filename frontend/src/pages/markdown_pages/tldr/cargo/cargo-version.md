@@ -1,5 +1,5 @@
 ---
-title: "Cargo Version - Display Rust Version Information | Free DevTools"
+title: "Cargo Version - Display Rust Version Information | Online Free DevTools by Hexmos"
 name: cargo-version
 path: /freedevtools/tldr/cargo/cargo-version
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-version/"

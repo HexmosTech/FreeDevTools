@@ -1,5 +1,5 @@
 ---
-title: "PHP Yii - Generate Yii Framework Components | Free DevTools"
+title: "PHP Yii - Generate Yii Framework Components | Online Free DevTools by Hexmos"
 name: php-yii
 path: /freedevtools/tldr/php/php-yii
 canonical: "https://hexmos.com/freedevtools/tldr/php/php-yii/"

@@ -1,5 +1,5 @@
 ---
-title: "Stat - Display File Information | Free DevTools"
+title: "Stat - Display File Information | Online Free DevTools by Hexmos"
 name: stat
 path: /freedevtools/tldr/st/stat
 canonical: "https://hexmos.com/freedevtools/tldr/st/stat/"

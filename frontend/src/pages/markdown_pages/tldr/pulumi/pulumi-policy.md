@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Policy - Manage Cloud Resource Policies | Free DevTools"
+title: "Pulumi Policy - Manage Cloud Resource Policies | Online Free DevTools by Hexmos"
 name: pulumi-policy
 path: /freedevtools/tldr/pulumi/pulumi-policy
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-policy/"

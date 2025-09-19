@@ -1,5 +1,5 @@
 ---
-title: "mocp - Control Music Playback on Console | Free DevTools"
+title: "mocp - Control Music Playback on Console | Online Free DevTools by Hexmos"
 name: mocp
 path: /freedevtools/tldr/linux/mocp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mocp/"

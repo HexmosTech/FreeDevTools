@@ -1,5 +1,5 @@
 ---
-title: "Extract RAR - Manage RAR Archives | Free DevTools"
+title: "Extract RAR - Manage RAR Archives | Online Free DevTools by Hexmos"
 name: unrar
 path: /freedevtools/tldr/common/unrar
 canonical: "https://hexmos.com/freedevtools/tldr/common/unrar/"

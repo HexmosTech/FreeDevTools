@@ -1,5 +1,5 @@
 ---
-title: "Evaluate Expression - Manipulate Strings with Expr | Free DevTools"
+title: "Evaluate Expression - Manipulate Strings with Expr | Online Free DevTools by Hexmos"
 name: expr
 path: /freedevtools/tldr/common/expr
 canonical: "https://hexmos.com/freedevtools/tldr/common/expr/"

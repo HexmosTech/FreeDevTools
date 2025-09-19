@@ -1,5 +1,5 @@
 ---
-title: "List Hardware - Display Installed Devices on Linux | Free DevTools"
+title: "List Hardware - Display Installed Devices on Linux | Online Free DevTools by Hexmos"
 name: lsdev
 path: /freedevtools/tldr/linux/lsdev
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsdev/"

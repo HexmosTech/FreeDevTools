@@ -1,5 +1,5 @@
 ---
-title: "Control Backlight Brightness with xbacklight | Free DevTools"
+title: "Control Backlight Brightness with xbacklight | Online Free DevTools by Hexmos"
 name: xbacklight
 path: /freedevtools/tldr/linux/xbacklight
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xbacklight/"

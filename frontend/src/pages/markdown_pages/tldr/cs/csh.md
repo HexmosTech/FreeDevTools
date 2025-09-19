@@ -1,5 +1,5 @@
 ---
-title: "Csh Shell - Control Shell Sessions | Free DevTools"
+title: "Csh Shell - Control Shell Sessions | Online Free DevTools by Hexmos"
 name: csh
 path: /freedevtools/tldr/cs/csh
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csh/"

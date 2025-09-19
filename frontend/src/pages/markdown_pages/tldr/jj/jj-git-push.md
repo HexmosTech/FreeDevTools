@@ -1,5 +1,5 @@
 ---
-title: "Git Push - Control Git Remote with jj | Free DevTools"
+title: "Git Push - Control Git Remote with jj | Online Free DevTools by Hexmos"
 name: jj-git-push
 path: /freedevtools/tldr/jj/jj-git-push
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-push/"

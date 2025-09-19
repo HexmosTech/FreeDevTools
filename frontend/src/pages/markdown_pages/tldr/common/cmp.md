@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Verify Data Integrity with Cmp | Free DevTools"
+title: "Compare Files - Verify Data Integrity with Cmp | Online Free DevTools by Hexmos"
 name: cmp
 path: /freedevtools/tldr/common/cmp
 canonical: "https://hexmos.com/freedevtools/tldr/common/cmp/"

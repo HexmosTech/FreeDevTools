@@ -1,5 +1,5 @@
 ---
-title: "Control Files - Manage Files with nnn | Free DevTools"
+title: "Control Files - Manage Files with nnn | Online Free DevTools by Hexmos"
 name: nnn
 path: /freedevtools/tldr/common/nnn
 canonical: "https://hexmos.com/freedevtools/tldr/common/nnn/"

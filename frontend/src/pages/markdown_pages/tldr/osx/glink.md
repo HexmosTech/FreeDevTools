@@ -1,5 +1,5 @@
 ---
-title: "Glink Command - Create Links on macOS | Free DevTools"
+title: "Glink Command - Create Links on macOS | Online Free DevTools by Hexmos"
 name: glink
 path: /freedevtools/tldr/osx/glink
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glink/"

@@ -1,5 +1,5 @@
 ---
-title: "Define Function - Create Shell Functions | Free DevTools"
+title: "Define Function - Create Shell Functions | Online Free DevTools by Hexmos"
 name: function
 path: "/freedevtools/tldr/common/function"
 canonical: "https://hexmos.com/freedevtools/tldr/common/function/"

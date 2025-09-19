@@ -1,5 +1,5 @@
 ---
-title: "Manage Azure Repos - Control Azure DevOps Repos | Free DevTools"
+title: "Manage Azure Repos - Control Azure DevOps Repos | Online Free DevTools by Hexmos"
 name: az-repos
 path: /freedevtools/tldr/az/az-repos
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-repos/"

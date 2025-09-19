@@ -1,5 +1,5 @@
 ---
-title: "Debug PHP Code - Interactive PsySH REPL | Free DevTools"
+title: "Debug PHP Code - Interactive PsySH REPL | Online Free DevTools by Hexmos"
 name: psysh
 path: /freedevtools/tldr/common/psysh
 canonical: "https://hexmos.com/freedevtools/tldr/common/psysh/"

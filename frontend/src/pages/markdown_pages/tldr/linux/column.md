@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Columnar Formatting | Free DevTools"
+title: "Format Text - Columnar Formatting | Online Free DevTools by Hexmos"
 name: column
 path: /freedevtools/tldr/linux/column
 canonical: "https://hexmos.com/freedevtools/tldr/linux/column/"

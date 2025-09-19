@@ -1,5 +1,5 @@
 ---
-title: "Extract Archive - Unpack Files with dtrx | Free DevTools"
+title: "Extract Archive - Unpack Files with dtrx | Online Free DevTools by Hexmos"
 name: dtrx
 path: /freedevtools/tldr/common/dtrx
 canonical: "https://hexmos.com/freedevtools/tldr/common/dtrx/"

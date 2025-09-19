@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Sites - Control with Jekyll | Free DevTools"
+title: "Generate Static Sites - Control with Jekyll | Online Free DevTools by Hexmos"
 name: jekyll
 path: /freedevtools/tldr/common/jekyll
 canonical: "https://hexmos.com/freedevtools/tldr/common/jekyll/"

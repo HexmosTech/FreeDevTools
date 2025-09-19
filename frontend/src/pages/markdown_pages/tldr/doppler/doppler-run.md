@@ -1,5 +1,5 @@
 ---
-title: "Doppler Run - Inject Secrets | Free DevTools"
+title: "Doppler Run - Inject Secrets | Online Free DevTools by Hexmos"
 name: doppler-run
 path: /freedevtools/tldr/doppler/doppler-run
 canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-run/"

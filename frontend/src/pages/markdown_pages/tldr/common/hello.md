@@ -1,5 +1,5 @@
 ---
-title: "Hello Command - Generate Customizable Greetings | Free DevTools"
+title: "Hello Command - Generate Customizable Greetings | Online Free DevTools by Hexmos"
 name: hello
 path: /freedevtools/tldr/common/hello
 canonical: "https://hexmos.com/freedevtools/tldr/common/hello/"

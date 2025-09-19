@@ -1,5 +1,5 @@
 ---
-title: "Rustup Help - Display Rust Toolchain Info | Free DevTools"
+title: "Rustup Help - Display Rust Toolchain Info | Online Free DevTools by Hexmos"
 name: rustup-help
 path: /freedevtools/tldr/rustup/rustup-help
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-help/"

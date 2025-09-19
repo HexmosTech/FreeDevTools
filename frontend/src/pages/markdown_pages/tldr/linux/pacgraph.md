@@ -1,5 +1,5 @@
 ---
-title: "Generate Package Graph - Pacgraph | Free DevTools"
+title: "Generate Package Graph - Pacgraph | Online Free DevTools by Hexmos"
 name: pacgraph
 path: /freedevtools/tldr/linux/pacgraph
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacgraph/"

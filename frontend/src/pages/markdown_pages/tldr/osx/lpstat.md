@@ -1,5 +1,5 @@
 ---
-title: "Display Printer Status - Control Printing with lpstat | Free DevTools"
+title: "Display Printer Status - Control Printing with lpstat | Online Free DevTools by Hexmos"
 name: lpstat
 path: /freedevtools/tldr/osx/lpstat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/lpstat/"

@@ -1,5 +1,5 @@
 ---
-title: "Test Command - Validate File Types | Free DevTools"
+title: "Test Command - Validate File Types | Online Free DevTools by Hexmos"
 name: test
 path: /freedevtools/tldr/common/test
 canonical: "https://hexmos.com/freedevtools/tldr/common/test/"

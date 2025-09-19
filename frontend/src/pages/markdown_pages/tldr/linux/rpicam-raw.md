@@ -1,5 +1,5 @@
 ---
-title: "Capture Raw Video - Using rpicam-raw | Free DevTools"
+title: "Capture Raw Video - Using rpicam-raw | Online Free DevTools by Hexmos"
 name: rpicam-raw
 path: /freedevtools/tldr/linux/rpicam-raw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-raw/"

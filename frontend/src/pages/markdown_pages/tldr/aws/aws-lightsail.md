@@ -1,5 +1,5 @@
 ---
-title: "AWS Lightsail - Manage Cloud Resources | Free DevTools"
+title: "AWS Lightsail - Manage Cloud Resources | Online Free DevTools by Hexmos"
 name: aws-lightsail
 path: /freedevtools/tldr/aws/aws-lightsail
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-lightsail/"

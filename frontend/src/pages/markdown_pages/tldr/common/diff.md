@@ -1,5 +1,5 @@
 ---
-title: "Diff - Compare Files and Directories | Free DevTools"
+title: "Diff - Compare Files and Directories | Online Free DevTools by Hexmos"
 name: diff
 path: /freedevtools/tldr/common/diff
 canonical: "https://hexmos.com/freedevtools/tldr/common/diff/"

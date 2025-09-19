@@ -1,5 +1,5 @@
 ---
-title: "Control Nohup Process - Run Commands in Background | Free DevTools"
+title: "Control Nohup Process - Run Commands in Background | Online Free DevTools by Hexmos"
 name: gnohup
 path: /freedevtools/tldr/osx/gnohup
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gnohup/"

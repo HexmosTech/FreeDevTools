@@ -1,5 +1,5 @@
 ---
-title: "Manage Neovim Versions - Switch Neovim Versions | Free DevTools"
+title: "Manage Neovim Versions - Switch Neovim Versions | Online Free DevTools by Hexmos"
 name: bob
 path: /freedevtools/tldr/common/bob
 canonical: "https://hexmos.com/freedevtools/tldr/common/bob/"

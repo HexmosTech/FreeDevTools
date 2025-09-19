@@ -1,5 +1,5 @@
 ---
-title: "Validate DNS Zones - dnswalk Debugger | Free DevTools"
+title: "Validate DNS Zones - dnswalk Debugger | Online Free DevTools by Hexmos"
 name: dnswalk
 path: /freedevtools/tldr/common/dnswalk
 canonical: "https://hexmos.com/freedevtools/tldr/common/dnswalk/"

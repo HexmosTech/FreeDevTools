@@ -1,5 +1,5 @@
 ---
-title: "Validate Commit - Validate Node.js Commits | Free DevTools"
+title: "Validate Commit - Validate Node.js Commits | Online Free DevTools by Hexmos"
 name: core-validate-commit
 path: /freedevtools/tldr/common/core-validate-commit
 canonical: "https://hexmos.com/freedevtools/tldr/common/core-validate-commit/"

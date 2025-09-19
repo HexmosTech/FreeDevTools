@@ -1,5 +1,5 @@
 ---
-title: "Control Background Jobs - Resume Processes | Free DevTools"
+title: "Control Background Jobs - Resume Processes | Online Free DevTools by Hexmos"
 name: bg
 path: /freedevtools/tldr/common/bg
 canonical: "https://hexmos.com/freedevtools/tldr/common/bg/"

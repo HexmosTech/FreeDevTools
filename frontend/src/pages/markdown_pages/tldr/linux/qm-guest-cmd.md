@@ -1,5 +1,5 @@
 ---
-title: "Control QEMU Guest - Execute Agent Commands | Free DevTools"
+title: "Control QEMU Guest - Execute Agent Commands | Online Free DevTools by Hexmos"
 name: qm-guest-cmd
 path: /freedevtools/tldr/linux/qm-guest-cmd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-guest-cmd/"

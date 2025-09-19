@@ -1,5 +1,5 @@
 ---
-title: "Analyze Web Logs - GoAccess Analyzer | Free DevTools"
+title: "Analyze Web Logs - GoAccess Analyzer | Online Free DevTools by Hexmos"
 name: goaccess
 path: /freedevtools/tldr/linux/goaccess
 canonical: "https://hexmos.com/freedevtools/tldr/linux/goaccess/"

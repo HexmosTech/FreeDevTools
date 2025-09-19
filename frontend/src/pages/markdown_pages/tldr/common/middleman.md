@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Sites - Middleman Generator | Free DevTools"
+title: "Generate Static Sites - Middleman Generator | Online Free DevTools by Hexmos"
 name: middleman
 path: /freedevtools/tldr/common/middleman
 canonical: "https://hexmos.com/freedevtools/tldr/common/middleman/"

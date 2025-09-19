@@ -1,5 +1,5 @@
 ---
-title: "LOLCODE Interpreter - Run LOLCODE Files | Free DevTools"
+title: "LOLCODE Interpreter - Run LOLCODE Files | Online Free DevTools by Hexmos"
 name: lci
 path: /freedevtools/tldr/linux/lci
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lci/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Symfony Projects - Manage Apps | Free DevTools"
+title: "Create Symfony Projects - Manage Apps | Online Free DevTools by Hexmos"
 name: symfony
 path: /freedevtools/tldr/common/symfony
 canonical: "https://hexmos.com/freedevtools/tldr/common/symfony/"

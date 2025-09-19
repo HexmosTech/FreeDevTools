@@ -1,5 +1,5 @@
 ---
-title: "Display Dialogs with Zenity - Command-Line Tool | Free DevTools"
+title: "Display Dialogs with Zenity - Command-Line Tool | Online Free DevTools by Hexmos"
 name: zenity
 path: /freedevtools/tldr/linux/zenity
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zenity/"

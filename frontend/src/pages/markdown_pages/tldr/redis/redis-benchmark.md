@@ -1,5 +1,5 @@
 ---
-title: "Redis Benchmark - Measure Redis Server Performance | Free DevTools"
+title: "Redis Benchmark - Measure Redis Server Performance | Online Free DevTools by Hexmos"
 name: redis-benchmark
 path: /freedevtools/tldr/redis/redis-benchmark
 canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-benchmark/"

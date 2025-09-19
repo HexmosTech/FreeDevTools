@@ -1,5 +1,5 @@
 ---
-title: "Compare Diffs - Show Differences Between Files | Free DevTools"
+title: "Compare Diffs - Show Differences Between Files | Online Free DevTools by Hexmos"
 name: interdiff
 path: /freedevtools/tldr/in/interdiff
 canonical: "https://hexmos.com/freedevtools/tldr/in/interdiff/"

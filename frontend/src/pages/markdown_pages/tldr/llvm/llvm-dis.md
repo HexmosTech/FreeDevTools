@@ -1,5 +1,5 @@
 ---
-title: "Generate LLVM IR - Disassemble Bitcode | Free DevTools"
+title: "Generate LLVM IR - Disassemble Bitcode | Online Free DevTools by Hexmos"
 name: llvm-dis
 path: /freedevtools/tldr/llvm/llvm-dis
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-dis/"

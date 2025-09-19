@@ -1,5 +1,5 @@
 ---
-title: "Droplet Control - Manage DigitalOcean VMs | Free DevTools"
+title: "Droplet Control - Manage DigitalOcean VMs | Online Free DevTools by Hexmos"
 name: doctl-compute-droplet
 path: /freedevtools/tldr/doctl/doctl-compute-droplet
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-compute-droplet/"

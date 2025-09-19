@@ -1,5 +1,5 @@
 ---
-title: "Control Group Ownership - gchgrp Command | Free DevTools"
+title: "Control Group Ownership - gchgrp Command | Online Free DevTools by Hexmos"
 name: gchgrp
 path: /freedevtools/tldr/osx/gchgrp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gchgrp/"

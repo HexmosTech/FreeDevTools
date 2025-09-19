@@ -1,5 +1,5 @@
 ---
-title: "cbatticon - Monitor Battery Status | Free DevTools"
+title: "cbatticon - Monitor Battery Status | Online Free DevTools by Hexmos"
 name: cbatticon
 path: /freedevtools/tldr/linux/cbatticon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cbatticon/"

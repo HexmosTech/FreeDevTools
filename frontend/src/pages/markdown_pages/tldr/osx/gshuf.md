@@ -1,5 +1,5 @@
 ---
-title: "Shuffle Lines - Generate Random Permutations with gshuf | Free DevTools"
+title: "Shuffle Lines - Generate Random Permutations with gshuf | Online Free DevTools by Hexmos"
 name: gshuf
 path: /freedevtools/tldr/osx/gshuf
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gshuf/"

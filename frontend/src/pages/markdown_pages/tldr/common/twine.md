@@ -1,5 +1,5 @@
 ---
-title: "Publish Python Packages - Upload with Twine | Free DevTools"
+title: "Publish Python Packages - Upload with Twine | Online Free DevTools by Hexmos"
 name: twine
 path: /freedevtools/tldr/common/twine
 canonical: "https://hexmos.com/freedevtools/tldr/common/twine/"

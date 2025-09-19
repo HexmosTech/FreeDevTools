@@ -1,5 +1,5 @@
 ---
-title: "Rust Documentation - Generate Offline Docs | Free DevTools"
+title: "Rust Documentation - Generate Offline Docs | Online Free DevTools by Hexmos"
 name: rustup-doc
 path: /freedevtools/tldr/rustup/rustup-doc
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-doc/"

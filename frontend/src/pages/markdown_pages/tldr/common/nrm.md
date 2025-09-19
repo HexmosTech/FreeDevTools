@@ -1,5 +1,5 @@
 ---
-title: "Control npm Registry - Easily Switch Registries | Free DevTools"
+title: "Control npm Registry - Easily Switch Registries | Online Free DevTools by Hexmos"
 name: nrm
 path: /freedevtools/tldr/common/nrm
 canonical: "https://hexmos.com/freedevtools/tldr/common/nrm/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Documentation - Build Websites with MkDocs | Free DevTools"
+title: "Create Documentation - Build Websites with MkDocs | Online Free DevTools by Hexmos"
 name: mkdocs
 path: /freedevtools/tldr/common/mkdocs
 canonical: "https://hexmos.com/freedevtools/tldr/common/mkdocs/"

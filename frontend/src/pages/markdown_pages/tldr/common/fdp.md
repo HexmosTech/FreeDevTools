@@ -1,5 +1,5 @@
 ---
-title: "Generate Network Graph - Force Directed Layout | Free DevTools"
+title: "Generate Network Graph - Force Directed Layout | Online Free DevTools by Hexmos"
 name: fdp
 path: /freedevtools/tldr/common/fdp
 canonical: "https://hexmos.com/freedevtools/tldr/common/fdp/"

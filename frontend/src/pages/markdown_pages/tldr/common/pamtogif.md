@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to GIF - Image Converter | Free DevTools"
+title: "Convert PAM to GIF - Image Converter | Online Free DevTools by Hexmos"
 name: pamtogif
 path: /freedevtools/tldr/common/pamtogif
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtogif/"

@@ -1,5 +1,5 @@
 ---
-title: "Dirsearch Scanner - Discover Web Paths | Free DevTools"
+title: "Dirsearch Scanner - Discover Web Paths | Online Free DevTools by Hexmos"
 name: dirsearch
 path: /freedevtools/tldr/common/dirsearch
 canonical: "https://hexmos.com/freedevtools/tldr/common/dirsearch/"

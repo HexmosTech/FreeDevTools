@@ -1,5 +1,5 @@
 ---
-title: "Compile LaTeX - Generate DVI Documents | Free DevTools"
+title: "Compile LaTeX - Generate DVI Documents | Online Free DevTools by Hexmos"
 name: latex
 path: /freedevtools/tldr/common/latex
 canonical: "https://hexmos.com/freedevtools/tldr/common/latex/"

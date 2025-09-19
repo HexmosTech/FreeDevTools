@@ -1,5 +1,5 @@
 ---
-title: "Device Tree Compiler - Recompile DTB Files | Free DevTools"
+title: "Device Tree Compiler - Recompile DTB Files | Online Free DevTools by Hexmos"
 name: dtc
 path: /freedevtools/tldr/common/dtc
 canonical: "https://hexmos.com/freedevtools/tldr/common/dtc/"

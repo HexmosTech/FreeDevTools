@@ -1,5 +1,5 @@
 ---
-title: "Rmmod - Remove Linux Kernel Modules | Free DevTools"
+title: "Rmmod - Remove Linux Kernel Modules | Online Free DevTools by Hexmos"
 name: rmmod
 path: /freedevtools/tldr/linux/rmmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rmmod/"

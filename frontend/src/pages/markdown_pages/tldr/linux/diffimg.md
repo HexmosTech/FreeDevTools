@@ -1,5 +1,5 @@
 ---
-title: "Compare Images - Calculate Image Differences | Free DevTools"
+title: "Compare Images - Calculate Image Differences | Online Free DevTools by Hexmos"
 name: diffimg
 path: /freedevtools/tldr/linux/diffimg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/diffimg/"

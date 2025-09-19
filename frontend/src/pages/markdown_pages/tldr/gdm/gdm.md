@@ -1,5 +1,5 @@
 ---
-title: "Manage GNOME Display - Control GDM Settings | Free DevTools"
+title: "Manage GNOME Display - Control GDM Settings | Online Free DevTools by Hexmos"
 name: gdm
 path: /freedevtools/tldr/gdm/gdm
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm/"

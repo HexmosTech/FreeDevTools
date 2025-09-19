@@ -1,5 +1,5 @@
 ---
-title: "List Directory Items - Explore Files with Get-ChildItem | Free DevTools"
+title: "List Directory Items - Explore Files with Get-ChildItem | Online Free DevTools by Hexmos"
 name: get-childitem
 path: /freedevtools/tldr/windows/get-childitem
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-childitem/"

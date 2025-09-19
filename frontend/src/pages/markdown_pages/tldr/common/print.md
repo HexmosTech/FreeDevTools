@@ -1,5 +1,5 @@
 ---
-title: "Control Print Commands - View Documentation | Free DevTools"
+title: "Control Print Commands - View Documentation | Online Free DevTools by Hexmos"
 name: print
 path: /freedevtools/tldr/common/print
 canonical: "https://hexmos.com/freedevtools/tldr/common/print/"

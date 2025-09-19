@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Teardown - Disable AppArmor Profiles | Free DevTools"
+title: "AppArmor Teardown - Disable AppArmor Profiles | Online Free DevTools by Hexmos"
 name: aa-teardown
 path: /freedevtools/tldr/linux/aa-teardown
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-teardown/"

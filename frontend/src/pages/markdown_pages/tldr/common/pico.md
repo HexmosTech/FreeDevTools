@@ -1,5 +1,5 @@
 ---
-title: "Edit Text with Pico - Command-Line Editor | Free DevTools"
+title: "Edit Text with Pico - Command-Line Editor | Online Free DevTools by Hexmos"
 name: pico
 path: /freedevtools/tldr/common/pico
 canonical: "https://hexmos.com/freedevtools/tldr/common/pico/"

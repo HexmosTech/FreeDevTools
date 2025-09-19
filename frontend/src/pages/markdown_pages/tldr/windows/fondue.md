@@ -1,5 +1,5 @@
 ---
-title: "Fondue - Install Windows Features | Free DevTools"
+title: "Fondue - Install Windows Features | Online Free DevTools by Hexmos"
 name: fondue
 path: /freedevtools/tldr/windows/fondue
 canonical: "https://hexmos.com/freedevtools/tldr/windows/fondue/"

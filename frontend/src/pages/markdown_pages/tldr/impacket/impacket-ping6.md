@@ -1,5 +1,5 @@
 ---
-title: "Impacket Ping6 - Network Connectivity Test | Free DevTools"
+title: "Impacket Ping6 - Network Connectivity Test | Online Free DevTools by Hexmos"
 name: impacket-ping6
 path: /freedevtools/tldr/impacket/impacket-ping6
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-ping6/"

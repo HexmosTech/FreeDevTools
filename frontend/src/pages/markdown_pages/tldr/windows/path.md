@@ -1,5 +1,5 @@
 ---
-title: "Control Path - Manage System Paths | Free DevTools"
+title: "Control Path - Manage System Paths | Online Free DevTools by Hexmos"
 name: path
 path: /freedevtools/tldr/windows/path
 canonical: "https://hexmos.com/freedevtools/tldr/windows/path/"

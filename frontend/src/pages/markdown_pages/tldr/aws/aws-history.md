@@ -1,5 +1,5 @@
 ---
-title: "AWS History - Control AWS CLI Commands | Free DevTools"
+title: "AWS History - Control AWS CLI Commands | Online Free DevTools by Hexmos"
 name: aws-history
 path: /freedevtools/tldr/aws/aws-history
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-history/"

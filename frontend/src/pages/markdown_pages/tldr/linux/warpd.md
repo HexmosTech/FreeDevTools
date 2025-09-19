@@ -1,5 +1,5 @@
 ---
-title: "Warpd - Control Mouse with Keyboard | Free DevTools"
+title: "Warpd - Control Mouse with Keyboard | Online Free DevTools by Hexmos"
 name: warpd
 path: /freedevtools/tldr/linux/warpd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/warpd/"

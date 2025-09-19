@@ -1,5 +1,5 @@
 ---
-title: "Nslookup - Query DNS Records | Free DevTools"
+title: "Nslookup - Query DNS Records | Online Free DevTools by Hexmos"
 name: nslookup
 path: /freedevtools/tldr/common/nslookup
 canonical: "https://hexmos.com/freedevtools/tldr/common/nslookup/"

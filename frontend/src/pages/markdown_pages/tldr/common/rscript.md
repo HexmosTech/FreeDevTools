@@ -1,5 +1,5 @@
 ---
-title: "Execute R Scripts - Run R Code | Free DevTools"
+title: "Execute R Scripts - Run R Code | Online Free DevTools by Hexmos"
 name: rscript
 path: /freedevtools/tldr/common/rscript
 canonical: "https://hexmos.com/freedevtools/tldr/common/rscript/"

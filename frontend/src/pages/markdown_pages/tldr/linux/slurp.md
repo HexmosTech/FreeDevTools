@@ -1,5 +1,5 @@
 ---
-title: "Select Region - Capture Screen Regions with Slurp | Free DevTools"
+title: "Select Region - Capture Screen Regions with Slurp | Online Free DevTools by Hexmos"
 name: slurp
 path: /freedevtools/tldr/linux/slurp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurp/"

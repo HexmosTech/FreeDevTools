@@ -1,5 +1,5 @@
 ---
-title: "Shred File - Securely Erase Data | Free DevTools"
+title: "Shred File - Securely Erase Data | Online Free DevTools by Hexmos"
 name: gshred
 path: /freedevtools/tldr/osx/gshred
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gshred/"

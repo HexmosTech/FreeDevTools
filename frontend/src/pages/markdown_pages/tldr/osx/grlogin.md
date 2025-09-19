@@ -1,5 +1,5 @@
 ---
-title: "Rlogin Control - Access Remote Systems | Free DevTools"
+title: "Rlogin Control - Access Remote Systems | Online Free DevTools by Hexmos"
 name: grlogin
 path: /freedevtools/tldr/osx/grlogin
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grlogin/"

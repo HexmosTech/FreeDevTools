@@ -1,5 +1,5 @@
 ---
-title: "Scala Control - Interact with Scala Code | Free DevTools"
+title: "Scala Control - Interact with Scala Code | Online Free DevTools by Hexmos"
 name: scala-cli
 path: /freedevtools/tldr/common/scala-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/scala-cli/"

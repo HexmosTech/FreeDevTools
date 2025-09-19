@@ -1,5 +1,5 @@
 ---
-title: "Reverse Shell - Control Remote Access with rc | Free DevTools"
+title: "Reverse Shell - Control Remote Access with rc | Online Free DevTools by Hexmos"
 name: rc
 path: /freedevtools/tldr/common/rc
 canonical: "https://hexmos.com/freedevtools/tldr/common/rc/"

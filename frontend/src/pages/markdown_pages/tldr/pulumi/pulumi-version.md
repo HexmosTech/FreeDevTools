@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Version - Display Pulumi Version | Free DevTools"
+title: "Pulumi Version - Display Pulumi Version | Online Free DevTools by Hexmos"
 name: pulumi-version
 path: /freedevtools/tldr/pulumi/pulumi-version
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-version/"

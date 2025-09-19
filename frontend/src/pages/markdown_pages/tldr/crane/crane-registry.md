@@ -1,5 +1,5 @@
 ---
-title: "Create Crane Registry - Serve Container Images | Free DevTools"
+title: "Create Crane Registry - Serve Container Images | Online Free DevTools by Hexmos"
 name: crane-registry
 path: /freedevtools/tldr/crane/crane-registry
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-registry/"

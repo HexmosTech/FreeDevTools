@@ -1,5 +1,5 @@
 ---
-title: "Search Code with Platinum Searcher | Free DevTools"
+title: "Search Code with Platinum Searcher | Online Free DevTools by Hexmos"
 name: pt
 path: /freedevtools/tldr/common/pt
 canonical: "https://hexmos.com/freedevtools/tldr/common/pt/"

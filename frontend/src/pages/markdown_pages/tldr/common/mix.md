@@ -1,5 +1,5 @@
 ---
-title: "Elixir Mix - Build Elixir Projects | Free DevTools"
+title: "Elixir Mix - Build Elixir Projects | Online Free DevTools by Hexmos"
 name: mix
 path: /freedevtools/tldr/common/mix
 canonical: "https://hexmos.com/freedevtools/tldr/common/mix/"

@@ -1,5 +1,5 @@
 ---
-title: "Resolve Avahi Addresses - Network Address Resolution | Free DevTools"
+title: "Resolve Avahi Addresses - Network Address Resolution | Online Free DevTools by Hexmos"
 name: avahi-resolve-address
 path: /freedevtools/tldr/linux/avahi-resolve-address
 canonical: "https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-address/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Encrypted Filesystems - with encfs | Free DevTools"
+title: "Create Encrypted Filesystems - with encfs | Online Free DevTools by Hexmos"
 name: encfs
 path: /freedevtools/tldr/common/encfs
 canonical: "https://hexmos.com/freedevtools/tldr/common/encfs/"

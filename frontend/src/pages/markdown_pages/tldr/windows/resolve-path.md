@@ -1,5 +1,5 @@
 ---
-title: "Resolve Path - Display Path Contents | Free DevTools"
+title: "Resolve Path - Display Path Contents | Online Free DevTools by Hexmos"
 name: resolve-path
 path: /freedevtools/tldr/windows/resolve-path
 canonical: "https://hexmos.com/freedevtools/tldr/windows/resolve-path/"

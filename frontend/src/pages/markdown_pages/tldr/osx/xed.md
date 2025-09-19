@@ -1,5 +1,5 @@
 ---
-title: "Xcode Editor - Open Files for Editing | Free DevTools"
+title: "Xcode Editor - Open Files for Editing | Online Free DevTools by Hexmos"
 name: xed
 path: /freedevtools/tldr/osx/xed
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xed/"

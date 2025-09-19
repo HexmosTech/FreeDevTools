@@ -1,5 +1,5 @@
 ---
-title: "Oh Dear CLI - Control Website Monitoring | Free DevTools"
+title: "Oh Dear CLI - Control Website Monitoring | Online Free DevTools by Hexmos"
 name: ohdear-cli
 path: /freedevtools/tldr/common/ohdear-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/ohdear-cli/"

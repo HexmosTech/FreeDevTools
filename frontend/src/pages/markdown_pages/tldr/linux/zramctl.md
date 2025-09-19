@@ -1,5 +1,5 @@
 ---
-title: "zramctl - Control zRAM Devices | Free DevTools"
+title: "zramctl - Control zRAM Devices | Online Free DevTools by Hexmos"
 name: zramctl
 path: /freedevtools/tldr/linux/zramctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/zramctl/"

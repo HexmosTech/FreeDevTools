@@ -1,5 +1,5 @@
 ---
-title: "Where-Object - Filter Objects | Free DevTools"
+title: "Where-Object - Filter Objects | Online Free DevTools by Hexmos"
 name: where-object
 path: /freedevtools/tldr/windows/where-object
 canonical: "https://hexmos.com/freedevtools/tldr/windows/where-object/"

@@ -1,5 +1,5 @@
 ---
-title: "System Monitor - Control System Processes with gtop | Free DevTools"
+title: "System Monitor - Control System Processes with gtop | Online Free DevTools by Hexmos"
 name: gtop
 path: /freedevtools/tldr/common/gtop
 canonical: "https://hexmos.com/freedevtools/tldr/common/gtop/"

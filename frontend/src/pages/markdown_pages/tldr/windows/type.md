@@ -1,5 +1,5 @@
 ---
-title: "Display File Content - Read Files with Type | Free DevTools"
+title: "Display File Content - Read Files with Type | Online Free DevTools by Hexmos"
 name: type
 path: /freedevtools/tldr/windows/type
 canonical: "https://hexmos.com/freedevtools/tldr/windows/type/"

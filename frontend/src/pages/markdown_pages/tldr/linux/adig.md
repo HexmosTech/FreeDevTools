@@ -1,5 +1,5 @@
 ---
-title: "adig DNS Lookup - Query DNS Records | Free DevTools"
+title: "adig DNS Lookup - Query DNS Records | Online Free DevTools by Hexmos"
 name: adig
 path: /freedevtools/tldr/linux/adig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/adig/"

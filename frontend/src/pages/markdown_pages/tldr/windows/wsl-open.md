@@ -1,5 +1,5 @@
 ---
-title: "WSL Open - Open Files in Windows from WSL | Free DevTools"
+title: "WSL Open - Open Files in Windows from WSL | Online Free DevTools by Hexmos"
 name: wsl-open
 path: /freedevtools/tldr/windows/wsl-open
 canonical: "https://hexmos.com/freedevtools/tldr/windows/wsl-open/"

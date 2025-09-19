@@ -1,5 +1,5 @@
 ---
-title: "Git LFS - Manage Large Files in Git | Free DevTools"
+title: "Git LFS - Manage Large Files in Git | Online Free DevTools by Hexmos"
 name: git-lfs
 path: /freedevtools/tldr/git/git-lfs
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-lfs/"

@@ -1,5 +1,5 @@
 ---
-title: "PipeWire Dump - Generate JSON State | Free DevTools"
+title: "PipeWire Dump - Generate JSON State | Online Free DevTools by Hexmos"
 name: pw-dump
 path: /freedevtools/tldr/linux/pw-dump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-dump/"

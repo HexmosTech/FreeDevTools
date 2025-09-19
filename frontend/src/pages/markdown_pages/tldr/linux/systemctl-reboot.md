@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Reboot - Control System Restart | Free DevTools"
+title: "Systemctl Reboot - Control System Restart | Online Free DevTools by Hexmos"
 name: systemctl-reboot
 path: /freedevtools/tldr/linux/systemctl-reboot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-reboot/"

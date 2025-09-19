@@ -1,5 +1,5 @@
 ---
-title: "Change Password - Manage User Info on OpenBSD | Free DevTools"
+title: "Change Password - Manage User Info on OpenBSD | Online Free DevTools by Hexmos"
 name: chpass
 path: "/freedevtools/tldr/openbsd/chpass"
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/chpass/"

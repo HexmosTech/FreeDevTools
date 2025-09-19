@@ -1,5 +1,5 @@
 ---
-title: "PO Count - Get Translation Progress | Free DevTools"
+title: "PO Count - Get Translation Progress | Online Free DevTools by Hexmos"
 name: pocount
 path: /freedevtools/tldr/common/pocount
 canonical: "https://hexmos.com/freedevtools/tldr/common/pocount/"

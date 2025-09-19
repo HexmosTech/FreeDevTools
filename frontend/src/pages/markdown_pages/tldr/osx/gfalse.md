@@ -1,5 +1,5 @@
 ---
-title: "Gfalse - Execute False Command on MacOS | Free DevTools"
+title: "Gfalse - Execute False Command on MacOS | Online Free DevTools by Hexmos"
 name: gfalse
 path: /freedevtools/tldr/osx/gfalse
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfalse/"

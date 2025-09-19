@@ -1,5 +1,5 @@
 ---
-title: "Inkscape - Generate SVG Graphics | Free DevTools"
+title: "Inkscape - Generate SVG Graphics | Online Free DevTools by Hexmos"
 name: inkscape
 path: /freedevtools/tldr/in/inkscape
 canonical: "https://hexmos.com/freedevtools/tldr/in/inkscape/"

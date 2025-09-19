@@ -1,5 +1,5 @@
 ---
-title: "Soak Input - Control Output Files with Sponge | Free DevTools"
+title: "Soak Input - Control Output Files with Sponge | Online Free DevTools by Hexmos"
 name: sponge
 path: /freedevtools/tldr/common/sponge
 canonical: "https://hexmos.com/freedevtools/tldr/common/sponge/"

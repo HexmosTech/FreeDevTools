@@ -1,5 +1,5 @@
 ---
-title: "Reg Save - Backup Registry Keys to File | Free DevTools"
+title: "Reg Save - Backup Registry Keys to File | Online Free DevTools by Hexmos"
 name: reg-save
 path: /freedevtools/tldr/windows/reg-save
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-save/"

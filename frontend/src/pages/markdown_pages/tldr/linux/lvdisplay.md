@@ -1,5 +1,5 @@
 ---
-title: "lvdisplay - Display LVM Logical Volumes Information | Free DevTools"
+title: "lvdisplay - Display LVM Logical Volumes Information | Online Free DevTools by Hexmos"
 name: lvdisplay
 path: /freedevtools/tldr/linux/lvdisplay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvdisplay/"

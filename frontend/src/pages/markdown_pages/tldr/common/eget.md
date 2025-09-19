@@ -1,5 +1,5 @@
 ---
-title: "Install Binaries - Download Prebuilt Executables | Free DevTools"
+title: "Install Binaries - Download Prebuilt Executables | Online Free DevTools by Hexmos"
 name: eget
 path: /freedevtools/tldr/common/eget
 canonical: "https://hexmos.com/freedevtools/tldr/common/eget/"

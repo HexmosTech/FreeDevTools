@@ -1,5 +1,5 @@
 ---
-title: "Compile C# Code - Control Compilation with mcs | Free DevTools"
+title: "Compile C# Code - Control Compilation with mcs | Online Free DevTools by Hexmos"
 name: mcs
 path: /freedevtools/tldr/common/mcs
 canonical: "https://hexmos.com/freedevtools/tldr/common/mcs/"

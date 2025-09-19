@@ -1,5 +1,5 @@
 ---
-title: "GPGV Signature Verify - Validate OpenPGP Signatures | Free DevTools"
+title: "GPGV Signature Verify - Validate OpenPGP Signatures | Online Free DevTools by Hexmos"
 name: gpgv
 path: /freedevtools/tldr/gpg/gpgv
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpgv/"

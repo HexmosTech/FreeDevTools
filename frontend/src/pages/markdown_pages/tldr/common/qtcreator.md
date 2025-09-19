@@ -1,5 +1,5 @@
 ---
-title: "Qt Creator - Develop Qt Applications | Free DevTools"
+title: "Qt Creator - Develop Qt Applications | Online Free DevTools by Hexmos"
 name: qtcreator
 path: /freedevtools/tldr/common/qtcreator
 canonical: "https://hexmos.com/freedevtools/tldr/common/qtcreator/"

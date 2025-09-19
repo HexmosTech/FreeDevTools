@@ -1,5 +1,5 @@
 ---
-title: "Control OCaml Packages - Link Libraries | Free DevTools"
+title: "Control OCaml Packages - Link Libraries | Online Free DevTools by Hexmos"
 name: ocamlfind
 path: /freedevtools/tldr/common/ocamlfind
 canonical: "https://hexmos.com/freedevtools/tldr/common/ocamlfind/"

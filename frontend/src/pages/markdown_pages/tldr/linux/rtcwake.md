@@ -1,5 +1,5 @@
 ---
-title: "RTCWake - Control System Sleep States | Free DevTools"
+title: "RTCWake - Control System Sleep States | Online Free DevTools by Hexmos"
 name: rtcwake
 path: /freedevtools/tldr/linux/rtcwake
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rtcwake/"

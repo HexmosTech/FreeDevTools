@@ -1,5 +1,5 @@
 ---
-title: "Search System Commands - Discover Command Descriptions | Free DevTools"
+title: "Search System Commands - Discover Command Descriptions | Online Free DevTools by Hexmos"
 name: whatis
 path: /freedevtools/tldr/osx/whatis
 canonical: "https://hexmos.com/freedevtools/tldr/osx/whatis/"

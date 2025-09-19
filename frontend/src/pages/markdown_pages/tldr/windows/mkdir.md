@@ -1,5 +1,5 @@
 ---
-title: "Create Directory - Organize Files | Free DevTools"
+title: "Create Directory - Organize Files | Online Free DevTools by Hexmos"
 name: mkdir
 path: "/freedevtools/tldr/windows/mkdir"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mkdir/"

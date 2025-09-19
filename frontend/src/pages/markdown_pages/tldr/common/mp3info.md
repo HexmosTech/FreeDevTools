@@ -1,5 +1,5 @@
 ---
-title: "Edit MP3 Tags - Control ID3v1 Metadata | Free DevTools"
+title: "Edit MP3 Tags - Control ID3v1 Metadata | Online Free DevTools by Hexmos"
 name: mp3info
 path: /freedevtools/tldr/common/mp3info
 canonical: "https://hexmos.com/freedevtools/tldr/common/mp3info/"

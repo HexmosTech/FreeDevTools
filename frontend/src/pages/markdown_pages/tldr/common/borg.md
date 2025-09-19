@@ -1,5 +1,5 @@
 ---
-title: "Create Borg Backups - Deduplicate Data | Free DevTools"
+title: "Create Borg Backups - Deduplicate Data | Online Free DevTools by Hexmos"
 name: borg
 path: /freedevtools/tldr/common/borg
 canonical: "https://hexmos.com/freedevtools/tldr/common/borg/"

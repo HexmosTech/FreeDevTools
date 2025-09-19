@@ -1,5 +1,5 @@
 ---
-title: "QDBus Control - Manage IPC and RPC Calls | Free DevTools"
+title: "QDBus Control - Manage IPC and RPC Calls | Online Free DevTools by Hexmos"
 name: qdbus
 path: /freedevtools/tldr/common/qdbus
 canonical: "https://hexmos.com/freedevtools/tldr/common/qdbus/"

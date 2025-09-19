@@ -1,5 +1,5 @@
 ---
-title: "Poetry - Manage Python Dependencies | Free DevTools"
+title: "Poetry - Manage Python Dependencies | Online Free DevTools by Hexmos"
 name: poetry
 path: /freedevtools/tldr/common/poetry
 canonical: "https://hexmos.com/freedevtools/tldr/common/poetry/"

@@ -1,5 +1,5 @@
 ---
-title: "Speed Test - Check Internet Speed and Ping | Free DevTools"
+title: "Speed Test - Check Internet Speed and Ping | Online Free DevTools by Hexmos"
 name: speed-test
 path: /freedevtools/tldr/common/speed-test
 canonical: "https://hexmos.com/freedevtools/tldr/common/speed-test/"

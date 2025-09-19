@@ -1,5 +1,5 @@
 ---
-title: "AppArmor Status - Check Modules | Free DevTools"
+title: "AppArmor Status - Check Modules | Online Free DevTools by Hexmos"
 name: aa-status
 path: /freedevtools/tldr/linux/aa-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-status/"

@@ -1,5 +1,5 @@
 ---
-title: "Box Phar Manager - Create Phars | Free DevTools"
+title: "Box Phar Manager - Create Phars | Online Free DevTools by Hexmos"
 name: box
 path: /freedevtools/tldr/common/box
 canonical: "https://hexmos.com/freedevtools/tldr/common/box/"

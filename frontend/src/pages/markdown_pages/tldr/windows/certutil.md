@@ -1,5 +1,5 @@
 ---
-title: "CertUtil - Manage Certificate Information | Free DevTools"
+title: "CertUtil - Manage Certificate Information | Online Free DevTools by Hexmos"
 name: certutil
 path: "/freedevtools/tldr/windows/certutil"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/certutil/"

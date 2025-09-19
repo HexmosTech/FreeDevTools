@@ -1,5 +1,5 @@
 ---
-title: "AWS Backup - Control Cloud Data Backups | Free DevTools"
+title: "AWS Backup - Control Cloud Data Backups | Online Free DevTools by Hexmos"
 name: aws-backup
 path: /freedevtools/tldr/aws/aws-backup
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-backup/"

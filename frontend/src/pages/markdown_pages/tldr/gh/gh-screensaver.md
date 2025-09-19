@@ -1,5 +1,5 @@
 ---
-title: "Run GitHub Screensavers - Animate Your Terminal | Free DevTools"
+title: "Run GitHub Screensavers - Animate Your Terminal | Online Free DevTools by Hexmos"
 name: gh-screensaver
 path: /freedevtools/tldr/gh/gh-screensaver
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-screensaver/"

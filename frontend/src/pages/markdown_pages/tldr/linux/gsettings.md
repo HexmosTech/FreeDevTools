@@ -1,5 +1,5 @@
 ---
-title: "GSettings - Control dconf Settings | Free DevTools"
+title: "GSettings - Control dconf Settings | Online Free DevTools by Hexmos"
 name: gsettings
 path: /freedevtools/tldr/linux/gsettings
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gsettings/"

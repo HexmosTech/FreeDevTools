@@ -1,5 +1,5 @@
 ---
-title: "Ifconfig - Control Network Interfaces on MacOS | Free DevTools"
+title: "Ifconfig - Control Network Interfaces on MacOS | Online Free DevTools by Hexmos"
 name: gifconfig
 path: /freedevtools/tldr/osx/gifconfig
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gifconfig/"

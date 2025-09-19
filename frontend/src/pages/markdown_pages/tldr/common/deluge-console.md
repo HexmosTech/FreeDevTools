@@ -1,5 +1,5 @@
 ---
-title: "Deluge Console - Control BitTorrent Client | Free DevTools"
+title: "Deluge Console - Control BitTorrent Client | Online Free DevTools by Hexmos"
 name: deluge-console
 path: /freedevtools/tldr/common/deluge-console
 canonical: "https://hexmos.com/freedevtools/tldr/common/deluge-console/"

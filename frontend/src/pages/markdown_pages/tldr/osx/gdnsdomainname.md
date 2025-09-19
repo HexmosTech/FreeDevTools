@@ -1,5 +1,5 @@
 ---
-title: "DNS Domain Name - Retrieve Domain Name with gdnsdomainname | Free DevTools"
+title: "DNS Domain Name - Retrieve Domain Name with gdnsdomainname | Online Free DevTools by Hexmos"
 name: gdnsdomainname
 path: /freedevtools/tldr/osx/gdnsdomainname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdnsdomainname/"

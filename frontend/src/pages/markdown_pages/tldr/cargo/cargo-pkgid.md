@@ -1,5 +1,5 @@
 ---
-title: "Generate Cargo Package ID - Find Package Specifier | Free DevTools"
+title: "Generate Cargo Package ID - Find Package Specifier | Online Free DevTools by Hexmos"
 name: cargo-pkgid
 path: /freedevtools/tldr/cargo/cargo-pkgid
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-pkgid/"

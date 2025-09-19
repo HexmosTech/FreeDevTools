@@ -1,5 +1,5 @@
 ---
-title: "Azure Functions - Create & Run Apps Locally | Free DevTools"
+title: "Azure Functions - Create & Run Apps Locally | Online Free DevTools by Hexmos"
 name: func
 path: /freedevtools/tldr/common/func
 canonical: "https://hexmos.com/freedevtools/tldr/common/func/"

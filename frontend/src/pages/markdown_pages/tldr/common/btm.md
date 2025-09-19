@@ -1,5 +1,5 @@
 ---
-title: "Btm - Monitor System Resources | Free DevTools"
+title: "Btm - Monitor System Resources | Online Free DevTools by Hexmos"
 name: btm
 path: /freedevtools/tldr/common/btm
 canonical: "https://hexmos.com/freedevtools/tldr/common/btm/"

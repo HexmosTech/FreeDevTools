@@ -1,5 +1,5 @@
 ---
-title: "Ubuntu Security Status - Manage Package Security | Free DevTools"
+title: "Ubuntu Security Status - Manage Package Security | Online Free DevTools by Hexmos"
 name: ubuntu-security-status
 path: /freedevtools/tldr/linux/ubuntu-security-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ubuntu-security-status/"

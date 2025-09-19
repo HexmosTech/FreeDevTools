@@ -1,5 +1,5 @@
 ---
-title: "Linode Account - Manage Linode Accounts | Free DevTools"
+title: "Linode Account - Manage Linode Accounts | Online Free DevTools by Hexmos"
 name: linode-cli-account
 path: /freedevtools/tldr/linode/linode-cli-account
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-account/"

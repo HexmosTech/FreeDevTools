@@ -1,5 +1,5 @@
 ---
-title: "Convert WebP - Decompress WebP Images | Free DevTools"
+title: "Convert WebP - Decompress WebP Images | Online Free DevTools by Hexmos"
 name: dwebp
 path: /freedevtools/tldr/common/dwebp
 canonical: "https://hexmos.com/freedevtools/tldr/common/dwebp/"

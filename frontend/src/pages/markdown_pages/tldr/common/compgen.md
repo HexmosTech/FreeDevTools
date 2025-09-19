@@ -1,5 +1,5 @@
 ---
-title: "Generate Completion Matches - compgen | Free DevTools"
+title: "Generate Completion Matches - compgen | Online Free DevTools by Hexmos"
 name: compgen
 path: /freedevtools/tldr/common/compgen
 canonical: "https://hexmos.com/freedevtools/tldr/common/compgen/"

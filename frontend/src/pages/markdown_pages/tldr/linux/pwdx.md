@@ -1,5 +1,5 @@
 ---
-title: "Pwdx - Print Process Directory | Free DevTools"
+title: "Pwdx - Print Process Directory | Online Free DevTools by Hexmos"
 name: pwdx
 path: /freedevtools/tldr/linux/pwdx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pwdx/"

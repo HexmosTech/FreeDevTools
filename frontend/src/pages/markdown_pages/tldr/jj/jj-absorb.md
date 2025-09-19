@@ -1,5 +1,5 @@
 ---
-title: "JJ Absorb - Split Changes | Free DevTools"
+title: "JJ Absorb - Split Changes | Online Free DevTools by Hexmos"
 name: jj-absorb
 path: /freedevtools/tldr/jj/jj-absorb
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-absorb/"

@@ -1,5 +1,5 @@
 ---
-title: "PostgreSQL Ready Check - Control Connection Status | Free DevTools"
+title: "PostgreSQL Ready Check - Control Connection Status | Online Free DevTools by Hexmos"
 name: pg_isready
 path: /freedevtools/tldr/postgres/pg_isready
 canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_isready/"

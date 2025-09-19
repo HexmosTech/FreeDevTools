@@ -1,5 +1,5 @@
 ---
-title: "Salesforce CLI - Control Salesforce Orgs | Free DevTools"
+title: "Salesforce CLI - Control Salesforce Orgs | Online Free DevTools by Hexmos"
 name: sf
 path: /freedevtools/tldr/common/sf
 canonical: "https://hexmos.com/freedevtools/tldr/common/sf/"

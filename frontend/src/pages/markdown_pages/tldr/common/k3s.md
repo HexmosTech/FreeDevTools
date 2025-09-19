@@ -1,5 +1,5 @@
 ---
-title: "Manage K3s Clusters - Control Kubernetes | Free DevTools"
+title: "Manage K3s Clusters - Control Kubernetes | Online Free DevTools by Hexmos"
 name: k3s
 path: /freedevtools/tldr/common/k3s
 canonical: "https://hexmos.com/freedevtools/tldr/common/k3s/"

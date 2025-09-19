@@ -1,5 +1,5 @@
 ---
-title: "Edit Text with Sed - Scriptable Text Editing | Free DevTools"
+title: "Edit Text with Sed - Scriptable Text Editing | Online Free DevTools by Hexmos"
 name: sed
 path: /freedevtools/tldr/openbsd/sed
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/sed/"

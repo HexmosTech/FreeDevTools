@@ -1,5 +1,5 @@
 ---
-title: "Execute Lua Scripts - Lightweight Programming Language | Free DevTools"
+title: "Execute Lua Scripts - Lightweight Programming Language | Online Free DevTools by Hexmos"
 name: lua
 path: /freedevtools/tldr/common/lua
 canonical: "https://hexmos.com/freedevtools/tldr/common/lua/"

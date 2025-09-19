@@ -1,5 +1,5 @@
 ---
-title: "Vzdump - Backup Virtual Machines & Containers | Free DevTools"
+title: "Vzdump - Backup Virtual Machines & Containers | Online Free DevTools by Hexmos"
 name: vzdump
 path: /freedevtools/tldr/linux/vzdump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vzdump/"

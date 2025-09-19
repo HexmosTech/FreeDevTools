@@ -1,5 +1,5 @@
 ---
-title: "Check TeX Live - Verify Installation Consistency | Free DevTools"
+title: "Check TeX Live - Verify Installation Consistency | Online Free DevTools by Hexmos"
 name: tlmgr-check
 path: /freedevtools/tldr/tlmgr/tlmgr-check
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-check/"

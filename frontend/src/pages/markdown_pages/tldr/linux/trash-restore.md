@@ -1,5 +1,5 @@
 ---
-title: "Trash Restore - Recover Deleted Files on Linux | Free DevTools"
+title: "Trash Restore - Recover Deleted Files on Linux | Online Free DevTools by Hexmos"
 name: trash-restore
 path: /freedevtools/tldr/linux/trash-restore
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash-restore/"

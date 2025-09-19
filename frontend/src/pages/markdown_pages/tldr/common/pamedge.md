@@ -1,5 +1,5 @@
 ---
-title: "Pamedge Image Edge Detection - Generate Edges | Free DevTools"
+title: "Pamedge Image Edge Detection - Generate Edges | Online Free DevTools by Hexmos"
 name: pamedge
 path: /freedevtools/tldr/common/pamedge
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamedge/"

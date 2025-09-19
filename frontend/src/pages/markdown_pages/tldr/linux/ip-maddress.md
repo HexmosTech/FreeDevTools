@@ -1,5 +1,5 @@
 ---
-title: "Manage Multicast Addresses with ip maddress | Free DevTools"
+title: "Manage Multicast Addresses with ip maddress | Online Free DevTools by Hexmos"
 name: ip-maddress
 path: /freedevtools/tldr/linux/ip-maddress
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-maddress/"

@@ -1,5 +1,5 @@
 ---
-title: "Impacket psexec - Control Remote Processes | Free DevTools"
+title: "Impacket psexec - Control Remote Processes | Online Free DevTools by Hexmos"
 name: impacket-psexec
 path: /freedevtools/tldr/impacket/impacket-psexec
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-psexec/"

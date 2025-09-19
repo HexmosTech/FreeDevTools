@@ -1,5 +1,5 @@
 ---
-title: "Kill Process - Terminate Processes with Signals | Free DevTools"
+title: "Kill Process - Terminate Processes with Signals | Online Free DevTools by Hexmos"
 name: kill
 path: /freedevtools/tldr/common/kill
 canonical: "https://hexmos.com/freedevtools/tldr/common/kill/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Undo - Revert Commits Easily | Free DevTools"
+title: "Git Undo - Revert Commits Easily | Online Free DevTools by Hexmos"
 name: git-undo
 path: /freedevtools/tldr/git/git-undo
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-undo/"

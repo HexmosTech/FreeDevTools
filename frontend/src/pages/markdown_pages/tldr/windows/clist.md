@@ -1,5 +1,5 @@
 ---
-title: "Chocolatey List - Manage Packages on Windows | Free DevTools"
+title: "Chocolatey List - Manage Packages on Windows | Online Free DevTools by Hexmos"
 name: clist
 path: /freedevtools/tldr/windows/clist
 canonical: "https://hexmos.com/freedevtools/tldr/windows/clist/"

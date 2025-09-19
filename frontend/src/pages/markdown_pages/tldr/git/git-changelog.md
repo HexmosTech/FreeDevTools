@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Changelog - Track Repository Changes | Free DevTools"
+title: "Generate Git Changelog - Track Repository Changes | Online Free DevTools by Hexmos"
 name: git-changelog
 path: /freedevtools/tldr/git/git-changelog
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-changelog/"

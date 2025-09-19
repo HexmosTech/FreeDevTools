@@ -1,5 +1,5 @@
 ---
-title: "Package Electron Apps - Build Cross-Platform Apps | Free DevTools"
+title: "Package Electron Apps - Build Cross-Platform Apps | Online Free DevTools by Hexmos"
 name: electron-packager
 path: /freedevtools/tldr/common/electron-packager
 canonical: "https://hexmos.com/freedevtools/tldr/common/electron-packager/"

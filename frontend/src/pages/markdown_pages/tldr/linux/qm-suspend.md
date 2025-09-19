@@ -1,5 +1,5 @@
 ---
-title: "QM Suspend - Control Virtual Machines | Free DevTools"
+title: "QM Suspend - Control Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-suspend
 path: /freedevtools/tldr/linux/qm-suspend
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-suspend/"

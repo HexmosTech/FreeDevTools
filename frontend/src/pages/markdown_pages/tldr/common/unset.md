@@ -1,5 +1,5 @@
 ---
-title: "Unset Variables - Remove Shell Variables | Free DevTools"
+title: "Unset Variables - Remove Shell Variables | Online Free DevTools by Hexmos"
 name: unset
 path: /freedevtools/tldr/common/unset
 canonical: "https://hexmos.com/freedevtools/tldr/common/unset/"

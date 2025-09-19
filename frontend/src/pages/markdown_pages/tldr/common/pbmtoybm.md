@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to YBM - Format Image Files | Free DevTools"
+title: "Convert PBM to YBM - Format Image Files | Online Free DevTools by Hexmos"
 name: pbmtoybm
 path: /freedevtools/tldr/common/pbmtoybm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoybm/"

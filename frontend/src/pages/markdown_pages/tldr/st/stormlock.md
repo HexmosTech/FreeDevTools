@@ -1,5 +1,5 @@
 ---
-title: "Stormlock - Control Centralized Locks | Free DevTools"
+title: "Stormlock - Control Centralized Locks | Online Free DevTools by Hexmos"
 name: stormlock
 path: /freedevtools/tldr/st/stormlock
 canonical: "https://hexmos.com/freedevtools/tldr/st/stormlock/"

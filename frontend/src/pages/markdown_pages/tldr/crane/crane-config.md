@@ -1,5 +1,5 @@
 ---
-title: "Crane Config - Get Image Configuration | Free DevTools"
+title: "Crane Config - Get Image Configuration | Online Free DevTools by Hexmos"
 name: crane-config
 path: /freedevtools/tldr/crane/crane-config
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-config/"

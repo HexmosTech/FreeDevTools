@@ -1,5 +1,5 @@
 ---
-title: "Compile C Code - with CC Command | Free DevTools"
+title: "Compile C Code - with CC Command | Online Free DevTools by Hexmos"
 name: cc
 path: /freedevtools/tldr/linux/cc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cc/"

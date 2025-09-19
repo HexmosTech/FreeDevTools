@@ -1,5 +1,5 @@
 ---
-title: "UV Sync - Update Project Dependencies | Free DevTools"
+title: "UV Sync - Update Project Dependencies | Online Free DevTools by Hexmos"
 name: uv-sync
 path: /freedevtools/tldr/uv/uv-sync
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-sync/"

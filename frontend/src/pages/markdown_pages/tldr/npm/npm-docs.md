@@ -1,5 +1,5 @@
 ---
-title: "NPM Docs - Access Package Documentation | Free DevTools"
+title: "NPM Docs - Access Package Documentation | Online Free DevTools by Hexmos"
 name: npm-docs
 path: /freedevtools/tldr/npm/npm-docs
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-docs/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Datashader Visualizations - CLI Tool | Free DevTools"
+title: "Create Datashader Visualizations - CLI Tool | Online Free DevTools by Hexmos"
 name: datashader_cli
 path: /freedevtools/tldr/common/datashader_cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/datashader_cli/"

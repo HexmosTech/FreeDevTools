@@ -1,5 +1,5 @@
 ---
-title: "Execute Julia Code - High-Performance Computing | Free DevTools"
+title: "Execute Julia Code - High-Performance Computing | Online Free DevTools by Hexmos"
 name: julia
 path: /freedevtools/tldr/common/julia
 canonical: "https://hexmos.com/freedevtools/tldr/common/julia/"

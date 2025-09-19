@@ -1,5 +1,5 @@
 ---
-title: "apx Package Manager - Manage Software Packages | Free DevTools"
+title: "apx Package Manager - Manage Software Packages | Online Free DevTools by Hexmos"
 name: apx
 path: /freedevtools/tldr/linux/apx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apx/"

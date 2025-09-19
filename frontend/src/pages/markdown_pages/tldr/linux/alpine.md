@@ -1,5 +1,5 @@
 ---
-title: "Alpine Email Client - Manage Emails via Command Line | Free DevTools"
+title: "Alpine Email Client - Manage Emails via Command Line | Online Free DevTools by Hexmos"
 name: alpine
 path: /freedevtools/tldr/linux/alpine
 canonical: "https://hexmos.com/freedevtools/tldr/linux/alpine/"

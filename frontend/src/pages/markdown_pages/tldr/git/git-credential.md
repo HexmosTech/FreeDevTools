@@ -1,5 +1,5 @@
 ---
-title: "Git Credential - Retrieve Credentials | Free DevTools"
+title: "Git Credential - Retrieve Credentials | Online Free DevTools by Hexmos"
 name: git-credential
 path: /freedevtools/tldr/git/git-credential
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-credential/"

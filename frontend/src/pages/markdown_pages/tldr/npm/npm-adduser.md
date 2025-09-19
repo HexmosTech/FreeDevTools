@@ -1,5 +1,5 @@
 ---
-title: "NPM Add User - Create Accounts | Free DevTools"
+title: "NPM Add User - Create Accounts | Online Free DevTools by Hexmos"
 name: npm-adduser
 path: /freedevtools/tldr/npm/npm-adduser
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-adduser/"

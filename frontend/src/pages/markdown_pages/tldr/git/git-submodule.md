@@ -1,5 +1,5 @@
 ---
-title: "Manage Git Submodules - Update & Add Repos | Free DevTools"
+title: "Manage Git Submodules - Update & Add Repos | Online Free DevTools by Hexmos"
 name: git-submodule
 path: /freedevtools/tldr/git/git-submodule
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-submodule/"

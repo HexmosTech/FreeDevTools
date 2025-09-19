@@ -1,5 +1,5 @@
 ---
-title: "AWS EC2 - Manage Instances & Volumes | Free DevTools"
+title: "AWS EC2 - Manage Instances & Volumes | Online Free DevTools by Hexmos"
 name: aws-ec2
 path: /freedevtools/tldr/aws/aws-ec2
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ec2/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Bulk - Manage Multiple Git Repositories | Free DevTools"
+title: "Git Bulk - Manage Multiple Git Repositories | Online Free DevTools by Hexmos"
 name: git-bulk
 path: /freedevtools/tldr/git/git-bulk
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-bulk/"

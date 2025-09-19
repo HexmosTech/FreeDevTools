@@ -1,5 +1,5 @@
 ---
-title: "OptiPNG - Optimize PNG Files | Free DevTools"
+title: "OptiPNG - Optimize PNG Files | Online Free DevTools by Hexmos"
 name: optipng
 path: /freedevtools/tldr/common/optipng
 canonical: "https://hexmos.com/freedevtools/tldr/common/optipng/"

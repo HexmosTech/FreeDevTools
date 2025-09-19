@@ -1,5 +1,5 @@
 ---
-title: "JJ - Create New Change | Free DevTools"
+title: "JJ - Create New Change | Online Free DevTools by Hexmos"
 name: jj-new
 path: /freedevtools/tldr/jj/jj-new
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-new/"

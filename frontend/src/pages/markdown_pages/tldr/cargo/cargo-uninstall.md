@@ -1,5 +1,5 @@
 ---
-title: "Cargo Uninstall - Remove Rust Packages | Free DevTools"
+title: "Cargo Uninstall - Remove Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-uninstall
 path: /freedevtools/tldr/cargo/cargo-uninstall
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-uninstall/"

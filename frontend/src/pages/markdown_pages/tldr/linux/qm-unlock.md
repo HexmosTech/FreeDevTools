@@ -1,5 +1,5 @@
 ---
-title: "QM Unlock - Control VMs on Linux | Free DevTools"
+title: "QM Unlock - Control VMs on Linux | Online Free DevTools by Hexmos"
 name: qm-unlock
 path: /freedevtools/tldr/linux/qm-unlock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-unlock/"

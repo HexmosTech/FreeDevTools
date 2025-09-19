@@ -1,5 +1,5 @@
 ---
-title: "MTR Traceroute - Diagnose Network Paths | Free DevTools"
+title: "MTR Traceroute - Diagnose Network Paths | Online Free DevTools by Hexmos"
 name: mtr
 path: /freedevtools/tldr/common/mtr
 canonical: "https://hexmos.com/freedevtools/tldr/common/mtr/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Git Branches - Control Commits with Git GUI | Free DevTools"
+title: "Manage Git Branches - Control Commits with Git GUI | Online Free DevTools by Hexmos"
 name: git-gui
 path: /freedevtools/tldr/git/git-gui
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-gui/"

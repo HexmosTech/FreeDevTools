@@ -1,5 +1,5 @@
 ---
-title: "Publish MQTT Messages - Control IoT Devices | Free DevTools"
+title: "Publish MQTT Messages - Control IoT Devices | Online Free DevTools by Hexmos"
 name: mosquitto_pub
 path: /freedevtools/tldr/common/mosquitto_pub
 canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_pub/"

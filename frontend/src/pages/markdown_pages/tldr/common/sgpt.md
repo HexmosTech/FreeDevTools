@@ -1,5 +1,5 @@
 ---
-title: "Generate Code with sgpt - OpenAI Command Line Tool | Free DevTools"
+title: "Generate Code with sgpt - OpenAI Command Line Tool | Online Free DevTools by Hexmos"
 name: sgpt
 path: /freedevtools/tldr/common/sgpt
 canonical: "https://hexmos.com/freedevtools/tldr/common/sgpt/"

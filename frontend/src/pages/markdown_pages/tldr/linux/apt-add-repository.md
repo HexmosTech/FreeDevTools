@@ -1,5 +1,5 @@
 ---
-title: "Add Apt Repository - Manage Software Sources | Free DevTools"
+title: "Add Apt Repository - Manage Software Sources | Online Free DevTools by Hexmos"
 name: apt-add-repository
 path: /freedevtools/tldr/linux/apt-add-repository
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-add-repository/"

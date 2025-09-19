@@ -1,5 +1,5 @@
 ---
-title: "Fossil Commit - Create Repository Versions | Free DevTools"
+title: "Fossil Commit - Create Repository Versions | Online Free DevTools by Hexmos"
 name: fossil-commit
 path: /freedevtools/tldr/fossil/fossil-commit
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-commit/"

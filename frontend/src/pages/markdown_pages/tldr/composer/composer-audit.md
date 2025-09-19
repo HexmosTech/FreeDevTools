@@ -1,5 +1,5 @@
 ---
-title: "Composer Audit - Analyze PHP Dependencies | Free DevTools"
+title: "Composer Audit - Analyze PHP Dependencies | Online Free DevTools by Hexmos"
 name: composer-audit
 path: /freedevtools/tldr/composer/composer-audit
 canonical: "https://hexmos.com/freedevtools/tldr/composer/composer-audit/"

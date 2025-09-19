@@ -1,5 +1,5 @@
 ---
-title: "Control User Info - chfn Command on OpenBSD | Free DevTools"
+title: "Control User Info - chfn Command on OpenBSD | Online Free DevTools by Hexmos"
 name: chfn
 path: /freedevtools/tldr/openbsd/chfn
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/chfn/"

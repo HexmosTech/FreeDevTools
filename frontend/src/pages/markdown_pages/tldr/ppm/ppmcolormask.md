@@ -1,5 +1,5 @@
 ---
-title: "PPM Color Mask - Generate Mask from Color | Free DevTools"
+title: "PPM Color Mask - Generate Mask from Color | Online Free DevTools by Hexmos"
 name: ppmcolormask
 path: /freedevtools/tldr/ppm/ppmcolormask
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmcolormask/"

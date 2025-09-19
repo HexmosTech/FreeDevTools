@@ -1,5 +1,5 @@
 ---
-title: "Doppler Secrets Manager - Manage Environment Variables | Free DevTools"
+title: "Doppler Secrets Manager - Manage Environment Variables | Online Free DevTools by Hexmos"
 name: doppler
 path: /freedevtools/tldr/doppler/doppler
 canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Traefik - HTTP Reverse Proxy | Free DevTools"
+title: "Control Traefik - HTTP Reverse Proxy | Online Free DevTools by Hexmos"
 name: traefik
 path: /freedevtools/tldr/common/traefik
 canonical: "https://hexmos.com/freedevtools/tldr/common/traefik/"

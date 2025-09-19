@@ -1,5 +1,5 @@
 ---
-title: "IBM Cloud - Manage IBM Cloud Apps and Services | Free DevTools"
+title: "IBM Cloud - Manage IBM Cloud Apps and Services | Online Free DevTools by Hexmos"
 name: ibmcloud
 path: /freedevtools/tldr/common/ibmcloud
 canonical: "https://hexmos.com/freedevtools/tldr/common/ibmcloud/"

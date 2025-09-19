@@ -1,5 +1,5 @@
 ---
-title: "Screenshooter - Capture Screenshots with XFCE4 | Free DevTools"
+title: "Screenshooter - Capture Screenshots with XFCE4 | Online Free DevTools by Hexmos"
 name: xfce4-screenshooter
 path: /freedevtools/tldr/linux/xfce4-screenshooter
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xfce4-screenshooter/"

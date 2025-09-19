@@ -1,5 +1,5 @@
 ---
-title: "Control E-book Database - Calibredb Command | Free DevTools"
+title: "Control E-book Database - Calibredb Command | Online Free DevTools by Hexmos"
 name: calibredb
 path: /freedevtools/tldr/common/calibredb
 canonical: "https://hexmos.com/freedevtools/tldr/common/calibredb/"

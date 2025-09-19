@@ -1,5 +1,5 @@
 ---
-title: "DVC Config - Manage DVC Repository Configurations | Free DevTools"
+title: "DVC Config - Manage DVC Repository Configurations | Online Free DevTools by Hexmos"
 name: dvc-config
 path: /freedevtools/tldr/dvc/dvc-config
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-config/"

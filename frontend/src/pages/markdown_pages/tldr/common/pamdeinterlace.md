@@ -1,5 +1,5 @@
 ---
-title: "Deinterlace Image - Remove Rows | Free DevTools"
+title: "Deinterlace Image - Remove Rows | Online Free DevTools by Hexmos"
 name: pamdeinterlace
 path: /freedevtools/tldr/common/pamdeinterlace
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamdeinterlace/"

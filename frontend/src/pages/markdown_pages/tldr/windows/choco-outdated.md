@@ -1,5 +1,5 @@
 ---
-title: "Check Choco Outdated - List Packages | Free DevTools"
+title: "Check Choco Outdated - List Packages | Online Free DevTools by Hexmos"
 name: choco-outdated
 path: /freedevtools/tldr/windows/choco-outdated
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-outdated/"

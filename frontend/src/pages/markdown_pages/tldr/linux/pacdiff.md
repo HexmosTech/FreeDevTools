@@ -1,5 +1,5 @@
 ---
-title: "Pacdiff - Manage Pacman Configuration Files | Free DevTools"
+title: "Pacdiff - Manage Pacman Configuration Files | Online Free DevTools by Hexmos"
 name: pacdiff
 path: /freedevtools/tldr/linux/pacdiff
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacdiff/"

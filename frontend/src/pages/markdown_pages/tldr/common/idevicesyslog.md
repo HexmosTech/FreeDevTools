@@ -1,5 +1,5 @@
 ---
-title: "iOS Syslog Relay - Stream Device Logs | Free DevTools"
+title: "iOS Syslog Relay - Stream Device Logs | Online Free DevTools by Hexmos"
 name: idevicesyslog
 path: /freedevtools/tldr/common/idevicesyslog
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicesyslog/"

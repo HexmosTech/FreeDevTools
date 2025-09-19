@@ -1,5 +1,5 @@
 ---
-title: "Control Microsoft Edge Browser - Command Line | Free DevTools"
+title: "Control Microsoft Edge Browser - Command Line | Online Free DevTools by Hexmos"
 name: microsoft-edge
 path: /freedevtools/tldr/windows/microsoft-edge
 canonical: "https://hexmos.com/freedevtools/tldr/windows/microsoft-edge/"

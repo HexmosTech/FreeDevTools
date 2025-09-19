@@ -1,5 +1,5 @@
 ---
-title: "Kind - Create Kubernetes Clusters Locally | Free DevTools"
+title: "Kind - Create Kubernetes Clusters Locally | Online Free DevTools by Hexmos"
 name: kind
 path: /freedevtools/tldr/common/kind
 canonical: "https://hexmos.com/freedevtools/tldr/common/kind/"

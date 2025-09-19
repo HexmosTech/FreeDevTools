@@ -1,5 +1,5 @@
 ---
-title: "Docker Service - Manage Container Services | Free DevTools"
+title: "Docker Service - Manage Container Services | Online Free DevTools by Hexmos"
 name: docker-service
 path: /freedevtools/tldr/docker/docker-service
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-service/"

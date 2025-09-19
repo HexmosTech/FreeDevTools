@@ -1,5 +1,5 @@
 ---
-title: "Enlarge PBM Image - Scale Images with Edge Smoothing | Free DevTools"
+title: "Enlarge PBM Image - Scale Images with Edge Smoothing | Online Free DevTools by Hexmos"
 name: pbmpscale
 path: "/freedevtools/tldr/common/pbmpscale"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmpscale/"

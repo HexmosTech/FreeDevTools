@@ -1,5 +1,5 @@
 ---
-title: "Ubus Control - Interact with OpenWrt Ubus Daemon | Free DevTools"
+title: "Ubus Control - Interact with OpenWrt Ubus Daemon | Online Free DevTools by Hexmos"
 name: ubus
 path: /freedevtools/tldr/linux/ubus
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ubus/"

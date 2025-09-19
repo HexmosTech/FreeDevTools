@@ -1,5 +1,5 @@
 ---
-title: "Create PNM Colormap - Quantize Images | Free DevTools"
+title: "Create PNM Colormap - Quantize Images | Online Free DevTools by Hexmos"
 name: pnmcolormap
 path: "/freedevtools/tldr/pnm/pnmcolormap"
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcolormap/"

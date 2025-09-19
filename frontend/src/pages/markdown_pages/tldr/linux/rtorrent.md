@@ -1,5 +1,5 @@
 ---
-title: "Control rtorrent - Download Torrents Easily | Free DevTools"
+title: "Control rtorrent - Download Torrents Easily | Online Free DevTools by Hexmos"
 name: rtorrent
 path: /freedevtools/tldr/linux/rtorrent
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rtorrent/"

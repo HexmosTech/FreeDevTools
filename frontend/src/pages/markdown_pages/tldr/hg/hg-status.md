@@ -1,5 +1,5 @@
 ---
-title: "Control Mercurial Status - Track Changes | Free DevTools"
+title: "Control Mercurial Status - Track Changes | Online Free DevTools by Hexmos"
 name: hg-status
 path: /freedevtools/tldr/hg/hg-status
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-status/"

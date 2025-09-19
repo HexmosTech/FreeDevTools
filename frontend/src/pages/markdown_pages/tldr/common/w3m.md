@@ -1,5 +1,5 @@
 ---
-title: "w3m Browser - Browse Web via Terminal | Free DevTools"
+title: "w3m Browser - Browse Web via Terminal | Online Free DevTools by Hexmos"
 name: w3m
 path: /freedevtools/tldr/common/w3m
 canonical: "https://hexmos.com/freedevtools/tldr/common/w3m/"

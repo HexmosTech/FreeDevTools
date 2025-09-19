@@ -1,5 +1,5 @@
 ---
-title: "Rake Task Runner - Execute Ruby Tasks | Free DevTools"
+title: "Rake Task Runner - Execute Ruby Tasks | Online Free DevTools by Hexmos"
 name: rake
 path: /freedevtools/tldr/common/rake
 canonical: "https://hexmos.com/freedevtools/tldr/common/rake/"

@@ -1,5 +1,5 @@
 ---
-title: "GLab Auth - Authenticate GitLab Hosts | Free DevTools"
+title: "GLab Auth - Authenticate GitLab Hosts | Online Free DevTools by Hexmos"
 name: glab-auth
 path: /freedevtools/tldr/glab/glab-auth
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-auth/"

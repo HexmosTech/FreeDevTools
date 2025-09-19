@@ -1,5 +1,5 @@
 ---
-title: "Control Development Environments - Kool | Free DevTools"
+title: "Control Development Environments - Kool | Online Free DevTools by Hexmos"
 name: kool
 path: /freedevtools/tldr/common/kool
 canonical: "https://hexmos.com/freedevtools/tldr/common/kool/"

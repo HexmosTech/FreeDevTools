@@ -1,5 +1,5 @@
 ---
-title: "Cisco Line Control - Manage IOS Lines | Free DevTools"
+title: "Cisco Line Control - Manage IOS Lines | Online Free DevTools by Hexmos"
 name: line
 path: "/freedevtools/tldr/cisco-ios/line"
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/line/"

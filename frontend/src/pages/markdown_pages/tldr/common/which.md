@@ -1,5 +1,5 @@
 ---
-title: "Locate Program - Find Executables with Which | Free DevTools"
+title: "Locate Program - Find Executables with Which | Online Free DevTools by Hexmos"
 name: which
 path: /freedevtools/tldr/common/which
 canonical: "https://hexmos.com/freedevtools/tldr/common/which/"

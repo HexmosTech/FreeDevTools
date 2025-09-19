@@ -1,5 +1,5 @@
 ---
-title: "SWC Compiler - Transpile JavaScript & TypeScript | Free DevTools"
+title: "SWC Compiler - Transpile JavaScript & TypeScript | Online Free DevTools by Hexmos"
 name: swc
 path: /freedevtools/tldr/common/swc
 canonical: "https://hexmos.com/freedevtools/tldr/common/swc/"

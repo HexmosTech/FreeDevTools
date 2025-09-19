@@ -1,5 +1,5 @@
 ---
-title: "Xcode Select - Control Xcode Versions | Free DevTools"
+title: "Xcode Select - Control Xcode Versions | Online Free DevTools by Hexmos"
 name: xcode-select
 path: /freedevtools/tldr/osx/xcode-select
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xcode-select/"

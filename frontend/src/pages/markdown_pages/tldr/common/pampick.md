@@ -1,5 +1,5 @@
 ---
-title: "Pick Images - Extract PAM Images | Free DevTools"
+title: "Pick Images - Extract PAM Images | Online Free DevTools by Hexmos"
 name: pampick
 path: /freedevtools/tldr/common/pampick
 canonical: "https://hexmos.com/freedevtools/tldr/common/pampick/"

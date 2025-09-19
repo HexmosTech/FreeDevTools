@@ -1,5 +1,5 @@
 ---
-title: "Split File - Create File Splits | Free DevTools"
+title: "Split File - Create File Splits | Online Free DevTools by Hexmos"
 name: split
 path: "/freedevtools/tldr/osx/split"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/split/"

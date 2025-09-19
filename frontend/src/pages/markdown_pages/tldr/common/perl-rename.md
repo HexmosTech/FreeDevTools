@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Modify Filenames Easily | Free DevTools"
+title: "Rename Files - Modify Filenames Easily | Online Free DevTools by Hexmos"
 name: perl-rename
 path: /freedevtools/tldr/common/perl-rename
 canonical: "https://hexmos.com/freedevtools/tldr/common/perl-rename/"

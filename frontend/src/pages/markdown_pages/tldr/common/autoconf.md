@@ -1,5 +1,5 @@
 ---
-title: "Generate Configuration Scripts with Autoconf | Free DevTools"
+title: "Generate Configuration Scripts with Autoconf | Online Free DevTools by Hexmos"
 name: autoconf
 path: /freedevtools/tldr/common/autoconf
 canonical: "https://hexmos.com/freedevtools/tldr/common/autoconf/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate SHA384 Checksum - Verify File Integrity | Free DevTools"
+title: "Generate SHA384 Checksum - Verify File Integrity | Online Free DevTools by Hexmos"
 name: sha384sum
 path: /freedevtools/tldr/common/sha384sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/sha384sum/"

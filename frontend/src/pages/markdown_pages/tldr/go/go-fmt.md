@@ -1,5 +1,5 @@
 ---
-title: "Format Go - Format Go Source Files | Free DevTools"
+title: "Format Go - Format Go Source Files | Online Free DevTools by Hexmos"
 name: go-fmt
 path: /freedevtools/tldr/go/go-fmt
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-fmt/"

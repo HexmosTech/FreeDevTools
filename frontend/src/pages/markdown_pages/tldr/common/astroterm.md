@@ -1,5 +1,5 @@
 ---
-title: "Astroterm - Render Star Maps in Terminal | Free DevTools"
+title: "Astroterm - Render Star Maps in Terminal | Online Free DevTools by Hexmos"
 name: astroterm
 path: /freedevtools/tldr/common/astroterm
 canonical: "https://hexmos.com/freedevtools/tldr/common/astroterm/"

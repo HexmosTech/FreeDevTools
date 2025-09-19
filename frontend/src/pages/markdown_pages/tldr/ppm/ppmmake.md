@@ -1,5 +1,5 @@
 ---
-title: "Create PPM Image - Generate Pixmap Images | Free DevTools"
+title: "Create PPM Image - Generate Pixmap Images | Online Free DevTools by Hexmos"
 name: ppmmake
 path: /freedevtools/tldr/ppm/ppmmake
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmmake/"

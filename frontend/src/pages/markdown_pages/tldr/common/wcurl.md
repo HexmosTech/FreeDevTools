@@ -1,5 +1,5 @@
 ---
-title: "Download Files - wcurl Wrapper for Curl | Free DevTools"
+title: "Download Files - wcurl Wrapper for Curl | Online Free DevTools by Hexmos"
 name: wcurl
 path: /freedevtools/tldr/common/wcurl
 canonical: "https://hexmos.com/freedevtools/tldr/common/wcurl/"

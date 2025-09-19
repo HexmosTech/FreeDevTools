@@ -1,5 +1,5 @@
 ---
-title: "Todo Manager - Create Todo Lists | Free DevTools"
+title: "Todo Manager - Create Todo Lists | Online Free DevTools by Hexmos"
 name: todo
 path: /freedevtools/tldr/common/todo
 canonical: "https://hexmos.com/freedevtools/tldr/common/todo/"

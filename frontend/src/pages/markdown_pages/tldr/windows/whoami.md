@@ -1,5 +1,5 @@
 ---
-title: "Whoami - Display User Details | Free DevTools"
+title: "Whoami - Display User Details | Online Free DevTools by Hexmos"
 name: whoami
 path: /freedevtools/tldr/windows/whoami
 canonical: "https://hexmos.com/freedevtools/tldr/windows/whoami/"

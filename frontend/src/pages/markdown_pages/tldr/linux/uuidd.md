@@ -1,5 +1,5 @@
 ---
-title: "Generate UUIDs - UUID Generator Command | Free DevTools"
+title: "Generate UUIDs - UUID Generator Command | Online Free DevTools by Hexmos"
 name: uuidd
 path: /freedevtools/tldr/linux/uuidd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidd/"

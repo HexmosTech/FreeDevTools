@@ -1,5 +1,5 @@
 ---
-title: "TSLint - Validate TypeScript Code | Free DevTools"
+title: "TSLint - Validate TypeScript Code | Online Free DevTools by Hexmos"
 name: tslint
 path: /freedevtools/tldr/common/tslint
 canonical: "https://hexmos.com/freedevtools/tldr/common/tslint/"

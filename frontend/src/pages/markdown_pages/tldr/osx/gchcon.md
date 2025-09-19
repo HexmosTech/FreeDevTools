@@ -1,5 +1,5 @@
 ---
-title: "Gchcon - Control File Security Contexts | Free DevTools"
+title: "Gchcon - Control File Security Contexts | Online Free DevTools by Hexmos"
 name: gchcon
 path: /freedevtools/tldr/osx/gchcon
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gchcon/"

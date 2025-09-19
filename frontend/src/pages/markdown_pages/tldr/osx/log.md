@@ -1,5 +1,5 @@
 ---
-title: "Log - View System Logs on macOS | Free DevTools"
+title: "Log - View System Logs on macOS | Online Free DevTools by Hexmos"
 name: log
 path: /freedevtools/tldr/osx/log
 canonical: "https://hexmos.com/freedevtools/tldr/osx/log/"

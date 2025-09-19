@@ -1,5 +1,5 @@
 ---
-title: "Control agetty TTY - Open Ports and Prompt Login | Free DevTools"
+title: "Control agetty TTY - Open Ports and Prompt Login | Online Free DevTools by Hexmos"
 name: agetty
 path: /freedevtools/tldr/linux/agetty
 canonical: "https://hexmos.com/freedevtools/tldr/linux/agetty/"

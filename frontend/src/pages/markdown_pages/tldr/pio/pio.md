@@ -1,5 +1,5 @@
 ---
-title: "PIO Manager - Manage Embedded Development with PIO | Free DevTools"
+title: "PIO Manager - Manage Embedded Development with PIO | Online Free DevTools by Hexmos"
 name: pio
 path: /freedevtools/tldr/pio/pio
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio/"

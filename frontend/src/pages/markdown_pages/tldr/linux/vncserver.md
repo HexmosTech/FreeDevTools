@@ -1,5 +1,5 @@
 ---
-title: "VNC Server - Launch VNC Desktops | Free DevTools"
+title: "VNC Server - Launch VNC Desktops | Online Free DevTools by Hexmos"
 name: vncserver
 path: /freedevtools/tldr/linux/vncserver
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vncserver/"

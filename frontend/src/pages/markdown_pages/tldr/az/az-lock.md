@@ -1,5 +1,5 @@
 ---
-title: "Azure Lock - Manage Azure Locks | Free DevTools"
+title: "Azure Lock - Manage Azure Locks | Online Free DevTools by Hexmos"
 name: az-lock
 path: /freedevtools/tldr/az/az-lock
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-lock/"

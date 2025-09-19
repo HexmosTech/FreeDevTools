@@ -1,5 +1,5 @@
 ---
-title: "Popeye - Validate Kubernetes Manifests | Free DevTools"
+title: "Popeye - Validate Kubernetes Manifests | Online Free DevTools by Hexmos"
 name: popeye
 path: /freedevtools/tldr/common/popeye
 canonical: "https://hexmos.com/freedevtools/tldr/common/popeye/"

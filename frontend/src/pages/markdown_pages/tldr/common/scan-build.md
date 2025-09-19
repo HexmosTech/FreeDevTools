@@ -1,5 +1,5 @@
 ---
-title: "Static Analyzer - Validate Code with Scan-build | Free DevTools"
+title: "Static Analyzer - Validate Code with Scan-build | Online Free DevTools by Hexmos"
 name: scan-build
 path: /freedevtools/tldr/common/scan-build
 canonical: "https://hexmos.com/freedevtools/tldr/common/scan-build/"

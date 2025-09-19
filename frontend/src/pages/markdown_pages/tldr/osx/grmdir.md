@@ -1,5 +1,5 @@
 ---
-title: "Remove Directory - Delete Folders with grmdir | Free DevTools"
+title: "Remove Directory - Delete Folders with grmdir | Online Free DevTools by Hexmos"
 name: grmdir
 path: /freedevtools/tldr/osx/grmdir
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grmdir/"

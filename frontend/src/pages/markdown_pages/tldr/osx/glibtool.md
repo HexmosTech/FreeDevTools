@@ -1,5 +1,5 @@
 ---
-title: "Glibtool - Manage Libraries | Free DevTools"
+title: "Glibtool - Manage Libraries | Online Free DevTools by Hexmos"
 name: glibtool
 path: /freedevtools/tldr/osx/glibtool
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glibtool/"

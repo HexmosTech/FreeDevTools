@@ -1,5 +1,5 @@
 ---
-title: "ALSA Mixer - Control Soundcard Audio Levels | Free DevTools"
+title: "ALSA Mixer - Control Soundcard Audio Levels | Online Free DevTools by Hexmos"
 name: alsamixer
 path: /freedevtools/tldr/linux/alsamixer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/alsamixer/"

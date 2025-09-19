@@ -1,5 +1,5 @@
 ---
-title: "Generate b2sum - Hash Data with gb2sum | Free DevTools"
+title: "Generate b2sum - Hash Data with gb2sum | Online Free DevTools by Hexmos"
 name: gb2sum
 path: /freedevtools/tldr/osx/gb2sum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gb2sum/"

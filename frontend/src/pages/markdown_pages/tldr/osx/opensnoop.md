@@ -1,5 +1,5 @@
 ---
-title: "Opensnoop - Track File Opens on System | Free DevTools"
+title: "Opensnoop - Track File Opens on System | Online Free DevTools by Hexmos"
 name: opensnoop
 path: /freedevtools/tldr/osx/opensnoop
 canonical: "https://hexmos.com/freedevtools/tldr/osx/opensnoop/"

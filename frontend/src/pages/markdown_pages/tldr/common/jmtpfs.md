@@ -1,5 +1,5 @@
 ---
-title: "Mount MTP - Access MTP Devices | Free DevTools"
+title: "Mount MTP - Access MTP Devices | Online Free DevTools by Hexmos"
 name: jmtpfs
 path: "/freedevtools/tldr/common/jmtpfs"
 canonical: "https://hexmos.com/freedevtools/tldr/common/jmtpfs/"

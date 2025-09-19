@@ -1,5 +1,5 @@
 ---
-title: "Control Internet Sharing - Configure Network Settings | Free DevTools"
+title: "Control Internet Sharing - Configure Network Settings | Online Free DevTools by Hexmos"
 name: internetsharing
 path: /freedevtools/tldr/osx/internetsharing
 canonical: "https://hexmos.com/freedevtools/tldr/osx/internetsharing/"

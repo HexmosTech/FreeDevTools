@@ -1,5 +1,5 @@
 ---
-title: "Git Clear - Reset Git Working Directory | Free DevTools"
+title: "Git Clear - Reset Git Working Directory | Online Free DevTools by Hexmos"
 name: git-clear
 path: /freedevtools/tldr/git/git-clear
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-clear/"

@@ -1,5 +1,5 @@
 ---
-title: "Logname Command - Get Login Name | Free DevTools"
+title: "Logname Command - Get Login Name | Online Free DevTools by Hexmos"
 name: glogname
 path: /freedevtools/tldr/osx/glogname
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glogname/"

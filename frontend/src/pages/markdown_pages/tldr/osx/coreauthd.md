@@ -1,5 +1,5 @@
 ---
-title: "Coreauthd - Manage Authentication | Free DevTools"
+title: "Coreauthd - Manage Authentication | Online Free DevTools by Hexmos"
 name: coreauthd
 path: /freedevtools/tldr/osx/coreauthd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/coreauthd/"

@@ -1,5 +1,5 @@
 ---
-title: "Enroll Fingerprints - fprintd-enroll Management | Free DevTools"
+title: "Enroll Fingerprints - fprintd-enroll Management | Online Free DevTools by Hexmos"
 name: fprintd-enroll
 path: /freedevtools/tldr/linux/fprintd-enroll
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-enroll/"

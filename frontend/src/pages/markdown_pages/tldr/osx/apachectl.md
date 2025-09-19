@@ -1,5 +1,5 @@
 ---
-title: "Apachectl - Control Apache Server on macOS | Free DevTools"
+title: "Apachectl - Control Apache Server on macOS | Online Free DevTools by Hexmos"
 name: apachectl
 path: /freedevtools/tldr/osx/apachectl
 canonical: "https://hexmos.com/freedevtools/tldr/osx/apachectl/"

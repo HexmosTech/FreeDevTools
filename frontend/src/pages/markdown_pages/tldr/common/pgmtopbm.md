@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM to PBM - Format Image Files | Free DevTools"
+title: "Convert PGM to PBM - Format Image Files | Online Free DevTools by Hexmos"
 name: pgmtopbm
 path: /freedevtools/tldr/common/pgmtopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtopbm/"

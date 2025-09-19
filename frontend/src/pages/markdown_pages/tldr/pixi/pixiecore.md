@@ -1,5 +1,5 @@
 ---
-title: "Manage PXE Boot - Control Network Booting with Pixiecore | Free DevTools"
+title: "Manage PXE Boot - Control Network Booting with Pixiecore | Online Free DevTools by Hexmos"
 name: pixiecore
 path: /freedevtools/tldr/pixi/pixiecore
 canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixiecore/"

@@ -1,5 +1,5 @@
 ---
-title: "QM Help - Display Proxmox Commands | Free DevTools"
+title: "QM Help - Display Proxmox Commands | Online Free DevTools by Hexmos"
 name: qm-help
 path: /freedevtools/tldr/linux/qm-help
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-help/"

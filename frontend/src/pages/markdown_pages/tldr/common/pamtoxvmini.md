@@ -1,5 +1,5 @@
 ---
-title: "Convert Netpbm Image - Create XV Thumbnail | Free DevTools"
+title: "Convert Netpbm Image - Create XV Thumbnail | Online Free DevTools by Hexmos"
 name: pamtoxvmini
 path: /freedevtools/tldr/common/pamtoxvmini
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtoxvmini/"

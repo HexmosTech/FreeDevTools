@@ -1,5 +1,5 @@
 ---
-title: "Distrobox Stop - Control Containers | Free DevTools"
+title: "Distrobox Stop - Control Containers | Online Free DevTools by Hexmos"
 name: distrobox-stop
 path: /freedevtools/tldr/linux/distrobox-stop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-stop/"

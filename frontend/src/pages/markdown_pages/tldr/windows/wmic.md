@@ -1,5 +1,5 @@
 ---
-title: "WMIC - Control Windows Processes | Free DevTools"
+title: "WMIC - Control Windows Processes | Online Free DevTools by Hexmos"
 name: wmic
 path: /freedevtools/tldr/windows/wmic
 canonical: "https://hexmos.com/freedevtools/tldr/windows/wmic/"

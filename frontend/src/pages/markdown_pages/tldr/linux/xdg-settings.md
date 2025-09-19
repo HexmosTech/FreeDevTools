@@ -1,5 +1,5 @@
 ---
-title: "XDG Settings - Manage Desktop Environment Settings | Free DevTools"
+title: "XDG Settings - Manage Desktop Environment Settings | Online Free DevTools by Hexmos"
 name: xdg-settings
 path: /freedevtools/tldr/linux/xdg-settings
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-settings/"

@@ -1,5 +1,5 @@
 ---
-title: "Resolve IP - Resolve Hostnames to IPs | Free DevTools"
+title: "Resolve IP - Resolve Hostnames to IPs | Online Free DevTools by Hexmos"
 name: resolveip
 path: /freedevtools/tldr/linux/resolveip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/resolveip/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Device Maps - kpartx Partition Tool | Free DevTools"
+title: "Create Device Maps - kpartx Partition Tool | Online Free DevTools by Hexmos"
 name: kpartx
 path: /freedevtools/tldr/linux/kpartx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kpartx/"

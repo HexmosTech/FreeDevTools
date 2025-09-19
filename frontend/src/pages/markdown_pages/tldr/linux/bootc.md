@@ -1,5 +1,5 @@
 ---
-title: "Bootc Manager - Control Linux OS Images | Free DevTools"
+title: "Bootc Manager - Control Linux OS Images | Online Free DevTools by Hexmos"
 name: bootc
 path: /freedevtools/tldr/linux/bootc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bootc/"

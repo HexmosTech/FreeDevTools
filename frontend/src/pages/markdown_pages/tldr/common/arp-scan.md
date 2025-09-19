@@ -1,5 +1,5 @@
 ---
-title: "ARP Scan - Scan Local Network | Free DevTools"
+title: "ARP Scan - Scan Local Network | Online Free DevTools by Hexmos"
 name: arp-scan
 path: /freedevtools/tldr/common/arp-scan
 canonical: "https://hexmos.com/freedevtools/tldr/common/arp-scan/"

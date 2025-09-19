@@ -1,5 +1,5 @@
 ---
-title: "Gunzip - Extract GZIP Archives | Free DevTools"
+title: "Gunzip - Extract GZIP Archives | Online Free DevTools by Hexmos"
 name: gunzip
 path: /freedevtools/tldr/common/gunzip
 canonical: "https://hexmos.com/freedevtools/tldr/common/gunzip/"

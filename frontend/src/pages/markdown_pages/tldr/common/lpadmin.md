@@ -1,5 +1,5 @@
 ---
-title: "LPAdmin - Configure CUPS Printers | Free DevTools"
+title: "LPAdmin - Configure CUPS Printers | Online Free DevTools by Hexmos"
 name: lpadmin
 path: /freedevtools/tldr/common/lpadmin
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpadmin/"

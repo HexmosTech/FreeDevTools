@@ -1,5 +1,5 @@
 ---
-title: "Create PDF Documents - Compile TeX Files | Free DevTools"
+title: "Create PDF Documents - Compile TeX Files | Online Free DevTools by Hexmos"
 name: pdftex
 path: /freedevtools/tldr/common/pdftex
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdftex/"

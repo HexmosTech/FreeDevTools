@@ -1,5 +1,5 @@
 ---
-title: "Send Notifications - Control macOS Alerts | Free DevTools"
+title: "Send Notifications - Control macOS Alerts | Online Free DevTools by Hexmos"
 name: terminal-notifier
 path: /freedevtools/tldr/osx/terminal-notifier
 canonical: "https://hexmos.com/freedevtools/tldr/osx/terminal-notifier/"

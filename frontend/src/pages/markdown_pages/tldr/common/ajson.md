@@ -1,5 +1,5 @@
 ---
-title: "Execute JSONPath - Query JSON with AJSON | Free DevTools"
+title: "Execute JSONPath - Query JSON with AJSON | Online Free DevTools by Hexmos"
 name: ajson
 path: /freedevtools/tldr/common/ajson
 canonical: "https://hexmos.com/freedevtools/tldr/common/ajson/"

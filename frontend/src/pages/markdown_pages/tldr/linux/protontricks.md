@@ -1,5 +1,5 @@
 ---
-title: "Protontricks - Run Winetricks for Proton Games | Free DevTools"
+title: "Protontricks - Run Winetricks for Proton Games | Online Free DevTools by Hexmos"
 name: protontricks
 path: /freedevtools/tldr/linux/protontricks
 canonical: "https://hexmos.com/freedevtools/tldr/linux/protontricks/"

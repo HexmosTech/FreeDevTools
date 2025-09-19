@@ -1,5 +1,5 @@
 ---
-title: "Get Windows Update Settings - Control WUA Configuration | Free DevTools"
+title: "Get Windows Update Settings - Control WUA Configuration | Online Free DevTools by Hexmos"
 name: get-wusettings
 path: /freedevtools/tldr/windows/get-wusettings
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-wusettings/"

@@ -1,5 +1,5 @@
 ---
-title: "Scan Images - Digitize Photos with Scanimage | Free DevTools"
+title: "Scan Images - Digitize Photos with Scanimage | Online Free DevTools by Hexmos"
 name: scanimage
 path: /freedevtools/tldr/linux/scanimage
 canonical: "https://hexmos.com/freedevtools/tldr/linux/scanimage/"

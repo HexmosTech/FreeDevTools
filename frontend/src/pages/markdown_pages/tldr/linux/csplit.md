@@ -1,5 +1,5 @@
 ---
-title: "Split Files - csplit Command | Free DevTools"
+title: "Split Files - csplit Command | Online Free DevTools by Hexmos"
 name: csplit
 path: /freedevtools/tldr/linux/csplit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/csplit/"

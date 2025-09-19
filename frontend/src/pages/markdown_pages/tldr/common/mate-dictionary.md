@@ -1,5 +1,5 @@
 ---
-title: "Dictionary Lookup - Define Words with mate-dictionary | Free DevTools"
+title: "Dictionary Lookup - Define Words with mate-dictionary | Online Free DevTools by Hexmos"
 name: mate-dictionary
 path: /freedevtools/tldr/common/mate-dictionary
 canonical: "https://hexmos.com/freedevtools/tldr/common/mate-dictionary/"

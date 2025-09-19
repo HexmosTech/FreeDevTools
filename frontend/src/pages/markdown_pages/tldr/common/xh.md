@@ -1,5 +1,5 @@
 ---
-title: "Send HTTP Requests with XH - Fast CLI Tool | Free DevTools"
+title: "Send HTTP Requests with XH - Fast CLI Tool | Online Free DevTools by Hexmos"
 name: xh
 path: /freedevtools/tldr/common/xh
 canonical: "https://hexmos.com/freedevtools/tldr/common/xh/"

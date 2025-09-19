@@ -1,5 +1,5 @@
 ---
-title: "Image Viewer - View Images in CLI | Free DevTools"
+title: "Image Viewer - View Images in CLI | Online Free DevTools by Hexmos"
 name: imv
 path: /freedevtools/tldr/linux/imv
 canonical: "https://hexmos.com/freedevtools/tldr/linux/imv/"

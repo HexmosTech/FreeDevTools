@@ -1,5 +1,5 @@
 ---
-title: "Convert SVG to PNG - Image Converter | Free DevTools"
+title: "Convert SVG to PNG - Image Converter | Online Free DevTools by Hexmos"
 name: ksvgtopng5
 path: /freedevtools/tldr/linux/ksvgtopng5
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ksvgtopng5/"

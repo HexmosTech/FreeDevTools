@@ -1,5 +1,5 @@
 ---
-title: "Convert ThinkJet - Create PBM from HP ThinkJet | Free DevTools"
+title: "Convert ThinkJet - Create PBM from HP ThinkJet | Online Free DevTools by Hexmos"
 name: thinkjettopbm
 path: /freedevtools/tldr/common/thinkjettopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/thinkjettopbm/"

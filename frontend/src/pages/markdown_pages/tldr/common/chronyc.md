@@ -1,5 +1,5 @@
 ---
-title: "Chrony Control - Query NTP Daemon | Free DevTools"
+title: "Chrony Control - Query NTP Daemon | Online Free DevTools by Hexmos"
 name: chronyc
 path: /freedevtools/tldr/common/chronyc
 canonical: "https://hexmos.com/freedevtools/tldr/common/chronyc/"

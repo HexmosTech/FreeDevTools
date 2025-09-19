@@ -1,5 +1,5 @@
 ---
-title: "Nerdctl - Control Containerd Containers | Free DevTools"
+title: "Nerdctl - Control Containerd Containers | Online Free DevTools by Hexmos"
 name: nerdctl
 path: /freedevtools/tldr/linux/nerdctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nerdctl/"

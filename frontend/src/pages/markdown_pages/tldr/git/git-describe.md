@@ -1,5 +1,5 @@
 ---
-title: "Git Describe - Generate Names from Git Refs | Free DevTools"
+title: "Git Describe - Generate Names from Git Refs | Online Free DevTools by Hexmos"
 name: git-describe
 path: /freedevtools/tldr/git/git-describe
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-describe/"

@@ -1,5 +1,5 @@
 ---
-title: "Dither Greyscale Image - Convert to Black & White | Free DevTools"
+title: "Dither Greyscale Image - Convert to Black & White | Online Free DevTools by Hexmos"
 name: pamditherbw
 path: /freedevtools/tldr/common/pamditherbw
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamditherbw/"

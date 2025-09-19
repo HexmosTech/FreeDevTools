@@ -1,5 +1,5 @@
 ---
-title: "Flask Utility - Manage Flask Applications | Free DevTools"
+title: "Flask Utility - Manage Flask Applications | Online Free DevTools by Hexmos"
 name: flask
 path: /freedevtools/tldr/common/flask
 canonical: "https://hexmos.com/freedevtools/tldr/common/flask/"

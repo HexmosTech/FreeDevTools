@@ -1,5 +1,5 @@
 ---
-title: "XBPS Install - Update Packages | Free DevTools"
+title: "XBPS Install - Update Packages | Online Free DevTools by Hexmos"
 name: xbps-install
 path: /freedevtools/tldr/linux/xbps-install
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-install/"

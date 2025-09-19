@@ -1,5 +1,5 @@
 ---
-title: "SFDK Deploy - Deploy Sailfish OS Builds | Free DevTools"
+title: "SFDK Deploy - Deploy Sailfish OS Builds | Online Free DevTools by Hexmos"
 name: sfdk-deploy
 path: /freedevtools/tldr/sfdk/sfdk-deploy
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-deploy/"

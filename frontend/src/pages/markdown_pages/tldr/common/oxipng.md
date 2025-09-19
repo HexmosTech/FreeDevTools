@@ -1,5 +1,5 @@
 ---
-title: "OxiPNG Compressor - Optimize PNG Files Losslessly | Free DevTools"
+title: "OxiPNG Compressor - Optimize PNG Files Losslessly | Online Free DevTools by Hexmos"
 name: oxipng
 path: /freedevtools/tldr/common/oxipng
 canonical: "https://hexmos.com/freedevtools/tldr/common/oxipng/"

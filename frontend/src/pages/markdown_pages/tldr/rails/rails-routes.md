@@ -1,5 +1,5 @@
 ---
-title: "Rails Routes - List Routes in Rails Apps | Free DevTools"
+title: "Rails Routes - List Routes in Rails Apps | Online Free DevTools by Hexmos"
 name: rails-routes
 path: /freedevtools/tldr/rails/rails-routes
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-routes/"

@@ -1,5 +1,5 @@
 ---
-title: "Distrobox Remove - Delete Containers | Free DevTools"
+title: "Distrobox Remove - Delete Containers | Online Free DevTools by Hexmos"
 name: distrobox-rm
 path: /freedevtools/tldr/linux/distrobox-rm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-rm/"

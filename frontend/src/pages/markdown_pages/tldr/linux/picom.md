@@ -1,5 +1,5 @@
 ---
-title: "Picom Compositor - Manage Xorg Windowing | Free DevTools"
+title: "Picom Compositor - Manage Xorg Windowing | Online Free DevTools by Hexmos"
 name: picom
 path: /freedevtools/tldr/linux/picom
 canonical: "https://hexmos.com/freedevtools/tldr/linux/picom/"

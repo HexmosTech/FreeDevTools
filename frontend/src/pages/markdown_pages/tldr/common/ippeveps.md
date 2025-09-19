@@ -1,5 +1,5 @@
 ---
-title: "Print PostScript - Print Files to Adobe Printers | Free DevTools"
+title: "Print PostScript - Print Files to Adobe Printers | Online Free DevTools by Hexmos"
 name: ippeveps
 path: /freedevtools/tldr/common/ippeveps
 canonical: "https://hexmos.com/freedevtools/tldr/common/ippeveps/"

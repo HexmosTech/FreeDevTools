@@ -1,5 +1,5 @@
 ---
-title: "Determine OS Architecture - Check Remote Windows Systems | Free DevTools"
+title: "Determine OS Architecture - Check Remote Windows Systems | Online Free DevTools by Hexmos"
 name: getarch.py
 path: /freedevtools/tldr/get/getarch.py
 canonical: "https://hexmos.com/freedevtools/tldr/get/getarch.py/"

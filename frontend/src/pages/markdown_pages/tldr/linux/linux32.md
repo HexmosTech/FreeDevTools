@@ -1,5 +1,5 @@
 ---
-title: "Linux32 Command - Execute 32-bit Programs | Free DevTools"
+title: "Linux32 Command - Execute 32-bit Programs | Online Free DevTools by Hexmos"
 name: linux32
 path: /freedevtools/tldr/linux/linux32
 canonical: "https://hexmos.com/freedevtools/tldr/linux/linux32/"

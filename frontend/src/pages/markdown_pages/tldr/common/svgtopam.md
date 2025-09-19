@@ -1,5 +1,5 @@
 ---
-title: "Convert SVG to PAM - Format Images | Free DevTools"
+title: "Convert SVG to PAM - Format Images | Online Free DevTools by Hexmos"
 name: svgtopam
 path: /freedevtools/tldr/common/svgtopam
 canonical: "https://hexmos.com/freedevtools/tldr/common/svgtopam/"

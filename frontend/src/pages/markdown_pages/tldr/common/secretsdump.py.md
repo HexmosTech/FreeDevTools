@@ -1,5 +1,5 @@
 ---
-title: "Dump NTLM Hashes - Secretsdump.py Windows Credentials | Free DevTools"
+title: "Dump NTLM Hashes - Secretsdump.py Windows Credentials | Online Free DevTools by Hexmos"
 name: secretsdump.py
 path: /freedevtools/tldr/common/secretsdump.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/secretsdump.py/"

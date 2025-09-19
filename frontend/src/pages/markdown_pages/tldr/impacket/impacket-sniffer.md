@@ -1,5 +1,5 @@
 ---
-title: "Sniffer - Capture Network Packets | Free DevTools"
+title: "Sniffer - Capture Network Packets | Online Free DevTools by Hexmos"
 name: impacket-sniffer
 path: /freedevtools/tldr/impacket/impacket-sniffer
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sniffer/"

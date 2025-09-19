@@ -1,5 +1,5 @@
 ---
-title: "Generate Hakyll Blog - Initialize Projects | Free DevTools"
+title: "Generate Hakyll Blog - Initialize Projects | Online Free DevTools by Hexmos"
 name: hakyll-init
 path: /freedevtools/tldr/common/hakyll-init
 canonical: "https://hexmos.com/freedevtools/tldr/common/hakyll-init/"

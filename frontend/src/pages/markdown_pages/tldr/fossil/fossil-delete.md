@@ -1,5 +1,5 @@
 ---
-title: "Fossil Delete - Control Versioned Files | Free DevTools"
+title: "Fossil Delete - Control Versioned Files | Online Free DevTools by Hexmos"
 name: fossil-delete
 path: /freedevtools/tldr/fossil/fossil-delete
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-delete/"

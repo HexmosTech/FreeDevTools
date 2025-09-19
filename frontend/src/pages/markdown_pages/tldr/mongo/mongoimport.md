@@ -1,5 +1,5 @@
 ---
-title: "Mongoimport - Import Data to MongoDB | Free DevTools"
+title: "Mongoimport - Import Data to MongoDB | Online Free DevTools by Hexmos"
 name: mongoimport
 path: /freedevtools/tldr/mongo/mongoimport
 canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongoimport/"

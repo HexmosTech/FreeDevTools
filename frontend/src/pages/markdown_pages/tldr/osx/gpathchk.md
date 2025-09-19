@@ -1,5 +1,5 @@
 ---
-title: "Validate Pathnames - gpathchk | Free DevTools"
+title: "Validate Pathnames - gpathchk | Online Free DevTools by Hexmos"
 name: gpathchk
 path: /freedevtools/tldr/osx/gpathchk
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gpathchk/"

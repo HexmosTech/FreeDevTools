@@ -1,5 +1,5 @@
 ---
-title: "Generate Random Identity - Rig | Free DevTools"
+title: "Generate Random Identity - Rig | Online Free DevTools by Hexmos"
 name: rig
 path: /freedevtools/tldr/linux/rig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rig/"

@@ -1,5 +1,5 @@
 ---
-title: "Query Packages - DNF Repoquery Command | Free DevTools"
+title: "Query Packages - DNF Repoquery Command | Online Free DevTools by Hexmos"
 name: dnf-repoquery
 path: /freedevtools/tldr/linux/dnf-repoquery
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-repoquery/"

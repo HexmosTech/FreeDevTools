@@ -1,5 +1,5 @@
 ---
-title: "Stat - Display File Status | Free DevTools"
+title: "Stat - Display File Status | Online Free DevTools by Hexmos"
 name: stat
 path: /freedevtools/tldr/osx/stat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/stat/"

@@ -1,5 +1,5 @@
 ---
-title: "Kubeseal - Encrypt Kubernetes Secrets | Free DevTools"
+title: "Kubeseal - Encrypt Kubernetes Secrets | Online Free DevTools by Hexmos"
 name: kubeseal
 path: /freedevtools/tldr/kube/kubeseal
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kubeseal/"

@@ -1,5 +1,5 @@
 ---
-title: "Secure MySQL - Improve Database Security | Free DevTools"
+title: "Secure MySQL - Improve Database Security | Online Free DevTools by Hexmos"
 name: mysql_secure_installation
 path: /freedevtools/tldr/common/mysql_secure_installation
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysql_secure_installation/"

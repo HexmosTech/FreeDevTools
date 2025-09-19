@@ -1,5 +1,5 @@
 ---
-title: "RAR Password Cracker - Recover RAR Passwords | Free DevTools"
+title: "RAR Password Cracker - Recover RAR Passwords | Online Free DevTools by Hexmos"
 name: rarcrack
 path: /freedevtools/tldr/common/rarcrack
 canonical: "https://hexmos.com/freedevtools/tldr/common/rarcrack/"

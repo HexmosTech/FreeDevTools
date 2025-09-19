@@ -1,5 +1,5 @@
 ---
-title: "GRUB Reboot - Control Boot Entry | Free DevTools"
+title: "GRUB Reboot - Control Boot Entry | Online Free DevTools by Hexmos"
 name: grub-reboot
 path: /freedevtools/tldr/linux/grub-reboot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-reboot/"

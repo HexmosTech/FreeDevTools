@@ -1,5 +1,5 @@
 ---
-title: "Control SteamOS Sessions - Manage Desktop Modes | Free DevTools"
+title: "Control SteamOS Sessions - Manage Desktop Modes | Online Free DevTools by Hexmos"
 name: steamos-session-select
 path: /freedevtools/tldr/linux/steamos-session-select
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-session-select/"

@@ -1,5 +1,5 @@
 ---
-title: "Create YAA Archives - Compress Files | Free DevTools"
+title: "Create YAA Archives - Compress Files | Online Free DevTools by Hexmos"
 name: yaa
 path: /freedevtools/tldr/osx/yaa
 canonical: "https://hexmos.com/freedevtools/tldr/osx/yaa/"

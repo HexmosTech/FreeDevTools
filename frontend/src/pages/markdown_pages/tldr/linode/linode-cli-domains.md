@@ -1,5 +1,5 @@
 ---
-title: "Linode Domains - Manage DNS | Free DevTools"
+title: "Linode Domains - Manage DNS | Online Free DevTools by Hexmos"
 name: linode-cli-domains
 path: /freedevtools/tldr/linode/linode-cli-domains
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-domains/"

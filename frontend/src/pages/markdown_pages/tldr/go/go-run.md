@@ -1,5 +1,5 @@
 ---
-title: "Go Run - Compile & Run Go Code | Free DevTools"
+title: "Go Run - Compile & Run Go Code | Online Free DevTools by Hexmos"
 name: go-run
 path: /freedevtools/tldr/go/go-run
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-run/"

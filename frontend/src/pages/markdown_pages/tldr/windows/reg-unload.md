@@ -1,5 +1,5 @@
 ---
-title: "Reg Unload - Remove Registry Data | Free DevTools"
+title: "Reg Unload - Remove Registry Data | Online Free DevTools by Hexmos"
 name: reg-unload
 path: /freedevtools/tldr/windows/reg-unload
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-unload/"

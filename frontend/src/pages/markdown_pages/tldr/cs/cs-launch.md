@@ -1,5 +1,5 @@
 ---
-title: "Launch Application - Run Apps Directly with cs-launch | Free DevTools"
+title: "Launch Application - Run Apps Directly with cs-launch | Online Free DevTools by Hexmos"
 name: cs-launch
 path: /freedevtools/tldr/cs/cs-launch
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-launch/"

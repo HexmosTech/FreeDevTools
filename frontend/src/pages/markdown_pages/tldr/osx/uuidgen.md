@@ -1,5 +1,5 @@
 ---
-title: "Generate UUID - Create Unique Identifiers | Free DevTools"
+title: "Generate UUID - Create Unique Identifiers | Online Free DevTools by Hexmos"
 name: uuidgen
 path: /freedevtools/tldr/osx/uuidgen
 canonical: "https://hexmos.com/freedevtools/tldr/osx/uuidgen/"

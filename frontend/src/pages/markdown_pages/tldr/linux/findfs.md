@@ -1,5 +1,5 @@
 ---
-title: "Find Filesystem - Locate Filesystems by Label/UUID | Free DevTools"
+title: "Find Filesystem - Locate Filesystems by Label/UUID | Online Free DevTools by Hexmos"
 name: findfs
 path: /freedevtools/tldr/linux/findfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/findfs/"

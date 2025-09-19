@@ -1,5 +1,5 @@
 ---
-title: "Minikube Start - Control Kubernetes Clusters | Free DevTools"
+title: "Minikube Start - Control Kubernetes Clusters | Online Free DevTools by Hexmos"
 name: minikube-start
 path: /freedevtools/tldr/common/minikube-start
 canonical: "https://hexmos.com/freedevtools/tldr/common/minikube-start/"

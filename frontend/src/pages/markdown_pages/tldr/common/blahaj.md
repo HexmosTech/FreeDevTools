@@ -1,5 +1,5 @@
 ---
-title: "Colorize Output - Format Text with BLAHAJ | Free DevTools"
+title: "Colorize Output - Format Text with BLAHAJ | Online Free DevTools by Hexmos"
 name: blahaj
 path: /freedevtools/tldr/common/blahaj
 canonical: "https://hexmos.com/freedevtools/tldr/common/blahaj/"

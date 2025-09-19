@@ -1,5 +1,5 @@
 ---
-title: "a2ensite - Enable Apache Virtual Hosts | Free DevTools"
+title: "a2ensite - Enable Apache Virtual Hosts | Online Free DevTools by Hexmos"
 name: a2ensite
 path: /freedevtools/tldr/linux/a2ensite
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2ensite/"

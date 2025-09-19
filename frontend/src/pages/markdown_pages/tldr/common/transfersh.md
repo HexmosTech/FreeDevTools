@@ -1,5 +1,5 @@
 ---
-title: "Upload Files with transfersh - Share Files | Free DevTools"
+title: "Upload Files with transfersh - Share Files | Online Free DevTools by Hexmos"
 name: transfersh
 path: /freedevtools/tldr/common/transfersh
 canonical: "https://hexmos.com/freedevtools/tldr/common/transfersh/"

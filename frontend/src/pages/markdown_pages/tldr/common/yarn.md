@@ -1,5 +1,5 @@
 ---
-title: "Manage Yarn Packages - Install, Remove | Free DevTools"
+title: "Manage Yarn Packages - Install, Remove | Online Free DevTools by Hexmos"
 name: yarn
 path: /freedevtools/tldr/common/yarn
 canonical: "https://hexmos.com/freedevtools/tldr/common/yarn/"

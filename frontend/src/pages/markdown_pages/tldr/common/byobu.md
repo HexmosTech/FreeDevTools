@@ -1,5 +1,5 @@
 ---
-title: "Control Byobu Sessions - Terminal Multiplexer | Free DevTools"
+title: "Control Byobu Sessions - Terminal Multiplexer | Online Free DevTools by Hexmos"
 name: byobu
 path: /freedevtools/tldr/common/byobu
 canonical: "https://hexmos.com/freedevtools/tldr/common/byobu/"

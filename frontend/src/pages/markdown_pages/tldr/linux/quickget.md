@@ -1,5 +1,5 @@
 ---
-title: "Quickget - Create Quickemu VMs | Free DevTools"
+title: "Quickget - Create Quickemu VMs | Online Free DevTools by Hexmos"
 name: quickget
 path: /freedevtools/tldr/linux/quickget
 canonical: "https://hexmos.com/freedevtools/tldr/linux/quickget/"

@@ -1,5 +1,5 @@
 ---
-title: "Tart - Manage macOS VMs on Apple Silicon | Free DevTools"
+title: "Tart - Manage macOS VMs on Apple Silicon | Online Free DevTools by Hexmos"
 name: tart
 path: /freedevtools/tldr/osx/tart
 canonical: "https://hexmos.com/freedevtools/tldr/osx/tart/"

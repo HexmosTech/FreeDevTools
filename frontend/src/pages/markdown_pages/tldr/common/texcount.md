@@ -1,5 +1,5 @@
 ---
-title: "Count TeX Words - Analyze LaTeX Documents | Free DevTools"
+title: "Count TeX Words - Analyze LaTeX Documents | Online Free DevTools by Hexmos"
 name: texcount
 path: /freedevtools/tldr/common/texcount
 canonical: "https://hexmos.com/freedevtools/tldr/common/texcount/"

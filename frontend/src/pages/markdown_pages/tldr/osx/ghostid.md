@@ -1,5 +1,5 @@
 ---
-title: "Generate Host ID - Find System Host ID | Free DevTools"
+title: "Generate Host ID - Find System Host ID | Online Free DevTools by Hexmos"
 name: ghostid
 path: /freedevtools/tldr/osx/ghostid
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ghostid/"

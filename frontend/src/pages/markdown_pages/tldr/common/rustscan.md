@@ -1,5 +1,5 @@
 ---
-title: "Scan Ports - Analyze Network Ports with Rustscan | Free DevTools"
+title: "Scan Ports - Analyze Network Ports with Rustscan | Online Free DevTools by Hexmos"
 name: rustscan
 path: /freedevtools/tldr/common/rustscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/rustscan/"

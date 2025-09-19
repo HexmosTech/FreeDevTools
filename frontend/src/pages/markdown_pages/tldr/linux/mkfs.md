@@ -1,5 +1,5 @@
 ---
-title: "Create Filesystem - Format Partitions with mkfs | Free DevTools"
+title: "Create Filesystem - Format Partitions with mkfs | Online Free DevTools by Hexmos"
 name: mkfs
 path: /freedevtools/tldr/linux/mkfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs/"

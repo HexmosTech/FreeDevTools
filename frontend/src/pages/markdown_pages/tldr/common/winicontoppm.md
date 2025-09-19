@@ -1,5 +1,5 @@
 ---
-title: "Convert WinIcon to PPM - Format Icon Files | Free DevTools"
+title: "Convert WinIcon to PPM - Format Icon Files | Online Free DevTools by Hexmos"
 name: winicontoppm
 path: /freedevtools/tldr/common/winicontoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/winicontoppm/"

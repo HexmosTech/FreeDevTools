@@ -1,5 +1,5 @@
 ---
-title: "DNS Lookup - Query DNS Records with Doggo | Free DevTools"
+title: "DNS Lookup - Query DNS Records with Doggo | Online Free DevTools by Hexmos"
 name: doggo
 path: /freedevtools/tldr/common/doggo
 canonical: "https://hexmos.com/freedevtools/tldr/common/doggo/"

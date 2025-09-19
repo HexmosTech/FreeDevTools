@@ -1,5 +1,5 @@
 ---
-title: "Vgextend - Extend Volume Groups | Free DevTools"
+title: "Vgextend - Extend Volume Groups | Online Free DevTools by Hexmos"
 name: vgextend
 path: /freedevtools/tldr/linux/vgextend
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgextend/"

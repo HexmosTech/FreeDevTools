@@ -1,5 +1,5 @@
 ---
-title: "Iostat - Monitor Device Statistics | Free DevTools"
+title: "Iostat - Monitor Device Statistics | Online Free DevTools by Hexmos"
 name: iostat
 path: /freedevtools/tldr/osx/iostat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/iostat/"

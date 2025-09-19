@@ -1,5 +1,5 @@
 ---
-title: "PipeWire Monitor - Observe PipeWire Objects | Free DevTools"
+title: "PipeWire Monitor - Observe PipeWire Objects | Online Free DevTools by Hexmos"
 name: pw-mon
 path: /freedevtools/tldr/linux/pw-mon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-mon/"

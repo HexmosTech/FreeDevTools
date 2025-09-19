@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to LaserJet - Format Images | Free DevTools"
+title: "Convert PBM to LaserJet - Format Images | Online Free DevTools by Hexmos"
 name: pbmtolj
 path: "/freedevtools/tldr/common/pbmtolj"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtolj/"

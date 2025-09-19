@@ -1,5 +1,5 @@
 ---
-title: "Control AWS - Manage Amazon Web Services with CLI | Free DevTools"
+title: "Control AWS - Manage Amazon Web Services with CLI | Online Free DevTools by Hexmos"
 name: aws
 path: /freedevtools/tldr/aws/aws
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws/"

@@ -1,5 +1,5 @@
 ---
-title: "Launch Dev Environments - Manage Docker/K8s with Devpod | Free DevTools"
+title: "Launch Dev Environments - Manage Docker/K8s with Devpod | Online Free DevTools by Hexmos"
 name: devpod
 path: /freedevtools/tldr/common/devpod
 canonical: "https://hexmos.com/freedevtools/tldr/common/devpod/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Handshake Blockchain - hsd-cli | Free DevTools"
+title: "Control Handshake Blockchain - hsd-cli | Online Free DevTools by Hexmos"
 name: hsd-cli
 path: /freedevtools/tldr/common/hsd-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/hsd-cli/"

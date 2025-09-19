@@ -1,5 +1,5 @@
 ---
-title: "Run GUI Apps - x11docker Container Manager | Free DevTools"
+title: "Run GUI Apps - x11docker Container Manager | Online Free DevTools by Hexmos"
 name: x11docker
 path: /freedevtools/tldr/common/x11docker
 canonical: "https://hexmos.com/freedevtools/tldr/common/x11docker/"

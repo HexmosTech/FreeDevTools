@@ -1,5 +1,5 @@
 ---
-title: "Control Tetris Game - Play Cuyo Game on Linux | Free DevTools"
+title: "Control Tetris Game - Play Cuyo Game on Linux | Online Free DevTools by Hexmos"
 name: cuyo
 path: /freedevtools/tldr/linux/cuyo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cuyo/"

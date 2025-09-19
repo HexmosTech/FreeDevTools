@@ -1,5 +1,5 @@
 ---
-title: "Docker Rename - Manage Container Names | Free DevTools"
+title: "Docker Rename - Manage Container Names | Online Free DevTools by Hexmos"
 name: docker-rename
 path: /freedevtools/tldr/docker/docker-rename
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rename/"

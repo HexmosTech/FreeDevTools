@@ -1,5 +1,5 @@
 ---
-title: "Android Logcat - Monitor System Logs | Free DevTools"
+title: "Android Logcat - Monitor System Logs | Online Free DevTools by Hexmos"
 name: logcat
 path: /freedevtools/tldr/android/logcat
 canonical: "https://hexmos.com/freedevtools/tldr/android/logcat/"

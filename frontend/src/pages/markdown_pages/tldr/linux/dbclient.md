@@ -1,5 +1,5 @@
 ---
-title: "DB Client - Secure Shell Access | Free DevTools"
+title: "DB Client - Secure Shell Access | Online Free DevTools by Hexmos"
 name: dbclient
 path: /freedevtools/tldr/linux/dbclient
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dbclient/"

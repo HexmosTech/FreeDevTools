@@ -1,5 +1,5 @@
 ---
-title: "Create Bup Backups - Deduplicate Data | Free DevTools"
+title: "Create Bup Backups - Deduplicate Data | Online Free DevTools by Hexmos"
 name: bup
 path: /freedevtools/tldr/common/bup
 canonical: "https://hexmos.com/freedevtools/tldr/common/bup/"

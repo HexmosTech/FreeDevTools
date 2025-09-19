@@ -1,5 +1,5 @@
 ---
-title: "Control Systemd - Manage Services with systemctl | Free DevTools"
+title: "Control Systemd - Manage Services with systemctl | Online Free DevTools by Hexmos"
 name: systemctl
 path: /freedevtools/tldr/linux/systemctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl/"

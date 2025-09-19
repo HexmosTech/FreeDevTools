@@ -1,5 +1,5 @@
 ---
-title: "Check Spelling - Interactive Spell Check with Ispell | Free DevTools"
+title: "Check Spelling - Interactive Spell Check with Ispell | Online Free DevTools by Hexmos"
 name: ispell
 path: /freedevtools/tldr/common/ispell
 canonical: "https://hexmos.com/freedevtools/tldr/common/ispell/"

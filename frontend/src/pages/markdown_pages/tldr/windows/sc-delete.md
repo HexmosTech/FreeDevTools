@@ -1,5 +1,5 @@
 ---
-title: "SC Delete - Control Windows Services | Free DevTools"
+title: "SC Delete - Control Windows Services | Online Free DevTools by Hexmos"
 name: sc-delete
 path: /freedevtools/tldr/windows/sc-delete
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sc-delete/"

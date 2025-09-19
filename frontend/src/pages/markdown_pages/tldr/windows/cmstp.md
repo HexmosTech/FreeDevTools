@@ -1,5 +1,5 @@
 ---
-title: "CMSTP - Manage Connection Profiles | Free DevTools"
+title: "CMSTP - Manage Connection Profiles | Online Free DevTools by Hexmos"
 name: cmstp
 path: /freedevtools/tldr/windows/cmstp
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cmstp/"

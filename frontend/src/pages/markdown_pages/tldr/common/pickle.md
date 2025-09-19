@@ -1,5 +1,5 @@
 ---
-title: "Validate PHP Extensions - Pickle Command | Free DevTools"
+title: "Validate PHP Extensions - Pickle Command | Online Free DevTools by Hexmos"
 name: pickle
 path: /freedevtools/tldr/common/pickle
 canonical: "https://hexmos.com/freedevtools/tldr/common/pickle/"

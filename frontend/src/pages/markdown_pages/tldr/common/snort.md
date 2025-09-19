@@ -1,5 +1,5 @@
 ---
-title: "Snort - Analyze Network Traffic | Free DevTools"
+title: "Snort - Analyze Network Traffic | Online Free DevTools by Hexmos"
 name: snort
 path: /freedevtools/tldr/common/snort
 canonical: "https://hexmos.com/freedevtools/tldr/common/snort/"

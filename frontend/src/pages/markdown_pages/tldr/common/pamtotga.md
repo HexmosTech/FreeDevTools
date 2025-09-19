@@ -1,5 +1,5 @@
 ---
-title: "Convert Netpbm to Targa - Format Images | Free DevTools"
+title: "Convert Netpbm to Targa - Format Images | Online Free DevTools by Hexmos"
 name: pamtotga
 path: /freedevtools/tldr/common/pamtotga
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtotga/"

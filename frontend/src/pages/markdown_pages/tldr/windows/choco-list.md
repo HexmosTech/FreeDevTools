@@ -1,5 +1,5 @@
 ---
-title: "Choco List - Manage Chocolatey Packages | Free DevTools"
+title: "Choco List - Manage Chocolatey Packages | Online Free DevTools by Hexmos"
 name: choco-list
 path: /freedevtools/tldr/windows/choco-list
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-list/"

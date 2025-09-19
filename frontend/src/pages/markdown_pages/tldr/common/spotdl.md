@@ -1,5 +1,5 @@
 ---
-title: "Download Spotify - Playlist Downloader with Spotdl | Free DevTools"
+title: "Download Spotify - Playlist Downloader with Spotdl | Online Free DevTools by Hexmos"
 name: spotdl
 path: /freedevtools/tldr/common/spotdl
 canonical: "https://hexmos.com/freedevtools/tldr/common/spotdl/"

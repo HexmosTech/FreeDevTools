@@ -1,5 +1,5 @@
 ---
-title: "Manage Java Versions - jenv | Free DevTools"
+title: "Manage Java Versions - jenv | Online Free DevTools by Hexmos"
 name: jenv
 path: /freedevtools/tldr/common/jenv
 canonical: "https://hexmos.com/freedevtools/tldr/common/jenv/"

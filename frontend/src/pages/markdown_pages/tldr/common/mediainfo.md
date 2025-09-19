@@ -1,5 +1,5 @@
 ---
-title: "MediaInfo - Extract Media Metadata | Free DevTools"
+title: "MediaInfo - Extract Media Metadata | Online Free DevTools by Hexmos"
 name: mediainfo
 path: /freedevtools/tldr/common/mediainfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/mediainfo/"

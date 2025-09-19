@@ -1,5 +1,5 @@
 ---
-title: "Compile C/C++ Code - Clang Compiler | Free DevTools"
+title: "Compile C/C++ Code - Clang Compiler | Online Free DevTools by Hexmos"
 name: clang
 path: /freedevtools/tldr/clang/clang
 canonical: "https://hexmos.com/freedevtools/tldr/clang/clang/"

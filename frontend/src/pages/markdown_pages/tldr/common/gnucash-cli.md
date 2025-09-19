@@ -1,5 +1,5 @@
 ---
-title: "Generate Financial Reports - GnuCash-cli | Free DevTools"
+title: "Generate Financial Reports - GnuCash-cli | Online Free DevTools by Hexmos"
 name: gnucash-cli
 path: /freedevtools/tldr/common/gnucash-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/gnucash-cli/"

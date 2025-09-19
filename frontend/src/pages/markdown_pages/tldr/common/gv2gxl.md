@@ -1,5 +1,5 @@
 ---
-title: "Convert GV to GXL - Generate GXL Files | Free DevTools"
+title: "Convert GV to GXL - Generate GXL Files | Online Free DevTools by Hexmos"
 name: gv2gxl
 path: /freedevtools/tldr/common/gv2gxl
 canonical: "https://hexmos.com/freedevtools/tldr/common/gv2gxl/"

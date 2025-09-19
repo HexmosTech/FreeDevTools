@@ -1,5 +1,5 @@
 ---
-title: "Restore Disk Image - Copy Volume on OSX | Free DevTools"
+title: "Restore Disk Image - Copy Volume on OSX | Online Free DevTools by Hexmos"
 name: asr
 path: /freedevtools/tldr/osx/asr
 canonical: "https://hexmos.com/freedevtools/tldr/osx/asr/"

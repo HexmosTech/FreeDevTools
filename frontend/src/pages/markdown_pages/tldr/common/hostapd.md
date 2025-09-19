@@ -1,5 +1,5 @@
 ---
-title: "Create Wireless AP - Control WiFi Access Point with hostapd | Free DevTools"
+title: "Create Wireless AP - Control WiFi Access Point with hostapd | Online Free DevTools by Hexmos"
 name: hostapd
 path: /freedevtools/tldr/common/hostapd
 canonical: "https://hexmos.com/freedevtools/tldr/common/hostapd/"

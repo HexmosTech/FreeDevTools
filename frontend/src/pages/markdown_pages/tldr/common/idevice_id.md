@@ -1,5 +1,5 @@
 ---
-title: "List iOS Devices - Control Device IDs | Free DevTools"
+title: "List iOS Devices - Control Device IDs | Online Free DevTools by Hexmos"
 name: idevice_id
 path: /freedevtools/tldr/common/idevice_id
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevice_id/"

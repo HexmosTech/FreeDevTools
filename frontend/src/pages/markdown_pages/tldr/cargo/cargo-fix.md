@@ -1,5 +1,5 @@
 ---
-title: "Cargo Fix - Auto-Fix Rust Code with Cargo | Free DevTools"
+title: "Cargo Fix - Auto-Fix Rust Code with Cargo | Online Free DevTools by Hexmos"
 name: cargo-fix
 path: /freedevtools/tldr/cargo/cargo-fix
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-fix/"

@@ -1,5 +1,5 @@
 ---
-title: "Go Fix - Update Go Packages | Free DevTools"
+title: "Go Fix - Update Go Packages | Online Free DevTools by Hexmos"
 name: go-fix
 path: /freedevtools/tldr/go/go-fix
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-fix/"

@@ -1,5 +1,5 @@
 ---
-title: "Control MPD - Music Player Client Command | Free DevTools"
+title: "Control MPD - Music Player Client Command | Online Free DevTools by Hexmos"
 name: mpc
 path: /freedevtools/tldr/common/mpc
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpc/"

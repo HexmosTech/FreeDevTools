@@ -1,5 +1,5 @@
 ---
-title: "Control mitmweb - HTTP Proxy Interception | Free DevTools"
+title: "Control mitmweb - HTTP Proxy Interception | Online Free DevTools by Hexmos"
 name: mitmweb
 path: /freedevtools/tldr/common/mitmweb
 canonical: "https://hexmos.com/freedevtools/tldr/common/mitmweb/"

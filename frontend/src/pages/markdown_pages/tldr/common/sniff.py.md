@@ -1,5 +1,5 @@
 ---
-title: "Capture Network Packets - Sniff Network Traffic | Free DevTools"
+title: "Capture Network Packets - Sniff Network Traffic | Online Free DevTools by Hexmos"
 name: sniff.py
 path: /freedevtools/tldr/common/sniff.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/sniff.py/"

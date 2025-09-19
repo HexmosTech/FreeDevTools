@@ -1,5 +1,5 @@
 ---
-title: "Immich Upload - Manage Media Files | Free DevTools"
+title: "Immich Upload - Manage Media Files | Online Free DevTools by Hexmos"
 name: immich
 path: /freedevtools/tldr/common/immich
 canonical: "https://hexmos.com/freedevtools/tldr/common/immich/"

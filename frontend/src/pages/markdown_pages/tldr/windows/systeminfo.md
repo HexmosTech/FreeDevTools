@@ -1,5 +1,5 @@
 ---
-title: "Systeminfo - Display System Information | Free DevTools"
+title: "Systeminfo - Display System Information | Online Free DevTools by Hexmos"
 name: systeminfo
 path: /freedevtools/tldr/windows/systeminfo
 canonical: "https://hexmos.com/freedevtools/tldr/windows/systeminfo/"

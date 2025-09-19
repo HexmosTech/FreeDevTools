@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO Check - Validate Project Code | Free DevTools"
+title: "PlatformIO Check - Validate Project Code | Online Free DevTools by Hexmos"
 name: pio-check
 path: /freedevtools/tldr/pio/pio-check
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-check/"

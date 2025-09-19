@@ -1,5 +1,5 @@
 ---
-title: "Create JAR Archive - Package Java Applications | Free DevTools"
+title: "Create JAR Archive - Package Java Applications | Online Free DevTools by Hexmos"
 name: jar
 path: /freedevtools/tldr/common/jar
 canonical: "https://hexmos.com/freedevtools/tldr/common/jar/"

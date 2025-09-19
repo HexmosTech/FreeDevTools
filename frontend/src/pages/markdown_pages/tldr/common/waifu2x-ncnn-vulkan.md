@@ -1,5 +1,5 @@
 ---
-title: "Upscale Images - waifu2x-ncnn-vulkan | Free DevTools"
+title: "Upscale Images - waifu2x-ncnn-vulkan | Online Free DevTools by Hexmos"
 name: waifu2x-ncnn-vulkan
 path: /freedevtools/tldr/common/waifu2x-ncnn-vulkan
 canonical: "https://hexmos.com/freedevtools/tldr/common/waifu2x-ncnn-vulkan/"

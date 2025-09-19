@@ -1,5 +1,5 @@
 ---
-title: "Control Screen Temperature with wlsunset | Free DevTools"
+title: "Control Screen Temperature with wlsunset | Online Free DevTools by Hexmos"
 name: wlsunset
 path: /freedevtools/tldr/common/wlsunset
 canonical: "https://hexmos.com/freedevtools/tldr/common/wlsunset/"

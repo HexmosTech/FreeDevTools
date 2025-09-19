@@ -1,5 +1,5 @@
 ---
-title: "Vela Pipeline - Trigger & Control CI/CD Workflows | Free DevTools"
+title: "Vela Pipeline - Trigger & Control CI/CD Workflows | Online Free DevTools by Hexmos"
 name: vela
 path: /freedevtools/tldr/common/vela
 canonical: "https://hexmos.com/freedevtools/tldr/common/vela/"

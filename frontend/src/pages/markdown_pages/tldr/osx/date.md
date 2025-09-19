@@ -1,5 +1,5 @@
 ---
-title: "Date Command - Display System Date | Free DevTools"
+title: "Date Command - Display System Date | Online Free DevTools by Hexmos"
 name: date
 path: /freedevtools/tldr/osx/date
 canonical: "https://hexmos.com/freedevtools/tldr/osx/date/"

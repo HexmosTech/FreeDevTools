@@ -1,5 +1,5 @@
 ---
-title: "Download LinkedIn Learning Videos - LLVD Downloader | Free DevTools"
+title: "Download LinkedIn Learning Videos - LLVD Downloader | Online Free DevTools by Hexmos"
 name: llvd
 path: /freedevtools/tldr/common/llvd
 canonical: "https://hexmos.com/freedevtools/tldr/common/llvd/"

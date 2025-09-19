@@ -1,5 +1,5 @@
 ---
-title: "XML Format - Convert XML to P2X Format | Free DevTools"
+title: "XML Format - Convert XML to P2X Format | Online Free DevTools by Hexmos"
 name: xml-p2x
 path: /freedevtools/tldr/xml/xml-p2x
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-p2x/"

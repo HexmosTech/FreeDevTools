@@ -1,5 +1,5 @@
 ---
-title: "Control Plasma Colorscheme - Apply Themes | Free DevTools"
+title: "Control Plasma Colorscheme - Apply Themes | Online Free DevTools by Hexmos"
 name: plasma-apply-colorscheme
 path: /freedevtools/tldr/linux/plasma-apply-colorscheme
 canonical: "https://hexmos.com/freedevtools/tldr/linux/plasma-apply-colorscheme/"

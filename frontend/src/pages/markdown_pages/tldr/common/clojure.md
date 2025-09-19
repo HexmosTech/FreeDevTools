@@ -1,5 +1,5 @@
 ---
-title: "Clojure - Execute Clojure Code | Free DevTools"
+title: "Clojure - Execute Clojure Code | Online Free DevTools by Hexmos"
 name: clojure
 path: /freedevtools/tldr/common/clojure
 canonical: "https://hexmos.com/freedevtools/tldr/common/clojure/"

@@ -1,5 +1,5 @@
 ---
-title: "Sort Topological Order - Control File Dependencies | Free DevTools"
+title: "Sort Topological Order - Control File Dependencies | Online Free DevTools by Hexmos"
 name: gtsort
 path: /freedevtools/tldr/osx/gtsort
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtsort/"

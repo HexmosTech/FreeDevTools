@@ -1,5 +1,5 @@
 ---
-title: "Switch User - Manage Linux User Sessions | Free DevTools"
+title: "Switch User - Manage Linux User Sessions | Online Free DevTools by Hexmos"
 name: su
 path: /freedevtools/tldr/linux/su
 canonical: "https://hexmos.com/freedevtools/tldr/linux/su/"

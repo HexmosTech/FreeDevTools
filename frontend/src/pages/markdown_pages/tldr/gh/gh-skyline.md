@@ -1,5 +1,5 @@
 ---
-title: "Generate GitHub Skyline - Visualize Contributions | Free DevTools"
+title: "Generate GitHub Skyline - Visualize Contributions | Online Free DevTools by Hexmos"
 name: gh-skyline
 path: /freedevtools/tldr/gh/gh-skyline
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-skyline/"

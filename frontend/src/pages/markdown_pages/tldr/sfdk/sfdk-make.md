@@ -1,5 +1,5 @@
 ---
-title: "SFDK Make - Execute Build Steps | Free DevTools"
+title: "SFDK Make - Execute Build Steps | Online Free DevTools by Hexmos"
 name: sfdk-make
 path: /freedevtools/tldr/sfdk/sfdk-make
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-make/"

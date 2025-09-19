@@ -1,5 +1,5 @@
 ---
-title: "Create PHP Archives - Manage PHAR Files | Free DevTools"
+title: "Create PHP Archives - Manage PHAR Files | Online Free DevTools by Hexmos"
 name: phar
 path: /freedevtools/tldr/linux/phar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/phar/"

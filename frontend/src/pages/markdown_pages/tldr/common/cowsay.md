@@ -1,5 +1,5 @@
 ---
-title: "Generate ASCII Art - Cowsay Command | Free DevTools"
+title: "Generate ASCII Art - Cowsay Command | Online Free DevTools by Hexmos"
 name: cowsay
 path: /freedevtools/tldr/common/cowsay
 canonical: "https://hexmos.com/freedevtools/tldr/common/cowsay/"

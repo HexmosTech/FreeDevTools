@@ -1,5 +1,5 @@
 ---
-title: "Gsleep Command - Control System Sleep on macOS | Free DevTools"
+title: "Gsleep Command - Control System Sleep on macOS | Online Free DevTools by Hexmos"
 name: gsleep
 path: /freedevtools/tldr/osx/gsleep
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsleep/"

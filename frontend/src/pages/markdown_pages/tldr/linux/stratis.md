@@ -1,5 +1,5 @@
 ---
-title: "Stratis Manager - Manage Linux Storage Pools | Free DevTools"
+title: "Stratis Manager - Manage Linux Storage Pools | Online Free DevTools by Hexmos"
 name: stratis
 path: /freedevtools/tldr/linux/stratis
 canonical: "https://hexmos.com/freedevtools/tldr/linux/stratis/"

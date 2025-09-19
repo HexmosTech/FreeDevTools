@@ -1,5 +1,5 @@
 ---
-title: "Control SSH Shell - Xxh | Free DevTools"
+title: "Control SSH Shell - Xxh | Online Free DevTools by Hexmos"
 name: xxh
 path: /freedevtools/tldr/common/xxh
 canonical: "https://hexmos.com/freedevtools/tldr/common/xxh/"

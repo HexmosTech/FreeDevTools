@@ -1,5 +1,5 @@
 ---
-title: "Colorize Graph Edges - Clarify Graph Layouts | Free DevTools"
+title: "Colorize Graph Edges - Clarify Graph Layouts | Online Free DevTools by Hexmos"
 name: edgepaint
 path: /freedevtools/tldr/common/edgepaint
 canonical: "https://hexmos.com/freedevtools/tldr/common/edgepaint/"

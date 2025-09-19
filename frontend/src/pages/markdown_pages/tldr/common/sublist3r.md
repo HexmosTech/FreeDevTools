@@ -1,5 +1,5 @@
 ---
-title: "Find Subdomains - Enumerate Subdomains with Sublist3r | Free DevTools"
+title: "Find Subdomains - Enumerate Subdomains with Sublist3r | Online Free DevTools by Hexmos"
 name: sublist3r
 path: /freedevtools/tldr/common/sublist3r
 canonical: "https://hexmos.com/freedevtools/tldr/common/sublist3r/"

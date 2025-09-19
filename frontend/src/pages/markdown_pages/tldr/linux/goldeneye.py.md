@@ -1,5 +1,5 @@
 ---
-title: "GoldenEye - HTTP DoS Test | Free DevTools"
+title: "GoldenEye - HTTP DoS Test | Online Free DevTools by Hexmos"
 name: goldeneye.py
 path: /freedevtools/tldr/linux/goldeneye.py
 canonical: "https://hexmos.com/freedevtools/tldr/linux/goldeneye.py/"

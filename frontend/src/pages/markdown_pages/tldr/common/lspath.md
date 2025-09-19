@@ -1,5 +1,5 @@
 ---
-title: "List PATH - Display Environment Paths | Free DevTools"
+title: "List PATH - Display Environment Paths | Online Free DevTools by Hexmos"
 name: lspath
 path: /freedevtools/tldr/common/lspath
 canonical: "https://hexmos.com/freedevtools/tldr/common/lspath/"

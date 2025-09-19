@@ -1,5 +1,5 @@
 ---
-title: "Archive Files - Create 7zr Archives | Free DevTools"
+title: "Archive Files - Create 7zr Archives | Online Free DevTools by Hexmos"
 name: 7zr
 path: /freedevtools/tldr/common/7zr
 canonical: "https://hexmos.com/freedevtools/tldr/common/7zr/"

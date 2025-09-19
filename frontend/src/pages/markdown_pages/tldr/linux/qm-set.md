@@ -1,5 +1,5 @@
 ---
-title: "VM Set - Control Virtual Machine Options | Free DevTools"
+title: "VM Set - Control Virtual Machine Options | Online Free DevTools by Hexmos"
 name: qm-set
 path: /freedevtools/tldr/linux/qm-set
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-set/"

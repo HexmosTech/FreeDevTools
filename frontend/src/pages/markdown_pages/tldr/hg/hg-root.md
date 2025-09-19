@@ -1,5 +1,5 @@
 ---
-title: "Hg Root - Display Repository Root Location | Free DevTools"
+title: "Hg Root - Display Repository Root Location | Online Free DevTools by Hexmos"
 name: hg-root
 path: /freedevtools/tldr/hg/hg-root
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-root/"

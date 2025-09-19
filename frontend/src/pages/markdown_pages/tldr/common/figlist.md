@@ -1,5 +1,5 @@
 ---
-title: "Figlet Fonts - List & Control FIGlet Fonts | Free DevTools"
+title: "Figlet Fonts - List & Control FIGlet Fonts | Online Free DevTools by Hexmos"
 name: figlist
 path: /freedevtools/tldr/common/figlist
 canonical: "https://hexmos.com/freedevtools/tldr/common/figlist/"

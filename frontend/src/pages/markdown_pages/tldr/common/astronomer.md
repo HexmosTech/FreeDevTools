@@ -1,5 +1,5 @@
 ---
-title: "Detect Illegitimate Stars - Astronomer GitHub Tool | Free DevTools"
+title: "Detect Illegitimate Stars - Astronomer GitHub Tool | Online Free DevTools by Hexmos"
 name: astronomer
 path: /freedevtools/tldr/common/astronomer
 canonical: "https://hexmos.com/freedevtools/tldr/common/astronomer/"

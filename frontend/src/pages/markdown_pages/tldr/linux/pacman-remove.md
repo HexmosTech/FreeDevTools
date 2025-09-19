@@ -1,5 +1,5 @@
 ---
-title: "Pacman Remove - Remove Packages on Linux | Free DevTools"
+title: "Pacman Remove - Remove Packages on Linux | Online Free DevTools by Hexmos"
 name: pacman-remove
 path: /freedevtools/tldr/linux/pacman-remove
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-remove/"

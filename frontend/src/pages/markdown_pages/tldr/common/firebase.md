@@ -1,5 +1,5 @@
 ---
-title: "Firebase Manager - Control Firebase Projects | Free DevTools"
+title: "Firebase Manager - Control Firebase Projects | Online Free DevTools by Hexmos"
 name: firebase
 path: /freedevtools/tldr/common/firebase
 canonical: "https://hexmos.com/freedevtools/tldr/common/firebase/"

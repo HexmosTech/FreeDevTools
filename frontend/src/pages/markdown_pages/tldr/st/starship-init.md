@@ -1,5 +1,5 @@
 ---
-title: "Generate Starship Init - Shell Integration | Free DevTools"
+title: "Generate Starship Init - Shell Integration | Online Free DevTools by Hexmos"
 name: starship-init
 path: /freedevtools/tldr/st/starship-init
 canonical: "https://hexmos.com/freedevtools/tldr/st/starship-init/"

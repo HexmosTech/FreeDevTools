@@ -1,5 +1,5 @@
 ---
-title: "HTTP Client - Interact with APIs | Free DevTools"
+title: "HTTP Client - Interact with APIs | Online Free DevTools by Hexmos"
 name: http-prompt
 path: /freedevtools/tldr/linux/http-prompt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/http-prompt/"

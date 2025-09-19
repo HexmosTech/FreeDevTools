@@ -1,5 +1,5 @@
 ---
-title: "Manage TeX Live Platforms - Tlmgr Platform | Free DevTools"
+title: "Manage TeX Live Platforms - Tlmgr Platform | Online Free DevTools by Hexmos"
 name: tlmgr-platform
 path: /freedevtools/tldr/tlmgr/tlmgr-platform
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-platform/"

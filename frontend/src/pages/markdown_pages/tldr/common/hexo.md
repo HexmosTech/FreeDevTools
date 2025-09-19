@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Websites - Control Hexo Blog Framework | Free DevTools"
+title: "Generate Static Websites - Control Hexo Blog Framework | Online Free DevTools by Hexmos"
 name: hexo
 path: /freedevtools/tldr/common/hexo
 canonical: "https://hexmos.com/freedevtools/tldr/common/hexo/"

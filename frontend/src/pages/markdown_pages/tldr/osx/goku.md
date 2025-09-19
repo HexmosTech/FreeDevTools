@@ -1,5 +1,5 @@
 ---
-title: "Generate Karabiner Config - Goku | Free DevTools"
+title: "Generate Karabiner Config - Goku | Online Free DevTools by Hexmos"
 name: goku
 path: /freedevtools/tldr/osx/goku
 canonical: "https://hexmos.com/freedevtools/tldr/osx/goku/"

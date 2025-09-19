@@ -1,5 +1,5 @@
 ---
-title: "Control Redis Server - Persistent Key-Value Database | Free DevTools"
+title: "Control Redis Server - Persistent Key-Value Database | Online Free DevTools by Hexmos"
 name: redis-server
 path: /freedevtools/tldr/redis/redis-server
 canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-server/"

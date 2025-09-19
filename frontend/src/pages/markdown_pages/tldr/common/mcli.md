@@ -1,5 +1,5 @@
 ---
-title: "MinIO Client - Control Cloud Storage with mcli | Free DevTools"
+title: "MinIO Client - Control Cloud Storage with mcli | Online Free DevTools by Hexmos"
 name: mcli
 path: "/freedevtools/tldr/common/mcli"
 canonical: "https://hexmos.com/freedevtools/tldr/common/mcli/"

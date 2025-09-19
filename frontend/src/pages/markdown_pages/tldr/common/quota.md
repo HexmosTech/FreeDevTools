@@ -1,5 +1,5 @@
 ---
-title: "Quota - Control Disk Space Usage | Free DevTools"
+title: "Quota - Control Disk Space Usage | Online Free DevTools by Hexmos"
 name: quota
 path: /freedevtools/tldr/common/quota
 canonical: "https://hexmos.com/freedevtools/tldr/common/quota/"

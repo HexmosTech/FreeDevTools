@@ -1,5 +1,5 @@
 ---
-title: "Incus - Manage Containers & VMs | Free DevTools"
+title: "Incus - Manage Containers & VMs | Online Free DevTools by Hexmos"
 name: incus
 path: /freedevtools/tldr/in/incus
 canonical: "https://hexmos.com/freedevtools/tldr/in/incus/"

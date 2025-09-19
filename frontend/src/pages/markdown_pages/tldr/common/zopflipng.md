@@ -1,5 +1,5 @@
 ---
-title: "Optimize PNG - Compress PNG Images with Zopflipng | Free DevTools"
+title: "Optimize PNG - Compress PNG Images with Zopflipng | Online Free DevTools by Hexmos"
 name: zopflipng
 path: /freedevtools/tldr/common/zopflipng
 canonical: "https://hexmos.com/freedevtools/tldr/common/zopflipng/"

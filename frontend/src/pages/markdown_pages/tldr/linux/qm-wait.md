@@ -1,5 +1,5 @@
 ---
-title: "Proxmox VM Wait - Control VM Shutdown | Free DevTools"
+title: "Proxmox VM Wait - Control VM Shutdown | Online Free DevTools by Hexmos"
 name: qm-wait
 path: /freedevtools/tldr/linux/qm-wait
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-wait/"

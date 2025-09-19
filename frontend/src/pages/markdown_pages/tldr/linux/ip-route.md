@@ -1,5 +1,5 @@
 ---
-title: "Manage IP Routes - Control Network Routing | Free DevTools"
+title: "Manage IP Routes - Control Network Routing | Online Free DevTools by Hexmos"
 name: ip-route
 path: /freedevtools/tldr/linux/ip-route
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-route/"

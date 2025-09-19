@@ -1,5 +1,5 @@
 ---
-title: "Sequence Generator - Output Number Sequences | Free DevTools"
+title: "Sequence Generator - Output Number Sequences | Online Free DevTools by Hexmos"
 name: seq
 path: /freedevtools/tldr/common/seq
 canonical: "https://hexmos.com/freedevtools/tldr/common/seq/"

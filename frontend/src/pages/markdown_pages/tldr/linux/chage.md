@@ -1,5 +1,5 @@
 ---
-title: "Chage - Control Password Expiry | Free DevTools"
+title: "Chage - Control Password Expiry | Online Free DevTools by Hexmos"
 name: chage
 path: /freedevtools/tldr/linux/chage
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chage/"

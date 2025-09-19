@@ -1,5 +1,5 @@
 ---
-title: "Gcrane - Display Help | Free DevTools"
+title: "Gcrane - Display Help | Online Free DevTools by Hexmos"
 name: gcrane-help
 path: /freedevtools/tldr/gcrane/gcrane-help
 canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane-help/"

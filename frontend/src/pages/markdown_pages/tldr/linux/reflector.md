@@ -1,5 +1,5 @@
 ---
-title: "Reflector - Generate Mirrorlists | Free DevTools"
+title: "Reflector - Generate Mirrorlists | Online Free DevTools by Hexmos"
 name: reflector
 path: /freedevtools/tldr/linux/reflector
 canonical: "https://hexmos.com/freedevtools/tldr/linux/reflector/"

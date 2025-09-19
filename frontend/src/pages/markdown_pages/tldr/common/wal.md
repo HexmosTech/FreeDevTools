@@ -1,5 +1,5 @@
 ---
-title: "Generate Wallpaper Color Schemes - wal | Free DevTools"
+title: "Generate Wallpaper Color Schemes - wal | Online Free DevTools by Hexmos"
 name: wal
 path: /freedevtools/tldr/common/wal
 canonical: "https://hexmos.com/freedevtools/tldr/common/wal/"

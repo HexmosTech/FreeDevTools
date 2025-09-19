@@ -1,5 +1,5 @@
 ---
-title: "Monitor PipeWire - Real-time Statistics with pw-top | Free DevTools"
+title: "Monitor PipeWire - Real-time Statistics with pw-top | Online Free DevTools by Hexmos"
 name: pw-top
 path: /freedevtools/tldr/linux/pw-top
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-top/"

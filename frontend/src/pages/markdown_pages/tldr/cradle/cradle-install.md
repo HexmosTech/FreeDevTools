@@ -1,5 +1,5 @@
 ---
-title: "Cradle Install - Install Framework Components | Free DevTools"
+title: "Cradle Install - Install Framework Components | Online Free DevTools by Hexmos"
 name: cradle-install
 path: /freedevtools/tldr/cradle/cradle-install
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-install/"

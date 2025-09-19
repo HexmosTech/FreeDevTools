@@ -1,5 +1,5 @@
 ---
-title: "Vegeta Load Test - Generate HTTP Traffic | Free DevTools"
+title: "Vegeta Load Test - Generate HTTP Traffic | Online Free DevTools by Hexmos"
 name: vegeta
 path: /freedevtools/tldr/common/vegeta
 canonical: "https://hexmos.com/freedevtools/tldr/common/vegeta/"

@@ -1,5 +1,5 @@
 ---
-title: "Sdelete64 - Securely Delete Files | Free DevTools"
+title: "Sdelete64 - Securely Delete Files | Online Free DevTools by Hexmos"
 name: sdelete64
 path: /freedevtools/tldr/windows/sdelete64
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sdelete64/"

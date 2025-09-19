@@ -1,5 +1,5 @@
 ---
-title: "Monitor Bandwidth with bmon | Free DevTools"
+title: "Monitor Bandwidth with bmon | Online Free DevTools by Hexmos"
 name: bmon
 path: /freedevtools/tldr/linux/bmon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bmon/"

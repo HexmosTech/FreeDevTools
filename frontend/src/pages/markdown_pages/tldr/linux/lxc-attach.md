@@ -1,5 +1,5 @@
 ---
-title: "Lxc-Attach - Attach to Linux Containers | Free DevTools"
+title: "Lxc-Attach - Attach to Linux Containers | Online Free DevTools by Hexmos"
 name: lxc-attach
 path: /freedevtools/tldr/linux/lxc-attach
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-attach/"

@@ -1,5 +1,5 @@
 ---
-title: "Shell Script Executor - Run Shell Scripts with Dash | Free DevTools"
+title: "Shell Script Executor - Run Shell Scripts with Dash | Online Free DevTools by Hexmos"
 name: dash
 path: /freedevtools/tldr/common/dash
 canonical: "https://hexmos.com/freedevtools/tldr/common/dash/"

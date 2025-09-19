@@ -1,5 +1,5 @@
 ---
-title: "Image Identify - Format Image Files | Free DevTools"
+title: "Image Identify - Format Image Files | Online Free DevTools by Hexmos"
 name: magick-identify
 path: /freedevtools/tldr/magick/magick-identify
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-identify/"

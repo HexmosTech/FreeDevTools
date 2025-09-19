@@ -1,5 +1,5 @@
 ---
-title: "Convert QRT to PPM - Format Image Files | Free DevTools"
+title: "Convert QRT to PPM - Format Image Files | Online Free DevTools by Hexmos"
 name: qrttoppm
 path: /freedevtools/tldr/common/qrttoppm
 canonical: "https://hexmos.com/freedevtools/tldr/common/qrttoppm/"

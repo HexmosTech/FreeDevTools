@@ -1,5 +1,5 @@
 ---
-title: "JSON5 Converter - Format JSON5 Files to JSON | Free DevTools"
+title: "JSON5 Converter - Format JSON5 Files to JSON | Online Free DevTools by Hexmos"
 name: json5
 path: /freedevtools/tldr/common/json5
 canonical: "https://hexmos.com/freedevtools/tldr/common/json5/"

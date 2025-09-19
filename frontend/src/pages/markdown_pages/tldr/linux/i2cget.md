@@ -1,5 +1,5 @@
 ---
-title: "I2cget - Read I2C Registers | Free DevTools"
+title: "I2cget - Read I2C Registers | Online Free DevTools by Hexmos"
 name: i2cget
 path: /freedevtools/tldr/linux/i2cget
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i2cget/"

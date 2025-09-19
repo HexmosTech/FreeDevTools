@@ -1,5 +1,5 @@
 ---
-title: "OrbStack - Control Linux VMs on macOS | Free DevTools"
+title: "OrbStack - Control Linux VMs on macOS | Online Free DevTools by Hexmos"
 name: orb
 path: /freedevtools/tldr/osx/orb
 canonical: "https://hexmos.com/freedevtools/tldr/osx/orb/"

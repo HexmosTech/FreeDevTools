@@ -1,5 +1,5 @@
 ---
-title: "Jest Tests - Run JavaScript Tests | Free DevTools"
+title: "Jest Tests - Run JavaScript Tests | Online Free DevTools by Hexmos"
 name: jest
 path: /freedevtools/tldr/common/jest
 canonical: "https://hexmos.com/freedevtools/tldr/common/jest/"

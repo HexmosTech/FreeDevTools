@@ -1,5 +1,5 @@
 ---
-title: "View Excel and CSV Files - Read Data with x_x | Free DevTools"
+title: "View Excel and CSV Files - Read Data with x_x | Online Free DevTools by Hexmos"
 name: x_x
 path: /freedevtools/tldr/common/x_x
 canonical: "https://hexmos.com/freedevtools/tldr/common/x_x/"

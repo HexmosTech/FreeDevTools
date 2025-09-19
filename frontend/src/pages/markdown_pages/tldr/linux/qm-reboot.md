@@ -1,5 +1,5 @@
 ---
-title: "Reboot Virtual Machine - Control VMs with qm-reboot | Free DevTools"
+title: "Reboot Virtual Machine - Control VMs with qm-reboot | Online Free DevTools by Hexmos"
 name: qm-reboot
 path: /freedevtools/tldr/linux/qm-reboot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-reboot/"

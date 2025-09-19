@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Refresh - Update Infrastructure State | Free DevTools"
+title: "Pulumi Refresh - Update Infrastructure State | Online Free DevTools by Hexmos"
 name: pulumi-refresh
 path: /freedevtools/tldr/pulumi/pulumi-refresh
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-refresh/"

@@ -1,5 +1,5 @@
 ---
-title: "Evaluate Ruby Code - IRB Interactive Shell | Free DevTools"
+title: "Evaluate Ruby Code - IRB Interactive Shell | Online Free DevTools by Hexmos"
 name: irb
 path: /freedevtools/tldr/common/irb
 canonical: "https://hexmos.com/freedevtools/tldr/common/irb/"

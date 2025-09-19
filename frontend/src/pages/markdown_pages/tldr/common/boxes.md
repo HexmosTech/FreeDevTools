@@ -1,5 +1,5 @@
 ---
-title: "Create ASCII Art Boxes - Draw Boxes | Free DevTools"
+title: "Create ASCII Art Boxes - Draw Boxes | Online Free DevTools by Hexmos"
 name: boxes
 path: /freedevtools/tldr/common/boxes
 canonical: "https://hexmos.com/freedevtools/tldr/common/boxes/"

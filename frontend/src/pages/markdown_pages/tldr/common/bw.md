@@ -1,5 +1,5 @@
 ---
-title: "Bitwarden Vault - Manage Passwords Securely | Free DevTools"
+title: "Bitwarden Vault - Manage Passwords Securely | Online Free DevTools by Hexmos"
 name: bw
 path: /freedevtools/tldr/common/bw
 canonical: "https://hexmos.com/freedevtools/tldr/common/bw/"

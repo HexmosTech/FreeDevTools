@@ -1,5 +1,5 @@
 ---
-title: "Secretsdump - Extract Hashes | Free DevTools"
+title: "Secretsdump - Extract Hashes | Online Free DevTools by Hexmos"
 name: impacket-secretsdump
 path: /freedevtools/tldr/impacket/impacket-secretsdump
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-secretsdump/"

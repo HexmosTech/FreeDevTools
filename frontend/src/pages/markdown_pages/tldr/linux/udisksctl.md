@@ -1,5 +1,5 @@
 ---
-title: "udisksctl - Control Storage Devices | Free DevTools"
+title: "udisksctl - Control Storage Devices | Online Free DevTools by Hexmos"
 name: udisksctl
 path: /freedevtools/tldr/linux/udisksctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/udisksctl/"

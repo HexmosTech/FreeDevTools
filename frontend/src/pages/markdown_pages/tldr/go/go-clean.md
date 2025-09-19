@@ -1,5 +1,5 @@
 ---
-title: "Go Clean - Remove Go Object Files | Free DevTools"
+title: "Go Clean - Remove Go Object Files | Online Free DevTools by Hexmos"
 name: go-clean
 path: /freedevtools/tldr/go/go-clean
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-clean/"

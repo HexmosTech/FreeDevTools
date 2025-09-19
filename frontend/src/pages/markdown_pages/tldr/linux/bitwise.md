@@ -1,5 +1,5 @@
 ---
-title: "Calculate Bitwise - Convert Bases | Free DevTools"
+title: "Calculate Bitwise - Convert Bases | Online Free DevTools by Hexmos"
 name: bitwise
 path: /freedevtools/tldr/linux/bitwise
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bitwise/"

@@ -1,5 +1,5 @@
 ---
-title: "QM Sendkey - Control VM Key Events | Free DevTools"
+title: "QM Sendkey - Control VM Key Events | Online Free DevTools by Hexmos"
 name: qm-sendkey
 path: /freedevtools/tldr/linux/qm-sendkey
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-sendkey/"

@@ -1,5 +1,5 @@
 ---
-title: "Exiqgrep - Filter Exim Queue Output | Free DevTools"
+title: "Exiqgrep - Filter Exim Queue Output | Online Free DevTools by Hexmos"
 name: exiqgrep
 path: /freedevtools/tldr/linux/exiqgrep
 canonical: "https://hexmos.com/freedevtools/tldr/linux/exiqgrep/"

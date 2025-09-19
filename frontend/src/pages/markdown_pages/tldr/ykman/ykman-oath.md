@@ -1,5 +1,5 @@
 ---
-title: "Manage YubiKey OATH - Control Authentication | Free DevTools"
+title: "Manage YubiKey OATH - Control Authentication | Online Free DevTools by Hexmos"
 name: ykman-oath
 path: /freedevtools/tldr/ykman/ykman-oath
 canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-oath/"

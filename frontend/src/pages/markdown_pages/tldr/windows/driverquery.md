@@ -1,5 +1,5 @@
 ---
-title: "List Drivers - Display Device Driver Info | Free DevTools"
+title: "List Drivers - Display Device Driver Info | Online Free DevTools by Hexmos"
 name: driverquery
 path: /freedevtools/tldr/windows/driverquery
 canonical: "https://hexmos.com/freedevtools/tldr/windows/driverquery/"

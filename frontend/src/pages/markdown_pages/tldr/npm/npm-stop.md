@@ -1,5 +1,5 @@
 ---
-title: "Control npm Stop - Manage Scripts | Free DevTools"
+title: "Control npm Stop - Manage Scripts | Online Free DevTools by Hexmos"
 name: npm-stop
 path: /freedevtools/tldr/npm/npm-stop
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-stop/"

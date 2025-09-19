@@ -1,5 +1,5 @@
 ---
-title: "Disable AppArmor - Control Security Policies | Free DevTools"
+title: "Disable AppArmor - Control Security Policies | Online Free DevTools by Hexmos"
 name: aa-disable
 path: /freedevtools/tldr/linux/aa-disable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-disable/"

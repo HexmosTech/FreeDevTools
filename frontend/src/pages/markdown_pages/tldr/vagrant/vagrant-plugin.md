@@ -1,5 +1,5 @@
 ---
-title: "Manage Vagrant Plugins - Enhance Your Vagrant Workflow | Free DevTools"
+title: "Manage Vagrant Plugins - Enhance Your Vagrant Workflow | Online Free DevTools by Hexmos"
 name: vagrant-plugin
 path: /freedevtools/tldr/vagrant/vagrant-plugin
 canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-plugin/"

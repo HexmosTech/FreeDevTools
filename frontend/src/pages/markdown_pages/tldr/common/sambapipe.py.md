@@ -1,5 +1,5 @@
 ---
-title: "Samba Exploit - RCE with SambaCry | Free DevTools"
+title: "Samba Exploit - RCE with SambaCry | Online Free DevTools by Hexmos"
 name: sambapipe.py
 path: /freedevtools/tldr/common/sambapipe.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/sambapipe.py/"

@@ -1,5 +1,5 @@
 ---
-title: "Screenshot Maker - Create Screenshots in Linux | Free DevTools"
+title: "Screenshot Maker - Create Screenshots in Linux | Online Free DevTools by Hexmos"
 name: mate-screenshot
 path: /freedevtools/tldr/linux/mate-screenshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-screenshot/"

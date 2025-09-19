@@ -1,5 +1,5 @@
 ---
-title: "UPower Battery Monitor - Control Power Status | Free DevTools"
+title: "UPower Battery Monitor - Control Power Status | Online Free DevTools by Hexmos"
 name: upower
 path: /freedevtools/tldr/linux/upower
 canonical: "https://hexmos.com/freedevtools/tldr/linux/upower/"

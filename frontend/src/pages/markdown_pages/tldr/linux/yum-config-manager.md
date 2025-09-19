@@ -1,5 +1,5 @@
 ---
-title: "Control Yum Config - Manage Repos | Free DevTools"
+title: "Control Yum Config - Manage Repos | Online Free DevTools by Hexmos"
 name: yum-config-manager
 path: /freedevtools/tldr/linux/yum-config-manager
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yum-config-manager/"

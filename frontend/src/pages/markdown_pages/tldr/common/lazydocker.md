@@ -1,5 +1,5 @@
 ---
-title: "Control Docker Containers - lazydocker Management | Free DevTools"
+title: "Control Docker Containers - lazydocker Management | Online Free DevTools by Hexmos"
 name: lazydocker
 path: /freedevtools/tldr/common/lazydocker
 canonical: "https://hexmos.com/freedevtools/tldr/common/lazydocker/"

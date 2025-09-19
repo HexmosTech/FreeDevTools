@@ -1,5 +1,5 @@
 ---
-title: "PAM Mix Interlace - Merge Image Rows | Free DevTools"
+title: "PAM Mix Interlace - Merge Image Rows | Online Free DevTools by Hexmos"
 name: pammixinterlace
 path: /freedevtools/tldr/common/pammixinterlace
 canonical: "https://hexmos.com/freedevtools/tldr/common/pammixinterlace/"

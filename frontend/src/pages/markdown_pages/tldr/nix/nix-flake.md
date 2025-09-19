@@ -1,5 +1,5 @@
 ---
-title: "Nix Flake - Manage Dependencies with Nix | Free DevTools"
+title: "Nix Flake - Manage Dependencies with Nix | Online Free DevTools by Hexmos"
 name: nix-flake
 path: /freedevtools/tldr/nix/nix-flake
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-flake/"

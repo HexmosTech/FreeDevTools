@@ -1,5 +1,5 @@
 ---
-title: "Convert Text Encoding - Change Encoding with iconv | Free DevTools"
+title: "Convert Text Encoding - Change Encoding with iconv | Online Free DevTools by Hexmos"
 name: iconv
 path: /freedevtools/tldr/common/iconv
 canonical: "https://hexmos.com/freedevtools/tldr/common/iconv/"

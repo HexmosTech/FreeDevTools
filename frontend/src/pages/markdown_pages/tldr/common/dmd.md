@@ -1,5 +1,5 @@
 ---
-title: "D Compiler - Build D Source Code | Free DevTools"
+title: "D Compiler - Build D Source Code | Online Free DevTools by Hexmos"
 name: dmd
 path: /freedevtools/tldr/common/dmd
 canonical: "https://hexmos.com/freedevtools/tldr/common/dmd/"

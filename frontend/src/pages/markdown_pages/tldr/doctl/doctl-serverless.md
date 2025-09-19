@@ -1,5 +1,5 @@
 ---
-title: "Control Serverless Functions - DigitalOcean | Free DevTools"
+title: "Control Serverless Functions - DigitalOcean | Online Free DevTools by Hexmos"
 name: doctl-serverless
 path: /freedevtools/tldr/doctl/doctl-serverless
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-serverless/"

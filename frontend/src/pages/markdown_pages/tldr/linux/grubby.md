@@ -1,5 +1,5 @@
 ---
-title: "Grubby Config - Control GRUB Bootloader | Free DevTools"
+title: "Grubby Config - Control GRUB Bootloader | Online Free DevTools by Hexmos"
 name: grubby
 path: /freedevtools/tldr/linux/grubby
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grubby/"

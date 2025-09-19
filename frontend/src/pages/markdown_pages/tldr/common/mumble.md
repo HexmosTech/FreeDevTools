@@ -1,5 +1,5 @@
 ---
-title: "Control Mumble - Low Latency Voice Chat | Free DevTools"
+title: "Control Mumble - Low Latency Voice Chat | Online Free DevTools by Hexmos"
 name: mumble
 path: /freedevtools/tldr/common/mumble
 canonical: "https://hexmos.com/freedevtools/tldr/common/mumble/"

@@ -1,5 +1,5 @@
 ---
-title: "Find ROP Gadgets - Analyze Binaries | Free DevTools"
+title: "Find ROP Gadgets - Analyze Binaries | Online Free DevTools by Hexmos"
 name: ropgadget
 path: /freedevtools/tldr/common/ropgadget
 canonical: "https://hexmos.com/freedevtools/tldr/common/ropgadget/"

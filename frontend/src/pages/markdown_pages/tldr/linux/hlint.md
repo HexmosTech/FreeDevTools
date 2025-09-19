@@ -1,5 +1,5 @@
 ---
-title: "HLint - Improve Haskell Code | Free DevTools"
+title: "HLint - Improve Haskell Code | Online Free DevTools by Hexmos"
 name: hlint
 path: /freedevtools/tldr/linux/hlint
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hlint/"

@@ -1,5 +1,5 @@
 ---
-title: "Time - Control System Time | Free DevTools"
+title: "Time - Control System Time | Online Free DevTools by Hexmos"
 name: time
 path: /freedevtools/tldr/windows/time
 canonical: "https://hexmos.com/freedevtools/tldr/windows/time/"

@@ -1,5 +1,5 @@
 ---
-title: "See File Viewer - Display Files with Linux | Free DevTools"
+title: "See File Viewer - Display Files with Linux | Online Free DevTools by Hexmos"
 name: see
 path: /freedevtools/tldr/linux/see
 canonical: "https://hexmos.com/freedevtools/tldr/linux/see/"

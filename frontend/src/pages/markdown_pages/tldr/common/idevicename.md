@@ -1,5 +1,5 @@
 ---
-title: "iDevice Name - Control Device Name | Free DevTools"
+title: "iDevice Name - Control Device Name | Online Free DevTools by Hexmos"
 name: idevicename
 path: /freedevtools/tldr/common/idevicename
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicename/"

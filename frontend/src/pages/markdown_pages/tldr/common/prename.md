@@ -1,5 +1,5 @@
 ---
-title: "Rename Utility - Rename Files | Free DevTools"
+title: "Rename Utility - Rename Files | Online Free DevTools by Hexmos"
 name: prename
 path: /freedevtools/tldr/common/prename
 canonical: "https://hexmos.com/freedevtools/tldr/common/prename/"

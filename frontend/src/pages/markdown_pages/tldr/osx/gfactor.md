@@ -1,5 +1,5 @@
 ---
-title: "Factor Numbers - Calculate Prime Factors on macOS | Free DevTools"
+title: "Factor Numbers - Calculate Prime Factors on macOS | Online Free DevTools by Hexmos"
 name: gfactor
 path: /freedevtools/tldr/osx/gfactor
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfactor/"

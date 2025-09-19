@@ -1,5 +1,5 @@
 ---
-title: "DHCP Exhaustion Attack - Control DHCP with dhcpwn | Free DevTools"
+title: "DHCP Exhaustion Attack - Control DHCP with dhcpwn | Online Free DevTools by Hexmos"
 name: dhcpwn
 path: /freedevtools/tldr/common/dhcpwn
 canonical: "https://hexmos.com/freedevtools/tldr/common/dhcpwn/"

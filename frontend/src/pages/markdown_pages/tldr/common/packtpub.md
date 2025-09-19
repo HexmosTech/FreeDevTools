@@ -1,5 +1,5 @@
 ---
-title: "Download Packtpub Books - Get Free Ebooks | Free DevTools"
+title: "Download Packtpub Books - Get Free Ebooks | Online Free DevTools by Hexmos"
 name: packtpub
 path: /freedevtools/tldr/common/packtpub
 canonical: "https://hexmos.com/freedevtools/tldr/common/packtpub/"

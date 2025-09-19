@@ -1,5 +1,5 @@
 ---
-title: "PGM Edge Detection - Find Image Edges | Free DevTools"
+title: "PGM Edge Detection - Find Image Edges | Online Free DevTools by Hexmos"
 name: pgmedge
 path: /freedevtools/tldr/common/pgmedge
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmedge/"

@@ -1,5 +1,5 @@
 ---
-title: "Create ACR Registry - Manage Azure Containers | Free DevTools"
+title: "Create ACR Registry - Manage Azure Containers | Online Free DevTools by Hexmos"
 name: az-acr
 path: /freedevtools/tldr/az/az-acr
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-acr/"

@@ -1,5 +1,5 @@
 ---
-title: "Salt - Control Remote Systems | Free DevTools"
+title: "Salt - Control Remote Systems | Online Free DevTools by Hexmos"
 name: salt
 path: /freedevtools/tldr/salt/salt
 canonical: "https://hexmos.com/freedevtools/tldr/salt/salt/"

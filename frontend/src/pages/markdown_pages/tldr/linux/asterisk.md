@@ -1,5 +1,5 @@
 ---
-title: "Asterisk Server - Manage Phone Instances | Free DevTools"
+title: "Asterisk Server - Manage Phone Instances | Online Free DevTools by Hexmos"
 name: asterisk
 path: /freedevtools/tldr/linux/asterisk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/asterisk/"

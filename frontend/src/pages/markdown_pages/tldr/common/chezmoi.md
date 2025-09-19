@@ -1,5 +1,5 @@
 ---
-title: "Manage Dotfiles - Control Configuration Files with Chezmoi | Free DevTools"
+title: "Manage Dotfiles - Control Configuration Files with Chezmoi | Online Free DevTools by Hexmos"
 name: chezmoi
 path: /freedevtools/tldr/common/chezmoi
 canonical: "https://hexmos.com/freedevtools/tldr/common/chezmoi/"

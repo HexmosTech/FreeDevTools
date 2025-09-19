@@ -1,5 +1,5 @@
 ---
-title: "Yum Package Manager - Manage Software Packages | Free DevTools"
+title: "Yum Package Manager - Manage Software Packages | Online Free DevTools by Hexmos"
 name: yum
 path: /freedevtools/tldr/linux/yum
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yum/"

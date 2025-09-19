@@ -1,5 +1,5 @@
 ---
-title: "GStreamer Launch - Build Pipelines | Free DevTools"
+title: "GStreamer Launch - Build Pipelines | Online Free DevTools by Hexmos"
 name: gst-launch-1.0
 path: /freedevtools/tldr/gst/gst-launch-1.0
 canonical: "https://hexmos.com/freedevtools/tldr/gst/gst-launch-1.0/"

@@ -1,5 +1,5 @@
 ---
-title: "Deezer Downloader - Download Music | Free DevTools"
+title: "Deezer Downloader - Download Music | Online Free DevTools by Hexmos"
 name: deemix
 path: /freedevtools/tldr/common/deemix
 canonical: "https://hexmos.com/freedevtools/tldr/common/deemix/"

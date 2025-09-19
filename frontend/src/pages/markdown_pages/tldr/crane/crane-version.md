@@ -1,5 +1,5 @@
 ---
-title: "Crane Version - Display Binary Version | Free DevTools"
+title: "Crane Version - Display Binary Version | Online Free DevTools by Hexmos"
 name: crane-version
 path: /freedevtools/tldr/crane/crane-version
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-version/"

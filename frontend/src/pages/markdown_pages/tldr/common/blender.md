@@ -1,5 +1,5 @@
 ---
-title: "Blender - Render 3D Graphics via Command Line | Free DevTools"
+title: "Blender - Render 3D Graphics via Command Line | Online Free DevTools by Hexmos"
 name: blender
 path: /freedevtools/tldr/common/blender
 canonical: "https://hexmos.com/freedevtools/tldr/common/blender/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PAM to PNG - Optimize Images | Free DevTools"
+title: "Convert PAM to PNG - Optimize Images | Online Free DevTools by Hexmos"
 name: pamtopng
 path: /freedevtools/tldr/common/pamtopng
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtopng/"

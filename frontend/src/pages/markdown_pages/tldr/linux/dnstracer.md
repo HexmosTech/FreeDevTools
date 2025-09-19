@@ -1,5 +1,5 @@
 ---
-title: "DNSTracer - Trace DNS Path | Free DevTools"
+title: "DNSTracer - Trace DNS Path | Online Free DevTools by Hexmos"
 name: dnstracer
 path: /freedevtools/tldr/linux/dnstracer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnstracer/"

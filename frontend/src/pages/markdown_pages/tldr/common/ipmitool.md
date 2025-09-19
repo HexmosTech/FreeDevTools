@@ -1,5 +1,5 @@
 ---
-title: "IPMI Control - Manage Hardware Remotely | Free DevTools"
+title: "IPMI Control - Manage Hardware Remotely | Online Free DevTools by Hexmos"
 name: ipmitool
 path: /freedevtools/tldr/common/ipmitool
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipmitool/"

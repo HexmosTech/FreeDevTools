@@ -1,5 +1,5 @@
 ---
-title: "AWS Cost Explorer - Manage AWS Costs | Free DevTools"
+title: "AWS Cost Explorer - Manage AWS Costs | Online Free DevTools by Hexmos"
 name: aws-ce
 path: /freedevtools/tldr/aws/aws-ce
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ce/"

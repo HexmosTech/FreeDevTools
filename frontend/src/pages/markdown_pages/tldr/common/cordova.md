@@ -1,5 +1,5 @@
 ---
-title: "Create Cordova Apps - Build Mobile Apps | Free DevTools"
+title: "Create Cordova Apps - Build Mobile Apps | Online Free DevTools by Hexmos"
 name: cordova
 path: /freedevtools/tldr/common/cordova
 canonical: "https://hexmos.com/freedevtools/tldr/common/cordova/"

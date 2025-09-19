@@ -1,5 +1,5 @@
 ---
-title: "Warts Dump - Analyze Warts Files | Free DevTools"
+title: "Warts Dump - Analyze Warts Files | Online Free DevTools by Hexmos"
 name: sc_wartsdump
 path: /freedevtools/tldr/common/sc_wartsdump
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_wartsdump/"

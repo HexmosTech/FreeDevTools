@@ -1,5 +1,5 @@
 ---
-title: "Time Machine - Manage Backups on macOS | Free DevTools"
+title: "Time Machine - Manage Backups on macOS | Online Free DevTools by Hexmos"
 name: tmutil
 path: /freedevtools/tldr/osx/tmutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/tmutil/"

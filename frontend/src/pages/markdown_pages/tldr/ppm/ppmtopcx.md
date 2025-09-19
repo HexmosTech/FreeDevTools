@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to PCX - Image Format Conversion | Free DevTools"
+title: "Convert PPM to PCX - Image Format Conversion | Online Free DevTools by Hexmos"
 name: ppmtopcx
 path: /freedevtools/tldr/ppm/ppmtopcx
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopcx/"

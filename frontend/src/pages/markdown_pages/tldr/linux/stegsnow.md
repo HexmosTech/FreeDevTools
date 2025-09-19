@@ -1,5 +1,5 @@
 ---
-title: "Stegsnow - Conceal & Extract Text Messages | Free DevTools"
+title: "Stegsnow - Conceal & Extract Text Messages | Online Free DevTools by Hexmos"
 name: stegsnow
 path: /freedevtools/tldr/linux/stegsnow
 canonical: "https://hexmos.com/freedevtools/tldr/linux/stegsnow/"

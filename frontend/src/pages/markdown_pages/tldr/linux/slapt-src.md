@@ -1,5 +1,5 @@
 ---
-title: "Build Slackbuilds - Automate Builds with slapt-src | Free DevTools"
+title: "Build Slackbuilds - Automate Builds with slapt-src | Online Free DevTools by Hexmos"
 name: slapt-src
 path: /freedevtools/tldr/linux/slapt-src
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slapt-src/"

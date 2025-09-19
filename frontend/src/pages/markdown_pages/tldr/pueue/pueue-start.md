@@ -1,5 +1,5 @@
 ---
-title: "Pueue Start - Resume Tasks | Free DevTools"
+title: "Pueue Start - Resume Tasks | Online Free DevTools by Hexmos"
 name: pueue-start
 path: /freedevtools/tldr/pueue/pueue-start
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-start/"

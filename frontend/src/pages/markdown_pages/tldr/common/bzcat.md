@@ -1,5 +1,5 @@
 ---
-title: "BZCAT - Decompress Files | Free DevTools"
+title: "BZCAT - Decompress Files | Online Free DevTools by Hexmos"
 name: bzcat
 path: /freedevtools/tldr/common/bzcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzcat/"

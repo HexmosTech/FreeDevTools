@@ -1,5 +1,5 @@
 ---
-title: "PHP Extension Disabler - Disable PHP Extensions on Debian | Free DevTools"
+title: "PHP Extension Disabler - Disable PHP Extensions on Debian | Online Free DevTools by Hexmos"
 name: phpdismod
 path: /freedevtools/tldr/linux/phpdismod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/phpdismod/"

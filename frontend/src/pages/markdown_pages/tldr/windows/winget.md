@@ -1,5 +1,5 @@
 ---
-title: "Winget - Manage Windows Packages | Free DevTools"
+title: "Winget - Manage Windows Packages | Online Free DevTools by Hexmos"
 name: winget
 path: /freedevtools/tldr/windows/winget
 canonical: "https://hexmos.com/freedevtools/tldr/windows/winget/"

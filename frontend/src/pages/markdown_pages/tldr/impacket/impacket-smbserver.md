@@ -1,5 +1,5 @@
 ---
-title: "Impacket SMB Server - Create SMB Shares | Free DevTools"
+title: "Impacket SMB Server - Create SMB Shares | Online Free DevTools by Hexmos"
 name: impacket-smbserver
 path: /freedevtools/tldr/impacket/impacket-smbserver
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-smbserver/"

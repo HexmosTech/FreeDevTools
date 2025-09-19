@@ -1,5 +1,5 @@
 ---
-title: "Flatpak Mask - Control Updates with Flatpak | Free DevTools"
+title: "Flatpak Mask - Control Updates with Flatpak | Online Free DevTools by Hexmos"
 name: flatpak-mask
 path: /freedevtools/tldr/linux/flatpak-mask
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-mask/"

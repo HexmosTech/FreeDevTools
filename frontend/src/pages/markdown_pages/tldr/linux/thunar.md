@@ -1,5 +1,5 @@
 ---
-title: "Thunar File Manager - Manage Files in XFCE | Free DevTools"
+title: "Thunar File Manager - Manage Files in XFCE | Online Free DevTools by Hexmos"
 name: thunar
 path: /freedevtools/tldr/linux/thunar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/thunar/"

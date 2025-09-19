@@ -1,5 +1,5 @@
 ---
-title: "Create PNM Montage - Compose Images | Free DevTools"
+title: "Create PNM Montage - Compose Images | Online Free DevTools by Hexmos"
 name: pnmmontage
 path: /freedevtools/tldr/pnm/pnmmontage
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmontage/"

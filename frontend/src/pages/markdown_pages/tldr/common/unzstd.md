@@ -1,5 +1,5 @@
 ---
-title: "Unzstd - Decompress Zstandard Files | Free DevTools"
+title: "Unzstd - Decompress Zstandard Files | Online Free DevTools by Hexmos"
 name: unzstd
 path: /freedevtools/tldr/common/unzstd
 canonical: "https://hexmos.com/freedevtools/tldr/common/unzstd/"

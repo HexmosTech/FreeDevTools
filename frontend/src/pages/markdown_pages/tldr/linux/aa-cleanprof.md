@@ -1,5 +1,5 @@
 ---
-title: "Clean AppArmor Profiles - Optimize Security Rules | Free DevTools"
+title: "Clean AppArmor Profiles - Optimize Security Rules | Online Free DevTools by Hexmos"
 name: aa-cleanprof
 path: /freedevtools/tldr/linux/aa-cleanprof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-cleanprof/"

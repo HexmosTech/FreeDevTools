@@ -1,5 +1,5 @@
 ---
-title: "Shell Iteration - Iterate with `in` Command | Free DevTools"
+title: "Shell Iteration - Iterate with `in` Command | Online Free DevTools by Hexmos"
 name: in
 path: /freedevtools/tldr/in/in
 canonical: "https://hexmos.com/freedevtools/tldr/in/in/"

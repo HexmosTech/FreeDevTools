@@ -1,5 +1,5 @@
 ---
-title: "Cmatrix - Generate Matrix Effect Terminal | Free DevTools"
+title: "Cmatrix - Generate Matrix Effect Terminal | Online Free DevTools by Hexmos"
 name: cmatrix
 path: /freedevtools/tldr/common/cmatrix
 canonical: "https://hexmos.com/freedevtools/tldr/common/cmatrix/"

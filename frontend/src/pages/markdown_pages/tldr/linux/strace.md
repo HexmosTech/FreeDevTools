@@ -1,5 +1,5 @@
 ---
-title: "strace - Trace System Calls | Free DevTools"
+title: "strace - Trace System Calls | Online Free DevTools by Hexmos"
 name: strace
 path: /freedevtools/tldr/linux/strace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/strace/"

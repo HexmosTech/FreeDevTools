@@ -1,5 +1,5 @@
 ---
-title: "Needrestart - Manage Outdated Processes | Free DevTools"
+title: "Needrestart - Manage Outdated Processes | Online Free DevTools by Hexmos"
 name: needrestart
 path: /freedevtools/tldr/linux/needrestart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/needrestart/"

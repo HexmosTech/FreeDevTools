@@ -1,5 +1,5 @@
 ---
-title: "Filen - Control Cloud Storage | Free DevTools"
+title: "Filen - Control Cloud Storage | Online Free DevTools by Hexmos"
 name: filen
 path: /freedevtools/tldr/common/filen
 canonical: "https://hexmos.com/freedevtools/tldr/common/filen/"

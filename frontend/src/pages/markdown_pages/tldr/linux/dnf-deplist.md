@@ -1,5 +1,5 @@
 ---
-title: "DNF Deplist - List Package Dependencies | Free DevTools"
+title: "DNF Deplist - List Package Dependencies | Online Free DevTools by Hexmos"
 name: dnf-deplist
 path: /freedevtools/tldr/linux/dnf-deplist
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-deplist/"

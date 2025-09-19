@@ -1,5 +1,5 @@
 ---
-title: "Kaggle CLI - Manage Datasets & Competitions | Free DevTools"
+title: "Kaggle CLI - Manage Datasets & Competitions | Online Free DevTools by Hexmos"
 name: kaggle
 path: /freedevtools/tldr/common/kaggle
 canonical: "https://hexmos.com/freedevtools/tldr/common/kaggle/"

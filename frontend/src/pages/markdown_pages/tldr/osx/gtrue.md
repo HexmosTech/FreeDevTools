@@ -1,5 +1,5 @@
 ---
-title: "GNU True - Execute True Command on macOS | Free DevTools"
+title: "GNU True - Execute True Command on macOS | Online Free DevTools by Hexmos"
 name: gtrue
 path: /freedevtools/tldr/osx/gtrue
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtrue/"

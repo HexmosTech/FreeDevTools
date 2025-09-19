@@ -1,5 +1,5 @@
 ---
-title: "Load Test - Simulate Website Traffic | Free DevTools"
+title: "Load Test - Simulate Website Traffic | Online Free DevTools by Hexmos"
 name: loadtest
 path: /freedevtools/tldr/common/loadtest
 canonical: "https://hexmos.com/freedevtools/tldr/common/loadtest/"

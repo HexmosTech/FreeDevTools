@@ -1,5 +1,5 @@
 ---
-title: "Copy Git Files - Transfer Files from Remote Repositories | Free DevTools"
+title: "Copy Git Files - Transfer Files from Remote Repositories | Online Free DevTools by Hexmos"
 name: git-rscp
 path: /freedevtools/tldr/git/git-rscp
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rscp/"

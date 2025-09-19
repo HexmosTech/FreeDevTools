@@ -1,5 +1,5 @@
 ---
-title: "Access Services - Get Universal Access with Daemon | Free DevTools"
+title: "Access Services - Get Universal Access with Daemon | Online Free DevTools by Hexmos"
 name: universalaccessd
 path: /freedevtools/tldr/osx/universalaccessd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/universalaccessd/"

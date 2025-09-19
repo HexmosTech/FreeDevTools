@@ -1,5 +1,5 @@
 ---
-title: "Check Filesystem - Inspect and Repair Disks | Free DevTools"
+title: "Check Filesystem - Inspect and Repair Disks | Online Free DevTools by Hexmos"
 name: fsck
 path: /freedevtools/tldr/osx/fsck
 canonical: "https://hexmos.com/freedevtools/tldr/osx/fsck/"

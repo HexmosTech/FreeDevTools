@@ -1,5 +1,5 @@
 ---
-title: "Share Filesystem - Control Network Shares on SunOS | Free DevTools"
+title: "Share Filesystem - Control Network Shares on SunOS | Online Free DevTools by Hexmos"
 name: share
 path: /freedevtools/tldr/sunos/share
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/share/"

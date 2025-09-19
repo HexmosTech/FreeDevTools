@@ -1,5 +1,5 @@
 ---
-title: "Control FATrace - Report File Access Events | Free DevTools"
+title: "Control FATrace - Report File Access Events | Online Free DevTools by Hexmos"
 name: fatrace
 path: /freedevtools/tldr/linux/fatrace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fatrace/"

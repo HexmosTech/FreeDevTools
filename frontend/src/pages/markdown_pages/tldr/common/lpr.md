@@ -1,5 +1,5 @@
 ---
-title: "Print Files - Print Documents via Command Line | Free DevTools"
+title: "Print Files - Print Documents via Command Line | Online Free DevTools by Hexmos"
 name: lpr
 path: /freedevtools/tldr/common/lpr
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpr/"

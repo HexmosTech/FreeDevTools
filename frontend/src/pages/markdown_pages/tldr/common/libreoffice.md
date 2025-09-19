@@ -1,5 +1,5 @@
 ---
-title: "LibreOffice - Open Document Files | Free DevTools"
+title: "LibreOffice - Open Document Files | Online Free DevTools by Hexmos"
 name: libreoffice
 path: /freedevtools/tldr/common/libreoffice
 canonical: "https://hexmos.com/freedevtools/tldr/common/libreoffice/"

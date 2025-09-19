@@ -1,5 +1,5 @@
 ---
-title: "Haskell REPL - Create Interactive Haskell Sessions | Free DevTools"
+title: "Haskell REPL - Create Interactive Haskell Sessions | Online Free DevTools by Hexmos"
 name: ghci
 path: /freedevtools/tldr/common/ghci
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghci/"

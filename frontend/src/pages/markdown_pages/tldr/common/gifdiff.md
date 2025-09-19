@@ -1,5 +1,5 @@
 ---
-title: "GIF Diff - Compare Images Visually | Free DevTools"
+title: "GIF Diff - Compare Images Visually | Online Free DevTools by Hexmos"
 name: gifdiff
 path: /freedevtools/tldr/common/gifdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/gifdiff/"

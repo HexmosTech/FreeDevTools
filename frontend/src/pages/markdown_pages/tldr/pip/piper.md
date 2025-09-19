@@ -1,5 +1,5 @@
 ---
-title: "Generate Speech - Piper TTS | Free DevTools"
+title: "Generate Speech - Piper TTS | Online Free DevTools by Hexmos"
 name: piper
 path: "/freedevtools/tldr/pip/piper"
 canonical: "https://hexmos.com/freedevtools/tldr/pip/piper/"

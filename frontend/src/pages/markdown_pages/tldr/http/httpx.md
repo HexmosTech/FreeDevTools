@@ -1,5 +1,5 @@
 ---
-title: "HTTP Probe - Scan Hosts with HTTPX | Free DevTools"
+title: "HTTP Probe - Scan Hosts with HTTPX | Online Free DevTools by Hexmos"
 name: httpx
 path: /freedevtools/tldr/http/httpx
 canonical: "https://hexmos.com/freedevtools/tldr/http/httpx/"

@@ -1,5 +1,5 @@
 ---
-title: "Validate SemVer - Parse Semantic Version Strings | Free DevTools"
+title: "Validate SemVer - Parse Semantic Version Strings | Online Free DevTools by Hexmos"
 name: semver
 path: /freedevtools/tldr/common/semver
 canonical: "https://hexmos.com/freedevtools/tldr/common/semver/"

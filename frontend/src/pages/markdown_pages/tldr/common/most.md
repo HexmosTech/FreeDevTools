@@ -1,5 +1,5 @@
 ---
-title: "View Files - Interactive File Viewer with Most | Free DevTools"
+title: "View Files - Interactive File Viewer with Most | Online Free DevTools by Hexmos"
 name: most
 path: /freedevtools/tldr/common/most
 canonical: "https://hexmos.com/freedevtools/tldr/common/most/"

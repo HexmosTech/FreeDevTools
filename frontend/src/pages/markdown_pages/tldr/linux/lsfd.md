@@ -1,5 +1,5 @@
 ---
-title: "List Open Files - Linux File Management | Free DevTools"
+title: "List Open Files - Linux File Management | Online Free DevTools by Hexmos"
 name: lsfd
 path: /freedevtools/tldr/linux/lsfd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsfd/"

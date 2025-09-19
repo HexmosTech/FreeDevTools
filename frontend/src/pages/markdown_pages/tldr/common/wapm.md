@@ -1,5 +1,5 @@
 ---
-title: "Wapm Package Manager - Manage WebAssembly Packages | Free DevTools"
+title: "Wapm Package Manager - Manage WebAssembly Packages | Online Free DevTools by Hexmos"
 name: wapm
 path: /freedevtools/tldr/common/wapm
 canonical: "https://hexmos.com/freedevtools/tldr/common/wapm/"

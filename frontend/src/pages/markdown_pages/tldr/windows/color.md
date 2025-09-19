@@ -1,5 +1,5 @@
 ---
-title: "Color Control - Set Console Colors on Windows | Free DevTools"
+title: "Color Control - Set Console Colors on Windows | Online Free DevTools by Hexmos"
 name: color
 path: /freedevtools/tldr/windows/color
 canonical: "https://hexmos.com/freedevtools/tldr/windows/color/"

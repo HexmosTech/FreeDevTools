@@ -1,5 +1,5 @@
 ---
-title: "Run Command as Root - Elevate Privileges | Free DevTools"
+title: "Run Command as Root - Elevate Privileges | Online Free DevTools by Hexmos"
 name: run0
 path: /freedevtools/tldr/linux/run0
 canonical: "https://hexmos.com/freedevtools/tldr/linux/run0/"

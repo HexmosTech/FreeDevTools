@@ -1,5 +1,5 @@
 ---
-title: "Transpile JavaScript - Babel ES6 to ES5 | Free DevTools"
+title: "Transpile JavaScript - Babel ES6 to ES5 | Online Free DevTools by Hexmos"
 name: babel
 path: /freedevtools/tldr/common/babel
 canonical: "https://hexmos.com/freedevtools/tldr/common/babel/"

@@ -1,5 +1,5 @@
 ---
-title: "RPC Service Control - Manage RPC Calls with rpcinfo | Free DevTools"
+title: "RPC Service Control - Manage RPC Calls with rpcinfo | Online Free DevTools by Hexmos"
 name: rpcinfo
 path: /freedevtools/tldr/linux/rpcinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpcinfo/"

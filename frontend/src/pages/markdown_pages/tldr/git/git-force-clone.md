@@ -1,5 +1,5 @@
 ---
-title: "Force Clone Git - Reset Git Repositories | Free DevTools"
+title: "Force Clone Git - Reset Git Repositories | Online Free DevTools by Hexmos"
 name: git-force-clone
 path: /freedevtools/tldr/git/git-force-clone
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-force-clone/"

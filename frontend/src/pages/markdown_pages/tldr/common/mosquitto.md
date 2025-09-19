@@ -1,5 +1,5 @@
 ---
-title: "MQTT Broker - Manage Messages | Free DevTools"
+title: "MQTT Broker - Manage Messages | Online Free DevTools by Hexmos"
 name: mosquitto
 path: /freedevtools/tldr/common/mosquitto
 canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto/"

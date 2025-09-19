@@ -1,5 +1,5 @@
 ---
-title: "Uninstall Chocolatey Packages - Manage Software | Free DevTools"
+title: "Uninstall Chocolatey Packages - Manage Software | Online Free DevTools by Hexmos"
 name: cuninst
 path: /freedevtools/tldr/windows/cuninst
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cuninst/"

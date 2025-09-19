@@ -1,5 +1,5 @@
 ---
-title: "Open Editor - Launch Default Editor | Free DevTools"
+title: "Open Editor - Launch Default Editor | Online Free DevTools by Hexmos"
 name: sensible-editor
 path: "/freedevtools/tldr/linux/sensible-editor"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sensible-editor/"

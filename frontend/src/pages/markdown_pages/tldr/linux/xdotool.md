@@ -1,5 +1,5 @@
 ---
-title: "Control X11 Actions with xdotool | Free DevTools"
+title: "Control X11 Actions with xdotool | Online Free DevTools by Hexmos"
 name: xdotool
 path: /freedevtools/tldr/linux/xdotool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xdotool/"

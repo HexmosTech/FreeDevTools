@@ -1,5 +1,5 @@
 ---
-title: "V Formatter - Format V Source Code | Free DevTools"
+title: "V Formatter - Format V Source Code | Online Free DevTools by Hexmos"
 name: v
 path: /freedevtools/tldr/common/v
 canonical: "https://hexmos.com/freedevtools/tldr/common/v/"

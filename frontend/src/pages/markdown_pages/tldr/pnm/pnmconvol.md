@@ -1,5 +1,5 @@
 ---
-title: "Convolve PNM Image - Process Images | Free DevTools"
+title: "Convolve PNM Image - Process Images | Online Free DevTools by Hexmos"
 name: pnmconvol
 path: /freedevtools/tldr/pnm/pnmconvol
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmconvol/"

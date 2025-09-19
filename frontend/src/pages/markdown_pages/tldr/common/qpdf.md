@@ -1,5 +1,5 @@
 ---
-title: "QPDF - Control PDF Files | Free DevTools"
+title: "QPDF - Control PDF Files | Online Free DevTools by Hexmos"
 name: qpdf
 path: /freedevtools/tldr/common/qpdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/qpdf/"

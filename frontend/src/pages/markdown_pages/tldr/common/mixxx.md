@@ -1,5 +1,5 @@
 ---
-title: "Control DJ Mixing - Free DJ Software | Free DevTools"
+title: "Control DJ Mixing - Free DJ Software | Online Free DevTools by Hexmos"
 name: mixxx
 path: /freedevtools/tldr/common/mixxx
 canonical: "https://hexmos.com/freedevtools/tldr/common/mixxx/"

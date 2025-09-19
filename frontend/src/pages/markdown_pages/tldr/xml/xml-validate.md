@@ -1,5 +1,5 @@
 ---
-title: "XML Validate - Validate XML Documents | Free DevTools"
+title: "XML Validate - Validate XML Documents | Online Free DevTools by Hexmos"
 name: xml-validate
 path: /freedevtools/tldr/xml/xml-validate
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-validate/"

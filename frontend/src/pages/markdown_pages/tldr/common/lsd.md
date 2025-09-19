@@ -1,5 +1,5 @@
 ---
-title: "List Directory - View Files with lsd | Free DevTools"
+title: "List Directory - View Files with lsd | Online Free DevTools by Hexmos"
 name: lsd
 path: /freedevtools/tldr/common/lsd
 canonical: "https://hexmos.com/freedevtools/tldr/common/lsd/"

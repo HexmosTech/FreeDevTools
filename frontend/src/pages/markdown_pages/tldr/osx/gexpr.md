@@ -1,5 +1,5 @@
 ---
-title: "Evaluate Expressions - Control Math with gexpr | Free DevTools"
+title: "Evaluate Expressions - Control Math with gexpr | Online Free DevTools by Hexmos"
 name: gexpr
 path: /freedevtools/tldr/osx/gexpr
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gexpr/"

@@ -1,5 +1,5 @@
 ---
-title: "Rustup Target - Modify Rust Toolchain Targets | Free DevTools"
+title: "Rustup Target - Modify Rust Toolchain Targets | Online Free DevTools by Hexmos"
 name: rustup-target
 path: /freedevtools/tldr/rustup/rustup-target
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-target/"

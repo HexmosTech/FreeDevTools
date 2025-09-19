@@ -1,5 +1,5 @@
 ---
-title: "Control MongoDB Server - Manage Database Instances | Free DevTools"
+title: "Control MongoDB Server - Manage Database Instances | Online Free DevTools by Hexmos"
 name: mongod
 path: /freedevtools/tldr/mongo/mongod
 canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongod/"

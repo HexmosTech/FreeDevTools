@@ -1,5 +1,5 @@
 ---
-title: "Manage RPM Configuration - Handle Package Upgrade Files | Free DevTools"
+title: "Manage RPM Configuration - Handle Package Upgrade Files | Online Free DevTools by Hexmos"
 name: rpmconf
 path: /freedevtools/tldr/linux/rpmconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpmconf/"

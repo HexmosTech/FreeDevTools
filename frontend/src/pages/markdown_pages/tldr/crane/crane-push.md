@@ -1,5 +1,5 @@
 ---
-title: "Crane Push - Upload Container Images | Free DevTools"
+title: "Crane Push - Upload Container Images | Online Free DevTools by Hexmos"
 name: crane-push
 path: /freedevtools/tldr/crane/crane-push
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-push/"

@@ -1,5 +1,5 @@
 ---
-title: "OpenSSL X.509 - Manage Certificates | Free DevTools"
+title: "OpenSSL X.509 - Manage Certificates | Online Free DevTools by Hexmos"
 name: openssl-x509
 path: /freedevtools/tldr/openssl/openssl-x509
 canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-x509/"

@@ -1,5 +1,5 @@
 ---
-title: "Resize Container Storage - pct resize | Free DevTools"
+title: "Resize Container Storage - pct resize | Online Free DevTools by Hexmos"
 name: pct-resize
 path: /freedevtools/tldr/linux/pct-resize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-resize/"

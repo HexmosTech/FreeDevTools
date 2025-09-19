@@ -1,5 +1,5 @@
 ---
-title: "Create Minecraft Modpacks - Manage Mods with Packwiz | Free DevTools"
+title: "Create Minecraft Modpacks - Manage Mods with Packwiz | Online Free DevTools by Hexmos"
 name: packwiz
 path: /freedevtools/tldr/common/packwiz
 canonical: "https://hexmos.com/freedevtools/tldr/common/packwiz/"

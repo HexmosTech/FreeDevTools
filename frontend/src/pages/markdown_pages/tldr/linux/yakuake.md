@@ -1,5 +1,5 @@
 ---
-title: "Control Yakuake - KDE Drop-Down Terminal | Free DevTools"
+title: "Control Yakuake - KDE Drop-Down Terminal | Online Free DevTools by Hexmos"
 name: yakuake
 path: /freedevtools/tldr/linux/yakuake
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yakuake/"

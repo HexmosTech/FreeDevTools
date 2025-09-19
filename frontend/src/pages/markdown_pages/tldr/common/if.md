@@ -1,5 +1,5 @@
 ---
-title: "Control Shell Script Flow - if Command | Free DevTools"
+title: "Control Shell Script Flow - if Command | Online Free DevTools by Hexmos"
 name: if
 path: /freedevtools/tldr/common/if
 canonical: "https://hexmos.com/freedevtools/tldr/common/if/"

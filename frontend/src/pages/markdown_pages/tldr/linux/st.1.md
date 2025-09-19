@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Sessions with st - Simple Terminal Emulator | Free DevTools"
+title: "Control Terminal Sessions with st - Simple Terminal Emulator | Online Free DevTools by Hexmos"
 name: st.1
 path: /freedevtools/tldr/linux/st.1
 canonical: "https://hexmos.com/freedevtools/tldr/linux/st.1/"

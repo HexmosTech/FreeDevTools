@@ -1,5 +1,5 @@
 ---
-title: "Share Websites - Expose Local Sites with Tunnel | Free DevTools"
+title: "Share Websites - Expose Local Sites with Tunnel | Online Free DevTools by Hexmos"
 name: expose
 path: /freedevtools/tldr/common/expose
 canonical: "https://hexmos.com/freedevtools/tldr/common/expose/"

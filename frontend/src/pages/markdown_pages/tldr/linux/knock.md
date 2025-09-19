@@ -1,5 +1,5 @@
 ---
-title: "Knock Port Control - Open Ports with TCP/UDP | Free DevTools"
+title: "Knock Port Control - Open Ports with TCP/UDP | Online Free DevTools by Hexmos"
 name: knock
 path: /freedevtools/tldr/linux/knock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/knock/"

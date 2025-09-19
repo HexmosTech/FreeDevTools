@@ -1,5 +1,5 @@
 ---
-title: "Envsubst - Substitute Variables | Free DevTools"
+title: "Envsubst - Substitute Variables | Online Free DevTools by Hexmos"
 name: envsubst
 path: /freedevtools/tldr/common/envsubst
 canonical: "https://hexmos.com/freedevtools/tldr/common/envsubst/"

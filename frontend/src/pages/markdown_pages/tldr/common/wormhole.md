@@ -1,5 +1,5 @@
 ---
-title: "Wormhole - Transfer Files Securely | Free DevTools"
+title: "Wormhole - Transfer Files Securely | Online Free DevTools by Hexmos"
 name: wormhole
 path: /freedevtools/tldr/common/wormhole
 canonical: "https://hexmos.com/freedevtools/tldr/common/wormhole/"

@@ -1,5 +1,5 @@
 ---
-title: "Lipo - Create Universal Binaries | Free DevTools"
+title: "Lipo - Create Universal Binaries | Online Free DevTools by Hexmos"
 name: llvm-lipo
 path: /freedevtools/tldr/osx/llvm-lipo
 canonical: "https://hexmos.com/freedevtools/tldr/osx/llvm-lipo/"

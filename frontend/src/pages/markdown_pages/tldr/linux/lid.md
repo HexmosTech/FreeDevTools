@@ -1,5 +1,5 @@
 ---
-title: "LID Command - View System Information | Free DevTools"
+title: "LID Command - View System Information | Online Free DevTools by Hexmos"
 name: lid
 path: /freedevtools/tldr/linux/lid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lid/"

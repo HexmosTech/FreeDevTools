@@ -1,5 +1,5 @@
 ---
-title: "HTTP Command - Execute Web Requests | Free DevTools"
+title: "HTTP Command - Execute Web Requests | Online Free DevTools by Hexmos"
 name: https
 path: /freedevtools/tldr/http/https
 canonical: "https://hexmos.com/freedevtools/tldr/http/https/"

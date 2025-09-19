@@ -1,5 +1,5 @@
 ---
-title: "Linode Events - Manage Linode Cloud Events | Free DevTools"
+title: "Linode Events - Manage Linode Cloud Events | Online Free DevTools by Hexmos"
 name: linode-cli-events
 path: /freedevtools/tldr/linode/linode-cli-events
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-events/"

@@ -1,5 +1,5 @@
 ---
-title: "Prowler M365 - Assess Security Configurations | Free DevTools"
+title: "Prowler M365 - Assess Security Configurations | Online Free DevTools by Hexmos"
 name: prowler-m365
 path: /freedevtools/tldr/prowler/prowler-m365
 canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-m365/"

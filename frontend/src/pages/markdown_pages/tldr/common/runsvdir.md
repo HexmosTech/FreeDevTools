@@ -1,5 +1,5 @@
 ---
-title: "Run Services - Control Service Directory with runsvdir | Free DevTools"
+title: "Run Services - Control Service Directory with runsvdir | Online Free DevTools by Hexmos"
 name: runsvdir
 path: /freedevtools/tldr/common/runsvdir
 canonical: "https://hexmos.com/freedevtools/tldr/common/runsvdir/"

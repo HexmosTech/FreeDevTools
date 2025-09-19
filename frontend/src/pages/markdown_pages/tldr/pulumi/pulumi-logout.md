@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Logout - Secure Cloud Logouts | Free DevTools"
+title: "Pulumi Logout - Secure Cloud Logouts | Online Free DevTools by Hexmos"
 name: pulumi-logout
 path: /freedevtools/tldr/pulumi/pulumi-logout
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-logout/"

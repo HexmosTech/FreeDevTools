@@ -1,5 +1,5 @@
 ---
-title: "Version Control - Manage Project Versions | Free DevTools"
+title: "Version Control - Manage Project Versions | Online Free DevTools by Hexmos"
 name: uv-version
 path: /freedevtools/tldr/uv/uv-version
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-version/"

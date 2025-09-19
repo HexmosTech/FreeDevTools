@@ -1,5 +1,5 @@
 ---
-title: "Validate Disk Capacity - f3read Command | Free DevTools"
+title: "Validate Disk Capacity - f3read Command | Online Free DevTools by Hexmos"
 name: f3read
 path: /freedevtools/tldr/common/f3read
 canonical: "https://hexmos.com/freedevtools/tldr/common/f3read/"

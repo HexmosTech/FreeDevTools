@@ -1,5 +1,5 @@
 ---
-title: "Racket Interpreter - Execute Code | Free DevTools"
+title: "Racket Interpreter - Execute Code | Online Free DevTools by Hexmos"
 name: racket
 path: /freedevtools/tldr/common/racket
 canonical: "https://hexmos.com/freedevtools/tldr/common/racket/"

@@ -1,5 +1,5 @@
 ---
-title: "RM Command - Delete Files on macOS | Free DevTools"
+title: "RM Command - Delete Files on macOS | Online Free DevTools by Hexmos"
 name: grm
 path: /freedevtools/tldr/osx/grm
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grm/"

@@ -1,5 +1,5 @@
 ---
-title: "Go Install - Compile and Install Go Packages | Free DevTools"
+title: "Go Install - Compile and Install Go Packages | Online Free DevTools by Hexmos"
 name: go-install
 path: /freedevtools/tldr/go/go-install
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-install/"

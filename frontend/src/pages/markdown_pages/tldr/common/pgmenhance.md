@@ -1,5 +1,5 @@
 ---
-title: "Edge-Enhance PGM - Enhance PGM Images | Free DevTools"
+title: "Edge-Enhance PGM - Enhance PGM Images | Online Free DevTools by Hexmos"
 name: pgmenhance
 path: /freedevtools/tldr/common/pgmenhance
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmenhance/"

@@ -1,5 +1,5 @@
 ---
-title: "Localectl - Control System Locale | Free DevTools"
+title: "Localectl - Control System Locale | Online Free DevTools by Hexmos"
 name: localectl
 path: /freedevtools/tldr/linux/localectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/localectl/"

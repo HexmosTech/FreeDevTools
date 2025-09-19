@@ -1,5 +1,5 @@
 ---
-title: "Fetch Rust Dependencies - Manage Packages | Free DevTools"
+title: "Fetch Rust Dependencies - Manage Packages | Online Free DevTools by Hexmos"
 name: cargo-fetch
 path: /freedevtools/tldr/cargo/cargo-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-fetch/"

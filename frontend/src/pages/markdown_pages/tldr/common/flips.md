@@ -1,5 +1,5 @@
 ---
-title: "Create Patches - Apply IPS/BPS Files | Free DevTools"
+title: "Create Patches - Apply IPS/BPS Files | Online Free DevTools by Hexmos"
 name: flips
 path: /freedevtools/tldr/common/flips
 canonical: "https://hexmos.com/freedevtools/tldr/common/flips/"

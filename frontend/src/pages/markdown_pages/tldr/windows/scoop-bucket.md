@@ -1,5 +1,5 @@
 ---
-title: "Scoop Bucket - Manage App Repositories | Free DevTools"
+title: "Scoop Bucket - Manage App Repositories | Online Free DevTools by Hexmos"
 name: scoop-bucket
 path: /freedevtools/tldr/windows/scoop-bucket
 canonical: "https://hexmos.com/freedevtools/tldr/windows/scoop-bucket/"

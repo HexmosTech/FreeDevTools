@@ -1,5 +1,5 @@
 ---
-title: "Control Virtual Machines - virt-viewer | Free DevTools"
+title: "Control Virtual Machines - virt-viewer | Online Free DevTools by Hexmos"
 name: virt-viewer
 path: /freedevtools/tldr/linux/virt-viewer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-viewer/"

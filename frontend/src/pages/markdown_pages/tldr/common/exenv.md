@@ -1,5 +1,5 @@
 ---
-title: "Manage Elixir Versions - Control Environments | Free DevTools"
+title: "Manage Elixir Versions - Control Environments | Online Free DevTools by Hexmos"
 name: exenv
 path: /freedevtools/tldr/common/exenv
 canonical: "https://hexmos.com/freedevtools/tldr/common/exenv/"

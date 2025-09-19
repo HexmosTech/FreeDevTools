@@ -1,5 +1,5 @@
 ---
-title: "Atuin - Search Shell History | Free DevTools"
+title: "Atuin - Search Shell History | Online Free DevTools by Hexmos"
 name: atuin
 path: "/freedevtools/tldr/common/atuin"
 canonical: "https://hexmos.com/freedevtools/tldr/common/atuin/"

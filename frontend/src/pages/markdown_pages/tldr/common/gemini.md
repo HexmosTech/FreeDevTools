@@ -1,5 +1,5 @@
 ---
-title: "Generate Gemini AI Prompts - Interact with AI | Free DevTools"
+title: "Generate Gemini AI Prompts - Interact with AI | Online Free DevTools by Hexmos"
 name: gemini
 path: /freedevtools/tldr/common/gemini
 canonical: "https://hexmos.com/freedevtools/tldr/common/gemini/"

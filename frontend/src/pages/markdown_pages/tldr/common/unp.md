@@ -1,5 +1,5 @@
 ---
-title: "Extract Archives - Unpack Any Archive | Free DevTools"
+title: "Extract Archives - Unpack Any Archive | Online Free DevTools by Hexmos"
 name: unp
 path: /freedevtools/tldr/common/unp
 canonical: "https://hexmos.com/freedevtools/tldr/common/unp/"

@@ -1,5 +1,5 @@
 ---
-title: "Core Audio Daemon - Control Audio Services | Free DevTools"
+title: "Core Audio Daemon - Control Audio Services | Online Free DevTools by Hexmos"
 name: coreaudiod
 path: /freedevtools/tldr/osx/coreaudiod
 canonical: "https://hexmos.com/freedevtools/tldr/osx/coreaudiod/"

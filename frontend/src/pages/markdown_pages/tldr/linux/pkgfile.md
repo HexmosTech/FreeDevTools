@@ -1,5 +1,5 @@
 ---
-title: "Search Linux Packages - Find Files with pkgfile | Free DevTools"
+title: "Search Linux Packages - Find Files with pkgfile | Online Free DevTools by Hexmos"
 name: pkgfile
 path: /freedevtools/tldr/linux/pkgfile
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgfile/"

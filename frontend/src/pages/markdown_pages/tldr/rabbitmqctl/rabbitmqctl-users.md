@@ -1,5 +1,5 @@
 ---
-title: "RabbitMQ User Control - Manage Permissions | Free DevTools"
+title: "RabbitMQ User Control - Manage Permissions | Online Free DevTools by Hexmos"
 name: rabbitmqctl-users
 path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl-users
 canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-users/"

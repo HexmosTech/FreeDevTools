@@ -1,5 +1,5 @@
 ---
-title: "Analyze Photos - Control Photo Libraries | Free DevTools"
+title: "Analyze Photos - Control Photo Libraries | Online Free DevTools by Hexmos"
 name: photoanalysisd
 path: /freedevtools/tldr/osx/photoanalysisd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/photoanalysisd/"

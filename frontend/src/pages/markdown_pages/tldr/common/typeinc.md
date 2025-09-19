@@ -1,5 +1,5 @@
 ---
-title: "Type Speed Test - Improve Typing Speed | Free DevTools"
+title: "Type Speed Test - Improve Typing Speed | Online Free DevTools by Hexmos"
 name: typeinc
 path: /freedevtools/tldr/common/typeinc
 canonical: "https://hexmos.com/freedevtools/tldr/common/typeinc/"

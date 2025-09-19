@@ -1,5 +1,5 @@
 ---
-title: "Control Xclip Clipboard - Linux Data Transfer | Free DevTools"
+title: "Control Xclip Clipboard - Linux Data Transfer | Online Free DevTools by Hexmos"
 name: xclip
 path: /freedevtools/tldr/linux/xclip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xclip/"

@@ -1,5 +1,5 @@
 ---
-title: "Kitty Terminal - Control Terminal Sessions | Free DevTools"
+title: "Kitty Terminal - Control Terminal Sessions | Online Free DevTools by Hexmos"
 name: kitty
 path: /freedevtools/tldr/common/kitty
 canonical: "https://hexmos.com/freedevtools/tldr/common/kitty/"

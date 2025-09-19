@@ -1,5 +1,5 @@
 ---
-title: "Screenshot Spectacle - Capture Screen Images | Free DevTools"
+title: "Screenshot Spectacle - Capture Screen Images | Online Free DevTools by Hexmos"
 name: spectacle
 path: /freedevtools/tldr/common/spectacle
 canonical: "https://hexmos.com/freedevtools/tldr/common/spectacle/"

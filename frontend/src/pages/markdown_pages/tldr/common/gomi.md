@@ -1,5 +1,5 @@
 ---
-title: "Manage Trashcan - Safely Remove Files with Gomi | Free DevTools"
+title: "Manage Trashcan - Safely Remove Files with Gomi | Online Free DevTools by Hexmos"
 name: gomi
 path: /freedevtools/tldr/common/gomi
 canonical: "https://hexmos.com/freedevtools/tldr/common/gomi/"

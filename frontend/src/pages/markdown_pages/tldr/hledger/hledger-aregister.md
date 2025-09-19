@@ -1,5 +1,5 @@
 ---
-title: "Generate hledger Register - Account Balances | Free DevTools"
+title: "Generate hledger Register - Account Balances | Online Free DevTools by Hexmos"
 name: hledger-aregister
 path: /freedevtools/tldr/hledger/hledger-aregister
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-aregister/"

@@ -1,5 +1,5 @@
 ---
-title: "OpenConnect VPN - Connect to VPN Servers | Free DevTools"
+title: "OpenConnect VPN - Connect to VPN Servers | Online Free DevTools by Hexmos"
 name: openconnect
 path: /freedevtools/tldr/common/openconnect
 canonical: "https://hexmos.com/freedevtools/tldr/common/openconnect/"

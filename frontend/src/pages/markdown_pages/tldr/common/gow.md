@@ -1,5 +1,5 @@
 ---
-title: "Watch Go Files - Restart App on Change | Free DevTools"
+title: "Watch Go Files - Restart App on Change | Online Free DevTools by Hexmos"
 name: gow
 path: /freedevtools/tldr/common/gow
 canonical: "https://hexmos.com/freedevtools/tldr/common/gow/"

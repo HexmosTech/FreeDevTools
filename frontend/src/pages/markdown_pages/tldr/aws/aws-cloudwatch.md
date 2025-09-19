@@ -1,5 +1,5 @@
 ---
-title: "AWS CloudWatch - Monitor AWS Resources | Free DevTools"
+title: "AWS CloudWatch - Monitor AWS Resources | Online Free DevTools by Hexmos"
 name: aws-cloudwatch
 path: /freedevtools/tldr/aws/aws-cloudwatch
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloudwatch/"

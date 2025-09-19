@@ -1,5 +1,5 @@
 ---
-title: "While Loop - Control Command Execution | Free DevTools"
+title: "While Loop - Control Command Execution | Online Free DevTools by Hexmos"
 name: while
 path: /freedevtools/tldr/common/while
 canonical: "https://hexmos.com/freedevtools/tldr/common/while/"

@@ -1,5 +1,5 @@
 ---
-title: "MITMDump - Capture and Analyze HTTP Traffic | Free DevTools"
+title: "MITMDump - Capture and Analyze HTTP Traffic | Online Free DevTools by Hexmos"
 name: mitmdump
 path: /freedevtools/tldr/common/mitmdump
 canonical: "https://hexmos.com/freedevtools/tldr/common/mitmdump/"

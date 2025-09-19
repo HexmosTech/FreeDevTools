@@ -1,5 +1,5 @@
 ---
-title: "VNC Viewer - Control Remote Desktops | Free DevTools"
+title: "VNC Viewer - Control Remote Desktops | Online Free DevTools by Hexmos"
 name: vncviewer
 path: /freedevtools/tldr/linux/vncviewer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vncviewer/"

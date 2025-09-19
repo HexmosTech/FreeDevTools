@@ -1,5 +1,5 @@
 ---
-title: "Ruff Linter - Check Python Code | Free DevTools"
+title: "Ruff Linter - Check Python Code | Online Free DevTools by Hexmos"
 name: ruff-check
 path: /freedevtools/tldr/ruff/ruff-check
 canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-check/"

@@ -1,5 +1,5 @@
 ---
-title: "Install Python Applications - Control Environments with pipx | Free DevTools"
+title: "Install Python Applications - Control Environments with pipx | Online Free DevTools by Hexmos"
 name: pipx
 path: /freedevtools/tldr/pip/pipx
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pipx/"

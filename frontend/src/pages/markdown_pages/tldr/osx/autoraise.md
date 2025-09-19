@@ -1,5 +1,5 @@
 ---
-title: "AutoRaise - Focus Windows on Hover | Free DevTools"
+title: "AutoRaise - Focus Windows on Hover | Online Free DevTools by Hexmos"
 name: autoraise
 path: /freedevtools/tldr/osx/autoraise
 canonical: "https://hexmos.com/freedevtools/tldr/osx/autoraise/"

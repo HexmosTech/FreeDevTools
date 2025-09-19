@@ -1,5 +1,5 @@
 ---
-title: "Save Webpage - Convert to Single HTML | Free DevTools"
+title: "Save Webpage - Convert to Single HTML | Online Free DevTools by Hexmos"
 name: monolith
 path: /freedevtools/tldr/common/monolith
 canonical: "https://hexmos.com/freedevtools/tldr/common/monolith/"

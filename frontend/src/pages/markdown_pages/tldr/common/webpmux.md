@@ -1,5 +1,5 @@
 ---
-title: "Create WebP Animations - Webpmux | Free DevTools"
+title: "Create WebP Animations - Webpmux | Online Free DevTools by Hexmos"
 name: webpmux
 path: /freedevtools/tldr/common/webpmux
 canonical: "https://hexmos.com/freedevtools/tldr/common/webpmux/"

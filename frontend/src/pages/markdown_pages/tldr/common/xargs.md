@@ -1,5 +1,5 @@
 ---
-title: "Xargs - Control Command Arguments | Free DevTools"
+title: "Xargs - Control Command Arguments | Online Free DevTools by Hexmos"
 name: xargs
 path: /freedevtools/tldr/common/xargs
 canonical: "https://hexmos.com/freedevtools/tldr/common/xargs/"

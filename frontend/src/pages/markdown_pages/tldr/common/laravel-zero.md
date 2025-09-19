@@ -1,5 +1,5 @@
 ---
-title: "Create Laravel Zero App - Installer | Free DevTools"
+title: "Create Laravel Zero App - Installer | Online Free DevTools by Hexmos"
 name: laravel-zero
 path: /freedevtools/tldr/common/laravel-zero
 canonical: "https://hexmos.com/freedevtools/tldr/common/laravel-zero/"

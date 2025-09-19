@@ -1,5 +1,5 @@
 ---
-title: "Find Files - Query Files with SQL-like Syntax | Free DevTools"
+title: "Find Files - Query Files with SQL-like Syntax | Online Free DevTools by Hexmos"
 name: fselect
 path: /freedevtools/tldr/common/fselect
 canonical: "https://hexmos.com/freedevtools/tldr/common/fselect/"

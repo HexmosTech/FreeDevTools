@@ -1,5 +1,5 @@
 ---
-title: "Numlockx - Control Number Lock Status | Free DevTools"
+title: "Numlockx - Control Number Lock Status | Online Free DevTools by Hexmos"
 name: numlockx
 path: /freedevtools/tldr/linux/numlockx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/numlockx/"

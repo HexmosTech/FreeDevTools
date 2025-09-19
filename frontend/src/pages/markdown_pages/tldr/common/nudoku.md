@@ -1,5 +1,5 @@
 ---
-title: "Play Sudoku - Solve Puzzles in Terminal | Free DevTools"
+title: "Play Sudoku - Solve Puzzles in Terminal | Online Free DevTools by Hexmos"
 name: nudoku
 path: /freedevtools/tldr/common/nudoku
 canonical: "https://hexmos.com/freedevtools/tldr/common/nudoku/"

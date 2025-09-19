@@ -1,5 +1,5 @@
 ---
-title: "Export Shell Variables - Control Environment | Free DevTools"
+title: "Export Shell Variables - Control Environment | Online Free DevTools by Hexmos"
 name: export
 path: /freedevtools/tldr/linux/export
 canonical: "https://hexmos.com/freedevtools/tldr/linux/export/"

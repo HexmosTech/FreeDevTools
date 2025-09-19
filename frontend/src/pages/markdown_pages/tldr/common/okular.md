@@ -1,5 +1,5 @@
 ---
-title: "View Documents - Control Documents with Okular | Free DevTools"
+title: "View Documents - Control Documents with Okular | Online Free DevTools by Hexmos"
 name: okular
 path: /freedevtools/tldr/common/okular
 canonical: "https://hexmos.com/freedevtools/tldr/common/okular/"

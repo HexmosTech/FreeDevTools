@@ -1,5 +1,5 @@
 ---
-title: "Resize2fs - Resize Linux Filesystems | Free DevTools"
+title: "Resize2fs - Resize Linux Filesystems | Online Free DevTools by Hexmos"
 name: resize2fs
 path: /freedevtools/tldr/linux/resize2fs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/resize2fs/"

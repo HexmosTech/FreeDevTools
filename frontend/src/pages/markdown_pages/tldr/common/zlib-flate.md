@@ -1,5 +1,5 @@
 ---
-title: "Compress Zlib - Flate Files | Free DevTools"
+title: "Compress Zlib - Flate Files | Online Free DevTools by Hexmos"
 name: zlib-flate
 path: /freedevtools/tldr/common/zlib-flate
 canonical: "https://hexmos.com/freedevtools/tldr/common/zlib-flate/"

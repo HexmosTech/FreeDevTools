@@ -1,5 +1,5 @@
 ---
-title: "Expand Text - Format Text with gexpand | Free DevTools"
+title: "Expand Text - Format Text with gexpand | Online Free DevTools by Hexmos"
 name: gexpand
 path: /freedevtools/tldr/osx/gexpand
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gexpand/"

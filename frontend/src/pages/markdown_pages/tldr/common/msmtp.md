@@ -1,5 +1,5 @@
 ---
-title: "Send Email - Send Emails via SMTP with msmtp | Free DevTools"
+title: "Send Email - Send Emails via SMTP with msmtp | Online Free DevTools by Hexmos"
 name: msmtp
 path: /freedevtools/tldr/common/msmtp
 canonical: "https://hexmos.com/freedevtools/tldr/common/msmtp/"

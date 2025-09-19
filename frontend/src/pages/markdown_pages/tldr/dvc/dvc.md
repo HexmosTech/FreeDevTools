@@ -1,5 +1,5 @@
 ---
-title: "Data Version Control - Manage Data with DVC | Free DevTools"
+title: "Data Version Control - Manage Data with DVC | Online Free DevTools by Hexmos"
 name: dvc
 path: /freedevtools/tldr/dvc/dvc
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc/"

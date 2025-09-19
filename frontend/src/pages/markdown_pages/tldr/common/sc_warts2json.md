@@ -1,5 +1,5 @@
 ---
-title: "Warts to JSON - Convert Warts Data | Free DevTools"
+title: "Warts to JSON - Convert Warts Data | Online Free DevTools by Hexmos"
 name: sc_warts2json
 path: /freedevtools/tldr/common/sc_warts2json
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_warts2json/"

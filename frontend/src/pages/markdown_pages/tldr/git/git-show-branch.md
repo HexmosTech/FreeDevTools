@@ -1,5 +1,5 @@
 ---
-title: "Git Show-Branch - Show Branch Commits | Free DevTools"
+title: "Git Show-Branch - Show Branch Commits | Online Free DevTools by Hexmos"
 name: git-show-branch
 path: /freedevtools/tldr/git/git-show-branch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-branch/"

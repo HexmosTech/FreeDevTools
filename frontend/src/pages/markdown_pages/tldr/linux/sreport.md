@@ -1,5 +1,5 @@
 ---
-title: "Generate sreport - Cluster Reports | Free DevTools"
+title: "Generate sreport - Cluster Reports | Online Free DevTools by Hexmos"
 name: sreport
 path: /freedevtools/tldr/linux/sreport
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sreport/"

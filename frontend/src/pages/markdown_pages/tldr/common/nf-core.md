@@ -1,5 +1,5 @@
 ---
-title: "nf-core - Create Nextflow Pipelines | Free DevTools"
+title: "nf-core - Create Nextflow Pipelines | Online Free DevTools by Hexmos"
 name: nf-core
 path: /freedevtools/tldr/common/nf-core
 canonical: "https://hexmos.com/freedevtools/tldr/common/nf-core/"

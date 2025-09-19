@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Standup - Track Commits | Free DevTools"
+title: "Generate Git Standup - Track Commits | Online Free DevTools by Hexmos"
 name: git-standup
 path: /freedevtools/tldr/git/git-standup
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-standup/"

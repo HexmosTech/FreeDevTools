@@ -1,5 +1,5 @@
 ---
-title: "PPM Shadow - Generate Image Shadows | Free DevTools"
+title: "PPM Shadow - Generate Image Shadows | Online Free DevTools by Hexmos"
 name: ppmshadow
 path: /freedevtools/tldr/ppm/ppmshadow
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmshadow/"

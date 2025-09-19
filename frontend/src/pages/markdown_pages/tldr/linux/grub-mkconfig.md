@@ -1,5 +1,5 @@
 ---
-title: "GRUB Configuration - Generate GRUB Config Files | Free DevTools"
+title: "GRUB Configuration - Generate GRUB Config Files | Online Free DevTools by Hexmos"
 name: grub-mkconfig
 path: /freedevtools/tldr/linux/grub-mkconfig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-mkconfig/"

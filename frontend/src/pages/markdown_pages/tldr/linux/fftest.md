@@ -1,5 +1,5 @@
 ---
-title: "FFTest - Control Force-Feedback Devices | Free DevTools"
+title: "FFTest - Control Force-Feedback Devices | Online Free DevTools by Hexmos"
 name: fftest
 path: /freedevtools/tldr/linux/fftest
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fftest/"

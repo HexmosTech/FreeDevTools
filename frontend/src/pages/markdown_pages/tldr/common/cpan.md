@@ -1,5 +1,5 @@
 ---
-title: "CPAN - Manage Perl Modules | Free DevTools"
+title: "CPAN - Manage Perl Modules | Online Free DevTools by Hexmos"
 name: cpan
 path: /freedevtools/tldr/common/cpan
 canonical: "https://hexmos.com/freedevtools/tldr/common/cpan/"

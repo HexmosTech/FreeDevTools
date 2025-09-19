@@ -1,5 +1,5 @@
 ---
-title: "NDCTL Control - Manage NVDIMMs | Free DevTools"
+title: "NDCTL Control - Manage NVDIMMs | Online Free DevTools by Hexmos"
 name: ndctl
 path: /freedevtools/tldr/linux/ndctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ndctl/"

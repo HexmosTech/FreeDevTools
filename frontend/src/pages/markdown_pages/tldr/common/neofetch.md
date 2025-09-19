@@ -1,5 +1,5 @@
 ---
-title: "Display System Info - Neofetch OS Information | Free DevTools"
+title: "Display System Info - Neofetch OS Information | Online Free DevTools by Hexmos"
 name: neofetch
 path: /freedevtools/tldr/common/neofetch
 canonical: "https://hexmos.com/freedevtools/tldr/common/neofetch/"

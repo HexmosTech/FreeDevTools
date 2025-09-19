@@ -1,5 +1,5 @@
 ---
-title: "Dolt Version Control - Manage SQL Databases | Free DevTools"
+title: "Dolt Version Control - Manage SQL Databases | Online Free DevTools by Hexmos"
 name: dolt
 path: /freedevtools/tldr/dolt/dolt
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt/"

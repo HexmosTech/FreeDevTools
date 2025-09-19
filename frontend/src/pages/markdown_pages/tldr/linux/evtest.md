@@ -1,5 +1,5 @@
 ---
-title: "Evtest Input Device - Display Events | Free DevTools"
+title: "Evtest Input Device - Display Events | Online Free DevTools by Hexmos"
 name: evtest
 path: /freedevtools/tldr/linux/evtest
 canonical: "https://hexmos.com/freedevtools/tldr/linux/evtest/"

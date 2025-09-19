@@ -1,5 +1,5 @@
 ---
-title: "PDF Parser - Analyze PDF Files | Free DevTools"
+title: "PDF Parser - Analyze PDF Files | Online Free DevTools by Hexmos"
 name: pdf-parser
 path: /freedevtools/tldr/common/pdf-parser
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdf-parser/"

@@ -1,5 +1,5 @@
 ---
-title: "Bundletool Validate - Verify Android Bundles | Free DevTools"
+title: "Bundletool Validate - Verify Android Bundles | Online Free DevTools by Hexmos"
 name: bundletool-validate
 path: /freedevtools/tldr/bundletool/bundletool-validate
 canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool-validate/"

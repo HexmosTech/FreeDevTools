@@ -1,5 +1,5 @@
 ---
-title: "Map Syscalls - Find System Call Numbers and Names | Free DevTools"
+title: "Map Syscalls - Find System Call Numbers and Names | Online Free DevTools by Hexmos"
 name: ausyscall
 path: /freedevtools/tldr/linux/ausyscall
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ausyscall/"

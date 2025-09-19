@@ -1,5 +1,5 @@
 ---
-title: "Generate File Database - gupdatedb Command | Free DevTools"
+title: "Generate File Database - gupdatedb Command | Online Free DevTools by Hexmos"
 name: gupdatedb
 path: /freedevtools/tldr/osx/gupdatedb
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gupdatedb/"

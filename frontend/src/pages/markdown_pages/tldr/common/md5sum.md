@@ -1,5 +1,5 @@
 ---
-title: "Generate MD5 Checksums - Verify File Integrity | Free DevTools"
+title: "Generate MD5 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: md5sum
 path: /freedevtools/tldr/common/md5sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/md5sum/"

@@ -1,5 +1,5 @@
 ---
-title: "Watchlistd - Manage Apple TV Watch List | Free DevTools"
+title: "Watchlistd - Manage Apple TV Watch List | Online Free DevTools by Hexmos"
 name: watchlistd
 path: /freedevtools/tldr/osx/watchlistd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/watchlistd/"

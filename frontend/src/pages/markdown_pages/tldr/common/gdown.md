@@ -1,5 +1,5 @@
 ---
-title: "Download Files - Control Files with Gdown | Free DevTools"
+title: "Download Files - Control Files with Gdown | Online Free DevTools by Hexmos"
 name: gdown
 path: /freedevtools/tldr/common/gdown
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdown/"

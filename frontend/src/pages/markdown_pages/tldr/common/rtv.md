@@ -1,5 +1,5 @@
 ---
-title: "Control Reddit from Terminal - RTV Viewer | Free DevTools"
+title: "Control Reddit from Terminal - RTV Viewer | Online Free DevTools by Hexmos"
 name: rtv
 path: "/freedevtools/tldr/common/rtv"
 canonical: "https://hexmos.com/freedevtools/tldr/common/rtv/"

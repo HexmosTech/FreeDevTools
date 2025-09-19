@@ -1,5 +1,5 @@
 ---
-title: "Control OpenRC Services - Manage Runlevels | Free DevTools"
+title: "Control OpenRC Services - Manage Runlevels | Online Free DevTools by Hexmos"
 name: rc-update
 path: /freedevtools/tldr/linux/rc-update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-update/"

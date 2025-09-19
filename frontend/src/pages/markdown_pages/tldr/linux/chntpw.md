@@ -1,5 +1,5 @@
 ---
-title: "chntpw - Reset Windows Passwords | Free DevTools"
+title: "chntpw - Reset Windows Passwords | Online Free DevTools by Hexmos"
 name: chntpw
 path: /freedevtools/tldr/linux/chntpw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chntpw/"

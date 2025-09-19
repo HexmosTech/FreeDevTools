@@ -1,5 +1,5 @@
 ---
-title: "Acquire AWS Credentials - Google SSO Auth | Free DevTools"
+title: "Acquire AWS Credentials - Google SSO Auth | Online Free DevTools by Hexmos"
 name: aws-google-auth
 path: /freedevtools/tldr/aws/aws-google-auth
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-google-auth/"

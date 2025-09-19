@@ -1,5 +1,5 @@
 ---
-title: "Storage Account - Manage Azure Storage Accounts | Free DevTools"
+title: "Storage Account - Manage Azure Storage Accounts | Online Free DevTools by Hexmos"
 name: az-storage-account
 path: /freedevtools/tldr/az/az-storage-account
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-account/"

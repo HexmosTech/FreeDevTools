@@ -1,5 +1,5 @@
 ---
-title: "Display Calendar - View Monthly & Yearly Schedules | Free DevTools"
+title: "Display Calendar - View Monthly & Yearly Schedules | Online Free DevTools by Hexmos"
 name: cal
 path: /freedevtools/tldr/linux/cal
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cal/"

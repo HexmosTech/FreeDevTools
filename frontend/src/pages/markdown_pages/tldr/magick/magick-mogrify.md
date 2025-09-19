@@ -1,5 +1,5 @@
 ---
-title: "Magick Mogrify - Transform Images | Free DevTools"
+title: "Magick Mogrify - Transform Images | Online Free DevTools by Hexmos"
 name: magick-mogrify
 path: /freedevtools/tldr/magick/magick-mogrify
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-mogrify/"

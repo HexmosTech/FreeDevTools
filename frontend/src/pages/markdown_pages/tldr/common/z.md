@@ -1,5 +1,5 @@
 ---
-title: "Z Directory Jumper - Quickly Navigate Directories | Free DevTools"
+title: "Z Directory Jumper - Quickly Navigate Directories | Online Free DevTools by Hexmos"
 name: z
 path: /freedevtools/tldr/common/z
 canonical: "https://hexmos.com/freedevtools/tldr/common/z/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Logical Volumes - lvcreate Command | Free DevTools"
+title: "Create Logical Volumes - lvcreate Command | Online Free DevTools by Hexmos"
 name: lvcreate
 path: /freedevtools/tldr/linux/lvcreate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvcreate/"

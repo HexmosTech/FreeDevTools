@@ -1,5 +1,5 @@
 ---
-title: "Control SunOS Services - svcadm | Free DevTools"
+title: "Control SunOS Services - svcadm | Online Free DevTools by Hexmos"
 name: svcadm
 path: /freedevtools/tldr/sunos/svcadm
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/svcadm/"

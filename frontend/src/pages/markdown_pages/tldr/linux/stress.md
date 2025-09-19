@@ -1,5 +1,5 @@
 ---
-title: "Stress Test - CPU, Memory & IO Load on Linux | Free DevTools"
+title: "Stress Test - CPU, Memory & IO Load on Linux | Online Free DevTools by Hexmos"
 name: stress
 path: /freedevtools/tldr/linux/stress
 canonical: "https://hexmos.com/freedevtools/tldr/linux/stress/"

@@ -1,5 +1,5 @@
 ---
-title: "Unzip Content - View Archive Contents | Free DevTools"
+title: "Unzip Content - View Archive Contents | Online Free DevTools by Hexmos"
 name: funzip
 path: /freedevtools/tldr/common/funzip
 canonical: "https://hexmos.com/freedevtools/tldr/common/funzip/"

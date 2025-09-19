@@ -1,5 +1,5 @@
 ---
-title: "Create Scala Builds - Manage Java Projects with sbt | Free DevTools"
+title: "Create Scala Builds - Manage Java Projects with sbt | Online Free DevTools by Hexmos"
 name: sbt
 path: /freedevtools/tldr/common/sbt
 canonical: "https://hexmos.com/freedevtools/tldr/common/sbt/"

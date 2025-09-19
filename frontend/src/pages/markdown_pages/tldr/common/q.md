@@ -1,5 +1,5 @@
 ---
-title: "Query CSV - Execute SQL on Files | Free DevTools"
+title: "Query CSV - Execute SQL on Files | Online Free DevTools by Hexmos"
 name: q
 path: /freedevtools/tldr/common/q
 canonical: "https://hexmos.com/freedevtools/tldr/common/q/"

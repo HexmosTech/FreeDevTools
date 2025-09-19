@@ -1,5 +1,5 @@
 ---
-title: "Dotnet - Create .NET Projects | Free DevTools"
+title: "Dotnet - Create .NET Projects | Online Free DevTools by Hexmos"
 name: dotnet
 path: /freedevtools/tldr/dotnet/dotnet
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet/"

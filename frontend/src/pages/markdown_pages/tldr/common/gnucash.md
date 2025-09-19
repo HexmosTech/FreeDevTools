@@ -1,5 +1,5 @@
 ---
-title: "Manage Finances - GnuCash Accounting | Free DevTools"
+title: "Manage Finances - GnuCash Accounting | Online Free DevTools by Hexmos"
 name: gnucash
 path: /freedevtools/tldr/common/gnucash
 canonical: "https://hexmos.com/freedevtools/tldr/common/gnucash/"

@@ -1,5 +1,5 @@
 ---
-title: "Multitail - Monitor Multiple Logs | Free DevTools"
+title: "Multitail - Monitor Multiple Logs | Online Free DevTools by Hexmos"
 name: multitail
 path: /freedevtools/tldr/common/multitail
 canonical: "https://hexmos.com/freedevtools/tldr/common/multitail/"

@@ -1,5 +1,5 @@
 ---
-title: "Analyze Network Traffic - Zeek | Free DevTools"
+title: "Analyze Network Traffic - Zeek | Online Free DevTools by Hexmos"
 name: zeek
 path: /freedevtools/tldr/common/zeek
 canonical: "https://hexmos.com/freedevtools/tldr/common/zeek/"

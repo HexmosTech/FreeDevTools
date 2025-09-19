@@ -1,5 +1,5 @@
 ---
-title: "Git SVN - Control Subversion with Git | Free DevTools"
+title: "Git SVN - Control Subversion with Git | Online Free DevTools by Hexmos"
 name: git-svn
 path: /freedevtools/tldr/git/git-svn
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-svn/"

@@ -1,5 +1,5 @@
 ---
-title: "Choco Pin - Control Package Versions | Free DevTools"
+title: "Choco Pin - Control Package Versions | Online Free DevTools by Hexmos"
 name: choco-pin
 path: /freedevtools/tldr/windows/choco-pin
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-pin/"

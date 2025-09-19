@@ -1,5 +1,5 @@
 ---
-title: "Control Wallpaper - Swaybg Tool | Free DevTools"
+title: "Control Wallpaper - Swaybg Tool | Online Free DevTools by Hexmos"
 name: swaybg
 path: /freedevtools/tldr/common/swaybg
 canonical: "https://hexmos.com/freedevtools/tldr/common/swaybg/"

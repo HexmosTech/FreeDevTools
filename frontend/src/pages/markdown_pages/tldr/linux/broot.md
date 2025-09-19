@@ -1,5 +1,5 @@
 ---
-title: "Broot - Navigate Directories Interactively | Free DevTools"
+title: "Broot - Navigate Directories Interactively | Online Free DevTools by Hexmos"
 name: broot
 path: /freedevtools/tldr/linux/broot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/broot/"

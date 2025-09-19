@@ -1,5 +1,5 @@
 ---
-title: "Sensors - Report Hardware Sensors Information | Free DevTools"
+title: "Sensors - Report Hardware Sensors Information | Online Free DevTools by Hexmos"
 name: sensors
 path: /freedevtools/tldr/linux/sensors
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sensors/"

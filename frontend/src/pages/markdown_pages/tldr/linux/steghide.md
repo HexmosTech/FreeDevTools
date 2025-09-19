@@ -1,5 +1,5 @@
 ---
-title: "Steganography Tool - Embed & Extract Data with steghide | Free DevTools"
+title: "Steganography Tool - Embed & Extract Data with steghide | Online Free DevTools by Hexmos"
 name: steghide
 path: /freedevtools/tldr/linux/steghide
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steghide/"

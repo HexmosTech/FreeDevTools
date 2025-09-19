@@ -1,5 +1,5 @@
 ---
-title: "Test SSL/TLS - Check Server Security | Free DevTools"
+title: "Test SSL/TLS - Check Server Security | Online Free DevTools by Hexmos"
 name: testssl
 path: /freedevtools/tldr/common/testssl
 canonical: "https://hexmos.com/freedevtools/tldr/common/testssl/"

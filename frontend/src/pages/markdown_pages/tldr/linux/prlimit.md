@@ -1,5 +1,5 @@
 ---
-title: "Control Process Limits - prlimit | Free DevTools"
+title: "Control Process Limits - prlimit | Online Free DevTools by Hexmos"
 name: prlimit
 path: /freedevtools/tldr/linux/prlimit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/prlimit/"

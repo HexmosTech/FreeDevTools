@@ -1,5 +1,5 @@
 ---
-title: "Raw Bind - Control Device Binding on Linux | Free DevTools"
+title: "Raw Bind - Control Device Binding on Linux | Online Free DevTools by Hexmos"
 name: raw
 path: /freedevtools/tldr/linux/raw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/raw/"

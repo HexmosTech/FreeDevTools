@@ -1,5 +1,5 @@
 ---
-title: "FLAC Encode/Decode - Create Lossless Audio Files | Free DevTools"
+title: "FLAC Encode/Decode - Create Lossless Audio Files | Online Free DevTools by Hexmos"
 name: flac
 path: /freedevtools/tldr/common/flac
 canonical: "https://hexmos.com/freedevtools/tldr/common/flac/"

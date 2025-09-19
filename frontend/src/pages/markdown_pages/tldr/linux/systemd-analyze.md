@@ -1,5 +1,5 @@
 ---
-title: "Systemd Analyze - Debug System Manager | Free DevTools"
+title: "Systemd Analyze - Debug System Manager | Online Free DevTools by Hexmos"
 name: systemd-analyze
 path: /freedevtools/tldr/linux/systemd-analyze
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-analyze/"

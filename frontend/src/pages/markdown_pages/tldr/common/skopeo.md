@@ -1,5 +1,5 @@
 ---
-title: "Manage Container Images - Skopeo Toolbox | Free DevTools"
+title: "Manage Container Images - Skopeo Toolbox | Online Free DevTools by Hexmos"
 name: skopeo
 path: /freedevtools/tldr/common/skopeo
 canonical: "https://hexmos.com/freedevtools/tldr/common/skopeo/"

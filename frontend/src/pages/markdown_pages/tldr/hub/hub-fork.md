@@ -1,5 +1,5 @@
 ---
-title: "Hub Fork - Create GitHub Repository Forks | Free DevTools"
+title: "Hub Fork - Create GitHub Repository Forks | Online Free DevTools by Hexmos"
 name: hub-fork
 path: /freedevtools/tldr/hub/hub-fork
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-fork/"

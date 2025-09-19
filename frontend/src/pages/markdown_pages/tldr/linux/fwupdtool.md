@@ -1,5 +1,5 @@
 ---
-title: "Firmware Update Tool - Update Device Firmware | Free DevTools"
+title: "Firmware Update Tool - Update Device Firmware | Online Free DevTools by Hexmos"
 name: fwupdtool
 path: /freedevtools/tldr/linux/fwupdtool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fwupdtool/"

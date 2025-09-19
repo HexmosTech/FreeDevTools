@@ -1,5 +1,5 @@
 ---
-title: "Flash Memory Probe - Detect Counterfeit Flash | Free DevTools"
+title: "Flash Memory Probe - Detect Counterfeit Flash | Online Free DevTools by Hexmos"
 name: f3probe
 path: /freedevtools/tldr/common/f3probe
 canonical: "https://hexmos.com/freedevtools/tldr/common/f3probe/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert Debian Packages - debtap Arch Linux Converter | Free DevTools"
+title: "Convert Debian Packages - debtap Arch Linux Converter | Online Free DevTools by Hexmos"
 name: debtap
 path: /freedevtools/tldr/linux/debtap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/debtap/"

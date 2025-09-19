@@ -1,5 +1,5 @@
 ---
-title: "Control Backlight - Manage Screen Brightness with Light | Free DevTools"
+title: "Control Backlight - Manage Screen Brightness with Light | Online Free DevTools by Hexmos"
 name: light
 path: /freedevtools/tldr/linux/light
 canonical: "https://hexmos.com/freedevtools/tldr/linux/light/"

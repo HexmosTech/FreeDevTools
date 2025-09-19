@@ -1,5 +1,5 @@
 ---
-title: "Logsave - Save Command Output to Log File | Free DevTools"
+title: "Logsave - Save Command Output to Log File | Online Free DevTools by Hexmos"
 name: logsave
 path: /freedevtools/tldr/linux/logsave
 canonical: "https://hexmos.com/freedevtools/tldr/linux/logsave/"

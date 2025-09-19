@@ -1,5 +1,5 @@
 ---
-title: "Name Daemon Control - Manage Name Servers | Free DevTools"
+title: "Name Daemon Control - Manage Name Servers | Online Free DevTools by Hexmos"
 name: ndc
 path: /freedevtools/tldr/common/ndc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ndc/"

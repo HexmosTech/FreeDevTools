@@ -1,5 +1,5 @@
 ---
-title: "Yank - Extract Text from Input | Free DevTools"
+title: "Yank - Extract Text from Input | Online Free DevTools by Hexmos"
 name: yank
 path: /freedevtools/tldr/common/yank
 canonical: "https://hexmos.com/freedevtools/tldr/common/yank/"

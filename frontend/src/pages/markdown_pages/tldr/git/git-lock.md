@@ -1,5 +1,5 @@
 ---
-title: "Git Lock - Control File Changes in Git | Free DevTools"
+title: "Git Lock - Control File Changes in Git | Online Free DevTools by Hexmos"
 name: git-lock
 path: /freedevtools/tldr/git/git-lock
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-lock/"

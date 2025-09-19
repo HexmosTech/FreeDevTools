@@ -1,5 +1,5 @@
 ---
-title: "Bleachbit - Clean Junk Files | Free DevTools"
+title: "Bleachbit - Clean Junk Files | Online Free DevTools by Hexmos"
 name: bleachbit_console
 path: /freedevtools/tldr/windows/bleachbit_console
 canonical: "https://hexmos.com/freedevtools/tldr/windows/bleachbit_console/"

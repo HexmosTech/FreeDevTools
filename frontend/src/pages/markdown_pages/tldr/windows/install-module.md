@@ -1,5 +1,5 @@
 ---
-title: "Install Module - Manage PowerShell Modules | Free DevTools"
+title: "Install Module - Manage PowerShell Modules | Online Free DevTools by Hexmos"
 name: install-module
 path: /freedevtools/tldr/windows/install-module
 canonical: "https://hexmos.com/freedevtools/tldr/windows/install-module/"

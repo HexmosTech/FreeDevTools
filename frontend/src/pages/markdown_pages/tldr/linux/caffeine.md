@@ -1,5 +1,5 @@
 ---
-title: "Prevent Idleness - Control Desktop Activity with Caffeine | Free DevTools"
+title: "Prevent Idleness - Control Desktop Activity with Caffeine | Online Free DevTools by Hexmos"
 name: caffeine
 path: /freedevtools/tldr/linux/caffeine
 canonical: "https://hexmos.com/freedevtools/tldr/linux/caffeine/"

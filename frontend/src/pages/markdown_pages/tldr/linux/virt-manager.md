@@ -1,5 +1,5 @@
 ---
-title: "Virt-Manager - Manage Virtual Machines | Free DevTools"
+title: "Virt-Manager - Manage Virtual Machines | Online Free DevTools by Hexmos"
 name: virt-manager
 path: /freedevtools/tldr/linux/virt-manager
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-manager/"

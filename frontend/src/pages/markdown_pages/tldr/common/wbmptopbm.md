@@ -1,5 +1,5 @@
 ---
-title: "Convert WBMP to PBM - Image Conversion | Free DevTools"
+title: "Convert WBMP to PBM - Image Conversion | Online Free DevTools by Hexmos"
 name: wbmptopbm
 path: /freedevtools/tldr/common/wbmptopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/wbmptopbm/"

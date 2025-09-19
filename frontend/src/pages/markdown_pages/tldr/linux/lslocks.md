@@ -1,5 +1,5 @@
 ---
-title: "List System Locks - Control System Resources with lslocks | Free DevTools"
+title: "List System Locks - Control System Resources with lslocks | Online Free DevTools by Hexmos"
 name: lslocks
 path: /freedevtools/tldr/linux/lslocks
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lslocks/"

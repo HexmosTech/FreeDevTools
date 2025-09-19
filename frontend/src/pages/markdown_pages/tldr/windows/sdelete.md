@@ -1,5 +1,5 @@
 ---
-title: "Secure Delete - Erase Files Securely | Free DevTools"
+title: "Secure Delete - Erase Files Securely | Online Free DevTools by Hexmos"
 name: sdelete
 path: "/freedevtools/tldr/windows/sdelete"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sdelete/"

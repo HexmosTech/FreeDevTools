@@ -1,5 +1,5 @@
 ---
-title: "Create Spreadsheets - Calligra Sheets | Free DevTools"
+title: "Create Spreadsheets - Calligra Sheets | Online Free DevTools by Hexmos"
 name: calligrasheets
 path: /freedevtools/tldr/common/calligrasheets
 canonical: "https://hexmos.com/freedevtools/tldr/common/calligrasheets/"

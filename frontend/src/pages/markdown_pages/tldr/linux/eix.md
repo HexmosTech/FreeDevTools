@@ -1,5 +1,5 @@
 ---
-title: "Search Gentoo Packages - Find Packages with Eix | Free DevTools"
+title: "Search Gentoo Packages - Find Packages with Eix | Online Free DevTools by Hexmos"
 name: eix
 path: /freedevtools/tldr/linux/eix
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eix/"

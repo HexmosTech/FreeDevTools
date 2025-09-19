@@ -1,5 +1,5 @@
 ---
-title: "Format Flat Files - Extract Fields with FFE | Free DevTools"
+title: "Format Flat Files - Extract Fields with FFE | Online Free DevTools by Hexmos"
 name: ffe
 path: /freedevtools/tldr/common/ffe
 canonical: "https://hexmos.com/freedevtools/tldr/common/ffe/"

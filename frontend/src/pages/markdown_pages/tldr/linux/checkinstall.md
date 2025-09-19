@@ -1,5 +1,5 @@
 ---
-title: "Create Linux Packages - Track Install with Checkinstall | Free DevTools"
+title: "Create Linux Packages - Track Install with Checkinstall | Online Free DevTools by Hexmos"
 name: checkinstall
 path: /freedevtools/tldr/linux/checkinstall
 canonical: "https://hexmos.com/freedevtools/tldr/linux/checkinstall/"

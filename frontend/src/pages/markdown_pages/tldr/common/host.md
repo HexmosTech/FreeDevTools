@@ -1,5 +1,5 @@
 ---
-title: "Host Lookup - Query DNS Records | Free DevTools"
+title: "Host Lookup - Query DNS Records | Online Free DevTools by Hexmos"
 name: host
 path: /freedevtools/tldr/common/host
 canonical: "https://hexmos.com/freedevtools/tldr/common/host/"

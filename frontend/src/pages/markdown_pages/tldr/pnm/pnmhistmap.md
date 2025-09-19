@@ -1,5 +1,5 @@
 ---
-title: "Generate PNM Histogram - Visualize Image Data | Free DevTools"
+title: "Generate PNM Histogram - Visualize Image Data | Online Free DevTools by Hexmos"
 name: pnmhistmap
 path: /freedevtools/tldr/pnm/pnmhistmap
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmhistmap/"

@@ -1,5 +1,5 @@
 ---
-title: "Slurm Diagnose - Inspect Slurmctld | Free DevTools"
+title: "Slurm Diagnose - Inspect Slurmctld | Online Free DevTools by Hexmos"
 name: sdiag
 path: /freedevtools/tldr/linux/sdiag
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sdiag/"

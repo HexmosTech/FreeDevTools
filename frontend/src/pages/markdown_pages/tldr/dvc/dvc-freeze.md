@@ -1,5 +1,5 @@
 ---
-title: "Freeze DVC Stages - Control Pipeline Execution | Free DevTools"
+title: "Freeze DVC Stages - Control Pipeline Execution | Online Free DevTools by Hexmos"
 name: dvc-freeze
 path: /freedevtools/tldr/dvc/dvc-freeze
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-freeze/"

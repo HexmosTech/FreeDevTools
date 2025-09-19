@@ -1,5 +1,5 @@
 ---
-title: "Count Lines of Code - Analyze LOC with CLI | Free DevTools"
+title: "Count Lines of Code - Analyze LOC with CLI | Online Free DevTools by Hexmos"
 name: loc
 path: /freedevtools/tldr/common/loc
 canonical: "https://hexmos.com/freedevtools/tldr/common/loc/"

@@ -1,5 +1,5 @@
 ---
-title: "Kubectl - Control Kubernetes Clusters | Free DevTools"
+title: "Kubectl - Control Kubernetes Clusters | Online Free DevTools by Hexmos"
 name: kubectl
 path: /freedevtools/tldr/kubectl/kubectl
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Jobs - Monitor Process Status | Free DevTools"
+title: "Control Jobs - Monitor Process Status | Online Free DevTools by Hexmos"
 name: jobs
 path: /freedevtools/tldr/common/jobs
 canonical: "https://hexmos.com/freedevtools/tldr/common/jobs/"

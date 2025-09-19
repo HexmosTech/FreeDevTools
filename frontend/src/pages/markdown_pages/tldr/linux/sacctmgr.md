@@ -1,5 +1,5 @@
 ---
-title: "Manage Slurm Accounts - Control with sacctmgr | Free DevTools"
+title: "Manage Slurm Accounts - Control with sacctmgr | Online Free DevTools by Hexmos"
 name: sacctmgr
 path: /freedevtools/tldr/linux/sacctmgr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sacctmgr/"

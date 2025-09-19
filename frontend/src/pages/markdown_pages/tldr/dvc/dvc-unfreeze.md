@@ -1,5 +1,5 @@
 ---
-title: "DVC Unfreeze - Restore DVC Stage Tracking | Free DevTools"
+title: "DVC Unfreeze - Restore DVC Stage Tracking | Online Free DevTools by Hexmos"
 name: dvc-unfreeze
 path: /freedevtools/tldr/dvc/dvc-unfreeze
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-unfreeze/"

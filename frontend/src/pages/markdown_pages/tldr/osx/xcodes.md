@@ -1,5 +1,5 @@
 ---
-title: "Xcode Manager - Control Xcode Versions | Free DevTools"
+title: "Xcode Manager - Control Xcode Versions | Online Free DevTools by Hexmos"
 name: xcodes
 path: /freedevtools/tldr/osx/xcodes
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xcodes/"

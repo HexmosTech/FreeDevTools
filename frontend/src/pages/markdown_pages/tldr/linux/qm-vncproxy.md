@@ -1,5 +1,5 @@
 ---
-title: "Control VM VNC Proxy - Manage Virtual Machines | Free DevTools"
+title: "Control VM VNC Proxy - Manage Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-vncproxy
 path: /freedevtools/tldr/linux/qm-vncproxy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-vncproxy/"

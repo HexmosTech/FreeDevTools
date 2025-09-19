@@ -1,5 +1,5 @@
 ---
-title: "QM Disk Rescan - Update VM Disks | Free DevTools"
+title: "QM Disk Rescan - Update VM Disks | Online Free DevTools by Hexmos"
 name: qm-disk-rescan
 path: /freedevtools/tldr/linux/qm-disk-rescan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk-rescan/"

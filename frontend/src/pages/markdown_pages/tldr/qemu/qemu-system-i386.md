@@ -1,5 +1,5 @@
 ---
-title: "Emulate i386 - Run Virtual Machines | Free DevTools"
+title: "Emulate i386 - Run Virtual Machines | Online Free DevTools by Hexmos"
 name: qemu-system-i386
 path: /freedevtools/tldr/qemu/qemu-system-i386
 canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-system-i386/"

@@ -1,5 +1,5 @@
 ---
-title: "Android Screencap - Capture Screenshots with ADB | Free DevTools"
+title: "Android Screencap - Capture Screenshots with ADB | Online Free DevTools by Hexmos"
 name: screencap
 path: /freedevtools/tldr/android/screencap
 canonical: "https://hexmos.com/freedevtools/tldr/android/screencap/"

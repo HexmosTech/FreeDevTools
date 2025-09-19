@@ -1,5 +1,5 @@
 ---
-title: "PNM Cut - Crop PNM Images | Free DevTools"
+title: "PNM Cut - Crop PNM Images | Online Free DevTools by Hexmos"
 name: pnmcut
 path: /freedevtools/tldr/pnm/pnmcut
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcut/"

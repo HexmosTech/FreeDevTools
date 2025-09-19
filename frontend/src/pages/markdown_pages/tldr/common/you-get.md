@@ -1,5 +1,5 @@
 ---
-title: "Download Media - Download Videos and Audios with you-get | Free DevTools"
+title: "Download Media - Download Videos and Audios with you-get | Online Free DevTools by Hexmos"
 name: you-get
 path: /freedevtools/tldr/common/you-get
 canonical: "https://hexmos.com/freedevtools/tldr/common/you-get/"

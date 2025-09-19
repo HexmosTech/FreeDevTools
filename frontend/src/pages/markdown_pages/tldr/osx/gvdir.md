@@ -1,5 +1,5 @@
 ---
-title: "Directory View - List Directories with gvdir | Free DevTools"
+title: "Directory View - List Directories with gvdir | Online Free DevTools by Hexmos"
 name: gvdir
 path: /freedevtools/tldr/osx/gvdir
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gvdir/"

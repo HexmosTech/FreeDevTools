@@ -1,5 +1,5 @@
 ---
-title: "Display Calendar - View Dates with cal | Free DevTools"
+title: "Display Calendar - View Dates with cal | Online Free DevTools by Hexmos"
 name: cal
 path: /freedevtools/tldr/freebsd/cal
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/cal/"

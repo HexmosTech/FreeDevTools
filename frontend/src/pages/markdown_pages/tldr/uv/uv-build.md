@@ -1,5 +1,5 @@
 ---
-title: "Build Python Packages - Create Wheels & SDists | Free DevTools"
+title: "Build Python Packages - Create Wheels & SDists | Online Free DevTools by Hexmos"
 name: uv-build
 path: /freedevtools/tldr/uv/uv-build
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-build/"

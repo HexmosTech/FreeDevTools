@@ -1,5 +1,5 @@
 ---
-title: "List Files - Control Directory Contents | Free DevTools"
+title: "List Files - Control Directory Contents | Online Free DevTools by Hexmos"
 name: ls
 path: /freedevtools/tldr/common/ls
 canonical: "https://hexmos.com/freedevtools/tldr/common/ls/"

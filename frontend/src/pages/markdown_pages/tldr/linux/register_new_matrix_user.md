@@ -1,5 +1,5 @@
 ---
-title: "Create Matrix User - Register Users on Linux | Free DevTools"
+title: "Create Matrix User - Register Users on Linux | Online Free DevTools by Hexmos"
 name: register_new_matrix_user
 path: /freedevtools/tldr/linux/register_new_matrix_user
 canonical: "https://hexmos.com/freedevtools/tldr/linux/register_new_matrix_user/"

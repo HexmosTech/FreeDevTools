@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Taint - Control Node Taints | Free DevTools"
+title: "Kubectl Taint - Control Node Taints | Online Free DevTools by Hexmos"
 name: kubectl-taint
 path: /freedevtools/tldr/kubectl/kubectl-taint
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-taint/"

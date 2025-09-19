@@ -1,5 +1,5 @@
 ---
-title: "Translate Offline - Translate Text with Argos Translate | Free DevTools"
+title: "Translate Offline - Translate Text with Argos Translate | Online Free DevTools by Hexmos"
 name: argos-translate
 path: /freedevtools/tldr/common/argos-translate
 canonical: "https://hexmos.com/freedevtools/tldr/common/argos-translate/"

@@ -1,5 +1,5 @@
 ---
-title: "Node Version Manager - List Node.js Versions | Free DevTools"
+title: "Node Version Manager - List Node.js Versions | Online Free DevTools by Hexmos"
 name: get-nodeversions
 path: /freedevtools/tldr/get/get-nodeversions
 canonical: "https://hexmos.com/freedevtools/tldr/get/get-nodeversions/"

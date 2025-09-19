@@ -1,5 +1,5 @@
 ---
-title: "PNM Composer - Compose PNM Images | Free DevTools"
+title: "PNM Composer - Compose PNM Images | Online Free DevTools by Hexmos"
 name: pnmcomp
 path: /freedevtools/tldr/pnm/pnmcomp
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcomp/"

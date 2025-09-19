@@ -1,5 +1,5 @@
 ---
-title: "Edit Libvirt XML - Manage VM Configurations | Free DevTools"
+title: "Edit Libvirt XML - Manage VM Configurations | Online Free DevTools by Hexmos"
 name: virt-xml
 path: /freedevtools/tldr/linux/virt-xml
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-xml/"

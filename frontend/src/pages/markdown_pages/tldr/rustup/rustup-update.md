@@ -1,5 +1,5 @@
 ---
-title: "Rust Update - Manage Rust Toolchains | Free DevTools"
+title: "Rust Update - Manage Rust Toolchains | Online Free DevTools by Hexmos"
 name: rustup-update
 path: /freedevtools/tldr/rustup/rustup-update
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-update/"

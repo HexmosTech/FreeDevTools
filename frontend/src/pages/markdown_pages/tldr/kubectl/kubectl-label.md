@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Label - Manage Kubernetes Labels | Free DevTools"
+title: "Kubectl Label - Manage Kubernetes Labels | Online Free DevTools by Hexmos"
 name: kubectl-label
 path: /freedevtools/tldr/kubectl/kubectl-label
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-label/"

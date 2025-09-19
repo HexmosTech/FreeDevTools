@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to ESC/P2 - Generate Printer Files | Free DevTools"
+title: "Convert PBM to ESC/P2 - Generate Printer Files | Online Free DevTools by Hexmos"
 name: pbmtoescp2
 path: /freedevtools/tldr/common/pbmtoescp2
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoescp2/"

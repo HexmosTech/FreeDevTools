@@ -1,5 +1,5 @@
 ---
-title: "Kiterunner Schema - Compile and Replay API Endpoints | Free DevTools"
+title: "Kiterunner Schema - Compile and Replay API Endpoints | Online Free DevTools by Hexmos"
 name: kiterunner-kb
 path: /freedevtools/tldr/kiterunner/kiterunner-kb
 canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-kb/"

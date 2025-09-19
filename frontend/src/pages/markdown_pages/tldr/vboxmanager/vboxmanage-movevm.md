@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage Move VM - Relocate Virtual Machines | Free DevTools"
+title: "VBoxManage Move VM - Relocate Virtual Machines | Online Free DevTools by Hexmos"
 name: vboxmanage-movevm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-movevm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-movevm/"

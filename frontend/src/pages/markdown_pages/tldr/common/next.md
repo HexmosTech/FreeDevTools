@@ -1,5 +1,5 @@
 ---
-title: "Generate Next.js App - Build Optimized Apps | Free DevTools"
+title: "Generate Next.js App - Build Optimized Apps | Online Free DevTools by Hexmos"
 name: next
 path: /freedevtools/tldr/common/next
 canonical: "https://hexmos.com/freedevtools/tldr/common/next/"

@@ -1,5 +1,5 @@
 ---
-title: "Choco Push - Deploy NuGet Packages | Free DevTools"
+title: "Choco Push - Deploy NuGet Packages | Online Free DevTools by Hexmos"
 name: choco-push
 path: /freedevtools/tldr/windows/choco-push
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-push/"

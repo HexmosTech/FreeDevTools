@@ -1,5 +1,5 @@
 ---
-title: "Yadm Config - Manage Git Configurations | Free DevTools"
+title: "Yadm Config - Manage Git Configurations | Online Free DevTools by Hexmos"
 name: yadm-config
 path: /freedevtools/tldr/yadm/yadm-config
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-config/"

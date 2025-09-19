@@ -1,5 +1,5 @@
 ---
-title: "Gmake - Generate Makefiles | Free DevTools"
+title: "Gmake - Generate Makefiles | Online Free DevTools by Hexmos"
 name: gmake
 path: /freedevtools/tldr/osx/gmake
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmake/"

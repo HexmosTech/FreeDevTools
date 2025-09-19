@@ -1,5 +1,5 @@
 ---
-title: "Calendar Display - View Calendar with gcal | Free DevTools"
+title: "Calendar Display - View Calendar with gcal | Online Free DevTools by Hexmos"
 name: gcal
 path: /freedevtools/tldr/common/gcal
 canonical: "https://hexmos.com/freedevtools/tldr/common/gcal/"

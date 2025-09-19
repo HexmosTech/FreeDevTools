@@ -1,5 +1,5 @@
 ---
-title: "Caffeinate - Prevent macOS Sleep | Free DevTools"
+title: "Caffeinate - Prevent macOS Sleep | Online Free DevTools by Hexmos"
 name: caffeinate
 path: /freedevtools/tldr/osx/caffeinate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/caffeinate/"

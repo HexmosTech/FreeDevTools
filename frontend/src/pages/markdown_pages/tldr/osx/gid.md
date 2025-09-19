@@ -1,5 +1,5 @@
 ---
-title: "GID - View User Group ID | Free DevTools"
+title: "GID - View User Group ID | Online Free DevTools by Hexmos"
 name: gid
 path: /freedevtools/tldr/osx/gid
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gid/"

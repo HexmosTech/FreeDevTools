@@ -1,5 +1,5 @@
 ---
-title: "Control Parallel Ports - tunelp Configuration | Free DevTools"
+title: "Control Parallel Ports - tunelp Configuration | Online Free DevTools by Hexmos"
 name: tunelp
 path: /freedevtools/tldr/linux/tunelp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tunelp/"

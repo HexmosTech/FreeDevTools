@@ -1,5 +1,5 @@
 ---
-title: "ABRT - Analyze System Crashes | Free DevTools"
+title: "ABRT - Analyze System Crashes | Online Free DevTools by Hexmos"
 name: abrt
 path: /freedevtools/tldr/linux/abrt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/abrt/"

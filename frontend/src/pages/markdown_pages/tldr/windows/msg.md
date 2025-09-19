@@ -1,5 +1,5 @@
 ---
-title: "Message Sender - Send Messages via Command Line | Free DevTools"
+title: "Message Sender - Send Messages via Command Line | Online Free DevTools by Hexmos"
 name: msg
 path: /freedevtools/tldr/windows/msg
 canonical: "https://hexmos.com/freedevtools/tldr/windows/msg/"

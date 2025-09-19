@@ -1,5 +1,5 @@
 ---
-title: "Install Python Packages - Control pipwin Packages | Free DevTools"
+title: "Install Python Packages - Control pipwin Packages | Online Free DevTools by Hexmos"
 name: pipwin
 path: /freedevtools/tldr/windows/pipwin
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pipwin/"

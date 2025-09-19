@@ -1,5 +1,5 @@
 ---
-title: "Pacman Deptest - Check Package Dependencies | Free DevTools"
+title: "Pacman Deptest - Check Package Dependencies | Online Free DevTools by Hexmos"
 name: pacman-deptest
 path: /freedevtools/tldr/linux/pacman-deptest
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-deptest/"

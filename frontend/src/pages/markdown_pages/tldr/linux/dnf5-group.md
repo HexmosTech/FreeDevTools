@@ -1,5 +1,5 @@
 ---
-title: "DNF5 Group - Manage Package Groups | Free DevTools"
+title: "DNF5 Group - Manage Package Groups | Online Free DevTools by Hexmos"
 name: dnf5-group
 path: /freedevtools/tldr/linux/dnf5-group
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf5-group/"

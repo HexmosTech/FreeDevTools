@@ -1,5 +1,5 @@
 ---
-title: "Fingerprint Verify - Authenticate Users on Linux | Free DevTools"
+title: "Fingerprint Verify - Authenticate Users on Linux | Online Free DevTools by Hexmos"
 name: fprintd-verify
 path: /freedevtools/tldr/linux/fprintd-verify
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-verify/"

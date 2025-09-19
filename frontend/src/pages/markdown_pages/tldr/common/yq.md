@@ -1,5 +1,5 @@
 ---
-title: "YAML Processor - Format YAML Data with YQ | Free DevTools"
+title: "YAML Processor - Format YAML Data with YQ | Online Free DevTools by Hexmos"
 name: yq
 path: /freedevtools/tldr/common/yq
 canonical: "https://hexmos.com/freedevtools/tldr/common/yq/"

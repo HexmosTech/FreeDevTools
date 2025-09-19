@@ -1,5 +1,5 @@
 ---
-title: "Create k3d Clusters - Manage k3s Docker | Free DevTools"
+title: "Create k3d Clusters - Manage k3s Docker | Online Free DevTools by Hexmos"
 name: k3d
 path: /freedevtools/tldr/common/k3d
 canonical: "https://hexmos.com/freedevtools/tldr/common/k3d/"

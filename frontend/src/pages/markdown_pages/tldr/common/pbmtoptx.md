@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to PTX - Generate Printronix Graphics | Free DevTools"
+title: "Convert PBM to PTX - Generate Printronix Graphics | Online Free DevTools by Hexmos"
 name: pbmtoptx
 path: /freedevtools/tldr/common/pbmtoptx
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoptx/"

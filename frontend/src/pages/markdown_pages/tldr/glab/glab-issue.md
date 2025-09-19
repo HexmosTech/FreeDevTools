@@ -1,5 +1,5 @@
 ---
-title: "Manage GitLab Issues - View & Create Issues | Free DevTools"
+title: "Manage GitLab Issues - View & Create Issues | Online Free DevTools by Hexmos"
 name: glab-issue
 path: /freedevtools/tldr/glab/glab-issue
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-issue/"

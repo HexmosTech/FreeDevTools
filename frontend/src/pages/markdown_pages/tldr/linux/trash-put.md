@@ -1,5 +1,5 @@
 ---
-title: "Trash Put - Move Files to Trash | Free DevTools"
+title: "Trash Put - Move Files to Trash | Online Free DevTools by Hexmos"
 name: trash-put
 path: /freedevtools/tldr/linux/trash-put
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash-put/"

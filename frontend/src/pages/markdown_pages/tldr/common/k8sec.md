@@ -1,5 +1,5 @@
 ---
-title: "Manage Kubernetes Secrets - Control K8s Secrets | Free DevTools"
+title: "Manage Kubernetes Secrets - Control K8s Secrets | Online Free DevTools by Hexmos"
 name: k8sec
 path: /freedevtools/tldr/common/k8sec
 canonical: "https://hexmos.com/freedevtools/tldr/common/k8sec/"

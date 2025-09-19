@@ -1,5 +1,5 @@
 ---
-title: "Push Chocolatey Package - Deploy Software | Free DevTools"
+title: "Push Chocolatey Package - Deploy Software | Online Free DevTools by Hexmos"
 name: cpush
 path: /freedevtools/tldr/windows/cpush
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cpush/"

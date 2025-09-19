@@ -1,5 +1,5 @@
 ---
-title: "Fastlane - Build Mobile Apps | Free DevTools"
+title: "Fastlane - Build Mobile Apps | Online Free DevTools by Hexmos"
 name: fastlane
 path: /freedevtools/tldr/common/fastlane
 canonical: "https://hexmos.com/freedevtools/tldr/common/fastlane/"

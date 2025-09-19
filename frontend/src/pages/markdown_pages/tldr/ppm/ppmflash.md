@@ -1,5 +1,5 @@
 ---
-title: "Flash PPM Image - Generate Brighter Images | Free DevTools"
+title: "Flash PPM Image - Generate Brighter Images | Online Free DevTools by Hexmos"
 name: ppmflash
 path: /freedevtools/tldr/ppm/ppmflash
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmflash/"

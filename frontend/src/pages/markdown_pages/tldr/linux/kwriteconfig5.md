@@ -1,5 +1,5 @@
 ---
-title: "Control KConfig - Write KDE Plasma Settings | Free DevTools"
+title: "Control KConfig - Write KDE Plasma Settings | Online Free DevTools by Hexmos"
 name: kwriteconfig5
 path: /freedevtools/tldr/linux/kwriteconfig5
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kwriteconfig5/"

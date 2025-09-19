@@ -1,5 +1,5 @@
 ---
-title: "Logoff - Terminate Login Sessions | Free DevTools"
+title: "Logoff - Terminate Login Sessions | Online Free DevTools by Hexmos"
 name: logoff
 path: /freedevtools/tldr/windows/logoff
 canonical: "https://hexmos.com/freedevtools/tldr/windows/logoff/"

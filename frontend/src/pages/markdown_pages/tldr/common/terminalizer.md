@@ -1,5 +1,5 @@
 ---
-title: "Generate Terminal GIFs - Terminalizer | Free DevTools"
+title: "Generate Terminal GIFs - Terminalizer | Online Free DevTools by Hexmos"
 name: terminalizer
 path: /freedevtools/tldr/common/terminalizer
 canonical: "https://hexmos.com/freedevtools/tldr/common/terminalizer/"

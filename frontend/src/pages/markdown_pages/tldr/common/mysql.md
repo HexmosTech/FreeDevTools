@@ -1,5 +1,5 @@
 ---
-title: "MySQL Tool - Manage Databases | Free DevTools"
+title: "MySQL Tool - Manage Databases | Online Free DevTools by Hexmos"
 name: mysql
 path: /freedevtools/tldr/common/mysql
 canonical: "https://hexmos.com/freedevtools/tldr/common/mysql/"

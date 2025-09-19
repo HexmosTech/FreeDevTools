@@ -1,5 +1,5 @@
 ---
-title: "TCPkill - Control TCP Connections | Free DevTools"
+title: "TCPkill - Control TCP Connections | Online Free DevTools by Hexmos"
 name: tcpkill
 path: /freedevtools/tldr/linux/tcpkill
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tcpkill/"

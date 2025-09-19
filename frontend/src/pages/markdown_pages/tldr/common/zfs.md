@@ -1,5 +1,5 @@
 ---
-title: "ZFS Manager - Control ZFS Filesystems | Free DevTools"
+title: "ZFS Manager - Control ZFS Filesystems | Online Free DevTools by Hexmos"
 name: zfs
 path: /freedevtools/tldr/common/zfs
 canonical: "https://hexmos.com/freedevtools/tldr/common/zfs/"

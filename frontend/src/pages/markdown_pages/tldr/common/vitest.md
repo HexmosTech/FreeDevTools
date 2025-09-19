@@ -1,5 +1,5 @@
 ---
-title: "Vitest - Run Fast JavaScript Tests | Free DevTools"
+title: "Vitest - Run Fast JavaScript Tests | Online Free DevTools by Hexmos"
 name: vitest
 path: /freedevtools/tldr/common/vitest
 canonical: "https://hexmos.com/freedevtools/tldr/common/vitest/"

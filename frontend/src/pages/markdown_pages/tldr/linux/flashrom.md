@@ -1,5 +1,5 @@
 ---
-title: "Flashrom - Manage Flash Memory | Free DevTools"
+title: "Flashrom - Manage Flash Memory | Online Free DevTools by Hexmos"
 name: flashrom
 path: /freedevtools/tldr/linux/flashrom
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flashrom/"

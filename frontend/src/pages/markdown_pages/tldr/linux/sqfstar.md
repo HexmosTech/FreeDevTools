@@ -1,5 +1,5 @@
 ---
-title: "Create SquashFS - From Tar Archive | Free DevTools"
+title: "Create SquashFS - From Tar Archive | Online Free DevTools by Hexmos"
 name: sqfstar
 path: /freedevtools/tldr/linux/sqfstar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sqfstar/"

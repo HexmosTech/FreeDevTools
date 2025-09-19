@@ -1,5 +1,5 @@
 ---
-title: "Cloud Instance Control - Manage VirtualBox Cloud Instances | Free DevTools"
+title: "Cloud Instance Control - Manage VirtualBox Cloud Instances | Online Free DevTools by Hexmos"
 name: vboxmanage-cloud
 path: /freedevtools/tldr/vboxmanager/vboxmanage-cloud
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-cloud/"

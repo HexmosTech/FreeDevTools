@@ -1,5 +1,5 @@
 ---
-title: "Sed - Edit Text Scriptably | Free DevTools"
+title: "Sed - Edit Text Scriptably | Online Free DevTools by Hexmos"
 name: sed
 path: /freedevtools/tldr/osx/sed
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sed/"

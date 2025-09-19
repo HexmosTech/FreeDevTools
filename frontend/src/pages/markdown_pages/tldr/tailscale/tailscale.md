@@ -1,5 +1,5 @@
 ---
-title: "Tailscale Control - Manage WireGuard Networks | Free DevTools"
+title: "Tailscale Control - Manage WireGuard Networks | Online Free DevTools by Hexmos"
 name: tailscale
 path: /freedevtools/tldr/tailscale/tailscale
 canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale/"

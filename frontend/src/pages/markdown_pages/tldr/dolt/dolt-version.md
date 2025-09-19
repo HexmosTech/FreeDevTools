@@ -1,5 +1,5 @@
 ---
-title: "Control Dolt Version - Display Current Version | Free DevTools"
+title: "Control Dolt Version - Display Current Version | Online Free DevTools by Hexmos"
 name: dolt-version
 path: /freedevtools/tldr/dolt/dolt-version
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-version/"

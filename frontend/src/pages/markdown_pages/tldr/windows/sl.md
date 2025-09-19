@@ -1,5 +1,5 @@
 ---
-title: "Set-Location - Control PowerShell Directory | Free DevTools"
+title: "Set-Location - Control PowerShell Directory | Online Free DevTools by Hexmos"
 name: sl
 path: /freedevtools/tldr/windows/sl
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sl/"

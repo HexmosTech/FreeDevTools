@@ -1,5 +1,5 @@
 ---
-title: "Kafka Control Tool - Consume & Produce Kafka Messages | Free DevTools"
+title: "Kafka Control Tool - Consume & Produce Kafka Messages | Online Free DevTools by Hexmos"
 name: kcat
 path: /freedevtools/tldr/common/kcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/kcat/"

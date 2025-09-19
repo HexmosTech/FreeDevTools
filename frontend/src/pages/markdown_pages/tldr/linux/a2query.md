@@ -1,5 +1,5 @@
 ---
-title: "A2query - Retrieve Apache Configuration | Free DevTools"
+title: "A2query - Retrieve Apache Configuration | Online Free DevTools by Hexmos"
 name: a2query
 path: /freedevtools/tldr/linux/a2query
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2query/"

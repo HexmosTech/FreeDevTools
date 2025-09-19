@@ -1,5 +1,5 @@
 ---
-title: "CSV Look - Format CSV Data in Terminal | Free DevTools"
+title: "CSV Look - Format CSV Data in Terminal | Online Free DevTools by Hexmos"
 name: csvlook
 path: /freedevtools/tldr/cs/csvlook
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csvlook/"

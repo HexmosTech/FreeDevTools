@@ -1,5 +1,5 @@
 ---
-title: "NPM Test - Execute Project Tests | Free DevTools"
+title: "NPM Test - Execute Project Tests | Online Free DevTools by Hexmos"
 name: npm-test
 path: /freedevtools/tldr/npm/npm-test
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-test/"

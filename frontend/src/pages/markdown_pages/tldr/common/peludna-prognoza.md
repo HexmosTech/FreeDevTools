@@ -1,5 +1,5 @@
 ---
-title: "Fetch Pollen Data - peludna-prognoza CLI | Free DevTools"
+title: "Fetch Pollen Data - peludna-prognoza CLI | Online Free DevTools by Hexmos"
 name: peludna-prognoza
 path: /freedevtools/tldr/common/peludna-prognoza
 canonical: "https://hexmos.com/freedevtools/tldr/common/peludna-prognoza/"

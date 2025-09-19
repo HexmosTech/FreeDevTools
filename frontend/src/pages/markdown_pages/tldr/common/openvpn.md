@@ -1,5 +1,5 @@
 ---
-title: "OpenVPN - Create Secure VPN Tunnels | Free DevTools"
+title: "OpenVPN - Create Secure VPN Tunnels | Online Free DevTools by Hexmos"
 name: openvpn
 path: /freedevtools/tldr/common/openvpn
 canonical: "https://hexmos.com/freedevtools/tldr/common/openvpn/"

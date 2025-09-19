@@ -1,5 +1,5 @@
 ---
-title: "Monitor Battery - Manage Notebook Batteries | Free DevTools"
+title: "Monitor Battery - Manage Notebook Batteries | Online Free DevTools by Hexmos"
 name: battop
 path: /freedevtools/tldr/linux/battop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/battop/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Electrum Wallet - Manage Keys | Free DevTools"
+title: "Create Electrum Wallet - Manage Keys | Online Free DevTools by Hexmos"
 name: electrum
 path: /freedevtools/tldr/common/electrum
 canonical: "https://hexmos.com/freedevtools/tldr/common/electrum/"

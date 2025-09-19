@@ -1,5 +1,5 @@
 ---
-title: "Create PipeWire Loopback - Audio Routing | Free DevTools"
+title: "Create PipeWire Loopback - Audio Routing | Online Free DevTools by Hexmos"
 name: pw-loopback
 path: /freedevtools/tldr/linux/pw-loopback
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-loopback/"

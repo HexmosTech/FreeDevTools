@@ -1,5 +1,5 @@
 ---
-title: "Show Git Index - Inspect Packfile Archives | Free DevTools"
+title: "Show Git Index - Inspect Packfile Archives | Online Free DevTools by Hexmos"
 name: git-show-index
 path: /freedevtools/tldr/git/git-show-index
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-index/"

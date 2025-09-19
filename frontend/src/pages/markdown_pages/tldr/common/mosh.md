@@ -1,5 +1,5 @@
 ---
-title: "Mosh Shell - Connect Securely to Remote Servers | Free DevTools"
+title: "Mosh Shell - Connect Securely to Remote Servers | Online Free DevTools by Hexmos"
 name: mosh
 path: /freedevtools/tldr/common/mosh
 canonical: "https://hexmos.com/freedevtools/tldr/common/mosh/"

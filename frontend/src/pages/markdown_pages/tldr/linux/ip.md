@@ -1,5 +1,5 @@
 ---
-title: "Control Network with ip Command - Manage Routing | Free DevTools"
+title: "Control Network with ip Command - Manage Routing | Online Free DevTools by Hexmos"
 name: ip
 path: /freedevtools/tldr/linux/ip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip/"

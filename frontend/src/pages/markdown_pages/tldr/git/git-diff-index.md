@@ -1,5 +1,5 @@
 ---
-title: "Diff Index - Compare Git Index to Commit | Free DevTools"
+title: "Diff Index - Compare Git Index to Commit | Online Free DevTools by Hexmos"
 name: git-diff-index
 path: /freedevtools/tldr/git/git-diff-index
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff-index/"

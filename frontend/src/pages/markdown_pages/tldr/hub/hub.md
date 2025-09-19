@@ -1,5 +1,5 @@
 ---
-title: "GitHub Hub - Manage GitHub Repositories | Free DevTools"
+title: "GitHub Hub - Manage GitHub Repositories | Online Free DevTools by Hexmos"
 name: hub
 path: /freedevtools/tldr/hub/hub
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub/"

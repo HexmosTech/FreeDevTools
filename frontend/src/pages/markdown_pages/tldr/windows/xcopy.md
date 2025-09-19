@@ -1,5 +1,5 @@
 ---
-title: "Xcopy - Copy Files and Directories | Free DevTools"
+title: "Xcopy - Copy Files and Directories | Online Free DevTools by Hexmos"
 name: xcopy
 path: /freedevtools/tldr/windows/xcopy
 canonical: "https://hexmos.com/freedevtools/tldr/windows/xcopy/"

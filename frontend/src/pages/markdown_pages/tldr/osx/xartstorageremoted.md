@@ -1,5 +1,5 @@
 ---
-title: "xART Storage Remote - Manage CoProcessor Data | Free DevTools"
+title: "xART Storage Remote - Manage CoProcessor Data | Online Free DevTools by Hexmos"
 name: xartstorageremoted
 path: /freedevtools/tldr/osx/xartstorageremoted
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xartstorageremoted/"

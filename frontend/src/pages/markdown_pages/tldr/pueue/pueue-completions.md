@@ -1,5 +1,5 @@
 ---
-title: "Pueue Completions - Generate Shell Completions | Free DevTools"
+title: "Pueue Completions - Generate Shell Completions | Online Free DevTools by Hexmos"
 name: pueue-completions
 path: /freedevtools/tldr/pueue/pueue-completions
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-completions/"

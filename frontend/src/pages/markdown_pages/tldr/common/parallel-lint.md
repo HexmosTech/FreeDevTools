@@ -1,5 +1,5 @@
 ---
-title: "Lint PHP Syntax - Parallel PHP Syntax Checker | Free DevTools"
+title: "Lint PHP Syntax - Parallel PHP Syntax Checker | Online Free DevTools by Hexmos"
 name: parallel-lint
 path: /freedevtools/tldr/common/parallel-lint
 canonical: "https://hexmos.com/freedevtools/tldr/common/parallel-lint/"

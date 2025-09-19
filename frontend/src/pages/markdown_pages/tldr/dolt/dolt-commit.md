@@ -1,5 +1,5 @@
 ---
-title: "Dolt Commit - Save Changes in Dolt Repositories | Free DevTools"
+title: "Dolt Commit - Save Changes in Dolt Repositories | Online Free DevTools by Hexmos"
 name: dolt-commit
 path: /freedevtools/tldr/dolt/dolt-commit
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-commit/"

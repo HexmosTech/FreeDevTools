@@ -1,5 +1,5 @@
 ---
-title: "Octal Dump - Inspect File Data with God | Free DevTools"
+title: "Octal Dump - Inspect File Data with God | Online Free DevTools by Hexmos"
 name: god
 path: /freedevtools/tldr/osx/god
 canonical: "https://hexmos.com/freedevtools/tldr/osx/god/"

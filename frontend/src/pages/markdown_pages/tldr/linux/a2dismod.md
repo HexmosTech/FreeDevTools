@@ -1,5 +1,5 @@
 ---
-title: "Disable Apache Module - Control Modules on Linux | Free DevTools"
+title: "Disable Apache Module - Control Modules on Linux | Online Free DevTools by Hexmos"
 name: a2dismod
 path: /freedevtools/tldr/linux/a2dismod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2dismod/"

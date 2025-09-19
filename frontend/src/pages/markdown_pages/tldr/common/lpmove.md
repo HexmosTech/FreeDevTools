@@ -1,5 +1,5 @@
 ---
-title: "Control Printer Jobs - lpmove Command | Free DevTools"
+title: "Control Printer Jobs - lpmove Command | Online Free DevTools by Hexmos"
 name: lpmove
 path: /freedevtools/tldr/common/lpmove
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpmove/"

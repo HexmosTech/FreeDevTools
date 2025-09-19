@@ -1,5 +1,5 @@
 ---
-title: "ADB Connect - Connect to Android Devices | Free DevTools"
+title: "ADB Connect - Connect to Android Devices | Online Free DevTools by Hexmos"
 name: adb-connect
 path: /freedevtools/tldr/adb/adb-connect
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-connect/"

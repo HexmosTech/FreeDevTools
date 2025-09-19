@@ -1,5 +1,5 @@
 ---
-title: "Control Chromium Browser - Open URLs with Flags | Free DevTools"
+title: "Control Chromium Browser - Open URLs with Flags | Online Free DevTools by Hexmos"
 name: chromium
 path: /freedevtools/tldr/windows/chromium
 canonical: "https://hexmos.com/freedevtools/tldr/windows/chromium/"

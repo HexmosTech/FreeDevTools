@@ -1,5 +1,5 @@
 ---
-title: "Set Shell Options - Control Bash Behavior | Free DevTools"
+title: "Set Shell Options - Control Bash Behavior | Online Free DevTools by Hexmos"
 name: set
 path: /freedevtools/tldr/set/set
 canonical: "https://hexmos.com/freedevtools/tldr/set/set/"

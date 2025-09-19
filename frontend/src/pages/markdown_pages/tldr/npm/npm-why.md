@@ -1,5 +1,5 @@
 ---
-title: "npm-why - Explain npm Package Installation | Free DevTools"
+title: "npm-why - Explain npm Package Installation | Online Free DevTools by Hexmos"
 name: npm-why
 path: /freedevtools/tldr/npm/npm-why
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-why/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage PlatformIO Teams - Create & Control | Free DevTools"
+title: "Manage PlatformIO Teams - Create & Control | Online Free DevTools by Hexmos"
 name: pio-team
 path: /freedevtools/tldr/pio/pio-team
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-team/"

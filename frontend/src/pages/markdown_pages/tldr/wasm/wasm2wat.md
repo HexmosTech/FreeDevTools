@@ -1,5 +1,5 @@
 ---
-title: "WASM to WAT - Convert WebAssembly to Text | Free DevTools"
+title: "WASM to WAT - Convert WebAssembly to Text | Online Free DevTools by Hexmos"
 name: wasm2wat
 path: /freedevtools/tldr/wasm/wasm2wat
 canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm2wat/"

@@ -1,5 +1,5 @@
 ---
-title: "Archive Manager - Manage Files with Atool | Free DevTools"
+title: "Archive Manager - Manage Files with Atool | Online Free DevTools by Hexmos"
 name: atool
 path: /freedevtools/tldr/common/atool
 canonical: "https://hexmos.com/freedevtools/tldr/common/atool/"

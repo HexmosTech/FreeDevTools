@@ -1,5 +1,5 @@
 ---
-title: "Font Tools - Manipulate Fonts | Free DevTools"
+title: "Font Tools - Manipulate Fonts | Online Free DevTools by Hexmos"
 name: fonttools
 path: /freedevtools/tldr/linux/fonttools
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fonttools/"

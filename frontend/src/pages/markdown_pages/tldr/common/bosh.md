@@ -1,5 +1,5 @@
 ---
-title: "BOSH Manager - Deploy BOSH Directors | Free DevTools"
+title: "BOSH Manager - Deploy BOSH Directors | Online Free DevTools by Hexmos"
 name: bosh
 path: /freedevtools/tldr/common/bosh
 canonical: "https://hexmos.com/freedevtools/tldr/common/bosh/"

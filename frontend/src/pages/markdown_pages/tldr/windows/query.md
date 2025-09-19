@@ -1,5 +1,5 @@
 ---
-title: "Query User Sessions - Display Processes | Free DevTools"
+title: "Query User Sessions - Display Processes | Online Free DevTools by Hexmos"
 name: query
 path: /freedevtools/tldr/windows/query
 canonical: "https://hexmos.com/freedevtools/tldr/windows/query/"

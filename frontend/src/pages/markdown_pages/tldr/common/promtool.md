@@ -1,5 +1,5 @@
 ---
-title: "Promtool Validator - Validate Prometheus Configs | Free DevTools"
+title: "Promtool Validator - Validate Prometheus Configs | Online Free DevTools by Hexmos"
 name: promtool
 path: /freedevtools/tldr/common/promtool
 canonical: "https://hexmos.com/freedevtools/tldr/common/promtool/"

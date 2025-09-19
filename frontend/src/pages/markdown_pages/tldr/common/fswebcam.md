@@ -1,5 +1,5 @@
 ---
-title: "Capture Webcam Image - Control Camera Feed | Free DevTools"
+title: "Capture Webcam Image - Control Camera Feed | Online Free DevTools by Hexmos"
 name: fswebcam
 path: /freedevtools/tldr/common/fswebcam
 canonical: "https://hexmos.com/freedevtools/tldr/common/fswebcam/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Kakoune - Edit Code with Multiple Selections | Free DevTools"
+title: "Control Kakoune - Edit Code with Multiple Selections | Online Free DevTools by Hexmos"
 name: kak
 path: /freedevtools/tldr/common/kak
 canonical: "https://hexmos.com/freedevtools/tldr/common/kak/"

@@ -1,5 +1,5 @@
 ---
-title: "SmalltalkCI - Test Smalltalk Projects | Free DevTools"
+title: "SmalltalkCI - Test Smalltalk Projects | Online Free DevTools by Hexmos"
 name: smalltalkci
 path: /freedevtools/tldr/common/smalltalkci
 canonical: "https://hexmos.com/freedevtools/tldr/common/smalltalkci/"

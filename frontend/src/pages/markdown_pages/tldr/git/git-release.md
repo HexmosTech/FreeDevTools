@@ -1,5 +1,5 @@
 ---
-title: "Create Git Release - Tag Releases with Command Line | Free DevTools"
+title: "Create Git Release - Tag Releases with Command Line | Online Free DevTools by Hexmos"
 name: git-release
 path: /freedevtools/tldr/git/git-release
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-release/"

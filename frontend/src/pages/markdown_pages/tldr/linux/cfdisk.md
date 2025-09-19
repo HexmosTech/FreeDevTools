@@ -1,5 +1,5 @@
 ---
-title: "cfdisk - Manage Partitions | Free DevTools"
+title: "cfdisk - Manage Partitions | Online Free DevTools by Hexmos"
 name: cfdisk
 path: /freedevtools/tldr/linux/cfdisk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cfdisk/"

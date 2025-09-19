@@ -1,5 +1,5 @@
 ---
-title: "PPM Label - Add Text to PPM Images | Free DevTools"
+title: "PPM Label - Add Text to PPM Images | Online Free DevTools by Hexmos"
 name: ppmlabel
 path: /freedevtools/tldr/ppm/ppmlabel
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmlabel/"

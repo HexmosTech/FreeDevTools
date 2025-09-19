@@ -1,5 +1,5 @@
 ---
-title: "fuser Command - Identify Process File Usage | Free DevTools"
+title: "fuser Command - Identify Process File Usage | Online Free DevTools by Hexmos"
 name: fuser
 path: /freedevtools/tldr/linux/fuser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fuser/"

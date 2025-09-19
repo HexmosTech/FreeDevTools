@@ -1,5 +1,5 @@
 ---
-title: "Deduplicate Files - Find and Remove Duplicates with duperemove | Free DevTools"
+title: "Deduplicate Files - Find and Remove Duplicates with duperemove | Online Free DevTools by Hexmos"
 name: duperemove
 path: /freedevtools/tldr/linux/duperemove
 canonical: "https://hexmos.com/freedevtools/tldr/linux/duperemove/"

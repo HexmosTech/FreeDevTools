@@ -1,5 +1,5 @@
 ---
-title: "Extract MIME Attachments - Rip Email Content | Free DevTools"
+title: "Extract MIME Attachments - Rip Email Content | Online Free DevTools by Hexmos"
 name: ripmime
 path: /freedevtools/tldr/linux/ripmime
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ripmime/"

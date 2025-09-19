@@ -1,5 +1,5 @@
 ---
-title: "APK Leaks - Expose Secrets in APK Files | Free DevTools"
+title: "APK Leaks - Expose Secrets in APK Files | Online Free DevTools by Hexmos"
 name: apkleaks
 path: /freedevtools/tldr/common/apkleaks
 canonical: "https://hexmos.com/freedevtools/tldr/common/apkleaks/"

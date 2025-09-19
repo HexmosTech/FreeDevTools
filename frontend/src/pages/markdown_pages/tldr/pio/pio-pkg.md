@@ -1,5 +1,5 @@
 ---
-title: "PIO Package Manager - Manage Packages | Free DevTools"
+title: "PIO Package Manager - Manage Packages | Online Free DevTools by Hexmos"
 name: pio-pkg
 path: /freedevtools/tldr/pio/pio-pkg
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-pkg/"

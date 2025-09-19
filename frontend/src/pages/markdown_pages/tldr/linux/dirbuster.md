@@ -1,5 +1,5 @@
 ---
-title: "Dirbuster - Brute Force Directories | Free DevTools"
+title: "Dirbuster - Brute Force Directories | Online Free DevTools by Hexmos"
 name: dirbuster
 path: /freedevtools/tldr/linux/dirbuster
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dirbuster/"

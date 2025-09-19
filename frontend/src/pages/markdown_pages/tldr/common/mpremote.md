@@ -1,5 +1,5 @@
 ---
-title: "mpremote - Control MicroPython Devices | Free DevTools"
+title: "mpremote - Control MicroPython Devices | Online Free DevTools by Hexmos"
 name: mpremote
 path: /freedevtools/tldr/common/mpremote
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpremote/"

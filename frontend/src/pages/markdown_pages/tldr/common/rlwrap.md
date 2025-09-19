@@ -1,5 +1,5 @@
 ---
-title: "Control REPL Commands - rlwrap Line Editing | Free DevTools"
+title: "Control REPL Commands - rlwrap Line Editing | Online Free DevTools by Hexmos"
 name: rlwrap
 path: /freedevtools/tldr/common/rlwrap
 canonical: "https://hexmos.com/freedevtools/tldr/common/rlwrap/"

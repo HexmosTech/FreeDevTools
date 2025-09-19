@@ -1,5 +1,5 @@
 ---
-title: "Share Terminal - Control Terminal Sessions with GoTTY | Free DevTools"
+title: "Share Terminal - Control Terminal Sessions with GoTTY | Online Free DevTools by Hexmos"
 name: gotty
 path: /freedevtools/tldr/common/gotty
 canonical: "https://hexmos.com/freedevtools/tldr/common/gotty/"

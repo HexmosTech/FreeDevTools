@@ -1,5 +1,5 @@
 ---
-title: "Create Code Images - Carbon-now CLI | Free DevTools"
+title: "Create Code Images - Carbon-now CLI | Online Free DevTools by Hexmos"
 name: carbon-now
 path: /freedevtools/tldr/common/carbon-now
 canonical: "https://hexmos.com/freedevtools/tldr/common/carbon-now/"

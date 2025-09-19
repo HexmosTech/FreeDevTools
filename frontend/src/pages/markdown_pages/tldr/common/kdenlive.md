@@ -1,5 +1,5 @@
 ---
-title: "Kdenlive - Edit Videos Nondestructively | Free DevTools"
+title: "Kdenlive - Edit Videos Nondestructively | Online Free DevTools by Hexmos"
 name: kdenlive
 path: /freedevtools/tldr/common/kdenlive
 canonical: "https://hexmos.com/freedevtools/tldr/common/kdenlive/"

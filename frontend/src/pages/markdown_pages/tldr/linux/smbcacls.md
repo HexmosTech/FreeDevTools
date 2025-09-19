@@ -1,5 +1,5 @@
 ---
-title: "Control SMB ACLs - Manage Windows Permissions | Free DevTools"
+title: "Control SMB ACLs - Manage Windows Permissions | Online Free DevTools by Hexmos"
 name: smbcacls
 path: /freedevtools/tldr/linux/smbcacls
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smbcacls/"

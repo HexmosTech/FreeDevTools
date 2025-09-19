@@ -1,5 +1,5 @@
 ---
-title: "Rustdoc Generator - Generate Rust Docs | Free DevTools"
+title: "Rustdoc Generator - Generate Rust Docs | Online Free DevTools by Hexmos"
 name: rustdoc
 path: /freedevtools/tldr/common/rustdoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/rustdoc/"

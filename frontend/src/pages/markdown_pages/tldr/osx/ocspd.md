@@ -1,5 +1,5 @@
 ---
-title: "OCSP Daemon - Verify Certificate Status | Free DevTools"
+title: "OCSP Daemon - Verify Certificate Status | Online Free DevTools by Hexmos"
 name: ocspd
 path: /freedevtools/tldr/osx/ocspd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ocspd/"

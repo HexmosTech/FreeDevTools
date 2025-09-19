@@ -1,5 +1,5 @@
 ---
-title: "Cargo Search - Find Rust Packages | Free DevTools"
+title: "Cargo Search - Find Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-search
 path: /freedevtools/tldr/cargo/cargo-search
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-search/"

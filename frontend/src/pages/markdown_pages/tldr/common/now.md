@@ -1,5 +1,5 @@
 ---
-title: "Now Deployment - Cloud Serverless Deployment | Free DevTools"
+title: "Now Deployment - Cloud Serverless Deployment | Online Free DevTools by Hexmos"
 name: now
 path: /freedevtools/tldr/common/now
 canonical: "https://hexmos.com/freedevtools/tldr/common/now/"

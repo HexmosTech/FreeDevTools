@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to NEO - Image Format Tool | Free DevTools"
+title: "Convert PPM to NEO - Image Format Tool | Online Free DevTools by Hexmos"
 name: ppmtoneo
 path: /freedevtools/tldr/ppm/ppmtoneo
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoneo/"

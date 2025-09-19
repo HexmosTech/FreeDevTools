@@ -1,5 +1,5 @@
 ---
-title: "Submit LSF Jobs - Schedule Batch Tasks | Free DevTools"
+title: "Submit LSF Jobs - Schedule Batch Tasks | Online Free DevTools by Hexmos"
 name: bsub
 path: /freedevtools/tldr/linux/bsub
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bsub/"

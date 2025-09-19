@@ -1,5 +1,5 @@
 ---
-title: "Create Linux Groups - Manage User Groups | Free DevTools"
+title: "Create Linux Groups - Manage User Groups | Online Free DevTools by Hexmos"
 name: groupadd
 path: /freedevtools/tldr/linux/groupadd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/groupadd/"

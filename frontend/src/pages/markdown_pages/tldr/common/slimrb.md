@@ -1,5 +1,5 @@
 ---
-title: "Slim to HTML - Convert Slim Files to HTML | Free DevTools"
+title: "Slim to HTML - Convert Slim Files to HTML | Online Free DevTools by Hexmos"
 name: slimrb
 path: /freedevtools/tldr/common/slimrb
 canonical: "https://hexmos.com/freedevtools/tldr/common/slimrb/"

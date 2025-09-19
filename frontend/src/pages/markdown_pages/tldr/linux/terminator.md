@@ -1,5 +1,5 @@
 ---
-title: "Control Terminator - Manage GNOME Terminals | Free DevTools"
+title: "Control Terminator - Manage GNOME Terminals | Online Free DevTools by Hexmos"
 name: terminator
 path: /freedevtools/tldr/linux/terminator
 canonical: "https://hexmos.com/freedevtools/tldr/linux/terminator/"

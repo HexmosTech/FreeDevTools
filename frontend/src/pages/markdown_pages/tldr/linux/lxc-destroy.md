@@ -1,5 +1,5 @@
 ---
-title: "LXC Destroy - Delete Containers | Free DevTools"
+title: "LXC Destroy - Delete Containers | Online Free DevTools by Hexmos"
 name: lxc-destroy
 path: /freedevtools/tldr/linux/lxc-destroy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-destroy/"

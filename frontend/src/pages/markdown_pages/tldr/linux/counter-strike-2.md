@@ -1,5 +1,5 @@
 ---
-title: "Control CS2 Server - Host Dedicated Server | Free DevTools"
+title: "Control CS2 Server - Host Dedicated Server | Online Free DevTools by Hexmos"
 name: counter-strike-2
 path: /freedevtools/tldr/linux/counter-strike-2
 canonical: "https://hexmos.com/freedevtools/tldr/linux/counter-strike-2/"

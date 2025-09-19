@@ -1,5 +1,5 @@
 ---
-title: "OBS Studio - Control Video Recording & Streaming | Free DevTools"
+title: "OBS Studio - Control Video Recording & Streaming | Online Free DevTools by Hexmos"
 name: obs
 path: /freedevtools/tldr/common/obs
 canonical: "https://hexmos.com/freedevtools/tldr/common/obs/"

@@ -1,5 +1,5 @@
 ---
-title: "Dark Mode - Control macOS Appearance | Free DevTools"
+title: "Dark Mode - Control macOS Appearance | Online Free DevTools by Hexmos"
 name: dark-mode
 path: /freedevtools/tldr/osx/dark-mode
 canonical: "https://hexmos.com/freedevtools/tldr/osx/dark-mode/"

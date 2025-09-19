@@ -1,5 +1,5 @@
 ---
-title: "Generate Gemini Server - Manage Gemini Network | Free DevTools"
+title: "Generate Gemini Server - Manage Gemini Network | Online Free DevTools by Hexmos"
 name: agate
 path: /freedevtools/tldr/common/agate
 canonical: "https://hexmos.com/freedevtools/tldr/common/agate/"

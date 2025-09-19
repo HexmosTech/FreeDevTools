@@ -1,5 +1,5 @@
 ---
-title: "LLVM Bitcode Concatenator - Merge BC Files | Free DevTools"
+title: "LLVM Bitcode Concatenator - Merge BC Files | Online Free DevTools by Hexmos"
 name: llvm-cat
 path: /freedevtools/tldr/llvm/llvm-cat
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-cat/"

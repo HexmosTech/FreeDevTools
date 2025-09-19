@@ -1,5 +1,5 @@
 ---
-title: "NPM Update - Upgrade Packages with NPM | Free DevTools"
+title: "NPM Update - Upgrade Packages with NPM | Online Free DevTools by Hexmos"
 name: npm-update
 path: /freedevtools/tldr/npm/npm-update
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-update/"

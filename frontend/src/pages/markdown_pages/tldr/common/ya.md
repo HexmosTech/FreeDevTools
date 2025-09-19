@@ -1,5 +1,5 @@
 ---
-title: "Yazi Package Manager - Manage Packages | Free DevTools"
+title: "Yazi Package Manager - Manage Packages | Online Free DevTools by Hexmos"
 name: ya
 path: /freedevtools/tldr/common/ya
 canonical: "https://hexmos.com/freedevtools/tldr/common/ya/"

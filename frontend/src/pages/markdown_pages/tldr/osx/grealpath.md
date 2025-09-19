@@ -1,5 +1,5 @@
 ---
-title: "RealPath - Resolve File Paths | Free DevTools"
+title: "RealPath - Resolve File Paths | Online Free DevTools by Hexmos"
 name: grealpath
 path: /freedevtools/tldr/osx/grealpath
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grealpath/"

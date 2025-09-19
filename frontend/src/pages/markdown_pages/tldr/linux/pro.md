@@ -1,5 +1,5 @@
 ---
-title: "Manage Ubuntu Pro Services - Secure and Optimize | Free DevTools"
+title: "Manage Ubuntu Pro Services - Secure and Optimize | Online Free DevTools by Hexmos"
 name: pro
 path: /freedevtools/tldr/linux/pro
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pro/"

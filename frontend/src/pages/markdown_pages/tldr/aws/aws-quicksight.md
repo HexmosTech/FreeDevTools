@@ -1,5 +1,5 @@
 ---
-title: "AWS QuickSight - Manage Data Visualizations | Free DevTools"
+title: "AWS QuickSight - Manage Data Visualizations | Online Free DevTools by Hexmos"
 name: aws-quicksight
 path: /freedevtools/tldr/aws/aws-quicksight
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-quicksight/"

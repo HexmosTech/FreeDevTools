@@ -1,5 +1,5 @@
 ---
-title: "TC Shell - Execute Commands with Tcsh | Free DevTools"
+title: "TC Shell - Execute Commands with Tcsh | Online Free DevTools by Hexmos"
 name: tcsh
 path: /freedevtools/tldr/common/tcsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/tcsh/"

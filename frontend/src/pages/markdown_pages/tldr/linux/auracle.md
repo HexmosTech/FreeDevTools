@@ -1,5 +1,5 @@
 ---
-title: "AUR Package Manager - Control AUR Packages | Free DevTools"
+title: "AUR Package Manager - Control AUR Packages | Online Free DevTools by Hexmos"
 name: auracle
 path: /freedevtools/tldr/linux/auracle
 canonical: "https://hexmos.com/freedevtools/tldr/linux/auracle/"

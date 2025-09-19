@@ -1,5 +1,5 @@
 ---
-title: "PVDisplay - Display LVM Physical Volumes | Free DevTools"
+title: "PVDisplay - Display LVM Physical Volumes | Online Free DevTools by Hexmos"
 name: pvdisplay
 path: /freedevtools/tldr/linux/pvdisplay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pvdisplay/"

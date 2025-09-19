@@ -1,5 +1,5 @@
 ---
-title: "Remove AppxPackage - Uninstall Windows Apps | Free DevTools"
+title: "Remove AppxPackage - Uninstall Windows Apps | Online Free DevTools by Hexmos"
 name: remove-appxpackage
 path: /freedevtools/tldr/windows/remove-appxpackage
 canonical: "https://hexmos.com/freedevtools/tldr/windows/remove-appxpackage/"

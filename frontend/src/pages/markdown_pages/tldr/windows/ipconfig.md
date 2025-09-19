@@ -1,5 +1,5 @@
 ---
-title: "IP Configuration - Manage Network Settings | Free DevTools"
+title: "IP Configuration - Manage Network Settings | Online Free DevTools by Hexmos"
 name: ipconfig
 path: /freedevtools/tldr/windows/ipconfig
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ipconfig/"

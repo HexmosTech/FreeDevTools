@@ -1,5 +1,5 @@
 ---
-title: "Cargo Install - Build Rust Binaries | Free DevTools"
+title: "Cargo Install - Build Rust Binaries | Online Free DevTools by Hexmos"
 name: cargo-install
 path: /freedevtools/tldr/cargo/cargo-install
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-install/"

@@ -1,5 +1,5 @@
 ---
-title: "Bash Bind - Control Command Hotkeys | Free DevTools"
+title: "Bash Bind - Control Command Hotkeys | Online Free DevTools by Hexmos"
 name: bind
 path: /freedevtools/tldr/common/bind
 canonical: "https://hexmos.com/freedevtools/tldr/common/bind/"

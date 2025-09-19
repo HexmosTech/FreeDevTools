@@ -1,5 +1,5 @@
 ---
-title: "Extract Recfile Records - Print Data | Free DevTools"
+title: "Extract Recfile Records - Print Data | Online Free DevTools by Hexmos"
 name: recsel
 path: /freedevtools/tldr/common/recsel
 canonical: "https://hexmos.com/freedevtools/tldr/common/recsel/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Documentation with Sphinx-build | Free DevTools"
+title: "Generate Documentation with Sphinx-build | Online Free DevTools by Hexmos"
 name: sphinx-build
 path: /freedevtools/tldr/common/sphinx-build
 canonical: "https://hexmos.com/freedevtools/tldr/common/sphinx-build/"

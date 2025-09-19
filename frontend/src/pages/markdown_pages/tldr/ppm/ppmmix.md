@@ -1,5 +1,5 @@
 ---
-title: "Blend PPM Images - Mix Image Content | Free DevTools"
+title: "Blend PPM Images - Mix Image Content | Online Free DevTools by Hexmos"
 name: ppmmix
 path: /freedevtools/tldr/ppm/ppmmix
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmmix/"

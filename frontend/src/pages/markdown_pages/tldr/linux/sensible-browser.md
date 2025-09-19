@@ -1,5 +1,5 @@
 ---
-title: "Open Browser - Launch Default Browser | Free DevTools"
+title: "Open Browser - Launch Default Browser | Online Free DevTools by Hexmos"
 name: sensible-browser
 path: /freedevtools/tldr/linux/sensible-browser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sensible-browser/"

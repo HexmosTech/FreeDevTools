@@ -1,5 +1,5 @@
 ---
-title: "Generate Grayscale PPM - Convert PPM Images | Free DevTools"
+title: "Generate Grayscale PPM - Convert PPM Images | Online Free DevTools by Hexmos"
 name: ppmdist
 path: /freedevtools/tldr/ppm/ppmdist
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmdist/"

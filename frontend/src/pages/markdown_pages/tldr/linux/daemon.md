@@ -1,5 +1,5 @@
 ---
-title: "Control Daemon Processes - Manage Background Tasks | Free DevTools"
+title: "Control Daemon Processes - Manage Background Tasks | Online Free DevTools by Hexmos"
 name: daemon
 path: /freedevtools/tldr/linux/daemon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/daemon/"

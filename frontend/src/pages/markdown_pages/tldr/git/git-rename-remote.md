@@ -1,5 +1,5 @@
 ---
-title: "Rename Git Remote - Change Repository Origin | Free DevTools"
+title: "Rename Git Remote - Change Repository Origin | Online Free DevTools by Hexmos"
 name: git-rename-remote
 path: /freedevtools/tldr/git/git-rename-remote
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rename-remote/"

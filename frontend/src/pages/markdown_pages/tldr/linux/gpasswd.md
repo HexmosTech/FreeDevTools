@@ -1,5 +1,5 @@
 ---
-title: "Gpasswd - Manage Unix Groups | Free DevTools"
+title: "Gpasswd - Manage Unix Groups | Online Free DevTools by Hexmos"
 name: gpasswd
 path: /freedevtools/tldr/linux/gpasswd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gpasswd/"

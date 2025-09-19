@@ -1,5 +1,5 @@
 ---
-title: "Execute Command - Run Shell Commands Easily | Free DevTools"
+title: "Execute Command - Run Shell Commands Easily | Online Free DevTools by Hexmos"
 name: exec
 path: /freedevtools/tldr/common/exec
 canonical: "https://hexmos.com/freedevtools/tldr/common/exec/"

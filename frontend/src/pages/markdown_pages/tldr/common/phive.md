@@ -1,5 +1,5 @@
 ---
-title: "Phive - Securely Install PHP Packages | Free DevTools"
+title: "Phive - Securely Install PHP Packages | Online Free DevTools by Hexmos"
 name: phive
 path: "/freedevtools/tldr/common/phive"
 canonical: "https://hexmos.com/freedevtools/tldr/common/phive/"

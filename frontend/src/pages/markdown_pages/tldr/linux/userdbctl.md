@@ -1,5 +1,5 @@
 ---
-title: "User Database Control - Inspect Users and Groups | Free DevTools"
+title: "User Database Control - Inspect Users and Groups | Online Free DevTools by Hexmos"
 name: userdbctl
 path: /freedevtools/tldr/linux/userdbctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/userdbctl/"

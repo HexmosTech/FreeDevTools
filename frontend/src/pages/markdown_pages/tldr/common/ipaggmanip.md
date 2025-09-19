@@ -1,5 +1,5 @@
 ---
-title: "IP Aggregation Manipulation - Control Aggregate Stats | Free DevTools"
+title: "IP Aggregation Manipulation - Control Aggregate Stats | Online Free DevTools by Hexmos"
 name: ipaggmanip
 path: "/freedevtools/tldr/common/ipaggmanip"
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipaggmanip/"

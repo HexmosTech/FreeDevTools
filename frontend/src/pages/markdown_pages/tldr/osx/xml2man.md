@@ -1,5 +1,5 @@
 ---
-title: "Generate Man Pages - XML2Man Compiler | Free DevTools"
+title: "Generate Man Pages - XML2Man Compiler | Online Free DevTools by Hexmos"
 name: xml2man
 path: /freedevtools/tldr/osx/xml2man
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xml2man/"

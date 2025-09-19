@@ -1,5 +1,5 @@
 ---
-title: "Manage YubiKey FIDO - Secure Authentication | Free DevTools"
+title: "Manage YubiKey FIDO - Secure Authentication | Online Free DevTools by Hexmos"
 name: ykman-fido
 path: /freedevtools/tldr/ykman/ykman-fido
 canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-fido/"

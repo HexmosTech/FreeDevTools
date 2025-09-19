@@ -1,5 +1,5 @@
 ---
-title: "Shellcheck - Validate Shell Scripts | Free DevTools"
+title: "Shellcheck - Validate Shell Scripts | Online Free DevTools by Hexmos"
 name: shellcheck
 path: /freedevtools/tldr/common/shellcheck
 canonical: "https://hexmos.com/freedevtools/tldr/common/shellcheck/"

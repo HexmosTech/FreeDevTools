@@ -1,5 +1,5 @@
 ---
-title: "GetUserSPNs - Extract Service Principal Names | Free DevTools"
+title: "GetUserSPNs - Extract Service Principal Names | Online Free DevTools by Hexmos"
 name: impacket-getuserspns
 path: /freedevtools/tldr/impacket/impacket-getuserspns
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getuserspns/"

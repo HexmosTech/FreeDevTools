@@ -1,5 +1,5 @@
 ---
-title: "Password Manager - Control Passwords with rbw | Free DevTools"
+title: "Password Manager - Control Passwords with rbw | Online Free DevTools by Hexmos"
 name: rbw
 path: /freedevtools/tldr/common/rbw
 canonical: "https://hexmos.com/freedevtools/tldr/common/rbw/"

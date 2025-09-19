@@ -1,5 +1,5 @@
 ---
-title: "PW-Record - Record Audio Streams | Free DevTools"
+title: "PW-Record - Record Audio Streams | Online Free DevTools by Hexmos"
 name: pw-record
 path: /freedevtools/tldr/linux/pw-record
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-record/"

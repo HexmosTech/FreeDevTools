@@ -1,5 +1,5 @@
 ---
-title: "Clementine Player - Control Music Playback | Free DevTools"
+title: "Clementine Player - Control Music Playback | Online Free DevTools by Hexmos"
 name: clementine
 path: /freedevtools/tldr/common/clementine
 canonical: "https://hexmos.com/freedevtools/tldr/common/clementine/"

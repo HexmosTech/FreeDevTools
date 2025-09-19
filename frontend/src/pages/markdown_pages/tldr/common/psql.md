@@ -1,5 +1,5 @@
 ---
-title: "psql - Query PostgreSQL Databases | Free DevTools"
+title: "psql - Query PostgreSQL Databases | Online Free DevTools by Hexmos"
 name: psql
 path: /freedevtools/tldr/common/psql
 canonical: "https://hexmos.com/freedevtools/tldr/common/psql/"

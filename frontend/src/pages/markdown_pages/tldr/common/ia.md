@@ -1,5 +1,5 @@
 ---
-title: "Internet Archive - Manage Files | Free DevTools"
+title: "Internet Archive - Manage Files | Online Free DevTools by Hexmos"
 name: ia
 path: /freedevtools/tldr/common/ia
 canonical: "https://hexmos.com/freedevtools/tldr/common/ia/"

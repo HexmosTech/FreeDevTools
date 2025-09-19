@@ -1,5 +1,5 @@
 ---
-title: "PowerShell Control - Manage System with PWSH | Free DevTools"
+title: "PowerShell Control - Manage System with PWSH | Online Free DevTools by Hexmos"
 name: pwsh
 path: /freedevtools/tldr/common/pwsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/pwsh/"

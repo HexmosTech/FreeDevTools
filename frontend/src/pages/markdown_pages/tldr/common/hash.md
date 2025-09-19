@@ -1,5 +1,5 @@
 ---
-title: "Hash Command - View Executable Locations | Free DevTools"
+title: "Hash Command - View Executable Locations | Online Free DevTools by Hexmos"
 name: hash
 path: /freedevtools/tldr/common/hash
 canonical: "https://hexmos.com/freedevtools/tldr/common/hash/"

@@ -1,5 +1,5 @@
 ---
-title: "Modinfo - Extract Kernel Module Info | Free DevTools"
+title: "Modinfo - Extract Kernel Module Info | Online Free DevTools by Hexmos"
 name: modinfo
 path: /freedevtools/tldr/linux/modinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/modinfo/"

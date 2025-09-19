@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Subvolume - Manage Snapshots | Free DevTools"
+title: "Btrfs Subvolume - Manage Snapshots | Online Free DevTools by Hexmos"
 name: btrfs-subvolume
 path: /freedevtools/tldr/linux/btrfs-subvolume
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-subvolume/"

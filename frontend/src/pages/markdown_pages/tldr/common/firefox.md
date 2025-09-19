@@ -1,5 +1,5 @@
 ---
-title: "Control Firefox - Browse the Web | Free DevTools"
+title: "Control Firefox - Browse the Web | Online Free DevTools by Hexmos"
 name: firefox
 path: /freedevtools/tldr/common/firefox
 canonical: "https://hexmos.com/freedevtools/tldr/common/firefox/"

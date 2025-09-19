@@ -1,5 +1,5 @@
 ---
-title: "Asciinema - Record Terminal Sessions | Free DevTools"
+title: "Asciinema - Record Terminal Sessions | Online Free DevTools by Hexmos"
 name: asciinema
 path: /freedevtools/tldr/common/asciinema
 canonical: "https://hexmos.com/freedevtools/tldr/common/asciinema/"

@@ -1,5 +1,5 @@
 ---
-title: "SRun - Create Slurm Jobs | Free DevTools"
+title: "SRun - Create Slurm Jobs | Online Free DevTools by Hexmos"
 name: srun
 path: /freedevtools/tldr/linux/srun
 canonical: "https://hexmos.com/freedevtools/tldr/linux/srun/"

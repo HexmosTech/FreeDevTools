@@ -1,5 +1,5 @@
 ---
-title: "Manage Nix Channels - Update Software Packages | Free DevTools"
+title: "Manage Nix Channels - Update Software Packages | Online Free DevTools by Hexmos"
 name: nix-channel
 path: /freedevtools/tldr/nix/nix-channel
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-channel/"

@@ -1,5 +1,5 @@
 ---
-title: "Grep - Find Text Patterns with Regex | Free DevTools"
+title: "Grep - Find Text Patterns with Regex | Online Free DevTools by Hexmos"
 name: grep
 path: "/freedevtools/tldr/common/grep"
 canonical: "https://hexmos.com/freedevtools/tldr/common/grep/"

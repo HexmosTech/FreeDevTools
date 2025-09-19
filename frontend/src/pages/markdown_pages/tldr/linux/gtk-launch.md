@@ -1,5 +1,5 @@
 ---
-title: "Launch Application - Start Apps with gtk-launch | Free DevTools"
+title: "Launch Application - Start Apps with gtk-launch | Online Free DevTools by Hexmos"
 name: gtk-launch
 path: /freedevtools/tldr/linux/gtk-launch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gtk-launch/"

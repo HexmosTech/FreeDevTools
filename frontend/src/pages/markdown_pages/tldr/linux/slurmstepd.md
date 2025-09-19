@@ -1,5 +1,5 @@
 ---
-title: "Slurm Slurmstepd - Manage Job Steps | Free DevTools"
+title: "Slurm Slurmstepd - Manage Job Steps | Online Free DevTools by Hexmos"
 name: slurmstepd
 path: /freedevtools/tldr/linux/slurmstepd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmstepd/"

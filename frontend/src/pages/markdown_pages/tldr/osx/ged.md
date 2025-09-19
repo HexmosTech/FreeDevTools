@@ -1,5 +1,5 @@
 ---
-title: "GNU Ed - Edit Text Files | Free DevTools"
+title: "GNU Ed - Edit Text Files | Online Free DevTools by Hexmos"
 name: ged
 path: "/freedevtools/tldr/osx/ged"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ged/"

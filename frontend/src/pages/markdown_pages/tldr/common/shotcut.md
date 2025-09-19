@@ -1,5 +1,5 @@
 ---
-title: "Shotcut - Edit Videos with Shotcut | Free DevTools"
+title: "Shotcut - Edit Videos with Shotcut | Online Free DevTools by Hexmos"
 name: shotcut
 path: /freedevtools/tldr/common/shotcut
 canonical: "https://hexmos.com/freedevtools/tldr/common/shotcut/"

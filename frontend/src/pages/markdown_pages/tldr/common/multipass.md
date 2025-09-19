@@ -1,5 +1,5 @@
 ---
-title: "Multipass - Manage Ubuntu VMs | Free DevTools"
+title: "Multipass - Manage Ubuntu VMs | Online Free DevTools by Hexmos"
 name: multipass
 path: /freedevtools/tldr/common/multipass
 canonical: "https://hexmos.com/freedevtools/tldr/common/multipass/"

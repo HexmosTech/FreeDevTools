@@ -1,5 +1,5 @@
 ---
-title: "Analyze Binary Files - Inspect with Rabin2 | Free DevTools"
+title: "Analyze Binary Files - Inspect with Rabin2 | Online Free DevTools by Hexmos"
 name: rabin2
 path: /freedevtools/tldr/common/rabin2
 canonical: "https://hexmos.com/freedevtools/tldr/common/rabin2/"

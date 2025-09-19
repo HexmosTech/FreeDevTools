@@ -1,5 +1,5 @@
 ---
-title: "Groupmod - Modify User Groups | Free DevTools"
+title: "Groupmod - Modify User Groups | Online Free DevTools by Hexmos"
 name: groupmod
 path: "/freedevtools/tldr/linux/groupmod"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/groupmod/"

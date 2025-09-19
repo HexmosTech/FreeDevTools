@@ -1,5 +1,5 @@
 ---
-title: "Pamscale - Scale Images Easily | Free DevTools"
+title: "Pamscale - Scale Images Easily | Online Free DevTools by Hexmos"
 name: pamscale
 path: /freedevtools/tldr/common/pamscale
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamscale/"

@@ -1,5 +1,5 @@
 ---
-title: "Disk Space - Display Disk Usage with df Command | Free DevTools"
+title: "Disk Space - Display Disk Usage with df Command | Online Free DevTools by Hexmos"
 name: df
 path: /freedevtools/tldr/common/df
 canonical: "https://hexmos.com/freedevtools/tldr/common/df/"

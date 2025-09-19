@@ -1,5 +1,5 @@
 ---
-title: "Navigate Disk Space - Control Disk Usage with Diskonaut | Free DevTools"
+title: "Navigate Disk Space - Control Disk Usage with Diskonaut | Online Free DevTools by Hexmos"
 name: diskonaut
 path: /freedevtools/tldr/common/diskonaut
 canonical: "https://hexmos.com/freedevtools/tldr/common/diskonaut/"

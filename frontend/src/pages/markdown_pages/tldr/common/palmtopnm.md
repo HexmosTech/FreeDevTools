@@ -1,5 +1,5 @@
 ---
-title: "Convert Palm Bitmap - Generate PNM Image | Free DevTools"
+title: "Convert Palm Bitmap - Generate PNM Image | Online Free DevTools by Hexmos"
 name: palmtopnm
 path: /freedevtools/tldr/common/palmtopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/palmtopnm/"

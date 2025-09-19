@@ -1,5 +1,5 @@
 ---
-title: "OOM Control - Analyze System Memory with oomctl | Free DevTools"
+title: "OOM Control - Analyze System Memory with oomctl | Online Free DevTools by Hexmos"
 name: oomctl
 path: /freedevtools/tldr/linux/oomctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/oomctl/"

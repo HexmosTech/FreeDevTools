@@ -1,5 +1,5 @@
 ---
-title: "AWS S3 Move - Transfer S3 Objects | Free DevTools"
+title: "AWS S3 Move - Transfer S3 Objects | Online Free DevTools by Hexmos"
 name: aws-s3-mv
 path: /freedevtools/tldr/aws/aws-s3-mv
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-mv/"

@@ -1,5 +1,5 @@
 ---
-title: "Control stdin with pee - Pipe stdin to Commands | Free DevTools"
+title: "Control stdin with pee - Pipe stdin to Commands | Online Free DevTools by Hexmos"
 name: pee
 path: /freedevtools/tldr/common/pee
 canonical: "https://hexmos.com/freedevtools/tldr/common/pee/"

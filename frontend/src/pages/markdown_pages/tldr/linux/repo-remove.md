@@ -1,5 +1,5 @@
 ---
-title: "Remove Packages - Control Repo Packages | Free DevTools"
+title: "Remove Packages - Control Repo Packages | Online Free DevTools by Hexmos"
 name: repo-remove
 path: /freedevtools/tldr/linux/repo-remove
 canonical: "https://hexmos.com/freedevtools/tldr/linux/repo-remove/"

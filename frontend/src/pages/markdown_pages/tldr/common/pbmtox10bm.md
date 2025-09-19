@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM to X10BM - Format Image Files | Free DevTools"
+title: "Convert PBM to X10BM - Format Image Files | Online Free DevTools by Hexmos"
 name: pbmtox10bm
 path: /freedevtools/tldr/common/pbmtox10bm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtox10bm/"

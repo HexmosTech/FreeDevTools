@@ -1,5 +1,5 @@
 ---
-title: "Browse SSH - Discover SSH/VNC Servers | Free DevTools"
+title: "Browse SSH - Discover SSH/VNC Servers | Online Free DevTools by Hexmos"
 name: bssh
 path: /freedevtools/tldr/common/bssh
 canonical: "https://hexmos.com/freedevtools/tldr/common/bssh/"

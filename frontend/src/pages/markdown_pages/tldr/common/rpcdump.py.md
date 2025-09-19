@@ -1,5 +1,5 @@
 ---
-title: "RPC Dump - Discover RPC Endpoints with rpcdump.py | Free DevTools"
+title: "RPC Dump - Discover RPC Endpoints with rpcdump.py | Online Free DevTools by Hexmos"
 name: rpcdump.py
 path: /freedevtools/tldr/common/rpcdump.py
 canonical: "https://hexmos.com/freedevtools/tldr/common/rpcdump.py/"

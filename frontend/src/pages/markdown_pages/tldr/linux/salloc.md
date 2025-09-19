@@ -1,5 +1,5 @@
 ---
-title: "Salloc - Allocate Nodes | Free DevTools"
+title: "Salloc - Allocate Nodes | Online Free DevTools by Hexmos"
 name: salloc
 path: /freedevtools/tldr/linux/salloc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/salloc/"

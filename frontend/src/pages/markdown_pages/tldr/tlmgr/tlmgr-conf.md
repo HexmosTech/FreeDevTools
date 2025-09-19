@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Manager - Control TeX Configuration | Free DevTools"
+title: "TeX Live Manager - Control TeX Configuration | Online Free DevTools by Hexmos"
 name: tlmgr-conf
 path: /freedevtools/tldr/tlmgr/tlmgr-conf
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-conf/"

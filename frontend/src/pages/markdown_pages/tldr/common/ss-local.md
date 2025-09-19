@@ -1,5 +1,5 @@
 ---
-title: "Run Shadowsocks Client - SOCKS5 Proxy | Free DevTools"
+title: "Run Shadowsocks Client - SOCKS5 Proxy | Online Free DevTools by Hexmos"
 name: ss-local
 path: /freedevtools/tldr/common/ss-local
 canonical: "https://hexmos.com/freedevtools/tldr/common/ss-local/"

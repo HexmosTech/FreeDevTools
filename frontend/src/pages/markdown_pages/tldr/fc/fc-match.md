@@ -1,5 +1,5 @@
 ---
-title: "Match Fonts - Identify Available Fonts with fc-match | Free DevTools"
+title: "Match Fonts - Identify Available Fonts with fc-match | Online Free DevTools by Hexmos"
 name: fc-match
 path: /freedevtools/tldr/fc/fc-match
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-match/"

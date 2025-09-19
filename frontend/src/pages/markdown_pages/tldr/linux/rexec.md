@@ -1,5 +1,5 @@
 ---
-title: "Rexec Command - Execute Remote Commands | Free DevTools"
+title: "Rexec Command - Execute Remote Commands | Online Free DevTools by Hexmos"
 name: rexec
 path: /freedevtools/tldr/linux/rexec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rexec/"

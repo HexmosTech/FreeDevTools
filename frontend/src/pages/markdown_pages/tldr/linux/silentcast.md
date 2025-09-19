@@ -1,5 +1,5 @@
 ---
-title: "Silentcast - Create Screencasts Silently | Free DevTools"
+title: "Silentcast - Create Screencasts Silently | Online Free DevTools by Hexmos"
 name: silentcast
 path: /freedevtools/tldr/linux/silentcast
 canonical: "https://hexmos.com/freedevtools/tldr/linux/silentcast/"

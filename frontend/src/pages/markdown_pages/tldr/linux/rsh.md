@@ -1,5 +1,5 @@
 ---
-title: "Rsh - Execute Remote Commands | Free DevTools"
+title: "Rsh - Execute Remote Commands | Online Free DevTools by Hexmos"
 name: rsh
 path: /freedevtools/tldr/linux/rsh
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rsh/"

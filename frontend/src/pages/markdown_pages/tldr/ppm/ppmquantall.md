@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM Image - Quantize Colors | Free DevTools"
+title: "Convert PPM Image - Quantize Colors | Online Free DevTools by Hexmos"
 name: ppmquantall
 path: /freedevtools/tldr/ppm/ppmquantall
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmquantall/"

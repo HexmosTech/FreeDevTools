@@ -1,5 +1,5 @@
 ---
-title: "Create Sheet Music - Edit Scores with MuseScore | Free DevTools"
+title: "Create Sheet Music - Edit Scores with MuseScore | Online Free DevTools by Hexmos"
 name: musescore
 path: /freedevtools/tldr/common/musescore
 canonical: "https://hexmos.com/freedevtools/tldr/common/musescore/"

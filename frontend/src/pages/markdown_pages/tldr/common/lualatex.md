@@ -1,5 +1,5 @@
 ---
-title: "Compile LaTeX - Create PDFs with LuaLaTeX | Free DevTools"
+title: "Compile LaTeX - Create PDFs with LuaLaTeX | Online Free DevTools by Hexmos"
 name: lualatex
 path: /freedevtools/tldr/common/lualatex
 canonical: "https://hexmos.com/freedevtools/tldr/common/lualatex/"

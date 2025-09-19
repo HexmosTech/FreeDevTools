@@ -1,5 +1,5 @@
 ---
-title: "Execute NGS Script - Ops Scripting Language | Free DevTools"
+title: "Execute NGS Script - Ops Scripting Language | Online Free DevTools by Hexmos"
 name: ngs
 path: /freedevtools/tldr/common/ngs
 canonical: "https://hexmos.com/freedevtools/tldr/common/ngs/"

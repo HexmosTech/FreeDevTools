@@ -1,5 +1,5 @@
 ---
-title: "GetSEBool - Control SELinux Booleans | Free DevTools"
+title: "GetSEBool - Control SELinux Booleans | Online Free DevTools by Hexmos"
 name: getsebool
 path: /freedevtools/tldr/linux/getsebool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getsebool/"

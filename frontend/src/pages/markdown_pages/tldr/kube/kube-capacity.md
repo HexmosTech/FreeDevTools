@@ -1,5 +1,5 @@
 ---
-title: "Kube-Capacity - Control Kubernetes Resources | Free DevTools"
+title: "Kube-Capacity - Control Kubernetes Resources | Online Free DevTools by Hexmos"
 name: kube-capacity
 path: /freedevtools/tldr/kube/kube-capacity
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kube-capacity/"

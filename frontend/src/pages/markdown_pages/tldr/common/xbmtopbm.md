@@ -1,5 +1,5 @@
 ---
-title: "Convert XBM to PBM - Image Conversion | Free DevTools"
+title: "Convert XBM to PBM - Image Conversion | Online Free DevTools by Hexmos"
 name: xbmtopbm
 path: /freedevtools/tldr/common/xbmtopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/xbmtopbm/"

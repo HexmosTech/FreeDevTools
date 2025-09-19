@@ -1,5 +1,5 @@
 ---
-title: "Getmac - Display MAC Addresses | Free DevTools"
+title: "Getmac - Display MAC Addresses | Online Free DevTools by Hexmos"
 name: getmac
 path: "/freedevtools/tldr/windows/getmac"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/getmac/"

@@ -1,5 +1,5 @@
 ---
-title: "NPM Root - Display NPM Module Path | Free DevTools"
+title: "NPM Root - Display NPM Module Path | Online Free DevTools by Hexmos"
 name: npm-root
 path: /freedevtools/tldr/npm/npm-root
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-root/"

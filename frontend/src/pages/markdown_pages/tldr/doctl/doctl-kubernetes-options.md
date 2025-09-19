@@ -1,5 +1,5 @@
 ---
-title: "Doctl Kubernetes Options - Manage Clusters | Free DevTools"
+title: "Doctl Kubernetes Options - Manage Clusters | Online Free DevTools by Hexmos"
 name: doctl-kubernetes-options
 path: /freedevtools/tldr/doctl/doctl-kubernetes-options
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-options/"

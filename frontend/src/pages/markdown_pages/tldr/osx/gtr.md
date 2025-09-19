@@ -1,5 +1,5 @@
 ---
-title: "Text Replace - Transform Text with gtr | Free DevTools"
+title: "Text Replace - Transform Text with gtr | Online Free DevTools by Hexmos"
 name: gtr
 path: /freedevtools/tldr/osx/gtr
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtr/"

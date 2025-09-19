@@ -1,5 +1,5 @@
 ---
-title: "File Rename - Rename Files Easily | Free DevTools"
+title: "File Rename - Rename Files Easily | Online Free DevTools by Hexmos"
 name: file-rename
 path: /freedevtools/tldr/common/file-rename
 canonical: "https://hexmos.com/freedevtools/tldr/common/file-rename/"

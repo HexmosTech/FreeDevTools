@@ -1,5 +1,5 @@
 ---
-title: "Crane - Append Index Manifest | Free DevTools"
+title: "Crane - Append Index Manifest | Online Free DevTools by Hexmos"
 name: crane-index-append
 path: /freedevtools/tldr/crane/crane-index-append
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index-append/"

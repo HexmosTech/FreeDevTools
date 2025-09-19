@@ -1,5 +1,5 @@
 ---
-title: "Control Tetris Game - Play Bastet in Terminal | Free DevTools"
+title: "Control Tetris Game - Play Bastet in Terminal | Online Free DevTools by Hexmos"
 name: bastet
 path: /freedevtools/tldr/common/bastet
 canonical: "https://hexmos.com/freedevtools/tldr/common/bastet/"

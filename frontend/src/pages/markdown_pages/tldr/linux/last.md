@@ -1,5 +1,5 @@
 ---
-title: "Last Command - View User Logins | Free DevTools"
+title: "Last Command - View User Logins | Online Free DevTools by Hexmos"
 name: last
 path: "/freedevtools/tldr/linux/last"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/last/"

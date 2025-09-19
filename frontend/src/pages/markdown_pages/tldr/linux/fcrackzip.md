@@ -1,5 +1,5 @@
 ---
-title: "Crack ZIP Passwords - fcrackzip Password Cracker | Free DevTools"
+title: "Crack ZIP Passwords - fcrackzip Password Cracker | Online Free DevTools by Hexmos"
 name: fcrackzip
 path: /freedevtools/tldr/linux/fcrackzip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fcrackzip/"

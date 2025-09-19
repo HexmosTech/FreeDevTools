@@ -1,5 +1,5 @@
 ---
-title: "Picom Opacity Control - Manage Window Transparency | Free DevTools"
+title: "Picom Opacity Control - Manage Window Transparency | Online Free DevTools by Hexmos"
 name: picom-trans
 path: /freedevtools/tldr/common/picom-trans
 canonical: "https://hexmos.com/freedevtools/tldr/common/picom-trans/"

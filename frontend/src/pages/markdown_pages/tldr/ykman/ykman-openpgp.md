@@ -1,5 +1,5 @@
 ---
-title: "OpenPGP Manager - Control YubiKey OpenPGP Application | Free DevTools"
+title: "OpenPGP Manager - Control YubiKey OpenPGP Application | Online Free DevTools by Hexmos"
 name: ykman-openpgp
 path: /freedevtools/tldr/ykman/ykman-openpgp
 canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-openpgp/"

@@ -1,5 +1,5 @@
 ---
-title: "QM Shutdown - Control Virtual Machines | Free DevTools"
+title: "QM Shutdown - Control Virtual Machines | Online Free DevTools by Hexmos"
 name: qm-shutdown
 path: /freedevtools/tldr/linux/qm-shutdown
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-shutdown/"

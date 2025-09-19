@@ -1,5 +1,5 @@
 ---
-title: "Pueue Switch - Control Task Order | Free DevTools"
+title: "Pueue Switch - Control Task Order | Online Free DevTools by Hexmos"
 name: pueue-switch
 path: /freedevtools/tldr/pueue/pueue-switch
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-switch/"

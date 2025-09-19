@@ -1,5 +1,5 @@
 ---
-title: "SDK Maintain - Manage SailfishOS SDK with Ease | Free DevTools"
+title: "SDK Maintain - Manage SailfishOS SDK with Ease | Online Free DevTools by Hexmos"
 name: sfdk-maintain
 path: /freedevtools/tldr/sfdk/sfdk-maintain
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-maintain/"

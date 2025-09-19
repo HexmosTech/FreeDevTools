@@ -1,5 +1,5 @@
 ---
-title: "Format Code with Clang-Format - Auto Code Formatter | Free DevTools"
+title: "Format Code with Clang-Format - Auto Code Formatter | Online Free DevTools by Hexmos"
 name: clang-format
 path: /freedevtools/tldr/clang/clang-format
 canonical: "https://hexmos.com/freedevtools/tldr/clang/clang-format/"

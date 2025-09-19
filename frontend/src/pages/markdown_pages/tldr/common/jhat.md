@@ -1,5 +1,5 @@
 ---
-title: "JHAT Analyzer - Analyze Java Heap Dumps | Free DevTools"
+title: "JHAT Analyzer - Analyze Java Heap Dumps | Online Free DevTools by Hexmos"
 name: jhat
 path: /freedevtools/tldr/common/jhat
 canonical: "https://hexmos.com/freedevtools/tldr/common/jhat/"

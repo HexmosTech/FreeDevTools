@@ -1,5 +1,5 @@
 ---
-title: "Control Machines with machinectl | Free DevTools"
+title: "Control Machines with machinectl | Online Free DevTools by Hexmos"
 name: machinectl
 path: /freedevtools/tldr/linux/machinectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/machinectl/"

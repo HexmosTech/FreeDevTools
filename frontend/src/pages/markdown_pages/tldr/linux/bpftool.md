@@ -1,5 +1,5 @@
 ---
-title: "BPF Program Manager - Control eBPF Programs | Free DevTools"
+title: "BPF Program Manager - Control eBPF Programs | Online Free DevTools by Hexmos"
 name: bpftool
 path: /freedevtools/tldr/linux/bpftool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bpftool/"

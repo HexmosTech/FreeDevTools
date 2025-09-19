@@ -1,5 +1,5 @@
 ---
-title: "Convert PNG to PNM - Format Images | Free DevTools"
+title: "Convert PNG to PNM - Format Images | Online Free DevTools by Hexmos"
 name: pngtopnm
 path: /freedevtools/tldr/common/pngtopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pngtopnm/"

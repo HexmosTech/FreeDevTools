@@ -1,5 +1,5 @@
 ---
-title: "Clang-Tidy - Validate C/C++ Code | Free DevTools"
+title: "Clang-Tidy - Validate C/C++ Code | Online Free DevTools by Hexmos"
 name: clang-tidy
 path: /freedevtools/tldr/clang/clang-tidy
 canonical: "https://hexmos.com/freedevtools/tldr/clang/clang-tidy/"

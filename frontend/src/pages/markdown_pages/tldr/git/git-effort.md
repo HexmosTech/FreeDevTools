@@ -1,5 +1,5 @@
 ---
-title: "Git Effort - Track File Activity | Free DevTools"
+title: "Git Effort - Track File Activity | Online Free DevTools by Hexmos"
 name: git-effort
 path: /freedevtools/tldr/git/git-effort
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-effort/"

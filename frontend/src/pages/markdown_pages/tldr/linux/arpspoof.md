@@ -1,5 +1,5 @@
 ---
-title: "ARP Spoof - Intercept Packets | Free DevTools"
+title: "ARP Spoof - Intercept Packets | Online Free DevTools by Hexmos"
 name: arpspoof
 path: /freedevtools/tldr/linux/arpspoof
 canonical: "https://hexmos.com/freedevtools/tldr/linux/arpspoof/"

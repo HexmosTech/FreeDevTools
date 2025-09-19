@@ -1,5 +1,5 @@
 ---
-title: "Nemo File Manager - Manage Files in Cinnamon | Free DevTools"
+title: "Nemo File Manager - Manage Files in Cinnamon | Online Free DevTools by Hexmos"
 name: nemo
 path: /freedevtools/tldr/linux/nemo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nemo/"

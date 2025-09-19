@@ -1,5 +1,5 @@
 ---
-title: "Docker Load - Import Docker Images from Files | Free DevTools"
+title: "Docker Load - Import Docker Images from Files | Online Free DevTools by Hexmos"
 name: docker-load
 path: /freedevtools/tldr/docker/docker-load
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-load/"

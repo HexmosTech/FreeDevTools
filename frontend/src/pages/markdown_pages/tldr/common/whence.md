@@ -1,5 +1,5 @@
 ---
-title: "Interpret Command Type - Check Command Path | Free DevTools"
+title: "Interpret Command Type - Check Command Path | Online Free DevTools by Hexmos"
 name: whence
 path: /freedevtools/tldr/common/whence
 canonical: "https://hexmos.com/freedevtools/tldr/common/whence/"

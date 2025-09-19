@@ -1,5 +1,5 @@
 ---
-title: "FTP File Transfer - Control Remote Files Interactively | Free DevTools"
+title: "FTP File Transfer - Control Remote Files Interactively | Online Free DevTools by Hexmos"
 name: ftp
 path: /freedevtools/tldr/windows/ftp
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ftp/"

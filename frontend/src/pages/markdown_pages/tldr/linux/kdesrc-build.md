@@ -1,5 +1,5 @@
 ---
-title: "Build KDE Components - Source Compilation | Free DevTools"
+title: "Build KDE Components - Source Compilation | Online Free DevTools by Hexmos"
 name: kdesrc-build
 path: /freedevtools/tldr/linux/kdesrc-build
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kdesrc-build/"

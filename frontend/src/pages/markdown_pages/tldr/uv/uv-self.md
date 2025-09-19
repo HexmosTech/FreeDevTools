@@ -1,5 +1,5 @@
 ---
-title: "uv - Manage uv Executable | Free DevTools"
+title: "uv - Manage uv Executable | Online Free DevTools by Hexmos"
 name: uv-self
 path: /freedevtools/tldr/uv/uv-self
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-self/"

@@ -1,5 +1,5 @@
 ---
-title: "Starship Prompt - Customize Shell Prompts | Free DevTools"
+title: "Starship Prompt - Customize Shell Prompts | Online Free DevTools by Hexmos"
 name: starship
 path: /freedevtools/tldr/st/starship
 canonical: "https://hexmos.com/freedevtools/tldr/st/starship/"

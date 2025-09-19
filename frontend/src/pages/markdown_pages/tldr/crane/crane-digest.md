@@ -1,5 +1,5 @@
 ---
-title: "Crane Digest - Get Image Digest | Free DevTools"
+title: "Crane Digest - Get Image Digest | Online Free DevTools by Hexmos"
 name: crane-digest
 path: /freedevtools/tldr/crane/crane-digest
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-digest/"

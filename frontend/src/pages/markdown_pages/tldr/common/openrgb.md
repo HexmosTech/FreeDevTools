@@ -1,5 +1,5 @@
 ---
-title: "Control RGB Lighting - OpenRGB Command | Free DevTools"
+title: "Control RGB Lighting - OpenRGB Command | Online Free DevTools by Hexmos"
 name: openrgb
 path: /freedevtools/tldr/common/openrgb
 canonical: "https://hexmos.com/freedevtools/tldr/common/openrgb/"

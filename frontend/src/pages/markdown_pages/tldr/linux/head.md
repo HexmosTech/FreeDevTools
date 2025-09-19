@@ -1,5 +1,5 @@
 ---
-title: "Head Command - Output File Parts | Free DevTools"
+title: "Head Command - Output File Parts | Online Free DevTools by Hexmos"
 name: head
 path: /freedevtools/tldr/linux/head
 canonical: "https://hexmos.com/freedevtools/tldr/linux/head/"

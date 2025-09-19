@@ -1,5 +1,5 @@
 ---
-title: "Format JSON Data - Jello Processor using Python | Free DevTools"
+title: "Format JSON Data - Jello Processor using Python | Online Free DevTools by Hexmos"
 name: jello
 path: /freedevtools/tldr/common/jello
 canonical: "https://hexmos.com/freedevtools/tldr/common/jello/"

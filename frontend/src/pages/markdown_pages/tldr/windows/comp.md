@@ -1,5 +1,5 @@
 ---
-title: "Compare Files - Compare File Contents | Free DevTools"
+title: "Compare Files - Compare File Contents | Online Free DevTools by Hexmos"
 name: comp
 path: /freedevtools/tldr/windows/comp
 canonical: "https://hexmos.com/freedevtools/tldr/windows/comp/"

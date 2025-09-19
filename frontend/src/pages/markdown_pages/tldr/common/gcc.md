@@ -1,5 +1,5 @@
 ---
-title: "Compile C/C++ Code - Control GCC Compiler | Free DevTools"
+title: "Compile C/C++ Code - Control GCC Compiler | Online Free DevTools by Hexmos"
 name: gcc
 path: /freedevtools/tldr/common/gcc
 canonical: "https://hexmos.com/freedevtools/tldr/common/gcc/"

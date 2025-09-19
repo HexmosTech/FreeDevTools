@@ -1,5 +1,5 @@
 ---
-title: "WPA CLI - Manage Wireless Networks | Free DevTools"
+title: "WPA CLI - Manage Wireless Networks | Online Free DevTools by Hexmos"
 name: wpa_cli
 path: /freedevtools/tldr/linux/wpa_cli
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wpa_cli/"

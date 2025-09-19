@@ -1,5 +1,5 @@
 ---
-title: "Trizen - Build AUR Packages | Free DevTools"
+title: "Trizen - Build AUR Packages | Online Free DevTools by Hexmos"
 name: trizen
 path: /freedevtools/tldr/linux/trizen
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trizen/"

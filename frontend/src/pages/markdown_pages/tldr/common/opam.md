@@ -1,5 +1,5 @@
 ---
-title: "OPAM - Manage OCaml Packages | Free DevTools"
+title: "OPAM - Manage OCaml Packages | Online Free DevTools by Hexmos"
 name: opam
 path: /freedevtools/tldr/common/opam
 canonical: "https://hexmos.com/freedevtools/tldr/common/opam/"

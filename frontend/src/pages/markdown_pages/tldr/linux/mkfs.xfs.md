@@ -1,5 +1,5 @@
 ---
-title: "Create XFS Filesystem - Format Partitions with mkfs.xfs | Free DevTools"
+title: "Create XFS Filesystem - Format Partitions with mkfs.xfs | Online Free DevTools by Hexmos"
 name: mkfs.xfs
 path: /freedevtools/tldr/linux/mkfs.xfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.xfs/"

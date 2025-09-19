@@ -1,5 +1,5 @@
 ---
-title: "Run Go Tool - Execute Go Programs | Free DevTools"
+title: "Run Go Tool - Execute Go Programs | Online Free DevTools by Hexmos"
 name: go-tool
 path: /freedevtools/tldr/go/go-tool
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-tool/"

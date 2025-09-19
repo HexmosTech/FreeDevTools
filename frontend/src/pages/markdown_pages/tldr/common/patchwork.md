@@ -1,5 +1,5 @@
 ---
-title: "Patchwork - Render Graphviz Images | Free DevTools"
+title: "Patchwork - Render Graphviz Images | Online Free DevTools by Hexmos"
 name: patchwork
 path: /freedevtools/tldr/common/patchwork
 canonical: "https://hexmos.com/freedevtools/tldr/common/patchwork/"

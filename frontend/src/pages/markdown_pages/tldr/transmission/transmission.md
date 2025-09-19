@@ -1,5 +1,5 @@
 ---
-title: "Manage Torrents - Control Transmission Downloads | Free DevTools"
+title: "Manage Torrents - Control Transmission Downloads | Online Free DevTools by Hexmos"
 name: transmission
 path: /freedevtools/tldr/transmission/transmission
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission/"

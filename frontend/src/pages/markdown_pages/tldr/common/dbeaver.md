@@ -1,5 +1,5 @@
 ---
-title: "Control DBeaver - GUI SQL Client | Free DevTools"
+title: "Control DBeaver - GUI SQL Client | Online Free DevTools by Hexmos"
 name: dbeaver
 path: /freedevtools/tldr/common/dbeaver
 canonical: "https://hexmos.com/freedevtools/tldr/common/dbeaver/"

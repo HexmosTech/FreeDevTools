@@ -1,5 +1,5 @@
 ---
-title: "Scale PNM Images - Resize Image with pnmscalefixed | Free DevTools"
+title: "Scale PNM Images - Resize Image with pnmscalefixed | Online Free DevTools by Hexmos"
 name: pnmscalefixed
 path: /freedevtools/tldr/pnm/pnmscalefixed
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmscalefixed/"

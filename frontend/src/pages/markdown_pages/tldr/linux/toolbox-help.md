@@ -1,5 +1,5 @@
 ---
-title: "Toolbox Help - Access Command Information | Free DevTools"
+title: "Toolbox Help - Access Command Information | Online Free DevTools by Hexmos"
 name: toolbox-help
 path: /freedevtools/tldr/linux/toolbox-help
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-help/"

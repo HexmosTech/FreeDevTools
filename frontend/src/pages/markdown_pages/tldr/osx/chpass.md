@@ -1,5 +1,5 @@
 ---
-title: "Change User Password - Control User Data | Free DevTools"
+title: "Change User Password - Control User Data | Online Free DevTools by Hexmos"
 name: chpass
 path: /freedevtools/tldr/osx/chpass
 canonical: "https://hexmos.com/freedevtools/tldr/osx/chpass/"

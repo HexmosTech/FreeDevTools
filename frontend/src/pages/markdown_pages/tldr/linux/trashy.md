@@ -1,5 +1,5 @@
 ---
-title: "Trash Command - Delete Files Securely with Trashy | Free DevTools"
+title: "Trash Command - Delete Files Securely with Trashy | Online Free DevTools by Hexmos"
 name: trashy
 path: /freedevtools/tldr/linux/trashy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trashy/"

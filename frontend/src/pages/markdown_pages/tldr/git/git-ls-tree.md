@@ -1,5 +1,5 @@
 ---
-title: "Git List Tree - List Tree Contents | Free DevTools"
+title: "Git List Tree - List Tree Contents | Online Free DevTools by Hexmos"
 name: git-ls-tree
 path: /freedevtools/tldr/git/git-ls-tree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-tree/"

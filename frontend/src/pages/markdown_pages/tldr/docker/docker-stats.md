@@ -1,5 +1,5 @@
 ---
-title: "Docker Stats - Monitor Container Resource Usage | Free DevTools"
+title: "Docker Stats - Monitor Container Resource Usage | Online Free DevTools by Hexmos"
 name: docker-stats
 path: /freedevtools/tldr/docker/docker-stats
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-stats/"

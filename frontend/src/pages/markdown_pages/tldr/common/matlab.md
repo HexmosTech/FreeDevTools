@@ -1,5 +1,5 @@
 ---
-title: "MATLAB Control - Numerical Computation | Free DevTools"
+title: "MATLAB Control - Numerical Computation | Online Free DevTools by Hexmos"
 name: matlab
 path: "/freedevtools/tldr/common/matlab"
 canonical: "https://hexmos.com/freedevtools/tldr/common/matlab/"

@@ -1,5 +1,5 @@
 ---
-title: "Choco Search - Find Chocolatey Packages | Free DevTools"
+title: "Choco Search - Find Chocolatey Packages | Online Free DevTools by Hexmos"
 name: choco-search
 path: /freedevtools/tldr/windows/choco-search
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-search/"

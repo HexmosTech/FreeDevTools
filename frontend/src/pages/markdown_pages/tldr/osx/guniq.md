@@ -1,5 +1,5 @@
 ---
-title: "Guniq - Remove Duplicate Lines | Free DevTools"
+title: "Guniq - Remove Duplicate Lines | Online Free DevTools by Hexmos"
 name: guniq
 path: /freedevtools/tldr/osx/guniq
 canonical: "https://hexmos.com/freedevtools/tldr/osx/guniq/"

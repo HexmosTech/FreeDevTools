@@ -1,5 +1,5 @@
 ---
-title: "Netperf - Benchmark Network Throughput | Free DevTools"
+title: "Netperf - Benchmark Network Throughput | Online Free DevTools by Hexmos"
 name: netperf
 path: /freedevtools/tldr/common/netperf
 canonical: "https://hexmos.com/freedevtools/tldr/common/netperf/"

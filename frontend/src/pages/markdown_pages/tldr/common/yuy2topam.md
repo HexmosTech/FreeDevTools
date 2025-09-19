@@ -1,5 +1,5 @@
 ---
-title: "YUY2 to PAM Converter - Format YUY2 Images | Free DevTools"
+title: "YUY2 to PAM Converter - Format YUY2 Images | Online Free DevTools by Hexmos"
 name: yuy2topam
 path: /freedevtools/tldr/common/yuy2topam
 canonical: "https://hexmos.com/freedevtools/tldr/common/yuy2topam/"

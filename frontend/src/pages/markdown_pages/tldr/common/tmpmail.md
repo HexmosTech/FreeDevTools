@@ -1,5 +1,5 @@
 ---
-title: "Create Temporary Email - Manage Mail from Terminal | Free DevTools"
+title: "Create Temporary Email - Manage Mail from Terminal | Online Free DevTools by Hexmos"
 name: tmpmail
 path: /freedevtools/tldr/common/tmpmail
 canonical: "https://hexmos.com/freedevtools/tldr/common/tmpmail/"

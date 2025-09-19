@@ -1,5 +1,5 @@
 ---
-title: "Update Translation File - msgmerge | Free DevTools"
+title: "Update Translation File - msgmerge | Online Free DevTools by Hexmos"
 name: msgmerge
 path: /freedevtools/tldr/common/msgmerge
 canonical: "https://hexmos.com/freedevtools/tldr/common/msgmerge/"

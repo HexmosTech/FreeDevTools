@@ -1,5 +1,5 @@
 ---
-title: "Roll Dice - Generate Random Numbers with Rolldice | Free DevTools"
+title: "Roll Dice - Generate Random Numbers with Rolldice | Online Free DevTools by Hexmos"
 name: rolldice
 path: /freedevtools/tldr/linux/rolldice
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rolldice/"

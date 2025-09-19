@@ -1,5 +1,5 @@
 ---
-title: "WWAN Daemon - Control USB WWAN Devices | Free DevTools"
+title: "WWAN Daemon - Control USB WWAN Devices | Online Free DevTools by Hexmos"
 name: wwand
 path: /freedevtools/tldr/osx/wwand
 canonical: "https://hexmos.com/freedevtools/tldr/osx/wwand/"

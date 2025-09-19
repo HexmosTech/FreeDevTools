@@ -1,5 +1,5 @@
 ---
-title: "Control Tetris Game - Play Yetris in Terminal | Free DevTools"
+title: "Control Tetris Game - Play Yetris in Terminal | Online Free DevTools by Hexmos"
 name: yetris
 path: /freedevtools/tldr/linux/yetris
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yetris/"

@@ -1,5 +1,5 @@
 ---
-title: "Fix PAM Images - Repair Netpbm Files | Free DevTools"
+title: "Fix PAM Images - Repair Netpbm Files | Online Free DevTools by Hexmos"
 name: pamfix
 path: /freedevtools/tldr/common/pamfix
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamfix/"

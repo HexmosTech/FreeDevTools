@@ -1,5 +1,5 @@
 ---
-title: "Convert Image to WebP - Compress Images Online | Free DevTools"
+title: "Convert Image to WebP - Compress Images Online | Online Free DevTools by Hexmos"
 name: cwebp
 path: /freedevtools/tldr/common/cwebp
 canonical: "https://hexmos.com/freedevtools/tldr/common/cwebp/"

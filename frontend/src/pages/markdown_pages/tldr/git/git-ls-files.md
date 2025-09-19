@@ -1,5 +1,5 @@
 ---
-title: "List Git Files - Control Index and Tree | Free DevTools"
+title: "List Git Files - Control Index and Tree | Online Free DevTools by Hexmos"
 name: git-ls-files
 path: /freedevtools/tldr/git/git-ls-files
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-files/"

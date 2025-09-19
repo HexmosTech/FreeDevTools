@@ -1,5 +1,5 @@
 ---
-title: "Control Dircolors - Manage File Colors | Free DevTools"
+title: "Control Dircolors - Manage File Colors | Online Free DevTools by Hexmos"
 name: gdircolors
 path: /freedevtools/tldr/osx/gdircolors
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdircolors/"

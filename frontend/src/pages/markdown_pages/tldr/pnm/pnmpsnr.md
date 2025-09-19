@@ -1,5 +1,5 @@
 ---
-title: "Compute Image PSNR - Compare Images | Free DevTools"
+title: "Compute Image PSNR - Compare Images | Online Free DevTools by Hexmos"
 name: pnmpsnr
 path: /freedevtools/tldr/pnm/pnmpsnr
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpsnr/"

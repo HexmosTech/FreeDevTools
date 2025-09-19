@@ -1,5 +1,5 @@
 ---
-title: "Socat Relay - Create Network Connections | Free DevTools"
+title: "Socat Relay - Create Network Connections | Online Free DevTools by Hexmos"
 name: socat
 path: /freedevtools/tldr/common/socat
 canonical: "https://hexmos.com/freedevtools/tldr/common/socat/"

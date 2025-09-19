@@ -1,5 +1,5 @@
 ---
-title: "Create VM Snapshots - qm snapshot | Free DevTools"
+title: "Create VM Snapshots - qm snapshot | Online Free DevTools by Hexmos"
 name: qm-snapshot
 path: /freedevtools/tldr/linux/qm-snapshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-snapshot/"

@@ -1,5 +1,5 @@
 ---
-title: "Aireplay-ng Inject Packets - Control Wireless Network | Free DevTools"
+title: "Aireplay-ng Inject Packets - Control Wireless Network | Online Free DevTools by Hexmos"
 name: aireplay-ng
 path: /freedevtools/tldr/common/aireplay-ng
 canonical: "https://hexmos.com/freedevtools/tldr/common/aireplay-ng/"

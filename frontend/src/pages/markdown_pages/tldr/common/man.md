@@ -1,5 +1,5 @@
 ---
-title: "Format Manual Pages - Display Documentation | Free DevTools"
+title: "Format Manual Pages - Display Documentation | Online Free DevTools by Hexmos"
 name: man
 path: /freedevtools/tldr/common/man
 canonical: "https://hexmos.com/freedevtools/tldr/common/man/"

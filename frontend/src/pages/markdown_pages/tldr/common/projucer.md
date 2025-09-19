@@ -1,5 +1,5 @@
 ---
-title: "Projucer - Manage JUCE Projects | Free DevTools"
+title: "Projucer - Manage JUCE Projects | Online Free DevTools by Hexmos"
 name: projucer
 path: /freedevtools/tldr/common/projucer
 canonical: "https://hexmos.com/freedevtools/tldr/common/projucer/"

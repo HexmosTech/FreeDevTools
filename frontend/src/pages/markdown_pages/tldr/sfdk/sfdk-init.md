@@ -1,5 +1,5 @@
 ---
-title: "SFDK Init - Create Sailfish OS Projects | Free DevTools"
+title: "SFDK Init - Create Sailfish OS Projects | Online Free DevTools by Hexmos"
 name: sfdk-init
 path: /freedevtools/tldr/sfdk/sfdk-init
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-init/"

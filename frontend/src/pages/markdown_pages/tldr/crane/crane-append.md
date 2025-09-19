@@ -1,5 +1,5 @@
 ---
-title: "Crane Append - Create Container Images | Free DevTools"
+title: "Crane Append - Create Container Images | Online Free DevTools by Hexmos"
 name: crane-append
 path: /freedevtools/tldr/crane/crane-append
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-append/"

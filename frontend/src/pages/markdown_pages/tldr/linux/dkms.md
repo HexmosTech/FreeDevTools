@@ -1,5 +1,5 @@
 ---
-title: "DKMS - Build Kernel Modules Dynamically | Free DevTools"
+title: "DKMS - Build Kernel Modules Dynamically | Online Free DevTools by Hexmos"
 name: dkms
 path: /freedevtools/tldr/linux/dkms
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dkms/"

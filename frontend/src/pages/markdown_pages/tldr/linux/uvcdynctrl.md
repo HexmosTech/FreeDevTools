@@ -1,5 +1,5 @@
 ---
-title: "UVC Control - Manage UVC Cameras on Linux | Free DevTools"
+title: "UVC Control - Manage UVC Cameras on Linux | Online Free DevTools by Hexmos"
 name: uvcdynctrl
 path: /freedevtools/tldr/linux/uvcdynctrl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uvcdynctrl/"

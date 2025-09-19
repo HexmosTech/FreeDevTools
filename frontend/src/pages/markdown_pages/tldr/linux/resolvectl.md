@@ -1,5 +1,5 @@
 ---
-title: "Resolvectl - Control DNS Resolution | Free DevTools"
+title: "Resolvectl - Control DNS Resolution | Online Free DevTools by Hexmos"
 name: resolvectl
 path: /freedevtools/tldr/linux/resolvectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/resolvectl/"

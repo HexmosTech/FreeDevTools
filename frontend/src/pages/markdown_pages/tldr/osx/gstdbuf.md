@@ -1,5 +1,5 @@
 ---
-title: "Stdbuf - Control Standard Streams | Free DevTools"
+title: "Stdbuf - Control Standard Streams | Online Free DevTools by Hexmos"
 name: gstdbuf
 path: /freedevtools/tldr/osx/gstdbuf
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gstdbuf/"

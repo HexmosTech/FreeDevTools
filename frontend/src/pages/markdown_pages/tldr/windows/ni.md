@@ -1,5 +1,5 @@
 ---
-title: "New-Item - Create Files & Directories | Free DevTools"
+title: "New-Item - Create Files & Directories | Online Free DevTools by Hexmos"
 name: ni
 path: /freedevtools/tldr/windows/ni
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ni/"

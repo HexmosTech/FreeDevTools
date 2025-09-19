@@ -1,5 +1,5 @@
 ---
-title: "OGRINFO - List Data Source Information | Free DevTools"
+title: "OGRINFO - List Data Source Information | Online Free DevTools by Hexmos"
 name: ogrinfo
 path: /freedevtools/tldr/common/ogrinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/ogrinfo/"

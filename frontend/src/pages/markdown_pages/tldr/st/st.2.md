@@ -1,5 +1,5 @@
 ---
-title: "Statistics Tool - Generate Descriptive Stats | Free DevTools"
+title: "Statistics Tool - Generate Descriptive Stats | Online Free DevTools by Hexmos"
 name: st.2
 path: /freedevtools/tldr/st/st.2
 canonical: "https://hexmos.com/freedevtools/tldr/st/st.2/"

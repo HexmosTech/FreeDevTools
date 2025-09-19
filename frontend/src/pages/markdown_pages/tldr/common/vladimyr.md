@@ -1,5 +1,5 @@
 ---
-title: "Vladimyr CLI - Control System Utilities | Free DevTools"
+title: "Vladimyr CLI - Control System Utilities | Online Free DevTools by Hexmos"
 name: vladimyr
 path: /freedevtools/tldr/common/vladimyr
 canonical: "https://hexmos.com/freedevtools/tldr/common/vladimyr/"

@@ -1,5 +1,5 @@
 ---
-title: "Java Compiler - Compile Java Code | Free DevTools"
+title: "Java Compiler - Compile Java Code | Online Free DevTools by Hexmos"
 name: javac
 path: /freedevtools/tldr/common/javac
 canonical: "https://hexmos.com/freedevtools/tldr/common/javac/"

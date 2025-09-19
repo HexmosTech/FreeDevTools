@@ -1,5 +1,5 @@
 ---
-title: "Remove Alias - Control Shell Aliases | Free DevTools"
+title: "Remove Alias - Control Shell Aliases | Online Free DevTools by Hexmos"
 name: unalias
 path: /freedevtools/tldr/common/unalias
 canonical: "https://hexmos.com/freedevtools/tldr/common/unalias/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Sparse Images - virt-sparsify | Free DevTools"
+title: "Create Sparse Images - virt-sparsify | Online Free DevTools by Hexmos"
 name: virt-sparsify
 path: /freedevtools/tldr/virt/virt-sparsify
 canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-sparsify/"

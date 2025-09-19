@@ -1,5 +1,5 @@
 ---
-title: "Control Printer Options - Manage Printing with lpoptions | Free DevTools"
+title: "Control Printer Options - Manage Printing with lpoptions | Online Free DevTools by Hexmos"
 name: lpoptions
 path: /freedevtools/tldr/common/lpoptions
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpoptions/"

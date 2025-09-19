@@ -1,5 +1,5 @@
 ---
-title: "Unity Manager - Control Unity Versions | Free DevTools"
+title: "Unity Manager - Control Unity Versions | Online Free DevTools by Hexmos"
 name: u3d
 path: /freedevtools/tldr/common/u3d
 canonical: "https://hexmos.com/freedevtools/tldr/common/u3d/"

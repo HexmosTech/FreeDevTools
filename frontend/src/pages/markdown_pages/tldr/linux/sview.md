@@ -1,5 +1,5 @@
 ---
-title: "Slurm View - Control Slurm State with GUI | Free DevTools"
+title: "Slurm View - Control Slurm State with GUI | Online Free DevTools by Hexmos"
 name: sview
 path: /freedevtools/tldr/linux/sview
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sview/"

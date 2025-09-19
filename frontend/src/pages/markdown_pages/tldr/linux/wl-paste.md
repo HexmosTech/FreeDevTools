@@ -1,5 +1,5 @@
 ---
-title: "Paste Clipboard - Control Wayland Clipboard | Free DevTools"
+title: "Paste Clipboard - Control Wayland Clipboard | Online Free DevTools by Hexmos"
 name: wl-paste
 path: /freedevtools/tldr/linux/wl-paste
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wl-paste/"

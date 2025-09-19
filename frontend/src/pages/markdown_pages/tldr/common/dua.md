@@ -1,5 +1,5 @@
 ---
-title: "Analyze Disk Usage - Manage Disk Space with dua | Free DevTools"
+title: "Analyze Disk Usage - Manage Disk Space with dua | Online Free DevTools by Hexmos"
 name: dua
 path: /freedevtools/tldr/common/dua
 canonical: "https://hexmos.com/freedevtools/tldr/common/dua/"

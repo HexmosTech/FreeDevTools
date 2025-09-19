@@ -1,5 +1,5 @@
 ---
-title: "Manage rpm-ostree - Control OS Deployments | Free DevTools"
+title: "Manage rpm-ostree - Control OS Deployments | Online Free DevTools by Hexmos"
 name: rpm-ostree
 path: /freedevtools/tldr/linux/rpm-ostree
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm-ostree/"

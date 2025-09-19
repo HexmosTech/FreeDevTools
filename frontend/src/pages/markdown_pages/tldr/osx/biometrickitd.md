@@ -1,5 +1,5 @@
 ---
-title: "Biometric Support - Manage Biometrics on macOS | Free DevTools"
+title: "Biometric Support - Manage Biometrics on macOS | Online Free DevTools by Hexmos"
 name: biometrickitd
 path: /freedevtools/tldr/osx/biometrickitd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/biometrickitd/"

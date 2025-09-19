@@ -1,5 +1,5 @@
 ---
-title: "Redis Control - Manage Redis Server Connections | Free DevTools"
+title: "Redis Control - Manage Redis Server Connections | Online Free DevTools by Hexmos"
 name: redis-cli
 path: /freedevtools/tldr/redis/redis-cli
 canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-cli/"

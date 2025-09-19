@@ -1,5 +1,5 @@
 ---
-title: "MAC Address Changer - Control Network Interface MAC | Free DevTools"
+title: "MAC Address Changer - Control Network Interface MAC | Online Free DevTools by Hexmos"
 name: macchanger
 path: /freedevtools/tldr/linux/macchanger
 canonical: "https://hexmos.com/freedevtools/tldr/linux/macchanger/"

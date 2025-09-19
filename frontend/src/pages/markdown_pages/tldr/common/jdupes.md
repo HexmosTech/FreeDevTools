@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - Deduplicate Files with jdupes | Free DevTools"
+title: "Find Duplicate Files - Deduplicate Files with jdupes | Online Free DevTools by Hexmos"
 name: jdupes
 path: /freedevtools/tldr/common/jdupes
 canonical: "https://hexmos.com/freedevtools/tldr/common/jdupes/"

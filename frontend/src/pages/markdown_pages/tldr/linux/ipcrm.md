@@ -1,5 +1,5 @@
 ---
-title: "IPC Resource Delete - Manage Linux IPC Resources | Free DevTools"
+title: "IPC Resource Delete - Manage Linux IPC Resources | Online Free DevTools by Hexmos"
 name: ipcrm
 path: /freedevtools/tldr/linux/ipcrm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ipcrm/"

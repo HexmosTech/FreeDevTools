@@ -1,5 +1,5 @@
 ---
-title: "Coursier Install - Install Applications | Free DevTools"
+title: "Coursier Install - Install Applications | Online Free DevTools by Hexmos"
 name: cs-install
 path: /freedevtools/tldr/cs/cs-install
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-install/"

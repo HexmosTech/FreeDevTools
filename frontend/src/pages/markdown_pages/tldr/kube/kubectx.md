@@ -1,5 +1,5 @@
 ---
-title: "Control Kubernetes Contexts - Switch Contexts | Free DevTools"
+title: "Control Kubernetes Contexts - Switch Contexts | Online Free DevTools by Hexmos"
 name: kubectx
 path: /freedevtools/tldr/kube/kubectx
 canonical: "https://hexmos.com/freedevtools/tldr/kube/kubectx/"

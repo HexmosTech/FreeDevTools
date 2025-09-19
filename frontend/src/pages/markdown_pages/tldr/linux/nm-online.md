@@ -1,5 +1,5 @@
 ---
-title: "Check Network Status - nm-online Command | Free DevTools"
+title: "Check Network Status - nm-online Command | Online Free DevTools by Hexmos"
 name: nm-online
 path: /freedevtools/tldr/linux/nm-online
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nm-online/"

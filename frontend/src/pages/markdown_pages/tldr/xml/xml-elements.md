@@ -1,5 +1,5 @@
 ---
-title: "Extract XML Elements - Analyze XML Structure | Free DevTools"
+title: "Extract XML Elements - Analyze XML Structure | Online Free DevTools by Hexmos"
 name: xml-elements
 path: /freedevtools/tldr/xml/xml-elements
 canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-elements/"

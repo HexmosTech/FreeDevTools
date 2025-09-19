@@ -1,5 +1,5 @@
 ---
-title: "Hg Clone - Create Repository Copies | Free DevTools"
+title: "Hg Clone - Create Repository Copies | Online Free DevTools by Hexmos"
 name: hg-clone
 path: /freedevtools/tldr/hg/hg-clone
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-clone/"

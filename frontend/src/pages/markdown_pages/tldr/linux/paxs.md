@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Control Yay, Flatpak, and Snap | Free DevTools"
+title: "Manage Packages - Control Yay, Flatpak, and Snap | Online Free DevTools by Hexmos"
 name: paxs
 path: /freedevtools/tldr/linux/paxs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/paxs/"

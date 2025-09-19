@@ -1,5 +1,5 @@
 ---
-title: "Monitor Cryptocurrency - Track Crypto Prices with Cointop | Free DevTools"
+title: "Monitor Cryptocurrency - Track Crypto Prices with Cointop | Online Free DevTools by Hexmos"
 name: cointop
 path: /freedevtools/tldr/linux/cointop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cointop/"

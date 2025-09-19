@@ -1,5 +1,5 @@
 ---
-title: "Pw-cat - Play and Record Audio | Free DevTools"
+title: "Pw-cat - Play and Record Audio | Online Free DevTools by Hexmos"
 name: pw-cat
 path: /freedevtools/tldr/linux/pw-cat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-cat/"

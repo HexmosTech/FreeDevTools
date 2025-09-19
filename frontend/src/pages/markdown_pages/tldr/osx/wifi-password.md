@@ -1,5 +1,5 @@
 ---
-title: "Retrieve Wi-Fi Password - View Network Keys | Free DevTools"
+title: "Retrieve Wi-Fi Password - View Network Keys | Online Free DevTools by Hexmos"
 name: wifi-password
 path: /freedevtools/tldr/osx/wifi-password
 canonical: "https://hexmos.com/freedevtools/tldr/osx/wifi-password/"

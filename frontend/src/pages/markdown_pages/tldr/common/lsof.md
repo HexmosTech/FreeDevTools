@@ -1,5 +1,5 @@
 ---
-title: "Lsof - List Open Files | Free DevTools"
+title: "Lsof - List Open Files | Online Free DevTools by Hexmos"
 name: lsof
 path: /freedevtools/tldr/common/lsof
 canonical: "https://hexmos.com/freedevtools/tldr/common/lsof/"

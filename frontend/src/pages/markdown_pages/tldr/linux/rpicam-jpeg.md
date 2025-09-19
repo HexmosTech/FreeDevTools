@@ -1,5 +1,5 @@
 ---
-title: "Capture JPEG Image - Control Raspberry Pi Camera | Free DevTools"
+title: "Capture JPEG Image - Control Raspberry Pi Camera | Online Free DevTools by Hexmos"
 name: rpicam-jpeg
 path: /freedevtools/tldr/linux/rpicam-jpeg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-jpeg/"

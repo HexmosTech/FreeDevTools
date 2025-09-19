@@ -1,5 +1,5 @@
 ---
-title: "Fork GitHub Repo - Create GitHub Forks Easily | Free DevTools"
+title: "Fork GitHub Repo - Create GitHub Forks Easily | Online Free DevTools by Hexmos"
 name: git-fork
 path: /freedevtools/tldr/git/git-fork
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-fork/"

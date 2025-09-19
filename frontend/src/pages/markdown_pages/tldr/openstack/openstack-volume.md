@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Volume - Manage Volumes | Free DevTools"
+title: "OpenStack Volume - Manage Volumes | Online Free DevTools by Hexmos"
 name: openstack-volume
 path: /freedevtools/tldr/openstack/openstack-volume
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-volume/"

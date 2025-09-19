@@ -1,5 +1,5 @@
 ---
-title: "RabbitMQ Vhosts - Control Virtual Hosts | Free DevTools"
+title: "RabbitMQ Vhosts - Control Virtual Hosts | Online Free DevTools by Hexmos"
 name: rabbitmqctl-vhosts
 path: /freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts
 canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts/"

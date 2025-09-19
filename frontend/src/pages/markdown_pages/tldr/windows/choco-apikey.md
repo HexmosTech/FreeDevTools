@@ -1,5 +1,5 @@
 ---
-title: "Choco Apikey - Manage Chocolatey API Keys | Free DevTools"
+title: "Choco Apikey - Manage Chocolatey API Keys | Online Free DevTools by Hexmos"
 name: choco-apikey
 path: /freedevtools/tldr/windows/choco-apikey
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-apikey/"

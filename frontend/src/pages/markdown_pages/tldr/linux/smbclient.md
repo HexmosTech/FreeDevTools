@@ -1,5 +1,5 @@
 ---
-title: "SMB Client - Access SMB/CIFS Shares | Free DevTools"
+title: "SMB Client - Access SMB/CIFS Shares | Online Free DevTools by Hexmos"
 name: smbclient
 path: /freedevtools/tldr/linux/smbclient
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smbclient/"

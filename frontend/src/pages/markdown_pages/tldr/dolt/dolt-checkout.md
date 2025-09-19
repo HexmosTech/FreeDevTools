@@ -1,5 +1,5 @@
 ---
-title: "Dolt Checkout - Manage Branches & Tables | Free DevTools"
+title: "Dolt Checkout - Manage Branches & Tables | Online Free DevTools by Hexmos"
 name: dolt-checkout
 path: /freedevtools/tldr/dolt/dolt-checkout
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-checkout/"

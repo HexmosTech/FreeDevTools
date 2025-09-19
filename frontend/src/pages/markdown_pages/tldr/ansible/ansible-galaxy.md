@@ -1,5 +1,5 @@
 ---
-title: "Ansible Galaxy - Manage Roles & Collections | Free DevTools"
+title: "Ansible Galaxy - Manage Roles & Collections | Online Free DevTools by Hexmos"
 name: ansible-galaxy
 path: /freedevtools/tldr/ansible/ansible-galaxy
 canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-galaxy/"

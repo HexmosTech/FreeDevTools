@@ -1,5 +1,5 @@
 ---
-title: "Speedtest - Measure Network Speed | Free DevTools"
+title: "Speedtest - Measure Network Speed | Online Free DevTools by Hexmos"
 name: speedtest-rs
 path: /freedevtools/tldr/speedtest/speedtest-rs
 canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest-rs/"

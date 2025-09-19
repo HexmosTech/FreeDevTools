@@ -1,5 +1,5 @@
 ---
-title: "Brew Search - Find Packages and Casks | Free DevTools"
+title: "Brew Search - Find Packages and Casks | Online Free DevTools by Hexmos"
 name: brew-search
 path: /freedevtools/tldr/brew/brew-search
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-search/"

@@ -1,5 +1,5 @@
 ---
-title: "Conda Create - Generate Environments | Free DevTools"
+title: "Conda Create - Generate Environments | Online Free DevTools by Hexmos"
 name: conda-create
 path: /freedevtools/tldr/conda/conda-create
 canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-create/"

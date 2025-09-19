@@ -1,5 +1,5 @@
 ---
-title: "Git Control - Manage Git Workflow with Legit | Free DevTools"
+title: "Git Control - Manage Git Workflow with Legit | Online Free DevTools by Hexmos"
 name: legit
 path: /freedevtools/tldr/linux/legit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/legit/"

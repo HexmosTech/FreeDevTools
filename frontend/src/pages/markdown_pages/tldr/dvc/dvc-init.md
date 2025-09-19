@@ -1,5 +1,5 @@
 ---
-title: "Initialize DVC - Manage Data Versions | Free DevTools"
+title: "Initialize DVC - Manage Data Versions | Online Free DevTools by Hexmos"
 name: dvc-init
 path: /freedevtools/tldr/dvc/dvc-init
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-init/"

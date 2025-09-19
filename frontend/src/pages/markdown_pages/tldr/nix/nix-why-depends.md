@@ -1,5 +1,5 @@
 ---
-title: "Show Nix Dependencies - Find Dependency Reasons | Free DevTools"
+title: "Show Nix Dependencies - Find Dependency Reasons | Online Free DevTools by Hexmos"
 name: nix-why-depends
 path: /freedevtools/tldr/nix/nix-why-depends
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-why-depends/"

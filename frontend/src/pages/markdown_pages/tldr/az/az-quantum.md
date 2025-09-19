@@ -1,5 +1,5 @@
 ---
-title: "Azure Quantum - Manage Workspaces & Submit Jobs | Free DevTools"
+title: "Azure Quantum - Manage Workspaces & Submit Jobs | Online Free DevTools by Hexmos"
 name: az-quantum
 path: /freedevtools/tldr/az/az-quantum
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-quantum/"

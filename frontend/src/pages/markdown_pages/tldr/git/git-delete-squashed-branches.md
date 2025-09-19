@@ -1,5 +1,5 @@
 ---
-title: "Delete Git Branches - Remove Squashed Merged Branches | Free DevTools"
+title: "Delete Git Branches - Remove Squashed Merged Branches | Online Free DevTools by Hexmos"
 name: git-delete-squashed-branches
 path: /freedevtools/tldr/git/git-delete-squashed-branches
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-squashed-branches/"

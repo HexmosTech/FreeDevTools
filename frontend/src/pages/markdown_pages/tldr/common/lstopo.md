@@ -1,5 +1,5 @@
 ---
-title: "Lstopo - Show Hardware Topology | Free DevTools"
+title: "Lstopo - Show Hardware Topology | Online Free DevTools by Hexmos"
 name: lstopo
 path: /freedevtools/tldr/common/lstopo
 canonical: "https://hexmos.com/freedevtools/tldr/common/lstopo/"

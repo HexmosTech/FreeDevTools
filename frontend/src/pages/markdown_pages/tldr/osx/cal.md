@@ -1,5 +1,5 @@
 ---
-title: "Calendar Command - Generate Calendars | Free DevTools"
+title: "Calendar Command - Generate Calendars | Online Free DevTools by Hexmos"
 name: cal
 path: /freedevtools/tldr/osx/cal
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cal/"

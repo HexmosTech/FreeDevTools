@@ -1,5 +1,5 @@
 ---
-title: "YPCHPASS - Manage NIS Passwords | Free DevTools"
+title: "YPCHPASS - Manage NIS Passwords | Online Free DevTools by Hexmos"
 name: ypchpass
 path: /freedevtools/tldr/freebsd/ypchpass
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ypchpass/"

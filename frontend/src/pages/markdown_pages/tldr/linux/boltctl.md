@@ -1,5 +1,5 @@
 ---
-title: "Boltctl - Control Thunderbolt Devices | Free DevTools"
+title: "Boltctl - Control Thunderbolt Devices | Online Free DevTools by Hexmos"
 name: boltctl
 path: /freedevtools/tldr/linux/boltctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/boltctl/"

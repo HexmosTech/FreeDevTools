@@ -1,5 +1,5 @@
 ---
-title: "GitHub PR Merge - Manage Pull Requests | Free DevTools"
+title: "GitHub PR Merge - Manage Pull Requests | Online Free DevTools by Hexmos"
 name: gh-pr-merge
 path: /freedevtools/tldr/gh/gh-pr-merge
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr-merge/"

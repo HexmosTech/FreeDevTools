@@ -1,5 +1,5 @@
 ---
-title: "lrzuntar Command - Extract Files | Free DevTools"
+title: "lrzuntar Command - Extract Files | Online Free DevTools by Hexmos"
 name: lrzuntar
 path: /freedevtools/tldr/linux/lrzuntar
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lrzuntar/"

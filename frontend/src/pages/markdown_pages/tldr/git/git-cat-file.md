@@ -1,5 +1,5 @@
 ---
-title: "Git Cat-File - Inspect Git Object Content | Free DevTools"
+title: "Git Cat-File - Inspect Git Object Content | Online Free DevTools by Hexmos"
 name: git-cat-file
 path: /freedevtools/tldr/git/git-cat-file
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cat-file/"

@@ -1,5 +1,5 @@
 ---
-title: "AWK - Process Text Files | Free DevTools"
+title: "AWK - Process Text Files | Online Free DevTools by Hexmos"
 name: awk
 path: /freedevtools/tldr/common/awk
 canonical: "https://hexmos.com/freedevtools/tldr/common/awk/"

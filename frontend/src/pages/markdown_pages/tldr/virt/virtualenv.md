@@ -1,5 +1,5 @@
 ---
-title: "Create Virtual Environments - Isolate Python Projects | Free DevTools"
+title: "Create Virtual Environments - Isolate Python Projects | Online Free DevTools by Hexmos"
 name: virtualenv
 path: /freedevtools/tldr/virt/virtualenv
 canonical: "https://hexmos.com/freedevtools/tldr/virt/virtualenv/"

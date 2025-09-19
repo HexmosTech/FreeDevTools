@@ -1,5 +1,5 @@
 ---
-title: "LVM Logical Volumes - Display LVM Information | Free DevTools"
+title: "LVM Logical Volumes - Display LVM Information | Online Free DevTools by Hexmos"
 name: lvs
 path: /freedevtools/tldr/linux/lvs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvs/"

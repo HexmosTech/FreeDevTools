@@ -1,5 +1,5 @@
 ---
-title: "QM Resize - Control Disk Size | Free DevTools"
+title: "QM Resize - Control Disk Size | Online Free DevTools by Hexmos"
 name: qm-resize
 path: /freedevtools/tldr/linux/qm-resize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-resize/"

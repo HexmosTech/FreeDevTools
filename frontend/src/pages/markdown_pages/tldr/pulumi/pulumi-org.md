@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Org - Manage Cloud Organization Settings | Free DevTools"
+title: "Pulumi Org - Manage Cloud Organization Settings | Online Free DevTools by Hexmos"
 name: pulumi-org
 path: /freedevtools/tldr/pulumi/pulumi-org
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-org/"

@@ -1,5 +1,5 @@
 ---
-title: "Hardinfo - Generate Hardware Reports | Free DevTools"
+title: "Hardinfo - Generate Hardware Reports | Online Free DevTools by Hexmos"
 name: hardinfo
 path: /freedevtools/tldr/linux/hardinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hardinfo/"

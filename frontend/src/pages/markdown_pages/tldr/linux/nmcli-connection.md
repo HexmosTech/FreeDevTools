@@ -1,5 +1,5 @@
 ---
-title: "nmcli Connection - Manage Network Connections | Free DevTools"
+title: "nmcli Connection - Manage Network Connections | Online Free DevTools by Hexmos"
 name: nmcli-connection
 path: /freedevtools/tldr/linux/nmcli-connection
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-connection/"

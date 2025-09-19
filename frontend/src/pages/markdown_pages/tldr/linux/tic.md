@@ -1,5 +1,5 @@
 ---
-title: "Compile Terminfo - Manage Terminal Definitions | Free DevTools"
+title: "Compile Terminfo - Manage Terminal Definitions | Online Free DevTools by Hexmos"
 name: tic
 path: /freedevtools/tldr/linux/tic
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tic/"

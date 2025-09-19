@@ -1,5 +1,5 @@
 ---
-title: "List Logged In Users - Find Login Info | Free DevTools"
+title: "List Logged In Users - Find Login Info | Online Free DevTools by Hexmos"
 name: lastb
 path: /freedevtools/tldr/linux/lastb
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lastb/"

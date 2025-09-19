@@ -1,5 +1,5 @@
 ---
-title: "Mount Disk Images - Control DDI Mounts | Free DevTools"
+title: "Mount Disk Images - Control DDI Mounts | Online Free DevTools by Hexmos"
 name: mount.ddi
 path: /freedevtools/tldr/linux/mount.ddi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mount.ddi/"

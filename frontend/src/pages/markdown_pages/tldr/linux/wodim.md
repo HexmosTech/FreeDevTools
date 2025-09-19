@@ -1,5 +1,5 @@
 ---
-title: "Wodim - Burn CDs and DVDs | Free DevTools"
+title: "Wodim - Burn CDs and DVDs | Online Free DevTools by Hexmos"
 name: wodim
 path: /freedevtools/tldr/linux/wodim
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wodim/"

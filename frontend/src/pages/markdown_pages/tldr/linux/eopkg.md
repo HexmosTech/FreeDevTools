@@ -1,5 +1,5 @@
 ---
-title: "Eopkg - Manage Solus Packages | Free DevTools"
+title: "Eopkg - Manage Solus Packages | Online Free DevTools by Hexmos"
 name: eopkg
 path: /freedevtools/tldr/linux/eopkg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eopkg/"

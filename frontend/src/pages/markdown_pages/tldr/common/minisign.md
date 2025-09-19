@@ -1,5 +1,5 @@
 ---
-title: "Generate Signatures - minisign | Free DevTools"
+title: "Generate Signatures - minisign | Online Free DevTools by Hexmos"
 name: minisign
 path: /freedevtools/tldr/common/minisign
 canonical: "https://hexmos.com/freedevtools/tldr/common/minisign/"

@@ -1,5 +1,5 @@
 ---
-title: "Pinky Command - Print User Info with Finger Protocol | Free DevTools"
+title: "Pinky Command - Print User Info with Finger Protocol | Online Free DevTools by Hexmos"
 name: pinky
 path: /freedevtools/tldr/common/pinky
 canonical: "https://hexmos.com/freedevtools/tldr/common/pinky/"

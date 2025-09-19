@@ -1,5 +1,5 @@
 ---
-title: "List VM Block Devices - Virsh Domblklist | Free DevTools"
+title: "List VM Block Devices - Virsh Domblklist | Online Free DevTools by Hexmos"
 name: virsh-domblklist
 path: /freedevtools/tldr/virsh/virsh-domblklist
 canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-domblklist/"

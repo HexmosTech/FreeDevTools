@@ -1,5 +1,5 @@
 ---
-title: "Control IPFS Files - Manage Decentralized Storage | Free DevTools"
+title: "Control IPFS Files - Manage Decentralized Storage | Online Free DevTools by Hexmos"
 name: ipfs
 path: /freedevtools/tldr/common/ipfs
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipfs/"

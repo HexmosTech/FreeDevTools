@@ -1,5 +1,5 @@
 ---
-title: "Detect Secrets with Gitleaks - Find Leaks | Free DevTools"
+title: "Detect Secrets with Gitleaks - Find Leaks | Online Free DevTools by Hexmos"
 name: gitleaks
 path: /freedevtools/tldr/git/gitleaks
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitleaks/"

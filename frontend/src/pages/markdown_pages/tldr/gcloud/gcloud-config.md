@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Config - Manage Configurations | Free DevTools"
+title: "Gcloud Config - Manage Configurations | Online Free DevTools by Hexmos"
 name: gcloud-config
 path: /freedevtools/tldr/gcloud/gcloud-config
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config/"

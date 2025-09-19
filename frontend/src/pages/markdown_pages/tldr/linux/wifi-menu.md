@@ -1,5 +1,5 @@
 ---
-title: "Control Wireless Network - wifi-menu Connection | Free DevTools"
+title: "Control Wireless Network - wifi-menu Connection | Online Free DevTools by Hexmos"
 name: wifi-menu
 path: /freedevtools/tldr/linux/wifi-menu
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wifi-menu/"

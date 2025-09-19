@@ -1,5 +1,5 @@
 ---
-title: "Cradle SQL - Manage Databases | Free DevTools"
+title: "Cradle SQL - Manage Databases | Online Free DevTools by Hexmos"
 name: cradle-sql
 path: /freedevtools/tldr/cradle/cradle-sql
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-sql/"

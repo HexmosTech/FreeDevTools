@@ -1,5 +1,5 @@
 ---
-title: "Security Checker - Validate PHP Dependencies | Free DevTools"
+title: "Security Checker - Validate PHP Dependencies | Online Free DevTools by Hexmos"
 name: security-checker
 path: /freedevtools/tldr/common/security-checker
 canonical: "https://hexmos.com/freedevtools/tldr/common/security-checker/"

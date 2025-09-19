@@ -1,5 +1,5 @@
 ---
-title: "Stdbuf Control - Modify Standard Streams | Free DevTools"
+title: "Stdbuf Control - Modify Standard Streams | Online Free DevTools by Hexmos"
 name: stdbuf
 path: /freedevtools/tldr/st/stdbuf
 canonical: "https://hexmos.com/freedevtools/tldr/st/stdbuf/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Ephemerides - Kosmorro Date & Location | Free DevTools"
+title: "Generate Ephemerides - Kosmorro Date & Location | Online Free DevTools by Hexmos"
 name: kosmorro
 path: /freedevtools/tldr/common/kosmorro
 canonical: "https://hexmos.com/freedevtools/tldr/common/kosmorro/"

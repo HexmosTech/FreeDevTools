@@ -1,5 +1,5 @@
 ---
-title: "Android Reverse Engineering - Analyze APKs with Androguard | Free DevTools"
+title: "Android Reverse Engineering - Analyze APKs with Androguard | Online Free DevTools by Hexmos"
 name: androguard
 path: /freedevtools/tldr/common/androguard
 canonical: "https://hexmos.com/freedevtools/tldr/common/androguard/"

@@ -1,5 +1,5 @@
 ---
-title: "Control ORCA Sequencer - C-Port Tool | Free DevTools"
+title: "Control ORCA Sequencer - C-Port Tool | Online Free DevTools by Hexmos"
 name: orca-c
 path: /freedevtools/tldr/common/orca-c
 canonical: "https://hexmos.com/freedevtools/tldr/common/orca-c/"

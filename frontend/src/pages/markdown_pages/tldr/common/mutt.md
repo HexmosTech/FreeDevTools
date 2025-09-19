@@ -1,5 +1,5 @@
 ---
-title: "Send Email with Mutt - Command Line Mail | Free DevTools"
+title: "Send Email with Mutt - Command Line Mail | Online Free DevTools by Hexmos"
 name: mutt
 path: /freedevtools/tldr/common/mutt
 canonical: "https://hexmos.com/freedevtools/tldr/common/mutt/"

@@ -1,5 +1,5 @@
 ---
-title: "Fossil Forget - Remove Files from Repository | Free DevTools"
+title: "Fossil Forget - Remove Files from Repository | Online Free DevTools by Hexmos"
 name: fossil-forget
 path: /freedevtools/tldr/fossil/fossil-forget
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-forget/"

@@ -1,5 +1,5 @@
 ---
-title: "Scan API Paths - kiterunner Tool | Free DevTools"
+title: "Scan API Paths - kiterunner Tool | Online Free DevTools by Hexmos"
 name: kiterunner
 path: /freedevtools/tldr/kiterunner/kiterunner
 canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner/"

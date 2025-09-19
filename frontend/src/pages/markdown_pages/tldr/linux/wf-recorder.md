@@ -1,5 +1,5 @@
 ---
-title: "Screencast wf-recorder - Record Wayland Screens | Free DevTools"
+title: "Screencast wf-recorder - Record Wayland Screens | Online Free DevTools by Hexmos"
 name: wf-recorder
 path: /freedevtools/tldr/linux/wf-recorder
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wf-recorder/"

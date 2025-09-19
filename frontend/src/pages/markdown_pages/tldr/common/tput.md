@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Settings - Using Tput | Free DevTools"
+title: "Control Terminal Settings - Using Tput | Online Free DevTools by Hexmos"
 name: tput
 path: /freedevtools/tldr/common/tput
 canonical: "https://hexmos.com/freedevtools/tldr/common/tput/"

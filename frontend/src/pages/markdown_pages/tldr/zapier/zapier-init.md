@@ -1,5 +1,5 @@
 ---
-title: "Create Zapier Integration - Initialize with Zapier CLI | Free DevTools"
+title: "Create Zapier Integration - Initialize with Zapier CLI | Online Free DevTools by Hexmos"
 name: zapier-init
 path: /freedevtools/tldr/zapier/zapier-init
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-init/"

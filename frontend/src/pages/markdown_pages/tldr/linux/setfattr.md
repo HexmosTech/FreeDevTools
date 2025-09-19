@@ -1,5 +1,5 @@
 ---
-title: "Setfattr - Control File Attributes | Free DevTools"
+title: "Setfattr - Control File Attributes | Online Free DevTools by Hexmos"
 name: setfattr
 path: /freedevtools/tldr/linux/setfattr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setfattr/"

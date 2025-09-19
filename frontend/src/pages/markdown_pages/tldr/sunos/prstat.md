@@ -1,5 +1,5 @@
 ---
-title: "Prstat - Report Process Statistics | Free DevTools"
+title: "Prstat - Report Process Statistics | Online Free DevTools by Hexmos"
 name: prstat
 path: /freedevtools/tldr/sunos/prstat
 canonical: "https://hexmos.com/freedevtools/tldr/sunos/prstat/"

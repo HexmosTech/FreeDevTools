@@ -1,5 +1,5 @@
 ---
-title: "SNMP Scanner braa - Scan Networks Fast | Free DevTools"
+title: "SNMP Scanner braa - Scan Networks Fast | Online Free DevTools by Hexmos"
 name: braa
 path: /freedevtools/tldr/linux/braa
 canonical: "https://hexmos.com/freedevtools/tldr/linux/braa/"

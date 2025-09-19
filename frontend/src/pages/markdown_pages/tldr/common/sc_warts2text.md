@@ -1,5 +1,5 @@
 ---
-title: "Generate Warts Text - Format Warts Data | Free DevTools"
+title: "Generate Warts Text - Format Warts Data | Online Free DevTools by Hexmos"
 name: sc_warts2text
 path: /freedevtools/tldr/common/sc_warts2text
 canonical: "https://hexmos.com/freedevtools/tldr/common/sc_warts2text/"

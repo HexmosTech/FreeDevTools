@@ -1,5 +1,5 @@
 ---
-title: "Inspect HTTP Requests - Control Wuzz Interactions | Free DevTools"
+title: "Inspect HTTP Requests - Control Wuzz Interactions | Online Free DevTools by Hexmos"
 name: wuzz
 path: /freedevtools/tldr/common/wuzz
 canonical: "https://hexmos.com/freedevtools/tldr/common/wuzz/"

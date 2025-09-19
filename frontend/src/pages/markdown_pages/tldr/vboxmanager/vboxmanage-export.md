@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage Export - Export Virtual Machines | Free DevTools"
+title: "VBoxManage Export - Export Virtual Machines | Online Free DevTools by Hexmos"
 name: vboxmanage-export
 path: /freedevtools/tldr/vboxmanager/vboxmanage-export
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-export/"

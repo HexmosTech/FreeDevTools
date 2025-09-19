@@ -1,5 +1,5 @@
 ---
-title: "Control QMMP Audio - Play Music | Free DevTools"
+title: "Control QMMP Audio - Play Music | Online Free DevTools by Hexmos"
 name: qmmp
 path: /freedevtools/tldr/common/qmmp
 canonical: "https://hexmos.com/freedevtools/tldr/common/qmmp/"

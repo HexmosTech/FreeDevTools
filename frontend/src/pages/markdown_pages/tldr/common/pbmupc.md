@@ -1,5 +1,5 @@
 ---
-title: "Generate UPC PBM Image - Create Barcodes | Free DevTools"
+title: "Generate UPC PBM Image - Create Barcodes | Online Free DevTools by Hexmos"
 name: pbmupc
 path: /freedevtools/tldr/common/pbmupc
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmupc/"

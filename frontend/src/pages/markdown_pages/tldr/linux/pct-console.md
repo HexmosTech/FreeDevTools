@@ -1,5 +1,5 @@
 ---
-title: "Control Container TTY - PCT Console Access | Free DevTools"
+title: "Control Container TTY - PCT Console Access | Online Free DevTools by Hexmos"
 name: pct-console
 path: /freedevtools/tldr/linux/pct-console
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-console/"

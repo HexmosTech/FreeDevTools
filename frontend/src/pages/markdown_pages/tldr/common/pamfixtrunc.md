@@ -1,5 +1,5 @@
 ---
-title: "Fix PAM - Truncate Image Data | Free DevTools"
+title: "Fix PAM - Truncate Image Data | Online Free DevTools by Hexmos"
 name: pamfixtrunc
 path: /freedevtools/tldr/common/pamfixtrunc
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamfixtrunc/"

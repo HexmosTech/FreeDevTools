@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to Term - Create ANSI Images | Free DevTools"
+title: "Convert PPM to Term - Create ANSI Images | Online Free DevTools by Hexmos"
 name: ppmtoterm
 path: /freedevtools/tldr/ppm/ppmtoterm
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoterm/"

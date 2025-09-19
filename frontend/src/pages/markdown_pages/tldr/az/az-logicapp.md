@@ -1,5 +1,5 @@
 ---
-title: "Logic Apps - Manage Azure Logic Apps | Free DevTools"
+title: "Logic Apps - Manage Azure Logic Apps | Online Free DevTools by Hexmos"
 name: az-logicapp
 path: /freedevtools/tldr/az/az-logicapp
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-logicapp/"

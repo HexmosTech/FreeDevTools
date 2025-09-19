@@ -1,5 +1,5 @@
 ---
-title: "Claude - Code Generation with Natural Language | Free DevTools"
+title: "Claude - Code Generation with Natural Language | Online Free DevTools by Hexmos"
 name: claude
 path: /freedevtools/tldr/common/claude
 canonical: "https://hexmos.com/freedevtools/tldr/common/claude/"

@@ -1,5 +1,5 @@
 ---
-title: "Display Disk Information - Format Disk Usage | Free DevTools"
+title: "Display Disk Information - Format Disk Usage | Online Free DevTools by Hexmos"
 name: dysk
 path: /freedevtools/tldr/linux/dysk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dysk/"

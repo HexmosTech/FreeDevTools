@@ -1,5 +1,5 @@
 ---
-title: "GNU Who - List Users Logged in | Free DevTools"
+title: "GNU Who - List Users Logged in | Online Free DevTools by Hexmos"
 name: gwho
 path: /freedevtools/tldr/osx/gwho
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gwho/"

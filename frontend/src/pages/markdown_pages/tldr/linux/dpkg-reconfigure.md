@@ -1,5 +1,5 @@
 ---
-title: "Reconfigure Packages - Manage Linux Software | Free DevTools"
+title: "Reconfigure Packages - Manage Linux Software | Online Free DevTools by Hexmos"
 name: dpkg-reconfigure
 path: /freedevtools/tldr/linux/dpkg-reconfigure
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg-reconfigure/"

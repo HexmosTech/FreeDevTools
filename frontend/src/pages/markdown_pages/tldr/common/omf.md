@@ -1,5 +1,5 @@
 ---
-title: "OMF Package Manager - Extend Fish Shell | Free DevTools"
+title: "OMF Package Manager - Extend Fish Shell | Online Free DevTools by Hexmos"
 name: omf
 path: /freedevtools/tldr/common/omf
 canonical: "https://hexmos.com/freedevtools/tldr/common/omf/"

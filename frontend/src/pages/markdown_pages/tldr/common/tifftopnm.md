@@ -1,5 +1,5 @@
 ---
-title: "Convert TIFF to PNM - Create PNM Images | Free DevTools"
+title: "Convert TIFF to PNM - Create PNM Images | Online Free DevTools by Hexmos"
 name: tifftopnm
 path: /freedevtools/tldr/common/tifftopnm
 canonical: "https://hexmos.com/freedevtools/tldr/common/tifftopnm/"

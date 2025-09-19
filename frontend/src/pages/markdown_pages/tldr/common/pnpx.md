@@ -1,5 +1,5 @@
 ---
-title: "PNPX Executor - Execute npm Binaries with pnpm | Free DevTools"
+title: "PNPX Executor - Execute npm Binaries with pnpm | Online Free DevTools by Hexmos"
 name: pnpx
 path: /freedevtools/tldr/common/pnpx
 canonical: "https://hexmos.com/freedevtools/tldr/common/pnpx/"

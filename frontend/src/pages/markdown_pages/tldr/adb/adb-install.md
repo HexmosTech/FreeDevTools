@@ -1,5 +1,5 @@
 ---
-title: "ADB Install - Push Android Packages | Free DevTools"
+title: "ADB Install - Push Android Packages | Online Free DevTools by Hexmos"
 name: adb-install
 path: /freedevtools/tldr/adb/adb-install
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-install/"

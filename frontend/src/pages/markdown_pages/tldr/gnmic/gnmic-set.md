@@ -1,5 +1,5 @@
 ---
-title: "GNMI Set - Modify Network Configuration | Free DevTools"
+title: "GNMI Set - Modify Network Configuration | Online Free DevTools by Hexmos"
 name: gnmic-set
 path: /freedevtools/tldr/gnmic/gnmic-set
 canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-set/"

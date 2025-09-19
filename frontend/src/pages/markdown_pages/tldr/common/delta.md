@@ -1,5 +1,5 @@
 ---
-title: "Compare Diffs - View Git & Diff Output | Free DevTools"
+title: "Compare Diffs - View Git & Diff Output | Online Free DevTools by Hexmos"
 name: delta
 path: /freedevtools/tldr/common/delta
 canonical: "https://hexmos.com/freedevtools/tldr/common/delta/"

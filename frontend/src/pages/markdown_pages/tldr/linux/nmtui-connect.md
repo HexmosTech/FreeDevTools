@@ -1,5 +1,5 @@
 ---
-title: "Connect Network - Manage Network Connections with nmtui | Free DevTools"
+title: "Connect Network - Manage Network Connections with nmtui | Online Free DevTools by Hexmos"
 name: nmtui-connect
 path: /freedevtools/tldr/linux/nmtui-connect
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmtui-connect/"

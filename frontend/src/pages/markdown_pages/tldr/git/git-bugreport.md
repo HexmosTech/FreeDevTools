@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Bug Reports - Debug System Information | Free DevTools"
+title: "Generate Git Bug Reports - Debug System Information | Online Free DevTools by Hexmos"
 name: git-bugreport
 path: /freedevtools/tldr/git/git-bugreport
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-bugreport/"

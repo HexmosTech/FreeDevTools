@@ -1,5 +1,5 @@
 ---
-title: "Azure Advisor - Manage Subscriptions | Free DevTools"
+title: "Azure Advisor - Manage Subscriptions | Online Free DevTools by Hexmos"
 name: az-advisor
 path: /freedevtools/tldr/az/az-advisor
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-advisor/"

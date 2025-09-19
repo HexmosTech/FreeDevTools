@@ -1,5 +1,5 @@
 ---
-title: "QEMU Manager - Control VMs | Free DevTools"
+title: "QEMU Manager - Control VMs | Online Free DevTools by Hexmos"
 name: qm
 path: /freedevtools/tldr/linux/qm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm/"

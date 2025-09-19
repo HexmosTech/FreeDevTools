@@ -1,5 +1,5 @@
 ---
-title: "VGDisplay - Display LVM Volume Groups | Free DevTools"
+title: "VGDisplay - Display LVM Volume Groups | Online Free DevTools by Hexmos"
 name: vgdisplay
 path: /freedevtools/tldr/linux/vgdisplay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgdisplay/"

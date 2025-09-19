@@ -1,5 +1,5 @@
 ---
-title: "Android Settings - Control System Configuration | Free DevTools"
+title: "Android Settings - Control System Configuration | Online Free DevTools by Hexmos"
 name: settings
 path: /freedevtools/tldr/android/settings
 canonical: "https://hexmos.com/freedevtools/tldr/android/settings/"

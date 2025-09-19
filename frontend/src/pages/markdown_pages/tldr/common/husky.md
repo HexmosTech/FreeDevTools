@@ -1,5 +1,5 @@
 ---
-title: "Control Git Hooks - Husky Command Manager | Free DevTools"
+title: "Control Git Hooks - Husky Command Manager | Online Free DevTools by Hexmos"
 name: husky
 path: /freedevtools/tldr/common/husky
 canonical: "https://hexmos.com/freedevtools/tldr/common/husky/"

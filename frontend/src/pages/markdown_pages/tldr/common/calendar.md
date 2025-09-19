@@ -1,5 +1,5 @@
 ---
-title: "Calendar - Display Events | Free DevTools"
+title: "Calendar - Display Events | Online Free DevTools by Hexmos"
 name: calendar
 path: /freedevtools/tldr/common/calendar
 canonical: "https://hexmos.com/freedevtools/tldr/common/calendar/"

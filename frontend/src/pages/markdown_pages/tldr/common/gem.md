@@ -1,5 +1,5 @@
 ---
-title: "Manage Ruby Gems - Package Management | Free DevTools"
+title: "Manage Ruby Gems - Package Management | Online Free DevTools by Hexmos"
 name: gem
 path: /freedevtools/tldr/common/gem
 canonical: "https://hexmos.com/freedevtools/tldr/common/gem/"

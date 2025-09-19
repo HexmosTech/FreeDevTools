@@ -1,5 +1,5 @@
 ---
-title: "Display Image - Show Images on Command Line | Free DevTools"
+title: "Display Image - Show Images on Command Line | Online Free DevTools by Hexmos"
 name: imgcat
 path: /freedevtools/tldr/common/imgcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/imgcat/"

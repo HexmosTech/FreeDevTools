@@ -1,5 +1,5 @@
 ---
-title: "NFS Pentesting - Exploit NFS Servers | Free DevTools"
+title: "NFS Pentesting - Exploit NFS Servers | Online Free DevTools by Hexmos"
 name: nxc-nfs
 path: /freedevtools/tldr/nxc/nxc-nfs
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-nfs/"

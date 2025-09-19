@@ -1,5 +1,5 @@
 ---
-title: "VBoxManage Extpack - Manage VirtualBox Extensions | Free DevTools"
+title: "VBoxManage Extpack - Manage VirtualBox Extensions | Online Free DevTools by Hexmos"
 name: vboxmanage-extpack
 path: /freedevtools/tldr/vboxmanager/vboxmanage-extpack
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-extpack/"

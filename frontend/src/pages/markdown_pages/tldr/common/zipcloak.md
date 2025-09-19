@@ -1,5 +1,5 @@
 ---
-title: "Encrypt Zip Archives - Secure Files with Zipcloak | Free DevTools"
+title: "Encrypt Zip Archives - Secure Files with Zipcloak | Online Free DevTools by Hexmos"
 name: zipcloak
 path: /freedevtools/tldr/common/zipcloak
 canonical: "https://hexmos.com/freedevtools/tldr/common/zipcloak/"

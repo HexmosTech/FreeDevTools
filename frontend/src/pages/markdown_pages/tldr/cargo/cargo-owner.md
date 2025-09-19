@@ -1,5 +1,5 @@
 ---
-title: "Cargo Owner - Manage Rust Crate Owners | Free DevTools"
+title: "Cargo Owner - Manage Rust Crate Owners | Online Free DevTools by Hexmos"
 name: cargo-owner
 path: /freedevtools/tldr/cargo/cargo-owner
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-owner/"

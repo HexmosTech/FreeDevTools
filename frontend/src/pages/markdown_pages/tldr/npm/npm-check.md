@@ -1,5 +1,5 @@
 ---
-title: "Analyze NPM Packages - Check Dependencies | Free DevTools"
+title: "Analyze NPM Packages - Check Dependencies | Online Free DevTools by Hexmos"
 name: npm-check
 path: /freedevtools/tldr/npm/npm-check
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-check/"

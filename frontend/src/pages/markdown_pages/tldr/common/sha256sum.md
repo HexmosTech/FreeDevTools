@@ -1,5 +1,5 @@
 ---
-title: "Generate SHA256 Checksums - Verify File Integrity | Free DevTools"
+title: "Generate SHA256 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: sha256sum
 path: /freedevtools/tldr/common/sha256sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/sha256sum/"

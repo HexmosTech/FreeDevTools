@@ -1,5 +1,5 @@
 ---
-title: "Create Pipenv Project - Manage Python Dependencies | Free DevTools"
+title: "Create Pipenv Project - Manage Python Dependencies | Online Free DevTools by Hexmos"
 name: pipenv
 path: /freedevtools/tldr/pip/pipenv
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pipenv/"

@@ -1,5 +1,5 @@
 ---
-title: "Isolate Applications - Control Network Traffic with Oniux | Free DevTools"
+title: "Isolate Applications - Control Network Traffic with Oniux | Online Free DevTools by Hexmos"
 name: oniux
 path: /freedevtools/tldr/linux/oniux
 canonical: "https://hexmos.com/freedevtools/tldr/linux/oniux/"

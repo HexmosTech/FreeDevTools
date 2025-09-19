@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Sites - Control Zola Builds | Free DevTools"
+title: "Generate Static Sites - Control Zola Builds | Online Free DevTools by Hexmos"
 name: zola
 path: /freedevtools/tldr/common/zola
 canonical: "https://hexmos.com/freedevtools/tldr/common/zola/"

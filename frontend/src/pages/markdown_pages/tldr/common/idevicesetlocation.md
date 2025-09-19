@@ -1,5 +1,5 @@
 ---
-title: "iDevice Location Setter - Simulate iOS Device Location | Free DevTools"
+title: "iDevice Location Setter - Simulate iOS Device Location | Online Free DevTools by Hexmos"
 name: idevicesetlocation
 path: /freedevtools/tldr/common/idevicesetlocation
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicesetlocation/"

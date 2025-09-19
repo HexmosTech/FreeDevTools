@@ -1,5 +1,5 @@
 ---
-title: "Basename - Extract File Name | Free DevTools"
+title: "Basename - Extract File Name | Online Free DevTools by Hexmos"
 name: basename
 path: /freedevtools/tldr/common/basename
 canonical: "https://hexmos.com/freedevtools/tldr/common/basename/"

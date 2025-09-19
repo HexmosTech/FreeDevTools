@@ -1,5 +1,5 @@
 ---
-title: "Create BTRFS Snapshots - Manage Filesystems | Free DevTools"
+title: "Create BTRFS Snapshots - Manage Filesystems | Online Free DevTools by Hexmos"
 name: rusnapshot
 path: /freedevtools/tldr/linux/rusnapshot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rusnapshot/"

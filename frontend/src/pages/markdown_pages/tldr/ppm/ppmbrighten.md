@@ -1,5 +1,5 @@
 ---
-title: "Brighten PPM Images - Adjust Image Brightness | Free DevTools"
+title: "Brighten PPM Images - Adjust Image Brightness | Online Free DevTools by Hexmos"
 name: ppmbrighten
 path: /freedevtools/tldr/ppm/ppmbrighten
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmbrighten/"

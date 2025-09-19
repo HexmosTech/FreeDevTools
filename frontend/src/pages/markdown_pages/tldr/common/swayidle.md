@@ -1,5 +1,5 @@
 ---
-title: "Control Idle Time - Manage Wayland Idle with Swayidle | Free DevTools"
+title: "Control Idle Time - Manage Wayland Idle with Swayidle | Online Free DevTools by Hexmos"
 name: swayidle
 path: "/freedevtools/tldr/common/swayidle"
 canonical: "https://hexmos.com/freedevtools/tldr/common/swayidle/"

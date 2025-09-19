@@ -1,5 +1,5 @@
 ---
-title: "PlatformIO - Build Embedded Projects | Free DevTools"
+title: "PlatformIO - Build Embedded Projects | Online Free DevTools by Hexmos"
 name: platformio
 path: /freedevtools/tldr/common/platformio
 canonical: "https://hexmos.com/freedevtools/tldr/common/platformio/"

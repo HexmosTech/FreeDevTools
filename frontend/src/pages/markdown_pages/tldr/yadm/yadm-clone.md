@@ -1,5 +1,5 @@
 ---
-title: "Clone dotfiles - Manage configuration with yadm-clone | Free DevTools"
+title: "Clone dotfiles - Manage configuration with yadm-clone | Online Free DevTools by Hexmos"
 name: yadm-clone
 path: /freedevtools/tldr/yadm/yadm-clone
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-clone/"

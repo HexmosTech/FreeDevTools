@@ -1,5 +1,5 @@
 ---
-title: "Extract Zip Hashes - Crack Passwords | Free DevTools"
+title: "Extract Zip Hashes - Crack Passwords | Online Free DevTools by Hexmos"
 name: zip2john
 path: /freedevtools/tldr/common/zip2john
 canonical: "https://hexmos.com/freedevtools/tldr/common/zip2john/"

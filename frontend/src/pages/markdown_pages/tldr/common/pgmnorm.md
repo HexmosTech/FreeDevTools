@@ -1,5 +1,5 @@
 ---
-title: "PGM Normalizer - Format PGM Images | Free DevTools"
+title: "PGM Normalizer - Format PGM Images | Online Free DevTools by Hexmos"
 name: pgmnorm
 path: /freedevtools/tldr/common/pgmnorm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmnorm/"

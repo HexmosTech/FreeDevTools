@@ -1,5 +1,5 @@
 ---
-title: "Brew Bundle - Manage Homebrew Packages | Free DevTools"
+title: "Brew Bundle - Manage Homebrew Packages | Online Free DevTools by Hexmos"
 name: brew-bundle
 path: /freedevtools/tldr/brew/brew-bundle
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-bundle/"

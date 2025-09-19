@@ -1,5 +1,5 @@
 ---
-title: "Choose - Extract Text Columns | Free DevTools"
+title: "Choose - Extract Text Columns | Online Free DevTools by Hexmos"
 name: choose
 path: /freedevtools/tldr/common/choose
 canonical: "https://hexmos.com/freedevtools/tldr/common/choose/"

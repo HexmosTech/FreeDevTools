@@ -1,5 +1,5 @@
 ---
-title: "Netstat - Display Network Connections | Free DevTools"
+title: "Netstat - Display Network Connections | Online Free DevTools by Hexmos"
 name: netstat
 path: /freedevtools/tldr/osx/netstat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/netstat/"

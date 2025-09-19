@@ -1,5 +1,5 @@
 ---
-title: "Type Check Python - Run Mypy Daemon | Free DevTools"
+title: "Type Check Python - Run Mypy Daemon | Online Free DevTools by Hexmos"
 name: dmypy
 path: /freedevtools/tldr/common/dmypy
 canonical: "https://hexmos.com/freedevtools/tldr/common/dmypy/"

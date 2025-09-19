@@ -1,5 +1,5 @@
 ---
-title: "Nix Develop - Generate Shell Environments | Free DevTools"
+title: "Nix Develop - Generate Shell Environments | Online Free DevTools by Hexmos"
 name: nix-develop
 path: /freedevtools/tldr/nix/nix-develop
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-develop/"

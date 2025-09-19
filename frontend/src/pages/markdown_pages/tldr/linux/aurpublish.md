@@ -1,5 +1,5 @@
 ---
-title: "AUR Publish - Create AUR Packages for Linux | Free DevTools"
+title: "AUR Publish - Create AUR Packages for Linux | Online Free DevTools by Hexmos"
 name: aurpublish
 path: /freedevtools/tldr/linux/aurpublish
 canonical: "https://hexmos.com/freedevtools/tldr/linux/aurpublish/"

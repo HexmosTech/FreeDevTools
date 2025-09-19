@@ -1,5 +1,5 @@
 ---
-title: "Audit Security - Prowler Compliance Checks | Free DevTools"
+title: "Audit Security - Prowler Compliance Checks | Online Free DevTools by Hexmos"
 name: prowler
 path: /freedevtools/tldr/prowler/prowler
 canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler/"

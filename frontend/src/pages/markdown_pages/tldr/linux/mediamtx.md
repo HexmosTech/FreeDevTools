@@ -1,5 +1,5 @@
 ---
-title: "Control Media Streams - MediaMTX Server & Proxy | Free DevTools"
+title: "Control Media Streams - MediaMTX Server & Proxy | Online Free DevTools by Hexmos"
 name: mediamtx
 path: /freedevtools/tldr/linux/mediamtx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mediamtx/"

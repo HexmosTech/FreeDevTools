@@ -1,5 +1,5 @@
 ---
-title: "Compress PNG - Optimize Images with Pngcrush | Free DevTools"
+title: "Compress PNG - Optimize Images with Pngcrush | Online Free DevTools by Hexmos"
 name: pngcrush
 path: /freedevtools/tldr/common/pngcrush
 canonical: "https://hexmos.com/freedevtools/tldr/common/pngcrush/"

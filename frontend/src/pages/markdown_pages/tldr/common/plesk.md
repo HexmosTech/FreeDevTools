@@ -1,5 +1,5 @@
 ---
-title: "Plesk Control Panel - Manage Hosting | Free DevTools"
+title: "Plesk Control Panel - Manage Hosting | Online Free DevTools by Hexmos"
 name: plesk
 path: /freedevtools/tldr/common/plesk
 canonical: "https://hexmos.com/freedevtools/tldr/common/plesk/"

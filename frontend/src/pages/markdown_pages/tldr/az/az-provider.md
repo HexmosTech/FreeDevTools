@@ -1,5 +1,5 @@
 ---
-title: "Azure Provider - Manage Resource Providers | Free DevTools"
+title: "Azure Provider - Manage Resource Providers | Online Free DevTools by Hexmos"
 name: az-provider
 path: /freedevtools/tldr/az/az-provider
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-provider/"

@@ -1,5 +1,5 @@
 ---
-title: "Install Ubuntu Drivers - Manage Hardware Drivers | Free DevTools"
+title: "Install Ubuntu Drivers - Manage Hardware Drivers | Online Free DevTools by Hexmos"
 name: ubuntu-drivers
 path: /freedevtools/tldr/linux/ubuntu-drivers
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ubuntu-drivers/"

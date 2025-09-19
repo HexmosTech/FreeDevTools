@@ -1,5 +1,5 @@
 ---
-title: "Font Diff - Compare Font Differences with ftxdiff | Free DevTools"
+title: "Font Diff - Compare Font Differences with ftxdiff | Online Free DevTools by Hexmos"
 name: ftxdiff
 path: /freedevtools/tldr/osx/ftxdiff
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ftxdiff/"

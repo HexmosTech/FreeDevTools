@@ -1,5 +1,5 @@
 ---
-title: "Ark Archiver - Manage Archives Efficiently | Free DevTools"
+title: "Ark Archiver - Manage Archives Efficiently | Online Free DevTools by Hexmos"
 name: ark
 path: /freedevtools/tldr/linux/ark
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ark/"

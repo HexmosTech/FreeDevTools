@@ -1,5 +1,5 @@
 ---
-title: "List Repositories - Crane Catalog | Free DevTools"
+title: "List Repositories - Crane Catalog | Online Free DevTools by Hexmos"
 name: crane-catalog
 path: /freedevtools/tldr/crane/crane-catalog
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-catalog/"

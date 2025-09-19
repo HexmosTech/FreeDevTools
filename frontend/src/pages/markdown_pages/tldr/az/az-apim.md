@@ -1,5 +1,5 @@
 ---
-title: "APIM Manager - Manage Azure APIs | Free DevTools"
+title: "APIM Manager - Manage Azure APIs | Online Free DevTools by Hexmos"
 name: az-apim
 path: /freedevtools/tldr/az/az-apim
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-apim/"

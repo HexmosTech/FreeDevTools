@@ -1,5 +1,5 @@
 ---
-title: "AWS Configure - Manage AWS CLI Configuration | Free DevTools"
+title: "AWS Configure - Manage AWS CLI Configuration | Online Free DevTools by Hexmos"
 name: aws-configure
 path: /freedevtools/tldr/aws/aws-configure
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-configure/"

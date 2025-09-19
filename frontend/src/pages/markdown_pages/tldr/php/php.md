@@ -1,5 +1,5 @@
 ---
-title: "PHP Script Execute - Run PHP Code | Free DevTools"
+title: "PHP Script Execute - Run PHP Code | Online Free DevTools by Hexmos"
 name: php
 path: /freedevtools/tldr/php/php
 canonical: "https://hexmos.com/freedevtools/tldr/php/php/"

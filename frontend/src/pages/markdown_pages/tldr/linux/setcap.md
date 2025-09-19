@@ -1,5 +1,5 @@
 ---
-title: "Setcap - Set File Capabilities | Free DevTools"
+title: "Setcap - Set File Capabilities | Online Free DevTools by Hexmos"
 name: setcap
 path: /freedevtools/tldr/linux/setcap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setcap/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate EF Core Migrations - dotnet-ef | Free DevTools"
+title: "Generate EF Core Migrations - dotnet-ef | Online Free DevTools by Hexmos"
 name: dotnet-ef
 path: /freedevtools/tldr/dotnet/dotnet-ef
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-ef/"

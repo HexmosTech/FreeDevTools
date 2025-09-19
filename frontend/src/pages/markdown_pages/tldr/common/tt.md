@@ -1,5 +1,5 @@
 ---
-title: "Terminal Typing Test - Improve Typing Skills | Free DevTools"
+title: "Terminal Typing Test - Improve Typing Skills | Online Free DevTools by Hexmos"
 name: tt
 path: /freedevtools/tldr/common/tt
 canonical: "https://hexmos.com/freedevtools/tldr/common/tt/"

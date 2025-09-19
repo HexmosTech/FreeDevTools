@@ -1,5 +1,5 @@
 ---
-title: "Solo Key Control - Interact with Solo Keys | Free DevTools"
+title: "Solo Key Control - Interact with Solo Keys | Online Free DevTools by Hexmos"
 name: solo
 path: /freedevtools/tldr/common/solo
 canonical: "https://hexmos.com/freedevtools/tldr/common/solo/"

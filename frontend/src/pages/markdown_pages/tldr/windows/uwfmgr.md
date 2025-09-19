@@ -1,5 +1,5 @@
 ---
-title: "UWF Manager - Control Windows Write Filter | Free DevTools"
+title: "UWF Manager - Control Windows Write Filter | Online Free DevTools by Hexmos"
 name: uwfmgr
 path: /freedevtools/tldr/windows/uwfmgr
 canonical: "https://hexmos.com/freedevtools/tldr/windows/uwfmgr/"

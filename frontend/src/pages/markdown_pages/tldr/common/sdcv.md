@@ -1,5 +1,5 @@
 ---
-title: "Dictionary Lookup - Search Dictionaries with sdcv | Free DevTools"
+title: "Dictionary Lookup - Search Dictionaries with sdcv | Online Free DevTools by Hexmos"
 name: sdcv
 path: /freedevtools/tldr/common/sdcv
 canonical: "https://hexmos.com/freedevtools/tldr/common/sdcv/"

@@ -1,5 +1,5 @@
 ---
-title: "Sails Generate - Create MVC Apps | Free DevTools"
+title: "Sails Generate - Create MVC Apps | Online Free DevTools by Hexmos"
 name: sails
 path: /freedevtools/tldr/common/sails
 canonical: "https://hexmos.com/freedevtools/tldr/common/sails/"

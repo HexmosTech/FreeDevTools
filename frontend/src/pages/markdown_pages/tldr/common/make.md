@@ -1,5 +1,5 @@
 ---
-title: "Make - Control Compilation with Makefile | Free DevTools"
+title: "Make - Control Compilation with Makefile | Online Free DevTools by Hexmos"
 name: make
 path: /freedevtools/tldr/common/make
 canonical: "https://hexmos.com/freedevtools/tldr/common/make/"

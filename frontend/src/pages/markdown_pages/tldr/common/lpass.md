@@ -1,5 +1,5 @@
 ---
-title: "LastPass - Manage Passwords via Command Line | Free DevTools"
+title: "LastPass - Manage Passwords via Command Line | Online Free DevTools by Hexmos"
 name: lpass
 path: /freedevtools/tldr/common/lpass
 canonical: "https://hexmos.com/freedevtools/tldr/common/lpass/"

@@ -1,5 +1,5 @@
 ---
-title: "xhost - Control X Server Access | Free DevTools"
+title: "xhost - Control X Server Access | Online Free DevTools by Hexmos"
 name: xhost
 path: /freedevtools/tldr/linux/xhost
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xhost/"

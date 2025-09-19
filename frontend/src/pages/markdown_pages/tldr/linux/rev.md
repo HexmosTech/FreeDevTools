@@ -1,5 +1,5 @@
 ---
-title: "Reverse Text - Reverse Lines and Files | Free DevTools"
+title: "Reverse Text - Reverse Lines and Files | Online Free DevTools by Hexmos"
 name: rev
 path: /freedevtools/tldr/linux/rev
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rev/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Archive - Create File Archives from Git Repositories | Free DevTools"
+title: "Git Archive - Create File Archives from Git Repositories | Online Free DevTools by Hexmos"
 name: git-archive
 path: /freedevtools/tldr/git/git-archive
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-archive/"

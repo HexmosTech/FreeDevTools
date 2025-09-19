@@ -1,5 +1,5 @@
 ---
-title: "Generate LaTeX Planner - Create Daily Planners | Free DevTools"
+title: "Generate LaTeX Planner - Create Daily Planners | Online Free DevTools by Hexmos"
 name: yplan
 path: /freedevtools/tldr/linux/yplan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yplan/"

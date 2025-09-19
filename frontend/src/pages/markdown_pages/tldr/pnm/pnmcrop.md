@@ -1,5 +1,5 @@
 ---
-title: "PNM Crop - Crop PNM Images | Free DevTools"
+title: "PNM Crop - Crop PNM Images | Online Free DevTools by Hexmos"
 name: pnmcrop
 path: /freedevtools/tldr/pnm/pnmcrop
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcrop/"

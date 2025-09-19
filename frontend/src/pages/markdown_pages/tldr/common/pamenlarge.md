@@ -1,5 +1,5 @@
 ---
-title: "Enlarge PAM Image - Scale Pixel Art | Free DevTools"
+title: "Enlarge PAM Image - Scale Pixel Art | Online Free DevTools by Hexmos"
 name: pamenlarge
 path: /freedevtools/tldr/common/pamenlarge
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamenlarge/"

@@ -1,5 +1,5 @@
 ---
-title: "Babashka Interpreter - Execute Clojure Scripts | Free DevTools"
+title: "Babashka Interpreter - Execute Clojure Scripts | Online Free DevTools by Hexmos"
 name: bb
 path: /freedevtools/tldr/common/bb
 canonical: "https://hexmos.com/freedevtools/tldr/common/bb/"

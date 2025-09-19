@@ -1,5 +1,5 @@
 ---
-title: "Fluidsynth Synthesizer - Play MIDI Files | Free DevTools"
+title: "Fluidsynth Synthesizer - Play MIDI Files | Online Free DevTools by Hexmos"
 name: fluidsynth
 path: /freedevtools/tldr/linux/fluidsynth
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fluidsynth/"

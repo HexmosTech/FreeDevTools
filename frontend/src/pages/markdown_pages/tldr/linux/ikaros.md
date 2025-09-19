@@ -1,5 +1,5 @@
 ---
-title: "Ikaros - Manage Device Drivers | Free DevTools"
+title: "Ikaros - Manage Device Drivers | Online Free DevTools by Hexmos"
 name: ikaros
 path: /freedevtools/tldr/linux/ikaros
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ikaros/"

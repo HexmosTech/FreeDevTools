@@ -1,5 +1,5 @@
 ---
-title: "Run JavaScript Code - Control Bun Runtime | Free DevTools"
+title: "Run JavaScript Code - Control Bun Runtime | Online Free DevTools by Hexmos"
 name: bun
 path: /freedevtools/tldr/common/bun
 canonical: "https://hexmos.com/freedevtools/tldr/common/bun/"

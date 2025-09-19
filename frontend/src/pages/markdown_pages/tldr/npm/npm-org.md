@@ -1,5 +1,5 @@
 ---
-title: "NPM Org - Manage Organization Memberships | Free DevTools"
+title: "NPM Org - Manage Organization Memberships | Online Free DevTools by Hexmos"
 name: npm-org
 path: /freedevtools/tldr/npm/npm-org
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-org/"

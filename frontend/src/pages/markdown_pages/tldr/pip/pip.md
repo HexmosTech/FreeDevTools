@@ -1,5 +1,5 @@
 ---
-title: "Manage Python Packages - Control pip Commands | Free DevTools"
+title: "Manage Python Packages - Control pip Commands | Online Free DevTools by Hexmos"
 name: pip
 path: /freedevtools/tldr/pip/pip
 canonical: "https://hexmos.com/freedevtools/tldr/pip/pip/"

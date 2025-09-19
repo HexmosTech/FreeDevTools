@@ -1,5 +1,5 @@
 ---
-title: "Vi Editor - Edit Text Files | Free DevTools"
+title: "Vi Editor - Edit Text Files | Online Free DevTools by Hexmos"
 name: vi
 path: /freedevtools/tldr/common/vi
 canonical: "https://hexmos.com/freedevtools/tldr/common/vi/"

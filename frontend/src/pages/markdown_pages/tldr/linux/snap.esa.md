@@ -1,5 +1,5 @@
 ---
-title: "Process Satellite Data - Control SNAP ESA on Linux | Free DevTools"
+title: "Process Satellite Data - Control SNAP ESA on Linux | Online Free DevTools by Hexmos"
 name: snap.esa
 path: /freedevtools/tldr/linux/snap.esa
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snap.esa/"

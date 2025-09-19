@@ -1,5 +1,5 @@
 ---
-title: "Exoscale Storage - Manage SOS Buckets | Free DevTools"
+title: "Exoscale Storage - Manage SOS Buckets | Online Free DevTools by Hexmos"
 name: exo-storage
 path: /freedevtools/tldr/exo/exo-storage
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-storage/"

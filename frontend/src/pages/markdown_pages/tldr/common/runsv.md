@@ -1,5 +1,5 @@
 ---
-title: "Control Runit Service - Start & Manage with runsv | Free DevTools"
+title: "Control Runit Service - Start & Manage with runsv | Online Free DevTools by Hexmos"
 name: runsv
 path: /freedevtools/tldr/common/runsv
 canonical: "https://hexmos.com/freedevtools/tldr/common/runsv/"

@@ -1,5 +1,5 @@
 ---
-title: "Delete Cisco IOS Files - Erase Flash Memory | Free DevTools"
+title: "Delete Cisco IOS Files - Erase Flash Memory | Online Free DevTools by Hexmos"
 name: delete
 path: /freedevtools/tldr/cisco-ios/delete
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/delete/"

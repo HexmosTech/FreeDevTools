@@ -1,5 +1,5 @@
 ---
-title: "Prompt - Control Command Window Prompt | Free DevTools"
+title: "Prompt - Control Command Window Prompt | Online Free DevTools by Hexmos"
 name: prompt
 path: /freedevtools/tldr/windows/prompt
 canonical: "https://hexmos.com/freedevtools/tldr/windows/prompt/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate PPM Image - Create Pattern Images | Free DevTools"
+title: "Generate PPM Image - Create Pattern Images | Online Free DevTools by Hexmos"
 name: ppmpat
 path: /freedevtools/tldr/ppm/ppmpat
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmpat/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert SCSS to CSS - Compile Sass Files | Free DevTools"
+title: "Convert SCSS to CSS - Compile Sass Files | Online Free DevTools by Hexmos"
 name: sass
 path: /freedevtools/tldr/common/sass
 canonical: "https://hexmos.com/freedevtools/tldr/common/sass/"

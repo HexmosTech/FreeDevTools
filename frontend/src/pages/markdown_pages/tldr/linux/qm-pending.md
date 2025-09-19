@@ -1,5 +1,5 @@
 ---
-title: "QM Pending - Get VM Configuration | Free DevTools"
+title: "QM Pending - Get VM Configuration | Online Free DevTools by Hexmos"
 name: qm-pending
 path: /freedevtools/tldr/linux/qm-pending
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-pending/"

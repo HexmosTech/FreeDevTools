@@ -1,5 +1,5 @@
 ---
-title: "Control Spotify Music - ncspot TUI Client | Free DevTools"
+title: "Control Spotify Music - ncspot TUI Client | Online Free DevTools by Hexmos"
 name: ncspot
 path: /freedevtools/tldr/common/ncspot
 canonical: "https://hexmos.com/freedevtools/tldr/common/ncspot/"

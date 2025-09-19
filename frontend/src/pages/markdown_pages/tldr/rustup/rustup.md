@@ -1,5 +1,5 @@
 ---
-title: "Rust Toolchain Manager - Manage Rust Versions | Free DevTools"
+title: "Rust Toolchain Manager - Manage Rust Versions | Online Free DevTools by Hexmos"
 name: rustup
 path: /freedevtools/tldr/rustup/rustup
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup/"

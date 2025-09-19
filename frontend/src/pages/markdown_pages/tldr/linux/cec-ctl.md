@@ -1,5 +1,5 @@
 ---
-title: "Control CEC Devices with cec-ctl | Free DevTools"
+title: "Control CEC Devices with cec-ctl | Online Free DevTools by Hexmos"
 name: cec-ctl
 path: /freedevtools/tldr/linux/cec-ctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cec-ctl/"

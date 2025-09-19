@@ -1,5 +1,5 @@
 ---
-title: "Opus Encode Audio - Convert Audio to Opus Format | Free DevTools"
+title: "Opus Encode Audio - Convert Audio to Opus Format | Online Free DevTools by Hexmos"
 name: opusenc
 path: /freedevtools/tldr/common/opusenc
 canonical: "https://hexmos.com/freedevtools/tldr/common/opusenc/"

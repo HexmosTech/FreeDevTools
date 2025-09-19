@@ -1,5 +1,5 @@
 ---
-title: "PPM Image Draw - Create Images with Script | Free DevTools"
+title: "PPM Image Draw - Create Images with Script | Online Free DevTools by Hexmos"
 name: ppmdraw
 path: /freedevtools/tldr/ppm/ppmdraw
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmdraw/"

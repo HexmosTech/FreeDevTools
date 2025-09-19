@@ -1,5 +1,5 @@
 ---
-title: "Konsave - Manage Linux Configurations | Free DevTools"
+title: "Konsave - Manage Linux Configurations | Online Free DevTools by Hexmos"
 name: konsave
 path: /freedevtools/tldr/linux/konsave
 canonical: "https://hexmos.com/freedevtools/tldr/linux/konsave/"

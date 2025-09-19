@@ -1,5 +1,5 @@
 ---
-title: "List Hledger Accounts - Manage Ledger Account Names | Free DevTools"
+title: "List Hledger Accounts - Manage Ledger Account Names | Online Free DevTools by Hexmos"
 name: hledger-accounts
 path: /freedevtools/tldr/hledger/hledger-accounts
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-accounts/"

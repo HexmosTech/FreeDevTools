@@ -1,5 +1,5 @@
 ---
-title: "Puppet Apply - Execute Manifests Locally | Free DevTools"
+title: "Puppet Apply - Execute Manifests Locally | Online Free DevTools by Hexmos"
 name: puppet-apply
 path: /freedevtools/tldr/puppet/puppet-apply
 canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet-apply/"

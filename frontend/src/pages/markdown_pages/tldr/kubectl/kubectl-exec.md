@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Exec - Execute Commands in Containers | Free DevTools"
+title: "Kubectl Exec - Execute Commands in Containers | Online Free DevTools by Hexmos"
 name: kubectl-exec
 path: /freedevtools/tldr/kubectl/kubectl-exec
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-exec/"

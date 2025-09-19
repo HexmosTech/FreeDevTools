@@ -1,5 +1,5 @@
 ---
-title: "Java Launcher - Execute Java Programs | Free DevTools"
+title: "Java Launcher - Execute Java Programs | Online Free DevTools by Hexmos"
 name: java
 path: "/freedevtools/tldr/common/java"
 canonical: "https://hexmos.com/freedevtools/tldr/common/java/"

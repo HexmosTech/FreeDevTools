@@ -1,5 +1,5 @@
 ---
-title: "Crane Delete - Remove Image Reference | Free DevTools"
+title: "Crane Delete - Remove Image Reference | Online Free DevTools by Hexmos"
 name: crane-delete
 path: /freedevtools/tldr/crane/crane-delete
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-delete/"

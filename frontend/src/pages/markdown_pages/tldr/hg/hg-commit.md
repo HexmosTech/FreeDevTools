@@ -1,5 +1,5 @@
 ---
-title: "Hg Commit - Control Repository Changes | Free DevTools"
+title: "Hg Commit - Control Repository Changes | Online Free DevTools by Hexmos"
 name: hg-commit
 path: /freedevtools/tldr/hg/hg-commit
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-commit/"

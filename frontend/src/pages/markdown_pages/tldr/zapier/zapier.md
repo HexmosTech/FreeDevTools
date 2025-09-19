@@ -1,5 +1,5 @@
 ---
-title: "Create Zapier Integrations - Automate Workflows | Free DevTools"
+title: "Create Zapier Integrations - Automate Workflows | Online Free DevTools by Hexmos"
 name: zapier
 path: "/freedevtools/tldr/zapier/zapier"
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier/"

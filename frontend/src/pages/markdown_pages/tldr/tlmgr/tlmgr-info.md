@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Info - Show Package Information | Free DevTools"
+title: "TeX Live Info - Show Package Information | Online Free DevTools by Hexmos"
 name: tlmgr-info
 path: /freedevtools/tldr/tlmgr/tlmgr-info
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-info/"

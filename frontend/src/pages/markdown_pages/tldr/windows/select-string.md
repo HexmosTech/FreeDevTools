@@ -1,5 +1,5 @@
 ---
-title: "Select-String - Find Text in Files | Free DevTools"
+title: "Select-String - Find Text in Files | Online Free DevTools by Hexmos"
 name: select-string
 path: /freedevtools/tldr/windows/select-string
 canonical: "https://hexmos.com/freedevtools/tldr/windows/select-string/"

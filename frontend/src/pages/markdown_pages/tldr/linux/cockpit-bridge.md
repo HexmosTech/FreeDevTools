@@ -1,5 +1,5 @@
 ---
-title: "Control Cockpit Bridge - Manage Server Communication | Free DevTools"
+title: "Control Cockpit Bridge - Manage Server Communication | Online Free DevTools by Hexmos"
 name: cockpit-bridge
 path: /freedevtools/tldr/linux/cockpit-bridge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-bridge/"

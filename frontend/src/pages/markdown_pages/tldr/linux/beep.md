@@ -1,5 +1,5 @@
 ---
-title: "Beep Generator - Create PC Speaker Sounds | Free DevTools"
+title: "Beep Generator - Create PC Speaker Sounds | Online Free DevTools by Hexmos"
 name: beep
 path: /freedevtools/tldr/linux/beep
 canonical: "https://hexmos.com/freedevtools/tldr/linux/beep/"

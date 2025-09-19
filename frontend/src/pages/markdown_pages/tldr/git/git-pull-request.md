@@ -1,5 +1,5 @@
 ---
-title: "Create Git Pull Request - GitHub Project Collaboration | Free DevTools"
+title: "Create Git Pull Request - GitHub Project Collaboration | Online Free DevTools by Hexmos"
 name: git-pull-request
 path: /freedevtools/tldr/git/git-pull-request
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-pull-request/"

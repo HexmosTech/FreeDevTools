@@ -1,5 +1,5 @@
 ---
-title: "Upgrade Packages - Manage Arch Linux Packages | Free DevTools"
+title: "Upgrade Packages - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
 name: pacman-upgrade
 path: /freedevtools/tldr/linux/pacman-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-upgrade/"

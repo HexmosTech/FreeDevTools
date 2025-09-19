@@ -1,5 +1,5 @@
 ---
-title: "Generate Random Permutations with Shuf | Free DevTools"
+title: "Generate Random Permutations with Shuf | Online Free DevTools by Hexmos"
 name: shuf
 path: /freedevtools/tldr/osx/shuf
 canonical: "https://hexmos.com/freedevtools/tldr/osx/shuf/"

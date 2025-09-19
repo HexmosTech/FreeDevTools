@@ -1,5 +1,5 @@
 ---
-title: "Magento Manager - Control PHP Framework | Free DevTools"
+title: "Magento Manager - Control PHP Framework | Online Free DevTools by Hexmos"
 name: magento
 path: /freedevtools/tldr/common/magento
 canonical: "https://hexmos.com/freedevtools/tldr/common/magento/"

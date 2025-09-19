@@ -1,5 +1,5 @@
 ---
-title: "Tmux Session Manager - Create & Manage Sessions | Free DevTools"
+title: "Tmux Session Manager - Create & Manage Sessions | Online Free DevTools by Hexmos"
 name: tmuxinator
 path: /freedevtools/tldr/common/tmuxinator
 canonical: "https://hexmos.com/freedevtools/tldr/common/tmuxinator/"

@@ -1,5 +1,5 @@
 ---
-title: "Pacstrap - Install Arch Packages | Free DevTools"
+title: "Pacstrap - Install Arch Packages | Online Free DevTools by Hexmos"
 name: pacstrap
 path: /freedevtools/tldr/linux/pacstrap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacstrap/"

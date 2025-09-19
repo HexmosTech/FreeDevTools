@@ -1,5 +1,5 @@
 ---
-title: "uv run - Execute Python Scripts | Free DevTools"
+title: "uv run - Execute Python Scripts | Online Free DevTools by Hexmos"
 name: uv-run
 path: /freedevtools/tldr/uv/uv-run
 canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-run/"

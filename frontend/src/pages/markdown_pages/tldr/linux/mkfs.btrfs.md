@@ -1,5 +1,5 @@
 ---
-title: "Create BTRFS Filesystem - Format Partitions | Free DevTools"
+title: "Create BTRFS Filesystem - Format Partitions | Online Free DevTools by Hexmos"
 name: mkfs.btrfs
 path: /freedevtools/tldr/linux/mkfs.btrfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.btrfs/"

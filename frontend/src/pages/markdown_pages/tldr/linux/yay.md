@@ -1,5 +1,5 @@
 ---
-title: "Yay - Manage Arch Packages | Free DevTools"
+title: "Yay - Manage Arch Packages | Online Free DevTools by Hexmos"
 name: yay
 path: /freedevtools/tldr/linux/yay
 canonical: "https://hexmos.com/freedevtools/tldr/linux/yay/"

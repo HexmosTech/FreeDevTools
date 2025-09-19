@@ -1,5 +1,5 @@
 ---
-title: "GRUB Set Default - Control Boot Entry | Free DevTools"
+title: "GRUB Set Default - Control Boot Entry | Online Free DevTools by Hexmos"
 name: grub-set-default
 path: /freedevtools/tldr/linux/grub-set-default
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-set-default/"

@@ -1,5 +1,5 @@
 ---
-title: "Runlevel Status Checker - Control System Runlevels | Free DevTools"
+title: "Runlevel Status Checker - Control System Runlevels | Online Free DevTools by Hexmos"
 name: rc-status
 path: /freedevtools/tldr/linux/rc-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-status/"

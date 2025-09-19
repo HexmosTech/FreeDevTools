@@ -1,5 +1,5 @@
 ---
-title: "Decode Barcodes - Scan Images with zbarimg | Free DevTools"
+title: "Decode Barcodes - Scan Images with zbarimg | Online Free DevTools by Hexmos"
 name: zbarimg
 path: /freedevtools/tldr/common/zbarimg
 canonical: "https://hexmos.com/freedevtools/tldr/common/zbarimg/"

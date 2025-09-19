@@ -1,5 +1,5 @@
 ---
-title: "Scan Networks - Control Network Scans with Zmap | Free DevTools"
+title: "Scan Networks - Control Network Scans with Zmap | Online Free DevTools by Hexmos"
 name: zmap
 path: /freedevtools/tldr/common/zmap
 canonical: "https://hexmos.com/freedevtools/tldr/common/zmap/"

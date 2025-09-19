@@ -1,5 +1,5 @@
 ---
-title: "Validate Pathnames - Check Pathnames for Portability | Free DevTools"
+title: "Validate Pathnames - Check Pathnames for Portability | Online Free DevTools by Hexmos"
 name: pathchk
 path: /freedevtools/tldr/common/pathchk
 canonical: "https://hexmos.com/freedevtools/tldr/common/pathchk/"

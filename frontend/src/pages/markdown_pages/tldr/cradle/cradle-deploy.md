@@ -1,5 +1,5 @@
 ---
-title: "Cradle Deploy - Manage Cradle Deployments | Free DevTools"
+title: "Cradle Deploy - Manage Cradle Deployments | Online Free DevTools by Hexmos"
 name: cradle-deploy
 path: /freedevtools/tldr/cradle/cradle-deploy
 canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-deploy/"

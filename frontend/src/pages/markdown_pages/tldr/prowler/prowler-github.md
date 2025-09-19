@@ -1,5 +1,5 @@
 ---
-title: "Assess GitHub Security - Prowler GitHub Security Audit | Free DevTools"
+title: "Assess GitHub Security - Prowler GitHub Security Audit | Online Free DevTools by Hexmos"
 name: prowler-github
 path: /freedevtools/tldr/prowler/prowler-github
 canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-github/"

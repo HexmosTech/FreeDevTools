@@ -1,5 +1,5 @@
 ---
-title: "Control IPC - Manage System Resources | Free DevTools"
+title: "Control IPC - Manage System Resources | Online Free DevTools by Hexmos"
 name: ipcs
 path: /freedevtools/tldr/common/ipcs
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipcs/"

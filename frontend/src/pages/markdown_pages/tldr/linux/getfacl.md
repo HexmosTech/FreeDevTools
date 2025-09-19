@@ -1,5 +1,5 @@
 ---
-title: "Getfacl - Control File Access Lists on Linux | Free DevTools"
+title: "Getfacl - Control File Access Lists on Linux | Online Free DevTools by Hexmos"
 name: getfacl
 path: /freedevtools/tldr/linux/getfacl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/getfacl/"

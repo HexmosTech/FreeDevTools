@@ -1,5 +1,5 @@
 ---
-title: "Nvidia-smi MIG - Manage GPUs | Free DevTools"
+title: "Nvidia-smi MIG - Manage GPUs | Online Free DevTools by Hexmos"
 name: nvidia-smi-mig
 path: /freedevtools/tldr/nvidia/nvidia-smi-mig
 canonical: "https://hexmos.com/freedevtools/tldr/nvidia/nvidia-smi-mig/"

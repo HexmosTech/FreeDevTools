@@ -1,5 +1,5 @@
 ---
-title: "GH Config - Change GitHub CLI Settings | Free DevTools"
+title: "GH Config - Change GitHub CLI Settings | Online Free DevTools by Hexmos"
 name: gh-config
 path: /freedevtools/tldr/gh/gh-config
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-config/"

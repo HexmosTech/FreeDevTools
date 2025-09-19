@@ -1,5 +1,5 @@
 ---
-title: "Spectre Meltdown Checker - Detect Vulnerabilities | Free DevTools"
+title: "Spectre Meltdown Checker - Detect Vulnerabilities | Online Free DevTools by Hexmos"
 name: spectre-meltdown-checker
 path: /freedevtools/tldr/linux/spectre-meltdown-checker
 canonical: "https://hexmos.com/freedevtools/tldr/linux/spectre-meltdown-checker/"

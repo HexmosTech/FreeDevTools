@@ -1,5 +1,5 @@
 ---
-title: "Manage SELinux Contexts - Control File Security | Free DevTools"
+title: "Manage SELinux Contexts - Control File Security | Online Free DevTools by Hexmos"
 name: semanage-fcontext
 path: /freedevtools/tldr/linux/semanage-fcontext
 canonical: "https://hexmos.com/freedevtools/tldr/linux/semanage-fcontext/"

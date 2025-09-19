@@ -1,5 +1,5 @@
 ---
-title: "Control Cut - Extract Text with GCut | Free DevTools"
+title: "Control Cut - Extract Text with GCut | Online Free DevTools by Hexmos"
 name: gcut
 path: /freedevtools/tldr/osx/gcut
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcut/"

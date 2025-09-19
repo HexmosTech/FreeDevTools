@@ -1,5 +1,5 @@
 ---
-title: "Manage Elasticsearch Users - Create & Delete Users | Free DevTools"
+title: "Manage Elasticsearch Users - Create & Delete Users | Online Free DevTools by Hexmos"
 name: elasticsearch-users
 path: /freedevtools/tldr/elasticsearch/elasticsearch-users
 canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-users/"

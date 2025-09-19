@@ -1,5 +1,5 @@
 ---
-title: "Pidstat - Control System Resource Usage | Free DevTools"
+title: "Pidstat - Control System Resource Usage | Online Free DevTools by Hexmos"
 name: pidstat
 path: /freedevtools/tldr/linux/pidstat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pidstat/"

@@ -1,5 +1,5 @@
 ---
-title: "Declare Variables - Control Bash Shell Variables | Free DevTools"
+title: "Declare Variables - Control Bash Shell Variables | Online Free DevTools by Hexmos"
 name: declare
 path: /freedevtools/tldr/common/declare
 canonical: "https://hexmos.com/freedevtools/tldr/common/declare/"

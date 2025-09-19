@@ -1,5 +1,5 @@
 ---
-title: "Checkout Git PR - Review Pull Requests Easily | Free DevTools"
+title: "Checkout Git PR - Review Pull Requests Easily | Online Free DevTools by Hexmos"
 name: git-pr
 path: /freedevtools/tldr/git/git-pr
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-pr/"

@@ -1,5 +1,5 @@
 ---
-title: "Event Monitor - Control System Events | Free DevTools"
+title: "Event Monitor - Control System Events | Online Free DevTools by Hexmos"
 name: emond
 path: /freedevtools/tldr/osx/emond
 canonical: "https://hexmos.com/freedevtools/tldr/osx/emond/"

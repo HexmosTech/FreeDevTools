@@ -1,5 +1,5 @@
 ---
-title: "Apt Package Manager - Manage Debian Packages | Free DevTools"
+title: "Apt Package Manager - Manage Debian Packages | Online Free DevTools by Hexmos"
 name: apt
 path: /freedevtools/tldr/linux/apt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apt/"

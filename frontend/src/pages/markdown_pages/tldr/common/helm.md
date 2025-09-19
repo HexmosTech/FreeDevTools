@@ -1,5 +1,5 @@
 ---
-title: "Helm - Manage Kubernetes Applications | Free DevTools"
+title: "Helm - Manage Kubernetes Applications | Online Free DevTools by Hexmos"
 name: helm
 path: /freedevtools/tldr/common/helm
 canonical: "https://hexmos.com/freedevtools/tldr/common/helm/"

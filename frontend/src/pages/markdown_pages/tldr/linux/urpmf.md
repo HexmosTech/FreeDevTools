@@ -1,5 +1,5 @@
 ---
-title: "Find Linux Packages - Search Files with urpmf | Free DevTools"
+title: "Find Linux Packages - Search Files with urpmf | Online Free DevTools by Hexmos"
 name: urpmf
 path: /freedevtools/tldr/linux/urpmf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmf/"

@@ -1,5 +1,5 @@
 ---
-title: "Nokogiri Parser - Parse XML and HTML | Free DevTools"
+title: "Nokogiri Parser - Parse XML and HTML | Online Free DevTools by Hexmos"
 name: nokogiri
 path: /freedevtools/tldr/common/nokogiri
 canonical: "https://hexmos.com/freedevtools/tldr/common/nokogiri/"

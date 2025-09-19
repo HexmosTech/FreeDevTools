@@ -1,5 +1,5 @@
 ---
-title: "PDF Merge - Combine PDF Files | Free DevTools"
+title: "PDF Merge - Combine PDF Files | Online Free DevTools by Hexmos"
 name: pdfjoin
 path: /freedevtools/tldr/common/pdfjoin
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfjoin/"

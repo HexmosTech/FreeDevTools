@@ -1,5 +1,5 @@
 ---
-title: "IP Config - Control Network Interfaces | Free DevTools"
+title: "IP Config - Control Network Interfaces | Online Free DevTools by Hexmos"
 name: ipconfig
 path: "/freedevtools/tldr/osx/ipconfig"
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ipconfig/"

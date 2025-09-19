@@ -1,5 +1,5 @@
 ---
-title: "Change Directory - Navigate File Systems | Free DevTools"
+title: "Change Directory - Navigate File Systems | Online Free DevTools by Hexmos"
 name: cd
 path: /freedevtools/tldr/common/cd
 canonical: "https://hexmos.com/freedevtools/tldr/common/cd/"

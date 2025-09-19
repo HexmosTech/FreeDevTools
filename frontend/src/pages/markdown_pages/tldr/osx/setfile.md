@@ -1,5 +1,5 @@
 ---
-title: "Set File Attributes - Control File Metadata on macOS | Free DevTools"
+title: "Set File Attributes - Control File Metadata on macOS | Online Free DevTools by Hexmos"
 name: setfile
 path: /freedevtools/tldr/osx/setfile
 canonical: "https://hexmos.com/freedevtools/tldr/osx/setfile/"

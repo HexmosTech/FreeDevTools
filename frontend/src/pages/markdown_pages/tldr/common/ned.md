@@ -1,5 +1,5 @@
 ---
-title: "Search and Replace - Control Text with Ned | Free DevTools"
+title: "Search and Replace - Control Text with Ned | Online Free DevTools by Hexmos"
 name: ned
 path: /freedevtools/tldr/common/ned
 canonical: "https://hexmos.com/freedevtools/tldr/common/ned/"

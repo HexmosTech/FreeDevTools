@@ -1,5 +1,5 @@
 ---
-title: "LuaJIT Compiler - Execute Lua Scripts | Free DevTools"
+title: "LuaJIT Compiler - Execute Lua Scripts | Online Free DevTools by Hexmos"
 name: luajit
 path: /freedevtools/tldr/common/luajit
 canonical: "https://hexmos.com/freedevtools/tldr/common/luajit/"

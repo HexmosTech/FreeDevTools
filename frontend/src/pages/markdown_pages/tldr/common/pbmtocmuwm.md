@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - Create CMUWM Bitmap | Free DevTools"
+title: "Convert PBM Image - Create CMUWM Bitmap | Online Free DevTools by Hexmos"
 name: pbmtocmuwm
 path: /freedevtools/tldr/common/pbmtocmuwm
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtocmuwm/"

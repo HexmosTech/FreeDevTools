@@ -1,5 +1,5 @@
 ---
-title: "Encode/Decode Base - Convert Files with basenc | Free DevTools"
+title: "Encode/Decode Base - Convert Files with basenc | Online Free DevTools by Hexmos"
 name: basenc
 path: /freedevtools/tldr/common/basenc
 canonical: "https://hexmos.com/freedevtools/tldr/common/basenc/"

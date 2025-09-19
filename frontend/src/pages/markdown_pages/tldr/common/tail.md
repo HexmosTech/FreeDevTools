@@ -1,5 +1,5 @@
 ---
-title: "Tail File - Display Last Lines | Free DevTools"
+title: "Tail File - Display Last Lines | Online Free DevTools by Hexmos"
 name: tail
 path: /freedevtools/tldr/common/tail
 canonical: "https://hexmos.com/freedevtools/tldr/common/tail/"

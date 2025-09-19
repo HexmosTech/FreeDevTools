@@ -1,5 +1,5 @@
 ---
-title: "Launch Git Daemon - Share Repositories | Free DevTools"
+title: "Launch Git Daemon - Share Repositories | Online Free DevTools by Hexmos"
 name: git-daemon
 path: /freedevtools/tldr/git/git-daemon
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-daemon/"

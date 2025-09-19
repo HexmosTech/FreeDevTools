@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Control Packages and Slackbuilds with SPI | Free DevTools"
+title: "Manage Packages - Control Packages and Slackbuilds with SPI | Online Free DevTools by Hexmos"
 name: spi
 path: /freedevtools/tldr/linux/spi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/spi/"

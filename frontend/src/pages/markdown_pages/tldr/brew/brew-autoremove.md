@@ -1,5 +1,5 @@
 ---
-title: "Brew Autoremove - Remove Unused Packages | Free DevTools"
+title: "Brew Autoremove - Remove Unused Packages | Online Free DevTools by Hexmos"
 name: brew-autoremove
 path: /freedevtools/tldr/brew/brew-autoremove
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-autoremove/"

@@ -1,5 +1,5 @@
 ---
-title: "Manpath - Control Manual Page Paths | Free DevTools"
+title: "Manpath - Control Manual Page Paths | Online Free DevTools by Hexmos"
 name: manpath
 path: "/freedevtools/tldr/linux/manpath"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/manpath/"

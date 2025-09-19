@@ -1,5 +1,5 @@
 ---
-title: "iOS Diagnostics - Control Device Info | Free DevTools"
+title: "iOS Diagnostics - Control Device Info | Online Free DevTools by Hexmos"
 name: idevicediagnostics
 path: /freedevtools/tldr/common/idevicediagnostics
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicediagnostics/"

@@ -1,5 +1,5 @@
 ---
-title: "Progress Monitor - Control Coreutils Progress | Free DevTools"
+title: "Progress Monitor - Control Coreutils Progress | Online Free DevTools by Hexmos"
 name: progress
 path: /freedevtools/tldr/common/progress
 canonical: "https://hexmos.com/freedevtools/tldr/common/progress/"

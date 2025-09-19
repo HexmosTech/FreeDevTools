@@ -1,5 +1,5 @@
 ---
-title: "ClamAV Scanner - Control System Security | Free DevTools"
+title: "ClamAV Scanner - Control System Security | Online Free DevTools by Hexmos"
 name: clamav
 path: /freedevtools/tldr/common/clamav
 canonical: "https://hexmos.com/freedevtools/tldr/common/clamav/"

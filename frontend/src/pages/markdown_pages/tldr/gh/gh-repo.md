@@ -1,5 +1,5 @@
 ---
-title: "GitHub Repo - Manage Repositories | Free DevTools"
+title: "GitHub Repo - Manage Repositories | Online Free DevTools by Hexmos"
 name: gh-repo
 path: /freedevtools/tldr/gh/gh-repo
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-repo/"

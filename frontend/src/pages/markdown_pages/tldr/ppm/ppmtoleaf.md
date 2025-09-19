@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to LEAF - Image Format Conversion | Free DevTools"
+title: "Convert PPM to LEAF - Image Format Conversion | Online Free DevTools by Hexmos"
 name: ppmtoleaf
 path: /freedevtools/tldr/ppm/ppmtoleaf
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoleaf/"

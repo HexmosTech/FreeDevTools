@@ -1,5 +1,5 @@
 ---
-title: "Search Files - Zfgrep String Matching | Free DevTools"
+title: "Search Files - Zfgrep String Matching | Online Free DevTools by Hexmos"
 name: zfgrep
 path: /freedevtools/tldr/common/zfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/zfgrep/"

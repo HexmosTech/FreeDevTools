@@ -1,5 +1,5 @@
 ---
-title: "Set SELinux Boolean - Control Security Policies | Free DevTools"
+title: "Set SELinux Boolean - Control Security Policies | Online Free DevTools by Hexmos"
 name: setsebool
 path: /freedevtools/tldr/linux/setsebool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setsebool/"

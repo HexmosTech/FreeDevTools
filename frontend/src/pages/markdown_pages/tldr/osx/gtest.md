@@ -1,5 +1,5 @@
 ---
-title: "GTest - Validate Expressions | Free DevTools"
+title: "GTest - Validate Expressions | Online Free DevTools by Hexmos"
 name: gtest
 path: /freedevtools/tldr/osx/gtest
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtest/"

@@ -1,5 +1,5 @@
 ---
-title: "Calculate Expressions - Use mate-calc | Free DevTools"
+title: "Calculate Expressions - Use mate-calc | Online Free DevTools by Hexmos"
 name: mate-calc
 path: /freedevtools/tldr/linux/mate-calc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-calc/"

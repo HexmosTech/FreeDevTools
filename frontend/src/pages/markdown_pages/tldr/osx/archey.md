@@ -1,5 +1,5 @@
 ---
-title: "Display System Info - Generate Archey Reports | Free DevTools"
+title: "Display System Info - Generate Archey Reports | Online Free DevTools by Hexmos"
 name: archey
 path: /freedevtools/tldr/osx/archey
 canonical: "https://hexmos.com/freedevtools/tldr/osx/archey/"

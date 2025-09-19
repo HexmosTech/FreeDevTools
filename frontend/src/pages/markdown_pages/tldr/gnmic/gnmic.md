@@ -1,5 +1,5 @@
 ---
-title: "Manage gNMI Network Configuration | Free DevTools"
+title: "Manage gNMI Network Configuration | Online Free DevTools by Hexmos"
 name: gnmic
 path: /freedevtools/tldr/gnmic/gnmic
 canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic/"

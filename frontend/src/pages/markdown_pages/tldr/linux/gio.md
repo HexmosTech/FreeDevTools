@@ -1,5 +1,5 @@
 ---
-title: "GVfs File Manager - Handle Files Easily | Free DevTools"
+title: "GVfs File Manager - Handle Files Easily | Online Free DevTools by Hexmos"
 name: gio
 path: /freedevtools/tldr/linux/gio
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gio/"

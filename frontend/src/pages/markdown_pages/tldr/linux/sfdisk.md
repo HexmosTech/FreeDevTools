@@ -1,5 +1,5 @@
 ---
-title: "sfdisk - Manage Disk Partitions | Free DevTools"
+title: "sfdisk - Manage Disk Partitions | Online Free DevTools by Hexmos"
 name: sfdisk
 path: /freedevtools/tldr/linux/sfdisk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sfdisk/"

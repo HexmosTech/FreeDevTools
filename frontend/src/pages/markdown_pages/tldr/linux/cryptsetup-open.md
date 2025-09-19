@@ -1,5 +1,5 @@
 ---
-title: "Cryptsetup Open - Create Encrypted Mappings | Free DevTools"
+title: "Cryptsetup Open - Create Encrypted Mappings | Online Free DevTools by Hexmos"
 name: cryptsetup-open
 path: /freedevtools/tldr/linux/cryptsetup-open
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptsetup-open/"

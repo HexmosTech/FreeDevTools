@@ -1,5 +1,5 @@
 ---
-title: "Storage Table - Manage Azure NoSQL Data | Free DevTools"
+title: "Storage Table - Manage Azure NoSQL Data | Online Free DevTools by Hexmos"
 name: az-storage-table
 path: /freedevtools/tldr/az/az-storage-table
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-table/"

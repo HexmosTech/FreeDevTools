@@ -1,5 +1,5 @@
 ---
-title: "fsck - Check Filesystem Integrity | Free DevTools"
+title: "fsck - Check Filesystem Integrity | Online Free DevTools by Hexmos"
 name: fsck
 path: /freedevtools/tldr/linux/fsck
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fsck/"

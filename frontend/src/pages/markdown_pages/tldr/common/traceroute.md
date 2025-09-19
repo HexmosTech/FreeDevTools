@@ -1,5 +1,5 @@
 ---
-title: "Traceroute - Trace Network Routes | Free DevTools"
+title: "Traceroute - Trace Network Routes | Online Free DevTools by Hexmos"
 name: traceroute
 path: "/freedevtools/tldr/common/traceroute"
 canonical: "https://hexmos.com/freedevtools/tldr/common/traceroute/"

@@ -1,5 +1,5 @@
 ---
-title: "Docker Remove - Control Containers | Free DevTools"
+title: "Docker Remove - Control Containers | Online Free DevTools by Hexmos"
 name: docker-container-remove
 path: /freedevtools/tldr/docker/docker-container-remove
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-container-remove/"

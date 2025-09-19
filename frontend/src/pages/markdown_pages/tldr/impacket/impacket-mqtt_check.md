@@ -1,5 +1,5 @@
 ---
-title: "MQTT Check - Verify MQTT Broker Security | Free DevTools"
+title: "MQTT Check - Verify MQTT Broker Security | Online Free DevTools by Hexmos"
 name: impacket-mqtt_check
 path: /freedevtools/tldr/impacket/impacket-mqtt_check
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-mqtt_check/"

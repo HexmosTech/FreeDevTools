@@ -1,5 +1,5 @@
 ---
-title: "Gobuster - Discover Hidden Web Paths | Free DevTools"
+title: "Gobuster - Discover Hidden Web Paths | Online Free DevTools by Hexmos"
 name: gobuster
 path: /freedevtools/tldr/common/gobuster
 canonical: "https://hexmos.com/freedevtools/tldr/common/gobuster/"

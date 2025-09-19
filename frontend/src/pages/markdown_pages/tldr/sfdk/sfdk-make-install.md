@@ -1,5 +1,5 @@
 ---
-title: "SFDK Make Install - Create SailfishOS Packages | Free DevTools"
+title: "SFDK Make Install - Create SailfishOS Packages | Online Free DevTools by Hexmos"
 name: sfdk-make-install
 path: /freedevtools/tldr/sfdk/sfdk-make-install
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-make-install/"

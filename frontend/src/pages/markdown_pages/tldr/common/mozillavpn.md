@@ -1,5 +1,5 @@
 ---
-title: "Control MozillaVPN - Secure Your Connection | Free DevTools"
+title: "Control MozillaVPN - Secure Your Connection | Online Free DevTools by Hexmos"
 name: mozillavpn
 path: /freedevtools/tldr/common/mozillavpn
 canonical: "https://hexmos.com/freedevtools/tldr/common/mozillavpn/"

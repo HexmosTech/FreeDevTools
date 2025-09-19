@@ -1,5 +1,5 @@
 ---
-title: "Calculate Git Blame - Analyze Code Ownership | Free DevTools"
+title: "Calculate Git Blame - Analyze Code Ownership | Online Free DevTools by Hexmos"
 name: git-guilt
 path: /freedevtools/tldr/git/git-guilt
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-guilt/"

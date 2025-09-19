@@ -1,5 +1,5 @@
 ---
-title: "PGM Image Converter - Convert PGM Images | Free DevTools"
+title: "PGM Image Converter - Convert PGM Images | Online Free DevTools by Hexmos"
 name: pgmoil
 path: /freedevtools/tldr/common/pgmoil
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmoil/"

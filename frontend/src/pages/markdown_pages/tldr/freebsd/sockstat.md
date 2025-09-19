@@ -1,5 +1,5 @@
 ---
-title: "Sockstat - List Open Sockets | Free DevTools"
+title: "Sockstat - List Open Sockets | Online Free DevTools by Hexmos"
 name: sockstat
 path: "/freedevtools/tldr/freebsd/sockstat"
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/sockstat/"

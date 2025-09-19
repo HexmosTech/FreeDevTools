@@ -1,5 +1,5 @@
 ---
-title: "Convert Kanji - Format Text Encodings | Free DevTools"
+title: "Convert Kanji - Format Text Encodings | Online Free DevTools by Hexmos"
 name: nkf
 path: /freedevtools/tldr/common/nkf
 canonical: "https://hexmos.com/freedevtools/tldr/common/nkf/"

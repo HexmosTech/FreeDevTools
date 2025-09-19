@@ -1,5 +1,5 @@
 ---
-title: "euse - Manage Gentoo USE Flags | Free DevTools"
+title: "euse - Manage Gentoo USE Flags | Online Free DevTools by Hexmos"
 name: euse
 path: /freedevtools/tldr/linux/euse
 canonical: "https://hexmos.com/freedevtools/tldr/linux/euse/"

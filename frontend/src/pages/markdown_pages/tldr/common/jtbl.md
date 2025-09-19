@@ -1,5 +1,5 @@
 ---
-title: "Format JSON Table - Print JSON Data in Terminal | Free DevTools"
+title: "Format JSON Table - Print JSON Data in Terminal | Online Free DevTools by Hexmos"
 name: jtbl
 path: /freedevtools/tldr/common/jtbl
 canonical: "https://hexmos.com/freedevtools/tldr/common/jtbl/"

@@ -1,5 +1,5 @@
 ---
-title: "Search SlackBuilds - Install Packages with Sport | Free DevTools"
+title: "Search SlackBuilds - Install Packages with Sport | Online Free DevTools by Hexmos"
 name: sport
 path: /freedevtools/tldr/linux/sport
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sport/"

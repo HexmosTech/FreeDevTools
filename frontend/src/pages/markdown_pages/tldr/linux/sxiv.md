@@ -1,5 +1,5 @@
 ---
-title: "View Images - sxiv Image Viewer | Free DevTools"
+title: "View Images - sxiv Image Viewer | Online Free DevTools by Hexmos"
 name: sxiv
 path: /freedevtools/tldr/linux/sxiv
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sxiv/"

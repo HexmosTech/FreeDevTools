@@ -1,5 +1,5 @@
 ---
-title: "Distribute C Compilation - Accelerate Builds with distcc | Free DevTools"
+title: "Distribute C Compilation - Accelerate Builds with distcc | Online Free DevTools by Hexmos"
 name: distcc
 path: /freedevtools/tldr/common/distcc
 canonical: "https://hexmos.com/freedevtools/tldr/common/distcc/"

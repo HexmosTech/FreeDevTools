@@ -1,5 +1,5 @@
 ---
-title: "Ftype - Control File Associations | Free DevTools"
+title: "Ftype - Control File Associations | Online Free DevTools by Hexmos"
 name: ftype
 path: /freedevtools/tldr/windows/ftype
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ftype/"

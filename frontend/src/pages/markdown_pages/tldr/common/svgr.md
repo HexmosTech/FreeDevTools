@@ -1,5 +1,5 @@
 ---
-title: "SVGR - Generate React Components from SVG | Free DevTools"
+title: "SVGR - Generate React Components from SVG | Online Free DevTools by Hexmos"
 name: svgr
 path: /freedevtools/tldr/common/svgr
 canonical: "https://hexmos.com/freedevtools/tldr/common/svgr/"

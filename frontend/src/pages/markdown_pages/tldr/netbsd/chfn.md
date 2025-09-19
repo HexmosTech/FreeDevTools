@@ -1,5 +1,5 @@
 ---
-title: "Change User Info - Update User Data | Free DevTools"
+title: "Change User Info - Update User Data | Online Free DevTools by Hexmos"
 name: chfn
 path: /freedevtools/tldr/netbsd/chfn
 canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chfn/"

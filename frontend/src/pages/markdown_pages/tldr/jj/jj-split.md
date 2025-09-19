@@ -1,5 +1,5 @@
 ---
-title: "Split Revision - Edit History with jj-split | Free DevTools"
+title: "Split Revision - Edit History with jj-split | Online Free DevTools by Hexmos"
 name: jj-split
 path: /freedevtools/tldr/jj/jj-split
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-split/"

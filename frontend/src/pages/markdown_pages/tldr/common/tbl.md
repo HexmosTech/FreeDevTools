@@ -1,5 +1,5 @@
 ---
-title: "Format Tables - Process Groff Tables | Free DevTools"
+title: "Format Tables - Process Groff Tables | Online Free DevTools by Hexmos"
 name: tbl
 path: /freedevtools/tldr/common/tbl
 canonical: "https://hexmos.com/freedevtools/tldr/common/tbl/"

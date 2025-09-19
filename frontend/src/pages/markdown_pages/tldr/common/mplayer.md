@@ -1,5 +1,5 @@
 ---
-title: "Mplayer - Play Multimedia Files | Free DevTools"
+title: "Mplayer - Play Multimedia Files | Online Free DevTools by Hexmos"
 name: mplayer
 path: /freedevtools/tldr/common/mplayer
 canonical: "https://hexmos.com/freedevtools/tldr/common/mplayer/"

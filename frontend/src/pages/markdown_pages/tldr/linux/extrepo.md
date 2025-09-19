@@ -1,5 +1,5 @@
 ---
-title: "Extrepo - Manage Debian Repositories | Free DevTools"
+title: "Extrepo - Manage Debian Repositories | Online Free DevTools by Hexmos"
 name: extrepo
 path: /freedevtools/tldr/linux/extrepo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/extrepo/"

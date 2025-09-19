@@ -1,5 +1,5 @@
 ---
-title: "Dolt Blame - Track Row Changes | Free DevTools"
+title: "Dolt Blame - Track Row Changes | Online Free DevTools by Hexmos"
 name: dolt-blame
 path: /freedevtools/tldr/dolt/dolt-blame
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-blame/"

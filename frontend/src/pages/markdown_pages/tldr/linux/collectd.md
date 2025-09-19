@@ -1,5 +1,5 @@
 ---
-title: "Collectd System Stats - Monitor System Metrics | Free DevTools"
+title: "Collectd System Stats - Monitor System Metrics | Online Free DevTools by Hexmos"
 name: collectd
 path: /freedevtools/tldr/linux/collectd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/collectd/"

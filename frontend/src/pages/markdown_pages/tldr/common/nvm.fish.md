@@ -1,5 +1,5 @@
 ---
-title: "NVM - Manage Node.js Versions | Free DevTools"
+title: "NVM - Manage Node.js Versions | Online Free DevTools by Hexmos"
 name: nvm.fish
 path: /freedevtools/tldr/common/nvm.fish
 canonical: "https://hexmos.com/freedevtools/tldr/common/nvm.fish/"

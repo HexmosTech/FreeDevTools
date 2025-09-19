@@ -1,5 +1,5 @@
 ---
-title: "Get-Acl - Control Resource Access | Free DevTools"
+title: "Get-Acl - Control Resource Access | Online Free DevTools by Hexmos"
 name: get-acl
 path: /freedevtools/tldr/windows/get-acl
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-acl/"

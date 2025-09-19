@@ -1,5 +1,5 @@
 ---
-title: "Resolvconf - Manage Nameserver Info | Free DevTools"
+title: "Resolvconf - Manage Nameserver Info | Online Free DevTools by Hexmos"
 name: resolvconf
 path: /freedevtools/tldr/common/resolvconf
 canonical: "https://hexmos.com/freedevtools/tldr/common/resolvconf/"

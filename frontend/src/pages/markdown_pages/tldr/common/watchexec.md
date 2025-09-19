@@ -1,5 +1,5 @@
 ---
-title: "Watchexec - Control File Changes | Free DevTools"
+title: "Watchexec - Control File Changes | Online Free DevTools by Hexmos"
 name: watchexec
 path: /freedevtools/tldr/common/watchexec
 canonical: "https://hexmos.com/freedevtools/tldr/common/watchexec/"

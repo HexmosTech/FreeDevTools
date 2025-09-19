@@ -1,5 +1,5 @@
 ---
-title: "Control Git Timestamps - Change File Dates | Free DevTools"
+title: "Control Git Timestamps - Change File Dates | Online Free DevTools by Hexmos"
 name: git-utimes
 path: /freedevtools/tldr/git/git-utimes
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-utimes/"

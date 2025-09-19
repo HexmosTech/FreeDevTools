@@ -1,5 +1,5 @@
 ---
-title: "Create Elasticsearch Token - Enroll Nodes & Kibana | Free DevTools"
+title: "Create Elasticsearch Token - Enroll Nodes & Kibana | Online Free DevTools by Hexmos"
 name: elasticsearch-create-enrollment-token
 path: /freedevtools/tldr/elasticsearch/elasticsearch-create-enrollment-token
 canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-create-enrollment-token/"

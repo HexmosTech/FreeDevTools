@@ -1,5 +1,5 @@
 ---
-title: "Configure ldconfig - Manage Shared Library Dependencies | Free DevTools"
+title: "Configure ldconfig - Manage Shared Library Dependencies | Online Free DevTools by Hexmos"
 name: ldconfig
 path: /freedevtools/tldr/linux/ldconfig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ldconfig/"

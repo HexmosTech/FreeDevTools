@@ -1,5 +1,5 @@
 ---
-title: "Manage Files with Git Annex - Version Control | Free DevTools"
+title: "Manage Files with Git Annex - Version Control | Online Free DevTools by Hexmos"
 name: git-annex
 path: /freedevtools/tldr/git/git-annex
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-annex/"

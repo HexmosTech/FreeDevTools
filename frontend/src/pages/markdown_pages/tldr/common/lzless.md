@@ -1,5 +1,5 @@
 ---
-title: "LZless - View Compressed Files | Free DevTools"
+title: "LZless - View Compressed Files | Online Free DevTools by Hexmos"
 name: lzless
 path: /freedevtools/tldr/common/lzless
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzless/"

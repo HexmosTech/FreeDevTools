@@ -1,5 +1,5 @@
 ---
-title: "Archive Files - Create Archives with 7za | Free DevTools"
+title: "Archive Files - Create Archives with 7za | Online Free DevTools by Hexmos"
 name: 7za
 path: /freedevtools/tldr/common/7za
 canonical: "https://hexmos.com/freedevtools/tldr/common/7za/"

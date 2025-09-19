@@ -1,5 +1,5 @@
 ---
-title: "OpenFortivpn VPN Client - Connect Securely | Free DevTools"
+title: "OpenFortivpn VPN Client - Connect Securely | Online Free DevTools by Hexmos"
 name: openfortivpn
 path: /freedevtools/tldr/linux/openfortivpn
 canonical: "https://hexmos.com/freedevtools/tldr/linux/openfortivpn/"

@@ -1,5 +1,5 @@
 ---
-title: "Flip PNM Image - Control Image Orientation | Free DevTools"
+title: "Flip PNM Image - Control Image Orientation | Online Free DevTools by Hexmos"
 name: pnmflip
 path: /freedevtools/tldr/pnm/pnmflip
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmflip/"

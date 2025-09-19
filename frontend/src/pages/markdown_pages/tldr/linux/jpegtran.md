@@ -1,5 +1,5 @@
 ---
-title: "JPEGtran - Transform JPEG Images Losslessly | Free DevTools"
+title: "JPEGtran - Transform JPEG Images Losslessly | Online Free DevTools by Hexmos"
 name: jpegtran
 path: /freedevtools/tldr/linux/jpegtran
 canonical: "https://hexmos.com/freedevtools/tldr/linux/jpegtran/"

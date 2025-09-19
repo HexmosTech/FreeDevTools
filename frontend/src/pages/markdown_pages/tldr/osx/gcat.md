@@ -1,5 +1,5 @@
 ---
-title: "Control Cat - Concatenate Files | Free DevTools"
+title: "Control Cat - Concatenate Files | Online Free DevTools by Hexmos"
 name: gcat
 path: /freedevtools/tldr/osx/gcat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcat/"

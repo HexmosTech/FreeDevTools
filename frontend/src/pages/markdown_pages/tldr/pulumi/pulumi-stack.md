@@ -1,5 +1,5 @@
 ---
-title: "Manage Pulumi Stacks - View & Control State | Free DevTools"
+title: "Manage Pulumi Stacks - View & Control State | Online Free DevTools by Hexmos"
 name: pulumi-stack
 path: /freedevtools/tldr/pulumi/pulumi-stack
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-stack/"

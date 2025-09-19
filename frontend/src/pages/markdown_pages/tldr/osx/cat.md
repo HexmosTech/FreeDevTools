@@ -1,5 +1,5 @@
 ---
-title: "Cat - Print and Concatenate Files | Free DevTools"
+title: "Cat - Print and Concatenate Files | Online Free DevTools by Hexmos"
 name: cat
 path: /freedevtools/tldr/osx/cat
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cat/"

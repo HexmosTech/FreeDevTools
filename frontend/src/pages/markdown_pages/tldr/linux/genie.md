@@ -1,5 +1,5 @@
 ---
-title: "Genie - Manage systemd under WSL | Free DevTools"
+title: "Genie - Manage systemd under WSL | Online Free DevTools by Hexmos"
 name: genie
 path: /freedevtools/tldr/linux/genie
 canonical: "https://hexmos.com/freedevtools/tldr/linux/genie/"

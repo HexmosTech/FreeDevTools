@@ -1,5 +1,5 @@
 ---
-title: "Ngrok Tunnel - Create Secure Tunnels | Free DevTools"
+title: "Ngrok Tunnel - Create Secure Tunnels | Online Free DevTools by Hexmos"
 name: ngrok
 path: /freedevtools/tldr/common/ngrok
 canonical: "https://hexmos.com/freedevtools/tldr/common/ngrok/"

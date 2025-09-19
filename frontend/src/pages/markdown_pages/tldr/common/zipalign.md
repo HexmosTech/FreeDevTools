@@ -1,5 +1,5 @@
 ---
-title: "Zipalign - Optimize Zip Archives for Android | Free DevTools"
+title: "Zipalign - Optimize Zip Archives for Android | Online Free DevTools by Hexmos"
 name: zipalign
 path: /freedevtools/tldr/common/zipalign
 canonical: "https://hexmos.com/freedevtools/tldr/common/zipalign/"

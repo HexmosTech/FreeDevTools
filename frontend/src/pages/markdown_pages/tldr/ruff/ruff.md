@@ -1,5 +1,5 @@
 ---
-title: "Ruff Linter - Format Python Code with Ruff | Free DevTools"
+title: "Ruff Linter - Format Python Code with Ruff | Online Free DevTools by Hexmos"
 name: ruff
 path: /freedevtools/tldr/ruff/ruff
 canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff/"

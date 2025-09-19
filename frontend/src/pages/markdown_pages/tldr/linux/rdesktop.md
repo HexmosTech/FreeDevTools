@@ -1,5 +1,5 @@
 ---
-title: "rdesktop Remote Desktop - Connect to Servers | Free DevTools"
+title: "rdesktop Remote Desktop - Connect to Servers | Online Free DevTools by Hexmos"
 name: rdesktop
 path: /freedevtools/tldr/linux/rdesktop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rdesktop/"

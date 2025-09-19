@@ -1,5 +1,5 @@
 ---
-title: "DVC Diff - Show DVC Changes | Free DevTools"
+title: "DVC Diff - Show DVC Changes | Online Free DevTools by Hexmos"
 name: dvc-diff
 path: /freedevtools/tldr/dvc/dvc-diff
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-diff/"

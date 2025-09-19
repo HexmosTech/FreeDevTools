@@ -1,5 +1,5 @@
 ---
-title: "IFS Control - Manage Shell Delimiters | Free DevTools"
+title: "IFS Control - Manage Shell Delimiters | Online Free DevTools by Hexmos"
 name: ifs
 path: /freedevtools/tldr/common/ifs
 canonical: "https://hexmos.com/freedevtools/tldr/common/ifs/"

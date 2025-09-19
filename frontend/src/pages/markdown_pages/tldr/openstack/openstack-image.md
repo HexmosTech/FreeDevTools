@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Image - Manage Cloud Images | Free DevTools"
+title: "OpenStack Image - Manage Cloud Images | Online Free DevTools by Hexmos"
 name: openstack-image
 path: /freedevtools/tldr/openstack/openstack-image
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-image/"

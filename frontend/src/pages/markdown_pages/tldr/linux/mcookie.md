@@ -1,5 +1,5 @@
 ---
-title: "Generate Random Number - mcookie | Free DevTools"
+title: "Generate Random Number - mcookie | Online Free DevTools by Hexmos"
 name: mcookie
 path: "/freedevtools/tldr/linux/mcookie"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mcookie/"

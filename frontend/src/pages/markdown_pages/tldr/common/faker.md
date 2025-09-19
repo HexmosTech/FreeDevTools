@@ -1,5 +1,5 @@
 ---
-title: "Generate Fake Data with Faker | Free DevTools"
+title: "Generate Fake Data with Faker | Online Free DevTools by Hexmos"
 name: faker
 path: /freedevtools/tldr/common/faker
 canonical: "https://hexmos.com/freedevtools/tldr/common/faker/"

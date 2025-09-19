@@ -1,5 +1,5 @@
 ---
-title: "Mount Devices - Mount Removable Media with pmount | Free DevTools"
+title: "Mount Devices - Mount Removable Media with pmount | Online Free DevTools by Hexmos"
 name: pmount
 path: "/freedevtools/tldr/linux/pmount"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pmount/"

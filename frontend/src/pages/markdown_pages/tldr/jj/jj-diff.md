@@ -1,5 +1,5 @@
 ---
-title: "Diff Tool - Compare File Revisions with jj-diff | Free DevTools"
+title: "Diff Tool - Compare File Revisions with jj-diff | Online Free DevTools by Hexmos"
 name: jj-diff
 path: /freedevtools/tldr/jj/jj-diff
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-diff/"

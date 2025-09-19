@@ -1,5 +1,5 @@
 ---
-title: "Get Alias - Control PowerShell Aliases | Free DevTools"
+title: "Get Alias - Control PowerShell Aliases | Online Free DevTools by Hexmos"
 name: gal
 path: /freedevtools/tldr/windows/gal
 canonical: "https://hexmos.com/freedevtools/tldr/windows/gal/"

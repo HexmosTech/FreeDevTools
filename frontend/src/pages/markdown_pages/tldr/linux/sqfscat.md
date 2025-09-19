@@ -1,5 +1,5 @@
 ---
-title: "Concatenate Files - sqfscat Command | Free DevTools"
+title: "Concatenate Files - sqfscat Command | Online Free DevTools by Hexmos"
 name: sqfscat
 path: /freedevtools/tldr/linux/sqfscat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sqfscat/"

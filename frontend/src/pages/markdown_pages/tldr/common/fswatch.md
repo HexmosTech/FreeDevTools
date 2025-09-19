@@ -1,5 +1,5 @@
 ---
-title: "Monitor File Changes - fswatch | Free DevTools"
+title: "Monitor File Changes - fswatch | Online Free DevTools by Hexmos"
 name: fswatch
 path: /freedevtools/tldr/common/fswatch
 canonical: "https://hexmos.com/freedevtools/tldr/common/fswatch/"

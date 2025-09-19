@@ -1,5 +1,5 @@
 ---
-title: "Control Valet - Manage Local Development Sites | Free DevTools"
+title: "Control Valet - Manage Local Development Sites | Online Free DevTools by Hexmos"
 name: valet
 path: /freedevtools/tldr/osx/valet
 canonical: "https://hexmos.com/freedevtools/tldr/osx/valet/"

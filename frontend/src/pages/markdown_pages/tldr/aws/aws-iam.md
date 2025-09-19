@@ -1,5 +1,5 @@
 ---
-title: "AWS IAM - Control Access to AWS Resources | Free DevTools"
+title: "AWS IAM - Control Access to AWS Resources | Online Free DevTools by Hexmos"
 name: aws-iam
 path: /freedevtools/tldr/aws/aws-iam
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-iam/"

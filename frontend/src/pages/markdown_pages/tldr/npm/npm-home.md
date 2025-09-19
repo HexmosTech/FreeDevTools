@@ -1,5 +1,5 @@
 ---
-title: "npm-home - Open Package Pages | Free DevTools"
+title: "npm-home - Open Package Pages | Online Free DevTools by Hexmos"
 name: npm-home
 path: /freedevtools/tldr/npm/npm-home
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-home/"

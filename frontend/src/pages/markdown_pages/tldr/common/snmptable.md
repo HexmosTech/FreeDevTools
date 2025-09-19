@@ -1,5 +1,5 @@
 ---
-title: "Fetch SNMP Table - Get Network Data | Free DevTools"
+title: "Fetch SNMP Table - Get Network Data | Online Free DevTools by Hexmos"
 name: snmptable
 path: /freedevtools/tldr/common/snmptable
 canonical: "https://hexmos.com/freedevtools/tldr/common/snmptable/"

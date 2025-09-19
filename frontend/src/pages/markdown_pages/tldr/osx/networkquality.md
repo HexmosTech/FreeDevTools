@@ -1,5 +1,5 @@
 ---
-title: "Network Quality - Measure Internet Speed | Free DevTools"
+title: "Network Quality - Measure Internet Speed | Online Free DevTools by Hexmos"
 name: networkquality
 path: /freedevtools/tldr/osx/networkquality
 canonical: "https://hexmos.com/freedevtools/tldr/osx/networkquality/"

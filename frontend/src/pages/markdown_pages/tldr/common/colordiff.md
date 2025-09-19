@@ -1,5 +1,5 @@
 ---
-title: "Colordiff - Highlight Diff Output | Free DevTools"
+title: "Colordiff - Highlight Diff Output | Online Free DevTools by Hexmos"
 name: colordiff
 path: /freedevtools/tldr/common/colordiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/colordiff/"

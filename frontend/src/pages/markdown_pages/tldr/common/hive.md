@@ -1,5 +1,5 @@
 ---
-title: "Run Hive Queries - Execute HiveQL with CLI | Free DevTools"
+title: "Run Hive Queries - Execute HiveQL with CLI | Online Free DevTools by Hexmos"
 name: hive
 path: /freedevtools/tldr/common/hive
 canonical: "https://hexmos.com/freedevtools/tldr/common/hive/"

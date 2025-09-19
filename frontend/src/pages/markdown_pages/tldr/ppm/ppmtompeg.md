@@ -1,5 +1,5 @@
 ---
-title: "Encode MPEG-1 Streams - Generate MPEG | Free DevTools"
+title: "Encode MPEG-1 Streams - Generate MPEG | Online Free DevTools by Hexmos"
 name: ppmtompeg
 path: /freedevtools/tldr/ppm/ppmtompeg
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtompeg/"

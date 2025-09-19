@@ -1,5 +1,5 @@
 ---
-title: "Nping - Generate Network Packets | Free DevTools"
+title: "Nping - Generate Network Packets | Online Free DevTools by Hexmos"
 name: nping
 path: /freedevtools/tldr/common/nping
 canonical: "https://hexmos.com/freedevtools/tldr/common/nping/"

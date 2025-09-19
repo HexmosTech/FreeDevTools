@@ -1,5 +1,5 @@
 ---
-title: "Fuzz Websites - Discover Vulnerabilities with ffuf | Free DevTools"
+title: "Fuzz Websites - Discover Vulnerabilities with ffuf | Online Free DevTools by Hexmos"
 name: ffuf
 path: /freedevtools/tldr/common/ffuf
 canonical: "https://hexmos.com/freedevtools/tldr/common/ffuf/"

@@ -1,5 +1,5 @@
 ---
-title: "List Fonts - View Installed Fonts with fc-list | Free DevTools"
+title: "List Fonts - View Installed Fonts with fc-list | Online Free DevTools by Hexmos"
 name: fc-list
 path: /freedevtools/tldr/fc/fc-list
 canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-list/"

@@ -1,5 +1,5 @@
 ---
-title: "Backup Data Securely - Control Restic Backups | Free DevTools"
+title: "Backup Data Securely - Control Restic Backups | Online Free DevTools by Hexmos"
 name: restic
 path: /freedevtools/tldr/common/restic
 canonical: "https://hexmos.com/freedevtools/tldr/common/restic/"

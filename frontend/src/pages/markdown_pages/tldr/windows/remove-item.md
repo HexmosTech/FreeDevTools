@@ -1,5 +1,5 @@
 ---
-title: "Remove-Item - Delete Files and Folders | Free DevTools"
+title: "Remove-Item - Delete Files and Folders | Online Free DevTools by Hexmos"
 name: remove-item
 path: "/freedevtools/tldr/windows/remove-item"
 canonical: "https://hexmos.com/freedevtools/tldr/windows/remove-item/"

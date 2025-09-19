@@ -1,5 +1,5 @@
 ---
-title: "Flashcards - Learn with Flash Cards in Terminal | Free DevTools"
+title: "Flashcards - Learn with Flash Cards in Terminal | Online Free DevTools by Hexmos"
 name: flash
 path: /freedevtools/tldr/linux/flash
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flash/"

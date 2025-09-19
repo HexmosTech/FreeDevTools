@@ -1,5 +1,5 @@
 ---
-title: "Show DNS Domain Name - Resolve Hostname | Free DevTools"
+title: "Show DNS Domain Name - Resolve Hostname | Online Free DevTools by Hexmos"
 name: dnsdomainname
 path: /freedevtools/tldr/linux/dnsdomainname
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsdomainname/"

@@ -1,5 +1,5 @@
 ---
-title: "IP Rule - Control Routing Policy Database | Free DevTools"
+title: "IP Rule - Control Routing Policy Database | Online Free DevTools by Hexmos"
 name: ip-rule
 path: /freedevtools/tldr/linux/ip-rule
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-rule/"

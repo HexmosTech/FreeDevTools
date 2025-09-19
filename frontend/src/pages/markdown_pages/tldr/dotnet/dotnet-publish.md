@@ -1,5 +1,5 @@
 ---
-title: "Publish .NET - Deploy Applications with Dotnet Publish | Free DevTools"
+title: "Publish .NET - Deploy Applications with Dotnet Publish | Online Free DevTools by Hexmos"
 name: dotnet-publish
 path: /freedevtools/tldr/dotnet/dotnet-publish
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-publish/"

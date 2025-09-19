@@ -1,5 +1,5 @@
 ---
-title: "BleachBit - Clean Junk Files | Free DevTools"
+title: "BleachBit - Clean Junk Files | Online Free DevTools by Hexmos"
 name: bleachbit
 path: /freedevtools/tldr/linux/bleachbit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bleachbit/"

@@ -1,5 +1,5 @@
 ---
-title: "Bzgrep - Search Bzip2 Files with Grep | Free DevTools"
+title: "Bzgrep - Search Bzip2 Files with Grep | Online Free DevTools by Hexmos"
 name: bzgrep
 path: /freedevtools/tldr/common/bzgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzgrep/"

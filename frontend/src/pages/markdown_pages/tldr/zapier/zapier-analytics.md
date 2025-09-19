@@ -1,5 +1,5 @@
 ---
-title: "Zapier Analytics - Control Data Collection | Free DevTools"
+title: "Zapier Analytics - Control Data Collection | Online Free DevTools by Hexmos"
 name: zapier-analytics
 path: /freedevtools/tldr/zapier/zapier-analytics
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-analytics/"

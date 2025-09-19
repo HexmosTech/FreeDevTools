@@ -1,5 +1,5 @@
 ---
-title: "Manage Wireless Interfaces - Control Airportd | Free DevTools"
+title: "Manage Wireless Interfaces - Control Airportd | Online Free DevTools by Hexmos"
 name: airportd
 path: /freedevtools/tldr/osx/airportd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/airportd/"

@@ -1,5 +1,5 @@
 ---
-title: "Reboot System - Control System Power | Free DevTools"
+title: "Reboot System - Control System Power | Online Free DevTools by Hexmos"
 name: reboot
 path: /freedevtools/tldr/linux/reboot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/reboot/"

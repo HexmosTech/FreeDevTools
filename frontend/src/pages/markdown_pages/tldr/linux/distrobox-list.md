@@ -1,5 +1,5 @@
 ---
-title: "List Distrobox Containers - Manage Linux Containers | Free DevTools"
+title: "List Distrobox Containers - Manage Linux Containers | Online Free DevTools by Hexmos"
 name: distrobox-list
 path: /freedevtools/tldr/linux/distrobox-list
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-list/"

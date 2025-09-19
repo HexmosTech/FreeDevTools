@@ -1,5 +1,5 @@
 ---
-title: "DVC Add - Control Data Versions | Free DevTools"
+title: "DVC Add - Control Data Versions | Online Free DevTools by Hexmos"
 name: dvc-add
 path: /freedevtools/tldr/dvc/dvc-add
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-add/"

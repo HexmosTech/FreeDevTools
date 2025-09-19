@@ -1,5 +1,5 @@
 ---
-title: "Mutagen Sync - Create Real-time File Synchronization | Free DevTools"
+title: "Mutagen Sync - Create Real-time File Synchronization | Online Free DevTools by Hexmos"
 name: mutagen
 path: /freedevtools/tldr/common/mutagen
 canonical: "https://hexmos.com/freedevtools/tldr/common/mutagen/"

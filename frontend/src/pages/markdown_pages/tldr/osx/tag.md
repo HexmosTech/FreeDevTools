@@ -1,5 +1,5 @@
 ---
-title: "Tag Files - Edit Tags on macOS | Free DevTools"
+title: "Tag Files - Edit Tags on macOS | Online Free DevTools by Hexmos"
 name: tag
 path: /freedevtools/tldr/osx/tag
 canonical: "https://hexmos.com/freedevtools/tldr/osx/tag/"

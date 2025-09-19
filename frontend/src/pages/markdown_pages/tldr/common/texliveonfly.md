@@ -1,5 +1,5 @@
 ---
-title: "Compile LaTeX - Download Packages with texliveonfly | Free DevTools"
+title: "Compile LaTeX - Download Packages with texliveonfly | Online Free DevTools by Hexmos"
 name: texliveonfly
 path: /freedevtools/tldr/common/texliveonfly
 canonical: "https://hexmos.com/freedevtools/tldr/common/texliveonfly/"

@@ -1,5 +1,5 @@
 ---
-title: "Create Static Sites - Jigsaw Builder for PHP | Free DevTools"
+title: "Create Static Sites - Jigsaw Builder for PHP | Online Free DevTools by Hexmos"
 name: jigsaw
 path: /freedevtools/tldr/common/jigsaw
 canonical: "https://hexmos.com/freedevtools/tldr/common/jigsaw/"

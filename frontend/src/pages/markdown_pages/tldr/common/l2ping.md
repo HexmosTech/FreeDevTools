@@ -1,5 +1,5 @@
 ---
-title: "L2ping - Ping Bluetooth Devices | Free DevTools"
+title: "L2ping - Ping Bluetooth Devices | Online Free DevTools by Hexmos"
 name: l2ping
 path: /freedevtools/tldr/common/l2ping
 canonical: "https://hexmos.com/freedevtools/tldr/common/l2ping/"

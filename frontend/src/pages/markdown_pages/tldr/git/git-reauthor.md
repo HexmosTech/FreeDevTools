@@ -1,5 +1,5 @@
 ---
-title: "Reauthor Git - Change Author Identity | Free DevTools"
+title: "Reauthor Git - Change Author Identity | Online Free DevTools by Hexmos"
 name: git-reauthor
 path: /freedevtools/tldr/git/git-reauthor
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-reauthor/"

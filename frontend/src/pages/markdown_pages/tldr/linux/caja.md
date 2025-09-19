@@ -1,5 +1,5 @@
 ---
-title: "Caja - Manage Files and Directories | Free DevTools"
+title: "Caja - Manage Files and Directories | Online Free DevTools by Hexmos"
 name: caja
 path: /freedevtools/tldr/linux/caja
 canonical: "https://hexmos.com/freedevtools/tldr/linux/caja/"

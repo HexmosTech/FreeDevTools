@@ -1,5 +1,5 @@
 ---
-title: "Generate TeX Live Config - Remake TLMGR Settings | Free DevTools"
+title: "Generate TeX Live Config - Remake TLMGR Settings | Online Free DevTools by Hexmos"
 name: tlmgr-generate
 path: "/freedevtools/tldr/tlmgr/tlmgr-generate"
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-generate/"

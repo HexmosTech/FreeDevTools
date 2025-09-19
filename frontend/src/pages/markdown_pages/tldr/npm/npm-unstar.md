@@ -1,5 +1,5 @@
 ---
-title: "Unstar NPM Package - Remove Package Stars | Free DevTools"
+title: "Unstar NPM Package - Remove Package Stars | Online Free DevTools by Hexmos"
 name: npm-unstar
 path: /freedevtools/tldr/npm/npm-unstar
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-unstar/"

@@ -1,5 +1,5 @@
 ---
-title: "Convert PNM to XWD - Generate X11 Window Dumps | Free DevTools"
+title: "Convert PNM to XWD - Generate X11 Window Dumps | Online Free DevTools by Hexmos"
 name: pnmtoxwd
 path: /freedevtools/tldr/pnm/pnmtoxwd
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtoxwd/"

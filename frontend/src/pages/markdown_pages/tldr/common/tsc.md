@@ -1,5 +1,5 @@
 ---
-title: "TypeScript Compiler - Generate JavaScript from TypeScript | Free DevTools"
+title: "TypeScript Compiler - Generate JavaScript from TypeScript | Online Free DevTools by Hexmos"
 name: tsc
 path: /freedevtools/tldr/common/tsc
 canonical: "https://hexmos.com/freedevtools/tldr/common/tsc/"

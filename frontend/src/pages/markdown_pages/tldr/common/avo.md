@@ -1,5 +1,5 @@
 ---
-title: "Avo CLI - Control Avo Analytics Workspaces | Free DevTools"
+title: "Avo CLI - Control Avo Analytics Workspaces | Online Free DevTools by Hexmos"
 name: avo
 path: /freedevtools/tldr/common/avo
 canonical: "https://hexmos.com/freedevtools/tldr/common/avo/"

@@ -1,5 +1,5 @@
 ---
-title: "Edit Group File - Control Group Management | Free DevTools"
+title: "Edit Group File - Control Group Management | Online Free DevTools by Hexmos"
 name: vigr
 path: /freedevtools/tldr/linux/vigr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vigr/"

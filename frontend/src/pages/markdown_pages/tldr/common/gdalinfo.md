@@ -1,5 +1,5 @@
 ---
-title: "GDAL Info - Analyze Raster Data | Free DevTools"
+title: "GDAL Info - Analyze Raster Data | Online Free DevTools by Hexmos"
 name: gdalinfo
 path: /freedevtools/tldr/common/gdalinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/gdalinfo/"

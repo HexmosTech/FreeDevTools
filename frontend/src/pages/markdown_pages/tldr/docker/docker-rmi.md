@@ -1,5 +1,5 @@
 ---
-title: "Docker RMI - Remove Docker Images Easily | Free DevTools"
+title: "Docker RMI - Remove Docker Images Easily | Online Free DevTools by Hexmos"
 name: docker-rmi
 path: /freedevtools/tldr/docker/docker-rmi
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rmi/"

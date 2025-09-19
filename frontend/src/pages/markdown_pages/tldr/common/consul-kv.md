@@ -1,5 +1,5 @@
 ---
-title: "Consul KV - Manage Key-Value Data | Free DevTools"
+title: "Consul KV - Manage Key-Value Data | Online Free DevTools by Hexmos"
 name: consul-kv
 path: /freedevtools/tldr/common/consul-kv
 canonical: "https://hexmos.com/freedevtools/tldr/common/consul-kv/"

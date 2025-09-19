@@ -1,5 +1,5 @@
 ---
-title: "Manage Files - MinIO and Midnight Commander | Free DevTools"
+title: "Manage Files - MinIO and Midnight Commander | Online Free DevTools by Hexmos"
 name: mc
 path: /freedevtools/tldr/common/mc
 canonical: "https://hexmos.com/freedevtools/tldr/common/mc/"

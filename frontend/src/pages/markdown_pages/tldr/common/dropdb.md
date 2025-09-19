@@ -1,5 +1,5 @@
 ---
-title: "Drop PostgreSQL Database - Remove Databases | Free DevTools"
+title: "Drop PostgreSQL Database - Remove Databases | Online Free DevTools by Hexmos"
 name: dropdb
 path: /freedevtools/tldr/common/dropdb
 canonical: "https://hexmos.com/freedevtools/tldr/common/dropdb/"

@@ -1,5 +1,5 @@
 ---
-title: "LLDP Control - Inspect Network Neighbors | Free DevTools"
+title: "LLDP Control - Inspect Network Neighbors | Online Free DevTools by Hexmos"
 name: lldpctl
 path: /freedevtools/tldr/linux/lldpctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lldpctl/"

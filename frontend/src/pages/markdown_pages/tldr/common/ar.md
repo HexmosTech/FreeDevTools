@@ -1,5 +1,5 @@
 ---
-title: "Create Archive Files - Manage Unix Archives | Free DevTools"
+title: "Create Archive Files - Manage Unix Archives | Online Free DevTools by Hexmos"
 name: ar
 path: /freedevtools/tldr/common/ar
 canonical: "https://hexmos.com/freedevtools/tldr/common/ar/"

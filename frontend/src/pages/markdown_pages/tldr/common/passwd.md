@@ -1,5 +1,5 @@
 ---
-title: "Change Password - Update User Passwords | Free DevTools"
+title: "Change Password - Update User Passwords | Online Free DevTools by Hexmos"
 name: passwd
 path: /freedevtools/tldr/common/passwd
 canonical: "https://hexmos.com/freedevtools/tldr/common/passwd/"

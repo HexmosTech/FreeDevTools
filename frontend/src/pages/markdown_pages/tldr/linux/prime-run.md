@@ -1,5 +1,5 @@
 ---
-title: "Run Program on GPU - Prime-run | Free DevTools"
+title: "Run Program on GPU - Prime-run | Online Free DevTools by Hexmos"
 name: prime-run
 path: /freedevtools/tldr/linux/prime-run
 canonical: "https://hexmos.com/freedevtools/tldr/linux/prime-run/"

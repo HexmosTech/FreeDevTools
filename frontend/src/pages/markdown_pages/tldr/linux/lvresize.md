@@ -1,5 +1,5 @@
 ---
-title: "Lvresize - Resize Logical Volumes | Free DevTools"
+title: "Lvresize - Resize Logical Volumes | Online Free DevTools by Hexmos"
 name: lvresize
 path: /freedevtools/tldr/linux/lvresize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvresize/"

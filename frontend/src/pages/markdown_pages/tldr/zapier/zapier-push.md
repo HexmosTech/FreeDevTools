@@ -1,5 +1,5 @@
 ---
-title: "Create Zapier Integration - Build and Upload with CLI | Free DevTools"
+title: "Create Zapier Integration - Build and Upload with CLI | Online Free DevTools by Hexmos"
 name: zapier-push
 path: /freedevtools/tldr/zapier/zapier-push
 canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-push/"

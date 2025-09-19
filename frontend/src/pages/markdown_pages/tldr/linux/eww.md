@@ -1,5 +1,5 @@
 ---
-title: "Eww Widget Manager - Control Window Manager Widgets | Free DevTools"
+title: "Eww Widget Manager - Control Window Manager Widgets | Online Free DevTools by Hexmos"
 name: eww
 path: /freedevtools/tldr/linux/eww
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eww/"

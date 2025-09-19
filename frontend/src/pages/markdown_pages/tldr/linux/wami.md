@@ -1,5 +1,5 @@
 ---
-title: "Tool Recommender - Find Programs for Tasks | Free DevTools"
+title: "Tool Recommender - Find Programs for Tasks | Online Free DevTools by Hexmos"
 name: wami
 path: /freedevtools/tldr/linux/wami
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wami/"

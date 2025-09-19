@@ -1,5 +1,5 @@
 ---
-title: "System File Check - Scan & Repair Windows System Files | Free DevTools"
+title: "System File Check - Scan & Repair Windows System Files | Online Free DevTools by Hexmos"
 name: sfc
 path: /freedevtools/tldr/windows/sfc
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sfc/"

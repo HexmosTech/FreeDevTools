@@ -1,5 +1,5 @@
 ---
-title: "Nano Editor - Edit Text Files with Nano | Free DevTools"
+title: "Nano Editor - Edit Text Files with Nano | Online Free DevTools by Hexmos"
 name: nano
 path: /freedevtools/tldr/common/nano
 canonical: "https://hexmos.com/freedevtools/tldr/common/nano/"

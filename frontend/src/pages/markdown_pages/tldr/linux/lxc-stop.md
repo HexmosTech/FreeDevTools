@@ -1,5 +1,5 @@
 ---
-title: "LXC Container Control - Stop Containers with lxc-stop | Free DevTools"
+title: "LXC Container Control - Stop Containers with lxc-stop | Online Free DevTools by Hexmos"
 name: lxc-stop
 path: /freedevtools/tldr/linux/lxc-stop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-stop/"

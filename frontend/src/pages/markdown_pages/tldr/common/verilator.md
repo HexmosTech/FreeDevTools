@@ -1,5 +1,5 @@
 ---
-title: "Verilator - Generate C++ Models | Free DevTools"
+title: "Verilator - Generate C++ Models | Online Free DevTools by Hexmos"
 name: verilator
 path: /freedevtools/tldr/common/verilator
 canonical: "https://hexmos.com/freedevtools/tldr/common/verilator/"

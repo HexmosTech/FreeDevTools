@@ -1,5 +1,5 @@
 ---
-title: "Hex Viewer - Inspect Files in Hex Format | Free DevTools"
+title: "Hex Viewer - Inspect Files in Hex Format | Online Free DevTools by Hexmos"
 name: hexyl
 path: /freedevtools/tldr/common/hexyl
 canonical: "https://hexmos.com/freedevtools/tldr/common/hexyl/"

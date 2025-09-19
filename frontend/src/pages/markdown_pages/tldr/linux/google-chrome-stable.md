@@ -1,5 +1,5 @@
 ---
-title: "Chrome Browser - Browse Web Pages on Linux | Free DevTools"
+title: "Chrome Browser - Browse Web Pages on Linux | Online Free DevTools by Hexmos"
 name: google-chrome-stable
 path: /freedevtools/tldr/linux/google-chrome-stable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/google-chrome-stable/"

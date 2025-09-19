@@ -1,5 +1,5 @@
 ---
-title: "Generate in-toto Link Metadata | Free DevTools"
+title: "Generate in-toto Link Metadata | Online Free DevTools by Hexmos"
 name: in-toto-run
 path: /freedevtools/tldr/in/in-toto-run
 canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-run/"

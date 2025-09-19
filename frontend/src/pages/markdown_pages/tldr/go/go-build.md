@@ -1,5 +1,5 @@
 ---
-title: "Go Build - Compile Go Sources | Free DevTools"
+title: "Go Build - Compile Go Sources | Online Free DevTools by Hexmos"
 name: go-build
 path: /freedevtools/tldr/go/go-build
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-build/"

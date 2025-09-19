@@ -1,5 +1,5 @@
 ---
-title: "Control Choice Prompts - Windows Command | Free DevTools"
+title: "Control Choice Prompts - Windows Command | Online Free DevTools by Hexmos"
 name: choice
 path: /freedevtools/tldr/windows/choice
 canonical: "https://hexmos.com/freedevtools/tldr/windows/choice/"

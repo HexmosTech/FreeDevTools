@@ -1,5 +1,5 @@
 ---
-title: "Alacritty Terminal - Control Terminal Emulation | Free DevTools"
+title: "Alacritty Terminal - Control Terminal Emulation | Online Free DevTools by Hexmos"
 name: alacritty
 path: /freedevtools/tldr/common/alacritty
 canonical: "https://hexmos.com/freedevtools/tldr/common/alacritty/"

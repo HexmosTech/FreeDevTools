@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM Images - Format Pixmaps with ppmtouil | Free DevTools"
+title: "Convert PPM Images - Format Pixmaps with ppmtouil | Online Free DevTools by Hexmos"
 name: ppmtouil
 path: /freedevtools/tldr/ppm/ppmtouil
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtouil/"

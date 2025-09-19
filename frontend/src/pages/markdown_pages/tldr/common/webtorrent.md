@@ -1,5 +1,5 @@
 ---
-title: "WebTorrent - Download and Seed Torrents | Free DevTools"
+title: "WebTorrent - Download and Seed Torrents | Online Free DevTools by Hexmos"
 name: webtorrent
 path: /freedevtools/tldr/common/webtorrent
 canonical: "https://hexmos.com/freedevtools/tldr/common/webtorrent/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate Libtool Scripts - glibtoolize | Free DevTools"
+title: "Generate Libtool Scripts - glibtoolize | Online Free DevTools by Hexmos"
 name: glibtoolize
 path: /freedevtools/tldr/osx/glibtoolize
 canonical: "https://hexmos.com/freedevtools/tldr/osx/glibtoolize/"

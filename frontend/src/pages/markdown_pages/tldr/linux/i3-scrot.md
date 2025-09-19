@@ -1,5 +1,5 @@
 ---
-title: "i3-scrot Screenshot - Capture Screen on i3 | Free DevTools"
+title: "i3-scrot Screenshot - Capture Screen on i3 | Online Free DevTools by Hexmos"
 name: i3-scrot
 path: /freedevtools/tldr/linux/i3-scrot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i3-scrot/"

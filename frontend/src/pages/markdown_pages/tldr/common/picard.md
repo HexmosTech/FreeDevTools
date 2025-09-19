@@ -1,5 +1,5 @@
 ---
-title: "Tag Music with Picard - Generate MusicBrainz Tags | Free DevTools"
+title: "Tag Music with Picard - Generate MusicBrainz Tags | Online Free DevTools by Hexmos"
 name: picard
 path: /freedevtools/tldr/common/picard
 canonical: "https://hexmos.com/freedevtools/tldr/common/picard/"

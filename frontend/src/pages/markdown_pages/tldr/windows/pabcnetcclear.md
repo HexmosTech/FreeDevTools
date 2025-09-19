@@ -1,5 +1,5 @@
 ---
-title: "Compile Pascal Code - Pabcnetcclear Compiler | Free DevTools"
+title: "Compile Pascal Code - Pabcnetcclear Compiler | Online Free DevTools by Hexmos"
 name: pabcnetcclear
 path: /freedevtools/tldr/windows/pabcnetcclear
 canonical: "https://hexmos.com/freedevtools/tldr/windows/pabcnetcclear/"

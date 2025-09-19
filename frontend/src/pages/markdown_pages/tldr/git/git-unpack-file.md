@@ -1,5 +1,5 @@
 ---
-title: "Create Git Blob File - Unpack Blob Contents | Free DevTools"
+title: "Create Git Blob File - Unpack Blob Contents | Online Free DevTools by Hexmos"
 name: git-unpack-file
 path: /freedevtools/tldr/git/git-unpack-file
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-unpack-file/"

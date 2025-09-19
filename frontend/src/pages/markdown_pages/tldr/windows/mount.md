@@ -1,5 +1,5 @@
 ---
-title: "Mount Network Share - Access Network Drives | Free DevTools"
+title: "Mount Network Share - Access Network Drives | Online Free DevTools by Hexmos"
 name: mount
 path: /freedevtools/tldr/windows/mount
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mount/"

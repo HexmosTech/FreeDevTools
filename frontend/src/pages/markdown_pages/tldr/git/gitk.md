@@ -1,5 +1,5 @@
 ---
-title: "Git Browser - Browse Git Repos Graphically | Free DevTools"
+title: "Git Browser - Browse Git Repos Graphically | Online Free DevTools by Hexmos"
 name: gitk
 path: /freedevtools/tldr/git/gitk
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitk/"

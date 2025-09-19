@@ -1,5 +1,5 @@
 ---
-title: "Search DuckDuckGo - Terminal Search | Free DevTools"
+title: "Search DuckDuckGo - Terminal Search | Online Free DevTools by Hexmos"
 name: ddgr
 path: /freedevtools/tldr/common/ddgr
 canonical: "https://hexmos.com/freedevtools/tldr/common/ddgr/"

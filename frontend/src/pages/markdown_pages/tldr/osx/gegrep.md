@@ -1,5 +1,5 @@
 ---
-title: "Grep Text - Search Files with Grep Command | Free DevTools"
+title: "Grep Text - Search Files with Grep Command | Online Free DevTools by Hexmos"
 name: gegrep
 path: /freedevtools/tldr/osx/gegrep
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gegrep/"

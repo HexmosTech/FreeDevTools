@@ -1,5 +1,5 @@
 ---
-title: "Tree Command - Visualize Directory Structure | Free DevTools"
+title: "Tree Command - Visualize Directory Structure | Online Free DevTools by Hexmos"
 name: tre
 path: /freedevtools/tldr/common/tre
 canonical: "https://hexmos.com/freedevtools/tldr/common/tre/"

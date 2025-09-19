@@ -1,5 +1,5 @@
 ---
-title: "Stty Control - Manage Terminal Settings on MacOS | Free DevTools"
+title: "Stty Control - Manage Terminal Settings on MacOS | Online Free DevTools by Hexmos"
 name: gstty
 path: /freedevtools/tldr/osx/gstty
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gstty/"

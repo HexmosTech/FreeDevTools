@@ -1,5 +1,5 @@
 ---
-title: "Augment Humans with Fabric - AI Prompt Framework | Free DevTools"
+title: "Augment Humans with Fabric - AI Prompt Framework | Online Free DevTools by Hexmos"
 name: fabric
 path: /freedevtools/tldr/common/fabric
 canonical: "https://hexmos.com/freedevtools/tldr/common/fabric/"

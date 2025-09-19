@@ -1,5 +1,5 @@
 ---
-title: "Crane Auth - Manage Container Registry Credentials | Free DevTools"
+title: "Crane Auth - Manage Container Registry Credentials | Online Free DevTools by Hexmos"
 name: crane-auth
 path: /freedevtools/tldr/crane/crane-auth
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-auth/"

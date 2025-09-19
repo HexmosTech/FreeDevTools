@@ -1,5 +1,5 @@
 ---
-title: "Coreutils - Manage Files and Processes | Free DevTools"
+title: "Coreutils - Manage Files and Processes | Online Free DevTools by Hexmos"
 name: coreutils
 path: /freedevtools/tldr/common/coreutils
 canonical: "https://hexmos.com/freedevtools/tldr/common/coreutils/"

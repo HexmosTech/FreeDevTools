@@ -1,5 +1,5 @@
 ---
-title: "Compress Files - bzip2 Block-Sorting Compression | Free DevTools"
+title: "Compress Files - bzip2 Block-Sorting Compression | Online Free DevTools by Hexmos"
 name: bzip2
 path: /freedevtools/tldr/common/bzip2
 canonical: "https://hexmos.com/freedevtools/tldr/common/bzip2/"

@@ -1,5 +1,5 @@
 ---
-title: "bspwm Window Manager - Control Desktop Windows | Free DevTools"
+title: "bspwm Window Manager - Control Desktop Windows | Online Free DevTools by Hexmos"
 name: bspwm
 path: /freedevtools/tldr/linux/bspwm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/bspwm/"

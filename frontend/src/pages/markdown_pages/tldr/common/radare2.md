@@ -1,5 +1,5 @@
 ---
-title: "Reverse Engineer - Analyze Binaries with Radare2 | Free DevTools"
+title: "Reverse Engineer - Analyze Binaries with Radare2 | Online Free DevTools by Hexmos"
 name: radare2
 path: /freedevtools/tldr/common/radare2
 canonical: "https://hexmos.com/freedevtools/tldr/common/radare2/"

@@ -1,5 +1,5 @@
 ---
-title: "Cut Text - Extract Fields with Tuc | Free DevTools"
+title: "Cut Text - Extract Fields with Tuc | Online Free DevTools by Hexmos"
 name: tuc
 path: /freedevtools/tldr/common/tuc
 canonical: "https://hexmos.com/freedevtools/tldr/common/tuc/"

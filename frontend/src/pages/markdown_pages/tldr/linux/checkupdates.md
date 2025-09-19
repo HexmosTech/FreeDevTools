@@ -1,5 +1,5 @@
 ---
-title: "Check Updates - List Pending Updates in Linux | Free DevTools"
+title: "Check Updates - List Pending Updates in Linux | Online Free DevTools by Hexmos"
 name: checkupdates
 path: /freedevtools/tldr/linux/checkupdates
 canonical: "https://hexmos.com/freedevtools/tldr/linux/checkupdates/"

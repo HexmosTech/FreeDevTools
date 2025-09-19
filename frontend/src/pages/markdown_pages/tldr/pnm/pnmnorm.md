@@ -1,5 +1,5 @@
 ---
-title: "Normalize PNM Image - Adjust Contrast | Free DevTools"
+title: "Normalize PNM Image - Adjust Contrast | Online Free DevTools by Hexmos"
 name: pnmnorm
 path: /freedevtools/tldr/pnm/pnmnorm
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmnorm/"

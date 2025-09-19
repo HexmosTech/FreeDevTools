@@ -1,5 +1,5 @@
 ---
-title: "NPM Version - Bump Package Versions Easily | Free DevTools"
+title: "NPM Version - Bump Package Versions Easily | Online Free DevTools by Hexmos"
 name: npm-version
 path: /freedevtools/tldr/npm/npm-version
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-version/"

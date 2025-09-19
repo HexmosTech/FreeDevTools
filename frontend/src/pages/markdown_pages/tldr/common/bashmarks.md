@@ -1,5 +1,5 @@
 ---
-title: "Bashmarks - Manage Directories with Single Character Commands | Free DevTools"
+title: "Bashmarks - Manage Directories with Single Character Commands | Online Free DevTools by Hexmos"
 name: bashmarks
 path: /freedevtools/tldr/common/bashmarks
 canonical: "https://hexmos.com/freedevtools/tldr/common/bashmarks/"

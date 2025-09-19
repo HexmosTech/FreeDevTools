@@ -1,5 +1,5 @@
 ---
-title: "Chainctl - Control Chainguard Platform | Free DevTools"
+title: "Chainctl - Control Chainguard Platform | Online Free DevTools by Hexmos"
 name: chainctl
 path: /freedevtools/tldr/common/chainctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/chainctl/"

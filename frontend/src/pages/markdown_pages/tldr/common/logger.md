@@ -1,5 +1,5 @@
 ---
-title: "Log Messages - Add to Syslog with Logger | Free DevTools"
+title: "Log Messages - Add to Syslog with Logger | Online Free DevTools by Hexmos"
 name: logger
 path: /freedevtools/tldr/common/logger
 canonical: "https://hexmos.com/freedevtools/tldr/common/logger/"

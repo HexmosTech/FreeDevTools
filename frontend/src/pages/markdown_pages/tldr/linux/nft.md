@@ -1,5 +1,5 @@
 ---
-title: "Nft - Configure Linux Firewall Rules | Free DevTools"
+title: "Nft - Configure Linux Firewall Rules | Online Free DevTools by Hexmos"
 name: nft
 path: /freedevtools/tldr/linux/nft
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nft/"

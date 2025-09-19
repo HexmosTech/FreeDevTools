@@ -1,5 +1,5 @@
 ---
-title: "Cargo Help - Display Rust Subcommand Help | Free DevTools"
+title: "Cargo Help - Display Rust Subcommand Help | Online Free DevTools by Hexmos"
 name: cargo-help
 path: /freedevtools/tldr/cargo/cargo-help
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-help/"

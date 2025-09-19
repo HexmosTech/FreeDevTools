@@ -1,5 +1,5 @@
 ---
-title: "Control Nagios2 - Legacy Monitoring with Config Check | Free DevTools"
+title: "Control Nagios2 - Legacy Monitoring with Config Check | Online Free DevTools by Hexmos"
 name: nagios2
 path: /freedevtools/tldr/common/nagios2
 canonical: "https://hexmos.com/freedevtools/tldr/common/nagios2/"

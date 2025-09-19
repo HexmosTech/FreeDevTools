@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Install - Manage Packages and Plugins | Free DevTools"
+title: "Pulumi Install - Manage Packages and Plugins | Online Free DevTools by Hexmos"
 name: pulumi-install
 path: /freedevtools/tldr/pulumi/pulumi-install
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-install/"

@@ -1,5 +1,5 @@
 ---
-title: "Enable Builtins - Control Shell Features | Free DevTools"
+title: "Enable Builtins - Control Shell Features | Online Free DevTools by Hexmos"
 name: enable
 path: /freedevtools/tldr/common/enable
 canonical: "https://hexmos.com/freedevtools/tldr/common/enable/"

@@ -1,5 +1,5 @@
 ---
-title: "Build Xcode Projects - Control Builds with xctool | Free DevTools"
+title: "Build Xcode Projects - Control Builds with xctool | Online Free DevTools by Hexmos"
 name: xctool
 path: /freedevtools/tldr/osx/xctool
 canonical: "https://hexmos.com/freedevtools/tldr/osx/xctool/"

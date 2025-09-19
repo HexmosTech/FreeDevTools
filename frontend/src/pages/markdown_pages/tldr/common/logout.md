@@ -1,5 +1,5 @@
 ---
-title: "Logout - Exit Shell Sessions | Free DevTools"
+title: "Logout - Exit Shell Sessions | Online Free DevTools by Hexmos"
 name: logout
 path: /freedevtools/tldr/common/logout
 canonical: "https://hexmos.com/freedevtools/tldr/common/logout/"

@@ -1,5 +1,5 @@
 ---
-title: "Timezone Config - Manage System Timezone | Free DevTools"
+title: "Timezone Config - Manage System Timezone | Online Free DevTools by Hexmos"
 name: tzconfig
 path: /freedevtools/tldr/common/tzconfig
 canonical: "https://hexmos.com/freedevtools/tldr/common/tzconfig/"

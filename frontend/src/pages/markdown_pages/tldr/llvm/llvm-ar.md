@@ -1,5 +1,5 @@
 ---
-title: "LLVM-ar Archiver - Create Archive Libraries | Free DevTools"
+title: "LLVM-ar Archiver - Create Archive Libraries | Online Free DevTools by Hexmos"
 name: llvm-ar
 path: /freedevtools/tldr/llvm/llvm-ar
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-ar/"

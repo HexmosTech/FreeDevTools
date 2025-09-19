@@ -1,5 +1,5 @@
 ---
-title: "NPM Run - Execute Scripts | Free DevTools"
+title: "NPM Run - Execute Scripts | Online Free DevTools by Hexmos"
 name: npm-run
 path: /freedevtools/tldr/npm/npm-run
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-run/"

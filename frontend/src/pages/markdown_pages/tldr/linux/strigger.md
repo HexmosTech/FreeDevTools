@@ -1,5 +1,5 @@
 ---
-title: "Slurm Trigger - Control Cluster Actions | Free DevTools"
+title: "Slurm Trigger - Control Cluster Actions | Online Free DevTools by Hexmos"
 name: strigger
 path: /freedevtools/tldr/linux/strigger
 canonical: "https://hexmos.com/freedevtools/tldr/linux/strigger/"

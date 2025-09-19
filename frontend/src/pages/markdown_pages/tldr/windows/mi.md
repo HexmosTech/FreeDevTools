@@ -1,5 +1,5 @@
 ---
-title: "Move Item - Rename Files with PowerShell MI | Free DevTools"
+title: "Move Item - Rename Files with PowerShell MI | Online Free DevTools by Hexmos"
 name: mi
 path: /freedevtools/tldr/windows/mi
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mi/"

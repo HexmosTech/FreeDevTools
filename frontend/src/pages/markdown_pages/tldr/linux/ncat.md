@@ -1,5 +1,5 @@
 ---
-title: "Network Control - Manage Data with Ncat | Free DevTools"
+title: "Network Control - Manage Data with Ncat | Online Free DevTools by Hexmos"
 name: ncat
 path: /freedevtools/tldr/linux/ncat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ncat/"

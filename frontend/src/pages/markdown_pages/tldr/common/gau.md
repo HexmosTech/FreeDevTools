@@ -1,5 +1,5 @@
 ---
-title: "Fetch URLs - Discover Website URLs with Gau | Free DevTools"
+title: "Fetch URLs - Discover Website URLs with Gau | Online Free DevTools by Hexmos"
 name: gau
 path: /freedevtools/tldr/common/gau
 canonical: "https://hexmos.com/freedevtools/tldr/common/gau/"

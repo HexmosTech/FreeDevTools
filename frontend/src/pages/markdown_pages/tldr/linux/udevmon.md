@@ -1,5 +1,5 @@
 ---
-title: "Monitor Input Devices - Intercept Events with udevmon | Free DevTools"
+title: "Monitor Input Devices - Intercept Events with udevmon | Online Free DevTools by Hexmos"
 name: udevmon
 path: /freedevtools/tldr/linux/udevmon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/udevmon/"

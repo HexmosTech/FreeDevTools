@@ -1,5 +1,5 @@
 ---
-title: "Reverse Proxy - Setup Frps Server | Free DevTools"
+title: "Reverse Proxy - Setup Frps Server | Online Free DevTools by Hexmos"
 name: frps
 path: /freedevtools/tldr/common/frps
 canonical: "https://hexmos.com/freedevtools/tldr/common/frps/"

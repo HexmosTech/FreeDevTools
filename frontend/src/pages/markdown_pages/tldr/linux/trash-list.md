@@ -1,5 +1,5 @@
 ---
-title: "Trash List - View Deleted Files with Trash | Free DevTools"
+title: "Trash List - View Deleted Files with Trash | Online Free DevTools by Hexmos"
 name: trash-list
 path: /freedevtools/tldr/linux/trash-list
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash-list/"

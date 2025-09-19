@@ -1,5 +1,5 @@
 ---
-title: "Finger Lookup - Find User Information | Free DevTools"
+title: "Finger Lookup - Find User Information | Online Free DevTools by Hexmos"
 name: finger
 path: /freedevtools/tldr/common/finger
 canonical: "https://hexmos.com/freedevtools/tldr/common/finger/"

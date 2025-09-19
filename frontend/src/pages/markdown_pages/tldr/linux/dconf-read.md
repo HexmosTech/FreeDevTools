@@ -1,5 +1,5 @@
 ---
-title: "Read Dconf Keys - Access Config Values | Free DevTools"
+title: "Read Dconf Keys - Access Config Values | Online Free DevTools by Hexmos"
 name: dconf-read
 path: /freedevtools/tldr/linux/dconf-read
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf-read/"

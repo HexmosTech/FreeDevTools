@@ -1,5 +1,5 @@
 ---
-title: "Control Date - Format Dates on macOS | Free DevTools"
+title: "Control Date - Format Dates on macOS | Online Free DevTools by Hexmos"
 name: gdate
 path: /freedevtools/tldr/osx/gdate
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gdate/"

@@ -1,5 +1,5 @@
 ---
-title: "Fossil CI - Commit Changes | Free DevTools"
+title: "Fossil CI - Commit Changes | Online Free DevTools by Hexmos"
 name: fossil-ci
 path: /freedevtools/tldr/fossil/fossil-ci
 canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-ci/"

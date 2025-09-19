@@ -1,5 +1,5 @@
 ---
-title: "Rust Component Manager - Control Toolchain Components | Free DevTools"
+title: "Rust Component Manager - Control Toolchain Components | Online Free DevTools by Hexmos"
 name: rustup-component
 path: /freedevtools/tldr/rustup/rustup-component
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-component/"

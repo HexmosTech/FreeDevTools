@@ -1,5 +1,5 @@
 ---
-title: "Git Move - Rename Files & Directories | Free DevTools"
+title: "Git Move - Rename Files & Directories | Online Free DevTools by Hexmos"
 name: git-mv
 path: /freedevtools/tldr/git/git-mv
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-mv/"

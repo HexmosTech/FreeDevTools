@@ -1,5 +1,5 @@
 ---
-title: "VMInfo - Show Virtual Machine Info | Free DevTools"
+title: "VMInfo - Show Virtual Machine Info | Online Free DevTools by Hexmos"
 name: vboxmanage-showvminfo
 path: /freedevtools/tldr/vboxmanager/vboxmanage-showvminfo
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/"

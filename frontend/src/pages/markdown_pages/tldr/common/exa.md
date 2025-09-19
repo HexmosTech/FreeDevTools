@@ -1,5 +1,5 @@
 ---
-title: "Exa - List Directory Contents | Free DevTools"
+title: "Exa - List Directory Contents | Online Free DevTools by Hexmos"
 name: exa
 path: /freedevtools/tldr/common/exa
 canonical: "https://hexmos.com/freedevtools/tldr/common/exa/"

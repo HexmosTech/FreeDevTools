@@ -1,5 +1,5 @@
 ---
-title: "Compare Text - Display Word Differences with wdiff | Free DevTools"
+title: "Compare Text - Display Word Differences with wdiff | Online Free DevTools by Hexmos"
 name: wdiff
 path: /freedevtools/tldr/common/wdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/wdiff/"

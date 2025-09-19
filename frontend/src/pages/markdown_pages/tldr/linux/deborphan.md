@@ -1,5 +1,5 @@
 ---
-title: "Deborphan - Find Orphan Packages | Free DevTools"
+title: "Deborphan - Find Orphan Packages | Online Free DevTools by Hexmos"
 name: deborphan
 path: /freedevtools/tldr/linux/deborphan
 canonical: "https://hexmos.com/freedevtools/tldr/linux/deborphan/"

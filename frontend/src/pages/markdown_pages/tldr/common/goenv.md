@@ -1,5 +1,5 @@
 ---
-title: "Goenv Manager - Control Go Versions | Free DevTools"
+title: "Goenv Manager - Control Go Versions | Online Free DevTools by Hexmos"
 name: goenv
 path: /freedevtools/tldr/common/goenv
 canonical: "https://hexmos.com/freedevtools/tldr/common/goenv/"

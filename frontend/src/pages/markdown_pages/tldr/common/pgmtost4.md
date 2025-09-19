@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM to ST-4 - Format Images | Free DevTools"
+title: "Convert PGM to ST-4 - Format Images | Online Free DevTools by Hexmos"
 name: pgmtost4
 path: /freedevtools/tldr/common/pgmtost4
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtost4/"

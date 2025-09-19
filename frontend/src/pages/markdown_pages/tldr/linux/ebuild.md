@@ -1,5 +1,5 @@
 ---
-title: "Ebuild - Manage Gentoo Packages | Free DevTools"
+title: "Ebuild - Manage Gentoo Packages | Online Free DevTools by Hexmos"
 name: ebuild
 path: /freedevtools/tldr/linux/ebuild
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ebuild/"

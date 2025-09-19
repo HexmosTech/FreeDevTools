@@ -1,5 +1,5 @@
 ---
-title: "PPM Spread - Displace Image Pixels Randomly | Free DevTools"
+title: "PPM Spread - Displace Image Pixels Randomly | Online Free DevTools by Hexmos"
 name: ppmspread
 path: /freedevtools/tldr/ppm/ppmspread
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmspread/"

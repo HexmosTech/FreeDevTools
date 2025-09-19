@@ -1,5 +1,5 @@
 ---
-title: "Format Text - Improve Text Readability with Gfmt | Free DevTools"
+title: "Format Text - Improve Text Readability with Gfmt | Online Free DevTools by Hexmos"
 name: gfmt
 path: /freedevtools/tldr/osx/gfmt
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gfmt/"

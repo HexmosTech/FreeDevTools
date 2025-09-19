@@ -1,5 +1,5 @@
 ---
-title: "Control Gtalk - Communicate via Command Line | Free DevTools"
+title: "Control Gtalk - Communicate via Command Line | Online Free DevTools by Hexmos"
 name: gtalk
 path: /freedevtools/tldr/osx/gtalk
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtalk/"

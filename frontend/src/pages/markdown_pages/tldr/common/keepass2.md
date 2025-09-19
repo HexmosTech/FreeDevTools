@@ -1,5 +1,5 @@
 ---
-title: "Manage Passwords - Control KeePass2 Databases | Free DevTools"
+title: "Manage Passwords - Control KeePass2 Databases | Online Free DevTools by Hexmos"
 name: keepass2
 path: /freedevtools/tldr/common/keepass2
 canonical: "https://hexmos.com/freedevtools/tldr/common/keepass2/"

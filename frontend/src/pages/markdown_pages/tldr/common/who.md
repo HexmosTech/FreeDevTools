@@ -1,5 +1,5 @@
 ---
-title: "Who - Display Logged-In Users | Free DevTools"
+title: "Who - Display Logged-In Users | Online Free DevTools by Hexmos"
 name: who
 path: /freedevtools/tldr/common/who
 canonical: "https://hexmos.com/freedevtools/tldr/common/who/"

@@ -1,5 +1,5 @@
 ---
-title: "GitHub Control - Manage Repositories with GH | Free DevTools"
+title: "GitHub Control - Manage Repositories with GH | Online Free DevTools by Hexmos"
 name: gh
 path: /freedevtools/tldr/common/gh
 canonical: "https://hexmos.com/freedevtools/tldr/common/gh/"

@@ -1,5 +1,5 @@
 ---
-title: "Run R Scripts - Execute R Language Programs | Free DevTools"
+title: "Run R Scripts - Execute R Language Programs | Online Free DevTools by Hexmos"
 name: r
 path: "/freedevtools/tldr/common/r"
 canonical: "https://hexmos.com/freedevtools/tldr/common/r/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Calendar - Calcurse Command-line Tool | Free DevTools"
+title: "Manage Calendar - Calcurse Command-line Tool | Online Free DevTools by Hexmos"
 name: calcurse
 path: /freedevtools/tldr/linux/calcurse
 canonical: "https://hexmos.com/freedevtools/tldr/linux/calcurse/"

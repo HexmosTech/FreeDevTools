@@ -1,5 +1,5 @@
 ---
-title: "Complete Dependency - Search Maven Artifacts | Free DevTools"
+title: "Complete Dependency - Search Maven Artifacts | Online Free DevTools by Hexmos"
 name: cs-complete-dep
 path: /freedevtools/tldr/cs/cs-complete-dep
 canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-complete-dep/"

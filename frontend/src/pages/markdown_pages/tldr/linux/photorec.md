@@ -1,5 +1,5 @@
 ---
-title: "Recover Deleted Files - with PhotoRec | Free DevTools"
+title: "Recover Deleted Files - with PhotoRec | Online Free DevTools by Hexmos"
 name: photorec
 path: /freedevtools/tldr/linux/photorec
 canonical: "https://hexmos.com/freedevtools/tldr/linux/photorec/"

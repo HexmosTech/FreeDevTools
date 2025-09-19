@@ -1,5 +1,5 @@
 ---
-title: "LLDB Debugger - Debug Executables | Free DevTools"
+title: "LLDB Debugger - Debug Executables | Online Free DevTools by Hexmos"
 name: lldb
 path: /freedevtools/tldr/common/lldb
 canonical: "https://hexmos.com/freedevtools/tldr/common/lldb/"

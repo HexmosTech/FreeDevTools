@@ -1,5 +1,5 @@
 ---
-title: "Nix Search - Find Nix Packages | Free DevTools"
+title: "Nix Search - Find Nix Packages | Online Free DevTools by Hexmos"
 name: nix-search
 path: /freedevtools/tldr/nix/nix-search
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-search/"

@@ -1,5 +1,5 @@
 ---
-title: "Streamlink - Extract Video Streams | Free DevTools"
+title: "Streamlink - Extract Video Streams | Online Free DevTools by Hexmos"
 name: streamlink
 path: /freedevtools/tldr/st/streamlink
 canonical: "https://hexmos.com/freedevtools/tldr/st/streamlink/"

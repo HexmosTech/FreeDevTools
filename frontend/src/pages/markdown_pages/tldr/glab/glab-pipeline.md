@@ -1,5 +1,5 @@
 ---
-title: "Manage GitLab Pipelines - Run and View CI/CD | Free DevTools"
+title: "Manage GitLab Pipelines - Run and View CI/CD | Online Free DevTools by Hexmos"
 name: glab-pipeline
 path: /freedevtools/tldr/glab/glab-pipeline
 canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-pipeline/"

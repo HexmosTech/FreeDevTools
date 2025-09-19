@@ -1,5 +1,5 @@
 ---
-title: "C# IDE - Create C# Applications with MonoDevelop | Free DevTools"
+title: "C# IDE - Create C# Applications with MonoDevelop | Online Free DevTools by Hexmos"
 name: monodevelop
 path: /freedevtools/tldr/common/monodevelop
 canonical: "https://hexmos.com/freedevtools/tldr/common/monodevelop/"

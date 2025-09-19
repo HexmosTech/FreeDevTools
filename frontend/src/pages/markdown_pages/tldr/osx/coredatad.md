@@ -1,5 +1,5 @@
 ---
-title: "Schedule CloudKit Operations - CoreDataD | Free DevTools"
+title: "Schedule CloudKit Operations - CoreDataD | Online Free DevTools by Hexmos"
 name: coredatad
 path: /freedevtools/tldr/osx/coredatad
 canonical: "https://hexmos.com/freedevtools/tldr/osx/coredatad/"

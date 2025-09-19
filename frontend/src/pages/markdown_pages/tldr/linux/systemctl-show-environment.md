@@ -1,5 +1,5 @@
 ---
-title: "Show Environment - Display Systemd Env Blocks | Free DevTools"
+title: "Show Environment - Display Systemd Env Blocks | Online Free DevTools by Hexmos"
 name: systemctl-show-environment
 path: /freedevtools/tldr/linux/systemctl-show-environment
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-show-environment/"

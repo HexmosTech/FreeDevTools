@@ -1,5 +1,5 @@
 ---
-title: "Edit Plain Text - Control Files with CotEditor | Free DevTools"
+title: "Edit Plain Text - Control Files with CotEditor | Online Free DevTools by Hexmos"
 name: cot
 path: /freedevtools/tldr/osx/cot
 canonical: "https://hexmos.com/freedevtools/tldr/osx/cot/"

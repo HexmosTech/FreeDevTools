@@ -1,5 +1,5 @@
 ---
-title: "List Hardware - System Information with lshw | Free DevTools"
+title: "List Hardware - System Information with lshw | Online Free DevTools by Hexmos"
 name: lshw
 path: /freedevtools/tldr/linux/lshw
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lshw/"

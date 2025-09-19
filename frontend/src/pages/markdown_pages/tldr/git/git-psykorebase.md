@@ -1,5 +1,5 @@
 ---
-title: "Git Psykorebase - Rebase Branches with Merge Commit | Free DevTools"
+title: "Git Psykorebase - Rebase Branches with Merge Commit | Online Free DevTools by Hexmos"
 name: git-psykorebase
 path: /freedevtools/tldr/git/git-psykorebase
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-psykorebase/"

@@ -1,5 +1,5 @@
 ---
-title: "SQL Backups - Describe SQL Backups with gcloud | Free DevTools"
+title: "SQL Backups - Describe SQL Backups with gcloud | Online Free DevTools by Hexmos"
 name: gcloud-sql-backups-describe
 path: /freedevtools/tldr/gcloud/gcloud-sql-backups-describe
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-sql-backups-describe/"

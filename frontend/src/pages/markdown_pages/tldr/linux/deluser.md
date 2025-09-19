@@ -1,5 +1,5 @@
 ---
-title: "Delete User - Manage System Users | Free DevTools"
+title: "Delete User - Manage System Users | Online Free DevTools by Hexmos"
 name: deluser
 path: /freedevtools/tldr/linux/deluser
 canonical: "https://hexmos.com/freedevtools/tldr/linux/deluser/"

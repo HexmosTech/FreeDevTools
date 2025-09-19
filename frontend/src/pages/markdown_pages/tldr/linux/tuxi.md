@@ -1,5 +1,5 @@
 ---
-title: "Scrape Google Results - Tuxi Search Scraper | Free DevTools"
+title: "Scrape Google Results - Tuxi Search Scraper | Online Free DevTools by Hexmos"
 name: tuxi
 path: /freedevtools/tldr/linux/tuxi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tuxi/"

@@ -1,5 +1,5 @@
 ---
-title: "Pdbedit - Edit Samba User Database | Free DevTools"
+title: "Pdbedit - Edit Samba User Database | Online Free DevTools by Hexmos"
 name: pdbedit
 path: /freedevtools/tldr/linux/pdbedit
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pdbedit/"

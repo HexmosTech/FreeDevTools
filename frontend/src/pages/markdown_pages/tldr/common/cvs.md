@@ -1,5 +1,5 @@
 ---
-title: "Control CVS Versions - Manage Code Revisions | Free DevTools"
+title: "Control CVS Versions - Manage Code Revisions | Online Free DevTools by Hexmos"
 name: cvs
 path: /freedevtools/tldr/common/cvs
 canonical: "https://hexmos.com/freedevtools/tldr/common/cvs/"

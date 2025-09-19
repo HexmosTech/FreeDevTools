@@ -1,5 +1,5 @@
 ---
-title: "Uncompress - Extract Compressed Files | Free DevTools"
+title: "Uncompress - Extract Compressed Files | Online Free DevTools by Hexmos"
 name: uncompress
 path: /freedevtools/tldr/linux/uncompress
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uncompress/"

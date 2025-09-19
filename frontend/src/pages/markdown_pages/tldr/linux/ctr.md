@@ -1,5 +1,5 @@
 ---
-title: "Manage Containerd - Control Containers with ctr | Free DevTools"
+title: "Manage Containerd - Control Containers with ctr | Online Free DevTools by Hexmos"
 name: ctr
 path: /freedevtools/tldr/linux/ctr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ctr/"

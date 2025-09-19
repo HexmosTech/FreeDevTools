@@ -1,5 +1,5 @@
 ---
-title: "PAM Image Function - Apply Arithmetic Functions | Free DevTools"
+title: "PAM Image Function - Apply Arithmetic Functions | Online Free DevTools by Hexmos"
 name: pamfunc
 path: /freedevtools/tldr/common/pamfunc
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamfunc/"

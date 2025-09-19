@@ -1,5 +1,5 @@
 ---
-title: "Control Cloud Files - rclone Copy/Sync | Free DevTools"
+title: "Control Cloud Files - rclone Copy/Sync | Online Free DevTools by Hexmos"
 name: rclone
 path: /freedevtools/tldr/common/rclone
 canonical: "https://hexmos.com/freedevtools/tldr/common/rclone/"

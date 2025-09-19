@@ -1,5 +1,5 @@
 ---
-title: "Mount SteamOS - Control Filesystem Partitions | Free DevTools"
+title: "Mount SteamOS - Control Filesystem Partitions | Online Free DevTools by Hexmos"
 name: mount.steamos
 path: /freedevtools/tldr/linux/mount.steamos
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mount.steamos/"

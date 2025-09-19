@@ -1,5 +1,5 @@
 ---
-title: "Manage Files - Dolphin File Manager on Linux | Free DevTools"
+title: "Manage Files - Dolphin File Manager on Linux | Online Free DevTools by Hexmos"
 name: dolphin
 path: /freedevtools/tldr/linux/dolphin
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dolphin/"

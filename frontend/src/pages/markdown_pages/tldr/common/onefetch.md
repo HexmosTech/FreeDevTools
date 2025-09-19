@@ -1,5 +1,5 @@
 ---
-title: "Display Git Repo Info - Onefetch | Free DevTools"
+title: "Display Git Repo Info - Onefetch | Online Free DevTools by Hexmos"
 name: onefetch
 path: /freedevtools/tldr/common/onefetch
 canonical: "https://hexmos.com/freedevtools/tldr/common/onefetch/"

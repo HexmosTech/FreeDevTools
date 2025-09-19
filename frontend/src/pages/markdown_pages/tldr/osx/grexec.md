@@ -1,5 +1,5 @@
 ---
-title: "Rexec - Execute Commands Remotely | Free DevTools"
+title: "Rexec - Execute Commands Remotely | Online Free DevTools by Hexmos"
 name: grexec
 path: /freedevtools/tldr/osx/grexec
 canonical: "https://hexmos.com/freedevtools/tldr/osx/grexec/"

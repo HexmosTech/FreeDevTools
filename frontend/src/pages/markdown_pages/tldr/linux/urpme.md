@@ -1,5 +1,5 @@
 ---
-title: "Urpme - Uninstall Packages in Mageia | Free DevTools"
+title: "Urpme - Uninstall Packages in Mageia | Online Free DevTools by Hexmos"
 name: urpme
 path: /freedevtools/tldr/linux/urpme
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urpme/"

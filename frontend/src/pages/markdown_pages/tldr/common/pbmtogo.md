@@ -1,5 +1,5 @@
 ---
-title: "Convert PBM Image - Compress Graphics with pbmtogo | Free DevTools"
+title: "Convert PBM Image - Compress Graphics with pbmtogo | Online Free DevTools by Hexmos"
 name: pbmtogo
 path: /freedevtools/tldr/common/pbmtogo
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtogo/"

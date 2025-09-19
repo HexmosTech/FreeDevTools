@@ -1,5 +1,5 @@
 ---
-title: "Display Shared Library Dependencies with ldd | Free DevTools"
+title: "Display Shared Library Dependencies with ldd | Online Free DevTools by Hexmos"
 name: ldd
 path: /freedevtools/tldr/linux/ldd
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ldd/"

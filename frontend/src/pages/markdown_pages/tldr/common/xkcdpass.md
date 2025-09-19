@@ -1,5 +1,5 @@
 ---
-title: "Generate Password - XKCDpass Phrase Generator | Free DevTools"
+title: "Generate Password - XKCDpass Phrase Generator | Online Free DevTools by Hexmos"
 name: xkcdpass
 path: /freedevtools/tldr/common/xkcdpass
 canonical: "https://hexmos.com/freedevtools/tldr/common/xkcdpass/"

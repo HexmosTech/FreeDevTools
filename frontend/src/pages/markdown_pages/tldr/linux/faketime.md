@@ -1,5 +1,5 @@
 ---
-title: "Fake Time Control - Manage System Time for Commands | Free DevTools"
+title: "Fake Time Control - Manage System Time for Commands | Online Free DevTools by Hexmos"
 name: faketime
 path: /freedevtools/tldr/linux/faketime
 canonical: "https://hexmos.com/freedevtools/tldr/linux/faketime/"

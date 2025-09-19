@@ -1,5 +1,5 @@
 ---
-title: "MuseScore - Launch Music Notation Software | Free DevTools"
+title: "MuseScore - Launch Music Notation Software | Online Free DevTools by Hexmos"
 name: mscore
 path: /freedevtools/tldr/common/mscore
 canonical: "https://hexmos.com/freedevtools/tldr/common/mscore/"

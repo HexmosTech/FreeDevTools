@@ -1,5 +1,5 @@
 ---
-title: "Speaker-Test - Generate Audio Test Tones | Free DevTools"
+title: "Speaker-Test - Generate Audio Test Tones | Online Free DevTools by Hexmos"
 name: speaker-test
 path: /freedevtools/tldr/linux/speaker-test
 canonical: "https://hexmos.com/freedevtools/tldr/linux/speaker-test/"

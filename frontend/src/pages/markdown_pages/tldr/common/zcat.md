@@ -1,5 +1,5 @@
 ---
-title: "Zcat - Print Gzip Files | Free DevTools"
+title: "Zcat - Print Gzip Files | Online Free DevTools by Hexmos"
 name: zcat
 path: "/freedevtools/tldr/common/zcat"
 canonical: "https://hexmos.com/freedevtools/tldr/common/zcat/"

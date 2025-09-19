@@ -1,5 +1,5 @@
 ---
-title: "Pstree - Control Process Trees in Linux | Free DevTools"
+title: "Pstree - Control Process Trees in Linux | Online Free DevTools by Hexmos"
 name: pstree
 path: /freedevtools/tldr/linux/pstree
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pstree/"

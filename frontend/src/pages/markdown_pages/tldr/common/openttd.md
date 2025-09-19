@@ -1,5 +1,5 @@
 ---
-title: "Control OpenTTD - Manage Transport Tycoon Games | Free DevTools"
+title: "Control OpenTTD - Manage Transport Tycoon Games | Online Free DevTools by Hexmos"
 name: openttd
 path: /freedevtools/tldr/common/openttd
 canonical: "https://hexmos.com/freedevtools/tldr/common/openttd/"

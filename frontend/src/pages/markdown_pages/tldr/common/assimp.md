@@ -1,5 +1,5 @@
 ---
-title: "Convert 3D Models - Assimp File Converter | Free DevTools"
+title: "Convert 3D Models - Assimp File Converter | Online Free DevTools by Hexmos"
 name: assimp
 path: /freedevtools/tldr/common/assimp
 canonical: "https://hexmos.com/freedevtools/tldr/common/assimp/"

@@ -1,5 +1,5 @@
 ---
-title: "Pokemon Sprite Display - Pokeget Terminal Sprites | Free DevTools"
+title: "Pokemon Sprite Display - Pokeget Terminal Sprites | Online Free DevTools by Hexmos"
 name: pokeget
 path: /freedevtools/tldr/common/pokeget
 canonical: "https://hexmos.com/freedevtools/tldr/common/pokeget/"

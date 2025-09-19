@@ -1,5 +1,5 @@
 ---
-title: "Generate Rust Reports - Cargo Report | Free DevTools"
+title: "Generate Rust Reports - Cargo Report | Online Free DevTools by Hexmos"
 name: cargo-report
 path: /freedevtools/tldr/cargo/cargo-report
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-report/"

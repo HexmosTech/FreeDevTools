@@ -1,5 +1,5 @@
 ---
-title: "Format Datetime - Arithmetic, Parsing & Formatting | Free DevTools"
+title: "Format Datetime - Arithmetic, Parsing & Formatting | Online Free DevTools by Hexmos"
 name: biff
 path: /freedevtools/tldr/common/biff
 canonical: "https://hexmos.com/freedevtools/tldr/common/biff/"

@@ -1,5 +1,5 @@
 ---
-title: "Shell Then - Control Shell Branching | Free DevTools"
+title: "Shell Then - Control Shell Branching | Online Free DevTools by Hexmos"
 name: then
 path: /freedevtools/tldr/common/then
 canonical: "https://hexmos.com/freedevtools/tldr/common/then/"

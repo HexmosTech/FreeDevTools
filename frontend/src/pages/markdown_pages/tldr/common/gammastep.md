@@ -1,5 +1,5 @@
 ---
-title: "Gammastep - Control Screen Color Temperature | Free DevTools"
+title: "Gammastep - Control Screen Color Temperature | Online Free DevTools by Hexmos"
 name: gammastep
 path: /freedevtools/tldr/common/gammastep
 canonical: "https://hexmos.com/freedevtools/tldr/common/gammastep/"

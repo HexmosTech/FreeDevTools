@@ -1,5 +1,5 @@
 ---
-title: "Control Directory - Navigate Filesystems with CD | Free DevTools"
+title: "Control Directory - Navigate Filesystems with CD | Online Free DevTools by Hexmos"
 name: cd
 path: /freedevtools/tldr/windows/cd
 canonical: "https://hexmos.com/freedevtools/tldr/windows/cd/"

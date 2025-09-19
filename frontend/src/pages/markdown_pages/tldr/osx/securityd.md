@@ -1,5 +1,5 @@
 ---
-title: "Manage Security Contexts - securityd | Free DevTools"
+title: "Manage Security Contexts - securityd | Online Free DevTools by Hexmos"
 name: securityd
 path: /freedevtools/tldr/osx/securityd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/securityd/"

@@ -1,5 +1,5 @@
 ---
-title: "iDevice Pair - Manage iOS Device Pairing | Free DevTools"
+title: "iDevice Pair - Manage iOS Device Pairing | Online Free DevTools by Hexmos"
 name: idevicepair
 path: /freedevtools/tldr/common/idevicepair
 canonical: "https://hexmos.com/freedevtools/tldr/common/idevicepair/"

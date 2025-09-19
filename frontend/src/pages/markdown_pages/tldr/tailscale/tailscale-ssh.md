@@ -1,5 +1,5 @@
 ---
-title: "Tailscale SSH - Secure Shell Access | Free DevTools"
+title: "Tailscale SSH - Secure Shell Access | Online Free DevTools by Hexmos"
 name: tailscale-ssh
 path: /freedevtools/tldr/tailscale/tailscale-ssh
 canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-ssh/"

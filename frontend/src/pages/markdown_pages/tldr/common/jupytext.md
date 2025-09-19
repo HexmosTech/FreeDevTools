@@ -1,5 +1,5 @@
 ---
-title: "Convert Jupyter Notebooks - Jupytext | Free DevTools"
+title: "Convert Jupyter Notebooks - Jupytext | Online Free DevTools by Hexmos"
 name: jupytext
 path: "/freedevtools/tldr/common/jupytext"
 canonical: "https://hexmos.com/freedevtools/tldr/common/jupytext/"

@@ -1,5 +1,5 @@
 ---
-title: "SQLx - Create and Manage Databases | Free DevTools"
+title: "SQLx - Create and Manage Databases | Online Free DevTools by Hexmos"
 name: sqlx
 path: /freedevtools/tldr/common/sqlx
 canonical: "https://hexmos.com/freedevtools/tldr/common/sqlx/"

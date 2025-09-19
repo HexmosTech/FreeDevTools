@@ -1,5 +1,5 @@
 ---
-title: "Convert Netpbm to SRF - Format Images | Free DevTools"
+title: "Convert Netpbm to SRF - Format Images | Online Free DevTools by Hexmos"
 name: pamtosrf
 path: /freedevtools/tldr/common/pamtosrf
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamtosrf/"

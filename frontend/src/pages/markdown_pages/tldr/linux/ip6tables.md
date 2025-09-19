@@ -1,5 +1,5 @@
 ---
-title: "IP6tables - Control IPv6 Firewall Rules | Free DevTools"
+title: "IP6tables - Control IPv6 Firewall Rules | Online Free DevTools by Hexmos"
 name: ip6tables
 path: /freedevtools/tldr/linux/ip6tables
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip6tables/"

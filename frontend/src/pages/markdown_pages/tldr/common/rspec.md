@@ -1,5 +1,5 @@
 ---
-title: "RSpec - Test Ruby Code with Behavior-Driven Development | Free DevTools"
+title: "RSpec - Test Ruby Code with Behavior-Driven Development | Online Free DevTools by Hexmos"
 name: rspec
 path: /freedevtools/tldr/common/rspec
 canonical: "https://hexmos.com/freedevtools/tldr/common/rspec/"

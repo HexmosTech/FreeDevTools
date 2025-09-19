@@ -1,5 +1,5 @@
 ---
-title: "Carbonyl Terminal Viewer - View Webpages in Terminal | Free DevTools"
+title: "Carbonyl Terminal Viewer - View Webpages in Terminal | Online Free DevTools by Hexmos"
 name: carbonyl
 path: /freedevtools/tldr/common/carbonyl
 canonical: "https://hexmos.com/freedevtools/tldr/common/carbonyl/"

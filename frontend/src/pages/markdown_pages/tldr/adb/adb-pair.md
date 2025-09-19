@@ -1,5 +1,5 @@
 ---
-title: "ADB Pair - Connect Android Devices | Free DevTools"
+title: "ADB Pair - Connect Android Devices | Online Free DevTools by Hexmos"
 name: adb-pair
 path: /freedevtools/tldr/adb/adb-pair
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-pair/"

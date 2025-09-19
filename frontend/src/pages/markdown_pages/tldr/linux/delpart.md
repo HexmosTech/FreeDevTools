@@ -1,5 +1,5 @@
 ---
-title: "Delete Partition - Forget Partition Tables with Linux | Free DevTools"
+title: "Delete Partition - Forget Partition Tables with Linux | Online Free DevTools by Hexmos"
 name: delpart
 path: /freedevtools/tldr/linux/delpart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/delpart/"

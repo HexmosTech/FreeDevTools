@@ -1,5 +1,5 @@
 ---
-title: "Corepack - Manage Package Managers | Free DevTools"
+title: "Corepack - Manage Package Managers | Online Free DevTools by Hexmos"
 name: corepack
 path: /freedevtools/tldr/common/corepack
 canonical: "https://hexmos.com/freedevtools/tldr/common/corepack/"

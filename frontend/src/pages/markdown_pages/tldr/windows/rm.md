@@ -1,5 +1,5 @@
 ---
-title: "Remove Item - Delete Files Easily with Remove-Item | Free DevTools"
+title: "Remove Item - Delete Files Easily with Remove-Item | Online Free DevTools by Hexmos"
 name: rm
 path: /freedevtools/tldr/windows/rm
 canonical: "https://hexmos.com/freedevtools/tldr/windows/rm/"

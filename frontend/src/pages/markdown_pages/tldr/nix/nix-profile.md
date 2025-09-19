@@ -1,5 +1,5 @@
 ---
-title: "Nix Profile - Manage Packages | Free DevTools"
+title: "Nix Profile - Manage Packages | Online Free DevTools by Hexmos"
 name: nix-profile
 path: /freedevtools/tldr/nix/nix-profile
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-profile/"

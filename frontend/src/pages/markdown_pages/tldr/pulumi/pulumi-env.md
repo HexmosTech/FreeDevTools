@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Env - Manage Environments | Free DevTools"
+title: "Pulumi Env - Manage Environments | Online Free DevTools by Hexmos"
 name: pulumi-env
 path: /freedevtools/tldr/pulumi/pulumi-env
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-env/"

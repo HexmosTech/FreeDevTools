@@ -1,5 +1,5 @@
 ---
-title: "Submit Batch Jobs - Control SLURM with sbatch | Free DevTools"
+title: "Submit Batch Jobs - Control SLURM with sbatch | Online Free DevTools by Hexmos"
 name: sbatch
 path: /freedevtools/tldr/linux/sbatch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sbatch/"

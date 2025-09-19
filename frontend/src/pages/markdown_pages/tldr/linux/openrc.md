@@ -1,5 +1,5 @@
 ---
-title: "Control OpenRC - Manage Services | Free DevTools"
+title: "Control OpenRC - Manage Services | Online Free DevTools by Hexmos"
 name: openrc
 path: /freedevtools/tldr/linux/openrc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/openrc/"

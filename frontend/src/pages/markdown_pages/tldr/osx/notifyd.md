@@ -1,5 +1,5 @@
 ---
-title: "Control Notifications - Manage OSX Notifications | Free DevTools"
+title: "Control Notifications - Manage OSX Notifications | Online Free DevTools by Hexmos"
 name: notifyd
 path: /freedevtools/tldr/osx/notifyd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/notifyd/"

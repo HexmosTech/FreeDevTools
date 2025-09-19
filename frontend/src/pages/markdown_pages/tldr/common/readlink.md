@@ -1,5 +1,5 @@
 ---
-title: "Readlink - Follow Symlinks and Get Information | Free DevTools"
+title: "Readlink - Follow Symlinks and Get Information | Online Free DevTools by Hexmos"
 name: readlink
 path: /freedevtools/tldr/common/readlink
 canonical: "https://hexmos.com/freedevtools/tldr/common/readlink/"

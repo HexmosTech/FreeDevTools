@@ -1,5 +1,5 @@
 ---
-title: "Rlogin Command - Remote Login Access | Free DevTools"
+title: "Rlogin Command - Remote Login Access | Online Free DevTools by Hexmos"
 name: rlogin
 path: /freedevtools/tldr/linux/rlogin
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rlogin/"

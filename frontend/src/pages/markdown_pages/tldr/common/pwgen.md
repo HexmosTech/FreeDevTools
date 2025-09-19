@@ -1,5 +1,5 @@
 ---
-title: "Generate Password - Generate Secure Passwords with pwgen | Free DevTools"
+title: "Generate Password - Generate Secure Passwords with pwgen | Online Free DevTools by Hexmos"
 name: pwgen
 path: /freedevtools/tldr/common/pwgen
 canonical: "https://hexmos.com/freedevtools/tldr/common/pwgen/"

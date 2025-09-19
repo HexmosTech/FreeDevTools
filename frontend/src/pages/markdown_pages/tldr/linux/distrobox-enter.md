@@ -1,5 +1,5 @@
 ---
-title: "Distrobox Enter - Access Containers | Free DevTools"
+title: "Distrobox Enter - Access Containers | Online Free DevTools by Hexmos"
 name: distrobox-enter
 path: /freedevtools/tldr/linux/distrobox-enter
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-enter/"

@@ -1,5 +1,5 @@
 ---
-title: "LZcat - Decompress LZMA Files | Free DevTools"
+title: "LZcat - Decompress LZMA Files | Online Free DevTools by Hexmos"
 name: lzcat
 path: /freedevtools/tldr/common/lzcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/lzcat/"

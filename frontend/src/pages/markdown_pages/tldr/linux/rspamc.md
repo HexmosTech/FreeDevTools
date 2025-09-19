@@ -1,5 +1,5 @@
 ---
-title: "Rspamc - Control Spam Filtering | Free DevTools"
+title: "Rspamc - Control Spam Filtering | Online Free DevTools by Hexmos"
 name: rspamc
 path: /freedevtools/tldr/linux/rspamc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rspamc/"

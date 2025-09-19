@@ -1,5 +1,5 @@
 ---
-title: "Generate Git Archive - Package Files into Zip | Free DevTools"
+title: "Generate Git Archive - Package Files into Zip | Online Free DevTools by Hexmos"
 name: git-archive-file
 path: /freedevtools/tldr/git/git-archive-file
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-archive-file/"

@@ -1,5 +1,5 @@
 ---
-title: "Volatility - Analyze Memory Dumps with Vol.py | Free DevTools"
+title: "Volatility - Analyze Memory Dumps with Vol.py | Online Free DevTools by Hexmos"
 name: vol.py
 path: /freedevtools/tldr/windows/vol.py
 canonical: "https://hexmos.com/freedevtools/tldr/windows/vol.py/"

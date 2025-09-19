@@ -1,5 +1,5 @@
 ---
-title: "Create VM Clones - VBoxManage Clone VM | Free DevTools"
+title: "Create VM Clones - VBoxManage Clone VM | Online Free DevTools by Hexmos"
 name: vboxmanage-clonevm
 path: /freedevtools/tldr/vboxmanager/vboxmanage-clonevm
 canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/"

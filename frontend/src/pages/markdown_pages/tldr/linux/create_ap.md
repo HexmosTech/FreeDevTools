@@ -1,5 +1,5 @@
 ---
-title: "Create AP - Generate Access Point | Free DevTools"
+title: "Create AP - Generate Access Point | Online Free DevTools by Hexmos"
 name: create_ap
 path: /freedevtools/tldr/linux/create_ap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/create_ap/"

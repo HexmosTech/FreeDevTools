@@ -1,5 +1,5 @@
 ---
-title: "GitHub Terminal - Control GitHub from Command Line | Free DevTools"
+title: "GitHub Terminal - Control GitHub from Command Line | Online Free DevTools by Hexmos"
 name: gitsome
 path: /freedevtools/tldr/git/gitsome
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitsome/"

@@ -1,5 +1,5 @@
 ---
-title: "Calculate SHA224 Checksums - Verify File Integrity | Free DevTools"
+title: "Calculate SHA224 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: sha224sum
 path: /freedevtools/tldr/common/sha224sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/sha224sum/"

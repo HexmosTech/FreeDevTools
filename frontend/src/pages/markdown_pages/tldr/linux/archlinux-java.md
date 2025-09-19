@@ -1,5 +1,5 @@
 ---
-title: "Control Java Versions - Archlinux-Java | Free DevTools"
+title: "Control Java Versions - Archlinux-Java | Online Free DevTools by Hexmos"
 name: archlinux-java
 path: "/freedevtools/tldr/linux/archlinux-java"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/archlinux-java/"

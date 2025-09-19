@@ -1,5 +1,5 @@
 ---
-title: "Standup Preparation - Manage Daily Tasks | Free DevTools"
+title: "Standup Preparation - Manage Daily Tasks | Online Free DevTools by Hexmos"
 name: laydown
 path: /freedevtools/tldr/common/laydown
 canonical: "https://hexmos.com/freedevtools/tldr/common/laydown/"

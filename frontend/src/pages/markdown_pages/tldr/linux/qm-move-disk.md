@@ -1,5 +1,5 @@
 ---
-title: "QM Move Disk - Control Virtual Machine Storage | Free DevTools"
+title: "QM Move Disk - Control Virtual Machine Storage | Online Free DevTools by Hexmos"
 name: qm-move-disk
 path: /freedevtools/tldr/linux/qm-move-disk
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-move-disk/"

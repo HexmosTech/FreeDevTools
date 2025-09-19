@@ -1,5 +1,5 @@
 ---
-title: "Create npm Package - Initialize Projects | Free DevTools"
+title: "Create npm Package - Initialize Projects | Online Free DevTools by Hexmos"
 name: npm-init
 path: /freedevtools/tldr/npm/npm-init
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-init/"

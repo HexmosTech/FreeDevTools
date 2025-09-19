@@ -1,5 +1,5 @@
 ---
-title: "AVB Device Manager - Control Audio Video Bridging | Free DevTools"
+title: "AVB Device Manager - Control Audio Video Bridging | Online Free DevTools by Hexmos"
 name: avbdeviced
 path: /freedevtools/tldr/osx/avbdeviced
 canonical: "https://hexmos.com/freedevtools/tldr/osx/avbdeviced/"

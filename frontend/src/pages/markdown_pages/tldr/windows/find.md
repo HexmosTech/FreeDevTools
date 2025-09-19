@@ -1,5 +1,5 @@
 ---
-title: "Find String - Search Files for Text | Free DevTools"
+title: "Find String - Search Files for Text | Online Free DevTools by Hexmos"
 name: find
 path: /freedevtools/tldr/windows/find
 canonical: "https://hexmos.com/freedevtools/tldr/windows/find/"

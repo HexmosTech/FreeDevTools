@@ -1,5 +1,5 @@
 ---
-title: "Check GitHub CI Status - Display Checks | Free DevTools"
+title: "Check GitHub CI Status - Display Checks | Online Free DevTools by Hexmos"
 name: hub-ci-status
 path: /freedevtools/tldr/hub/hub-ci-status
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-ci-status/"

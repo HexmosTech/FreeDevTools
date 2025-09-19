@@ -1,5 +1,5 @@
 ---
-title: "Trace Kernel Events - Record with trace-cmd | Free DevTools"
+title: "Trace Kernel Events - Record with trace-cmd | Online Free DevTools by Hexmos"
 name: trace-cmd-record
 path: /freedevtools/tldr/linux/trace-cmd-record
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trace-cmd-record/"

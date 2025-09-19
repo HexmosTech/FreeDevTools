@@ -1,5 +1,5 @@
 ---
-title: "Mount Filesystem - Access Filesystems | Free DevTools"
+title: "Mount Filesystem - Access Filesystems | Online Free DevTools by Hexmos"
 name: mount
 path: /freedevtools/tldr/linux/mount
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mount/"

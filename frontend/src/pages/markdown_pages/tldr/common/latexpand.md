@@ -1,5 +1,5 @@
 ---
-title: "Expand LaTeX Files - Simplify Documents | Free DevTools"
+title: "Expand LaTeX Files - Simplify Documents | Online Free DevTools by Hexmos"
 name: latexpand
 path: /freedevtools/tldr/common/latexpand
 canonical: "https://hexmos.com/freedevtools/tldr/common/latexpand/"

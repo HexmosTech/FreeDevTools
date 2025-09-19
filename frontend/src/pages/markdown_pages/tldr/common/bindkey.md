@@ -1,5 +1,5 @@
 ---
-title: "Bind Key - Add Zsh Keybindings | Free DevTools"
+title: "Bind Key - Add Zsh Keybindings | Online Free DevTools by Hexmos"
 name: bindkey
 path: /freedevtools/tldr/common/bindkey
 canonical: "https://hexmos.com/freedevtools/tldr/common/bindkey/"

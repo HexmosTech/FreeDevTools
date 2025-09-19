@@ -1,5 +1,5 @@
 ---
-title: "AWS S3 Sync - Control S3 Data | Free DevTools"
+title: "AWS S3 Sync - Control S3 Data | Online Free DevTools by Hexmos"
 name: aws-s3-sync
 path: /freedevtools/tldr/aws/aws-s3-sync
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-sync/"

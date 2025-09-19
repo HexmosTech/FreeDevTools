@@ -1,5 +1,5 @@
 ---
-title: "Format Image to Sixel - Convert Images | Free DevTools"
+title: "Format Image to Sixel - Convert Images | Online Free DevTools by Hexmos"
 name: img2sixel
 path: /freedevtools/tldr/common/img2sixel
 canonical: "https://hexmos.com/freedevtools/tldr/common/img2sixel/"

@@ -1,5 +1,5 @@
 ---
-title: "SmartCard Daemon - Control SmartCard Access | Free DevTools"
+title: "SmartCard Daemon - Control SmartCard Access | Online Free DevTools by Hexmos"
 name: ctkd
 path: /freedevtools/tldr/osx/ctkd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ctkd/"

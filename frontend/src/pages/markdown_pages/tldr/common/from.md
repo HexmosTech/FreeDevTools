@@ -1,5 +1,5 @@
 ---
-title: "Print Mail Headers - Inspect Mailbox Details | Free DevTools"
+title: "Print Mail Headers - Inspect Mailbox Details | Online Free DevTools by Hexmos"
 name: from
 path: /freedevtools/tldr/common/from
 canonical: "https://hexmos.com/freedevtools/tldr/common/from/"

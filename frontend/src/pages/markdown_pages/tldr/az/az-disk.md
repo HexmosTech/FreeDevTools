@@ -1,5 +1,5 @@
 ---
-title: "Create Azure Disk - Manage Virtual Disks | Free DevTools"
+title: "Create Azure Disk - Manage Virtual Disks | Online Free DevTools by Hexmos"
 name: az-disk
 path: /freedevtools/tldr/az/az-disk
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-disk/"

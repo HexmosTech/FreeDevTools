@@ -1,5 +1,5 @@
 ---
-title: "CPU Information - Display CPU Details | Free DevTools"
+title: "CPU Information - Display CPU Details | Online Free DevTools by Hexmos"
 name: cpuid
 path: /freedevtools/tldr/linux/cpuid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cpuid/"

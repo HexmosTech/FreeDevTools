@@ -1,5 +1,5 @@
 ---
-title: "Haskell Compiler - Compile Haskell Code | Free DevTools"
+title: "Haskell Compiler - Compile Haskell Code | Online Free DevTools by Hexmos"
 name: ghc
 path: /freedevtools/tldr/common/ghc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghc/"

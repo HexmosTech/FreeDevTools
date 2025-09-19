@@ -1,5 +1,5 @@
 ---
-title: "Nettop - Monitor Network Activity | Free DevTools"
+title: "Nettop - Monitor Network Activity | Online Free DevTools by Hexmos"
 name: nettop
 path: /freedevtools/tldr/osx/nettop
 canonical: "https://hexmos.com/freedevtools/tldr/osx/nettop/"

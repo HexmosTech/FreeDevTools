@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Whoami - Check User Identity | Free DevTools"
+title: "Pulumi Whoami - Check User Identity | Online Free DevTools by Hexmos"
 name: pulumi-whoami
 path: /freedevtools/tldr/pulumi/pulumi-whoami
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-whoami/"

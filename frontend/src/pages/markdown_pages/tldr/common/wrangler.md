@@ -1,5 +1,5 @@
 ---
-title: "Wrangler - Cloudflare Workers Control | Free DevTools"
+title: "Wrangler - Cloudflare Workers Control | Online Free DevTools by Hexmos"
 name: wrangler
 path: /freedevtools/tldr/common/wrangler
 canonical: "https://hexmos.com/freedevtools/tldr/common/wrangler/"

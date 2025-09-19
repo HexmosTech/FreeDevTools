@@ -1,5 +1,5 @@
 ---
-title: "Calculate Sequence Composition - Compseq | Free DevTools"
+title: "Calculate Sequence Composition - Compseq | Online Free DevTools by Hexmos"
 name: compseq
 path: /freedevtools/tldr/linux/compseq
 canonical: "https://hexmos.com/freedevtools/tldr/linux/compseq/"

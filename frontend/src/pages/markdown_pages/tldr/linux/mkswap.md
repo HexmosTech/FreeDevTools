@@ -1,5 +1,5 @@
 ---
-title: "Create Linux Swap - Set Up Swap Space | Free DevTools"
+title: "Create Linux Swap - Set Up Swap Space | Online Free DevTools by Hexmos"
 name: mkswap
 path: /freedevtools/tldr/linux/mkswap
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkswap/"

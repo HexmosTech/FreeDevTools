@@ -1,5 +1,5 @@
 ---
-title: "Manage Package Versions - Control with asdf | Free DevTools"
+title: "Manage Package Versions - Control with asdf | Online Free DevTools by Hexmos"
 name: asdf
 path: "/freedevtools/tldr/common/asdf"
 canonical: "https://hexmos.com/freedevtools/tldr/common/asdf/"

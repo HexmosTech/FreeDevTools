@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Enable - Control Systemd Services | Free DevTools"
+title: "Systemctl Enable - Control Systemd Services | Online Free DevTools by Hexmos"
 name: systemctl-enable
 path: /freedevtools/tldr/linux/systemctl-enable
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-enable/"

@@ -1,5 +1,5 @@
 ---
-title: "Strings Command - Extract Text | Free DevTools"
+title: "Strings Command - Extract Text | Online Free DevTools by Hexmos"
 name: llvm-strings
 path: /freedevtools/tldr/llvm/llvm-strings
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-strings/"

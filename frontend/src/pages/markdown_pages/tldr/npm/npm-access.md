@@ -1,5 +1,5 @@
 ---
-title: "Control npm Package Access - Manage Permissions | Free DevTools"
+title: "Control npm Package Access - Manage Permissions | Online Free DevTools by Hexmos"
 name: npm-access
 path: /freedevtools/tldr/npm/npm-access
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-access/"

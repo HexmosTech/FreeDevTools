@@ -1,5 +1,5 @@
 ---
-title: "Vipe Editor - Control Pipeline Input | Free DevTools"
+title: "Vipe Editor - Control Pipeline Input | Online Free DevTools by Hexmos"
 name: vipe
 path: /freedevtools/tldr/common/vipe
 canonical: "https://hexmos.com/freedevtools/tldr/common/vipe/"

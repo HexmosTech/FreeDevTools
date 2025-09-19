@@ -1,5 +1,5 @@
 ---
-title: "Control Mac App Store - Manage Apps with mas CLI | Free DevTools"
+title: "Control Mac App Store - Manage Apps with mas CLI | Online Free DevTools by Hexmos"
 name: mas
 path: /freedevtools/tldr/osx/mas
 canonical: "https://hexmos.com/freedevtools/tldr/osx/mas/"

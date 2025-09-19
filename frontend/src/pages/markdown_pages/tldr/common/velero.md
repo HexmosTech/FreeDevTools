@@ -1,5 +1,5 @@
 ---
-title: "Velero - Backup Kubernetes Apps | Free DevTools"
+title: "Velero - Backup Kubernetes Apps | Online Free DevTools by Hexmos"
 name: velero
 path: /freedevtools/tldr/common/velero
 canonical: "https://hexmos.com/freedevtools/tldr/common/velero/"

@@ -1,5 +1,5 @@
 ---
-title: "Git List Remote - Show Remote Git References | Free DevTools"
+title: "Git List Remote - Show Remote Git References | Online Free DevTools by Hexmos"
 name: git-ls-remote
 path: /freedevtools/tldr/git/git-ls-remote
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-remote/"

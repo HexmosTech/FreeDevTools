@@ -1,5 +1,5 @@
 ---
-title: "DNS Lookup - Query DNS Records | Free DevTools"
+title: "DNS Lookup - Query DNS Records | Online Free DevTools by Hexmos"
 name: dog
 path: /freedevtools/tldr/common/dog
 canonical: "https://hexmos.com/freedevtools/tldr/common/dog/"

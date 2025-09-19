@@ -1,5 +1,5 @@
 ---
-title: "Virus Scan - Scan Files with Clamdscan | Free DevTools"
+title: "Virus Scan - Scan Files with Clamdscan | Online Free DevTools by Hexmos"
 name: clamdscan
 path: /freedevtools/tldr/common/clamdscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/clamdscan/"

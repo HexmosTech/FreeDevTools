@@ -1,5 +1,5 @@
 ---
-title: "Capture Photos - rpicam-still | Free DevTools"
+title: "Capture Photos - rpicam-still | Online Free DevTools by Hexmos"
 name: rpicam-still
 path: /freedevtools/tldr/linux/rpicam-still
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-still/"

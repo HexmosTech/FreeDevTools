@@ -1,5 +1,5 @@
 ---
-title: "Perldoc - View Perl Documentation | Free DevTools"
+title: "Perldoc - View Perl Documentation | Online Free DevTools by Hexmos"
 name: perldoc
 path: /freedevtools/tldr/common/perldoc
 canonical: "https://hexmos.com/freedevtools/tldr/common/perldoc/"

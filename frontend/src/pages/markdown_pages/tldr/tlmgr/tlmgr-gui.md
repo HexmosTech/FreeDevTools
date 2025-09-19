@@ -1,5 +1,5 @@
 ---
-title: "TLMGR GUI - Control TeX Live Manager Graphically | Free DevTools"
+title: "TLMGR GUI - Control TeX Live Manager Graphically | Online Free DevTools by Hexmos"
 name: tlmgr-gui
 path: /freedevtools/tldr/tlmgr/tlmgr-gui
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-gui/"

@@ -1,5 +1,5 @@
 ---
-title: "Gcloud Auth - Manage Credentials | Free DevTools"
+title: "Gcloud Auth - Manage Credentials | Online Free DevTools by Hexmos"
 name: gcloud-auth
 path: /freedevtools/tldr/gcloud/gcloud-auth
 canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-auth/"

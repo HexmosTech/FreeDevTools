@@ -1,5 +1,5 @@
 ---
-title: "Systemd-notify - Control Service Status | Free DevTools"
+title: "Systemd-notify - Control Service Status | Online Free DevTools by Hexmos"
 name: systemd-notify
 path: /freedevtools/tldr/linux/systemd-notify
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-notify/"

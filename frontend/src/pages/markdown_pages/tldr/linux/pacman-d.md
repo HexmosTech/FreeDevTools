@@ -1,5 +1,5 @@
 ---
-title: "Pacman Database - Control Pacman Database on Linux | Free DevTools"
+title: "Pacman Database - Control Pacman Database on Linux | Online Free DevTools by Hexmos"
 name: pacman-d
 path: /freedevtools/tldr/linux/pacman-d
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-d/"

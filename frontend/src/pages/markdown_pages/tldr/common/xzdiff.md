@@ -1,5 +1,5 @@
 ---
-title: "Compare Compressed Files - xzdiff | Free DevTools"
+title: "Compare Compressed Files - xzdiff | Online Free DevTools by Hexmos"
 name: xzdiff
 path: /freedevtools/tldr/common/xzdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzdiff/"

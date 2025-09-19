@@ -1,5 +1,5 @@
 ---
-title: "Pokemon Sprites - Display Terminal Pokemon Art | Free DevTools"
+title: "Pokemon Sprites - Display Terminal Pokemon Art | Online Free DevTools by Hexmos"
 name: pokego
 path: /freedevtools/tldr/linux/pokego
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pokego/"

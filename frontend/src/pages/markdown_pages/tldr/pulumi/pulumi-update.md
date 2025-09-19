@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Update - Deploy Infrastructure Changes | Free DevTools"
+title: "Pulumi Update - Deploy Infrastructure Changes | Online Free DevTools by Hexmos"
 name: pulumi-update
 path: /freedevtools/tldr/pulumi/pulumi-update
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-update/"

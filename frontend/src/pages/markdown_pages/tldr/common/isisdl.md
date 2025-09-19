@@ -1,5 +1,5 @@
 ---
-title: "Download ISIS Files - Sync Content | Free DevTools"
+title: "Download ISIS Files - Sync Content | Online Free DevTools by Hexmos"
 name: isisdl
 path: /freedevtools/tldr/common/isisdl
 canonical: "https://hexmos.com/freedevtools/tldr/common/isisdl/"

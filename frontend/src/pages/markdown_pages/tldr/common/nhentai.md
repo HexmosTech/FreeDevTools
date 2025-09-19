@@ -1,5 +1,5 @@
 ---
-title: "NHentai Downloader - Download Doujinshis | Free DevTools"
+title: "NHentai Downloader - Download Doujinshis | Online Free DevTools by Hexmos"
 name: nhentai
 path: /freedevtools/tldr/common/nhentai
 canonical: "https://hexmos.com/freedevtools/tldr/common/nhentai/"

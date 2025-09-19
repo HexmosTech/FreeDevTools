@@ -1,5 +1,5 @@
 ---
-title: "Manage Markdown Notes - QOwnNotes Editor | Free DevTools"
+title: "Manage Markdown Notes - QOwnNotes Editor | Online Free DevTools by Hexmos"
 name: qownnotes
 path: /freedevtools/tldr/common/qownnotes
 canonical: "https://hexmos.com/freedevtools/tldr/common/qownnotes/"

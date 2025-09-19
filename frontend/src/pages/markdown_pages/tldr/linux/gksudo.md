@@ -1,5 +1,5 @@
 ---
-title: "Run Graphical Sudo - Execute Commands with Root | Free DevTools"
+title: "Run Graphical Sudo - Execute Commands with Root | Online Free DevTools by Hexmos"
 name: gksudo
 path: /freedevtools/tldr/linux/gksudo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gksudo/"

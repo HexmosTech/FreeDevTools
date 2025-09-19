@@ -1,5 +1,5 @@
 ---
-title: "Wondershaper - Control Bandwidth | Free DevTools"
+title: "Wondershaper - Control Bandwidth | Online Free DevTools by Hexmos"
 name: wondershaper
 path: /freedevtools/tldr/common/wondershaper
 canonical: "https://hexmos.com/freedevtools/tldr/common/wondershaper/"

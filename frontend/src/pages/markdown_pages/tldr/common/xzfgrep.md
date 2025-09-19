@@ -1,5 +1,5 @@
 ---
-title: "Xzfgrep - Search Files Fast | Free DevTools"
+title: "Xzfgrep - Search Files Fast | Online Free DevTools by Hexmos"
 name: xzfgrep
 path: /freedevtools/tldr/common/xzfgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/xzfgrep/"

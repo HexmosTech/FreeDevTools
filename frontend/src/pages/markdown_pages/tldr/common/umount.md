@@ -1,5 +1,5 @@
 ---
-title: "Umount Filesystem - Disconnect Filesystems | Free DevTools"
+title: "Umount Filesystem - Disconnect Filesystems | Online Free DevTools by Hexmos"
 name: umount
 path: "/freedevtools/tldr/common/umount"
 canonical: "https://hexmos.com/freedevtools/tldr/common/umount/"

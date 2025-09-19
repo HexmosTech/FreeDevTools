@@ -1,5 +1,5 @@
 ---
-title: "List Kernel Modules - Show Linux Module Status | Free DevTools"
+title: "List Kernel Modules - Show Linux Module Status | Online Free DevTools by Hexmos"
 name: lsmod
 path: /freedevtools/tldr/linux/lsmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsmod/"

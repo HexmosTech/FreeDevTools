@@ -1,5 +1,5 @@
 ---
-title: "JFrog Control - Manage Artifactory & Xray with JF | Free DevTools"
+title: "JFrog Control - Manage Artifactory & Xray with JF | Online Free DevTools by Hexmos"
 name: jf
 path: /freedevtools/tldr/common/jf
 canonical: "https://hexmos.com/freedevtools/tldr/common/jf/"

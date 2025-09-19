@@ -1,5 +1,5 @@
 ---
-title: "Vkpurge - Remove Old Kernels | Free DevTools"
+title: "Vkpurge - Remove Old Kernels | Online Free DevTools by Hexmos"
 name: vkpurge
 path: /freedevtools/tldr/linux/vkpurge
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vkpurge/"

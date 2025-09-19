@@ -1,5 +1,5 @@
 ---
-title: "GitHub CLI - Display Help | Free DevTools"
+title: "GitHub CLI - Display Help | Online Free DevTools by Hexmos"
 name: gh-help
 path: /freedevtools/tldr/gh/gh-help
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-help/"

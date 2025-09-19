@@ -1,5 +1,5 @@
 ---
-title: "btrfs Filesystem - Manage Filesystem with btrfs | Free DevTools"
+title: "btrfs Filesystem - Manage Filesystem with btrfs | Online Free DevTools by Hexmos"
 name: btrfs-filesystem
 path: /freedevtools/tldr/linux/btrfs-filesystem
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-filesystem/"

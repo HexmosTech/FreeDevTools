@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Process - Manage Tokens & Privileges | Free DevTools"
+title: "Mimikatz Process - Manage Tokens & Privileges | Online Free DevTools by Hexmos"
 name: mimikatz-process
 path: /freedevtools/tldr/windows/mimikatz-process
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-process/"

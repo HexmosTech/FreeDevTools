@@ -1,5 +1,5 @@
 ---
-title: "Ansible Inventory - Display Ansible Inventory | Free DevTools"
+title: "Ansible Inventory - Display Ansible Inventory | Online Free DevTools by Hexmos"
 name: ansible-inventory
 path: /freedevtools/tldr/ansible/ansible-inventory
 canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-inventory/"

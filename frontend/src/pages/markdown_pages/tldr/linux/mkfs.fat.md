@@ -1,5 +1,5 @@
 ---
-title: "Create FAT Filesystem - Format Partitions | Free DevTools"
+title: "Create FAT Filesystem - Format Partitions | Online Free DevTools by Hexmos"
 name: mkfs.fat
 path: /freedevtools/tldr/linux/mkfs.fat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs.fat/"

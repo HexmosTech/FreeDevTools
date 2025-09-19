@@ -1,5 +1,5 @@
 ---
-title: "Vendor Cargo Dependencies - Manage Rust Packages | Free DevTools"
+title: "Vendor Cargo Dependencies - Manage Rust Packages | Online Free DevTools by Hexmos"
 name: cargo-vendor
 path: /freedevtools/tldr/cargo/cargo-vendor
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-vendor/"

@@ -1,5 +1,5 @@
 ---
-title: "Firmware Update Manager - Manage Firmware Updates | Free DevTools"
+title: "Firmware Update Manager - Manage Firmware Updates | Online Free DevTools by Hexmos"
 name: fwupdmgr
 path: /freedevtools/tldr/linux/fwupdmgr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fwupdmgr/"

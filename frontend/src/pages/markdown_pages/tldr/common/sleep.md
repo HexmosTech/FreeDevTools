@@ -1,5 +1,5 @@
 ---
-title: "Delay Time - Control Sleep Time with Command | Free DevTools"
+title: "Delay Time - Control Sleep Time with Command | Online Free DevTools by Hexmos"
 name: sleep
 path: /freedevtools/tldr/common/sleep
 canonical: "https://hexmos.com/freedevtools/tldr/common/sleep/"

@@ -1,5 +1,5 @@
 ---
-title: "Cosign - Sign Container Images | Free DevTools"
+title: "Cosign - Sign Container Images | Online Free DevTools by Hexmos"
 name: cosign
 path: /freedevtools/tldr/common/cosign
 canonical: "https://hexmos.com/freedevtools/tldr/common/cosign/"

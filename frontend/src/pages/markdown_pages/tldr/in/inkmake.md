@@ -1,5 +1,5 @@
 ---
-title: "Generate SVG Makefiles - Inkmake | Free DevTools"
+title: "Generate SVG Makefiles - Inkmake | Online Free DevTools by Hexmos"
 name: inkmake
 path: /freedevtools/tldr/in/inkmake
 canonical: "https://hexmos.com/freedevtools/tldr/in/inkmake/"

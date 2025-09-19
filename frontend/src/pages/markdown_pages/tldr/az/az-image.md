@@ -1,5 +1,5 @@
 ---
-title: "Create Azure Image - Manage VM Images with CLI | Free DevTools"
+title: "Create Azure Image - Manage VM Images with CLI | Online Free DevTools by Hexmos"
 name: az-image
 path: /freedevtools/tldr/az/az-image
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-image/"

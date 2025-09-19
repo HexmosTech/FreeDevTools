@@ -1,5 +1,5 @@
 ---
-title: "Format Git Reference - Validate Ref Names | Free DevTools"
+title: "Format Git Reference - Validate Ref Names | Online Free DevTools by Hexmos"
 name: git-check-ref-format
 path: /freedevtools/tldr/git/git-check-ref-format
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-check-ref-format/"

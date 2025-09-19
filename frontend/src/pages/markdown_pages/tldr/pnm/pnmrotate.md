@@ -1,5 +1,5 @@
 ---
-title: "Rotate PNM Image - Transform Images | Free DevTools"
+title: "Rotate PNM Image - Transform Images | Online Free DevTools by Hexmos"
 name: pnmrotate
 path: /freedevtools/tldr/pnm/pnmrotate
 canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmrotate/"

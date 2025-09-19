@@ -1,5 +1,5 @@
 ---
-title: "Generate System Info - inxi Command | Free DevTools"
+title: "Generate System Info - inxi Command | Online Free DevTools by Hexmos"
 name: inxi
 path: /freedevtools/tldr/linux/inxi
 canonical: "https://hexmos.com/freedevtools/tldr/linux/inxi/"

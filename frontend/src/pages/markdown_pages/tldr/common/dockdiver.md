@@ -1,5 +1,5 @@
 ---
-title: "Docker Registry Tool - List & Dump Repositories | Free DevTools"
+title: "Docker Registry Tool - List & Dump Repositories | Online Free DevTools by Hexmos"
 name: dockdiver
 path: /freedevtools/tldr/common/dockdiver
 canonical: "https://hexmos.com/freedevtools/tldr/common/dockdiver/"

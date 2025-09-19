@@ -1,5 +1,5 @@
 ---
-title: "Format Numbers - Format Numbers with gnumfmt | Free DevTools"
+title: "Format Numbers - Format Numbers with gnumfmt | Online Free DevTools by Hexmos"
 name: gnumfmt
 path: /freedevtools/tldr/osx/gnumfmt
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gnumfmt/"

@@ -1,5 +1,5 @@
 ---
-title: "TFTP Client - Transfer Files with TFTP | Free DevTools"
+title: "TFTP Client - Transfer Files with TFTP | Online Free DevTools by Hexmos"
 name: tftp
 path: /freedevtools/tldr/linux/tftp
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tftp/"

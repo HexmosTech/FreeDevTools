@@ -1,5 +1,5 @@
 ---
-title: "Annotate Logging - Control Timestamps with Gnomon | Free DevTools"
+title: "Annotate Logging - Control Timestamps with Gnomon | Online Free DevTools by Hexmos"
 name: gnomon
 path: /freedevtools/tldr/common/gnomon
 canonical: "https://hexmos.com/freedevtools/tldr/common/gnomon/"

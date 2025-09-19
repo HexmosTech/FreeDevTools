@@ -1,5 +1,5 @@
 ---
-title: "List Linux Containers - Manage LXC with lxc-ls | Free DevTools"
+title: "List Linux Containers - Manage LXC with lxc-ls | Online Free DevTools by Hexmos"
 name: lxc-ls
 path: /freedevtools/tldr/linux/lxc-ls
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-ls/"

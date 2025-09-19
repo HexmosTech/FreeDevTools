@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Device Manager - Control Filesystem Devices | Free DevTools"
+title: "Btrfs Device Manager - Control Filesystem Devices | Online Free DevTools by Hexmos"
 name: btrfs-device
 path: /freedevtools/tldr/linux/btrfs-device
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-device/"

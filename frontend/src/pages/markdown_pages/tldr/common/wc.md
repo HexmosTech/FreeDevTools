@@ -1,5 +1,5 @@
 ---
-title: "Count Lines Words - Analyze Text with wc | Free DevTools"
+title: "Count Lines Words - Analyze Text with wc | Online Free DevTools by Hexmos"
 name: wc
 path: /freedevtools/tldr/common/wc
 canonical: "https://hexmos.com/freedevtools/tldr/common/wc/"

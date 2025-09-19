@@ -1,5 +1,5 @@
 ---
-title: "Analyze Inclusivity - Check Text with Alex | Free DevTools"
+title: "Analyze Inclusivity - Check Text with Alex | Online Free DevTools by Hexmos"
 name: alex
 path: /freedevtools/tldr/common/alex
 canonical: "https://hexmos.com/freedevtools/tldr/common/alex/"

@@ -1,5 +1,5 @@
 ---
-title: "Git Credential Cache - Store Passwords Temporarily | Free DevTools"
+title: "Git Credential Cache - Store Passwords Temporarily | Online Free DevTools by Hexmos"
 name: git-credential-cache
 path: /freedevtools/tldr/git/git-credential-cache
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-credential-cache/"

@@ -1,5 +1,5 @@
 ---
-title: "Analyze Multimedia Streams - ffprobe | Free DevTools"
+title: "Analyze Multimedia Streams - ffprobe | Online Free DevTools by Hexmos"
 name: ffprobe
 path: /freedevtools/tldr/common/ffprobe
 canonical: "https://hexmos.com/freedevtools/tldr/common/ffprobe/"

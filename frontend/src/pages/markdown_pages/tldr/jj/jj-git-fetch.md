@@ -1,5 +1,5 @@
 ---
-title: "Fetch Git Changes - Control Remote Repositories | Free DevTools"
+title: "Fetch Git Changes - Control Remote Repositories | Online Free DevTools by Hexmos"
 name: jj-git-fetch
 path: /freedevtools/tldr/jj/jj-git-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-fetch/"

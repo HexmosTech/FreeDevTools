@@ -1,5 +1,5 @@
 ---
-title: "Control GRUB Environment - Edit Variables | Free DevTools"
+title: "Control GRUB Environment - Edit Variables | Online Free DevTools by Hexmos"
 name: grub-editenv
 path: /freedevtools/tldr/linux/grub-editenv
 canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-editenv/"

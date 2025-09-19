@@ -1,5 +1,5 @@
 ---
-title: "Query Package Info - Manage CRUX Packages | Free DevTools"
+title: "Query Package Info - Manage CRUX Packages | Online Free DevTools by Hexmos"
 name: pkginfo
 path: /freedevtools/tldr/linux/pkginfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkginfo/"

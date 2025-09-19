@@ -1,5 +1,5 @@
 ---
-title: "Nx Workspace Manager - Control Builds & Tests | Free DevTools"
+title: "Nx Workspace Manager - Control Builds & Tests | Online Free DevTools by Hexmos"
 name: nx
 path: /freedevtools/tldr/common/nx
 canonical: "https://hexmos.com/freedevtools/tldr/common/nx/"

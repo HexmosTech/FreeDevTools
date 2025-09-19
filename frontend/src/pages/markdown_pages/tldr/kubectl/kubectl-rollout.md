@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Rollout - Manage Kubernetes Rollouts | Free DevTools"
+title: "Kubectl Rollout - Manage Kubernetes Rollouts | Online Free DevTools by Hexmos"
 name: kubectl-rollout
 path: /freedevtools/tldr/kubectl/kubectl-rollout
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-rollout/"

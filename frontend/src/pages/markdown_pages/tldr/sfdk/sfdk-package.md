@@ -1,5 +1,5 @@
 ---
-title: "SFDK Package - Create Sailfish OS Packages | Free DevTools"
+title: "SFDK Package - Create Sailfish OS Packages | Online Free DevTools by Hexmos"
 name: sfdk-package
 path: /freedevtools/tldr/sfdk/sfdk-package
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-package/"

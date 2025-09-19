@@ -1,5 +1,5 @@
 ---
-title: "Look - Display Sorted File Lines | Free DevTools"
+title: "Look - Display Sorted File Lines | Online Free DevTools by Hexmos"
 name: look
 path: /freedevtools/tldr/linux/look
 canonical: "https://hexmos.com/freedevtools/tldr/linux/look/"

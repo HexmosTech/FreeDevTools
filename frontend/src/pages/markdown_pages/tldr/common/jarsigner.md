@@ -1,5 +1,5 @@
 ---
-title: "Jarsigner - Sign JAR Files | Free DevTools"
+title: "Jarsigner - Sign JAR Files | Online Free DevTools by Hexmos"
 name: jarsigner
 path: /freedevtools/tldr/common/jarsigner
 canonical: "https://hexmos.com/freedevtools/tldr/common/jarsigner/"

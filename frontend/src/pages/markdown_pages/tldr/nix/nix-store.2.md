@@ -1,5 +1,5 @@
 ---
-title: "Nix Store - Control Package Storage | Free DevTools"
+title: "Nix Store - Control Package Storage | Online Free DevTools by Hexmos"
 name: nix-store.2
 path: /freedevtools/tldr/nix/nix-store.2
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-store.2/"

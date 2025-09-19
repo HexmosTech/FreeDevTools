@@ -1,5 +1,5 @@
 ---
-title: "Install - Copy Files & Set Attributes | Free DevTools"
+title: "Install - Copy Files & Set Attributes | Online Free DevTools by Hexmos"
 name: install
 path: /freedevtools/tldr/install/install
 canonical: "https://hexmos.com/freedevtools/tldr/install/install/"

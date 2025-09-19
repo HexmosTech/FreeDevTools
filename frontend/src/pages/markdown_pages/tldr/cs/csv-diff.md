@@ -1,5 +1,5 @@
 ---
-title: "CSV Diff - View Differences in CSV Files | Free DevTools"
+title: "CSV Diff - View Differences in CSV Files | Online Free DevTools by Hexmos"
 name: csv-diff
 path: /freedevtools/tldr/cs/csv-diff
 canonical: "https://hexmos.com/freedevtools/tldr/cs/csv-diff/"

@@ -1,5 +1,5 @@
 ---
-title: "Locate Files - Find Files Quickly | Free DevTools"
+title: "Locate Files - Find Files Quickly | Online Free DevTools by Hexmos"
 name: locate
 path: /freedevtools/tldr/linux/locate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/locate/"

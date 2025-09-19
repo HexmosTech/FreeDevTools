@@ -1,5 +1,5 @@
 ---
-title: "Gummy - Control Screen Brightness & Temperature | Free DevTools"
+title: "Gummy - Control Screen Brightness & Temperature | Online Free DevTools by Hexmos"
 name: gummy
 path: /freedevtools/tldr/linux/gummy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gummy/"

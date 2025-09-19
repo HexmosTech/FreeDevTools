@@ -1,5 +1,5 @@
 ---
-title: "Gprof Profiler - Analyze Program Performance | Free DevTools"
+title: "Gprof Profiler - Analyze Program Performance | Online Free DevTools by Hexmos"
 name: gprof
 path: /freedevtools/tldr/common/gprof
 canonical: "https://hexmos.com/freedevtools/tldr/common/gprof/"

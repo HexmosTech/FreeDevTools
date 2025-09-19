@@ -1,5 +1,5 @@
 ---
-title: "Rails Generate - Create Rails Templates | Free DevTools"
+title: "Rails Generate - Create Rails Templates | Online Free DevTools by Hexmos"
 name: rails-generate
 path: /freedevtools/tldr/rails/rails-generate
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-generate/"

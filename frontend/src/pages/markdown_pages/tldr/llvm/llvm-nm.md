@@ -1,5 +1,5 @@
 ---
-title: "LLVM NM - Inspect Symbol Tables | Free DevTools"
+title: "LLVM NM - Inspect Symbol Tables | Online Free DevTools by Hexmos"
 name: llvm-nm
 path: /freedevtools/tldr/llvm/llvm-nm
 canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-nm/"

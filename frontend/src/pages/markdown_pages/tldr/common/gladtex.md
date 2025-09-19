@@ -1,5 +1,5 @@
 ---
-title: "Convert LaTeX to HTML - GladTeX Image Generator | Free DevTools"
+title: "Convert LaTeX to HTML - GladTeX Image Generator | Online Free DevTools by Hexmos"
 name: gladtex
 path: /freedevtools/tldr/common/gladtex
 canonical: "https://hexmos.com/freedevtools/tldr/common/gladtex/"

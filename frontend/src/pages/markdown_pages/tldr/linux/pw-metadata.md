@@ -1,5 +1,5 @@
 ---
-title: "PipeWire Metadata - Manage Metadata with pw-metadata | Free DevTools"
+title: "PipeWire Metadata - Manage Metadata with pw-metadata | Online Free DevTools by Hexmos"
 name: pw-metadata
 path: /freedevtools/tldr/linux/pw-metadata
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-metadata/"

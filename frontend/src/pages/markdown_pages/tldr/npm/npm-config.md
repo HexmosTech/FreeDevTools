@@ -1,5 +1,5 @@
 ---
-title: "NPM Config - Manage NPM Configuration | Free DevTools"
+title: "NPM Config - Manage NPM Configuration | Online Free DevTools by Hexmos"
 name: npm-config
 path: /freedevtools/tldr/npm/npm-config
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-config/"

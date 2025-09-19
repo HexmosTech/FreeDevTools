@@ -1,5 +1,5 @@
 ---
-title: "Install DEB Packages - Manage .deb Files | Free DevTools"
+title: "Install DEB Packages - Manage .deb Files | Online Free DevTools by Hexmos"
 name: deb-get
 path: /freedevtools/tldr/linux/deb-get
 canonical: "https://hexmos.com/freedevtools/tldr/linux/deb-get/"

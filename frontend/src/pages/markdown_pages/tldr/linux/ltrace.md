@@ -1,5 +1,5 @@
 ---
-title: "ltrace - Trace Library Calls | Free DevTools"
+title: "ltrace - Trace Library Calls | Online Free DevTools by Hexmos"
 name: ltrace
 path: /freedevtools/tldr/linux/ltrace
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ltrace/"

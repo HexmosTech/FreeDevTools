@@ -1,5 +1,5 @@
 ---
-title: "Download Packages - Download RPM Packages with DNF | Free DevTools"
+title: "Download Packages - Download RPM Packages with DNF | Online Free DevTools by Hexmos"
 name: dnf-download
 path: /freedevtools/tldr/linux/dnf-download
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-download/"

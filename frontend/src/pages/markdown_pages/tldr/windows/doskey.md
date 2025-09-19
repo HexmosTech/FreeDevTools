@@ -1,5 +1,5 @@
 ---
-title: "Doskey - Manage Windows Commands | Free DevTools"
+title: "Doskey - Manage Windows Commands | Online Free DevTools by Hexmos"
 name: doskey
 path: /freedevtools/tldr/windows/doskey
 canonical: "https://hexmos.com/freedevtools/tldr/windows/doskey/"

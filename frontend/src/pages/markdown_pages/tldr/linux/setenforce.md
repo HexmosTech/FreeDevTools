@@ -1,5 +1,5 @@
 ---
-title: "Control SELinux - Set Enforcing Mode | Free DevTools"
+title: "Control SELinux - Set Enforcing Mode | Online Free DevTools by Hexmos"
 name: setenforce
 path: /freedevtools/tldr/linux/setenforce
 canonical: "https://hexmos.com/freedevtools/tldr/linux/setenforce/"

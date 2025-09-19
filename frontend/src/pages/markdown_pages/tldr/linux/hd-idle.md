@@ -1,5 +1,5 @@
 ---
-title: "HD-Idle - Control Disk Spin Down | Free DevTools"
+title: "HD-Idle - Control Disk Spin Down | Online Free DevTools by Hexmos"
 name: hd-idle
 path: /freedevtools/tldr/linux/hd-idle
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hd-idle/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Hangouts - Manage Google Hangouts Client | Free DevTools"
+title: "Control Hangouts - Manage Google Hangouts Client | Online Free DevTools by Hexmos"
 name: hangups
 path: /freedevtools/tldr/common/hangups
 canonical: "https://hexmos.com/freedevtools/tldr/common/hangups/"

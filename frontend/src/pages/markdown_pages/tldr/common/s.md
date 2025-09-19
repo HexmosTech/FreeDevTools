@@ -1,5 +1,5 @@
 ---
-title: "Web Search - Query Websites from Terminal | Free DevTools"
+title: "Web Search - Query Websites from Terminal | Online Free DevTools by Hexmos"
 name: s
 path: /freedevtools/tldr/common/s
 canonical: "https://hexmos.com/freedevtools/tldr/common/s/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Containerized Environments - Control Toolbox on Linux | Free DevTools"
+title: "Manage Containerized Environments - Control Toolbox on Linux | Online Free DevTools by Hexmos"
 name: toolbox
 path: /freedevtools/tldr/linux/toolbox
 canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox/"

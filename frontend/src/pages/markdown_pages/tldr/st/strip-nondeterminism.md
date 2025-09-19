@@ -1,5 +1,5 @@
 ---
-title: "Strip Nondeterminism - Remove Timestamps | Free DevTools"
+title: "Strip Nondeterminism - Remove Timestamps | Online Free DevTools by Hexmos"
 name: strip-nondeterminism
 path: /freedevtools/tldr/st/strip-nondeterminism
 canonical: "https://hexmos.com/freedevtools/tldr/st/strip-nondeterminism/"

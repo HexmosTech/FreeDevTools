@@ -1,5 +1,5 @@
 ---
-title: "Regex Replacement - Replace Text Fast with fastmod | Free DevTools"
+title: "Regex Replacement - Replace Text Fast with fastmod | Online Free DevTools by Hexmos"
 name: fastmod
 path: /freedevtools/tldr/common/fastmod
 canonical: "https://hexmos.com/freedevtools/tldr/common/fastmod/"

@@ -1,5 +1,5 @@
 ---
-title: "HG Remove - Control Staged Files | Free DevTools"
+title: "HG Remove - Control Staged Files | Online Free DevTools by Hexmos"
 name: hg-remove
 path: /freedevtools/tldr/hg/hg-remove
 canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-remove/"

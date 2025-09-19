@@ -1,5 +1,5 @@
 ---
-title: "PIO Project - Manage PlatformIO Projects | Free DevTools"
+title: "PIO Project - Manage PlatformIO Projects | Online Free DevTools by Hexmos"
 name: pio-project
 path: /freedevtools/tldr/pio/pio-project
 canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-project/"

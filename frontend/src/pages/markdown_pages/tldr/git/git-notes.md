@@ -1,5 +1,5 @@
 ---
-title: "Control Git Notes - Add & Inspect Object Notes | Free DevTools"
+title: "Control Git Notes - Add & Inspect Object Notes | Online Free DevTools by Hexmos"
 name: git-notes
 path: /freedevtools/tldr/git/git-notes
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-notes/"

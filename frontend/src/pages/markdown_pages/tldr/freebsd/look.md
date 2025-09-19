@@ -1,5 +1,5 @@
 ---
-title: "Look Command - Find Text Prefixes | Free DevTools"
+title: "Look Command - Find Text Prefixes | Online Free DevTools by Hexmos"
 name: look
 path: /freedevtools/tldr/freebsd/look
 canonical: "https://hexmos.com/freedevtools/tldr/freebsd/look/"

@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Network - Manage Cloud Networks | Free DevTools"
+title: "OpenStack Network - Manage Cloud Networks | Online Free DevTools by Hexmos"
 name: openstack-network
 path: /freedevtools/tldr/openstack/openstack-network
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-network/"

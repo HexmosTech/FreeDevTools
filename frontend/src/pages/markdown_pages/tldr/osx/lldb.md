@@ -1,5 +1,5 @@
 ---
-title: "Debug Programs - Control LLDB with Command Line | Free DevTools"
+title: "Debug Programs - Control LLDB with Command Line | Online Free DevTools by Hexmos"
 name: lldb
 path: /freedevtools/tldr/osx/lldb
 canonical: "https://hexmos.com/freedevtools/tldr/osx/lldb/"

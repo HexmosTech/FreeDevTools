@@ -1,5 +1,5 @@
 ---
-title: "Rsync File Transfer - Sync and Copy Files | Free DevTools"
+title: "Rsync File Transfer - Sync and Copy Files | Online Free DevTools by Hexmos"
 name: rsync
 path: "/freedevtools/tldr/common/rsync"
 canonical: "https://hexmos.com/freedevtools/tldr/common/rsync/"

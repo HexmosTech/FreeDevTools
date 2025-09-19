@@ -1,5 +1,5 @@
 ---
-title: "Control Object Storage - MinIO Client (mc) | Free DevTools"
+title: "Control Object Storage - MinIO Client (mc) | Online Free DevTools by Hexmos"
 name: mc.cli
 path: /freedevtools/tldr/common/mc.cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/mc.cli/"

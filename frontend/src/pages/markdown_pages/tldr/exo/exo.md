@@ -1,5 +1,5 @@
 ---
-title: "Exoscale Manage - Control Cloud Services | Free DevTools"
+title: "Exoscale Manage - Control Cloud Services | Online Free DevTools by Hexmos"
 name: exo
 path: /freedevtools/tldr/exo/exo
 canonical: "https://hexmos.com/freedevtools/tldr/exo/exo/"

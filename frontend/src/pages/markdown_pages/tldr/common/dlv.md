@@ -1,5 +1,5 @@
 ---
-title: "Debug Go Code - Delve Go Programs | Free DevTools"
+title: "Debug Go Code - Delve Go Programs | Online Free DevTools by Hexmos"
 name: dlv
 path: /freedevtools/tldr/common/dlv
 canonical: "https://hexmos.com/freedevtools/tldr/common/dlv/"

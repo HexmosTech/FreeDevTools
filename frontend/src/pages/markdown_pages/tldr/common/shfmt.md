@@ -1,5 +1,5 @@
 ---
-title: "Format Shell Script - shfmt Formatter | Free DevTools"
+title: "Format Shell Script - shfmt Formatter | Online Free DevTools by Hexmos"
 name: shfmt
 path: /freedevtools/tldr/common/shfmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/shfmt/"

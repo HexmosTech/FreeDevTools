@@ -1,5 +1,5 @@
 ---
-title: "UPX Compressor - Compress Executables | Free DevTools"
+title: "UPX Compressor - Compress Executables | Online Free DevTools by Hexmos"
 name: upx
 path: /freedevtools/tldr/common/upx
 canonical: "https://hexmos.com/freedevtools/tldr/common/upx/"

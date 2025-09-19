@@ -1,5 +1,5 @@
 ---
-title: "Convert Brush to PBM - Generate PBM Images | Free DevTools"
+title: "Convert Brush to PBM - Generate PBM Images | Online Free DevTools by Hexmos"
 name: brushtopbm
 path: /freedevtools/tldr/common/brushtopbm
 canonical: "https://hexmos.com/freedevtools/tldr/common/brushtopbm/"

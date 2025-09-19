@@ -1,5 +1,5 @@
 ---
-title: "Exif Editor - Change Image Metadata | Free DevTools"
+title: "Exif Editor - Change Image Metadata | Online Free DevTools by Hexmos"
 name: exif
 path: "/freedevtools/tldr/linux/exif"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/exif/"

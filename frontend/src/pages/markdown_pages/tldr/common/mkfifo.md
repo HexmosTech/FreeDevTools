@@ -1,5 +1,5 @@
 ---
-title: "Create Named Pipe - Make FIFOs on Linux | Free DevTools"
+title: "Create Named Pipe - Make FIFOs on Linux | Online Free DevTools by Hexmos"
 name: mkfifo
 path: /freedevtools/tldr/common/mkfifo
 canonical: "https://hexmos.com/freedevtools/tldr/common/mkfifo/"

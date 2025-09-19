@@ -1,5 +1,5 @@
 ---
-title: "Cryptsetup - Manage Encrypted Volumes | Free DevTools"
+title: "Cryptsetup - Manage Encrypted Volumes | Online Free DevTools by Hexmos"
 name: cryptsetup
 path: /freedevtools/tldr/linux/cryptsetup
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptsetup/"

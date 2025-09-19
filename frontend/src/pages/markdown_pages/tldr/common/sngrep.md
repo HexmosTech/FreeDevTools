@@ -1,5 +1,5 @@
 ---
-title: "Sngrep Capture - Display SIP Flows | Free DevTools"
+title: "Sngrep Capture - Display SIP Flows | Online Free DevTools by Hexmos"
 name: sngrep
 path: /freedevtools/tldr/common/sngrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/sngrep/"

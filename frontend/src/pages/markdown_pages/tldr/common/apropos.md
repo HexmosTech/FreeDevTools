@@ -1,5 +1,5 @@
 ---
-title: "Search Man Pages - Find Commands by Keyword | Free DevTools"
+title: "Search Man Pages - Find Commands by Keyword | Online Free DevTools by Hexmos"
 name: apropos
 path: /freedevtools/tldr/common/apropos
 canonical: "https://hexmos.com/freedevtools/tldr/common/apropos/"

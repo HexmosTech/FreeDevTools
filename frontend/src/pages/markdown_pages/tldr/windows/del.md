@@ -1,5 +1,5 @@
 ---
-title: "Delete Files - Manage Files on Windows with DEL | Free DevTools"
+title: "Delete Files - Manage Files on Windows with DEL | Online Free DevTools by Hexmos"
 name: del
 path: /freedevtools/tldr/windows/del
 canonical: "https://hexmos.com/freedevtools/tldr/windows/del/"

@@ -1,5 +1,5 @@
 ---
-title: "Faillock - Manage Login Failures | Free DevTools"
+title: "Faillock - Manage Login Failures | Online Free DevTools by Hexmos"
 name: faillock
 path: /freedevtools/tldr/linux/faillock
 canonical: "https://hexmos.com/freedevtools/tldr/linux/faillock/"

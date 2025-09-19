@@ -1,5 +1,5 @@
 ---
-title: "Control urxvt Terminal - Customize Terminal Emulator | Free DevTools"
+title: "Control urxvt Terminal - Customize Terminal Emulator | Online Free DevTools by Hexmos"
 name: urxvt
 path: /freedevtools/tldr/linux/urxvt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/urxvt/"

@@ -1,5 +1,5 @@
 ---
-title: "PNPM Outdated - Check Package Updates | Free DevTools"
+title: "PNPM Outdated - Check Package Updates | Online Free DevTools by Hexmos"
 name: pnpm-outdated
 path: /freedevtools/tldr/pnpm/pnpm-outdated
 canonical: "https://hexmos.com/freedevtools/tldr/pnpm/pnpm-outdated/"

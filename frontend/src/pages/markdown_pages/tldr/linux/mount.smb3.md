@@ -1,5 +1,5 @@
 ---
-title: "Mount SMB3 - Access Network Shares | Free DevTools"
+title: "Mount SMB3 - Access Network Shares | Online Free DevTools by Hexmos"
 name: mount.smb3
 path: /freedevtools/tldr/linux/mount.smb3
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mount.smb3/"

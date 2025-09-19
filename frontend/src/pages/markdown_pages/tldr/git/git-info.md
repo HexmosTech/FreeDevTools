@@ -1,5 +1,5 @@
 ---
-title: "Display Git Info - Inspect Repository Details | Free DevTools"
+title: "Display Git Info - Inspect Repository Details | Online Free DevTools by Hexmos"
 name: git-info
 path: /freedevtools/tldr/git/git-info
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-info/"

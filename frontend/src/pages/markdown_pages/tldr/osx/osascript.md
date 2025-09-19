@@ -1,5 +1,5 @@
 ---
-title: "Execute AppleScript - Automate macOS Tasks | Free DevTools"
+title: "Execute AppleScript - Automate macOS Tasks | Online Free DevTools by Hexmos"
 name: osascript
 path: /freedevtools/tldr/osx/osascript
 canonical: "https://hexmos.com/freedevtools/tldr/osx/osascript/"

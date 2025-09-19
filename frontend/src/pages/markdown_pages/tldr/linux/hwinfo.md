@@ -1,5 +1,5 @@
 ---
-title: "Hardware Info Probe - Investigate System Hardware | Free DevTools"
+title: "Hardware Info Probe - Investigate System Hardware | Online Free DevTools by Hexmos"
 name: hwinfo
 path: /freedevtools/tldr/linux/hwinfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/hwinfo/"

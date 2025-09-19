@@ -1,5 +1,5 @@
 ---
-title: "Whiptail Dialog Boxes - Create Shell Dialogs | Free DevTools"
+title: "Whiptail Dialog Boxes - Create Shell Dialogs | Online Free DevTools by Hexmos"
 name: whiptail
 path: /freedevtools/tldr/linux/whiptail
 canonical: "https://hexmos.com/freedevtools/tldr/linux/whiptail/"

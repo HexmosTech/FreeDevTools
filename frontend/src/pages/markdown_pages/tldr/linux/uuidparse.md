@@ -1,5 +1,5 @@
 ---
-title: "UUID Parser - Parse UUIDs with uuidparse | Free DevTools"
+title: "UUID Parser - Parse UUIDs with uuidparse | Online Free DevTools by Hexmos"
 name: uuidparse
 path: /freedevtools/tldr/linux/uuidparse
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidparse/"

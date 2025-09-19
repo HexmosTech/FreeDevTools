@@ -1,5 +1,5 @@
 ---
-title: "CBT - Read Bigtable Data | Free DevTools"
+title: "CBT - Read Bigtable Data | Online Free DevTools by Hexmos"
 name: cbt
 path: /freedevtools/tldr/common/cbt
 canonical: "https://hexmos.com/freedevtools/tldr/common/cbt/"

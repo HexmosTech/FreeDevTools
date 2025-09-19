@@ -1,5 +1,5 @@
 ---
-title: "YubiKey Information - Get Device Details | Free DevTools"
+title: "YubiKey Information - Get Device Details | Online Free DevTools by Hexmos"
 name: ykinfo
 path: /freedevtools/tldr/common/ykinfo
 canonical: "https://hexmos.com/freedevtools/tldr/common/ykinfo/"

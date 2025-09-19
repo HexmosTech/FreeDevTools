@@ -1,5 +1,5 @@
 ---
-title: "SSH Agent - Control SSH Key Management | Free DevTools"
+title: "SSH Agent - Control SSH Key Management | Online Free DevTools by Hexmos"
 name: ssh-agent
 path: /freedevtools/tldr/ssh/ssh-agent
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-agent/"

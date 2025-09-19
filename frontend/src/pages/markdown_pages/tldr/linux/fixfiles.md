@@ -1,5 +1,5 @@
 ---
-title: "Fix Files - Secure File Contexts | Free DevTools"
+title: "Fix Files - Secure File Contexts | Online Free DevTools by Hexmos"
 name: fixfiles
 path: /freedevtools/tldr/linux/fixfiles
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fixfiles/"

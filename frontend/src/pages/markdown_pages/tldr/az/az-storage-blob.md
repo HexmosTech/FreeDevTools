@@ -1,5 +1,5 @@
 ---
-title: "Storage Blob - Manage Azure Blobs | Free DevTools"
+title: "Storage Blob - Manage Azure Blobs | Online Free DevTools by Hexmos"
 name: az-storage-blob
 path: /freedevtools/tldr/az/az-storage-blob
 canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-blob/"

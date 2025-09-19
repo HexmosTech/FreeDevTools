@@ -1,5 +1,5 @@
 ---
-title: "Detect Steganography - Analyze Images with zsteg | Free DevTools"
+title: "Detect Steganography - Analyze Images with zsteg | Online Free DevTools by Hexmos"
 name: zsteg
 path: /freedevtools/tldr/common/zsteg
 canonical: "https://hexmos.com/freedevtools/tldr/common/zsteg/"

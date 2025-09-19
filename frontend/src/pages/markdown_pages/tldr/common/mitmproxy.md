@@ -1,5 +1,5 @@
 ---
-title: "Control HTTP Traffic - mitmproxy | Free DevTools"
+title: "Control HTTP Traffic - mitmproxy | Online Free DevTools by Hexmos"
 name: mitmproxy
 path: /freedevtools/tldr/common/mitmproxy
 canonical: "https://hexmos.com/freedevtools/tldr/common/mitmproxy/"

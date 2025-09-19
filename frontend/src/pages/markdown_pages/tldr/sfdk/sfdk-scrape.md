@@ -1,5 +1,5 @@
 ---
-title: "SFDK Scrape - Create Patches from Source Changes | Free DevTools"
+title: "SFDK Scrape - Create Patches from Source Changes | Online Free DevTools by Hexmos"
 name: sfdk-scrape
 path: /freedevtools/tldr/sfdk/sfdk-scrape
 canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-scrape/"

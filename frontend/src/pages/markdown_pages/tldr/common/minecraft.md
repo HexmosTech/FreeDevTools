@@ -1,5 +1,5 @@
 ---
-title: "Minecraft Server - Run Headless Minecraft Server | Free DevTools"
+title: "Minecraft Server - Run Headless Minecraft Server | Online Free DevTools by Hexmos"
 name: minecraft
 path: /freedevtools/tldr/common/minecraft
 canonical: "https://hexmos.com/freedevtools/tldr/common/minecraft/"

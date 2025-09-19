@@ -1,5 +1,5 @@
 ---
-title: "Show Last Command - Track User Activity | Free DevTools"
+title: "Show Last Command - Track User Activity | Online Free DevTools by Hexmos"
 name: lastcomm
 path: /freedevtools/tldr/common/lastcomm
 canonical: "https://hexmos.com/freedevtools/tldr/common/lastcomm/"

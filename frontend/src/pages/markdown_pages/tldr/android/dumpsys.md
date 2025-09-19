@@ -1,5 +1,5 @@
 ---
-title: "Dumpsys - Analyze Android Services | Free DevTools"
+title: "Dumpsys - Analyze Android Services | Online Free DevTools by Hexmos"
 name: dumpsys
 path: /freedevtools/tldr/android/dumpsys
 canonical: "https://hexmos.com/freedevtools/tldr/android/dumpsys/"

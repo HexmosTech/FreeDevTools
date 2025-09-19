@@ -1,5 +1,5 @@
 ---
-title: "PHPENMOD - Enable PHP Extensions | Free DevTools"
+title: "PHPENMOD - Enable PHP Extensions | Online Free DevTools by Hexmos"
 name: phpenmod
 path: /freedevtools/tldr/linux/phpenmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/phpenmod/"

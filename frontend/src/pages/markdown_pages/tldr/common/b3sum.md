@@ -1,5 +1,5 @@
 ---
-title: "Calculate B3SUM Checksums - Verify File Integrity | Free DevTools"
+title: "Calculate B3SUM Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
 name: b3sum
 path: /freedevtools/tldr/common/b3sum
 canonical: "https://hexmos.com/freedevtools/tldr/common/b3sum/"

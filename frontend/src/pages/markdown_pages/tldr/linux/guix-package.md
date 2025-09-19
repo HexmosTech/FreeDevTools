@@ -1,5 +1,5 @@
 ---
-title: "Guix Package Manager - Manage Packages | Free DevTools"
+title: "Guix Package Manager - Manage Packages | Online Free DevTools by Hexmos"
 name: guix-package
 path: /freedevtools/tldr/linux/guix-package
 canonical: "https://hexmos.com/freedevtools/tldr/linux/guix-package/"

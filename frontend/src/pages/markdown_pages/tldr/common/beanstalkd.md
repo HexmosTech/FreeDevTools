@@ -1,5 +1,5 @@
 ---
-title: "Beanstalkd - Control Work Queues | Free DevTools"
+title: "Beanstalkd - Control Work Queues | Online Free DevTools by Hexmos"
 name: beanstalkd
 path: /freedevtools/tldr/common/beanstalkd
 canonical: "https://hexmos.com/freedevtools/tldr/common/beanstalkd/"

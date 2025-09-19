@@ -1,5 +1,5 @@
 ---
-title: "Print Formatter - Format Files for Printing | Free DevTools"
+title: "Print Formatter - Format Files for Printing | Online Free DevTools by Hexmos"
 name: pr
 path: /freedevtools/tldr/common/pr
 canonical: "https://hexmos.com/freedevtools/tldr/common/pr/"

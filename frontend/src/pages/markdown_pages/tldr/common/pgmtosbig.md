@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM to SBIG - Image Converter | Free DevTools"
+title: "Convert PGM to SBIG - Image Converter | Online Free DevTools by Hexmos"
 name: pgmtosbig
 path: /freedevtools/tldr/common/pgmtosbig
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtosbig/"

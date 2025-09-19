@@ -1,5 +1,5 @@
 ---
-title: "Xonsh Shell - Execute Python Commands | Free DevTools"
+title: "Xonsh Shell - Execute Python Commands | Online Free DevTools by Hexmos"
 name: xonsh
 path: /freedevtools/tldr/common/xonsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/xonsh/"

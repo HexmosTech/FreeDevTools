@@ -1,5 +1,5 @@
 ---
-title: "Share Files - Send Files via Airpaste | Free DevTools"
+title: "Share Files - Send Files via Airpaste | Online Free DevTools by Hexmos"
 name: airpaste
 path: /freedevtools/tldr/common/airpaste
 canonical: "https://hexmos.com/freedevtools/tldr/common/airpaste/"

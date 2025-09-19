@@ -1,5 +1,5 @@
 ---
-title: "Control nmtui Hostname - Manage Network Hostname | Free DevTools"
+title: "Control nmtui Hostname - Manage Network Hostname | Online Free DevTools by Hexmos"
 name: nmtui-hostname
 path: /freedevtools/tldr/linux/nmtui-hostname
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nmtui-hostname/"

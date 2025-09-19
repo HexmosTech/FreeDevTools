@@ -1,5 +1,5 @@
 ---
-title: "Just Command - Run Project Commands Easily | Free DevTools"
+title: "Just Command - Run Project Commands Easily | Online Free DevTools by Hexmos"
 name: just.1
 path: /freedevtools/tldr/common/just.1
 canonical: "https://hexmos.com/freedevtools/tldr/common/just.1/"

@@ -1,5 +1,5 @@
 ---
-title: "Siege Load Testing - Benchmark Websites | Free DevTools"
+title: "Siege Load Testing - Benchmark Websites | Online Free DevTools by Hexmos"
 name: siege
 path: /freedevtools/tldr/common/siege
 canonical: "https://hexmos.com/freedevtools/tldr/common/siege/"

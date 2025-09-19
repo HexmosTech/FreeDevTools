@@ -1,5 +1,5 @@
 ---
-title: "Profile Analyzer - Visualize Profiling Data | Free DevTools"
+title: "Profile Analyzer - Visualize Profiling Data | Online Free DevTools by Hexmos"
 name: pprof
 path: /freedevtools/tldr/common/pprof
 canonical: "https://hexmos.com/freedevtools/tldr/common/pprof/"

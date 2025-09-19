@@ -1,5 +1,5 @@
 ---
-title: "Control Zsh Shell - Execute Commands | Free DevTools"
+title: "Control Zsh Shell - Execute Commands | Online Free DevTools by Hexmos"
 name: zsh
 path: /freedevtools/tldr/common/zsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/zsh/"

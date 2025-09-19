@@ -1,5 +1,5 @@
 ---
-title: "Tailscale Up - Connect to Tailscale Network | Free DevTools"
+title: "Tailscale Up - Connect to Tailscale Network | Online Free DevTools by Hexmos"
 name: tailscale-up
 path: /freedevtools/tldr/tailscale/tailscale-up
 canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-up/"

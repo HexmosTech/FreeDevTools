@@ -1,5 +1,5 @@
 ---
-title: "Control systemsoundserverd - Core Audio Daemon | Free DevTools"
+title: "Control systemsoundserverd - Core Audio Daemon | Online Free DevTools by Hexmos"
 name: systemsoundserverd
 path: /freedevtools/tldr/osx/systemsoundserverd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/systemsoundserverd/"

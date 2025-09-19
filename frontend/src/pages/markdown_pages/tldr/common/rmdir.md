@@ -1,5 +1,5 @@
 ---
-title: "Rmdir - Remove Directories | Free DevTools"
+title: "Rmdir - Remove Directories | Online Free DevTools by Hexmos"
 name: rmdir
 path: /freedevtools/tldr/common/rmdir
 canonical: "https://hexmos.com/freedevtools/tldr/common/rmdir/"

@@ -1,5 +1,5 @@
 ---
-title: "Choom - Control OOM Killer Score | Free DevTools"
+title: "Choom - Control OOM Killer Score | Online Free DevTools by Hexmos"
 name: choom
 path: /freedevtools/tldr/linux/choom
 canonical: "https://hexmos.com/freedevtools/tldr/linux/choom/"

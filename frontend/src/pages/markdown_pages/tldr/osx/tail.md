@@ -1,5 +1,5 @@
 ---
-title: "Tail - Display Last Lines of Files | Free DevTools"
+title: "Tail - Display Last Lines of Files | Online Free DevTools by Hexmos"
 name: tail
 path: /freedevtools/tldr/osx/tail
 canonical: "https://hexmos.com/freedevtools/tldr/osx/tail/"

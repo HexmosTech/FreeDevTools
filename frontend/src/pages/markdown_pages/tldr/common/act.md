@@ -1,5 +1,5 @@
 ---
-title: "Act - Execute GitHub Actions Locally | Free DevTools"
+title: "Act - Execute GitHub Actions Locally | Online Free DevTools by Hexmos"
 name: act
 path: /freedevtools/tldr/common/act
 canonical: "https://hexmos.com/freedevtools/tldr/common/act/"

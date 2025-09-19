@@ -1,5 +1,5 @@
 ---
-title: "Combine Files - Perform Set Operations on Lines | Free DevTools"
+title: "Combine Files - Perform Set Operations on Lines | Online Free DevTools by Hexmos"
 name: combine
 path: /freedevtools/tldr/common/combine
 canonical: "https://hexmos.com/freedevtools/tldr/common/combine/"

@@ -1,5 +1,5 @@
 ---
-title: "Mount SMB Shares - Interact with SMB Shares | Free DevTools"
+title: "Mount SMB Shares - Interact with SMB Shares | Online Free DevTools by Hexmos"
 name: smbnetfs
 path: /freedevtools/tldr/linux/smbnetfs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/smbnetfs/"

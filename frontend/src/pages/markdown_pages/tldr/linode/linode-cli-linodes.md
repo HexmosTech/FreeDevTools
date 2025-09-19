@@ -1,5 +1,5 @@
 ---
-title: "Linode Control - Manage Instances | Free DevTools"
+title: "Linode Control - Manage Instances | Online Free DevTools by Hexmos"
 name: linode-cli-linodes
 path: /freedevtools/tldr/linode/linode-cli-linodes
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-linodes/"

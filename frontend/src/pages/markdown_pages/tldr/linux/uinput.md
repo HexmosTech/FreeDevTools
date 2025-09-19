@@ -1,5 +1,5 @@
 ---
-title: "Uinput - Control Input Events | Free DevTools"
+title: "Uinput - Control Input Events | Online Free DevTools by Hexmos"
 name: uinput
 path: /freedevtools/tldr/linux/uinput
 canonical: "https://hexmos.com/freedevtools/tldr/linux/uinput/"

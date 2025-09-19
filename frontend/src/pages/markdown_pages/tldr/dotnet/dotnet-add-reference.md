@@ -1,5 +1,5 @@
 ---
-title: "Add .NET Reference - Manage Project Dependencies | Free DevTools"
+title: "Add .NET Reference - Manage Project Dependencies | Online Free DevTools by Hexmos"
 name: dotnet-add-reference
 path: /freedevtools/tldr/dotnet/dotnet-add-reference
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-add-reference/"

@@ -1,5 +1,5 @@
 ---
-title: "IP Address - Control Network Addresses | Free DevTools"
+title: "IP Address - Control Network Addresses | Online Free DevTools by Hexmos"
 name: ip-address
 path: /freedevtools/tldr/linux/ip-address
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-address/"

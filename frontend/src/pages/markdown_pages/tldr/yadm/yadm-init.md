@@ -1,5 +1,5 @@
 ---
-title: "Create Dotfile Repository - Init Yadm for Config Management | Free DevTools"
+title: "Create Dotfile Repository - Init Yadm for Config Management | Online Free DevTools by Hexmos"
 name: yadm-init
 path: /freedevtools/tldr/yadm/yadm-init
 canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-init/"

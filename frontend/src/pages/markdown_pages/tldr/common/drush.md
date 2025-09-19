@@ -1,5 +1,5 @@
 ---
-title: "Drush - Control Drupal Modules | Free DevTools"
+title: "Drush - Control Drupal Modules | Online Free DevTools by Hexmos"
 name: drush
 path: /freedevtools/tldr/common/drush
 canonical: "https://hexmos.com/freedevtools/tldr/common/drush/"

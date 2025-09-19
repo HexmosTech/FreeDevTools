@@ -1,5 +1,5 @@
 ---
-title: "Control Web Inspector - Remote Target Debugging | Free DevTools"
+title: "Control Web Inspector - Remote Target Debugging | Online Free DevTools by Hexmos"
 name: webinspectord
 path: /freedevtools/tldr/osx/webinspectord
 canonical: "https://hexmos.com/freedevtools/tldr/osx/webinspectord/"

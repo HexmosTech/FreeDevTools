@@ -1,5 +1,5 @@
 ---
-title: "Git Merge Base - Find Common Ancestor | Free DevTools"
+title: "Git Merge Base - Find Common Ancestor | Online Free DevTools by Hexmos"
 name: git-merge-base
 path: /freedevtools/tldr/git/git-merge-base
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge-base/"

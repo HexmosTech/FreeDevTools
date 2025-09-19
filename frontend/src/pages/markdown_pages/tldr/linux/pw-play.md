@@ -1,5 +1,5 @@
 ---
-title: "PW-Play - Play Audio with PipeWire | Free DevTools"
+title: "PW-Play - Play Audio with PipeWire | Online Free DevTools by Hexmos"
 name: pw-play
 path: /freedevtools/tldr/linux/pw-play
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-play/"

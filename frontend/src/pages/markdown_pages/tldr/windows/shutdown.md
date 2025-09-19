@@ -1,5 +1,5 @@
 ---
-title: "Control Shutdown - Manage System Power States | Free DevTools"
+title: "Control Shutdown - Manage System Power States | Online Free DevTools by Hexmos"
 name: shutdown
 path: /freedevtools/tldr/windows/shutdown
 canonical: "https://hexmos.com/freedevtools/tldr/windows/shutdown/"

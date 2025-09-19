@@ -1,5 +1,5 @@
 ---
-title: "Manage Bash Packages - Simplify Script Management | Free DevTools"
+title: "Manage Bash Packages - Simplify Script Management | Online Free DevTools by Hexmos"
 name: bpkg
 path: /freedevtools/tldr/common/bpkg
 canonical: "https://hexmos.com/freedevtools/tldr/common/bpkg/"

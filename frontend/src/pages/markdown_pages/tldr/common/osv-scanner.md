@@ -1,5 +1,5 @@
 ---
-title: "Scan Dependencies - osv-scanner Vulnerability Check | Free DevTools"
+title: "Scan Dependencies - osv-scanner Vulnerability Check | Online Free DevTools by Hexmos"
 name: osv-scanner
 path: /freedevtools/tldr/common/osv-scanner
 canonical: "https://hexmos.com/freedevtools/tldr/common/osv-scanner/"

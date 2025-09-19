@@ -1,5 +1,5 @@
 ---
-title: "MD5 Checksum - Generate File Hashes | Free DevTools"
+title: "MD5 Checksum - Generate File Hashes | Online Free DevTools by Hexmos"
 name: gmd5sum
 path: /freedevtools/tldr/osx/gmd5sum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gmd5sum/"

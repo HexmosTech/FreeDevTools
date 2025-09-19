@@ -1,5 +1,5 @@
 ---
-title: "Darwin Rebuild - Generate macOS System Configuration | Free DevTools"
+title: "Darwin Rebuild - Generate macOS System Configuration | Online Free DevTools by Hexmos"
 name: darwin-rebuild
 path: /freedevtools/tldr/osx/darwin-rebuild
 canonical: "https://hexmos.com/freedevtools/tldr/osx/darwin-rebuild/"

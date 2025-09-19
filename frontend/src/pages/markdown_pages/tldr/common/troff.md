@@ -1,5 +1,5 @@
 ---
-title: "Troff - Format Documents with Groff | Free DevTools"
+title: "Troff - Format Documents with Groff | Online Free DevTools by Hexmos"
 name: troff
 path: /freedevtools/tldr/common/troff
 canonical: "https://hexmos.com/freedevtools/tldr/common/troff/"

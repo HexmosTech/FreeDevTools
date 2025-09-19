@@ -1,5 +1,5 @@
 ---
-title: "Micromamba - Manage Conda Packages | Free DevTools"
+title: "Micromamba - Manage Conda Packages | Online Free DevTools by Hexmos"
 name: micromamba
 path: /freedevtools/tldr/common/micromamba
 canonical: "https://hexmos.com/freedevtools/tldr/common/micromamba/"

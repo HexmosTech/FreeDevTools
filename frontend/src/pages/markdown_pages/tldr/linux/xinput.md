@@ -1,5 +1,5 @@
 ---
-title: "xinput Control - Manage Input Devices | Free DevTools"
+title: "xinput Control - Manage Input Devices | Online Free DevTools by Hexmos"
 name: xinput
 path: /freedevtools/tldr/linux/xinput
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xinput/"

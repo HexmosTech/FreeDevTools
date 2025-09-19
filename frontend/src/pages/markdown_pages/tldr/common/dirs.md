@@ -1,5 +1,5 @@
 ---
-title: "Control Directory Stack - Manage Dirs with Bash | Free DevTools"
+title: "Control Directory Stack - Manage Dirs with Bash | Online Free DevTools by Hexmos"
 name: dirs
 path: /freedevtools/tldr/common/dirs
 canonical: "https://hexmos.com/freedevtools/tldr/common/dirs/"

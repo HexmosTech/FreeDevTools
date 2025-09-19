@@ -1,5 +1,5 @@
 ---
-title: "Zstdmt - Compress Files with Multiple Threads | Free DevTools"
+title: "Zstdmt - Compress Files with Multiple Threads | Online Free DevTools by Hexmos"
 name: zstdmt
 path: /freedevtools/tldr/common/zstdmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/zstdmt/"

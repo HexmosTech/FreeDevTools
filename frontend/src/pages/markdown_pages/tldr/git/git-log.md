@@ -1,5 +1,5 @@
 ---
-title: "Git Log - Show Commit History | Free DevTools"
+title: "Git Log - Show Commit History | Online Free DevTools by Hexmos"
 name: git-log
 path: /freedevtools/tldr/git/git-log
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-log/"

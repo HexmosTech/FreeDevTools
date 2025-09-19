@@ -1,5 +1,5 @@
 ---
-title: "Allocate Disk Space - Control Files with fallocate | Free DevTools"
+title: "Allocate Disk Space - Control Files with fallocate | Online Free DevTools by Hexmos"
 name: fallocate
 path: /freedevtools/tldr/linux/fallocate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fallocate/"

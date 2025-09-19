@@ -1,5 +1,5 @@
 ---
-title: "Pueue Kill - Control Task Execution | Free DevTools"
+title: "Pueue Kill - Control Task Execution | Online Free DevTools by Hexmos"
 name: pueue-kill
 path: /freedevtools/tldr/pueue/pueue-kill
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-kill/"

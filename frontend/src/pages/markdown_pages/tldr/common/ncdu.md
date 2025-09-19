@@ -1,5 +1,5 @@
 ---
-title: "Analyze Disk Usage - ncdu | Free DevTools"
+title: "Analyze Disk Usage - ncdu | Online Free DevTools by Hexmos"
 name: ncdu
 path: /freedevtools/tldr/common/ncdu
 canonical: "https://hexmos.com/freedevtools/tldr/common/ncdu/"

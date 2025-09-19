@@ -1,5 +1,5 @@
 ---
-title: "Push Directory - Manage Directory Stack | Free DevTools"
+title: "Push Directory - Manage Directory Stack | Online Free DevTools by Hexmos"
 name: pushd
 path: /freedevtools/tldr/common/pushd
 canonical: "https://hexmos.com/freedevtools/tldr/common/pushd/"

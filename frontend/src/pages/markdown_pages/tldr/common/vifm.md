@@ -1,5 +1,5 @@
 ---
-title: "Vifm File Manager - Manage Files in Terminal | Free DevTools"
+title: "Vifm File Manager - Manage Files in Terminal | Online Free DevTools by Hexmos"
 name: vifm
 path: /freedevtools/tldr/common/vifm
 canonical: "https://hexmos.com/freedevtools/tldr/common/vifm/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Sessions - Abduco | Free DevTools"
+title: "Control Terminal Sessions - Abduco | Online Free DevTools by Hexmos"
 name: abduco
 path: /freedevtools/tldr/common/abduco
 canonical: "https://hexmos.com/freedevtools/tldr/common/abduco/"

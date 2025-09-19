@@ -1,5 +1,5 @@
 ---
-title: "Find Git Missing Commits - Compare Branches | Free DevTools"
+title: "Find Git Missing Commits - Compare Branches | Online Free DevTools by Hexmos"
 name: git-missing
 path: /freedevtools/tldr/git/git-missing
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-missing/"

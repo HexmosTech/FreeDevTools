@@ -1,5 +1,5 @@
 ---
-title: "DPigs - Analyze Disk Usage on Linux | Free DevTools"
+title: "DPigs - Analyze Disk Usage on Linux | Online Free DevTools by Hexmos"
 name: dpigs
 path: /freedevtools/tldr/linux/dpigs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dpigs/"

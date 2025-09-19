@@ -1,5 +1,5 @@
 ---
-title: "Pi-hole Manager - Control Ad-Blocking DNS | Free DevTools"
+title: "Pi-hole Manager - Control Ad-Blocking DNS | Online Free DevTools by Hexmos"
 name: pihole
 path: /freedevtools/tldr/linux/pihole
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pihole/"

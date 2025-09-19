@@ -1,5 +1,5 @@
 ---
-title: "SteamOS Update - Manage Operating System Updates | Free DevTools"
+title: "SteamOS Update - Manage Operating System Updates | Online Free DevTools by Hexmos"
 name: steamos-update
 path: /freedevtools/tldr/linux/steamos-update
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-update/"

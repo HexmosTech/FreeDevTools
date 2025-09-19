@@ -1,5 +1,5 @@
 ---
-title: "Compare PDF - Analyze PDF Differences | Free DevTools"
+title: "Compare PDF - Analyze PDF Differences | Online Free DevTools by Hexmos"
 name: diff-pdf
 path: /freedevtools/tldr/common/diff-pdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/diff-pdf/"

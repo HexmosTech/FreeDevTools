@@ -1,5 +1,5 @@
 ---
-title: "SC Create - Control Windows Services | Free DevTools"
+title: "SC Create - Control Windows Services | Online Free DevTools by Hexmos"
 name: sc-create
 path: /freedevtools/tldr/windows/sc-create
 canonical: "https://hexmos.com/freedevtools/tldr/windows/sc-create/"

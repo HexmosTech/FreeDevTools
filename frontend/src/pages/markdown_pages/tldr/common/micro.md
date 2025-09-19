@@ -1,5 +1,5 @@
 ---
-title: "Micro Editor - Control Text Editing in Terminal | Free DevTools"
+title: "Micro Editor - Control Text Editing in Terminal | Online Free DevTools by Hexmos"
 name: micro
 path: /freedevtools/tldr/common/micro
 canonical: "https://hexmos.com/freedevtools/tldr/common/micro/"

@@ -1,5 +1,5 @@
 ---
-title: "HTTP Server Upload - Create a Simple File Upload Server | Free DevTools"
+title: "HTTP Server Upload - Create a Simple File Upload Server | Online Free DevTools by Hexmos"
 name: http-server-upload
 path: /freedevtools/tldr/http/http-server-upload
 canonical: "https://hexmos.com/freedevtools/tldr/http/http-server-upload/"

@@ -1,5 +1,5 @@
 ---
-title: "PAM Overlay - Compose Images with PAMCOMP | Free DevTools"
+title: "PAM Overlay - Compose Images with PAMCOMP | Online Free DevTools by Hexmos"
 name: pamcomp
 path: /freedevtools/tldr/common/pamcomp
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamcomp/"

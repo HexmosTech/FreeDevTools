@@ -1,5 +1,5 @@
 ---
-title: "Control Processes - Top Command Utility | Free DevTools"
+title: "Control Processes - Top Command Utility | Online Free DevTools by Hexmos"
 name: top
 path: /freedevtools/tldr/osx/top
 canonical: "https://hexmos.com/freedevtools/tldr/osx/top/"

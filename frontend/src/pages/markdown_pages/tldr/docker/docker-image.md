@@ -1,5 +1,5 @@
 ---
-title: "Manage Docker Images - Control Container Images | Free DevTools"
+title: "Manage Docker Images - Control Container Images | Online Free DevTools by Hexmos"
 name: docker-image
 path: /freedevtools/tldr/docker/docker-image
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-image/"

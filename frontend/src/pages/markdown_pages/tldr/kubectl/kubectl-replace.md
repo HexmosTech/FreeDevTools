@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Replace - Update Kubernetes Resources | Free DevTools"
+title: "Kubectl Replace - Update Kubernetes Resources | Online Free DevTools by Hexmos"
 name: kubectl-replace
 path: /freedevtools/tldr/kubectl/kubectl-replace
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-replace/"

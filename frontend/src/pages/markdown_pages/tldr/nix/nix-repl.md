@@ -1,5 +1,5 @@
 ---
-title: "Nix Repl - Evaluate Nix Expressions | Free DevTools"
+title: "Nix Repl - Evaluate Nix Expressions | Online Free DevTools by Hexmos"
 name: nix-repl
 path: /freedevtools/tldr/nix/nix-repl
 canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-repl/"

@@ -1,5 +1,5 @@
 ---
-title: "Generate hledger Incomestatement - Analyze Finances | Free DevTools"
+title: "Generate hledger Incomestatement - Analyze Finances | Online Free DevTools by Hexmos"
 name: hledger-incomestatement
 path: /freedevtools/tldr/hledger/hledger-incomestatement
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-incomestatement/"

@@ -1,5 +1,5 @@
 ---
-title: "NPM Logout - Securely Sign Out of NPM Registry | Free DevTools"
+title: "NPM Logout - Securely Sign Out of NPM Registry | Online Free DevTools by Hexmos"
 name: npm-logout
 path: /freedevtools/tldr/npm/npm-logout
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-logout/"

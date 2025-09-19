@@ -1,5 +1,5 @@
 ---
-title: "Pueue - Pause Tasks and Groups | Free DevTools"
+title: "Pueue - Pause Tasks and Groups | Online Free DevTools by Hexmos"
 name: pueue-pause
 path: /freedevtools/tldr/pueue/pueue-pause
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-pause/"

@@ -1,5 +1,5 @@
 ---
-title: "Gradle Build Automation - Automate Builds | Free DevTools"
+title: "Gradle Build Automation - Automate Builds | Online Free DevTools by Hexmos"
 name: gradle
 path: /freedevtools/tldr/common/gradle
 canonical: "https://hexmos.com/freedevtools/tldr/common/gradle/"

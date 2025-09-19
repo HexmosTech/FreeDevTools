@@ -1,5 +1,5 @@
 ---
-title: "Generate Searchable PDF - ocrmypdf | Free DevTools"
+title: "Generate Searchable PDF - ocrmypdf | Online Free DevTools by Hexmos"
 name: ocrmypdf
 path: /freedevtools/tldr/common/ocrmypdf
 canonical: "https://hexmos.com/freedevtools/tldr/common/ocrmypdf/"

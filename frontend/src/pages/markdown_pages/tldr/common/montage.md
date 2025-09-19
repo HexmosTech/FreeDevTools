@@ -1,5 +1,5 @@
 ---
-title: "Create Image Montage - Combine Images | Free DevTools"
+title: "Create Image Montage - Combine Images | Online Free DevTools by Hexmos"
 name: montage
 path: /freedevtools/tldr/common/montage
 canonical: "https://hexmos.com/freedevtools/tldr/common/montage/"

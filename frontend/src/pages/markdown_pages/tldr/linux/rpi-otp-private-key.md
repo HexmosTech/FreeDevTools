@@ -1,5 +1,5 @@
 ---
-title: "Display OTP Private Key - Read Raspberry Pi OTP Key | Free DevTools"
+title: "Display OTP Private Key - Read Raspberry Pi OTP Key | Online Free DevTools by Hexmos"
 name: rpi-otp-private-key
 path: /freedevtools/tldr/linux/rpi-otp-private-key
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpi-otp-private-key/"

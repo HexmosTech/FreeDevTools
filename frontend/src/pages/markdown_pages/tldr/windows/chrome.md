@@ -1,5 +1,5 @@
 ---
-title: "Chrome - Launch Browser | Free DevTools"
+title: "Chrome - Launch Browser | Online Free DevTools by Hexmos"
 name: chrome
 path: /freedevtools/tldr/windows/chrome
 canonical: "https://hexmos.com/freedevtools/tldr/windows/chrome/"

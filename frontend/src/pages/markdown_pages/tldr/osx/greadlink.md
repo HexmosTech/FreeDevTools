@@ -1,5 +1,5 @@
 ---
-title: "Readlink Command - Resolve Symbolic Links | Free DevTools"
+title: "Readlink Command - Resolve Symbolic Links | Online Free DevTools by Hexmos"
 name: greadlink
 path: /freedevtools/tldr/osx/greadlink
 canonical: "https://hexmos.com/freedevtools/tldr/osx/greadlink/"

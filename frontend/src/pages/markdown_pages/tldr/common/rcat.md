@@ -1,5 +1,5 @@
 ---
-title: "Alias Command - Access Commands with rcat | Free DevTools"
+title: "Alias Command - Access Commands with rcat | Online Free DevTools by Hexmos"
 name: rcat
 path: /freedevtools/tldr/common/rcat
 canonical: "https://hexmos.com/freedevtools/tldr/common/rcat/"

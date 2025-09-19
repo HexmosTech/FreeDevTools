@@ -1,5 +1,5 @@
 ---
-title: "PowerShell - Execute Commands | Free DevTools"
+title: "PowerShell - Execute Commands | Online Free DevTools by Hexmos"
 name: powershell
 path: /freedevtools/tldr/common/powershell
 canonical: "https://hexmos.com/freedevtools/tldr/common/powershell/"

@@ -1,5 +1,5 @@
 ---
-title: "Registry Manager - Control Windows Registry | Free DevTools"
+title: "Registry Manager - Control Windows Registry | Online Free DevTools by Hexmos"
 name: reg
 path: /freedevtools/tldr/windows/reg
 canonical: "https://hexmos.com/freedevtools/tldr/windows/reg/"

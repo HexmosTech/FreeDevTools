@@ -1,5 +1,5 @@
 ---
-title: "Git Fame - Analyze Code Contributions | Free DevTools"
+title: "Git Fame - Analyze Code Contributions | Online Free DevTools by Hexmos"
 name: git-fame
 path: /freedevtools/tldr/git/git-fame
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-fame/"

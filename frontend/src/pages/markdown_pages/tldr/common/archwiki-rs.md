@@ -1,5 +1,5 @@
 ---
-title: "ArchWiki Reader - Search and Read ArchWiki Pages | Free DevTools"
+title: "ArchWiki Reader - Search and Read ArchWiki Pages | Online Free DevTools by Hexmos"
 name: archwiki-rs
 path: /freedevtools/tldr/common/archwiki-rs
 canonical: "https://hexmos.com/freedevtools/tldr/common/archwiki-rs/"

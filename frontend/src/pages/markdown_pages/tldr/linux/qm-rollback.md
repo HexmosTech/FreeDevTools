@@ -1,5 +1,5 @@
 ---
-title: "QM Rollback - Restore VM Snapshots | Free DevTools"
+title: "QM Rollback - Restore VM Snapshots | Online Free DevTools by Hexmos"
 name: qm-rollback
 path: /freedevtools/tldr/linux/qm-rollback
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-rollback/"

@@ -1,5 +1,5 @@
 ---
-title: "Edit Text with moe - WYSIWYG Editor | Free DevTools"
+title: "Edit Text with moe - WYSIWYG Editor | Online Free DevTools by Hexmos"
 name: moe
 path: /freedevtools/tldr/common/moe
 canonical: "https://hexmos.com/freedevtools/tldr/common/moe/"

@@ -1,5 +1,5 @@
 ---
-title: "Identify Image - Format Images | Free DevTools"
+title: "Identify Image - Format Images | Online Free DevTools by Hexmos"
 name: identify
 path: /freedevtools/tldr/common/identify
 canonical: "https://hexmos.com/freedevtools/tldr/common/identify/"

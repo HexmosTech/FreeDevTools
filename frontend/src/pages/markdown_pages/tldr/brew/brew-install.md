@@ -1,5 +1,5 @@
 ---
-title: "Brew Install - Install Packages on macOS | Free DevTools"
+title: "Brew Install - Install Packages on macOS | Online Free DevTools by Hexmos"
 name: brew-install
 path: /freedevtools/tldr/brew/brew-install
 canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-install/"

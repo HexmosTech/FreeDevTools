@@ -1,5 +1,5 @@
 ---
-title: "Control SambaPipe - Execute Commands | Free DevTools"
+title: "Control SambaPipe - Execute Commands | Online Free DevTools by Hexmos"
 name: impacket-sambapipe
 path: /freedevtools/tldr/impacket/impacket-sambapipe
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-sambapipe/"

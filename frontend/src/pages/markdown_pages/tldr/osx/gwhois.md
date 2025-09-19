@@ -1,5 +1,5 @@
 ---
-title: "Whois Lookup - Perform Domain Information Retrieval | Free DevTools"
+title: "Whois Lookup - Perform Domain Information Retrieval | Online Free DevTools by Hexmos"
 name: gwhois
 path: /freedevtools/tldr/osx/gwhois
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gwhois/"

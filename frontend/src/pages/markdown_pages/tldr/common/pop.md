@@ -1,5 +1,5 @@
 ---
-title: "Pop Emails - Send Emails from Terminal | Free DevTools"
+title: "Pop Emails - Send Emails from Terminal | Online Free DevTools by Hexmos"
 name: pop
 path: /freedevtools/tldr/common/pop
 canonical: "https://hexmos.com/freedevtools/tldr/common/pop/"

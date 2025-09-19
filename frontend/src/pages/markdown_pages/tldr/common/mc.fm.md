@@ -1,5 +1,5 @@
 ---
-title: "Control Files - Midnight Commander File Manager | Free DevTools"
+title: "Control Files - Midnight Commander File Manager | Online Free DevTools by Hexmos"
 name: mc.fm
 path: /freedevtools/tldr/common/mc.fm
 canonical: "https://hexmos.com/freedevtools/tldr/common/mc.fm/"

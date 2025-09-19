@@ -1,5 +1,5 @@
 ---
-title: "Codespace Control - Manage Cloud Dev Environments | Free DevTools"
+title: "Codespace Control - Manage Cloud Dev Environments | Online Free DevTools by Hexmos"
 name: gh-cs
 path: /freedevtools/tldr/gh/gh-cs
 canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-cs/"

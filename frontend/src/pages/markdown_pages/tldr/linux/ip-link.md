@@ -1,5 +1,5 @@
 ---
-title: "IP Link - Manage Network Interfaces | Free DevTools"
+title: "IP Link - Manage Network Interfaces | Online Free DevTools by Hexmos"
 name: ip-link
 path: /freedevtools/tldr/linux/ip-link
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-link/"

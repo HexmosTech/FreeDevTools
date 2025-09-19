@@ -1,5 +1,5 @@
 ---
-title: "AWS STS - Generate Temporary Credentials | Free DevTools"
+title: "AWS STS - Generate Temporary Credentials | Online Free DevTools by Hexmos"
 name: aws-sts
 path: /freedevtools/tldr/aws/aws-sts
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sts/"

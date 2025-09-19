@@ -1,5 +1,5 @@
 ---
-title: "Control Tee Output - Duplicate Streams with gtee | Free DevTools"
+title: "Control Tee Output - Duplicate Streams with gtee | Online Free DevTools by Hexmos"
 name: gtee
 path: /freedevtools/tldr/osx/gtee
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtee/"

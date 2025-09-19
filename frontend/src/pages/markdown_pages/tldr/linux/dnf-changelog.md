@@ -1,5 +1,5 @@
 ---
-title: "View DNF Changelog - Package Change Logs | Free DevTools"
+title: "View DNF Changelog - Package Change Logs | Online Free DevTools by Hexmos"
 name: dnf-changelog
 path: /freedevtools/tldr/linux/dnf-changelog
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-changelog/"

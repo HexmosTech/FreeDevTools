@@ -1,5 +1,5 @@
 ---
-title: "Pueue Log - Display Task Logs | Free DevTools"
+title: "Pueue Log - Display Task Logs | Online Free DevTools by Hexmos"
 name: pueue-log
 path: /freedevtools/tldr/pueue/pueue-log
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-log/"

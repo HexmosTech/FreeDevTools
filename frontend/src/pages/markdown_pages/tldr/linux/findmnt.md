@@ -1,5 +1,5 @@
 ---
-title: "Find Filesystem - Locate Mount Points | Free DevTools"
+title: "Find Filesystem - Locate Mount Points | Online Free DevTools by Hexmos"
 name: findmnt
 path: /freedevtools/tldr/linux/findmnt
 canonical: "https://hexmos.com/freedevtools/tldr/linux/findmnt/"

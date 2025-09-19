@@ -1,5 +1,5 @@
 ---
-title: "Convert PPM to SIXEL - Format Images | Free DevTools"
+title: "Convert PPM to SIXEL - Format Images | Online Free DevTools by Hexmos"
 name: ppmtosixel
 path: /freedevtools/tldr/ppm/ppmtosixel
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtosixel/"

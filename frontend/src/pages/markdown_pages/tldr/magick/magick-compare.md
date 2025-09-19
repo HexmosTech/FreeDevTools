@@ -1,5 +1,5 @@
 ---
-title: "Create Image Comparison - Magick Compare | Free DevTools"
+title: "Create Image Comparison - Magick Compare | Online Free DevTools by Hexmos"
 name: magick-compare
 path: /freedevtools/tldr/magick/magick-compare
 canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-compare/"

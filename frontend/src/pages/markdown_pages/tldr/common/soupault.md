@@ -1,5 +1,5 @@
 ---
-title: "Generate Static Websites - soupault | Free DevTools"
+title: "Generate Static Websites - soupault | Online Free DevTools by Hexmos"
 name: soupault
 path: /freedevtools/tldr/common/soupault
 canonical: "https://hexmos.com/freedevtools/tldr/common/soupault/"

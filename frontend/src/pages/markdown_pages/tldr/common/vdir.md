@@ -1,5 +1,5 @@
 ---
-title: "List Directory - Verbose Listing with vdir | Free DevTools"
+title: "List Directory - Verbose Listing with vdir | Online Free DevTools by Hexmos"
 name: vdir
 path: /freedevtools/tldr/common/vdir
 canonical: "https://hexmos.com/freedevtools/tldr/common/vdir/"

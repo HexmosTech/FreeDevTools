@@ -1,5 +1,5 @@
 ---
-title: "Biomesyncd - Synchronize Data Between Devices | Free DevTools"
+title: "Biomesyncd - Synchronize Data Between Devices | Online Free DevTools by Hexmos"
 name: biomesyncd
 path: /freedevtools/tldr/osx/biomesyncd
 canonical: "https://hexmos.com/freedevtools/tldr/osx/biomesyncd/"

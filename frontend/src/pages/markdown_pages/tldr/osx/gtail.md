@@ -1,5 +1,5 @@
 ---
-title: "GNU Tail - View File Endings with gtail | Free DevTools"
+title: "GNU Tail - View File Endings with gtail | Online Free DevTools by Hexmos"
 name: gtail
 path: /freedevtools/tldr/osx/gtail
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtail/"

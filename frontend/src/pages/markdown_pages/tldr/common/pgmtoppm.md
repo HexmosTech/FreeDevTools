@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM to PPM - Colorize Images | Free DevTools"
+title: "Convert PGM to PPM - Colorize Images | Online Free DevTools by Hexmos"
 name: pgmtoppm
 path: "/freedevtools/tldr/common/pgmtoppm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtoppm/"

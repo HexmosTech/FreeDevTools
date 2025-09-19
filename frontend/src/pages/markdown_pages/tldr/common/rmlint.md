@@ -1,5 +1,5 @@
 ---
-title: "Find Duplicate Files - rmlint File Cleaner | Free DevTools"
+title: "Find Duplicate Files - rmlint File Cleaner | Online Free DevTools by Hexmos"
 name: rmlint
 path: /freedevtools/tldr/common/rmlint
 canonical: "https://hexmos.com/freedevtools/tldr/common/rmlint/"

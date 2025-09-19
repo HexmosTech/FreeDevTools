@@ -1,5 +1,5 @@
 ---
-title: "Convert RPM Packages - rpm2cpio Converter | Free DevTools"
+title: "Convert RPM Packages - rpm2cpio Converter | Online Free DevTools by Hexmos"
 name: rpm2cpio
 path: /freedevtools/tldr/linux/rpm2cpio
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm2cpio/"

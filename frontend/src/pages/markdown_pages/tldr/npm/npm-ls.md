@@ -1,5 +1,5 @@
 ---
-title: "List NPM Packages - View Installed Packages | Free DevTools"
+title: "List NPM Packages - View Installed Packages | Online Free DevTools by Hexmos"
 name: npm-ls
 path: /freedevtools/tldr/npm/npm-ls
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-ls/"

@@ -1,5 +1,5 @@
 ---
-title: "Compile Go Programs - Cross-Compile with Gox | Free DevTools"
+title: "Compile Go Programs - Cross-Compile with Gox | Online Free DevTools by Hexmos"
 name: gox
 path: /freedevtools/tldr/common/gox
 canonical: "https://hexmos.com/freedevtools/tldr/common/gox/"

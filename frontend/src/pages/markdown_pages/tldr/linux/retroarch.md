@@ -1,5 +1,5 @@
 ---
-title: "Control RetroArch - Emulate Games on Linux | Free DevTools"
+title: "Control RetroArch - Emulate Games on Linux | Online Free DevTools by Hexmos"
 name: retroarch
 path: /freedevtools/tldr/linux/retroarch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/retroarch/"

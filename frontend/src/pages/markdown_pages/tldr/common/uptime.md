@@ -1,5 +1,5 @@
 ---
-title: "Control Uptime - Monitor System Uptime | Free DevTools"
+title: "Control Uptime - Monitor System Uptime | Online Free DevTools by Hexmos"
 name: uptime
 path: /freedevtools/tldr/common/uptime
 canonical: "https://hexmos.com/freedevtools/tldr/common/uptime/"

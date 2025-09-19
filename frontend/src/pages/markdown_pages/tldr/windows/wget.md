@@ -1,5 +1,5 @@
 ---
-title: "Wget - Download Files via Command Line | Free DevTools"
+title: "Wget - Download Files via Command Line | Online Free DevTools by Hexmos"
 name: wget
 path: /freedevtools/tldr/windows/wget
 canonical: "https://hexmos.com/freedevtools/tldr/windows/wget/"

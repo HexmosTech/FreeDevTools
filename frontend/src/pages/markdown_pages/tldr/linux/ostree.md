@@ -1,5 +1,5 @@
 ---
-title: "OSTree Control - Version Files Like Git | Free DevTools"
+title: "OSTree Control - Version Files Like Git | Online Free DevTools by Hexmos"
 name: ostree
 path: /freedevtools/tldr/linux/ostree
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ostree/"

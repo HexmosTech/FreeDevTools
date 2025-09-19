@@ -1,5 +1,5 @@
 ---
-title: "IP Scanner - Network Scan with Ipcscan | Free DevTools"
+title: "IP Scanner - Network Scan with Ipcscan | Online Free DevTools by Hexmos"
 name: ipscan
 path: /freedevtools/tldr/common/ipscan
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipscan/"

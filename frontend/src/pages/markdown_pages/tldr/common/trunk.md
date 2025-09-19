@@ -1,5 +1,5 @@
 ---
-title: "Trunk - Bundle Rust Web Apps | Free DevTools"
+title: "Trunk - Bundle Rust Web Apps | Online Free DevTools by Hexmos"
 name: trunk
 path: /freedevtools/tldr/common/trunk
 canonical: "https://hexmos.com/freedevtools/tldr/common/trunk/"

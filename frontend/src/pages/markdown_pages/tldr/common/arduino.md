@@ -1,5 +1,5 @@
 ---
-title: "Arduino IDE - Control Sketches & Upload Code | Free DevTools"
+title: "Arduino IDE - Control Sketches & Upload Code | Online Free DevTools by Hexmos"
 name: arduino
 path: /freedevtools/tldr/common/arduino
 canonical: "https://hexmos.com/freedevtools/tldr/common/arduino/"

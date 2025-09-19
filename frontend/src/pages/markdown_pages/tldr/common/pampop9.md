@@ -1,5 +1,5 @@
 ---
-title: "Generate Multi-Lens Images - pampop9 | Free DevTools"
+title: "Generate Multi-Lens Images - pampop9 | Online Free DevTools by Hexmos"
 name: pampop9
 path: /freedevtools/tldr/common/pampop9
 canonical: "https://hexmos.com/freedevtools/tldr/common/pampop9/"

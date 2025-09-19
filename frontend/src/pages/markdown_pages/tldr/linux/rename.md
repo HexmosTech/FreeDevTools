@@ -1,5 +1,5 @@
 ---
-title: "Rename Files - Control File Names | Free DevTools"
+title: "Rename Files - Control File Names | Online Free DevTools by Hexmos"
 name: rename
 path: /freedevtools/tldr/linux/rename
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rename/"

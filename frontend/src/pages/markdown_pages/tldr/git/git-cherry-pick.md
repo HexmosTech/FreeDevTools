@@ -1,5 +1,5 @@
 ---
-title: "Cherry-Pick Git - Apply Commit Changes | Free DevTools"
+title: "Cherry-Pick Git - Apply Commit Changes | Online Free DevTools by Hexmos"
 name: git-cherry-pick
 path: /freedevtools/tldr/git/git-cherry-pick
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-cherry-pick/"

@@ -1,5 +1,5 @@
 ---
-title: "Display System Information - pfetch | Free DevTools"
+title: "Display System Information - pfetch | Online Free DevTools by Hexmos"
 name: pfetch
 path: /freedevtools/tldr/common/pfetch
 canonical: "https://hexmos.com/freedevtools/tldr/common/pfetch/"

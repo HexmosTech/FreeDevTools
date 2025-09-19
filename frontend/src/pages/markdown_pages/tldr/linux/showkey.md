@@ -1,5 +1,5 @@
 ---
-title: "Showkey - Display Keycodes | Free DevTools"
+title: "Showkey - Display Keycodes | Online Free DevTools by Hexmos"
 name: showkey
 path: /freedevtools/tldr/linux/showkey
 canonical: "https://hexmos.com/freedevtools/tldr/linux/showkey/"

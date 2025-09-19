@@ -1,5 +1,5 @@
 ---
-title: "Docker Remove - Delete Containers | Free DevTools"
+title: "Docker Remove - Delete Containers | Online Free DevTools by Hexmos"
 name: docker-rm
 path: /freedevtools/tldr/docker/docker-rm
 canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rm/"

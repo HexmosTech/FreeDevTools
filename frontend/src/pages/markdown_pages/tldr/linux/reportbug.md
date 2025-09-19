@@ -1,5 +1,5 @@
 ---
-title: "Generate Bug Reports - Reportbug Tool | Free DevTools"
+title: "Generate Bug Reports - Reportbug Tool | Online Free DevTools by Hexmos"
 name: reportbug
 path: /freedevtools/tldr/linux/reportbug
 canonical: "https://hexmos.com/freedevtools/tldr/linux/reportbug/"

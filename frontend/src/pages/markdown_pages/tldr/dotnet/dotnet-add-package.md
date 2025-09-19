@@ -1,5 +1,5 @@
 ---
-title: "Add .NET Package - Manage Dependencies | Free DevTools"
+title: "Add .NET Package - Manage Dependencies | Online Free DevTools by Hexmos"
 name: dotnet-add-package
 path: /freedevtools/tldr/dotnet/dotnet-add-package
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-add-package/"

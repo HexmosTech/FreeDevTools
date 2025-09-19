@@ -1,5 +1,5 @@
 ---
-title: "Bitcoin Daemon - Control Bitcoin Node | Free DevTools"
+title: "Bitcoin Daemon - Control Bitcoin Node | Online Free DevTools by Hexmos"
 name: bitcoind
 path: /freedevtools/tldr/common/bitcoind
 canonical: "https://hexmos.com/freedevtools/tldr/common/bitcoind/"

@@ -1,5 +1,5 @@
 ---
-title: "TimeZone Control - Configure System Time Zones | Free DevTools"
+title: "TimeZone Control - Configure System Time Zones | Online Free DevTools by Hexmos"
 name: tzutil
 path: /freedevtools/tldr/windows/tzutil
 canonical: "https://hexmos.com/freedevtools/tldr/windows/tzutil/"

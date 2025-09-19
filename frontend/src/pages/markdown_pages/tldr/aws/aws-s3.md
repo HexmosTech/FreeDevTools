@@ -1,5 +1,5 @@
 ---
-title: "AWS S3 Control - Manage Cloud Storage | Free DevTools"
+title: "AWS S3 Control - Manage Cloud Storage | Online Free DevTools by Hexmos"
 name: aws-s3
 path: /freedevtools/tldr/aws/aws-s3
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3/"

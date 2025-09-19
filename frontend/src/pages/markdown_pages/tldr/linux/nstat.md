@@ -1,5 +1,5 @@
 ---
-title: "Nstat - View Network Statistics | Free DevTools"
+title: "Nstat - View Network Statistics | Online Free DevTools by Hexmos"
 name: nstat
 path: "/freedevtools/tldr/linux/nstat"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nstat/"

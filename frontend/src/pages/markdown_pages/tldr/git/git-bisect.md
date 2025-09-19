@@ -1,5 +1,5 @@
 ---
-title: "Git Bisect - Find Bug-Inducing Commits | Free DevTools"
+title: "Git Bisect - Find Bug-Inducing Commits | Online Free DevTools by Hexmos"
 name: git-bisect
 path: /freedevtools/tldr/git/git-bisect
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-bisect/"

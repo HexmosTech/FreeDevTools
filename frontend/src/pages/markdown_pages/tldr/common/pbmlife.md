@@ -1,5 +1,5 @@
 ---
-title: "Generate PBM Life Images - Conway's Life with PBM | Free DevTools"
+title: "Generate PBM Life Images - Conway's Life with PBM | Online Free DevTools by Hexmos"
 name: pbmlife
 path: /freedevtools/tldr/common/pbmlife
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmlife/"

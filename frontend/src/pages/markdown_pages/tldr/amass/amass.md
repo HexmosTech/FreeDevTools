@@ -1,5 +1,5 @@
 ---
-title: "Amass Asset Discovery - Map Attack Surfaces | Free DevTools"
+title: "Amass Asset Discovery - Map Attack Surfaces | Online Free DevTools by Hexmos"
 name: amass
 path: /freedevtools/tldr/amass/amass
 canonical: "https://hexmos.com/freedevtools/tldr/amass/amass/"

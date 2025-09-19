@@ -1,5 +1,5 @@
 ---
-title: "Release Control - Commit, Tag, and Upload with pkgctl | Free DevTools"
+title: "Release Control - Commit, Tag, and Upload with pkgctl | Online Free DevTools by Hexmos"
 name: pkgctl-release
 path: /freedevtools/tldr/linux/pkgctl-release
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-release/"

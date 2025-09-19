@@ -1,5 +1,5 @@
 ---
-title: "Distrobox Upgrade - Control Linux Containers | Free DevTools"
+title: "Distrobox Upgrade - Control Linux Containers | Online Free DevTools by Hexmos"
 name: distrobox-upgrade
 path: /freedevtools/tldr/linux/distrobox-upgrade
 canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-upgrade/"

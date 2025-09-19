@@ -1,5 +1,5 @@
 ---
-title: "Trace Network Path - Discover MTU with tracepath | Free DevTools"
+title: "Trace Network Path - Discover MTU with tracepath | Online Free DevTools by Hexmos"
 name: tracepath
 path: /freedevtools/tldr/linux/tracepath
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tracepath/"

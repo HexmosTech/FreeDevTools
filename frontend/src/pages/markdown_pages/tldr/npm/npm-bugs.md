@@ -1,5 +1,5 @@
 ---
-title: "Report NPM Bugs - Package Bug Reporting | Free DevTools"
+title: "Report NPM Bugs - Package Bug Reporting | Online Free DevTools by Hexmos"
 name: npm-bugs
 path: /freedevtools/tldr/npm/npm-bugs
 canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-bugs/"

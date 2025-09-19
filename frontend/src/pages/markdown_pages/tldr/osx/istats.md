@@ -1,5 +1,5 @@
 ---
-title: "Istats - Show System Statistics | Free DevTools"
+title: "Istats - Show System Statistics | Online Free DevTools by Hexmos"
 name: istats
 path: /freedevtools/tldr/osx/istats
 canonical: "https://hexmos.com/freedevtools/tldr/osx/istats/"

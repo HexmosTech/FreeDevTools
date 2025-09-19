@@ -1,5 +1,5 @@
 ---
-title: "SSH Password Provider - Automate SSH Logins | Free DevTools"
+title: "SSH Password Provider - Automate SSH Logins | Online Free DevTools by Hexmos"
 name: sshpass
 path: /freedevtools/tldr/ssh/sshpass
 canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshpass/"

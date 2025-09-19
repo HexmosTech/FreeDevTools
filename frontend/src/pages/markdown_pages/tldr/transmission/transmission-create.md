@@ -1,5 +1,5 @@
 ---
-title: "Create Torrent Files - Transmission-Create | Free DevTools"
+title: "Create Torrent Files - Transmission-Create | Online Free DevTools by Hexmos"
 name: transmission-create
 path: "/freedevtools/tldr/transmission/transmission-create"
 canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-create/"

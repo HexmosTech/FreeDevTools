@@ -1,5 +1,5 @@
 ---
-title: "Git Revision Control - Display Metadata | Free DevTools"
+title: "Git Revision Control - Display Metadata | Online Free DevTools by Hexmos"
 name: git-rev-parse
 path: /freedevtools/tldr/git/git-rev-parse
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-rev-parse/"

@@ -1,5 +1,5 @@
 ---
-title: "PDF Merger - Create Combined PDFs | Free DevTools"
+title: "PDF Merger - Create Combined PDFs | Online Free DevTools by Hexmos"
 name: pdfunite
 path: /freedevtools/tldr/common/pdfunite
 canonical: "https://hexmos.com/freedevtools/tldr/common/pdfunite/"

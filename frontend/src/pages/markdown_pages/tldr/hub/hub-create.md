@@ -1,5 +1,5 @@
 ---
-title: "Hub Create - Create GitHub Repositories | Free DevTools"
+title: "Hub Create - Create GitHub Repositories | Online Free DevTools by Hexmos"
 name: hub-create
 path: /freedevtools/tldr/hub/hub-create
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-create/"

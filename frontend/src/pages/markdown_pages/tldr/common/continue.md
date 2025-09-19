@@ -1,5 +1,5 @@
 ---
-title: "Control Continue - Skip Loop Iterations | Free DevTools"
+title: "Control Continue - Skip Loop Iterations | Online Free DevTools by Hexmos"
 name: continue
 path: /freedevtools/tldr/common/continue
 canonical: "https://hexmos.com/freedevtools/tldr/common/continue/"

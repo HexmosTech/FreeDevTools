@@ -1,5 +1,5 @@
 ---
-title: "Lslogins - Show User Logins on Linux | Free DevTools"
+title: "Lslogins - Show User Logins on Linux | Online Free DevTools by Hexmos"
 name: lslogins
 path: /freedevtools/tldr/linux/lslogins
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lslogins/"

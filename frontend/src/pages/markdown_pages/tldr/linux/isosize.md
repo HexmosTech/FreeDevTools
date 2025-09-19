@@ -1,5 +1,5 @@
 ---
-title: "ISO Size Checker - Display ISO File Size | Free DevTools"
+title: "ISO Size Checker - Display ISO File Size | Online Free DevTools by Hexmos"
 name: isosize
 path: /freedevtools/tldr/linux/isosize
 canonical: "https://hexmos.com/freedevtools/tldr/linux/isosize/"

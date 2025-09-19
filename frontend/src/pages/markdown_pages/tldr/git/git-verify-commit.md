@@ -1,5 +1,5 @@
 ---
-title: "Verify Git Commit - Check GPG Signatures | Free DevTools"
+title: "Verify Git Commit - Check GPG Signatures | Online Free DevTools by Hexmos"
 name: git-verify-commit
 path: /freedevtools/tldr/git/git-verify-commit
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-commit/"

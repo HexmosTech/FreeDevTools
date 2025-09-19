@@ -1,5 +1,5 @@
 ---
-title: "Waitpid - Control Process Termination | Free DevTools"
+title: "Waitpid - Control Process Termination | Online Free DevTools by Hexmos"
 name: waitpid
 path: /freedevtools/tldr/linux/waitpid
 canonical: "https://hexmos.com/freedevtools/tldr/linux/waitpid/"

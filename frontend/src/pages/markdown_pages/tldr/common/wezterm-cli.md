@@ -1,5 +1,5 @@
 ---
-title: "Wezterm CLI - Control Wezterm Sessions | Free DevTools"
+title: "Wezterm CLI - Control Wezterm Sessions | Online Free DevTools by Hexmos"
 name: wezterm-cli
 path: /freedevtools/tldr/common/wezterm-cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/wezterm-cli/"

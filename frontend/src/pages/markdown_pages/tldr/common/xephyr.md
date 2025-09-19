@@ -1,5 +1,5 @@
 ---
-title: "Create Xephyr Window - Nested X Server | Free DevTools"
+title: "Create Xephyr Window - Nested X Server | Online Free DevTools by Hexmos"
 name: xephyr
 path: /freedevtools/tldr/common/xephyr
 canonical: "https://hexmos.com/freedevtools/tldr/common/xephyr/"

@@ -1,5 +1,5 @@
 ---
-title: "JPS - Show JVM Processes | Free DevTools"
+title: "JPS - Show JVM Processes | Online Free DevTools by Hexmos"
 name: jps
 path: "/freedevtools/tldr/common/jps"
 canonical: "https://hexmos.com/freedevtools/tldr/common/jps/"

@@ -1,5 +1,5 @@
 ---
-title: "Control iwd with iwctl - Network Management | Free DevTools"
+title: "Control iwd with iwctl - Network Management | Online Free DevTools by Hexmos"
 name: iwctl
 path: /freedevtools/tldr/linux/iwctl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iwctl/"

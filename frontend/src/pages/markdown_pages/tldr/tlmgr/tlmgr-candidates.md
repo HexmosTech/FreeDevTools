@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Candidates - Get Package Repositories | Free DevTools"
+title: "TeX Live Candidates - Get Package Repositories | Online Free DevTools by Hexmos"
 name: tlmgr-candidates
 path: /freedevtools/tldr/tlmgr/tlmgr-candidates
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-candidates/"

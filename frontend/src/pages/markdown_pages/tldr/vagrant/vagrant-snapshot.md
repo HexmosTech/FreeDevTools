@@ -1,5 +1,5 @@
 ---
-title: "Vagrant Snapshot - Manage VM States | Free DevTools"
+title: "Vagrant Snapshot - Manage VM States | Online Free DevTools by Hexmos"
 name: vagrant-snapshot
 path: /freedevtools/tldr/vagrant/vagrant-snapshot
 canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-snapshot/"

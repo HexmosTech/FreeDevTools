@@ -1,5 +1,5 @@
 ---
-title: "Windows Version - Display OS Version | Free DevTools"
+title: "Windows Version - Display OS Version | Online Free DevTools by Hexmos"
 name: ver
 path: /freedevtools/tldr/windows/ver
 canonical: "https://hexmos.com/freedevtools/tldr/windows/ver/"

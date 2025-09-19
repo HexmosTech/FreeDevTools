@@ -1,5 +1,5 @@
 ---
-title: "Control Terminal Locomotive - SL Command | Free DevTools"
+title: "Control Terminal Locomotive - SL Command | Online Free DevTools by Hexmos"
 name: sl
 path: /freedevtools/tldr/common/sl
 canonical: "https://hexmos.com/freedevtools/tldr/common/sl/"

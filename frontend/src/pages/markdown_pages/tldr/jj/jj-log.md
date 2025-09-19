@@ -1,5 +1,5 @@
 ---
-title: "JJ Log - Control Revision History Graph | Free DevTools"
+title: "JJ Log - Control Revision History Graph | Online Free DevTools by Hexmos"
 name: jj-log
 path: /freedevtools/tldr/jj/jj-log
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-log/"

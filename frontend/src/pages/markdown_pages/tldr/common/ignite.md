@@ -1,5 +1,5 @@
 ---
-title: "Ignite - Create React Native Apps | Free DevTools"
+title: "Ignite - Create React Native Apps | Online Free DevTools by Hexmos"
 name: ignite
 path: /freedevtools/tldr/common/ignite
 canonical: "https://hexmos.com/freedevtools/tldr/common/ignite/"

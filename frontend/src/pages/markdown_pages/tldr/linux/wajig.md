@@ -1,5 +1,5 @@
 ---
-title: "Control Debian Packages - Wajig System Admin | Free DevTools"
+title: "Control Debian Packages - Wajig System Admin | Online Free DevTools by Hexmos"
 name: wajig
 path: /freedevtools/tldr/linux/wajig
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wajig/"

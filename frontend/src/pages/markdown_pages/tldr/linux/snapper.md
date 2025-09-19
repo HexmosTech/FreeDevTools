@@ -1,5 +1,5 @@
 ---
-title: "Snapshot Manager - Create File System Snapshots | Free DevTools"
+title: "Snapshot Manager - Create File System Snapshots | Online Free DevTools by Hexmos"
 name: snapper
 path: /freedevtools/tldr/linux/snapper
 canonical: "https://hexmos.com/freedevtools/tldr/linux/snapper/"

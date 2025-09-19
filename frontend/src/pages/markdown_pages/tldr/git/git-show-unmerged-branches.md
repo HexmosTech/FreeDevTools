@@ -1,5 +1,5 @@
 ---
-title: "Show Unmerged Branches - Identify Git Branches | Free DevTools"
+title: "Show Unmerged Branches - Identify Git Branches | Online Free DevTools by Hexmos"
 name: git-show-unmerged-branches
 path: /freedevtools/tldr/git/git-show-unmerged-branches
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-unmerged-branches/"

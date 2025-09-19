@@ -1,5 +1,5 @@
 ---
-title: "Create AWS CloudFormation Stacks - Manage Infrastructure as Code | Free DevTools"
+title: "Create AWS CloudFormation Stacks - Manage Infrastructure as Code | Online Free DevTools by Hexmos"
 name: aws-cloudformation
 path: /freedevtools/tldr/aws/aws-cloudformation
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloudformation/"

@@ -1,5 +1,5 @@
 ---
-title: "Restore SELinux Context - Manage File Security | Free DevTools"
+title: "Restore SELinux Context - Manage File Security | Online Free DevTools by Hexmos"
 name: restorecon
 path: /freedevtools/tldr/linux/restorecon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/restorecon/"

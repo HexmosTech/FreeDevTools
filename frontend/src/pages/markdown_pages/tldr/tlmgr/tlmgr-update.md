@@ -1,5 +1,5 @@
 ---
-title: "TeX Live Update - Manage Packages | Free DevTools"
+title: "TeX Live Update - Manage Packages | Online Free DevTools by Hexmos"
 name: tlmgr-update
 path: /freedevtools/tldr/tlmgr/tlmgr-update
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-update/"

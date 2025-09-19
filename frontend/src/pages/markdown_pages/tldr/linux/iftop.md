@@ -1,5 +1,5 @@
 ---
-title: "Control Bandwidth Usage - iftop | Free DevTools"
+title: "Control Bandwidth Usage - iftop | Online Free DevTools by Hexmos"
 name: iftop
 path: /freedevtools/tldr/linux/iftop
 canonical: "https://hexmos.com/freedevtools/tldr/linux/iftop/"

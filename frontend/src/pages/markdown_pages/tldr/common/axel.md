@@ -1,5 +1,5 @@
 ---
-title: "Download Accelerator - Accelerate Downloads with Axel | Free DevTools"
+title: "Download Accelerator - Accelerate Downloads with Axel | Online Free DevTools by Hexmos"
 name: axel
 path: /freedevtools/tldr/common/axel
 canonical: "https://hexmos.com/freedevtools/tldr/common/axel/"

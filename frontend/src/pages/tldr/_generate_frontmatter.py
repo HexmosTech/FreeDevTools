@@ -30,8 +30,8 @@ def validate_seo_compliance(yaml_content, platform, command_name):
             title = line.split(":", 1)[1].strip().strip("\"'")
             if len(title) < 50 or len(title) > 60:
                 issues.append(f"Title length {len(title)} chars (should be 50-60)")
-            if not title.endswith("| Free DevTools"):
-                issues.append("Title missing brand suffix '| Free DevTools'")
+            if not title.endswith("| Online Free DevTools by Hexmos"):
+                issues.append("Title missing brand suffix '| Online Free DevTools by Hexmos'")
             if not any(
                 word in title.lower()
                 for word in [
@@ -238,7 +238,7 @@ SEO Requirements (CRITICAL):
 - Use proper YAML list format with dashes (-) for keywords and features, NOT array syntax
 
 TITLE Requirements:
-- Format: "[Tool Name] - [Primary Function] | Free DevTools"
+- Format: "[Tool Name] - [Primary Function] | Online Free DevTools by Hexmos"
 - Length: 50-60 characters
 - Primary keyword in first 3 words
 - Use action words like "Control", "Generate", "Format", "Validate", "Create"
@@ -271,7 +271,7 @@ OTHER Requirements:
 - Return ONLY the YAML content without any code block markers (no ```yaml or ```)
 
 Example format:
-title: "Android Activity Manager - Control App Activities with ADB | Free DevTools"
+title: "Android Activity Manager - Control App Activities with ADB | Online Free DevTools by Hexmos"
 name: {command_name}
 path: /freedevtools/tldr/{platform}/{command_name}
 description: "Control Android app activities instantly with ADB Activity Manager. Start activities, manage intents, and debug applications using command line. Free online tool, no registration required."

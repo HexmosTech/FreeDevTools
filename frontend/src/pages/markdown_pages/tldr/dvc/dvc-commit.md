@@ -1,5 +1,5 @@
 ---
-title: "DVC Commit - Record Data Changes | Free DevTools"
+title: "DVC Commit - Record Data Changes | Online Free DevTools by Hexmos"
 name: dvc-commit
 path: /freedevtools/tldr/dvc/dvc-commit
 canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-commit/"

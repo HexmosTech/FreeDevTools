@@ -1,5 +1,5 @@
 ---
-title: "PAM Flip - Rotate and Flip Images | Free DevTools"
+title: "PAM Flip - Rotate and Flip Images | Online Free DevTools by Hexmos"
 name: pamflip
 path: /freedevtools/tldr/common/pamflip
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamflip/"

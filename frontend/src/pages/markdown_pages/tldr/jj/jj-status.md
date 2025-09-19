@@ -1,5 +1,5 @@
 ---
-title: "JJ Status - Show Repository Status | Free DevTools"
+title: "JJ Status - Show Repository Status | Online Free DevTools by Hexmos"
 name: jj-status
 path: /freedevtools/tldr/jj/jj-status
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-status/"

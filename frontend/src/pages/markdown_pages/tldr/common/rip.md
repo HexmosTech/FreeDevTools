@@ -1,5 +1,5 @@
 ---
-title: "Rip Files - Remove and Recover Files | Free DevTools"
+title: "Rip Files - Remove and Recover Files | Online Free DevTools by Hexmos"
 name: rip
 path: /freedevtools/tldr/common/rip
 canonical: "https://hexmos.com/freedevtools/tldr/common/rip/"

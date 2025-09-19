@@ -1,5 +1,5 @@
 ---
-title: "Ditto - Copy Files and Directories on macOS | Free DevTools"
+title: "Ditto - Copy Files and Directories on macOS | Online Free DevTools by Hexmos"
 name: ditto
 path: /freedevtools/tldr/osx/ditto
 canonical: "https://hexmos.com/freedevtools/tldr/osx/ditto/"

@@ -1,5 +1,5 @@
 ---
-title: "Decompress JPEG XL - Convert JXL Images | Free DevTools"
+title: "Decompress JPEG XL - Convert JXL Images | Online Free DevTools by Hexmos"
 name: djxl
 path: /freedevtools/tldr/common/djxl
 canonical: "https://hexmos.com/freedevtools/tldr/common/djxl/"

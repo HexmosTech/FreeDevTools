@@ -1,5 +1,5 @@
 ---
-title: "Rust Toolchain Installer - Install Rust with rustup | Free DevTools"
+title: "Rust Toolchain Installer - Install Rust with rustup | Online Free DevTools by Hexmos"
 name: rustup-init.sh
 path: /freedevtools/tldr/rustup/rustup-init.sh
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-init.sh/"

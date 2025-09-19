@@ -1,5 +1,5 @@
 ---
-title: "Perl Script Interpreter - Run Perl Scripts | Free DevTools"
+title: "Perl Script Interpreter - Run Perl Scripts | Online Free DevTools by Hexmos"
 name: perl
 path: /freedevtools/tldr/common/perl
 canonical: "https://hexmos.com/freedevtools/tldr/common/perl/"

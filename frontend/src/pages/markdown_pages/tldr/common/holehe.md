@@ -1,5 +1,5 @@
 ---
-title: "Email Account Checker - Check Email Availability | Free DevTools"
+title: "Email Account Checker - Check Email Availability | Online Free DevTools by Hexmos"
 name: holehe
 path: /freedevtools/tldr/common/holehe
 canonical: "https://hexmos.com/freedevtools/tldr/common/holehe/"

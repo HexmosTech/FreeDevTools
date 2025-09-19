@@ -1,5 +1,5 @@
 ---
-title: "Gtime - Measure Command Execution Time | Free DevTools"
+title: "Gtime - Measure Command Execution Time | Online Free DevTools by Hexmos"
 name: gtime
 path: /freedevtools/tldr/osx/gtime
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtime/"

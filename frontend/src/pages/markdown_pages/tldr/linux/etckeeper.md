@@ -1,5 +1,5 @@
 ---
-title: "Control etckeeper - Track Configs in Git | Free DevTools"
+title: "Control etckeeper - Track Configs in Git | Online Free DevTools by Hexmos"
 name: etckeeper
 path: /freedevtools/tldr/linux/etckeeper
 canonical: "https://hexmos.com/freedevtools/tldr/linux/etckeeper/"

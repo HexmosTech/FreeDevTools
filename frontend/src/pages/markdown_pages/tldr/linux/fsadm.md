@@ -1,5 +1,5 @@
 ---
-title: "Fsadm - Check & Resize Filesystems | Free DevTools"
+title: "Fsadm - Check & Resize Filesystems | Online Free DevTools by Hexmos"
 name: fsadm
 path: /freedevtools/tldr/linux/fsadm
 canonical: "https://hexmos.com/freedevtools/tldr/linux/fsadm/"

@@ -1,5 +1,5 @@
 ---
-title: "Hexdump - Create Hexadecimal Dumps with xxd | Free DevTools"
+title: "Hexdump - Create Hexadecimal Dumps with xxd | Online Free DevTools by Hexmos"
 name: xxd
 path: /freedevtools/tldr/common/xxd
 canonical: "https://hexmos.com/freedevtools/tldr/common/xxd/"

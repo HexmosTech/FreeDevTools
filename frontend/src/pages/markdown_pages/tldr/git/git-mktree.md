@@ -1,5 +1,5 @@
 ---
-title: "Create Git Trees - Build Tree Objects | Free DevTools"
+title: "Create Git Trees - Build Tree Objects | Online Free DevTools by Hexmos"
 name: git-mktree
 path: /freedevtools/tldr/git/git-mktree
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-mktree/"

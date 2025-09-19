@@ -1,5 +1,5 @@
 ---
-title: "Apachectl - Control Apache Servers | Free DevTools"
+title: "Apachectl - Control Apache Servers | Online Free DevTools by Hexmos"
 name: apachectl
 path: /freedevtools/tldr/linux/apachectl
 canonical: "https://hexmos.com/freedevtools/tldr/linux/apachectl/"

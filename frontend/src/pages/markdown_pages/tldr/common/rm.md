@@ -1,5 +1,5 @@
 ---
-title: "Remove Files - Delete Files & Directories | Free DevTools"
+title: "Remove Files - Delete Files & Directories | Online Free DevTools by Hexmos"
 name: rm
 path: /freedevtools/tldr/common/rm
 canonical: "https://hexmos.com/freedevtools/tldr/common/rm/"

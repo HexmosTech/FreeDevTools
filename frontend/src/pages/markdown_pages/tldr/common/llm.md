@@ -1,5 +1,5 @@
 ---
-title: "Interact with LLMs - Generate Text | Free DevTools"
+title: "Interact with LLMs - Generate Text | Online Free DevTools by Hexmos"
 name: llm
 path: "/freedevtools/tldr/common/llm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/llm/"

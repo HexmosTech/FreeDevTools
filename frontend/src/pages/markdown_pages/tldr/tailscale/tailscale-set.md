@@ -1,5 +1,5 @@
 ---
-title: "Tailscale Set - Control Network Preferences | Free DevTools"
+title: "Tailscale Set - Control Network Preferences | Online Free DevTools by Hexmos"
 name: tailscale-set
 path: /freedevtools/tldr/tailscale/tailscale-set
 canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-set/"

@@ -1,5 +1,5 @@
 ---
-title: "Impacket Ping - Network Diagnostics | Free DevTools"
+title: "Impacket Ping - Network Diagnostics | Online Free DevTools by Hexmos"
 name: impacket-ping
 path: /freedevtools/tldr/impacket/impacket-ping
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-ping/"

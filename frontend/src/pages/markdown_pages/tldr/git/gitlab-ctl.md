@@ -1,5 +1,5 @@
 ---
-title: "Gitlab Control - Manage GitLab Services | Free DevTools"
+title: "Gitlab Control - Manage GitLab Services | Online Free DevTools by Hexmos"
 name: gitlab-ctl
 path: /freedevtools/tldr/git/gitlab-ctl
 canonical: "https://hexmos.com/freedevtools/tldr/git/gitlab-ctl/"

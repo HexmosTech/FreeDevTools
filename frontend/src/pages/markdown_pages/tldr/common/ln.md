@@ -1,5 +1,5 @@
 ---
-title: "Create Symbolic Links - Files & Directories | Free DevTools"
+title: "Create Symbolic Links - Files & Directories | Online Free DevTools by Hexmos"
 name: ln
 path: /freedevtools/tldr/common/ln
 canonical: "https://hexmos.com/freedevtools/tldr/common/ln/"

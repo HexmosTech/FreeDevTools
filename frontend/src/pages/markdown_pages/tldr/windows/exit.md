@@ -1,5 +1,5 @@
 ---
-title: "Exit Command - Quit CMD Instances | Free DevTools"
+title: "Exit Command - Quit CMD Instances | Online Free DevTools by Hexmos"
 name: exit
 path: /freedevtools/tldr/windows/exit
 canonical: "https://hexmos.com/freedevtools/tldr/windows/exit/"

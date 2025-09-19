@@ -1,5 +1,5 @@
 ---
-title: "View Jobs - Manage Shell Processes | Free DevTools"
+title: "View Jobs - Manage Shell Processes | Online Free DevTools by Hexmos"
 name: jobs
 path: /freedevtools/tldr/linux/jobs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/jobs/"

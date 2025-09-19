@@ -1,5 +1,5 @@
 ---
-title: "Control Persistent Reservations - blkpr | Free DevTools"
+title: "Control Persistent Reservations - blkpr | Online Free DevTools by Hexmos"
 name: blkpr
 path: /freedevtools/tldr/linux/blkpr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/blkpr/"

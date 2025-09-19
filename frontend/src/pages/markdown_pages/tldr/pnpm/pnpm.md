@@ -1,5 +1,5 @@
 ---
-title: "PNPM Manager - Control Node Packages | Free DevTools"
+title: "PNPM Manager - Control Node Packages | Online Free DevTools by Hexmos"
 name: pnpm
 path: /freedevtools/tldr/pnpm/pnpm
 canonical: "https://hexmos.com/freedevtools/tldr/pnpm/pnpm/"

@@ -1,5 +1,5 @@
 ---
-title: "Systemd Umount - Control Mount Points | Free DevTools"
+title: "Systemd Umount - Control Mount Points | Online Free DevTools by Hexmos"
 name: systemd-umount
 path: /freedevtools/tldr/linux/systemd-umount
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-umount/"

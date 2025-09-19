@@ -1,5 +1,5 @@
 ---
-title: "Ionic CLI - Build Hybrid Mobile Apps | Free DevTools"
+title: "Ionic CLI - Build Hybrid Mobile Apps | Online Free DevTools by Hexmos"
 name: ionic
 path: /freedevtools/tldr/common/ionic
 canonical: "https://hexmos.com/freedevtools/tldr/common/ionic/"

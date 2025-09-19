@@ -1,5 +1,5 @@
 ---
-title: "Highlight Syntax - Format Code with Pygmentize | Free DevTools"
+title: "Highlight Syntax - Format Code with Pygmentize | Online Free DevTools by Hexmos"
 name: pygmentize
 path: /freedevtools/tldr/common/pygmentize
 canonical: "https://hexmos.com/freedevtools/tldr/common/pygmentize/"

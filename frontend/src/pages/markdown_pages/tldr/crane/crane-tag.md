@@ -1,5 +1,5 @@
 ---
-title: "Crane Tag - Tag Remote Container Images | Free DevTools"
+title: "Crane Tag - Tag Remote Container Images | Online Free DevTools by Hexmos"
 name: crane-tag
 path: /freedevtools/tldr/crane/crane-tag
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-tag/"

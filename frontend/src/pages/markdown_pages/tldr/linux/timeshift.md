@@ -1,5 +1,5 @@
 ---
-title: "Timeshift - Restore System Snapshots | Free DevTools"
+title: "Timeshift - Restore System Snapshots | Online Free DevTools by Hexmos"
 name: timeshift
 path: /freedevtools/tldr/linux/timeshift
 canonical: "https://hexmos.com/freedevtools/tldr/linux/timeshift/"

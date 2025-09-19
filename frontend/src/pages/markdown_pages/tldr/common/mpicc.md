@@ -1,5 +1,5 @@
 ---
-title: "MPI Compile - Create MPI Executables | Free DevTools"
+title: "MPI Compile - Create MPI Executables | Online Free DevTools by Hexmos"
 name: mpicc
 path: /freedevtools/tldr/common/mpicc
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpicc/"

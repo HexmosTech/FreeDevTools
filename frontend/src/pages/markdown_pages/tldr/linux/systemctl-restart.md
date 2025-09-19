@@ -1,5 +1,5 @@
 ---
-title: "Systemctl Restart - Control Systemd Units | Free DevTools"
+title: "Systemctl Restart - Control Systemd Units | Online Free DevTools by Hexmos"
 name: systemctl-restart
 path: /freedevtools/tldr/linux/systemctl-restart
 canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-restart/"

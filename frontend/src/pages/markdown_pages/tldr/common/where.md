@@ -1,5 +1,5 @@
 ---
-title: "Where Command - Find Command Instances | Free DevTools"
+title: "Where Command - Find Command Instances | Online Free DevTools by Hexmos"
 name: where
 path: /freedevtools/tldr/common/where
 canonical: "https://hexmos.com/freedevtools/tldr/common/where/"

@@ -1,5 +1,5 @@
 ---
-title: "Control Colorpicker - Select Colors on Linux | Free DevTools"
+title: "Control Colorpicker - Select Colors on Linux | Online Free DevTools by Hexmos"
 name: colorpicker
 path: /freedevtools/tldr/common/colorpicker
 canonical: "https://hexmos.com/freedevtools/tldr/common/colorpicker/"

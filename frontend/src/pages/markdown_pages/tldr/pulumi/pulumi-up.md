@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Up - Create Infrastructure with Pulumi | Free DevTools"
+title: "Pulumi Up - Create Infrastructure with Pulumi | Online Free DevTools by Hexmos"
 name: pulumi-up
 path: /freedevtools/tldr/pulumi/pulumi-up
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-up/"

@@ -1,5 +1,5 @@
 ---
-title: "List Files - Analyze Image Files with fls | Free DevTools"
+title: "List Files - Analyze Image Files with fls | Online Free DevTools by Hexmos"
 name: fls
 path: /freedevtools/tldr/common/fls
 canonical: "https://hexmos.com/freedevtools/tldr/common/fls/"

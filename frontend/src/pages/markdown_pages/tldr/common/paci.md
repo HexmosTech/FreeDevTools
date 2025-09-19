@@ -1,5 +1,5 @@
 ---
-title: "Manage Packages - Paci Package Manager for Bash | Free DevTools"
+title: "Manage Packages - Paci Package Manager for Bash | Online Free DevTools by Hexmos"
 name: paci
 path: /freedevtools/tldr/common/paci
 canonical: "https://hexmos.com/freedevtools/tldr/common/paci/"

@@ -1,5 +1,5 @@
 ---
-title: "A2disconf - Disable Apache Configs | Free DevTools"
+title: "A2disconf - Disable Apache Configs | Online Free DevTools by Hexmos"
 name: a2disconf
 path: /freedevtools/tldr/linux/a2disconf
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2disconf/"

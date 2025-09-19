@@ -1,5 +1,5 @@
 ---
-title: "Assemble Files - Generate Assembly Code with AS | Free DevTools"
+title: "Assemble Files - Generate Assembly Code with AS | Online Free DevTools by Hexmos"
 name: as
 path: /freedevtools/tldr/linux/as
 canonical: "https://hexmos.com/freedevtools/tldr/linux/as/"

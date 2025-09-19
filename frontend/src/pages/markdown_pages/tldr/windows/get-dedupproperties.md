@@ -1,5 +1,5 @@
 ---
-title: "Get-DedupProperties - Control Data Deduplication | Free DevTools"
+title: "Get-DedupProperties - Control Data Deduplication | Online Free DevTools by Hexmos"
 name: get-dedupproperties
 path: /freedevtools/tldr/windows/get-dedupproperties
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-dedupproperties/"

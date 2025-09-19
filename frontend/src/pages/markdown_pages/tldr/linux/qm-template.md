@@ -1,5 +1,5 @@
 ---
-title: "Create Proxmox VM Template - qm-template | Free DevTools"
+title: "Create Proxmox VM Template - qm-template | Online Free DevTools by Hexmos"
 name: qm-template
 path: /freedevtools/tldr/linux/qm-template
 canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-template/"

@@ -1,5 +1,5 @@
 ---
-title: "Flatpak Run - Execute Applications and Runtimes | Free DevTools"
+title: "Flatpak Run - Execute Applications and Runtimes | Online Free DevTools by Hexmos"
 name: flatpak-run
 path: /freedevtools/tldr/linux/flatpak-run
 canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-run/"

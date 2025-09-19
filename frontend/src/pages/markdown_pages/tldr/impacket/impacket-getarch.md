@@ -1,5 +1,5 @@
 ---
-title: "Get Architecture - Determine Target Architecture | Free DevTools"
+title: "Get Architecture - Determine Target Architecture | Online Free DevTools by Hexmos"
 name: impacket-getarch
 path: /freedevtools/tldr/impacket/impacket-getarch
 canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-getarch/"

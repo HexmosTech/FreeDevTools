@@ -1,5 +1,5 @@
 ---
-title: "Control AWS Cloud9 Environments | Free DevTools"
+title: "Control AWS Cloud9 Environments | Online Free DevTools by Hexmos"
 name: aws-cloud9
 path: /freedevtools/tldr/aws/aws-cloud9
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloud9/"

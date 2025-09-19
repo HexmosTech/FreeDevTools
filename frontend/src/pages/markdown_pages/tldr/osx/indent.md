@@ -1,5 +1,5 @@
 ---
-title: "Indent - Format C/C++ Code | Free DevTools"
+title: "Indent - Format C/C++ Code | Online Free DevTools by Hexmos"
 name: indent
 path: /freedevtools/tldr/osx/indent
 canonical: "https://hexmos.com/freedevtools/tldr/osx/indent/"

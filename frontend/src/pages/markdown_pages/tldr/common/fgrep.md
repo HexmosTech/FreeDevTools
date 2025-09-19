@@ -1,5 +1,5 @@
 ---
-title: "fgrep - Search Fixed Strings | Free DevTools"
+title: "fgrep - Search Fixed Strings | Online Free DevTools by Hexmos"
 name: fgrep
 path: /freedevtools/tldr/common/fgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/fgrep/"

@@ -1,5 +1,5 @@
 ---
-title: "Reverse File Order - Tac Command | Free DevTools"
+title: "Reverse File Order - Tac Command | Online Free DevTools by Hexmos"
 name: tac
 path: /freedevtools/tldr/common/tac
 canonical: "https://hexmos.com/freedevtools/tldr/common/tac/"

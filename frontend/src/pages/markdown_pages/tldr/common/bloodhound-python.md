@@ -1,5 +1,5 @@
 ---
-title: "BloodHound Ingestor - Enumerate AD Relationships | Free DevTools"
+title: "BloodHound Ingestor - Enumerate AD Relationships | Online Free DevTools by Hexmos"
 name: bloodhound-python
 path: /freedevtools/tldr/common/bloodhound-python
 canonical: "https://hexmos.com/freedevtools/tldr/common/bloodhound-python/"

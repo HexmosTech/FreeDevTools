@@ -1,5 +1,5 @@
 ---
-title: "Browsh Terminal Viewer - Browse Web Pages in Terminal | Free DevTools"
+title: "Browsh Terminal Viewer - Browse Web Pages in Terminal | Online Free DevTools by Hexmos"
 name: browsh
 path: /freedevtools/tldr/common/browsh
 canonical: "https://hexmos.com/freedevtools/tldr/common/browsh/"

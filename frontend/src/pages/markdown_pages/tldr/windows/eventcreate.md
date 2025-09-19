@@ -1,5 +1,5 @@
 ---
-title: "Eventcreate - Create Event Log Entries | Free DevTools"
+title: "Eventcreate - Create Event Log Entries | Online Free DevTools by Hexmos"
 name: eventcreate
 path: /freedevtools/tldr/windows/eventcreate
 canonical: "https://hexmos.com/freedevtools/tldr/windows/eventcreate/"

@@ -1,5 +1,5 @@
 ---
-title: "Kubectl Auth - Control Kubernetes Access | Free DevTools"
+title: "Kubectl Auth - Control Kubernetes Access | Online Free DevTools by Hexmos"
 name: kubectl-auth
 path: /freedevtools/tldr/kubectl/kubectl-auth
 canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-auth/"

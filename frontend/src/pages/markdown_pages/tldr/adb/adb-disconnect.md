@@ -1,5 +1,5 @@
 ---
-title: "ADB Disconnect - Control Device Connections | Free DevTools"
+title: "ADB Disconnect - Control Device Connections | Online Free DevTools by Hexmos"
 name: adb-disconnect
 path: /freedevtools/tldr/adb/adb-disconnect
 canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-disconnect/"

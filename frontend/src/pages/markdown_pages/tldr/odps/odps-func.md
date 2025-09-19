@@ -1,5 +1,5 @@
 ---
-title: "Create ODPS Functions - Manage Data Processing | Free DevTools"
+title: "Create ODPS Functions - Manage Data Processing | Online Free DevTools by Hexmos"
 name: odps-func
 path: /freedevtools/tldr/odps/odps-func
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-func/"

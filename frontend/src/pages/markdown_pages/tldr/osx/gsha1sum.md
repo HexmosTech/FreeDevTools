@@ -1,5 +1,5 @@
 ---
-title: "Generate SHA1 Checksums - gsha1sum on macOS | Free DevTools"
+title: "Generate SHA1 Checksums - gsha1sum on macOS | Online Free DevTools by Hexmos"
 name: gsha1sum
 path: /freedevtools/tldr/osx/gsha1sum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsha1sum/"

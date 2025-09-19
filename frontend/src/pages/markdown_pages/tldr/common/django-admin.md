@@ -1,5 +1,5 @@
 ---
-title: "Django-admin - Control Django Projects | Free DevTools"
+title: "Django-admin - Control Django Projects | Online Free DevTools by Hexmos"
 name: django-admin
 path: /freedevtools/tldr/common/django-admin
 canonical: "https://hexmos.com/freedevtools/tldr/common/django-admin/"

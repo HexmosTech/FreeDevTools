@@ -1,5 +1,5 @@
 ---
-title: "HPing3 Ping - Advanced Network Probing | Free DevTools"
+title: "HPing3 Ping - Advanced Network Probing | Online Free DevTools by Hexmos"
 name: hping3
 path: /freedevtools/tldr/common/hping3
 canonical: "https://hexmos.com/freedevtools/tldr/common/hping3/"

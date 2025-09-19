@@ -1,5 +1,5 @@
 ---
-title: "Crane List - List Container Repository Tags | Free DevTools"
+title: "Crane List - List Container Repository Tags | Online Free DevTools by Hexmos"
 name: crane-ls
 path: /freedevtools/tldr/crane/crane-ls
 canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-ls/"

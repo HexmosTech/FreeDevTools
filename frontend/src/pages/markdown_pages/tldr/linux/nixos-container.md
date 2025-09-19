@@ -1,5 +1,5 @@
 ---
-title: "NixOS Container - Create & Manage Containers | Free DevTools"
+title: "NixOS Container - Create & Manage Containers | Online Free DevTools by Hexmos"
 name: nixos-container
 path: /freedevtools/tldr/linux/nixos-container
 canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-container/"

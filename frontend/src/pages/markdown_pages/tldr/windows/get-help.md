@@ -1,5 +1,5 @@
 ---
-title: "Get-Help - Display PowerShell Help Information | Free DevTools"
+title: "Get-Help - Display PowerShell Help Information | Online Free DevTools by Hexmos"
 name: get-help
 path: /freedevtools/tldr/windows/get-help
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-help/"

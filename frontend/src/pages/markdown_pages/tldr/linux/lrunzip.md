@@ -1,5 +1,5 @@
 ---
-title: "Unzip Files - Decompress Data with Lrunzip | Free DevTools"
+title: "Unzip Files - Decompress Data with Lrunzip | Online Free DevTools by Hexmos"
 name: lrunzip
 path: /freedevtools/tldr/linux/lrunzip
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lrunzip/"

@@ -1,5 +1,5 @@
 ---
-title: "Medusa Brute-forcer - Control Login Attempts | Free DevTools"
+title: "Medusa Brute-forcer - Control Login Attempts | Online Free DevTools by Hexmos"
 name: medusa
 path: /freedevtools/tldr/common/medusa
 canonical: "https://hexmos.com/freedevtools/tldr/common/medusa/"

@@ -1,5 +1,5 @@
 ---
-title: "Minetest Server - Create Minecraft-like Worlds | Free DevTools"
+title: "Minetest Server - Create Minecraft-like Worlds | Online Free DevTools by Hexmos"
 name: minetestserver
 path: /freedevtools/tldr/common/minetestserver
 canonical: "https://hexmos.com/freedevtools/tldr/common/minetestserver/"

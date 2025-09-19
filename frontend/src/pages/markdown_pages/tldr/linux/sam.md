@@ -1,5 +1,5 @@
 ---
-title: "SAM - Deploy Serverless Applications | Free DevTools"
+title: "SAM - Deploy Serverless Applications | Online Free DevTools by Hexmos"
 name: sam
 path: /freedevtools/tldr/linux/sam
 canonical: "https://hexmos.com/freedevtools/tldr/linux/sam/"

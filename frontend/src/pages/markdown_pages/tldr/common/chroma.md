@@ -1,5 +1,5 @@
 ---
-title: "Highlight Syntax - Chroma Code Formatter | Free DevTools"
+title: "Highlight Syntax - Chroma Code Formatter | Online Free DevTools by Hexmos"
 name: chroma
 path: /freedevtools/tldr/common/chroma
 canonical: "https://hexmos.com/freedevtools/tldr/common/chroma/"

@@ -1,5 +1,5 @@
 ---
-title: "Xlsclients - Control X11 Display Clients | Free DevTools"
+title: "Xlsclients - Control X11 Display Clients | Online Free DevTools by Hexmos"
 name: xlsclients
 path: /freedevtools/tldr/common/xlsclients
 canonical: "https://hexmos.com/freedevtools/tldr/common/xlsclients/"

@@ -1,5 +1,5 @@
 ---
-title: "Linux64 - Control 64-bit Architecture | Free DevTools"
+title: "Linux64 - Control 64-bit Architecture | Online Free DevTools by Hexmos"
 name: linux64
 path: /freedevtools/tldr/linux/linux64
 canonical: "https://hexmos.com/freedevtools/tldr/linux/linux64/"

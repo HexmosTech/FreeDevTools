@@ -1,5 +1,5 @@
 ---
-title: "Enable Apache Modules - a2enmod Command | Free DevTools"
+title: "Enable Apache Modules - a2enmod Command | Online Free DevTools by Hexmos"
 name: a2enmod
 path: /freedevtools/tldr/linux/a2enmod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/a2enmod/"

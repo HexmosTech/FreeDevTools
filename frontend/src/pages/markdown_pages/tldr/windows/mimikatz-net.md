@@ -1,5 +1,5 @@
 ---
-title: "Mimikatz Net - Control Domain Access | Free DevTools"
+title: "Mimikatz Net - Control Domain Access | Online Free DevTools by Hexmos"
 name: mimikatz-net
 path: /freedevtools/tldr/windows/mimikatz-net
 canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-net/"

@@ -1,5 +1,5 @@
 ---
-title: "Container Image Manager - Control gcrane Images | Free DevTools"
+title: "Container Image Manager - Control gcrane Images | Online Free DevTools by Hexmos"
 name: gcrane
 path: /freedevtools/tldr/gcrane/gcrane
 canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane/"

@@ -1,5 +1,5 @@
 ---
-title: "Head - Output File Headings | Free DevTools"
+title: "Head - Output File Headings | Online Free DevTools by Hexmos"
 name: head
 path: /freedevtools/tldr/osx/head
 canonical: "https://hexmos.com/freedevtools/tldr/osx/head/"

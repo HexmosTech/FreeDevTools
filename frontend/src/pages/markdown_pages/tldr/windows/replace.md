@@ -1,5 +1,5 @@
 ---
-title: "Replace Files - Manage File Replacement | Free DevTools"
+title: "Replace Files - Manage File Replacement | Online Free DevTools by Hexmos"
 name: replace
 path: /freedevtools/tldr/windows/replace
 canonical: "https://hexmos.com/freedevtools/tldr/windows/replace/"

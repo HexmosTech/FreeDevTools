@@ -1,5 +1,5 @@
 ---
-title: "Configure UPnP Ports - Control Router Ports with upnpc | Free DevTools"
+title: "Configure UPnP Ports - Control Router Ports with upnpc | Online Free DevTools by Hexmos"
 name: upnpc
 path: /freedevtools/tldr/linux/upnpc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/upnpc/"

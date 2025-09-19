@@ -1,5 +1,5 @@
 ---
-title: "Synchronize Time - SNTP Client | Free DevTools"
+title: "Synchronize Time - SNTP Client | Online Free DevTools by Hexmos"
 name: sntp
 path: /freedevtools/tldr/osx/sntp
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sntp/"

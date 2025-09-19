@@ -1,5 +1,5 @@
 ---
-title: "xrandr - Control Screen Resolution | Free DevTools"
+title: "xrandr - Control Screen Resolution | Online Free DevTools by Hexmos"
 name: xrandr
 path: /freedevtools/tldr/linux/xrandr
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xrandr/"

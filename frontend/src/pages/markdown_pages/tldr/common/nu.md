@@ -1,5 +1,5 @@
 ---
-title: "Nushell - Execute Shell Commands | Free DevTools"
+title: "Nushell - Execute Shell Commands | Online Free DevTools by Hexmos"
 name: nu
 path: /freedevtools/tldr/common/nu
 canonical: "https://hexmos.com/freedevtools/tldr/common/nu/"

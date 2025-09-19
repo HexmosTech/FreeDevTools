@@ -1,5 +1,5 @@
 ---
-title: "Convert PGM to FS - Format Image Files | Free DevTools"
+title: "Convert PGM to FS - Format Image Files | Online Free DevTools by Hexmos"
 name: pgmtofs
 path: /freedevtools/tldr/common/pgmtofs
 canonical: "https://hexmos.com/freedevtools/tldr/common/pgmtofs/"

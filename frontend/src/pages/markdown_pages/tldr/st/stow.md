@@ -1,5 +1,5 @@
 ---
-title: "Stow Symlink Manager - Manage Dotfiles | Free DevTools"
+title: "Stow Symlink Manager - Manage Dotfiles | Online Free DevTools by Hexmos"
 name: stow
 path: /freedevtools/tldr/st/stow
 canonical: "https://hexmos.com/freedevtools/tldr/st/stow/"

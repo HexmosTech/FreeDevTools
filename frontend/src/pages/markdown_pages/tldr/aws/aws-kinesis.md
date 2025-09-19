@@ -1,5 +1,5 @@
 ---
-title: "Kinesis Data Streams - Control Streaming Data | Free DevTools"
+title: "Kinesis Data Streams - Control Streaming Data | Online Free DevTools by Hexmos"
 name: aws-kinesis
 path: /freedevtools/tldr/aws/aws-kinesis
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kinesis/"

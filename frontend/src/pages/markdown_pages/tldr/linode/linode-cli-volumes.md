@@ -1,5 +1,5 @@
 ---
-title: "Linode Volumes - Manage Block Storage | Free DevTools"
+title: "Linode Volumes - Manage Block Storage | Online Free DevTools by Hexmos"
 name: linode-cli-volumes
 path: /freedevtools/tldr/linode/linode-cli-volumes
 canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-volumes/"

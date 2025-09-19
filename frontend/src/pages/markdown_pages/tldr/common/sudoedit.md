@@ -1,5 +1,5 @@
 ---
-title: "Sudoedit - Edit Files with Elevated Privileges | Free DevTools"
+title: "Sudoedit - Edit Files with Elevated Privileges | Online Free DevTools by Hexmos"
 name: sudoedit
 path: /freedevtools/tldr/common/sudoedit
 canonical: "https://hexmos.com/freedevtools/tldr/common/sudoedit/"

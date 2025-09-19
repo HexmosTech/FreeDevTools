@@ -1,5 +1,5 @@
 ---
-title: "ODPS Command - Manage Aliyun Data Processing | Free DevTools"
+title: "ODPS Command - Manage Aliyun Data Processing | Online Free DevTools by Hexmos"
 name: odps
 path: /freedevtools/tldr/odps/odps
 canonical: "https://hexmos.com/freedevtools/tldr/odps/odps/"

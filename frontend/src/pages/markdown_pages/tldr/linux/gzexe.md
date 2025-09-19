@@ -1,5 +1,5 @@
 ---
-title: "Compress Executable - Reduce File Size | Free DevTools"
+title: "Compress Executable - Reduce File Size | Online Free DevTools by Hexmos"
 name: gzexe
 path: /freedevtools/tldr/linux/gzexe
 canonical: "https://hexmos.com/freedevtools/tldr/linux/gzexe/"

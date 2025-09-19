@@ -1,5 +1,5 @@
 ---
-title: "Get-Alias - List PowerShell Aliases | Free DevTools"
+title: "Get-Alias - List PowerShell Aliases | Online Free DevTools by Hexmos"
 name: get-alias
 path: /freedevtools/tldr/windows/get-alias
 canonical: "https://hexmos.com/freedevtools/tldr/windows/get-alias/"

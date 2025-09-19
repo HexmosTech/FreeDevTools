@@ -1,5 +1,5 @@
 ---
-title: "Generate sdef - Create Scripting Definitions | Free DevTools"
+title: "Generate sdef - Create Scripting Definitions | Online Free DevTools by Hexmos"
 name: sdef
 path: /freedevtools/tldr/osx/sdef
 canonical: "https://hexmos.com/freedevtools/tldr/osx/sdef/"

@@ -1,5 +1,5 @@
 ---
-title: "PipeWire Config - List Configuration Paths | Free DevTools"
+title: "PipeWire Config - List Configuration Paths | Online Free DevTools by Hexmos"
 name: pw-config
 path: /freedevtools/tldr/linux/pw-config
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-config/"

@@ -1,5 +1,5 @@
 ---
-title: "Auditd - Control Linux Auditing System | Free DevTools"
+title: "Auditd - Control Linux Auditing System | Online Free DevTools by Hexmos"
 name: auditd
 path: /freedevtools/tldr/common/auditd
 canonical: "https://hexmos.com/freedevtools/tldr/common/auditd/"

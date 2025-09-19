@@ -1,5 +1,5 @@
 ---
-title: "Telnet Command - Control Remote Hosts on macOS | Free DevTools"
+title: "Telnet Command - Control Remote Hosts on macOS | Online Free DevTools by Hexmos"
 name: gtelnet
 path: /freedevtools/tldr/osx/gtelnet
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gtelnet/"

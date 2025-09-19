@@ -1,5 +1,5 @@
 ---
-title: "Generate Dice Rolls - Custom Dice Sequences | Free DevTools"
+title: "Generate Dice Rolls - Custom Dice Sequences | Online Free DevTools by Hexmos"
 name: roll
 path: /freedevtools/tldr/common/roll
 canonical: "https://hexmos.com/freedevtools/tldr/common/roll/"

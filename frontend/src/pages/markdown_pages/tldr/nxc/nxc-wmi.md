@@ -1,5 +1,5 @@
 ---
-title: "WMI Pentesting - Exploit WMI with NXC | Free DevTools"
+title: "WMI Pentesting - Exploit WMI with NXC | Online Free DevTools by Hexmos"
 name: nxc-wmi
 path: /freedevtools/tldr/nxc/nxc-wmi
 canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-wmi/"

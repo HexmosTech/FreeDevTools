@@ -1,5 +1,5 @@
 ---
-title: "GPG Card Admin - Manage Smart Cards | Free DevTools"
+title: "GPG Card Admin - Manage Smart Cards | Online Free DevTools by Hexmos"
 name: gpg-card
 path: /freedevtools/tldr/gpg/gpg-card
 canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-card/"

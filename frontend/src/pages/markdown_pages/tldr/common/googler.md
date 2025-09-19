@@ -1,5 +1,5 @@
 ---
-title: "Search Google - Command-Line Search | Free DevTools"
+title: "Search Google - Command-Line Search | Online Free DevTools by Hexmos"
 name: googler
 path: /freedevtools/tldr/common/googler
 canonical: "https://hexmos.com/freedevtools/tldr/common/googler/"

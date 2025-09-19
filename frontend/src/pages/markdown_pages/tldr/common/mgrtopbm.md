@@ -1,5 +1,5 @@
 ---
-title: "Convert MGR to PBM - Image Converter | Free DevTools"
+title: "Convert MGR to PBM - Image Converter | Online Free DevTools by Hexmos"
 name: mgrtopbm
 path: "/freedevtools/tldr/common/mgrtopbm"
 canonical: "https://hexmos.com/freedevtools/tldr/common/mgrtopbm/"

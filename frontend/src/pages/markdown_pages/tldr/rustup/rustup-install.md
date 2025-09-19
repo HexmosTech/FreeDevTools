@@ -1,5 +1,5 @@
 ---
-title: "Rustup Install - Manage Rust Toolchains | Free DevTools"
+title: "Rustup Install - Manage Rust Toolchains | Online Free DevTools by Hexmos"
 name: rustup-install
 path: /freedevtools/tldr/rustup/rustup-install
 canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-install/"

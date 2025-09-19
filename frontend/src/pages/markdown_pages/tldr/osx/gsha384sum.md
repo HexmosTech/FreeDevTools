@@ -1,5 +1,5 @@
 ---
-title: "Generate SHA384 Checksum - gsha384sum | Free DevTools"
+title: "Generate SHA384 Checksum - gsha384sum | Online Free DevTools by Hexmos"
 name: gsha384sum
 path: /freedevtools/tldr/osx/gsha384sum
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gsha384sum/"

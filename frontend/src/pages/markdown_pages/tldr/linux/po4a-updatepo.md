@@ -1,5 +1,5 @@
 ---
-title: "PO File Updater - Update PO Files | Free DevTools"
+title: "PO File Updater - Update PO Files | Online Free DevTools by Hexmos"
 name: po4a-updatepo
 path: /freedevtools/tldr/linux/po4a-updatepo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a-updatepo/"

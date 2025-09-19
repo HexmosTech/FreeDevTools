@@ -1,5 +1,5 @@
 ---
-title: "Send HTTP Requests - Curlie CLI | Free DevTools"
+title: "Send HTTP Requests - Curlie CLI | Online Free DevTools by Hexmos"
 name: curlie
 path: /freedevtools/tldr/linux/curlie
 canonical: "https://hexmos.com/freedevtools/tldr/linux/curlie/"

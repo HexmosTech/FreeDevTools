@@ -1,5 +1,5 @@
 ---
-title: "Einfo - Retrieve Entrez Database Information | Free DevTools"
+title: "Einfo - Retrieve Entrez Database Information | Online Free DevTools by Hexmos"
 name: einfo
 path: /freedevtools/tldr/linux/einfo
 canonical: "https://hexmos.com/freedevtools/tldr/linux/einfo/"

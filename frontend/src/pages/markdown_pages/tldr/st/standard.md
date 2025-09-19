@@ -1,5 +1,5 @@
 ---
-title: "Standard Lint - Validate JavaScript Code Style | Free DevTools"
+title: "Standard Lint - Validate JavaScript Code Style | Online Free DevTools by Hexmos"
 name: standard
 path: /freedevtools/tldr/st/standard
 canonical: "https://hexmos.com/freedevtools/tldr/st/standard/"

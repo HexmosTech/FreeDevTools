@@ -1,5 +1,5 @@
 ---
-title: "Control rbash Shell - Restrict Bash Commands | Free DevTools"
+title: "Control rbash Shell - Restrict Bash Commands | Online Free DevTools by Hexmos"
 name: rbash
 path: /freedevtools/tldr/common/rbash
 canonical: "https://hexmos.com/freedevtools/tldr/common/rbash/"

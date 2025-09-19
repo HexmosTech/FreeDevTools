@@ -1,5 +1,5 @@
 ---
-title: "Command Corrector - Correct Console Commands | Free DevTools"
+title: "Command Corrector - Correct Console Commands | Online Free DevTools by Hexmos"
 name: fuck
 path: /freedevtools/tldr/common/fuck
 canonical: "https://hexmos.com/freedevtools/tldr/common/fuck/"

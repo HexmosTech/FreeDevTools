@@ -1,5 +1,5 @@
 ---
-title: "MPI Run - Execute Parallel Jobs | Free DevTools"
+title: "MPI Run - Execute Parallel Jobs | Online Free DevTools by Hexmos"
 name: mpirun
 path: /freedevtools/tldr/common/mpirun
 canonical: "https://hexmos.com/freedevtools/tldr/common/mpirun/"

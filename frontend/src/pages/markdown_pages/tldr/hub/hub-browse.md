@@ -1,5 +1,5 @@
 ---
-title: "GitHub Browser - Open Repositories in Browser | Free DevTools"
+title: "GitHub Browser - Open Repositories in Browser | Online Free DevTools by Hexmos"
 name: hub-browse
 path: /freedevtools/tldr/hub/hub-browse
 canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-browse/"

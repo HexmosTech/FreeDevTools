@@ -1,5 +1,5 @@
 ---
-title: "Unlock Git File - Enable Commit Access | Free DevTools"
+title: "Unlock Git File - Enable Commit Access | Online Free DevTools by Hexmos"
 name: git-unlock
 path: /freedevtools/tldr/git/git-unlock
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-unlock/"

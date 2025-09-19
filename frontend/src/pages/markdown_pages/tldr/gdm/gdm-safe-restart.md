@@ -1,5 +1,5 @@
 ---
-title: "GDM Restart - Safely Restart GNOME Display Manager | Free DevTools"
+title: "GDM Restart - Safely Restart GNOME Display Manager | Online Free DevTools by Hexmos"
 name: gdm-safe-restart
 path: /freedevtools/tldr/gdm/gdm-safe-restart
 canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-safe-restart/"

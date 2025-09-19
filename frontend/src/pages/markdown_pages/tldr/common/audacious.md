@@ -1,5 +1,5 @@
 ---
-title: "Control Audio Playback - Audacious Player | Free DevTools"
+title: "Control Audio Playback - Audacious Player | Online Free DevTools by Hexmos"
 name: audacious
 path: /freedevtools/tldr/common/audacious
 canonical: "https://hexmos.com/freedevtools/tldr/common/audacious/"

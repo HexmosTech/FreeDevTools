@@ -1,5 +1,5 @@
 ---
-title: "Databases SQL Mode - Control MySQL SQL Modes | Free DevTools"
+title: "Databases SQL Mode - Control MySQL SQL Modes | Online Free DevTools by Hexmos"
 name: doctl-databases-sql-mode
 path: /freedevtools/tldr/doctl/doctl-databases-sql-mode
 canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-sql-mode/"

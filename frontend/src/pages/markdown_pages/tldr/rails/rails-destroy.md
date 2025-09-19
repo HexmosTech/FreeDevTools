@@ -1,5 +1,5 @@
 ---
-title: "Rails Destroy - Remove Rails Resources | Free DevTools"
+title: "Rails Destroy - Remove Rails Resources | Online Free DevTools by Hexmos"
 name: rails-destroy
 path: /freedevtools/tldr/rails/rails-destroy
 canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-destroy/"

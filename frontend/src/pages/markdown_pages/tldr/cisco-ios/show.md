@@ -1,5 +1,5 @@
 ---
-title: "Cisco Show - Display System Info | Free DevTools"
+title: "Cisco Show - Display System Info | Online Free DevTools by Hexmos"
 name: show
 path: /freedevtools/tldr/cisco-ios/show
 canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/show/"

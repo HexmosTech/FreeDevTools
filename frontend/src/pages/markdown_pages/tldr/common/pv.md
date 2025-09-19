@@ -1,5 +1,5 @@
 ---
-title: "Monitor Progress - Control Data Flow with pv | Free DevTools"
+title: "Monitor Progress - Control Data Flow with pv | Online Free DevTools by Hexmos"
 name: pv
 path: /freedevtools/tldr/common/pv
 canonical: "https://hexmos.com/freedevtools/tldr/common/pv/"

@@ -1,5 +1,5 @@
 ---
-title: "Copy Clipboard - Control Wayland Clipboard | Free DevTools"
+title: "Copy Clipboard - Control Wayland Clipboard | Online Free DevTools by Hexmos"
 name: wl-copy
 path: /freedevtools/tldr/linux/wl-copy
 canonical: "https://hexmos.com/freedevtools/tldr/linux/wl-copy/"

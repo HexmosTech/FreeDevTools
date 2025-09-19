@@ -1,5 +1,5 @@
 ---
-title: "Convert Units - Calculate with GUNITS | Free DevTools"
+title: "Convert Units - Calculate with GUNITS | Online Free DevTools by Hexmos"
 name: gunits
 path: /freedevtools/tldr/osx/gunits
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gunits/"

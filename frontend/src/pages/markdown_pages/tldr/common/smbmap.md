@@ -1,5 +1,5 @@
 ---
-title: "Enumerate Samba Shares - Scan SMB Drives | Free DevTools"
+title: "Enumerate Samba Shares - Scan SMB Drives | Online Free DevTools by Hexmos"
 name: smbmap
 path: /freedevtools/tldr/common/smbmap
 canonical: "https://hexmos.com/freedevtools/tldr/common/smbmap/"

@@ -1,5 +1,5 @@
 ---
-title: "Ifup Enable - Control Network Interfaces | Free DevTools"
+title: "Ifup Enable - Control Network Interfaces | Online Free DevTools by Hexmos"
 name: ifup
 path: "/freedevtools/tldr/linux/ifup"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ifup/"

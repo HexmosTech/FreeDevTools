@@ -1,5 +1,5 @@
 ---
-title: "Samtools - Manage Genomics Data | Free DevTools"
+title: "Samtools - Manage Genomics Data | Online Free DevTools by Hexmos"
 name: samtools
 path: /freedevtools/tldr/common/samtools
 canonical: "https://hexmos.com/freedevtools/tldr/common/samtools/"

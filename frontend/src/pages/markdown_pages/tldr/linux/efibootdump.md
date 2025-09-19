@@ -1,5 +1,5 @@
 ---
-title: "Dump Boot Entries - EFI Boot Dump Utility | Free DevTools"
+title: "Dump Boot Entries - EFI Boot Dump Utility | Online Free DevTools by Hexmos"
 name: efibootdump
 path: /freedevtools/tldr/linux/efibootdump
 canonical: "https://hexmos.com/freedevtools/tldr/linux/efibootdump/"

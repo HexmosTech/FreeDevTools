@@ -1,5 +1,5 @@
 ---
-title: "Remote Viewer - Control Desktops Remotely | Free DevTools"
+title: "Remote Viewer - Control Desktops Remotely | Online Free DevTools by Hexmos"
 name: remote-viewer
 path: /freedevtools/tldr/linux/remote-viewer
 canonical: "https://hexmos.com/freedevtools/tldr/linux/remote-viewer/"

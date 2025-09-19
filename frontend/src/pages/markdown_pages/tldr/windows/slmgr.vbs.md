@@ -1,5 +1,5 @@
 ---
-title: "Manage Windows Licenses - Control Activation with slmgr.vbs | Free DevTools"
+title: "Manage Windows Licenses - Control Activation with slmgr.vbs | Online Free DevTools by Hexmos"
 name: slmgr.vbs
 path: /freedevtools/tldr/windows/slmgr.vbs
 canonical: "https://hexmos.com/freedevtools/tldr/windows/slmgr.vbs/"

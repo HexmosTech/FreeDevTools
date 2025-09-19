@@ -1,5 +1,5 @@
 ---
-title: "JJ Evolog - Track Change Evolution | Free DevTools"
+title: "JJ Evolog - Track Change Evolution | Online Free DevTools by Hexmos"
 name: jj-evolog
 path: /freedevtools/tldr/jj/jj-evolog
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-evolog/"

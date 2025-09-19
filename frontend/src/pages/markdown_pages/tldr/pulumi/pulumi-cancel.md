@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Cancel - Stop Stack Updates | Free DevTools"
+title: "Pulumi Cancel - Stop Stack Updates | Online Free DevTools by Hexmos"
 name: pulumi-cancel
 path: /freedevtools/tldr/pulumi/pulumi-cancel
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-cancel/"

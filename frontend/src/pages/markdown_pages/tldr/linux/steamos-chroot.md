@@ -1,5 +1,5 @@
 ---
-title: "SteamOS Chroot - Switch Root Directories | Free DevTools"
+title: "SteamOS Chroot - Switch Root Directories | Online Free DevTools by Hexmos"
 name: steamos-chroot
 path: /freedevtools/tldr/linux/steamos-chroot
 canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-chroot/"

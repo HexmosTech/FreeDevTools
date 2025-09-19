@@ -1,5 +1,5 @@
 ---
-title: "Control Dolt Status - Database Session | Free DevTools"
+title: "Control Dolt Status - Database Session | Online Free DevTools by Hexmos"
 name: dolt-status
 path: /freedevtools/tldr/dolt/dolt-status
 canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-status/"

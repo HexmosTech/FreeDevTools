@@ -1,5 +1,5 @@
 ---
-title: "Eclean - Clean Package Files on Linux | Free DevTools"
+title: "Eclean - Clean Package Files on Linux | Online Free DevTools by Hexmos"
 name: eclean
 path: /freedevtools/tldr/linux/eclean
 canonical: "https://hexmos.com/freedevtools/tldr/linux/eclean/"

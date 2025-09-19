@@ -1,5 +1,5 @@
 ---
-title: "elink Command - Link NCBI Databases | Free DevTools"
+title: "elink Command - Link NCBI Databases | Online Free DevTools by Hexmos"
 name: elink
 path: /freedevtools/tldr/linux/elink
 canonical: "https://hexmos.com/freedevtools/tldr/linux/elink/"

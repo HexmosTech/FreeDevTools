@@ -1,5 +1,5 @@
 ---
-title: "Fix PHP Code - Correct Coding Standards with phpcbf | Free DevTools"
+title: "Fix PHP Code - Correct Coding Standards with phpcbf | Online Free DevTools by Hexmos"
 name: phpcbf
 path: /freedevtools/tldr/php/phpcbf
 canonical: "https://hexmos.com/freedevtools/tldr/php/phpcbf/"

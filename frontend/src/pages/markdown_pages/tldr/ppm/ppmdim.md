@@ -1,5 +1,5 @@
 ---
-title: "Dim PPM Image - Adjust Pixel Brightness | Free DevTools"
+title: "Dim PPM Image - Adjust Pixel Brightness | Online Free DevTools by Hexmos"
 name: ppmdim
 path: /freedevtools/tldr/ppm/ppmdim
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmdim/"

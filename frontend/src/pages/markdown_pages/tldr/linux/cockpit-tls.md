@@ -1,5 +1,5 @@
 ---
-title: "Control Cockpit TLS - Encrypt Traffic | Free DevTools"
+title: "Control Cockpit TLS - Encrypt Traffic | Online Free DevTools by Hexmos"
 name: cockpit-tls
 path: "/freedevtools/tldr/linux/cockpit-tls"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-tls/"

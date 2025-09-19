@@ -1,5 +1,5 @@
 ---
-title: "Create Mask Bitmap - PBM Mask Generator | Free DevTools"
+title: "Create Mask Bitmap - PBM Mask Generator | Online Free DevTools by Hexmos"
 name: pbmmask
 path: /freedevtools/tldr/common/pbmmask
 canonical: "https://hexmos.com/freedevtools/tldr/common/pbmmask/"

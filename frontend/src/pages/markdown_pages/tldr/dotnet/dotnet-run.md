@@ -1,5 +1,5 @@
 ---
-title: "Dotnet Run - Execute .NET Projects | Free DevTools"
+title: "Dotnet Run - Execute .NET Projects | Online Free DevTools by Hexmos"
 name: dotnet-run
 path: /freedevtools/tldr/dotnet/dotnet-run
 canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-run/"

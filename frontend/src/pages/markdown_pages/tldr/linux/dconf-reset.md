@@ -1,5 +1,5 @@
 ---
-title: "dconf Reset - Reset dconf Values | Free DevTools"
+title: "dconf Reset - Reset dconf Values | Online Free DevTools by Hexmos"
 name: dconf-reset
 path: /freedevtools/tldr/linux/dconf-reset
 canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf-reset/"

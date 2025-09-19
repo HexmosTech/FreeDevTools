@@ -1,5 +1,5 @@
 ---
-title: "Finch Messaging Client - Control Linux Messages | Free DevTools"
+title: "Finch Messaging Client - Control Linux Messages | Online Free DevTools by Hexmos"
 name: finch
 path: /freedevtools/tldr/linux/finch
 canonical: "https://hexmos.com/freedevtools/tldr/linux/finch/"

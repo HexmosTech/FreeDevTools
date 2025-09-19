@@ -1,5 +1,5 @@
 ---
-title: "ip6tables-save - Manage IPv6 Firewall Rules | Free DevTools"
+title: "ip6tables-save - Manage IPv6 Firewall Rules | Online Free DevTools by Hexmos"
 name: ip6tables-save
 path: /freedevtools/tldr/linux/ip6tables-save
 canonical: "https://hexmos.com/freedevtools/tldr/linux/ip6tables-save/"

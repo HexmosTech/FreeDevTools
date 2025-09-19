@@ -1,5 +1,5 @@
 ---
-title: "Reserve PipeWire Devices - Control Audio with pw-reserve | Free DevTools"
+title: "Reserve PipeWire Devices - Control Audio with pw-reserve | Online Free DevTools by Hexmos"
 name: pw-reserve
 path: /freedevtools/tldr/linux/pw-reserve
 canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-reserve/"

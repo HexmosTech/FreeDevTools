@@ -1,5 +1,5 @@
 ---
-title: "Git Check-Attr - Inspect File Attributes | Free DevTools"
+title: "Git Check-Attr - Inspect File Attributes | Online Free DevTools by Hexmos"
 name: git-check-attr
 path: /freedevtools/tldr/git/git-check-attr
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-check-attr/"

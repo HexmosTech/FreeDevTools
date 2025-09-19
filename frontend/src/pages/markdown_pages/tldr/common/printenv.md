@@ -1,5 +1,5 @@
 ---
-title: "Print Environment - Display Variables | Free DevTools"
+title: "Print Environment - Display Variables | Online Free DevTools by Hexmos"
 name: printenv
 path: /freedevtools/tldr/common/printenv
 canonical: "https://hexmos.com/freedevtools/tldr/common/printenv/"

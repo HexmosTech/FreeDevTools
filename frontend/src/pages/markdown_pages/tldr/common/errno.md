@@ -1,5 +1,5 @@
 ---
-title: "Lookup Errno - Find Error Codes and Descriptions | Free DevTools"
+title: "Lookup Errno - Find Error Codes and Descriptions | Online Free DevTools by Hexmos"
 name: errno
 path: /freedevtools/tldr/common/errno
 canonical: "https://hexmos.com/freedevtools/tldr/common/errno/"

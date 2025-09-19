@@ -1,5 +1,5 @@
 ---
-title: "AWS Kafka - Manage MSK Clusters | Free DevTools"
+title: "AWS Kafka - Manage MSK Clusters | Online Free DevTools by Hexmos"
 name: aws-kafka
 path: /freedevtools/tldr/aws/aws-kafka
 canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kafka/"

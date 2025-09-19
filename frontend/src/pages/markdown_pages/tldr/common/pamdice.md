@@ -1,5 +1,5 @@
 ---
-title: "Slice Netpbm Image - Control Image Tiles | Free DevTools"
+title: "Slice Netpbm Image - Control Image Tiles | Online Free DevTools by Hexmos"
 name: pamdice
 path: /freedevtools/tldr/common/pamdice
 canonical: "https://hexmos.com/freedevtools/tldr/common/pamdice/"

@@ -1,5 +1,5 @@
 ---
-title: "Btrfs Check - Repair Filesystems | Free DevTools"
+title: "Btrfs Check - Repair Filesystems | Online Free DevTools by Hexmos"
 name: btrfs-check
 path: /freedevtools/tldr/linux/btrfs-check
 canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-check/"

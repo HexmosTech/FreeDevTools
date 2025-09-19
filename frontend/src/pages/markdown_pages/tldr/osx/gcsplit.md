@@ -1,5 +1,5 @@
 ---
-title: "GCSplit - Split Files into Chunks | Free DevTools"
+title: "GCSplit - Split Files into Chunks | Online Free DevTools by Hexmos"
 name: gcsplit
 path: /freedevtools/tldr/osx/gcsplit
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gcsplit/"

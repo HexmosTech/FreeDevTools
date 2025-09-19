@@ -1,5 +1,5 @@
 ---
-title: "Format Rust Code - Instantly Improve Code Style | Free DevTools"
+title: "Format Rust Code - Instantly Improve Code Style | Online Free DevTools by Hexmos"
 name: rustfmt
 path: /freedevtools/tldr/common/rustfmt
 canonical: "https://hexmos.com/freedevtools/tldr/common/rustfmt/"

@@ -1,5 +1,5 @@
 ---
-title: "Android SDK Manager - Install Packages | Free DevTools"
+title: "Android SDK Manager - Install Packages | Online Free DevTools by Hexmos"
 name: sdkmanager
 path: /freedevtools/tldr/common/sdkmanager
 canonical: "https://hexmos.com/freedevtools/tldr/common/sdkmanager/"

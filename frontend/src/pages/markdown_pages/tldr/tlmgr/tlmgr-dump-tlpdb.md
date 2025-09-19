@@ -1,5 +1,5 @@
 ---
-title: "Dump TLPDB - Generate TeX Live Database | Free DevTools"
+title: "Dump TLPDB - Generate TeX Live Database | Online Free DevTools by Hexmos"
 name: tlmgr-dump-tlpdb
 path: /freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage Bookmarks - Control Browser Bookmarks with Buku | Free DevTools"
+title: "Manage Bookmarks - Control Browser Bookmarks with Buku | Online Free DevTools by Hexmos"
 name: buku
 path: /freedevtools/tldr/common/buku
 canonical: "https://hexmos.com/freedevtools/tldr/common/buku/"

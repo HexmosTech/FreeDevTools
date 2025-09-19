@@ -1,5 +1,5 @@
 ---
-title: "Smartctl - Monitor Disk Health & SMART Data | Free DevTools"
+title: "Smartctl - Monitor Disk Health & SMART Data | Online Free DevTools by Hexmos"
 name: smartctl
 path: /freedevtools/tldr/common/smartctl
 canonical: "https://hexmos.com/freedevtools/tldr/common/smartctl/"

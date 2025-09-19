@@ -1,5 +1,5 @@
 ---
-title: "GPing - Network Ping Monitoring | Free DevTools"
+title: "GPing - Network Ping Monitoring | Online Free DevTools by Hexmos"
 name: gping
 path: /freedevtools/tldr/osx/gping
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gping/"

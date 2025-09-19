@@ -1,5 +1,5 @@
 ---
-title: "Generate Ruby Documentation - YARD | Free DevTools"
+title: "Generate Ruby Documentation - YARD | Online Free DevTools by Hexmos"
 name: yard
 path: /freedevtools/tldr/common/yard
 canonical: "https://hexmos.com/freedevtools/tldr/common/yard/"

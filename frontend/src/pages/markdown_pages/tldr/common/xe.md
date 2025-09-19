@@ -1,5 +1,5 @@
 ---
-title: "Execute Command - Control Process Execution with xe | Free DevTools"
+title: "Execute Command - Control Process Execution with xe | Online Free DevTools by Hexmos"
 name: xe
 path: /freedevtools/tldr/common/xe
 canonical: "https://hexmos.com/freedevtools/tldr/common/xe/"

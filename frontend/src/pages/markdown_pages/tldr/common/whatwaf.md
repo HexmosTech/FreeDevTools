@@ -1,5 +1,5 @@
 ---
-title: "Detect WAF - Detect Web Application Firewalls | Free DevTools"
+title: "Detect WAF - Detect Web Application Firewalls | Online Free DevTools by Hexmos"
 name: whatwaf
 path: /freedevtools/tldr/common/whatwaf
 canonical: "https://hexmos.com/freedevtools/tldr/common/whatwaf/"

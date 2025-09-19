@@ -1,5 +1,5 @@
 ---
-title: "Go - Manage Go Source Code | Free DevTools"
+title: "Go - Manage Go Source Code | Online Free DevTools by Hexmos"
 name: go
 path: /freedevtools/tldr/common/go
 canonical: "https://hexmos.com/freedevtools/tldr/common/go/"

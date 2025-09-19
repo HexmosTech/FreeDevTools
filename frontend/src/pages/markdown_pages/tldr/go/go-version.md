@@ -1,5 +1,5 @@
 ---
-title: "Display Go Version - Check Go Version Online | Free DevTools"
+title: "Display Go Version - Check Go Version Online | Online Free DevTools by Hexmos"
 name: go-version
 path: /freedevtools/tldr/go/go-version
 canonical: "https://hexmos.com/freedevtools/tldr/go/go-version/"

@@ -1,5 +1,5 @@
 ---
-title: "Control kdialog - Display KDE Dialogs | Free DevTools"
+title: "Control kdialog - Display KDE Dialogs | Online Free DevTools by Hexmos"
 name: kdialog
 path: "/freedevtools/tldr/linux/kdialog"
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kdialog/"

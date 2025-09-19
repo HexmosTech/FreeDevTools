@@ -1,5 +1,5 @@
 ---
-title: "Hledger-web - Manage Accounts | Free DevTools"
+title: "Hledger-web - Manage Accounts | Online Free DevTools by Hexmos"
 name: hledger-web
 path: /freedevtools/tldr/hledger/hledger-web
 canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-web/"

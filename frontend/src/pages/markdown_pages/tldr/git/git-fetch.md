@@ -1,5 +1,5 @@
 ---
-title: "Git Fetch - Download Objects | Free DevTools"
+title: "Git Fetch - Download Objects | Online Free DevTools by Hexmos"
 name: git-fetch
 path: /freedevtools/tldr/git/git-fetch
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-fetch/"

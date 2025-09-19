@@ -1,5 +1,5 @@
 ---
-title: "View Manual Pages - xman Command | Free DevTools"
+title: "View Manual Pages - xman Command | Online Free DevTools by Hexmos"
 name: xman
 path: /freedevtools/tldr/linux/xman
 canonical: "https://hexmos.com/freedevtools/tldr/linux/xman/"

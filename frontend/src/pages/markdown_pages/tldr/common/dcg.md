@@ -1,5 +1,5 @@
 ---
-title: "Generate Drupal Code - DCG | Free DevTools"
+title: "Generate Drupal Code - DCG | Online Free DevTools by Hexmos"
 name: dcg
 path: /freedevtools/tldr/common/dcg
 canonical: "https://hexmos.com/freedevtools/tldr/common/dcg/"

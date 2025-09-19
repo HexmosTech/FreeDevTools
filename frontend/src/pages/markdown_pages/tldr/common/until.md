@@ -1,5 +1,5 @@
 ---
-title: "Control Shell Loop - Repeat Commands Until Zero | Free DevTools"
+title: "Control Shell Loop - Repeat Commands Until Zero | Online Free DevTools by Hexmos"
 name: until
 path: /freedevtools/tldr/common/until
 canonical: "https://hexmos.com/freedevtools/tldr/common/until/"

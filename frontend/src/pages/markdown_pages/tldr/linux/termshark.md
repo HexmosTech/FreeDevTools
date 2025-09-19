@@ -1,5 +1,5 @@
 ---
-title: "Control Network Traffic - Termshark Packet Analysis | Free DevTools"
+title: "Control Network Traffic - Termshark Packet Analysis | Online Free DevTools by Hexmos"
 name: termshark
 path: /freedevtools/tldr/linux/termshark
 canonical: "https://hexmos.com/freedevtools/tldr/linux/termshark/"

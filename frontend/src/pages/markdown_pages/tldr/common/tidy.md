@@ -1,5 +1,5 @@
 ---
-title: "Tidy - Format HTML and XML Files | Free DevTools"
+title: "Tidy - Format HTML and XML Files | Online Free DevTools by Hexmos"
 name: tidy
 path: /freedevtools/tldr/common/tidy
 canonical: "https://hexmos.com/freedevtools/tldr/common/tidy/"

@@ -1,5 +1,5 @@
 ---
-title: "Clip-view - Render CLI Pages | Free DevTools"
+title: "Clip-view - Render CLI Pages | Online Free DevTools by Hexmos"
 name: clip-view
 path: "/freedevtools/tldr/common/clip-view"
 canonical: "https://hexmos.com/freedevtools/tldr/common/clip-view/"

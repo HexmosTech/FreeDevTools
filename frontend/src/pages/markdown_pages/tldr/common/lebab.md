@@ -1,5 +1,5 @@
 ---
-title: "Lebab Modernizer - Transpile JavaScript ES6/ES7 | Free DevTools"
+title: "Lebab Modernizer - Transpile JavaScript ES6/ES7 | Online Free DevTools by Hexmos"
 name: lebab
 path: /freedevtools/tldr/common/lebab
 canonical: "https://hexmos.com/freedevtools/tldr/common/lebab/"

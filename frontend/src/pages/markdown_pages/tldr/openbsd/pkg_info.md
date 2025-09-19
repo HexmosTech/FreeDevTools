@@ -1,5 +1,5 @@
 ---
-title: "List Packages - View OpenBSD Packages with pkg_info | Free DevTools"
+title: "List Packages - View OpenBSD Packages with pkg_info | Online Free DevTools by Hexmos"
 name: pkg_info
 path: /freedevtools/tldr/openbsd/pkg_info
 canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg_info/"

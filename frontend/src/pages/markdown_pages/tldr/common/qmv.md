@@ -1,5 +1,5 @@
 ---
-title: "Qmv - Move Files Easily | Free DevTools"
+title: "Qmv - Move Files Easily | Online Free DevTools by Hexmos"
 name: qmv
 path: /freedevtools/tldr/common/qmv
 canonical: "https://hexmos.com/freedevtools/tldr/common/qmv/"

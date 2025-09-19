@@ -1,5 +1,5 @@
 ---
-title: "Control Travis CI - Interface with CLI | Free DevTools"
+title: "Control Travis CI - Interface with CLI | Online Free DevTools by Hexmos"
 name: travis
 path: /freedevtools/tldr/common/travis
 canonical: "https://hexmos.com/freedevtools/tldr/common/travis/"

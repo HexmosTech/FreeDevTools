@@ -1,5 +1,5 @@
 ---
-title: "Pulumi Environment - Generate Information | Free DevTools"
+title: "Pulumi Environment - Generate Information | Online Free DevTools by Hexmos"
 name: pulumi-about
 path: /freedevtools/tldr/pulumi/pulumi-about
 canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-about/"

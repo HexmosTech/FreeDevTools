@@ -1,5 +1,5 @@
 ---
-title: "Control Chroot - Manage Root Directories | Free DevTools"
+title: "Control Chroot - Manage Root Directories | Online Free DevTools by Hexmos"
 name: gchroot
 path: /freedevtools/tldr/osx/gchroot
 canonical: "https://hexmos.com/freedevtools/tldr/osx/gchroot/"

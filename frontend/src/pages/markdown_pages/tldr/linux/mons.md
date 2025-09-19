@@ -1,5 +1,5 @@
 ---
-title: "Manage Displays - Control Linux Monitors with Mons | Free DevTools"
+title: "Manage Displays - Control Linux Monitors with Mons | Online Free DevTools by Hexmos"
 name: mons
 path: /freedevtools/tldr/linux/mons
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mons/"

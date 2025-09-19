@@ -1,5 +1,5 @@
 ---
-title: "Generate Code with Aider - AI Pair Programming | Free DevTools"
+title: "Generate Code with Aider - AI Pair Programming | Online Free DevTools by Hexmos"
 name: aider
 path: /freedevtools/tldr/common/aider
 canonical: "https://hexmos.com/freedevtools/tldr/common/aider/"

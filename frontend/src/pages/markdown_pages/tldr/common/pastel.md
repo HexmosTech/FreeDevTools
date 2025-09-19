@@ -1,5 +1,5 @@
 ---
-title: "Generate Colors - Pastel Color Tool | Free DevTools"
+title: "Generate Colors - Pastel Color Tool | Online Free DevTools by Hexmos"
 name: pastel
 path: /freedevtools/tldr/common/pastel
 canonical: "https://hexmos.com/freedevtools/tldr/common/pastel/"

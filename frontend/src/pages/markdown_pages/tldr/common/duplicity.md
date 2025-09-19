@@ -1,5 +1,5 @@
 ---
-title: "Create Backups with Duplicity - Encrypted & Versioned | Free DevTools"
+title: "Create Backups with Duplicity - Encrypted & Versioned | Online Free DevTools by Hexmos"
 name: duplicity
 path: "/freedevtools/tldr/common/duplicity"
 canonical: "https://hexmos.com/freedevtools/tldr/common/duplicity/"

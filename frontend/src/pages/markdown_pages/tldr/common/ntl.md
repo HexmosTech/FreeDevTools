@@ -1,5 +1,5 @@
 ---
-title: "Netlify CLI - Control Netlify Deployments | Free DevTools"
+title: "Netlify CLI - Control Netlify Deployments | Online Free DevTools by Hexmos"
 name: ntl
 path: /freedevtools/tldr/common/ntl
 canonical: "https://hexmos.com/freedevtools/tldr/common/ntl/"

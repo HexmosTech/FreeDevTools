@@ -1,5 +1,5 @@
 ---
-title: "Partition Disk - Format Volumes with Diskutil on OSX | Free DevTools"
+title: "Partition Disk - Format Volumes with Diskutil on OSX | Online Free DevTools by Hexmos"
 name: diskutil-partitiondisk
 path: /freedevtools/tldr/osx/diskutil-partitiondisk
 canonical: "https://hexmos.com/freedevtools/tldr/osx/diskutil-partitiondisk/"

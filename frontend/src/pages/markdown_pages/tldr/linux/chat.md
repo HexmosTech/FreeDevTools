@@ -1,5 +1,5 @@
 ---
-title: "Automate Chat - Control Serial Device Conversations | Free DevTools"
+title: "Automate Chat - Control Serial Device Conversations | Online Free DevTools by Hexmos"
 name: chat
 path: /freedevtools/tldr/linux/chat
 canonical: "https://hexmos.com/freedevtools/tldr/linux/chat/"

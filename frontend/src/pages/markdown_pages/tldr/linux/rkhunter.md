@@ -1,5 +1,5 @@
 ---
-title: "Scan for Rootkits - Control Malware with rkhunter | Free DevTools"
+title: "Scan for Rootkits - Control Malware with rkhunter | Online Free DevTools by Hexmos"
 name: rkhunter
 path: /freedevtools/tldr/linux/rkhunter
 canonical: "https://hexmos.com/freedevtools/tldr/linux/rkhunter/"

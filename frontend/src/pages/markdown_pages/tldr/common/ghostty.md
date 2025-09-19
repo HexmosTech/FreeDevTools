@@ -1,5 +1,5 @@
 ---
-title: "Ghostty Terminal - Control Cross-Platform Terminal | Free DevTools"
+title: "Ghostty Terminal - Control Cross-Platform Terminal | Online Free DevTools by Hexmos"
 name: ghostty
 path: /freedevtools/tldr/common/ghostty
 canonical: "https://hexmos.com/freedevtools/tldr/common/ghostty/"

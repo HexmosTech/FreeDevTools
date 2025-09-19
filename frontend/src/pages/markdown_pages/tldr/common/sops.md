@@ -1,5 +1,5 @@
 ---
-title: "SOPS Secrets Manager - Encrypt and Decrypt Secrets | Free DevTools"
+title: "SOPS Secrets Manager - Encrypt and Decrypt Secrets | Online Free DevTools by Hexmos"
 name: sops
 path: "/freedevtools/tldr/common/sops"
 canonical: "https://hexmos.com/freedevtools/tldr/common/sops/"

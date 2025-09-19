@@ -1,5 +1,5 @@
 ---
-title: "Drutil - Interact with DVD Burners | Free DevTools"
+title: "Drutil - Interact with DVD Burners | Online Free DevTools by Hexmos"
 name: drutil
 path: /freedevtools/tldr/osx/drutil
 canonical: "https://hexmos.com/freedevtools/tldr/osx/drutil/"

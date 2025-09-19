@@ -1,5 +1,5 @@
 ---
-title: "Zipgrep - Search Zip Files with Regex | Free DevTools"
+title: "Zipgrep - Search Zip Files with Regex | Online Free DevTools by Hexmos"
 name: zipgrep
 path: /freedevtools/tldr/common/zipgrep
 canonical: "https://hexmos.com/freedevtools/tldr/common/zipgrep/"

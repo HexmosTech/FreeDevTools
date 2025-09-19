@@ -1,5 +1,5 @@
 ---
-title: "Helm Install - Deploy Charts | Free DevTools"
+title: "Helm Install - Deploy Charts | Online Free DevTools by Hexmos"
 name: helm-install
 path: /freedevtools/tldr/common/helm-install
 canonical: "https://hexmos.com/freedevtools/tldr/common/helm-install/"

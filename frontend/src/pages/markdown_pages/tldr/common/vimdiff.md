@@ -1,5 +1,5 @@
 ---
-title: "Vimdiff - Compare Files | Free DevTools"
+title: "Vimdiff - Compare Files | Online Free DevTools by Hexmos"
 name: vimdiff
 path: /freedevtools/tldr/common/vimdiff
 canonical: "https://hexmos.com/freedevtools/tldr/common/vimdiff/"

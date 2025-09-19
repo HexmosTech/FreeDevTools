@@ -1,5 +1,5 @@
 ---
-title: "Tarsnap Backup - Control Encrypted Archives | Free DevTools"
+title: "Tarsnap Backup - Control Encrypted Archives | Online Free DevTools by Hexmos"
 name: tarsnap
 path: "/freedevtools/tldr/common/tarsnap"
 canonical: "https://hexmos.com/freedevtools/tldr/common/tarsnap/"

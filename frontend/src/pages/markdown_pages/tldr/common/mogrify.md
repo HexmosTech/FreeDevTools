@@ -1,5 +1,5 @@
 ---
-title: "Mogrify Image Files - Convert Images | Free DevTools"
+title: "Mogrify Image Files - Convert Images | Online Free DevTools by Hexmos"
 name: mogrify
 path: /freedevtools/tldr/common/mogrify
 canonical: "https://hexmos.com/freedevtools/tldr/common/mogrify/"

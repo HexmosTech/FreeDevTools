@@ -1,5 +1,5 @@
 ---
-title: "Control i3 Status Line - Monitor System Info | Free DevTools"
+title: "Control i3 Status Line - Monitor System Info | Online Free DevTools by Hexmos"
 name: i3status
 path: /freedevtools/tldr/linux/i3status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/i3status/"

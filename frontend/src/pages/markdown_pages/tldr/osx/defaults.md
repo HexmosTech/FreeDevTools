@@ -1,5 +1,5 @@
 ---
-title: "Defaults - Manage macOS User Configuration | Free DevTools"
+title: "Defaults - Manage macOS User Configuration | Online Free DevTools by Hexmos"
 name: defaults
 path: /freedevtools/tldr/osx/defaults
 canonical: "https://hexmos.com/freedevtools/tldr/osx/defaults/"

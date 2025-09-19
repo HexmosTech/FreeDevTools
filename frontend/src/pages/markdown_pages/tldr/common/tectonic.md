@@ -1,5 +1,5 @@
 ---
-title: "Compile LaTeX Files - Tectonic Engine | Free DevTools"
+title: "Compile LaTeX Files - Tectonic Engine | Online Free DevTools by Hexmos"
 name: tectonic
 path: "/freedevtools/tldr/common/tectonic"
 canonical: "https://hexmos.com/freedevtools/tldr/common/tectonic/"

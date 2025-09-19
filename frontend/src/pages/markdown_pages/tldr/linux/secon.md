@@ -1,5 +1,5 @@
 ---
-title: "Control SELinux Context - View Security Context | Free DevTools"
+title: "Control SELinux Context - View Security Context | Online Free DevTools by Hexmos"
 name: secon
 path: /freedevtools/tldr/linux/secon
 canonical: "https://hexmos.com/freedevtools/tldr/linux/secon/"

@@ -1,5 +1,5 @@
 ---
-title: "Empty Trash - Remove Files Permanently on Linux | Free DevTools"
+title: "Empty Trash - Remove Files Permanently on Linux | Online Free DevTools by Hexmos"
 name: trash-empty
 path: /freedevtools/tldr/linux/trash-empty
 canonical: "https://hexmos.com/freedevtools/tldr/linux/trash-empty/"

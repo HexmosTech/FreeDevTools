@@ -1,5 +1,5 @@
 ---
-title: "OpenStack Server - Manage VMs | Free DevTools"
+title: "OpenStack Server - Manage VMs | Online Free DevTools by Hexmos"
 name: openstack-server
 path: /freedevtools/tldr/openstack/openstack-server
 canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-server/"

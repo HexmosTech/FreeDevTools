@@ -1,5 +1,5 @@
 ---
-title: "Create Packages - Build Pacman Packages with makepkg | Free DevTools"
+title: "Create Packages - Build Pacman Packages with makepkg | Online Free DevTools by Hexmos"
 name: makepkg
 path: /freedevtools/tldr/linux/makepkg
 canonical: "https://hexmos.com/freedevtools/tldr/linux/makepkg/"

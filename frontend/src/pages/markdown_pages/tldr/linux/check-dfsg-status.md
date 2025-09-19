@@ -1,5 +1,5 @@
 ---
-title: "Check Debian Packages - Identify Non-Free Software | Free DevTools"
+title: "Check Debian Packages - Identify Non-Free Software | Online Free DevTools by Hexmos"
 name: check-dfsg-status
 path: /freedevtools/tldr/linux/check-dfsg-status
 canonical: "https://hexmos.com/freedevtools/tldr/linux/check-dfsg-status/"

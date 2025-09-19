@@ -1,5 +1,5 @@
 ---
-title: "Pueue Stash - Control Task Execution | Free DevTools"
+title: "Pueue Stash - Control Task Execution | Online Free DevTools by Hexmos"
 name: pueue-stash
 path: /freedevtools/tldr/pueue/pueue-stash
 canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-stash/"

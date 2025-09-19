@@ -1,5 +1,5 @@
 ---
-title: "Display Volume Groups - Manage Storage with vgs | Free DevTools"
+title: "Display Volume Groups - Manage Storage with vgs | Online Free DevTools by Hexmos"
 name: vgs
 path: /freedevtools/tldr/linux/vgs
 canonical: "https://hexmos.com/freedevtools/tldr/linux/vgs/"

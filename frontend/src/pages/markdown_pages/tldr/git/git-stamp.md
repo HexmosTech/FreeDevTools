@@ -1,5 +1,5 @@
 ---
-title: "Git Stamp - Append Commit Messages | Free DevTools"
+title: "Git Stamp - Append Commit Messages | Online Free DevTools by Hexmos"
 name: git-stamp
 path: /freedevtools/tldr/git/git-stamp
 canonical: "https://hexmos.com/freedevtools/tldr/git/git-stamp/"

@@ -1,5 +1,5 @@
 ---
-title: "Manage TeX Paper Size - Control Paper Settings | Free DevTools"
+title: "Manage TeX Paper Size - Control Paper Settings | Online Free DevTools by Hexmos"
 name: tlmgr-paper
 path: /freedevtools/tldr/tlmgr/tlmgr-paper
 canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-paper/"

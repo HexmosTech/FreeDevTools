@@ -1,5 +1,5 @@
 ---
-title: "xplr - Explore File Systems | Free DevTools"
+title: "xplr - Explore File Systems | Online Free DevTools by Hexmos"
 name: xplr
 path: /freedevtools/tldr/common/xplr
 canonical: "https://hexmos.com/freedevtools/tldr/common/xplr/"
