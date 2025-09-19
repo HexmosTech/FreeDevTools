@@ -34,7 +34,9 @@ export class PaginationManager {
     // Update items per page if specified in URL
     if (items !== this.config.itemsPerPage) {
       this.config.itemsPerPage = items;
-      const dropdown = document.getElementById("items-per-page");
+      const dropdown = document.getElementById(
+        "items-per-page"
+      ) as HTMLSelectElement;
       if (dropdown) {
         dropdown.value = items.toString();
       }
@@ -51,7 +53,7 @@ export class PaginationManager {
 
   // Update URL without page reload
   updateURL(page: number, items?: number): void {
-    const url = new URL(window.location);
+    const url = new URL(window.location.href);
     if (page === 1) {
       url.searchParams.delete("page");
     } else {
@@ -65,7 +67,7 @@ export class PaginationManager {
       url.searchParams.delete("items");
     }
 
-    window.history.pushState({}, "", url);
+    window.history.pushState({}, "", url.toString());
   }
 
   // Generate page numbers for pagination
@@ -120,14 +122,25 @@ export class PaginationManager {
     if (bottomPageInfo) {
       bottomPageInfo.textContent = `Page ${currentPage} of ${totalPages} • ${totalItems} total ${this.config.itemsLabel || "items"}`;
     }
+
+    // Update page input value
+    const pageInput = document.getElementById("page-input") as HTMLInputElement;
+    if (pageInput) {
+      pageInput.value = currentPage.toString();
+      pageInput.max = totalPages.toString();
+    }
   }
 
   // Update button states
   updateButtonStates(currentPage: number, totalPages: number): void {
-    const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-    const bottomPrevBtn = document.getElementById("bottom-prev-btn");
-    const bottomNextBtn = document.getElementById("bottom-next-btn");
+    const prevBtn = document.getElementById("prev-btn") as HTMLButtonElement;
+    const nextBtn = document.getElementById("next-btn") as HTMLButtonElement;
+    const bottomPrevBtn = document.getElementById(
+      "bottom-prev-btn"
+    ) as HTMLButtonElement;
+    const bottomNextBtn = document.getElementById(
+      "bottom-next-btn"
+    ) as HTMLButtonElement;
 
     const hasPrev = currentPage > 1;
     const hasNext = currentPage < totalPages;
@@ -230,6 +243,24 @@ export class PaginationManager {
         this.goToPage(page);
         return;
       }
+
+      // Handle go to page button
+      if (target.id === "go-to-page-btn") {
+        e.preventDefault();
+        const pageInput = document.getElementById(
+          "page-input"
+        ) as HTMLInputElement;
+        if (pageInput) {
+          const page = parseInt(pageInput.value, 10);
+          if (
+            page >= 1 &&
+            page <= Math.ceil(this.config.totalItems / this.config.itemsPerPage)
+          ) {
+            this.goToPage(page);
+          }
+        }
+        return;
+      }
     });
 
     // Handle items per page dropdown change
@@ -238,6 +269,41 @@ export class PaginationManager {
       if (target.id === "items-per-page") {
         const newItemsPerPage = parseInt(target.value, 10);
         this.handleItemsPerPageChange(newItemsPerPage);
+      }
+    });
+
+    // Handle page input enter key press
+    document.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const target = e.target as HTMLInputElement;
+        if (target.id === "page-input") {
+          e.preventDefault();
+          const page = parseInt(target.value, 10);
+          if (
+            page >= 1 &&
+            page <= Math.ceil(this.config.totalItems / this.config.itemsPerPage)
+          ) {
+            this.goToPage(page);
+          }
+        }
+      }
+    });
+
+    // Handle page input value changes (real-time updates)
+    document.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.id === "page-input") {
+        const page = parseInt(target.value, 10);
+        const totalPages = Math.ceil(
+          this.config.totalItems / this.config.itemsPerPage
+        );
+
+        // Validate input
+        if (page < 1) {
+          target.value = "1";
+        } else if (page > totalPages) {
+          target.value = totalPages.toString();
+        }
       }
     });
   }
