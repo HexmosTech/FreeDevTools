@@ -16,48 +16,89 @@ jobs:
         with:
           fetch-depth: 2 # Fetch last 2 commits to compare
 
-      - name: Check for changes in tool pages
-        id: check-changes
+      - name: Detect changed sections
+        id: detect-changes
         run: |
-          echo "🔍 Checking for changes in frontend/src/pages/t/..."
+          echo "🔍 Detecting changes in frontend/src/pages/ sections..."
 
-          # Get changed files in the last commit, filter for frontend/src/pages/t/
-          changed=$(git diff --name-only HEAD~1 HEAD | grep "^frontend/src/pages/t/" || true)
+          # Get all changed files in frontend/src/pages/
+          all_changed=$(git diff --name-only HEAD~1 HEAD | grep "^frontend/src/pages/" || true)
 
-          if [ -n "$changed" ]; then
-            echo "📦 Changes detected:"
-            echo "$changed" | sed 's/^/ - /'
-            echo "Proceeding with build and deploy..."
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
-          else
-            echo "❌ No changes detected in frontend/src/pages/t/. Skipping build and deploy."
+          if [ -z "$all_changed" ]; then
+            echo "❌ No changes detected in frontend/src/pages/. Skipping build and deploy."
             echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "changed_sections=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📁 All changed files:"
+          echo "$all_changed" | sed 's/^/ - /'
+
+          # Extract unique directory names from changed files
+          changed_dirs=""
+          for file in $all_changed; do
+            # Remove frontend/src/pages/ prefix
+            relative_path=${file#frontend/src/pages/}
+            
+            # Check if it's a file in a subdirectory or root
+            if [[ "$relative_path" == */* ]]; then
+              # Extract directory name (first part before /)
+              dir_name=$(echo "$relative_path" | cut -d'/' -f1)
+              # Add to changed_dirs if not already present
+              if [[ ! "$changed_dirs" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]]; then
+                changed_dirs="$changed_dirs $dir_name"
+              fi
+            fi
+          done
+
+          # Clean up whitespace
+          changed_dirs=$(echo $changed_dirs | xargs)
+
+          if [ -n "$changed_dirs" ]; then
+            echo "📦 Changed sections detected: $changed_dirs"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "changed_sections=$changed_dirs" >> $GITHUB_OUTPUT
+          else
+            echo "❌ No section changes detected. Skipping build and deploy."
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "changed_sections=" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup Node.js
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
           cache-dependency-path: ./frontend/package-lock.json
 
-      - name: Exclude non-tool pages from build
-        if: steps.check-changes.outputs.should_deploy == 'true'
+      - name: Exclude unchanged sections from build
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
-          echo "🔧 Excluding non-tool pages from build by adding underscores..."
+          echo "🔧 Excluding unchanged sections from build..."
           cd frontend/src/pages
 
-          # Find all directories except 't' and add underscore prefix if not already present
+          # Get the list of changed sections
+          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+          echo "Building only these sections: $changed_sections"
+
+          # Find all directories and exclude those not in changed_sections
           for dir in */; do
-            if [ -d "$dir" ] && [ "$dir" != "t/" ] && [[ "$dir" != _* ]]; then
-              echo "Renaming $dir to _$dir"
-              mv "$dir" "_$dir"
+            if [ -d "$dir" ]; then
+              dir_name=${dir%/}  # Remove trailing slash
+              
+              # Skip if directory name is in changed_sections or already has underscore
+              if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
+                echo "✅ Including: $dir_name"
+              else
+                echo "❌ Excluding: $dir_name -> _$dir_name"
+                mv "$dir" "_$dir"
+              fi
             fi
           done
 
       - name: Install dependencies and build
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           echo "📦 Installing dependencies and building..."
           cd frontend
@@ -65,12 +106,12 @@ jobs:
           npx astro build
 
       - name: Restore original folder structure
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           echo "🔄 Restoring original folder structure..."
           cd frontend/src/pages
 
-          # Remove underscores from directories
+          # Remove underscores from all directories
           for dir in _*/; do
             if [ -d "$dir" ]; then
               original_name=${dir#_}  # Remove leading underscore
@@ -81,29 +122,30 @@ jobs:
           done
 
       - name: Setup SSH
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           echo "🚀 Deploying to server..."
+          echo "Deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
           rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:lince_test_deploy/
 
       - name: Cleanup
-        if: steps.check-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           echo "✅ Deployment complete!"
-          echo "🎉 Tool deployment successful!"
+          echo "🎉 Successfully deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
 
       - name: Skip deployment message
-        if: steps.check-changes.outputs.should_deploy == 'false'
+        if: steps.detect-changes.outputs.should_deploy == 'false'
         run: |
-          echo "⏭️ Skipping deployment - no changes in frontend/src/pages/t/"
+          echo "⏭️ Skipping deployment - no changes detected in any frontend/src/pages/ sections"

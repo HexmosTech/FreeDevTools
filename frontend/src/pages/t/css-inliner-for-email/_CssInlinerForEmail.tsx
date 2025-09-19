@@ -21,7 +21,7 @@ const convertCSSToInline = (
   preserveMediaQueries: boolean = false
 ): string => {
   try {
-    // Create a DOM parser to work with the HTML
+    // Create a DOM parser to work with the
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
