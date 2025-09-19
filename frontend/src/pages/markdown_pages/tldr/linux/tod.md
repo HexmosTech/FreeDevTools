@@ -1,5 +1,5 @@
 ---
-title: "Tod - Create Todoist Tasks - Free DevTools"
+title: "Tod - Create Todoist Tasks | Online Free DevTools by Hexmos"
 name: tod
 path: /freedevtools/tldr/linux/tod
 canonical: "https://hexmos.com/freedevtools/tldr/linux/tod/"

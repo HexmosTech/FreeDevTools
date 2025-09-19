@@ -18,7 +18,8 @@ export interface Tool {
 
 export const TOOLS_CONFIG: Record<string, Tool> = {
   "json-utilities": {
-    title: "JSON Formatter, Validator and Linter | Online Free DevTools",
+    title:
+      "JSON Formatter, Validator and Linter | Online Free DevTools by Hexmos",
     name: "JSON Utilities",
     path: "/freedevtools/t/json-utilities/",
     description:
@@ -56,7 +57,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
   },
   "json-prettifier": {
-    title: "JSON Formatter, Validator and Linter | Online Free DevTools",
+    title:
+      "JSON Formatter, Validator and Linter | Online Free DevTools by Hexmos",
     name: "JSON Prettifier",
     path: "/freedevtools/t/json-prettifier/",
     description:
@@ -140,7 +142,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     variationOf: "json-utilities",
   },
   "password-generator": {
-    title: "Secure, Strong & Random Password Generator | Online Free Devtools",
+    title:
+      "Secure, Strong & Random Password Generator | Online Free DevTools by Hexmos",
     name: "Password Generator",
     path: "/freedevtools/t/password-generator/",
     description:
@@ -178,7 +181,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "dockerfile-linter": {
-    title: "Dockerfile Linter and Validator | Online Free DevTools",
+    title: "Dockerfile Linter and Validator | Online Free DevTools by Hexmos",
     name: "Dockerfile Linter",
     path: "/freedevtools/t/dockerfile-linter/",
     description:
@@ -213,7 +216,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
   },
   "date-time-converter": {
-    title: "Date Time Converter | Online Free DevTools",
+    title: "Date Time Converter | Online Free DevTools by Hexmos",
     name: "Date Time Converter",
     path: "/freedevtools/t/date-time-converter/",
     description:
@@ -245,7 +248,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "openai-token-counter": {
-    title: "OpenAI Token Counter - Count GPT Tokens | Online Free DevTools",
+    title:
+      "OpenAI Token Counter - Count GPT Tokens | Online Free DevTools by Hexmos",
     name: "OpenAI Token Counter",
     path: "/freedevtools/t/openai-token-counter/",
     description:
@@ -304,11 +308,12 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
     title:
-      "Anthropic Token Counter - Count Claude Tokens | Online Free DevTools",
+      "Anthropic Token Counter - Count Claude Tokens | Online Free DevTools by Hexmos",
   },
 
   "json-to-csv-converter": {
-    title: "JSON to CSV Converter - Transform JSON Data | Online Free DevTools",
+    title:
+      "JSON to CSV Converter - Transform JSON Data | Online Free DevTools by Hexmos",
     name: "Json To Csv Converter",
     path: "/freedevtools/t/json-to-csv-converter/",
     description:
@@ -342,7 +347,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "image-to-base64": {
     title:
-      "Image to Base64 Converter - Encode Images Instantly | Free DevTools",
+      "Image to Base64 Converter - Encode Images Instantly | Online Free DevTools by Hexmos",
     name: "Image To Base64",
     path: "/freedevtools/t/image-to-base64/",
     description:
@@ -378,7 +383,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "jwt-parser": {
-    title: "JWT Parser - Decode JSON Web Tokens Online | Free DevTools",
+    title:
+      "JWT Parser - Decode JSON Web Tokens Online | Online Free DevTools by Hexmos",
     name: "JWT Parser",
     path: "/freedevtools/t/jwt-parser/",
     description:
@@ -415,7 +421,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "yaml-to-json": {
-    title: "YAML to JSON Converter - Transform YAML Online | Free DevTools",
+    title:
+      "YAML to JSON Converter - Transform YAML Online | Online Free DevTools by Hexmos",
     name: "YAML to JSON Converter",
     path: "/freedevtools/t/yaml-to-json/",
     description:
@@ -451,7 +458,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "uuid-generator": {
-    title: "UUID Generator - Generate Secure UUIDs Online | Free DevTools",
+    title:
+      "UUID Generator - Generate Secure UUIDs Online | Online Free DevTools by Hexmos",
     name: "UUID Generator",
     path: "/freedevtools/t/uuid-generator/",
     description:
@@ -488,7 +496,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "svg-viewer": {
-    title: "SVG Viewer - View & Analyze SVG Files Online | Free DevTools",
+    title:
+      "SVG Viewer - View & Analyze SVG Files Online | Online Free DevTools by Hexmos",
     name: "SVG Viewer",
     path: "/freedevtools/t/svg-viewer/",
     description:
@@ -525,7 +534,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "sql-minifier": {
-    title: "SQL Minifier - Optimize SQL Queries Online | Free DevTools",
+    title:
+      "SQL Minifier - Optimize SQL Queries Online | Online Free DevTools by Hexmos",
     name: "SQL Minifier",
     path: "/freedevtools/t/sql-minifier/",
     description:
@@ -562,7 +572,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "rgb-to-hex": {
-    title: "RGB to HEX Converter - Convert RGB Colors Online | Free DevTools",
+    title:
+      "RGB to HEX Converter - Convert RGB Colors Online | Online Free DevTools by Hexmos",
     name: "RGB to HEX Converter",
     path: "/freedevtools/t/rgb-to-hex/",
     description:
@@ -599,7 +610,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "diff-checker": {
-    title: "Diff Checker - Compare Text & Code Online | Free DevTools",
+    title:
+      "Diff Checker - Compare Text & Code Online | Online Free DevTools by Hexmos",
     name: "Diff Checker",
     path: "/freedevtools/t/diff-checker/",
     description:
@@ -636,7 +648,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "regex-tester": {
-    title: "Regex Tester - Test Regular Expressions Online | Free DevTools",
+    title:
+      "Regex Tester - Test Regular Expressions Online | Online Free DevTools by Hexmos",
     name: "Regex Tester",
     path: "/freedevtools/t/regex-tester/",
     description:
@@ -674,7 +687,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "query-params-to-json": {
     title:
-      "Query Params to JSON Converter - Parse URL Parameters | Free DevTools",
+      "Query Params to JSON Converter - Parse URL Parameters | Online Free DevTools by Hexmos",
     name: "Query Params To JSON",
     path: "/freedevtools/t/query-params-to-json/",
     description:
@@ -744,7 +757,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "json-to-yaml": {
-    title: "JSON to YAML Converter - Transform JSON Online | Free DevTools",
+    title:
+      "JSON to YAML Converter - Transform JSON Online | Online Free DevTools by Hexmos",
     name: "JSON to YAML Converter",
     path: "/freedevtools/t/json-to-yaml/",
     description:
@@ -780,7 +794,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "hash-generator": {
-    title: "Hash Generator - Generate Secure Hashes Online | Free DevTools",
+    title:
+      "Hash Generator - Generate Secure Hashes Online | Online Free DevTools by Hexmos",
     name: "Hash Generator",
     path: "/freedevtools/t/hash-generator/",
     description:
@@ -820,7 +835,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "har-file-viewer": {
     title:
-      "HAR File Viewer - Analyze HTTP Archive Files Online | Free DevTools",
+      "HAR File Viewer - Analyze HTTP Archive Files Online | Online Free DevTools by Hexmos",
     name: "HAR File Viewer",
     path: "/freedevtools/t/har-file-viewer/",
     description:
@@ -860,7 +875,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "env-to-netlify-toml": {
     title:
-      "Env to Netlify TOML Converter - Transform Environment Variables | Free DevTools",
+      "Env to Netlify TOML Converter - Transform Environment Variables | Online Free DevTools by Hexmos",
     name: "Env to Netlify TOML Converter",
     path: "/freedevtools/t/env-to-netlify-toml/",
     description:
@@ -899,7 +914,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "csv-to-json": {
-    title: "CSV to JSON Converter - Transform CSV Data Online | Free DevTools",
+    title:
+      "CSV to JSON Converter - Transform CSV Data Online | Online Free DevTools by Hexmos",
     name: "CSV to JSON Converter",
     path: "/freedevtools/t/csv-to-json/",
     description:
@@ -939,7 +955,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "css-units-converter": {
     title:
-      "CSS Units Converter - Convert px, rem, vw, vh Online | Free DevTools",
+      "CSS Units Converter - Convert px, rem, vw, vh Online | Online Free DevTools by Hexmos",
     name: "CSS Units Converter",
     path: "/freedevtools/t/css-units-converter/",
     description:
@@ -979,7 +995,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "base64-utilities": {
     title:
-      "Base64 Encoder/Decoder - Encode & Decode Text Online | Free DevTools",
+      "Base64 Encoder/Decoder - Encode & Decode Text Online | Online Free DevTools by Hexmos",
     name: "Base64 Utilities",
     path: "/freedevtools/t/base64-utilities/",
     description:
@@ -1020,7 +1036,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "base64-encoder": {
-    title: "Base64 Encoder - Encode Text to Base64 Online | Free DevTools",
+    title:
+      "Base64 Encoder - Encode Text to Base64 Online | Online Free DevTools by Hexmos",
     name: "Base64 Encoder",
     path: "/freedevtools/t/base64-encode/",
     description:
@@ -1054,7 +1071,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "base64-decoder": {
-    title: "Base64 Decoder - Decode Base64 to Text Online | Free DevTools",
+    title:
+      "Base64 Decoder - Decode Base64 to Text Online | Online Free DevTools by Hexmos",
     name: "Base64 Decoder",
     path: "/freedevtools/t/base64-decode/",
     description:
@@ -1089,7 +1107,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "css-inliner-for-email": {
     title:
-      "CSS Inliner for Email - Convert CSS to Inline Styles | Free DevTools",
+      "CSS Inliner for Email - Convert CSS to Inline Styles | Online Free DevTools by Hexmos",
     name: "CSS Inliner for Email",
     path: "/freedevtools/t/css-inliner-for-email/",
     description:
@@ -1129,7 +1147,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "curl-to-js-fetch": {
     title:
-      "cURL to JavaScript Fetch Converter - Convert cURL Commands | Free DevTools",
+      "cURL to JavaScript Fetch Converter - Convert cURL Commands | Online Free DevTools by Hexmos",
     name: "cURL to JavaScript Fetch",
     path: "/freedevtools/t/curl-to-js-fetch/",
     description:
@@ -1168,7 +1186,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "webp-converter": {
-    title: "WebP Converter - Convert Images to WebP Format | Free DevTools",
+    title:
+      "WebP Converter - Convert Images to WebP Format | Online Free DevTools by Hexmos",
     name: "WebP Converter",
     path: "/freedevtools/t/webp-converter/",
     description:
@@ -1207,7 +1226,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "qrcode-generator": {
-    title: "QR Code Generator - Create QR Codes Online | Free DevTools",
+    title:
+      "QR Code Generator - Create QR Codes Online | Online Free DevTools by Hexmos",
     name: "QR Code Generator",
     path: "/freedevtools/t/qrcode-generator/",
     description:
@@ -1245,7 +1265,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   faker: {
-    title: "Fake Data Generator - Generate Mock Data Online | Free DevTools",
+    title:
+      "Fake Data Generator - Generate Mock Data Online | Online Free DevTools by Hexmos",
     name: "Fake Data Generator",
     path: "/freedevtools/t/faker/",
     description:
@@ -1284,7 +1305,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "cron-tester": {
     title:
-      "Cron Expression Tester - Test & Validate Cron Jobs Online | Free DevTools",
+      "Cron Expression Tester - Test & Validate Cron Jobs Online | Online Free DevTools by Hexmos",
     name: "Cron Expression Tester",
     path: "/freedevtools/t/cron-tester/",
     description:
@@ -1322,7 +1343,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     softwareVersion: "1.0.0",
   },
   "xml-formatter": {
-    title: "XML Formatter - Format & Beautify XML Online | Free DevTools",
+    title:
+      "XML Formatter - Format & Beautify XML Online | Online Free DevTools by Hexmos",
     name: "XML Formatter",
     path: "/freedevtools/t/xml-formatter/",
     description:
@@ -1367,7 +1389,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "chmod-calculator": {
     title:
-      "Chmod Calculator - Unix File Permissions Calculator | Free DevTools",
+      "Chmod Calculator - Unix File Permissions Calculator | Online Free DevTools by Hexmos",
     name: "Chmod Calculator",
     path: "/freedevtools/t/chmod-calculator/",
     description:
@@ -1411,7 +1433,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "user-agent-parser": {
-    title: "User Agent Parser - Analyze Browser & Device Info | Free DevTools",
+    title:
+      "User Agent Parser - Analyze Browser & Device Info | Online Free DevTools by Hexmos",
     name: "User Agent Parser",
     path: "/freedevtools/t/user-agent-parser/",
     description:
@@ -1456,7 +1479,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 
   "mac-address-generator": {
     title:
-      "MAC Address Generator - Generate Random MAC Addresses | Free DevTools",
+      "MAC Address Generator - Generate Random MAC Addresses | Online Free DevTools by Hexmos",
     name: "MAC Address Generator",
     path: "/freedevtools/t/mac-address-generator/",
     description:
@@ -1495,7 +1518,8 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
   },
 
   "mac-address-lookup": {
-    title: "MAC Address Lookup - Find Vendor & Device Info | Free DevTools",
+    title:
+      "MAC Address Lookup - Find Vendor & Device Info | Online Free DevTools by Hexmos",
     name: "MAC Address Lookup",
     path: "/freedevtools/t/mac-address-lookup/",
     description:
@@ -1535,7 +1559,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 };
 
 // tldr: {
-//   title: "TLDR - Command Documentation | Free DevTools",
+//   title: "TLDR - Command Documentation | Online Free DevTools by Hexmos",
 //   name: "TLDR",
 //   path: "/freedevtools/tldr/",
 //   description:

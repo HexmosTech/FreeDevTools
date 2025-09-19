@@ -1,5 +1,5 @@
 ---
-title: "lsipc - Inspect System V IPC - Free DevTools"
+title: "lsipc - Inspect System V IPC | Online Free DevTools by Hexmos"
 name: lsipc
 path: /freedevtools/tldr/linux/lsipc
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lsipc/"

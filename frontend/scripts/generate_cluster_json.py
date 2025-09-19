@@ -47,7 +47,7 @@ def create_cluster_entry(
         "path": f"/freedevtools/unique/{name}",
         "keywords": generate_keywords(name, source_folder),
         "features": ["feature1", "feature2", "feature3"],
-        "title": f"Free {name} icons | Free DevTools",
+        "title": f"Free {name} icons | Online Free DevTools by Hexmos",
         "description": f"count: {count}, topic: {name}, source: {source_folder}",
         "fileNames": file_names,
         "enhanced": False,

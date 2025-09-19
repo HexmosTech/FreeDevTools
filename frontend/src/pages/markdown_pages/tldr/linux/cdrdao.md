@@ -1,5 +1,5 @@
 ---
-title: "CDRDAO - Create CD Images - Free DevTools"
+title: "CDRDAO - Create CD Images | Online Free DevTools by Hexmos"
 name: cdrdao
 path: /freedevtools/tldr/linux/cdrdao
 canonical: "https://hexmos.com/freedevtools/tldr/linux/cdrdao/"

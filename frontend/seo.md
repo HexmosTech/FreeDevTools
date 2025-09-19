@@ -3,12 +3,15 @@
 ## Keyword Validation
 
 ### Finding the Correct Primary Keyword
+
 A **primary keyword** is the main search term that users type into search engines to find the specific tool. It represents the core function of the tool and should match exactly what developers search for.
 
 ### Primary Keyword Formula
+
 **Format**: `[Data/Format Type] + [Action/Tool Type]`
 
 ### Requirements Checklist:
+
 - Primary keyword appears in title
 - Keywords match user search intent
 - No keyword stuffing (max 2-3% density)
@@ -18,10 +21,12 @@ A **primary keyword** is the main search term that users type into search engine
 ### Examples:
 
 **✅ Good:**
-- Primary: "datetime converter"  
+
+- Primary: "datetime converter"
 - Secondary: ["timestamp converter", "UTC converter", "free date converter", "online datetime converter", "unix timestamp converter"]
 
 **❌ Bad:**
+
 - Primary: "time tool" (too vague)
 - Secondary: ["tool", "helper", "utility", "thing", "converter"] (generic, keyword stuffing)
 
@@ -38,15 +43,16 @@ Give a list of 5 SEO friendly keywords for the tool based on requirement
 ### Examples:
 
 **Good:**
-- "JSON Formatter - Beautify & Validate JSON | Free DevTools" (59 chars)
+
+- "JSON Formatter - Beautify & Validate JSON | Online Free DevTools by Hexmos" (59 chars)
 - "Password Generator - Create Secure Passwords by Hexmos" (54 chars)
 - "Date Converter - Transform UTC, ISO & Unix Times Free" (53 chars)
 
 **Bad:**
+
 - "JSON Tool for Developers Online" (missing brand, no action verb)
 - "Free DevTools - The Best JSON Formatter Website Tool" (brand first, too long)
 - "Password Generator" (too short, no brand)
-
 
 ❌ if any fails: Title needs optimization
 Give a list of 5 SEO friendly titles based on requirement
@@ -63,13 +69,14 @@ Give a list of 5 SEO friendly titles based on requirement
 ### Examples:
 
 **Good:**
+
 - "Convert datetime formats instantly with Date Time Converter from Hexmos. Transform UTC, ISO, Unix timestamps easily. Free, fast, no registration required." (159 chars)
 - "Format JSON data beautifully with JSON Formatter. Validate, minify, and beautify JSON instantly. Free online tool, no registration needed." (152 chars)
 
 **Bad:**
+
 - "This is a JSON tool that helps developers format their code" (no brand, no CTA, no primary keyword early)
 - "Free DevTools by Hexmos offers the ultimate JSON formatting solution for all developers worldwide" (brand first, too generic, no CTA)
-
 
 ❌ if any fails: Rewrite meta description
 Give optimized meta description based on requirement
@@ -77,6 +84,7 @@ Give optimized meta description based on requirement
 ## Heading Validation
 
 ### H1: Simple tool name (handled by ToolHead component)
+
 - Format: `[Tool Name]` (e.g., "JSON Formatter", "Password Generator")
 
 - Has exactly ONE H1 tag per page
@@ -86,10 +94,12 @@ Give optimized meta description based on requirement
 ### Examples:
 
 **Good**
+
 - "JSON Formatter"
-- "Password Generator" 
+- "Password Generator"
 
 **Bad**
+
 - "Free JSON Formatting Tool Online" (too long, keyword stuffing)
 - "Tool for JSON" (vague, poor grammar)
 - "JSON Formatter by Hexmos - Free Online Tool" (too long, brand in H1)
@@ -123,7 +133,6 @@ Give H1 and 4 H2 headings based on requirement
 **Bad:**
 "This tool converts dates and times. It's useful for developers who need to work with different formats. You can use it online for free."
 
-
 ❌ if any fails: Rewrite tool description
 Give optimized tool description based on requirement
 
@@ -154,6 +163,7 @@ Give optimized tool description based on requirement
 Use the automated banner generation system to create high-quality social media images for each tool:
 
 **Setup:**
+
 ```bash
 
 # Generate banner for a tool
@@ -179,19 +189,19 @@ Generate complete Open Graph and Twitter Card tags based on requirement
 ### External Link Examples
 
 #### Required High-Authority Domains:
+
 - **Documentation**: developer.mozilla.org, w3.org
-- **Standards**: iso.org, ietf.org, rfc-editor.org  
+- **Standards**: iso.org, ietf.org, rfc-editor.org
 - **Education**: stackoverflow.com (questions), github.com
 
 #### Tool-Specific Link Examples:
+
 **JSON Tools**: json.org, MDN JSON docs, RFC 7159
 **Date Tools**: ISO 8601 spec, MDN Date docs, timeanddate.com
 **Security Tools**: OWASP guidelines, NIST standards
 
-
 ❌ if any fails: Add relevant high-quality external links
 Suggest 3-5 relevant external resources to link to based on tool requirement
-
 
 ## Text-to-Code Ratio Validation
 

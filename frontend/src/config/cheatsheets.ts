@@ -18,8 +18,8 @@ export interface CheatSheet {
 
 export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
   // HTML-based cheatsheets from md_html directory
-  "kubernetes": {
-    title: "Kubernetes Cheatsheet | Online Free DevTools",
+  kubernetes: {
+    title: "Kubernetes Cheatsheet | Online Free DevTools by Hexmos",
     name: "Kubernetes",
     path: "/freedevtools/c/kubernetes/",
     description: "Quick reference for Kubernetes commands and concepts.",
@@ -32,8 +32,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "python": {
-    title: "Python Cheatsheet | Online Free DevTools",
+  python: {
+    title: "Python Cheatsheet | Online Free DevTools by Hexmos",
     name: "Python",
     path: "/freedevtools/c/python/",
     description: "Quick reference for Python programming language.",
@@ -46,8 +46,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "golang": {
-    title: "Go Cheatsheet | Online Free DevTools",
+  golang: {
+    title: "Go Cheatsheet | Online Free DevTools by Hexmos",
     name: "Go",
     path: "/freedevtools/c/golang/",
     description: "Quick reference for Go programming language.",
@@ -60,8 +60,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "java": {
-    title: "Java Cheatsheet | Online Free DevTools",
+  java: {
+    title: "Java Cheatsheet | Online Free DevTools by Hexmos",
     name: "Java",
     path: "/freedevtools/c/java/",
     description: "Quick reference for Java programming language.",
@@ -74,11 +74,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "vscode": {
-    title: "VS Code Cheatsheet | Online Free DevTools",
+  vscode: {
+    title: "VS Code Cheatsheet | Online Free DevTools by Hexmos",
     name: "VS Code",
     path: "/freedevtools/c/vscode/",
-    description: "Quick reference for Visual Studio Code shortcuts and features.",
+    description:
+      "Quick reference for Visual Studio Code shortcuts and features.",
     category: "Developer Cheatsheets",
     icon: "💻",
     themeColor: "#007acc",
@@ -88,8 +89,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "emmet": {
-    title: "Emmet Cheatsheet | Online Free DevTools",
+  emmet: {
+    title: "Emmet Cheatsheet | Online Free DevTools by Hexmos",
     name: "Emmet",
     path: "/freedevtools/c/emmet/",
     description: "Quick reference for Emmet HTML/CSS shortcuts.",
@@ -102,11 +103,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "gcp": {
-    title: "Google Cloud Platform Cheatsheet | Online Free DevTools",
+  gcp: {
+    title: "Google Cloud Platform Cheatsheet | Online Free DevTools by Hexmos",
     name: "Google Cloud Platform",
     path: "/freedevtools/c/gcp/",
-    description: "Quick reference for Google Cloud Platform services and commands.",
+    description:
+      "Quick reference for Google Cloud Platform services and commands.",
     category: "Developer Cheatsheets",
     icon: "☁️",
     themeColor: "#4285f4",
@@ -116,8 +118,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "firebase_cli": {
-    title: "Firebase CLI Cheatsheet | Online Free DevTools",
+  firebase_cli: {
+    title: "Firebase CLI Cheatsheet | Online Free DevTools by Hexmos",
     name: "Firebase CLI",
     path: "/freedevtools/c/firebase_cli/",
     description: "Quick reference for Firebase CLI commands.",
@@ -130,8 +132,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "sublime_text": {
-    title: "Sublime Text Cheatsheet | Online Free DevTools",
+  sublime_text: {
+    title: "Sublime Text Cheatsheet | Online Free DevTools by Hexmos",
     name: "Sublime Text",
     path: "/freedevtools/c/sublime_text/",
     description: "Quick reference for Sublime Text shortcuts and features.",
@@ -144,8 +146,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "XML": {
-    title: "XML Cheatsheet | Online Free DevTools",
+  XML: {
+    title: "XML Cheatsheet | Online Free DevTools by Hexmos",
     name: "XML",
     path: "/freedevtools/c/XML/",
     description: "Quick reference for XML syntax and structure.",
@@ -158,11 +160,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "adonis": {
-    title: "AdonisJS Cheatsheet | Online Free DevTools",
+  adonis: {
+    title: "AdonisJS Cheatsheet | Online Free DevTools by Hexmos",
     name: "AdonisJS",
     path: "/freedevtools/c/adonis/",
-    description: "Quick reference for AdonisJS framework commands and concepts.",
+    description:
+      "Quick reference for AdonisJS framework commands and concepts.",
     category: "Developer Cheatsheets",
     icon: "🚀",
     themeColor: "#5a45ff",
@@ -172,8 +175,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "angular": {
-    title: "Angular Cheatsheet | Online Free DevTools",
+  angular: {
+    title: "Angular Cheatsheet | Online Free DevTools by Hexmos",
     name: "Angular",
     path: "/freedevtools/c/angular/",
     description: "Quick reference for Angular framework commands and concepts.",
@@ -186,11 +189,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "angularjs": {
-    title: "AngularJS Cheatsheet | Online Free DevTools",
+  angularjs: {
+    title: "AngularJS Cheatsheet | Online Free DevTools by Hexmos",
     name: "AngularJS",
     path: "/freedevtools/c/angularjs/",
-    description: "Quick reference for AngularJS framework commands and concepts.",
+    description:
+      "Quick reference for AngularJS framework commands and concepts.",
     category: "Developer Cheatsheets",
     icon: "🅰️",
     themeColor: "#e23237",
@@ -200,11 +204,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "aws": {
-    title: "AWS Cheatsheet | Online Free DevTools",
+  aws: {
+    title: "AWS Cheatsheet | Online Free DevTools by Hexmos",
     name: "AWS",
     path: "/freedevtools/c/aws/",
-    description: "Quick reference for Amazon Web Services commands and concepts.",
+    description:
+      "Quick reference for Amazon Web Services commands and concepts.",
     category: "Developer Cheatsheets",
     icon: "☁️",
     themeColor: "#ff9900",
@@ -214,8 +219,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "bash": {
-    title: "Bash Cheatsheet | Online Free DevTools",
+  bash: {
+    title: "Bash Cheatsheet | Online Free DevTools by Hexmos",
     name: "Bash",
     path: "/freedevtools/c/bash/",
     description: "Quick reference for Bash shell commands and scripting.",
@@ -228,11 +233,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "C": {
-    title: "C Programming Cheatsheet | Online Free DevTools",
+  C: {
+    title: "C Programming Cheatsheet | Online Free DevTools by Hexmos",
     name: "C",
     path: "/freedevtools/c/C/",
-    description: "Quick reference for C programming language syntax and concepts.",
+    description:
+      "Quick reference for C programming language syntax and concepts.",
     category: "Developer Cheatsheets",
     icon: "🔧",
     themeColor: "#00599c",
@@ -243,10 +249,11 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
   "C#": {
-    title: "C# Cheatsheet | Online Free DevTools",
+    title: "C# Cheatsheet | Online Free DevTools by Hexmos",
     name: "C#",
     path: "/freedevtools/c/C#/",
-    description: "Quick reference for C# programming language syntax and concepts.",
+    description:
+      "Quick reference for C# programming language syntax and concepts.",
     category: "Developer Cheatsheets",
     icon: "🔷",
     themeColor: "#239120",
@@ -257,7 +264,7 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
   "commitlint.config": {
-    title: "Commitlint Config Cheatsheet | Online Free DevTools",
+    title: "Commitlint Config Cheatsheet | Online Free DevTools by Hexmos",
     name: "Commitlint Config",
     path: "/freedevtools/c/commitlint.config/",
     description: "Quick reference for Commitlint configuration and rules.",
@@ -270,8 +277,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "css3": {
-    title: "CSS3 Cheatsheet | Online Free DevTools",
+  css3: {
+    title: "CSS3 Cheatsheet | Online Free DevTools by Hexmos",
     name: "CSS3",
     path: "/freedevtools/c/css3/",
     description: "Quick reference for CSS3 properties and selectors.",
@@ -284,8 +291,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "curl": {
-    title: "cURL Cheatsheet | Online Free DevTools",
+  curl: {
+    title: "cURL Cheatsheet | Online Free DevTools by Hexmos",
     name: "cURL",
     path: "/freedevtools/c/curl/",
     description: "Quick reference for cURL command-line tool.",
@@ -298,11 +305,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "django": {
-    title: "Django Cheatsheet | Online Free DevTools",
+  django: {
+    title: "Django Cheatsheet | Online Free DevTools by Hexmos",
     name: "Django",
     path: "/freedevtools/c/django/",
-    description: "Quick reference for Django web framework commands and concepts.",
+    description:
+      "Quick reference for Django web framework commands and concepts.",
     category: "Developer Cheatsheets",
     icon: "🐍",
     themeColor: "#092e20",
@@ -312,8 +320,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "docker": {
-    title: "Docker Cheatsheet | Online Free DevTools",
+  docker: {
+    title: "Docker Cheatsheet | Online Free DevTools by Hexmos",
     name: "Docker",
     path: "/freedevtools/c/docker/",
     description: "Quick reference for Docker containerization commands.",
@@ -326,8 +334,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "drush": {
-    title: "Drush Cheatsheet | Online Free DevTools",
+  drush: {
+    title: "Drush Cheatsheet | Online Free DevTools by Hexmos",
     name: "Drush",
     path: "/freedevtools/c/drush/",
     description: "Quick reference for Drush Drupal command-line tool.",
@@ -340,8 +348,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "elasticsearch": {
-    title: "Elasticsearch Cheatsheet | Online Free DevTools",
+  elasticsearch: {
+    title: "Elasticsearch Cheatsheet | Online Free DevTools by Hexmos",
     name: "Elasticsearch",
     path: "/freedevtools/c/elasticsearch/",
     description: "Quick reference for Elasticsearch search engine commands.",
@@ -354,11 +362,12 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "ember": {
-    title: "Ember.js Cheatsheet | Online Free DevTools",
+  ember: {
+    title: "Ember.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Ember.js",
     path: "/freedevtools/c/ember/",
-    description: "Quick reference for Ember.js framework commands and concepts.",
+    description:
+      "Quick reference for Ember.js framework commands and concepts.",
     category: "Developer Cheatsheets",
     icon: "🟠",
     themeColor: "#e04e39",
@@ -368,8 +377,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "express": {
-    title: "Express.js Cheatsheet | Online Free DevTools",
+  express: {
+    title: "Express.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Express.js",
     path: "/freedevtools/c/express/",
     description: "Quick reference for Express.js web framework commands.",
@@ -382,8 +391,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "feathers": {
-    title: "Feathers.js Cheatsheet | Online Free DevTools",
+  feathers: {
+    title: "Feathers.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Feathers.js",
     path: "/freedevtools/c/feathers/",
     description: "Quick reference for Feathers.js framework commands.",
@@ -396,8 +405,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "git": {
-    title: "Git Cheatsheet | Online Free DevTools",
+  git: {
+    title: "Git Cheatsheet | Online Free DevTools by Hexmos",
     name: "Git",
     path: "/freedevtools/c/git/",
     description: "Quick reference for Git version control commands.",
@@ -410,8 +419,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "heroku": {
-    title: "Heroku Cheatsheet | Online Free DevTools",
+  heroku: {
+    title: "Heroku Cheatsheet | Online Free DevTools by Hexmos",
     name: "Heroku",
     path: "/freedevtools/c/heroku/",
     description: "Quick reference for Heroku cloud platform commands.",
@@ -424,8 +433,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "html5": {
-    title: "HTML5 Cheatsheet | Online Free DevTools",
+  html5: {
+    title: "HTML5 Cheatsheet | Online Free DevTools by Hexmos",
     name: "HTML5",
     path: "/freedevtools/c/html5/",
     description: "Quick reference for HTML5 elements and attributes.",
@@ -438,8 +447,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "javascript": {
-    title: "JavaScript Cheatsheet | Online Free DevTools",
+  javascript: {
+    title: "JavaScript Cheatsheet | Online Free DevTools by Hexmos",
     name: "JavaScript",
     path: "/freedevtools/c/javascript/",
     description: "Quick reference for JavaScript programming language.",
@@ -452,8 +461,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "laravel": {
-    title: "Laravel Cheatsheet | Online Free DevTools",
+  laravel: {
+    title: "Laravel Cheatsheet | Online Free DevTools by Hexmos",
     name: "Laravel",
     path: "/freedevtools/c/laravel/",
     description: "Quick reference for Laravel PHP framework commands.",
@@ -466,8 +475,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "macos": {
-    title: "macOS Cheatsheet | Online Free DevTools",
+  macos: {
+    title: "macOS Cheatsheet | Online Free DevTools by Hexmos",
     name: "macOS",
     path: "/freedevtools/c/macos/",
     description: "Quick reference for macOS terminal commands and shortcuts.",
@@ -480,8 +489,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "moleculer": {
-    title: "Moleculer Cheatsheet | Online Free DevTools",
+  moleculer: {
+    title: "Moleculer Cheatsheet | Online Free DevTools by Hexmos",
     name: "Moleculer",
     path: "/freedevtools/c/moleculer/",
     description: "Quick reference for Moleculer microservices framework.",
@@ -494,8 +503,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "mongodb": {
-    title: "MongoDB Cheatsheet | Online Free DevTools",
+  mongodb: {
+    title: "MongoDB Cheatsheet | Online Free DevTools by Hexmos",
     name: "MongoDB",
     path: "/freedevtools/c/mongodb/",
     description: "Quick reference for MongoDB database commands and queries.",
@@ -508,8 +517,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "mysql": {
-    title: "MySQL Cheatsheet | Online Free DevTools",
+  mysql: {
+    title: "MySQL Cheatsheet | Online Free DevTools by Hexmos",
     name: "MySQL",
     path: "/freedevtools/c/mysql/",
     description: "Quick reference for MySQL database commands and queries.",
@@ -522,8 +531,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "nanobox_boxfile": {
-    title: "Nanobox Boxfile Cheatsheet | Online Free DevTools",
+  nanobox_boxfile: {
+    title: "Nanobox Boxfile Cheatsheet | Online Free DevTools by Hexmos",
     name: "Nanobox Boxfile",
     path: "/freedevtools/c/nanobox_boxfile/",
     description: "Quick reference for Nanobox Boxfile configuration.",
@@ -536,8 +545,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "nanobox_cli": {
-    title: "Nanobox CLI Cheatsheet | Online Free DevTools",
+  nanobox_cli: {
+    title: "Nanobox CLI Cheatsheet | Online Free DevTools by Hexmos",
     name: "Nanobox CLI",
     path: "/freedevtools/c/nanobox_cli/",
     description: "Quick reference for Nanobox CLI commands.",
@@ -550,8 +559,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "nginx": {
-    title: "Nginx Cheatsheet | Online Free DevTools",
+  nginx: {
+    title: "Nginx Cheatsheet | Online Free DevTools by Hexmos",
     name: "Nginx",
     path: "/freedevtools/c/nginx/",
     description: "Quick reference for Nginx web server configuration.",
@@ -564,8 +573,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "node": {
-    title: "Node.js Cheatsheet | Online Free DevTools",
+  node: {
+    title: "Node.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Node.js",
     path: "/freedevtools/c/node/",
     description: "Quick reference for Node.js runtime and npm commands.",
@@ -578,8 +587,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "php": {
-    title: "PHP Cheatsheet | Online Free DevTools",
+  php: {
+    title: "PHP Cheatsheet | Online Free DevTools by Hexmos",
     name: "PHP",
     path: "/freedevtools/c/php/",
     description: "Quick reference for PHP programming language syntax.",
@@ -592,8 +601,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "pm2": {
-    title: "PM2 Cheatsheet | Online Free DevTools",
+  pm2: {
+    title: "PM2 Cheatsheet | Online Free DevTools by Hexmos",
     name: "PM2",
     path: "/freedevtools/c/pm2/",
     description: "Quick reference for PM2 process manager commands.",
@@ -606,8 +615,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "puppeteer": {
-    title: "Puppeteer Cheatsheet | Online Free DevTools",
+  puppeteer: {
+    title: "Puppeteer Cheatsheet | Online Free DevTools by Hexmos",
     name: "Puppeteer",
     path: "/freedevtools/c/puppeteer/",
     description: "Quick reference for Puppeteer browser automation.",
@@ -620,8 +629,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "react": {
-    title: "React Cheatsheet | Online Free DevTools",
+  react: {
+    title: "React Cheatsheet | Online Free DevTools by Hexmos",
     name: "React",
     path: "/freedevtools/c/react/",
     description: "Quick reference for React JavaScript library.",
@@ -634,8 +643,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "redis": {
-    title: "Redis Cheatsheet | Online Free DevTools",
+  redis: {
+    title: "Redis Cheatsheet | Online Free DevTools by Hexmos",
     name: "Redis",
     path: "/freedevtools/c/redis/",
     description: "Quick reference for Redis in-memory database commands.",
@@ -648,8 +657,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "sails": {
-    title: "Sails.js Cheatsheet | Online Free DevTools",
+  sails: {
+    title: "Sails.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Sails.js",
     path: "/freedevtools/c/sails/",
     description: "Quick reference for Sails.js MVC framework commands.",
@@ -662,8 +671,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "tailwind": {
-    title: "Tailwind CSS Cheatsheet | Online Free DevTools",
+  tailwind: {
+    title: "Tailwind CSS Cheatsheet | Online Free DevTools by Hexmos",
     name: "Tailwind CSS",
     path: "/freedevtools/c/tailwind/",
     description: "Quick reference for Tailwind CSS utility classes.",
@@ -676,8 +685,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "ubuntu": {
-    title: "Ubuntu Cheatsheet | Online Free DevTools",
+  ubuntu: {
+    title: "Ubuntu Cheatsheet | Online Free DevTools by Hexmos",
     name: "Ubuntu",
     path: "/freedevtools/c/ubuntu/",
     description: "Quick reference for Ubuntu Linux commands and shortcuts.",
@@ -690,8 +699,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "vim": {
-    title: "Vim Cheatsheet | Online Free DevTools",
+  vim: {
+    title: "Vim Cheatsheet | Online Free DevTools by Hexmos",
     name: "Vim",
     path: "/freedevtools/c/vim/",
     description: "Quick reference for Vim text editor commands and shortcuts.",
@@ -704,8 +713,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "vue": {
-    title: "Vue.js Cheatsheet | Online Free DevTools",
+  vue: {
+    title: "Vue.js Cheatsheet | Online Free DevTools by Hexmos",
     name: "Vue.js",
     path: "/freedevtools/c/vue/",
     description: "Quick reference for Vue.js JavaScript framework.",
@@ -718,8 +727,8 @@ export const CHEATSHEETS_CONFIG: Record<string, CheatSheet> = {
     ogImage: "/freedevtools/free_devtools_banner.png",
     twitterImage: "/freedevtools/free_devtools_banner.png",
   },
-  "xcode": {
-    title: "Xcode Cheatsheet | Online Free DevTools",
+  xcode: {
+    title: "Xcode Cheatsheet | Online Free DevTools by Hexmos",
     name: "Xcode",
     path: "/freedevtools/c/xcode/",
     description: "Quick reference for Xcode IDE shortcuts and features.",
@@ -749,5 +758,3 @@ export function getAllUniqueCheatSheets(): CheatSheet[] {
 export function getCheatSheetsByCategory(category: string): CheatSheet[] {
   return getAllCheatSheets().filter((item) => item.category === category);
 }
-
-

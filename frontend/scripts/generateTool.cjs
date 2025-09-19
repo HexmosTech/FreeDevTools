@@ -277,7 +277,7 @@ function updateToolsConfig(toolKey, toolName) {
 
   // Add new tool to TOOLS_CONFIG
   const newToolEntry = `  '${toolKey}': {
-    title: '${toolName} | Online Free DevTools',
+    title: '${toolName} | Online Free DevTools by Hexmos',
     name: '${toolName}',
     path: '/freedevtools/t/${toolKey}/',
     description: 'TODO: Add your tool description here. Make it compelling and SEO-friendly.',
