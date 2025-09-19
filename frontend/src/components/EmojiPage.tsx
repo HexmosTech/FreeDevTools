@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { EmojiData, EmojiImageVariants } from '../lib/emojis';
+import { toast } from "@/components/ToastProvider";
 
 interface EmojiPageProps {
   emoji: EmojiData;
@@ -193,7 +194,6 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
           </p>
         </div>
       )}
-
       {/* Image Variants */}
       {getImageVariants().length > 0 && (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 mb-6 shadow-sm">
@@ -201,21 +201,88 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             Image Variants
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {getImageVariants().map((variant) => (
-              <div key={variant.type} className="text-center">
-                <div className={`${variant.type === 'High Contrast' ? 'bg-slate-50 dark:bg-white' : 'bg-slate-50 dark:bg-slate-800'} rounded-lg p-4 mb-2 border border-slate-200 dark:border-slate-700`}> 
-                  <img
-                    src={variant.url}
-                    alt={`${emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug || 'Unknown'} ${variant.type}`}
-                    className="w-16 h-16 mx-auto object-contain"
-                    loading="lazy"
-                  />
+            {getImageVariants().map((variant) => {
+
+              const copySvgAsPng = async (svgUrl: string) => {
+                try {
+                  const response = await fetch(svgUrl);
+                  const svgText = await response.text();
+              
+                  const svgBlob = new Blob([svgText], { type: "image/svg+xml" });
+                  const svgUrlBlob = URL.createObjectURL(svgBlob);
+              
+                  const img = new Image();
+                  img.src = svgUrlBlob;
+              
+                  img.onload = async () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width * 5 || 1024; // fallback size
+                    canvas.height = img.height * 5 || 1024;
+              
+                    const ctx = canvas.getContext("2d");
+                    if (!ctx) return;
+              
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              
+                    canvas.toBlob(async (blob) => {
+                      if (!blob) return;
+                      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+                      toast.success("Image copied to clipboard!");
+                    }, "image/png");
+                  };
+                } catch (err) {
+                  console.error("Failed to copy SVG:", err);
+                  toast.error("Failed to copy image.");
+                }
+              };
+              
+
+              const copyRasterImage = async () => {
+                try {
+                  const response = await fetch(variant.url);
+                  const blob = await response.blob();
+
+                  // Copy the actual image to clipboard
+                  await navigator.clipboard.write([
+                    new ClipboardItem({ [blob.type]: blob })
+                  ]);
+
+                  toast.success("Image copied to clipboard!");
+                } catch (err) {
+                  console.error("Failed to copy image:", err);
+                  toast.error("Failed to copy image.");
+                }
+              };
+
+
+              const handleCopy = () => {
+                if (variant.url.endsWith(".svg")) {
+                  copySvgAsPng(variant.url);
+                } else {
+                  copyRasterImage(); 
+                }
+              };
+
+
+              return (
+                <div key={variant.type} className="text-center">
+                  <div
+                    className={`${variant.type === 'High Contrast' ? 'bg-slate-50 dark:bg-white' : 'bg-slate-50 dark:bg-slate-800'} rounded-lg p-4 mb-2 border border-slate-200 dark:border-slate-700 cursor-pointer hover:opacity-80 transition`}
+                    onClick={handleCopy}
+                  >
+                    <img
+                      src={variant.url}
+                      alt={`${emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug || 'Unknown'} ${variant.type}`}
+                      className="w-16 h-16 mx-auto object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {variant.type}
+                  </p>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {variant.type}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
