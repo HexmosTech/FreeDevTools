@@ -14,54 +14,74 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # Fetch last 2 commits to compare
+          # fetch-depth: 0 is recommended for a more reliable diff across multiple commits in a push
+          fetch-depth: 0
 
       - name: Detect changed sections
         id: detect-changes
         run: |
-          echo "🔍 Detecting changes in frontend/src/pages/ sections..."
+          echo "🔍 Detecting changes based on custom build rules..."
 
-          # Get all changed files in frontend/src/pages/
-          all_changed=$(git diff --name-only HEAD~1 HEAD | grep "^frontend/src/pages/" || true)
+          # Use a more robust diff command that covers all commits in a push
+          all_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff --name-only HEAD~1 HEAD)
 
           if [ -z "$all_changed" ]; then
-            echo "❌ No changes detected in frontend/src/pages/. Skipping build and deploy."
+            echo "❌ No changes detected. Skipping build and deploy."
             echo "should_deploy=false" >> $GITHUB_OUTPUT
-            echo "changed_sections=" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           echo "📁 All changed files:"
           echo "$all_changed" | sed 's/^/ - /'
 
-          # Extract unique directory names from changed files
           changed_dirs=""
-          for file in $all_changed; do
-            # Remove frontend/src/pages/ prefix
-            relative_path=${file#frontend/src/pages/}
-            
-            # Check if it's a file in a subdirectory or root
-            if [[ "$relative_path" == */* ]]; then
-              # Extract directory name (first part before /)
-              dir_name=$(echo "$relative_path" | cut -d'/' -f1)
-              # Add to changed_dirs if not already present
-              if [[ ! "$changed_dirs" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]]; then
-                changed_dirs="$changed_dirs $dir_name"
-              fi
+
+          # Helper function to add a directory to the list if it's not already there
+          add_dir() {
+            if [[ ! "$changed_dirs" =~ (^|[[:space:]])$1($|[[:space:]]) ]]; then
+              changed_dirs="$changed_dirs $1"
             fi
+          }
+
+          for file in $all_changed; do
+            case "$file" in
+              frontend/src/pages/tools/*)
+                add_dir "t"
+                ;;
+              frontend/src/pages/markdown_pages/tldr/*|frontend/src/pages/tldr/*)
+                add_dir "tldr"
+                ;;
+              frontend/src/pages/html_pages/c/*|frontend/src/pages/c/*)
+                add_dir "c"
+                ;;
+              frontend/src/pages/svg_icons/*)
+                add_dir "svg_icons"
+                ;;
+              frontend/src/pages/png_icons/*)
+                # If png_icons changes, we build both png_icons and svg_icons
+                add_dir "png_icons"
+                add_dir "svg_icons"
+                ;;
+              frontend/src/pages/emojies/*)
+                add_dir "emojies"
+                ;;
+              *)
+                # You can add a default case here if needed, for example, to build everything
+                # echo "Change detected in unhandled path: $file"
+                ;;
+            esac
           done
 
-          # Clean up whitespace
-          changed_dirs=$(echo $changed_dirs | xargs)
+          # Clean up leading/trailing whitespace
+          changed_dirs=$(echo "$changed_dirs" | xargs)
 
           if [ -n "$changed_dirs" ]; then
-            echo "📦 Changed sections detected: $changed_dirs"
+            echo "📦 Changed sections to build: $changed_dirs"
             echo "should_deploy=true" >> $GITHUB_OUTPUT
             echo "changed_sections=$changed_dirs" >> $GITHUB_OUTPUT
           else
-            echo "❌ No section changes detected. Skipping build and deploy."
+            echo "❌ No changes matched the build rules. Skipping deployment."
             echo "should_deploy=false" >> $GITHUB_OUTPUT
-            echo "changed_sections=" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup Node.js
@@ -78,16 +98,12 @@ jobs:
           echo "🔧 Excluding unchanged sections from build..."
           cd frontend/src/pages
 
-          # Get the list of changed sections
           changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
           echo "Building only these sections: $changed_sections"
 
-          # Find all directories and exclude those not in changed_sections
           for dir in */; do
             if [ -d "$dir" ]; then
-              dir_name=${dir%/}  # Remove trailing slash
-              
-              # Skip if directory name is in changed_sections or already has underscore
+              dir_name=${dir%/}
               if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
                 echo "✅ Including: $dir_name"
               else
@@ -106,16 +122,15 @@ jobs:
           npx astro build
 
       - name: Restore original folder structure
-        if: steps.detect-changes.outputs.should_deploy == 'true'
+        if: always() && steps.detect-changes.outputs.should_deploy == 'true'
         run: |
           echo "🔄 Restoring original folder structure..."
           cd frontend/src/pages
 
-          # Remove underscores from all directories
           for dir in _*/; do
             if [ -d "$dir" ]; then
-              original_name=${dir#_}  # Remove leading underscore
-              original_name=${original_name%/}  # Remove trailing slash
+              original_name=${dir#_}
+              original_name=${original_name%/}
               echo "Restoring _$original_name to $original_name"
               mv "$dir" "$original_name/"
             fi
@@ -139,13 +154,7 @@ jobs:
           echo "Deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
           rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:lince_test_deploy/
 
-      - name: Cleanup
-        if: steps.detect-changes.outputs.should_deploy == 'true'
-        run: |
-          echo "✅ Deployment complete!"
-          echo "🎉 Successfully deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
-
       - name: Skip deployment message
         if: steps.detect-changes.outputs.should_deploy == 'false'
         run: |
-          echo "⏭️ Skipping deployment - no changes detected in any frontend/src/pages/ sections"
+          echo "⏭️ Skipping deployment - no changes matched the build rules."
