@@ -301,7 +301,7 @@ const CssInlinerForEmail: React.FC = () => {
     <ToolContainer>
       <ToolHead
         name="CSS Inliner for Email"
-        description="Convert CSS styles to inline styles for email HTML instantly with our free CSS inliner. Perfect for email templates, newsletters."
+        description="Convert CSS styles to inline styles for email HTML instantly with our free CSS inliner. Perfect for email templates, newsletters, and ensuring cross-client."
       />
 
       {!loaded ? (
