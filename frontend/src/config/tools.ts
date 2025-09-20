@@ -1597,6 +1597,46 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-20",
     softwareVersion: "1.0.0",
   }
+,
+  "llama-token-counter": {
+    title: "Llama Token Counter - Count Tokens for Meta Llama Models | Online Free DevTools by Hexmos",
+    name: "Llama Token Counter",
+    path: "/freedevtools/t/llama-token-counter/",
+    description: "Count tokens instantly for Meta Llama models with Llama Token Counter by Hexmos. Get accurate token counts for Llama 3 and Llama 2 models.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/llama-token-counter/",
+    keywords: [
+      "llama token counter",
+      "meta llama token calculator",
+      "llama 3 token counter",
+      "llama 2 token counter",
+      "token count llama",
+      "ai token counter",
+      "context limit llama",
+      "prompt token calculator",
+      "developer tools",
+      "api token counter",
+      "online token counter"
+    ],
+    features: [
+      "Count tokens for Llama 3 and Llama 2 models",
+      "Real-time token calculation using official Llama tokenizers",
+      "Context limit tracking and usage percentage calculation",
+      "Browser-based processing - your data stays private",
+      "Educational content and optimization tips for Llama usage",
+      "Copy token count and details to clipboard",
+      "Video guide on Llama tokenization",
+      "Links to official Meta Llama resources and documentation"
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/llama-token-counter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/llama-token-counter-banner.png",
+    datePublished: "2025-09-20",
+    softwareVersion: "1.0.0",
+  }
 };
 
 // tldr: {
