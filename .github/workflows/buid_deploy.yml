@@ -1,0 +1,198 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [lince/test-deploy]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production # This tells GitHub to use the production environment secrets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # fetch-depth: 0 is recommended for a more reliable diff across multiple commits in a push
+          fetch-depth: 0
+
+      - name: Detect changed sections
+        id: detect-changes
+        run: |
+          echo "🔍 Detecting changes based on custom build rules..."
+
+          # Use a more robust diff command that covers all commits in a push
+          all_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff --name-only HEAD~1 HEAD)
+
+          if [ -z "$all_changed" ]; then
+            echo "❌ No changes detected. Skipping build and deploy."
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📁 All changed files:"
+          echo "$all_changed" | sed 's/^/ - /'
+
+          changed_dirs=""
+
+          # Helper function to add a directory to the list if it's not already there
+          add_dir() {
+            if [[ ! "$changed_dirs" =~ (^|[[:space:]])$1($|[[:space:]]) ]]; then
+              changed_dirs="$changed_dirs $1"
+            fi
+          }
+
+          for file in $all_changed; do
+            case "$file" in
+              frontend/src/pages/t/*)
+                add_dir "t"
+                ;;
+              frontend/src/pages/markdown_pages/tldr/*|frontend/src/pages/tldr/*)
+                add_dir "markdown_pages"
+                add_dir "tldr"
+                ;;
+              frontend/src/pages/html_pages/cheatsheets/*|frontend/src/pages/c/*)
+                add_dir "html_pages"
+                add_dir "c"
+                ;;
+              frontend/src/pages/svg_icons/*)
+                add_dir "svg_icons"
+                ;;
+              frontend/src/pages/png_icons/*)
+                # If png_icons changes, we build both png_icons and svg_icons
+                add_dir "png_icons"
+                add_dir "svg_icons"
+                ;;
+              frontend/src/pages/emojies/*)
+                add_dir "emojies"
+                ;;
+              frontend/public/*)
+                # Public assets are served directly, just sync without rebuild
+                add_dir "public_assets_only"
+                ;;
+              frontend/src/*)
+                # Other src changes (components, layouts, styles, etc.) need full rebuild
+                add_dir "full_rebuild"
+                ;;
+              *)
+                # You can add a default case here if needed, for example, to build everything
+                # echo "Change detected in unhandled path: $file"
+                ;;
+            esac
+          done
+
+          # Clean up leading/trailing whitespace
+          changed_dirs=$(echo "$changed_dirs" | xargs)
+
+          if [ -n "$changed_dirs" ]; then
+            echo "📦 Changed sections to build: $changed_dirs"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "changed_sections=$changed_dirs" >> $GITHUB_OUTPUT
+          else
+            echo "❌ No changes matched the build rules. Skipping deployment."
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Exclude unchanged sections from build
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "🔧 Excluding unchanged sections from build..."
+          cd frontend/src/pages
+
+          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+          echo "Building only these sections: $changed_sections"
+
+          # Only exclude sections if we're doing selective page builds
+          if [[ "$changed_sections" != "full_rebuild" && "$changed_sections" != "public_assets_only" ]]; then
+            for dir in */; do
+              if [ -d "$dir" ]; then
+                dir_name=${dir%/}
+                if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
+                  echo "✅ Including: $dir_name"
+                else
+                  echo "❌ Excluding: $dir_name -> _$dir_name"
+                  mv "$dir" "_$dir"
+                fi
+              fi
+            done
+          elif [[ "$changed_sections" == "full_rebuild" ]]; then
+            # For components/lib changes, exclude tldr but build everything else
+            echo "🔧 Building all sections except tldr (components/styles/lib changed)"
+            for dir in */; do
+              if [ -d "$dir" ]; then
+                dir_name=${dir%/}
+                if [[ "$dir_name" == "tldr" ]]; then
+                  echo "❌ Excluding: $dir_name -> _$dir_name"
+                  mv "$dir" "_$dir"
+                else
+                  echo "✅ Including: $dir_name"
+                fi
+              fi
+            done
+          else
+            echo "🔧 Building all sections (public assets only)"
+          fi
+
+      - name: Install dependencies and build
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        run: |
+          echo "📦 Installing dependencies and building..."
+          cd frontend
+          npm install
+          npx astro build
+
+      - name: Restore original folder structure
+        if: always() && steps.detect-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "🔄 Restoring original folder structure..."
+          cd frontend/src/pages
+
+          for dir in _*/; do
+            if [ -d "$dir" ]; then
+              original_name=${dir#_}
+              original_name=${original_name%/}
+              echo "Restoring _$original_name to $original_name"
+              mv "$dir" "$original_name/"
+            fi
+          done
+
+      - name: Setup SSH
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        run: |
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "🚀 Deploying to server..."
+          echo "Deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
+
+          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+
+          if [[ "$changed_sections" == "public_assets_only" ]]; then
+            echo "📁 Only public assets changed - syncing files only"
+            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          else
+            echo "📦 Full deployment"
+            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          fi
+
+      - name: Skip deployment message
+        if: steps.detect-changes.outputs.should_deploy == 'false'
+        run: |
+          echo "⏭️ Skipping deployment - no changes matched the build rules."
