@@ -44,8 +44,8 @@ function generateTool(toolKey) {
   console.log(`✅ Updated tools configuration`);
 
   // Update sitemap.xml
-  updateSitemap(toolKey, toolName);
-  console.log(`✅ Updated sitemap.xml`);
+  // updateSitemap(toolKey, toolName);
+  // console.log(`✅ Updated sitemap.xml`);
 
   console.log(`\n🎉 Tool "${toolName}" generated successfully!`);
   console.log(`📁 Location: ${toolDir}`);

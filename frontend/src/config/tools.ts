@@ -1556,6 +1556,47 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
+
+  'deepseek-token-counter': {
+    title: 'Deepseek Token Counter - Count Tokens for Deepseek Models | Online Free DevTools by Hexmos',
+    name: 'Deepseek Token Counter',
+    path: '/freedevtools/t/deepseek-token-counter/',
+    description: 'Count tokens instantly for Deepseek models with Deepseek Token Counter by Hexmos. Get accurate token counts for Deepseek V2, Coder, and LLM models.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/deepseek-token-counter/',
+    keywords: [
+      'deepseek token counter',
+      'deepseek model token calculator',
+      'deepseek v2 token counter',
+      'deepseek coder token counter',
+      'deepseek llm token counter',
+      'token count deepseek',
+      'ai token counter',
+      'context limit deepseek',
+      'prompt token calculator',
+      'developer tools',
+      'api token counter',
+      'online token counter'
+    ],
+    features: [
+      'Count tokens for Deepseek V2, Coder, and LLM models',
+      'Real-time token calculation using official Deepseek tokenizers',
+      'Context limit tracking and usage percentage calculation',
+      'Browser-based processing - your data stays private',
+      'Educational content and optimization tips for Deepseek usage',
+      'Copy token count and details to clipboard',
+      'Video guide on Deepseek tokenization',
+      'Links to official Deepseek resources and documentation'
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/deepseek-token-counter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/deepseek-token-counter-banner.png",
+    datePublished: "2025-09-20",
+    softwareVersion: "1.0.0",
+  }
 };
 
 // tldr: {
