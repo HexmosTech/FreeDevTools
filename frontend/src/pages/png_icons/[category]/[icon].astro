@@ -1,0 +1,273 @@
+---
+import AdBanner from '../../../components/banner/AdBanner.tsx';
+import CopyPngButton from '../../../components/buttons/CopyPngButton.tsx';
+import CopySvgButton from '../../../components/buttons/CopySvgButton.tsx';
+import DownloadPngButton from '../../../components/buttons/DownloadPngButton.tsx';
+import DownloadSvgButton from '../../../components/buttons/DownloadSvgButton.tsx';
+import ToastProvider from '../../../components/ToastProvider.tsx';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { extractSVGDimensions, processSVGContent } from '../../../lib/svg-processor.ts';
+
+export async function getStaticPaths() {
+  // Load the clustor.json file to get all icons
+  const fs = await import('fs/promises');
+  const path = await import('path');
+  
+  const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
+  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
+  
+  const paths = [];
+  
+  // Process each cluster (category)
+  for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
+    const cluster = clusterData as any;
+    const categoryName = cluster.name; // Use the name from the cluster data
+    
+    // Process each file in the cluster
+    for (const fileName of cluster.fileNames) {
+      const iconName = fileName.replace(".svg", "");
+      
+      // Read the SVG file content from the public folder
+      const filePath = path.join('./public/svg_icons', categoryName, fileName);
+      let svgContent = '';
+      try {
+        svgContent = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`Could not read file: ${categoryName}/${fileName}`);
+        continue;
+      }
+      
+      // Process SVG content to handle irregular dimensions
+      const processedSvgContent = processSVGContent(svgContent, 128);
+      
+      paths.push({
+        params: { category: categoryName, icon: iconName },
+        props: {
+          iconData: {
+            name: iconName,
+            description: `Free ${iconName} icon`,
+            category: categoryName,
+            svgContent: processedSvgContent,
+            originalSvgContent: svgContent, // Keep original for downloads
+            tags: cluster.keywords || [],
+            author: 'Free DevTools by Hexmos',
+            license: 'MIT'
+          }
+        }
+      });
+    }
+  }
+  
+  console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
+  console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));
+  
+  return paths;
+}
+
+const { category, icon } = Astro.params;
+const { iconData } = Astro.props as {
+  iconData: {
+    name: string;
+    category: string;
+    svgContent: string;
+    originalSvgContent: string;
+    tags: string[];
+    author: string;
+    license: string;
+  };
+};
+
+// Generate SEO-friendly title and description
+const seoTitle = `Free ${iconData.name} SVG Icon Download | Online Free DevTools by Hexmos`;
+const seoDescription = `Download ${iconData.name} SVG icon for free. High-quality vector icon in ${iconData.category} category. No registration required. Unlimited Downloads.`;
+
+// Generate better alt text for the icon
+const altText = `${iconData.name} ${iconData.category} icon - Free SVG download`;
+
+const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}`;
+
+// Extract SVG dimensions for structured data
+const svgDimensions = extractSVGDimensions(iconData.originalSvgContent);
+
+// Calculate optimal display size (scale to fit ~380px while maintaining aspect ratio)
+const maxDisplaySize = 380;
+
+// Extract viewBox dimensions from the original SVG
+const viewBoxMatch = iconData.originalSvgContent.match(/viewBox="([^"]*)"/);
+let originalWidth, originalHeight;
+
+if (viewBoxMatch) {
+  const viewBox = viewBoxMatch[1].split(/\s+/);
+  originalWidth = parseFloat(viewBox[2]) || 48;
+  originalHeight = parseFloat(viewBox[3]) || 48;
+} else {
+  // Fallback to extracted dimensions
+  originalWidth = svgDimensions.width || 48;
+  originalHeight = svgDimensions.height || 48;
+}
+
+console.log('🔍 DEBUG: Original dimensions:', originalWidth, 'x', originalHeight);
+
+const aspectRatio = originalWidth / originalHeight;
+
+// Simple scaling: scale the larger dimension to maxDisplaySize
+let displayWidth, displayHeight;
+
+if (originalWidth >= originalHeight) {
+  // Landscape or square: scale by width
+  displayWidth = maxDisplaySize;
+  displayHeight = maxDisplaySize / aspectRatio;
+} else {
+  // Portrait: scale by height
+  displayHeight = maxDisplaySize;
+  displayWidth = maxDisplaySize * aspectRatio;
+}
+
+console.log('🔍 DEBUG: Calculated display size:', displayWidth, 'x', displayHeight);
+
+// Generate thumbnail URL (points to the actual SVG image in public folder)
+const thumbnailUrl = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}.svg`;
+ 
+---
+
+<BaseLayout 
+  name={iconData.name}
+  path={`/freedevtools/svg_icons/${category}/${icon}`}
+  title={seoTitle}
+  description={seoDescription}
+  canonical={canonical}
+  themeColor="#1e40af"
+  imgWidth={svgDimensions.width}
+  imgHeight={svgDimensions.height}
+  thumbnailUrl={thumbnailUrl}
+  ogImage={thumbnailUrl}
+  twitterImage={thumbnailUrl}
+  showSidebar={false}
+  showHeader={true}
+  encodingFormat="image/svg+xml"
+  partOf={`${iconData.category} Icons`}
+  partOfUrl={`https://hexmos.com/freedevtools/svg_icons/${category}`}
+  keywords={iconData.tags}
+  features={iconData.tags}
+  category={iconData.category}
+  iconName={iconData.name}
+  iconCategory={iconData.category}
+  iconTags={iconData.tags}
+  author={iconData.author}
+  license={iconData.license}
+>
+  <ToastProvider client:load>
+    <div class="max-w-6xl mx-auto px-2 md:px-6">
+    <div class="mb-16 mt-[74px]">
+      <AdBanner client:load />
+    </div>
+    
+    <div class="mb-8">
+      <nav class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+        <a href="/freedevtools/" class="hover:text-blue-600 dark:hover:text-blue-400">Free DevTools</a>
+        <span class="mx-2">/</span>
+        <a href="/freedevtools/svg_icons/" class="hover:text-blue-600 dark:hover:text-blue-400">SVG Icons</a>
+        <span class="mx-2">/</span>
+        <a href={`/freedevtools/svg_icons/${category}`} class="hover:text-blue-600 dark:hover:text-blue-400 capitalize">{category}</a>
+        <span class="mx-2">/</span>
+        <span>{iconData.name}</span>
+      </nav>
+      
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        {iconData.name} Vector SVG Icon 
+      </h1>
+      
+    </div>
+
+    <!-- Icon Display and Controls -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Big Canvas with Icon -->
+      <div
+        style="
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: #f3f4f6;
+          border-radius: 12px;
+          padding: 16px;
+          box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08);
+          width: 400px;
+          height: 400px;
+        "
+      >
+         <!-- Responsive image with calculated optimal dimensions -->
+         <picture>
+           <source type="image/svg+xml" srcset={`/freedevtools/svg_icons/${category}/${icon}.svg`}>
+           <img 
+             src={`/freedevtools/svg_icons/${category}/${icon}.svg`}
+             alt={altText}
+             width={Math.round(displayWidth)}
+             height={Math.round(displayHeight)}
+             style={`width: ${Math.round(displayWidth)}px; height: ${Math.round(displayHeight)}px; object-fit: contain; display: block;`}
+             loading="eager"
+             decoding="async"
+             title={`${iconData.name} ${iconData.category} icon`}
+           />
+         </picture>
+      </div>
+      
+      <!-- 2x2 Button Grid -->
+      <div class="flex flex-col justify-center">
+        <p class="text-lg text-slate-600 dark:text-slate-400 mb-6">
+          {seoDescription}
+        </p>
+        
+                <div class="space-y-4">
+                  <!-- Copy Buttons Row -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <!-- Copy PNG -->
+                    <CopyPngButton iconData={iconData} client:load />
+                    
+                    <!-- Copy SVG -->
+                    <CopySvgButton iconData={iconData} client:load />
+                  </div>
+                  
+                  <!-- Download Buttons Row -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <!-- PNG Download with Size Selector -->
+                    <DownloadPngButton iconData={iconData} client:load />
+                    
+                    <!-- SVG Download -->
+                    <DownloadSvgButton iconData={iconData} client:load />
+                  </div>
+                </div>
+      </div>
+    </div>
+
+
+    <!-- Credits Section -->
+    <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+      <div class="flex flex-wrap gap-4">
+        <a 
+          href="/freedevtools/svg_icons/" 
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+        >
+          ←  Back to SVG Icons
+        </a>
+        <a 
+          href="/freedevtools/" 
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        >
+          Free DevTools Home
+        </a>
+      </div>
+    </div>
+  </div>
+  </ToastProvider>
+</BaseLayout>
+
+
+<style>
+  /* Simple SVG styling */
+  .icon-display-container svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+  }
+</style>
