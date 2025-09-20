@@ -67,6 +67,14 @@ jobs:
               frontend/src/pages/emojies/*)
                 add_dir "emojies"
                 ;;
+              frontend/public/*)
+                # Public assets are served directly, just sync without rebuild
+                add_dir "public_assets_only"
+                ;;
+              frontend/src/*)
+                # Other src changes (components, layouts, styles, etc.) need full rebuild
+                add_dir "full_rebuild"
+                ;;
               *)
                 # You can add a default case here if needed, for example, to build everything
                 # echo "Change detected in unhandled path: $file"
@@ -103,20 +111,25 @@ jobs:
           changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
           echo "Building only these sections: $changed_sections"
 
-          for dir in */; do
-            if [ -d "$dir" ]; then
-              dir_name=${dir%/}
-              if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
-                echo "✅ Including: $dir_name"
-              else
-                echo "❌ Excluding: $dir_name -> _$dir_name"
-                mv "$dir" "_$dir"
+          # Only exclude sections if we're doing selective page builds
+          if [[ "$changed_sections" != "full_rebuild" && "$changed_sections" != "public_assets_only" ]]; then
+            for dir in */; do
+              if [ -d "$dir" ]; then
+                dir_name=${dir%/}
+                if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
+                  echo "✅ Including: $dir_name"
+                else
+                  echo "❌ Excluding: $dir_name -> _$dir_name"
+                  mv "$dir" "_$dir"
+                fi
               fi
-            fi
-          done
+            done
+          else
+            echo "🔧 Building all sections (full rebuild or components/styles changed)"
+          fi
 
       - name: Install dependencies and build
-        if: steps.detect-changes.outputs.should_deploy == 'true'
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
         run: |
           echo "📦 Installing dependencies and building..."
           cd frontend
@@ -154,7 +167,16 @@ jobs:
         run: |
           echo "🚀 Deploying to server..."
           echo "Deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
-          rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+
+          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+
+          if [[ "$changed_sections" == "public_assets_only" ]]; then
+            echo "📁 Only public assets changed - syncing files only"
+            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          else
+            echo "📦 Full deployment"
+            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          fi
 
       - name: Skip deployment message
         if: steps.detect-changes.outputs.should_deploy == 'false'
