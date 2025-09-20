@@ -3,7 +3,7 @@
 Generate cluster JSON entries for SVG icon directories and update unique_cluster.json
 
 Usage:
-    python generate_cluster_json.py ~/hex/freedevtools/frontend/src/pages/svg_icons/_icons/flag
+    python generate_cluster_json.py ~/hex/freedevtools/frontend/public/svg_icons/flag
 """
 
 import argparse
