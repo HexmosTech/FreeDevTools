@@ -22,11 +22,11 @@ const Header: React.FC = () => {
                   Free DevTools
                 </p>
                 <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-tight">
-                  Essential tools for developers
+                  50,000+ Free Dev Resources - No Login Required
                 </p>
               </div>
             </a>
-            
+
             {/* Theme Switcher - ensure it doesn't extend beyond banner edge */}
             <div className="flex-shrink-0">
               <ThemeSwitcher />
