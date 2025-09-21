@@ -241,6 +241,9 @@ const OpenaiCostCalculator: React.FC = () => {
 											))}
 										</TableBody>
 									</Table>
+									<div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+										<strong>Disclaimer:</strong> Prices are based on data as of September 21, 2025. Please check official OpenAI documentation for the latest rates.
+									</div>
 								</div>
 							</CardContent>
 						</Card>
