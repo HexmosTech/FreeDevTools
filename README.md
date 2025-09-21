@@ -1,4 +1,4 @@
-![Free DevTools Banner](frontend/public/free_devtools_banner.png)
+![Free DevTools Banner](frontend/public/site-banner.png)
 
 A curated collection of 100+ online utilities to make developers' lives easier. Completely free and open source.
 
