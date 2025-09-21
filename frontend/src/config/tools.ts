@@ -1713,6 +1713,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-21",
     softwareVersion: "1.0.0",
   }
+,
+  'slugify-string': {
+    title: 'Slugify String Tool - Convert Text to URL Slug | Online Free DevTools by Hexmos',
+    name: 'Slugify String',
+    path: '/freedevtools/t/slugify-string/',
+    description: 'Convert any string to a clean, URL-friendly slug instantly with Slugify String Tool by Hexmos. Enter your text and get a slugified output for SEO, file names, and web development.',
+    category: 'Developer Tools',
+    icon: '🔤',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/slugify-string/',
+    keywords: [
+      'slugify string',
+      'url slug generator',
+      'slug converter',
+      'seo slug tool',
+      'text to slug',
+      'developer tools',
+      'online slugify',
+      'free slugify tool',
+      'slugify utility'
+    ],
+    features: [
+      'Convert any string to a URL-friendly slug',
+      'Real-time slug generation',
+      'Copy slug to clipboard',
+      'Mobile responsive interface',
+      'Browser-based processing - your data stays private',
+      'Video guide on slugification',
+      'Links to official documentation and resources'
+    ],
+    ogImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/slugify-string-banner.png',
+    twitterImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/slugify-string-banner.png',
+    datePublished: '2025-09-21',
+    softwareVersion: '1.0.0',
+  },
 };
 
 // tldr: {
