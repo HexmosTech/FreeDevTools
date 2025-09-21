@@ -1793,6 +1793,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: '2025-09-21',
     softwareVersion: '1.0.0',
   }
+,
+  'yaml-to-toml': {
+    title: 'YAML to TOML Converter - Transform YAML to TOML Online | Free DevTools by Hexmos',
+    name: 'YAML to TOML Converter',
+    path: '/freedevtools/t/yaml-to-toml/',
+    description: 'Convert YAML to TOML format instantly with YAML to TOML Converter by Hexmos. Paste your YAML and get valid TOML output for configuration files, development, and deployment.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/yaml-to-toml/',
+    keywords: [
+      'yaml to toml converter',
+      'convert yaml to toml',
+      'yaml toml online',
+      'toml generator',
+      'yaml config converter',
+      'developer tools',
+      'online yaml to toml',
+      'free yaml toml tool',
+      'yaml to toml transformation'
+    ],
+    features: [
+      'Convert YAML to TOML instantly',
+      'Paste YAML and get valid TOML output',
+      'Copy TOML to clipboard',
+      'Mobile responsive interface',
+      'Browser-based processing - your data stays private',
+      'Video guide on YAML and TOML conversion',
+      'Links to official documentation and resources'
+    ],
+    ogImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/yaml-to-toml-banner.png',
+    twitterImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/yaml-to-toml-banner.png',
+    datePublished: '2025-09-21',
+    softwareVersion: '1.0.0',
+  }
 };
 
 // tldr: {
