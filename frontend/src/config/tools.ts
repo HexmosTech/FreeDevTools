@@ -1637,6 +1637,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-20",
     softwareVersion: "1.0.0",
   }
+,
+  'openai-cost-calculator': {
+    title: 'OpenAI Cost Calculator - Estimate API Pricing for GPT Models | Online Free DevTools by Hexmos',
+    name: 'OpenAI Cost Calculator',
+    path: '/freedevtools/t/openai-cost-calculator/',
+    description: 'Estimate API costs for all OpenAI models with OpenAI Cost Calculator by Hexmos. Enter input tokens, output tokens, and API calls to see dynamic pricing for GPT-4, GPT-4o, GPT-5, o1, o3, and more.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/openai-cost-calculator/',
+    keywords: [
+      'openai cost calculator',
+      'gpt pricing calculator',
+      'openai api cost estimator',
+      'gpt-4 cost calculator',
+      'gpt-5 cost calculator',
+      'openai token pricing',
+      'api token cost',
+      'developer tools',
+      'online cost calculator',
+      'openai pricing tool'
+    ],
+    features: [
+      'Estimate costs for all OpenAI models (GPT-4, GPT-4o, GPT-5, o1, o3)',
+      'Dynamic pricing table based on user input',
+      'Real-time cost calculation for input/output tokens and API calls',
+      'Browser-based processing - your data stays private',
+      'Educational content and optimization tips for OpenAI usage',
+      'Copy cost details to clipboard',
+      'Video guide on OpenAI pricing',
+      'Links to official OpenAI resources and documentation'
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/openai-cost-calculator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/openai-cost-calculator-banner.png",
+    datePublished: "2025-09-20",
+    softwareVersion: "1.0.0",
+  }
 };
 
 // tldr: {
