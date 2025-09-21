@@ -288,9 +288,9 @@ function updateToolsConfig(toolKey, toolName) {
     keywords: ['${toolKey}', 'developer tools', 'TODO: add more keywords'],
     features: ['TODO: Add feature 1', 'TODO: Add feature 2', 'TODO: Add feature 3'],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/${toolKey}-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/${toolKey}-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/${toolKey}-banner.png",
     datePublished: "${new Date().toISOString().split('T')[0]}",
     softwareVersion: "1.0.0",
   }`;

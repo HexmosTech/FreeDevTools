@@ -52,9 +52,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
   },
   "json-prettifier": {
     title:
@@ -83,9 +83,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-prettifier-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-prettifier-banner.png",
     variationOf: "json-utilities",
   },
 
@@ -112,9 +112,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-validator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-validator-banner.png",
     variationOf: "json-utilities",
   },
 
@@ -136,9 +136,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy fixed JSON",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-fixer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-fixer-banner.png",
     variationOf: "json-utilities",
   },
   "password-generator": {
@@ -175,9 +175,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Real-time password strength indicator",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/password-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/password-generator-banner.png",
   },
 
   "dockerfile-linter": {
@@ -211,9 +211,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy results to clipboard",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/dockerfile-linter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/dockerfile-linter-banner.png",
   },
   "date-time-converter": {
     title: "Date Time Converter | Online Free DevTools by Hexmos",
@@ -242,9 +242,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Shows all common formats at a glance",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/date-time-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/date-time-converter-banner.png",
   },
 
   "openai-token-counter": {
@@ -274,9 +274,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - your data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/openai-token-counter.png",
+      "https://hexmos.com/freedevtools/tool-banners/openai-token-counter.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/openai-token-counter.png",
+      "https://hexmos.com/freedevtools/tool-banners/openai-token-counter.png",
   },
 
   "anthropic-token-counter": {
@@ -304,9 +304,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - your data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
+      "https://hexmos.com/freedevtools/tool-banners/anthropic-token-counter.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/anthropic-token-counter.png",
+      "https://hexmos.com/freedevtools/tool-banners/anthropic-token-counter.png",
     title:
       "Anthropic Token Counter - Count Claude Tokens | Online Free DevTools by Hexmos",
   },
@@ -340,9 +340,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png",
   },
 
   "image-to-base64": {
@@ -413,9 +413,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for all JWT algorithms and formats",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/jwt-parser-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/jwt-parser-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/jwt-parser-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/jwt-parser-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -450,9 +450,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for all YAML syntax features",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/yaml-to-json-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/yaml-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/yaml-to-json-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -488,9 +488,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for all standard UUID formats and variants",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/uuid-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/uuid-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/uuid-generator-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -526,9 +526,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for all SVG elements and attributes",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/svg-viewer-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/svg-viewer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/svg-viewer-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -564,9 +564,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy minified SQL to clipboard with one click",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/sql-minifier-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/sql-minifier-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -602,9 +602,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - no server uploads",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/rgb-to-hex-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/rgb-to-hex-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/rgb-to-hex-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -640,9 +640,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/diff-checker-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/diff-checker-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/diff-checker-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -678,9 +678,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - patterns never leave your device",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/regex-tester-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/regex-tester-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/regex-tester-banner.png",
     datePublished: "2025-09-11",
     softwareVersion: "1.0.0",
   },
@@ -716,9 +716,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/query-params-to-json-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/query-params-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/query-params-to-json-banner.png",
     datePublished: "2025-09-13",
     softwareVersion: "1.0.0",
   },
@@ -749,9 +749,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Mobile responsive interface",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/lorem-ipsum-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/lorem-ipsum-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/lorem-ipsum-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/lorem-ipsum-generator-banner.png",
     datePublished: "2025-09-13",
     softwareVersion: "1.0.0",
   },
@@ -786,9 +786,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for all JSON syntax features",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-to-yaml-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-to-yaml-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/json-to-yaml-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/json-to-yaml-banner.png",
     datePublished: "2025-09-13",
     softwareVersion: "1.0.0",
   },
@@ -826,9 +826,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/hash-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/hash-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/hash-generator-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -866,9 +866,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - files never leave your device",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/har-file-viewer-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/har-file-viewer-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/har-file-viewer-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -906,9 +906,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/env-to-netlify-toml-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/env-to-netlify-toml-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/env-to-netlify-toml-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -946,9 +946,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/csv-to-json-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/csv-to-json-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/csv-to-json-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -986,9 +986,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/css-units-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/css-units-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/css-units-converter-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1028,9 +1028,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-encoder-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-encoder-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-encoder-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-encoder-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1064,9 +1064,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-encode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-encode-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-encode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-encode-banner.png",
     variationOf: "base64-utilities",
   },
 
@@ -1099,9 +1099,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-decode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-decode-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/base64-decode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-decode-banner.png",
     variationOf: "base64-utilities",
   },
 
@@ -1138,9 +1138,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/css-inliner-for-email-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/css-inliner-for-email-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/css-inliner-for-email-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/css-inliner-for-email-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1178,9 +1178,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/curl-to-js-fetch-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/curl-to-js-fetch-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/curl-to-js-fetch-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/curl-to-js-fetch-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1218,9 +1218,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - images never leave your device",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/webp-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/webp-converter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/webp-converter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/webp-converter-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1257,9 +1257,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/qrcode-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/qrcode-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/qrcode-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/qrcode-generator-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
@@ -1296,9 +1296,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy to clipboard functionality",
       "Browser-based processing - data stays private",
     ],
-    ogImage: "https://hexmos.com/freedevtools/t/tool-banners/faker-banner.png",
+    ogImage: "https://hexmos.com/freedevtools/tool-banners/faker-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/faker-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/faker-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1336,9 +1336,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - expressions never leave your device",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/cron-tester-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/cron-tester-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/cron-tester-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/cron-tester-banner.png",
     datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
@@ -1380,9 +1380,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/xml-formatter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/xml-formatter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/xml-formatter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/xml-formatter-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
@@ -1425,9 +1425,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based calculation - no server required",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/chmod-calculator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/chmod-calculator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/chmod-calculator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/chmod-calculator-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
@@ -1470,9 +1470,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based parsing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/user-agent-parser-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/user-agent-parser-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/user-agent-parser-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/user-agent-parser-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
@@ -1510,9 +1510,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/mac-address-generator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-generator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/mac-address-generator-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
@@ -1550,59 +1550,62 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Support for partial MAC address lookup",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-lookup-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/mac-address-lookup-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/mac-address-lookup-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/mac-address-lookup-banner.png",
     datePublished: "2025-01-17",
     softwareVersion: "1.0.0",
   },
 
-  'deepseek-token-counter': {
-    title: 'Deepseek Token Counter - Count Tokens for Deepseek Models | Online Free DevTools by Hexmos',
-    name: 'Deepseek Token Counter',
-    path: '/freedevtools/t/deepseek-token-counter/',
-    description: 'Count tokens instantly for Deepseek models with Deepseek Token Counter by Hexmos. Get accurate token counts for Deepseek V2, Coder, and LLM models.',
-    category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/deepseek-token-counter/',
+  "deepseek-token-counter": {
+    title:
+      "Deepseek Token Counter - Count Tokens for Deepseek Models | Online Free DevTools by Hexmos",
+    name: "Deepseek Token Counter",
+    path: "/freedevtools/t/deepseek-token-counter/",
+    description:
+      "Count tokens instantly for Deepseek models with Deepseek Token Counter by Hexmos. Get accurate token counts for Deepseek V2, Coder, and LLM models.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/deepseek-token-counter/",
     keywords: [
-      'deepseek token counter',
-      'deepseek model token calculator',
-      'deepseek v2 token counter',
-      'deepseek coder token counter',
-      'deepseek llm token counter',
-      'token count deepseek',
-      'ai token counter',
-      'context limit deepseek',
-      'prompt token calculator',
-      'developer tools',
-      'api token counter',
-      'online token counter'
+      "deepseek token counter",
+      "deepseek model token calculator",
+      "deepseek v2 token counter",
+      "deepseek coder token counter",
+      "deepseek llm token counter",
+      "token count deepseek",
+      "ai token counter",
+      "context limit deepseek",
+      "prompt token calculator",
+      "developer tools",
+      "api token counter",
+      "online token counter",
     ],
     features: [
-      'Count tokens for Deepseek V2, Coder, and LLM models',
-      'Real-time token calculation using official Deepseek tokenizers',
-      'Context limit tracking and usage percentage calculation',
-      'Browser-based processing - your data stays private',
-      'Educational content and optimization tips for Deepseek usage',
-      'Copy token count and details to clipboard',
-      'Video guide on Deepseek tokenization',
-      'Links to official Deepseek resources and documentation'
+      "Count tokens for Deepseek V2, Coder, and LLM models",
+      "Real-time token calculation using official Deepseek tokenizers",
+      "Context limit tracking and usage percentage calculation",
+      "Browser-based processing - your data stays private",
+      "Educational content and optimization tips for Deepseek usage",
+      "Copy token count and details to clipboard",
+      "Video guide on Deepseek tokenization",
+      "Links to official Deepseek resources and documentation",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/deepseek-token-counter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/deepseek-token-counter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/deepseek-token-counter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/deepseek-token-counter-banner.png",
     datePublished: "2025-09-20",
     softwareVersion: "1.0.0",
-  }
-,
+  },
   "llama-token-counter": {
-    title: "Llama Token Counter - Count Tokens for Meta Llama Models | Online Free DevTools by Hexmos",
+    title:
+      "Llama Token Counter - Count Tokens for Meta Llama Models | Online Free DevTools by Hexmos",
     name: "Llama Token Counter",
     path: "/freedevtools/t/llama-token-counter/",
-    description: "Count tokens instantly for Meta Llama models with Llama Token Counter by Hexmos. Get accurate token counts for Llama 3 and Llama 2 models.",
+    description:
+      "Count tokens instantly for Meta Llama models with Llama Token Counter by Hexmos. Get accurate token counts for Llama 3 and Llama 2 models.",
     category: "Developer Tools",
     icon: "🛠️",
     themeColor: "#3b82f6",
@@ -1618,7 +1621,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "prompt token calculator",
       "developer tools",
       "api token counter",
-      "online token counter"
+      "online token counter",
     ],
     features: [
       "Count tokens for Llama 3 and Llama 2 models",
@@ -1628,60 +1631,62 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Educational content and optimization tips for Llama usage",
       "Copy token count and details to clipboard",
       "Video guide on Llama tokenization",
-      "Links to official Meta Llama resources and documentation"
+      "Links to official Meta Llama resources and documentation",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/llama-token-counter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/llama-token-counter-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/llama-token-counter-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/llama-token-counter-banner.png",
     datePublished: "2025-09-20",
     softwareVersion: "1.0.0",
-  }
-,
-  'openai-cost-calculator': {
-    title: 'OpenAI Cost Calculator - Estimate API Pricing for GPT Models | Online Free DevTools by Hexmos',
-    name: 'OpenAI Cost Calculator',
-    path: '/freedevtools/t/openai-cost-calculator/',
-    description: 'Estimate API costs for all OpenAI models with OpenAI Cost Calculator by Hexmos. Enter input tokens, output tokens, and API calls to see dynamic pricing for GPT-4, GPT-4o, GPT-5, o1, o3, and more.',
-    category: 'Developer Tools',
-    icon: '🛠️',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/openai-cost-calculator/',
+  },
+  "openai-cost-calculator": {
+    title:
+      "OpenAI Cost Calculator - Estimate API Pricing for GPT Models | Online Free DevTools by Hexmos",
+    name: "OpenAI Cost Calculator",
+    path: "/freedevtools/t/openai-cost-calculator/",
+    description:
+      "Estimate API costs for all OpenAI models with OpenAI Cost Calculator by Hexmos. Enter input tokens, output tokens, and API calls to see dynamic pricing for GPT-4, GPT-4o, GPT-5, o1, o3, and more.",
+    category: "Developer Tools",
+    icon: "🛠️",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/openai-cost-calculator/",
     keywords: [
-      'openai cost calculator',
-      'gpt pricing calculator',
-      'openai api cost estimator',
-      'gpt-4 cost calculator',
-      'gpt-5 cost calculator',
-      'openai token pricing',
-      'api token cost',
-      'developer tools',
-      'online cost calculator',
-      'openai pricing tool'
+      "openai cost calculator",
+      "gpt pricing calculator",
+      "openai api cost estimator",
+      "gpt-4 cost calculator",
+      "gpt-5 cost calculator",
+      "openai token pricing",
+      "api token cost",
+      "developer tools",
+      "online cost calculator",
+      "openai pricing tool",
     ],
     features: [
-      'Estimate costs for all OpenAI models (GPT-4, GPT-4o, GPT-5, o1, o3)',
-      'Dynamic pricing table based on user input',
-      'Real-time cost calculation for input/output tokens and API calls',
-      'Browser-based processing - your data stays private',
-      'Educational content and optimization tips for OpenAI usage',
-      'Copy cost details to clipboard',
-      'Video guide on OpenAI pricing',
-      'Links to official OpenAI resources and documentation'
+      "Estimate costs for all OpenAI models (GPT-4, GPT-4o, GPT-5, o1, o3)",
+      "Dynamic pricing table based on user input",
+      "Real-time cost calculation for input/output tokens and API calls",
+      "Browser-based processing - your data stays private",
+      "Educational content and optimization tips for OpenAI usage",
+      "Copy cost details to clipboard",
+      "Video guide on OpenAI pricing",
+      "Links to official OpenAI resources and documentation",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/openai-cost-calculator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/openai-cost-calculator-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/openai-cost-calculator-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/openai-cost-calculator-banner.png",
     datePublished: "2025-09-20",
     softwareVersion: "1.0.0",
-  }
-,
+  },
   "character-count": {
-    title: "Character Count Tool - Count Characters, Words, Lines & Bytes | Online Free DevTools by Hexmos",
+    title:
+      "Character Count Tool - Count Characters, Words, Lines & Bytes | Online Free DevTools by Hexmos",
     name: "Character Count",
     path: "/freedevtools/t/character-count/",
-    description: "Count characters, words, lines, and byte size instantly with Character Count Tool by Hexmos. Enter your text and get real-time statistics for code, documents, and more. Estimate API costs for all models based on your input.",
+    description:
+      "Count characters, words, lines, and byte size instantly with Character Count Tool by Hexmos. Enter your text and get real-time statistics for code, documents, and more. Estimate API costs for all models based on your input.",
     category: "Developer Tools",
     icon: "🔢",
     themeColor: "#3b82f6",
@@ -1695,7 +1700,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "developer tools",
       "api cost calculator",
       "online character counter",
-      "free character count tool"
+      "free character count tool",
     ],
     features: [
       "Count characters, words, lines, and bytes in real-time",
@@ -1704,51 +1709,52 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Copy statistics to clipboard",
       "Browser-based processing - your data stays private",
       "Video guide on character counting",
-      "Links to official documentation and resources"
+      "Links to official documentation and resources",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/character-count-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/character-count-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/t/tool-banners/character-count-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/character-count-banner.png",
     datePublished: "2025-09-21",
     softwareVersion: "1.0.0",
-  }
-,
-  'slugify-string': {
-    title: 'Slugify String Tool - Convert Text to URL Slug | Online Free DevTools by Hexmos',
-    name: 'Slugify String',
-    path: '/freedevtools/t/slugify-string/',
-    description: 'Convert any string to a clean, URL-friendly slug instantly with Slugify String Tool by Hexmos. Enter your text and get a slugified output for SEO, file names, and web development.',
-    category: 'Developer Tools',
-    icon: '🔤',
-    themeColor: '#3b82f6',
-    canonical: 'https://hexmos.com/freedevtools/t/slugify-string/',
+  },
+  "slugify-string": {
+    title:
+      "Slugify String Tool - Convert Text to URL Slug | Online Free DevTools by Hexmos",
+    name: "Slugify String",
+    path: "/freedevtools/t/slugify-string/",
+    description:
+      "Convert any string to a clean, URL-friendly slug instantly with Slugify String Tool by Hexmos. Enter your text and get a slugified output for SEO, file names, and web development.",
+    category: "Developer Tools",
+    icon: "🔤",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/slugify-string/",
     keywords: [
-      'slugify string',
-      'url slug generator',
-      'slug converter',
-      'seo slug tool',
-      'text to slug',
-      'developer tools',
-      'online slugify',
-      'free slugify tool',
-      'slugify utility'
+      "slugify string",
+      "url slug generator",
+      "slug converter",
+      "seo slug tool",
+      "text to slug",
+      "developer tools",
+      "online slugify",
+      "free slugify tool",
+      "slugify utility",
     ],
     features: [
-      'Convert any string to a URL-friendly slug',
-      'Real-time slug generation',
-      'Copy slug to clipboard',
-      'Mobile responsive interface',
-      'Browser-based processing - your data stays private',
-      'Video guide on slugification',
-      'Links to official documentation and resources'
+      "Convert any string to a URL-friendly slug",
+      "Real-time slug generation",
+      "Copy slug to clipboard",
+      "Mobile responsive interface",
+      "Browser-based processing - your data stays private",
+      "Video guide on slugification",
+      "Links to official documentation and resources",
     ],
     ogImage:
-      'https://hexmos.com/freedevtools/t/tool-banners/slugify-string-banner.png',
+      "https://hexmos.com/freedevtools/tool-banners/slugify-string-banner.png",
     twitterImage:
-      'https://hexmos.com/freedevtools/t/tool-banners/slugify-string-banner.png',
-    datePublished: '2025-09-21',
-    softwareVersion: '1.0.0',
+      "https://hexmos.com/freedevtools/tool-banners/slugify-string-banner.png",
+    datePublished: "2025-09-21",
+    softwareVersion: "1.0.0",
   },
 };
 
@@ -1781,9 +1787,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
 //     "Cross-platform command reference",
 //     "Mobile and desktop commands",
 //   ],
-//   ogImage: "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+//   ogImage: "https://hexmos.com/freedevtools/tool-banners/tldr-banner.png",
 //   twitterImage:
-//     "https://hexmos.com/freedevtools/t/tool-banners/tldr-banner.png",
+//     "https://hexmos.com/freedevtools/tool-banners/tldr-banner.png",
 // },
 
 export function getToolByKey(key: string): Tool | undefined {

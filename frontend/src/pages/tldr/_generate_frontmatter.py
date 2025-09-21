@@ -11,10 +11,8 @@ import requests
 API_KEYS = []
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
-OG_IMAGE = "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-TWITTER_IMAGE = (
-    "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-)
+OG_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+TWITTER_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
 
 
 def validate_seo_compliance(yaml_content, platform, command_name):
@@ -31,7 +29,9 @@ def validate_seo_compliance(yaml_content, platform, command_name):
             if len(title) < 50 or len(title) > 60:
                 issues.append(f"Title length {len(title)} chars (should be 50-60)")
             if not title.endswith("| Online Free DevTools by Hexmos"):
-                issues.append("Title missing brand suffix '| Online Free DevTools by Hexmos'")
+                issues.append(
+                    "Title missing brand suffix '| Online Free DevTools by Hexmos'"
+                )
             if not any(
                 word in title.lower()
                 for word in [
