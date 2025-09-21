@@ -1,49 +1,32 @@
-# Starlight Starter Kit: Basics
+## How to Test SEO for Your Project
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Once your tool is partially or fully completed, you can run validation steps to identify any SEO issues.
 
-```
-npm create astro@latest -- --template starlight
-```
+### Steps for Comprehensive SEO Testing
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+1. Open the AI Chat window in your IDE (such as Cursor or Copilot).
+2. Select the relevant files for your tool—mainly the main source file, `tools.ts` (which contains configurations and details), and any subcomponents if applicable.
+3. Attach the `seo.md` file.
+4. Run this prompt:  
+   `Go through all the attached files of this tool [tool name] and find any SEO issues based on the instructions provided in #seo.md file.`
+5. Wait for the analysis to complete, then fix any issues found.
 
-## 🚀 Project Structure
+### Testing Specific Sections
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+If you want to test a particular section (for example, the meta description):
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+1. Attach all relevant files.
+2. Run the prompt:  
+   `Check the meta description of the tool [tool name] is valid based on seo.md file.`
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+## Improving Results
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+If you find any SEO issues in your tool that are not addressed in `seo.md`, you can improve the file by adding those issues along with validation methods.  
+Make sure to follow the same format for any new sections you
 
-Static assets, like favicons, can be placed in the `public/` directory.
+## SEO testing tools
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+- https://tools.backlinko.com/seo-checker
+- https://pagespeed.web.dev/analysis
+- https://seositecheckup.com/
+- https://rankmath.com/tools/seo-analyzer/
