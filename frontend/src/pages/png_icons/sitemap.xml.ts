@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
     const category = parts.pop() || "general";
     return `
       <url>
-        <loc>${site}/png_icons/${category}/${name}</loc>
+        <loc>${site}/png_icons/${category}/${name}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
