@@ -91,21 +91,33 @@ const OpenaiCostCalculator: React.FC = () => {
 		loadTokenizer();
 	}, []);
 
-	useEffect(() => {
-		let chars = 0;
-		if (mode === "code") {
-			chars = lines * charsPerLine;
-		} else {
-			chars = pages * PAPER_SIZES[paperSize];
-		}
-		if (tokenizer) {
-			// Use tiktoken to estimate tokens from generated string
-			const fakeText = "a".repeat(chars);
-			setInputTokens(tokenizer.encode(fakeText).length);
-		} else {
-			setInputTokens(Math.ceil(chars / 4));
-		}
-	}, [tokenizer, mode, lines, charsPerLine, pages, paperSize]);
+	// Custom debounce hook
+	const useDebouncedCallback = (callback: () => void, delay: number, deps: any[]) => {
+		useEffect(() => {
+			const timeoutId = setTimeout(callback, delay);
+			return () => clearTimeout(timeoutId);
+		}, [...deps, delay]);
+	};
+
+	useDebouncedCallback(
+		() => {
+			let chars = 0;
+			if (mode === "code") {
+				chars = lines * charsPerLine;
+			} else {
+				chars = pages * PAPER_SIZES[paperSize];
+			}
+			if (tokenizer) {
+				// Use tiktoken to estimate tokens from generated string
+				const fakeText = "a".repeat(Math.min(chars, 100000)); // Cap to 100k chars for performance
+				setInputTokens(tokenizer.encode(fakeText).length);
+			} else {
+				setInputTokens(Math.ceil(chars / 4));
+			}
+		},
+		300,
+		[tokenizer, mode, lines, charsPerLine, pages, paperSize]
+	);
 
 	const calculateCostPerCall = (model: any) => {
 		// Prices are per 1M tokens
@@ -133,9 +145,26 @@ const OpenaiCostCalculator: React.FC = () => {
 							<CardContent className="space-y-6 pt-6">
 								<Tabs value={mode} onValueChange={setMode} className="mb-6">
 									<TabsList>
+										<TabsTrigger value="Custom">Custom</TabsTrigger>
 										<TabsTrigger value="code">Code</TabsTrigger>
 										<TabsTrigger value="document">Document</TabsTrigger>
 									</TabsList>
+									<TabsContent value="Custom">
+										<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Input Tokens</label>
+												<Input type="number" value={inputTokens} onChange={e => setInputTokens(Number(e.target.value))} />
+											</div>
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Output Tokens</label>
+												<Input type="number" value={outputTokens} onChange={e => setOutputTokens(Number(e.target.value))} />
+											</div>
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">API Calls</label>
+												<Input type="number" value={apiCalls} onChange={e => setApiCalls(Number(e.target.value))} />
+											</div>
+										</div>
+									</TabsContent>
 									<TabsContent value="code">
 										<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 											<div>
@@ -154,6 +183,21 @@ const OpenaiCostCalculator: React.FC = () => {
 													min={1}
 													value={charsPerLine}
 													onChange={e => setCharsPerLine(Number(e.target.value))}
+												/>
+											</div>
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Calculated Input Tokens</label>
+												<Input type="number" value={inputTokens} readOnly />
+											</div>
+										</div>
+										<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Output Tokens</label>
+												<Input
+													type="number"
+													min={0}
+													value={outputTokens}
+													onChange={e => setOutputTokens(Number(e.target.value))}
 												/>
 											</div>
 											<div>
@@ -192,6 +236,21 @@ const OpenaiCostCalculator: React.FC = () => {
 												</Select>
 											</div>
 											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Calculated Input Tokens</label>
+												<Input type="number" value={inputTokens} readOnly />
+											</div>
+										</div>
+										<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+											<div>
+												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Output Tokens</label>
+												<Input
+													type="number"
+													min={0}
+													value={outputTokens}
+													onChange={e => setOutputTokens(Number(e.target.value))}
+												/>
+											</div>
+											<div>
 												<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">API Calls</label>
 												<Input
 													type="number"
@@ -203,21 +262,6 @@ const OpenaiCostCalculator: React.FC = () => {
 										</div>
 									</TabsContent>
 								</Tabs>
-								<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-									<div>
-										<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Input Tokens</label>
-										<Input type="number" value={inputTokens} onChange={e => setInputTokens(Number(e.target.value))} />
-									</div>
-									<div>
-										<label className="block font-medium text-slate-700 dark:text-slate-300 mb-2">Output Tokens</label>
-										<Input
-											type="number"
-											min={0}
-											value={outputTokens}
-											onChange={e => setOutputTokens(Number(e.target.value))}
-										/>
-									</div>
-								</div>
 								<div className="overflow-x-auto">
 									<Table>
 										<TableHeader>
