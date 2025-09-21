@@ -1830,6 +1830,45 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: '2025-09-21',
     softwareVersion: '1.0.0',
   }
+,
+  'svg-placeholder-generator': {
+    title: 'SVG Placeholder Generator - Create Custom SVG Placeholders Online | Free DevTools by Hexmos',
+    name: 'SVG Placeholder Generator',
+    path: '/freedevtools/t/svg-placeholder-generator/',
+    description: 'Generate custom SVG placeholder images instantly with SVG Placeholder Generator by Hexmos. Set width, height, background, text color, font size, and custom text for responsive design and rapid prototyping.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/svg-placeholder-generator/',
+    keywords: [
+      'svg placeholder generator',
+      'svg image generator',
+      'svg placeholder',
+      'custom svg generator',
+      'responsive svg',
+      'svg for prototyping',
+      'svg design tool',
+      'svg image creator',
+      'svg mockup',
+      'developer tools'
+    ],
+    features: [
+      'Generate custom SVG placeholders with adjustable size and colors',
+      'Set width, height, background, text color, and font size',
+      'Add custom text or use default dimensions',
+      'Copy SVG code or Base64 string to clipboard',
+      'Download SVG image instantly',
+      'Mobile responsive and browser-based processing',
+      'Dynamic cost table for all models',
+      'Video guide for SVG placeholder usage'
+    ],
+    ogImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/svg-placeholder-generator-banner.png',
+    twitterImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/svg-placeholder-generator-banner.png',
+    datePublished: '2025-09-21',
+    softwareVersion: '1.0.0',
+  },
 };
 
 // tldr: {
