@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ site }) => {
         <loc>${site}/png_icons/${category}/${name}</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
-        <priority>0.4</priority>
+        <priority>0.8</priority>
         <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
           <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
           <image:title>Free ${name} PNG Icon Download</image:title>
@@ -34,7 +34,7 @@ export const GET: APIRoute = async ({ site }) => {
       <loc>${site}/png_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
-      <priority>0.5</priority>
+      <priority>0.9</priority>
     </url>`);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
