@@ -15,7 +15,7 @@ export default defineConfig({
     tailwind(),
     sitemap({
       filter: (page) => !page.includes('404') && !page.includes('_astro'),
-      changefreq: 'weekly',
+      changefreq: 'daily',
       priority: 0.7,
       lastmod: new Date()
     })
