@@ -1,9 +1,9 @@
-import type { APIRoute } from "astro";
 import { getAllCheatsheets } from "@/lib/cheatsheets"; // adjust import path if needed
+import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const baseUrl = site ?? "https://hexmos.com"; // fallback if astro.config.mjs.site not set
+  const baseUrl = site ?? "https://hexmos.com/freedevtools"; // fallback if astro.config.mjs.site not set
 
   const cheatsheetsByCategory = await getAllCheatsheets();
 
@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ site }) => {
   // Root landing
   urls.push(
     `  <url>
-      <loc>${baseUrl}/freedevtools/c/</loc>
+      <loc>${baseUrl}/c/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.7</priority>
@@ -23,7 +23,7 @@ export const GET: APIRoute = async ({ site }) => {
   for (const category of Object.keys(cheatsheetsByCategory)) {
     urls.push(
       `  <url>
-        <loc>${baseUrl}/freedevtools/c/${category}/</loc>
+        <loc>${baseUrl}/c/${category}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
