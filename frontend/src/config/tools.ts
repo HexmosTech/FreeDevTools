@@ -567,7 +567,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/sql-minifier-banner.png",
-    datePublished: "2025-09-11",
+    datePublished: "2025-01-16",
     softwareVersion: "1.0.0",
   },
 
@@ -1674,6 +1674,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     twitterImage:
       "https://hexmos.com/freedevtools/t/tool-banners/openai-cost-calculator-banner.png",
     datePublished: "2025-09-20",
+    softwareVersion: "1.0.0",
+  }
+,
+  "character-count": {
+    title: "Character Count Tool - Count Characters, Words, Lines & Bytes | Online Free DevTools by Hexmos",
+    name: "Character Count",
+    path: "/freedevtools/t/character-count/",
+    description: "Count characters, words, lines, and byte size instantly with Character Count Tool by Hexmos. Enter your text and get real-time statistics for code, documents, and more. Estimate API costs for all models based on your input.",
+    category: "Developer Tools",
+    icon: "🔢",
+    themeColor: "#3b82f6",
+    canonical: "https://hexmos.com/freedevtools/t/character-count/",
+    keywords: [
+      "character count",
+      "word count",
+      "line count",
+      "byte size calculator",
+      "text statistics",
+      "developer tools",
+      "api cost calculator",
+      "online character counter",
+      "free character count tool"
+    ],
+    features: [
+      "Count characters, words, lines, and bytes in real-time",
+      "Estimate API costs for all models based on input",
+      "Mobile responsive interface",
+      "Copy statistics to clipboard",
+      "Browser-based processing - your data stays private",
+      "Video guide on character counting",
+      "Links to official documentation and resources"
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/character-count-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/t/tool-banners/character-count-banner.png",
+    datePublished: "2025-09-21",
     softwareVersion: "1.0.0",
   }
 };
