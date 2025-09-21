@@ -1756,6 +1756,43 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-21",
     softwareVersion: "1.0.0",
   },
+
+  'og-meta-generator': {
+    title: 'Open Graph Meta Tag Generator - Create OG & Twitter Meta Tags | Online Free DevTools by Hexmos',
+    name: 'Og Meta Generator',
+    path: '/freedevtools/t/og-meta-generator/',
+    description: 'Generate Open Graph and Twitter meta tags instantly with Og Meta Generator by Hexmos. Customize page type, title, description, image, and more for perfect social sharing and SEO.',
+    category: 'Developer Tools',
+    icon: '🔖',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/og-meta-generator/',
+    keywords: [
+      'open graph meta generator',
+      'og meta tag generator',
+      'twitter meta tag generator',
+      'meta tag generator',
+      'seo meta tags',
+      'social media meta tags',
+      'developer tools',
+      'online meta tag generator',
+      'free og meta tool'
+    ],
+    features: [
+      'Generate Open Graph and Twitter meta tags',
+      'Customize page type, title, description, image, and more',
+      'Copy meta tags to clipboard',
+      'Mobile responsive interface',
+      'Browser-based processing - your data stays private',
+      'Video guide on meta tag generation',
+      'Links to official documentation and resources'
+    ],
+    ogImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/og-meta-generator-banner.png',
+    twitterImage:
+      'https://hexmos.com/freedevtools/t/tool-banners/og-meta-generator-banner.png',
+    datePublished: '2025-09-21',
+    softwareVersion: '1.0.0',
+  }
 };
 
 // tldr: {
