@@ -202,14 +202,14 @@ const AdBanner: React.FC = () => {
           className="block h-full w-full flex justify-start"
         >
           <div className="px-6 h-full w-full min-w-96 flex flex-col justify-center">
-            <div className="text-left mb-2">
-              <p className="leading-tight font-eb-garamond tracking-wide mb-2 text-2xl md:text-4xl lg:text-6xl font-bold !important;">
-                <span className="text-red-700">{currentAd.title}</span>
+            <div className="text-left">
+              <p className="leading-tight font-eb-garamond tracking-wide mb-4 text-6xl font-bold text-red-700">
+                <span >{currentAd.title}</span>
               </p>
             </div>
             <div className="text-left flex flex-row justify-between items-center gap-24 mt-0">
               <div className="flex flex-row justify-between items-center gap-12">
-                <p className="text-gray-800 font-eb-garamond leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium ">
+                <p className="text-gray-800 font-eb-garamond leading-relaxed text-3xl font-medium ">
                   {currentAd.description}
                 </p>
                 <LearnMoreButton size="md" />
@@ -237,10 +237,10 @@ const AdBanner: React.FC = () => {
         >
           <div className="px-2 py-2 h-full flex flex-col justify-center">
             <div className="text-left mb-4">
-              <p className="font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide text-2xl md:text-4xl lg:text-6xl font-bold !important;">
+              <p className="font-bold text-red-700 mb-3 leading-tight font-eb-garamond tracking-wide text-4xl">
                 {currentAd.title}
               </p>
-              <p className="text-gray-800 font-eb-garamond font-medium leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium">
+              <p className="text-gray-800 font-eb-garamond leading-relaxed text-2xl font-medium">
                 {currentAd.description}
               </p>
             </div>
@@ -266,10 +266,10 @@ const AdBanner: React.FC = () => {
       >
         <div className="px-4 py-2 h-full flex flex-col justify-center">
           <div className="text-left mb-4">
-            <p className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide text-2xl md:text-4xl lg:text-6xl font-bold !important;">
+            <p className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide text-2xl font-bold">
               {currentAd.title}
             </p>
-            <p className="text-gray-800 font-eb-garamond leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium">
+            <p className="text-gray-800 font-eb-garamond leading-relaxed text-xl font-medium">
               {currentAd.description}
             </p>
           </div>
