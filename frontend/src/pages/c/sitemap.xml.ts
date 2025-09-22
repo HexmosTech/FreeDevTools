@@ -38,8 +38,8 @@ export const GET: APIRoute = async ({ site }) => {
         `  <url>
           <loc>${baseUrl}${sheet.url}</loc>
           <lastmod>${now}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.4</priority>
+          <changefreq>daily</changefreq>
+          <priority>0.8</priority>
         </url>`
       );
     }

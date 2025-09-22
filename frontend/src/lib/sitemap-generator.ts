@@ -20,7 +20,7 @@ export async function generateTldrSitemapEntries() {
   entries.push({
     url: "/freedevtools/tldr/",
     lastmod: new Date(),
-    changefreq: "weekly",
+    changefreq: "daily",
     priority: 1.0,
   });
 
@@ -29,7 +29,7 @@ export async function generateTldrSitemapEntries() {
     entries.push({
       url: `/freedevtools/tldr/${platform}/`,
       lastmod: new Date(),
-      changefreq: "weekly",
+      changefreq: "daily",
       priority: 0.9,
     });
 
@@ -38,7 +38,7 @@ export async function generateTldrSitemapEntries() {
       entries.push({
         url: command.url,
         lastmod: new Date(),
-        changefreq: "monthly",
+        changefreq: "daily",
         priority: 0.8,
       });
     });

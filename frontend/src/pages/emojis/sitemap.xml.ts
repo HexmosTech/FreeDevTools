@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ site }) => {
   for (const e of emojis) {
     if (!e.slug) continue;
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${site}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
