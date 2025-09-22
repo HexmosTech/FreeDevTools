@@ -12,30 +12,27 @@ const Footer: React.FC = () => {
                 href="https://hexmos.com/livereview/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
               >
-                LiveReview
+                <p>LiveReview</p>
               </a>
               <a
                 href="https://journal.hexmos.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
               >
-                Blog
+                <p>Blog</p>
               </a>
               <a
                 href="/freedevtools/termsofuse"
-                className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
               >
-                Terms of Use
+                <p>Terms of Use</p>
               </a>
             </div>
           </div>
 
           {/* Right Column - Social Icons */}
           <div className="flex items-center space-x-4">
-            <span className="text-slate-600 dark:text-slate-400">Follow us:</span>
+            <p >Follow us:</p>
             <a
               href="https://github.com/HexmosTech/FreeDevTools"
               target="_blank"
