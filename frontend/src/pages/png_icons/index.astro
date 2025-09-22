@@ -9,13 +9,13 @@ import type { CollectionEntry } from 'astro:content';
 const ITEMS_PER_PAGE = 30;
 
 async function getAllIcons() {
-  // Load the clustor.json file
+  // Load the clustor.json file for metadata (fast)
   const fs = await import('fs/promises');
   const path = await import('path');
   
   const clustorPath = path.join('./src/pages/svg_icons', 'clustor.json');
   const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
-  
+
   const iconsByCategory: Record<
     string,
     Array<{
@@ -28,59 +28,28 @@ async function getAllIcons() {
     }>
   > = {};
 
-  // Process each cluster (category)
+  // Process each cluster (category) - NO SVG loading at build time
   for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
     const cluster = clusterData as any;
-    const categoryName = cluster.name; // Use the name from the cluster data
+    const categoryName = cluster.name;
     
     if (!iconsByCategory[categoryName]) {
       iconsByCategory[categoryName] = [];
     }
 
-    // Process each file in the cluster - load preview SVGs for first 6 icons only
+    // Process each file in the cluster - NO SVG loading at build time
     for (let i = 0; i < cluster.fileNames.length; i++) {
       const fileName = cluster.fileNames[i];
       const iconName = fileName.replace(".svg", "");
       
-      let previewSvg = '';
-      
-      // Only load SVG content for the first 6 icons (for preview)
-      if (i < 6) {
-        const filePath = path.join('./public/svg_icons', categoryName, fileName);
-        try {
-          const svgContent = await fs.readFile(filePath, 'utf-8');
-          
-          // Simple SVG processing for preview
-          if (svgContent.includes('<svg')) {
-            const widthMatch = svgContent.match(/width="([^"]*)"/);
-            const heightMatch = svgContent.match(/height="([^"]*)"/);
-            const viewBoxMatch = svgContent.match(/viewBox="([^"]*)"/);
-            
-            let width = widthMatch ? widthMatch[1] : '24';
-            let height = heightMatch ? heightMatch[1] : '24';
-            
-            const widthNum = parseFloat(width);
-            const heightNum = parseFloat(height);
-            
-            let viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${widthNum} ${heightNum}`;
-            
-            previewSvg = svgContent.replace(
-              /<svg[^>]*>/,
-              `<svg width="56" height="56" viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet" style="max-width: 100%; max-height: 100%;">`
-            );
-          }
-        } catch (error) {
-          console.warn(`Could not read file: ${categoryName}/${fileName}`);
-        }
-      }
-
+      // No preview SVG loading at build time - will be loaded client-side
       iconsByCategory[categoryName].push({
         name: iconName,
-        url: `/freedevtools/svg_icons/${categoryName}/${iconName}`,
+        url: `/freedevtools/svg_icons/${categoryName}/${iconName}/`,
         description: `Free ${iconName} icon`,
         category: categoryName,
         iconCount: cluster.fileNames.length,
-        previewSvg: previewSvg,
+        previewSvg: '', // Will be loaded client-side
       });
     }
   }
@@ -94,16 +63,6 @@ const allCategories = Object.keys(allIcons).sort();
 const totalCategories = allCategories.length;
 const totalPages = Math.ceil(totalCategories / ITEMS_PER_PAGE);
 
-
-const categoryIconMap = {
-  "general": "https://cdn-icons-png.flaticon.com/512/5515/5515389.png",
-  "animals": "https://cdn-icons-png.flaticon.com/512/1998/1998619.png",
-  "nature": "https://cdn-icons-png.flaticon.com/512/1998/1998619.png",
-  "technology": "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
-  "business": "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
-  "social": "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
-  "shapes": "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
-};
 ---
 
 <BaseLayout 
@@ -354,36 +313,31 @@ const categoryIconMap = {
     return filtered;
   }
   
-  // Render category card with preview SVGs
+  // Render category card with img tags for SVG previews
   function renderCategoryCard(category, categoryIcons) {
     const iconCount = categoryIcons.length;
     const iconSlots = Array(6).fill(null);
     
-    // Fill available slots with preview icons
+    // Create slots with img tags for SVG previews
     for (let i = 0; i < Math.min(6, iconCount); i++) {
       const icon = categoryIcons[i];
       
-      if (icon.previewSvg) {
-        // Use the actual preview SVG
-        iconSlots[i] = `<div class="flex items-center justify-center p-1">
-          <div class="w-14 h-14 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
-            <div class="w-14 h-14 flex items-center justify-center">
-              ${icon.previewSvg}
-            </div>
+      iconSlots[i] = `<div class="flex items-center justify-center p-1">
+        <div class="w-14 h-14 text-slate-600 overflow-hidden flex items-center justify-center">
+          <div class="w-14 h-14 flex items-center justify-center bg-slate-100 rounded-lg">
+            <img 
+              src="/freedevtools/svg_icons/${category}/${icon.name}.svg" 
+              alt="${icon.name} icon"
+              class="w-10 h-10 object-contain"
+              loading="lazy"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-slate-400" style="display:none;">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
           </div>
-        </div>`;
-      } else {
-        // Use placeholder for icons beyond the first 6
-        iconSlots[i] = `<div class="flex items-center justify-center p-1">
-          <div class="w-14 h-14 text-slate-600 dark:text-slate-400 overflow-hidden flex items-center justify-center">
-            <div class="w-14 h-14 flex items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-lg">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-slate-400">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-            </div>
-          </div>
-        </div>`;
-      }
+        </div>
+      </div>`;
     }
     
     // Fill empty slots with transparent placeholders
