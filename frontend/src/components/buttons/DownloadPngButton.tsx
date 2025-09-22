@@ -120,15 +120,17 @@ const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
     <div className="inline-flex rounded overflow-hidden w-full">
       <button
         onClick={handleClick}
-        className="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+        className="flex-1 px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
       >
-        Download PNG
+        <span className="hidden sm:inline">Download PNG</span>
+        <span className="sm:hidden">PNG</span>
       </button>
       <div className="relative">
         <select
           ref={pngSizeSelectRef}
-          className="px-3 py-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[80px] focus:outline-none focus:ring-0 focus:border-green-500"
+          className="px-2 sm:px-3 py-3 text-xs sm:text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[60px] sm:min-w-[80px] focus:outline-none focus:ring-0 focus:border-green-500 h-full"
           defaultValue="512"
+          style={{ minHeight: '48px' }}
         >
           <option value="512">512px</option>
           <option value="256">256px</option>
@@ -136,8 +138,8 @@ const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
           <option value="64">64px</option>
           <option value="32">32px</option>
         </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="absolute inset-y-0 right-0 flex items-center pr-1 sm:pr-2 pointer-events-none">
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </div>
