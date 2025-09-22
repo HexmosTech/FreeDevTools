@@ -1,3 +1,5 @@
+import { scrollToHeadTitle } from "./scroll-utils";
+
 export interface PaginationConfig {
   totalItems: number;
   itemsPerPage: number;
@@ -197,8 +199,8 @@ export class PaginationManager {
     this.updateURL(page);
     this.onPageChange(page);
 
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }
 
   // Handle items per page change
@@ -212,8 +214,8 @@ export class PaginationManager {
     this.updateURL(this.config.currentPage, this.config.itemsPerPage);
     this.onItemsPerPageChange(newItemsPerPage);
 
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }
 
   // Setup event listeners

@@ -1,4 +1,6 @@
 // Pagination utility functions
+import { scrollToHeadTitle } from './scroll-utils.js';
+
 export function createPaginationManager(config, onPageChange, onItemsPerPageChange) {
   let currentPage = config.currentPage || 1;
   let itemsPerPage = config.itemsPerPage || config.defaultItemsPerPage;
@@ -152,8 +154,8 @@ export function createPaginationManager(config, onPageChange, onItemsPerPageChan
     updateURL(page);
     onPageChange(page);
 
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }
 
   // Handle items per page change
@@ -167,8 +169,8 @@ export function createPaginationManager(config, onPageChange, onItemsPerPageChan
     updateURL(currentPage, itemsPerPage);
     onItemsPerPageChange(newItemsPerPage);
 
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }
 
   // Setup event listeners
