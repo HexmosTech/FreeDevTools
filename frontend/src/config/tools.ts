@@ -1869,6 +1869,25 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: '2025-09-21',
     softwareVersion: '1.0.0',
   },
+
+  'rsa-key-pair-generator': {
+    title: 'RSA Key Pair Generator - Securely Generate RSA Keys | Online Free DevTools by Hexmos',
+    name: 'RSA Key Pair Generator',
+    path: '/freedevtools/t/rsa-key-pair-generator/',
+    description: 'Generate secure RSA public and private key pairs for encryption, decryption, and digital signatures. Choose your key size and generate keys instantly in your browser.',
+    category: 'Security Tools',
+    icon: '🔐',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/rsa-key-pair-generator/',
+    keywords: ['rsa key pair generator', 'rsa generator', 'public key generator', 'private key generator', 'asymmetric key generator', 'encryption key generator', 'security tools'],
+    features: ['Generate RSA public and private keys', 'Select key size (2048 or 4096 bits)', 'Secure client-side key generation', 'Copy keys to clipboard', 'PEM format output'],
+    ogImage:
+      "https://hexmos.com/freedevtools/tool-banners/rsa-key-pair-generator-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/tool-banners/rsa-key-pair-generator-banner.png",
+    datePublished: "2025-09-22",
+    softwareVersion: "1.0.0",
+  }
 };
 
 // tldr: {
