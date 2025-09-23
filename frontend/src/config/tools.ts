@@ -1888,6 +1888,25 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-22",
     softwareVersion: "1.0.0",
   }
+,
+  'markdown-to-html-converter': {
+    title: 'Markdown to HTML Converter - Convert Markdown to HTML | Online Free DevTools by Hexmos',
+    name: 'Markdown to HTML Converter',
+    path: '/freedevtools/t/markdown-to-html-converter/',
+    description: 'Convert Markdown to HTML instantly with this free online tool. See the rendered HTML in real-time as you type.',
+    category: 'Developer Tools',
+    icon: '✍️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/markdown-to-html-converter/',
+    keywords: ['markdown to html', 'md to html', 'markdown converter', 'html converter', 'markdown editor', 'developer tools'],
+    features: ['Real-time Markdown to HTML conversion', 'Live preview', 'Copy HTML to clipboard', 'Load sample Markdown', 'Client-side processing'],
+    ogImage:
+      "https://hexmos.com/freedevtools/tool-banners/markdown-to-html-converter-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/tool-banners/markdown-to-html-converter-banner.png",
+    datePublished: "2025-09-22",
+    softwareVersion: "1.0.0",
+  }
 };
 
 // tldr: {
