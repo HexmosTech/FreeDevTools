@@ -132,7 +132,7 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
           {/* Emoji Info */}
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-              {emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug || 'Unknown'}
+              {emoji.code || (emoji as any).glyph} {emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug || 'Unknown'}
             </h1>
             
             {emoji.alsoKnownAs && emoji.alsoKnownAs.length > 0 && (
