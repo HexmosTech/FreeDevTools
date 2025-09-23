@@ -1926,6 +1926,41 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     datePublished: "2025-09-22",
     softwareVersion: "1.0.0",
   }
+,
+  ,
+  'xml-to-json': {
+    title: 'XML to JSON Converter | Online Free DevTools by Hexmos',
+    name: 'XML to JSON',
+    path: '/freedevtools/t/xml-to-json/',
+    description: 'Easily convert XML data to JSON format with our free online XML to JSON Converter. Fast, secure, and accurate conversion for developers and data analysts. No installation required.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/xml-to-json/',
+    keywords: [
+      'xml-to-json',
+      'xml to json converter',
+      'online xml to json',
+      'developer tools',
+      'data conversion',
+      'json tools',
+      'xml tools',
+      'free devtools',
+      'Hexmos'
+    ],
+    features: [
+      'Instantly convert XML data to JSON format',
+      'Supports large and complex XML files',
+      'Secure, client-side processing for privacy',
+      'Copy, download, or share converted JSON',
+      'Syntax highlighting and error detection'
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/tool-banners/xml-to-json-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/tool-banners/xml-to-json-banner.png",
+    datePublished: "2025-09-23",
+    softwareVersion: "1.0.0",
 };
 
 // tldr: {
