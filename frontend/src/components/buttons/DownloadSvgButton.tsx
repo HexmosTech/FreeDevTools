@@ -9,10 +9,24 @@ interface DownloadSvgButtonProps {
 }
 
 const DownloadSvgButton: React.FC<DownloadSvgButtonProps> = ({ iconData }) => {
-  const downloadAsSVG = useCallback(() => {
-    // Use original SVG content for downloads to maintain quality
-    const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
-    if (!svgData) return;
+  const downloadAsSVG = useCallback(async () => {
+    // Load SVG content client-side if not available
+    let svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+
+    if (!svgData) {
+      // Extract category and icon name from current URL
+      const pathParts = window.location.pathname.split('/');
+      const category = pathParts[pathParts.length - 2];
+      const iconName = pathParts[pathParts.length - 1];
+
+      try {
+        const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
+        svgData = await response.text();
+      } catch (error) {
+        console.error('Failed to load SVG:', error);
+        return;
+      }
+    }
 
     const blob = new Blob([svgData], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);

@@ -13,11 +13,23 @@ interface CopyPngButtonProps {
 
 const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) => {
   const copyAsPNG = useCallback(async () => {
-    // Use original SVG content for copying to maintain quality
-    const svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+    // Load SVG content client-side if not available
+    let svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
+
     if (!svgData) {
-      toast.error('No SVG data available');
-      return;
+      // Extract category and icon name from current URL
+      const pathParts = window.location.pathname.split('/');
+      const category = pathParts[pathParts.length - 2];
+      const iconName = pathParts[pathParts.length - 1];
+
+      try {
+        const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
+        svgData = await response.text();
+      } catch (error) {
+        console.error('Failed to load SVG:', error);
+        toast.error('Failed to load SVG data');
+        return;
+      }
     }
 
     try {
