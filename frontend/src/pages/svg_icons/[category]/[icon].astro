@@ -6,7 +6,7 @@ import DownloadPngButton from '../../../components/buttons/DownloadPngButton.tsx
 import DownloadSvgButton from '../../../components/buttons/DownloadSvgButton.tsx';
 import ToastProvider from '../../../components/ToastProvider';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { extractSVGDimensions, processSVGContent } from '../../../lib/svg-processor';
+// SVG processing moved to client-side for better performance
 
 export async function getStaticPaths() {
   // Load the cluster.json file to get all icons
@@ -18,27 +18,14 @@ export async function getStaticPaths() {
   
   const paths = [];
   
-  // Process each cluster (category)
+  // Process each cluster (category) - NO SVG loading at build time
   for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
     const cluster = clusterData as any;
     const categoryName = cluster.name; // Use the name from the cluster data
     
-    // Process each file in the cluster
+    // Process each file in the cluster - NO SVG loading at build time
     for (const fileName of cluster.fileNames) {
       const iconName = fileName.replace(".svg", "");
-      
-      // Read the SVG file content from the public folder
-      const filePath = path.join('./public/svg_icons', categoryName, fileName);
-      let svgContent = '';
-      try {
-        svgContent = await fs.readFile(filePath, 'utf-8');
-      } catch (error) {
-        console.warn(`Could not read file: ${categoryName}/${fileName}`);
-        continue;
-      }
-      
-      // Process SVG content to handle irregular dimensions
-      const processedSvgContent = processSVGContent(svgContent, 128);
       
       paths.push({
         params: { category: categoryName, icon: iconName },
@@ -47,8 +34,8 @@ export async function getStaticPaths() {
             name: iconName,
             description: `Free ${iconName} icon`,
             category: categoryName,
-            svgContent: processedSvgContent,
-            originalSvgContent: svgContent, // Keep original for downloads
+            svgContent: '', // Will be loaded client-side
+            originalSvgContent: '', // Will be loaded client-side
             tags: cluster.keywords || [],
             author: 'Free DevTools by Hexmos',
             license: 'MIT'
@@ -86,8 +73,8 @@ const altText = `${iconData.name} ${iconData.category} icon - Free SVG download`
 
 const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}/`;
 
-// Extract SVG dimensions for structured data
-const svgDimensions = extractSVGDimensions(iconData.originalSvgContent);
+// Extract SVG dimensions for structured data (will be updated client-side)
+const svgDimensions = { width: 128, height: 128, viewBox: "0 0 128 128", aspectRatio: 1 };
 
 // Calculate optimal display size (scale to fit ~380px while maintaining aspect ratio)
 const maxDisplaySize = 280;
@@ -267,6 +254,50 @@ const thumbnailUrl = icon === 'brand-oauth' && category === 'factory'
   </ToastProvider>
 </BaseLayout>
 
+<script define:vars={{ iconData, category, icon }}>
+  // Load SVG content client-side for better performance
+  async function loadSVGContent() {
+    try {
+      const response = await fetch(`/freedevtools/svg_icons/${category}/${icon}.svg`);
+      const svgContent = await response.text();
+      
+      // Update the image source to use the loaded SVG
+      const img = document.querySelector('img[alt*="icon"]');
+      if (img) {
+        // Create a blob URL for the SVG
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        img.src = url;
+        
+        // Extract dimensions from SVG content
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+        const svgElement = svgDoc.querySelector('svg');
+        
+        if (svgElement) {
+          const width = svgElement.getAttribute('width') || '128';
+          const height = svgElement.getAttribute('height') || '128';
+          const viewBox = svgElement.getAttribute('viewBox') || `0 0 ${width} ${height}`;
+          
+          // Update image dimensions
+          img.width = parseInt(width);
+          img.height = parseInt(height);
+          
+          console.log('🔍 DEBUG: Loaded SVG with dimensions:', width, 'x', height);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load SVG content:', error);
+    }
+  }
+  
+  // Load SVG content after page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadSVGContent);
+  } else {
+    loadSVGContent();
+  }
+</script>
 
 <style>
   /* Simple SVG styling */
