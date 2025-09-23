@@ -298,7 +298,7 @@ const XmlToJson: React.FC = () => {
                           variant="ghost"
                           size="sm"
                           onClick={handleLoadExample}
-                          className="text-xs"
+                          className="text-xs p-0"
                         >
                           Load Example
                         </Button>

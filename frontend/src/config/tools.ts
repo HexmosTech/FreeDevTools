@@ -1927,7 +1927,6 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     softwareVersion: "1.0.0",
   }
 ,
-  ,
   'xml-to-json': {
     title: 'XML to JSON Converter | Online Free DevTools by Hexmos',
     name: 'XML to JSON',
@@ -1961,7 +1960,41 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/tool-banners/xml-to-json-banner.png",
     datePublished: "2025-09-23",
     softwareVersion: "1.0.0",
-};
+},
+'json-to-xml': {
+    title: 'JSON to XML Converter | Online Free DevTools by Hexmos',
+    name: 'JSON to XML',
+    path: '/freedevtools/t/json-to-xml/',
+    description: 'Convert JSON data to XML format instantly with our free online JSON to XML Converter. Fast, secure, and accurate conversion for developers and data analysts. No installation required.',
+    category: 'Developer Tools',
+    icon: '🛠️',
+    themeColor: '#3b82f6',
+    canonical: 'https://hexmos.com/freedevtools/t/json-to-xml/',
+    keywords: [
+      'json-to-xml',
+      'json to xml converter',
+      'online json to xml',
+      'developer tools',
+      'data conversion',
+      'json tools',
+      'xml tools',
+      'free devtools',
+      'Hexmos'
+    ],
+    features: [
+      'Instantly convert JSON data to XML format',
+      'Handles complex and nested JSON structures',
+      'Secure, client-side processing for privacy',
+      'Copy, download, or share converted XML',
+      'Syntax highlighting and error detection'
+    ],
+    ogImage:
+      "https://hexmos.com/freedevtools/tool-banners/json-to-xml-banner.png",
+    twitterImage:
+      "https://hexmos.com/freedevtools/tool-banners/json-to-xml-banner.png",
+    datePublished: "2025-09-23",
+}
+}
 
 // tldr: {
 //   title: "TLDR - Command Documentation | Online Free DevTools by Hexmos",
