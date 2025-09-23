@@ -124,7 +124,7 @@ const MarkdownToHtmlConverter: React.FC = () => {
                 <CardTitle>Markdown Syntax Guide</CardTitle>
               </CardHeader>
               <CardContent className="text-slate-800 dark:text-slate-400 space-y-4">
-                <p>
+              <p>
                   Markdown is a simple and intuitive markup language. Here are some of the most common elements you'll use:
                 </p>
                 <h4 className="font-semibold text-slate-900 dark:text-slate-100">Headers</h4>
