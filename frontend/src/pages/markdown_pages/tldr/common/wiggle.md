@@ -1,24 +1,24 @@
 ---
-title: "Patch Application Tool - Apply Patches with Wiggle | Online Free DevTools by Hexmos"
+title: "Wiggle - Patch Application Tool | Online Free DevTools by Hexmos"
 name: wiggle
 path: /freedevtools/tldr/common/wiggle
 canonical: "https://hexmos.com/freedevtools/tldr/common/wiggle/"
-description: "Apply patches effortlessly with Wiggle, resolving patch conflicts that `patch` can't handle. Merge changes automatically and extract branches easily. Free online tool, no registration required."
+description: "Apply patches easily with Wiggle, resolving conflicts in patches that `patch` can't handle. Merge changes automatically and extract branches effortlessly. Free online tool, no registration required."
 category: common
 keywords:
   - patch application tool
-  - patch conflict resolution
-  - wiggle patch command
-  - patch merging tool
-  - linux patch application
-  - macos patch application
-  - patch file merging
-  - reject file merging tool
-  - command line patch utility
-  - diff file patching
+  - patch conflict resolver
+  - wiggle patch
+  - patch merging
+  - file patching linux
+  - code patching macos
+  - patch extractor
+  - reject file merging
+  - command line patch tool
+  - diff application tool
 features:
-  - Automatically resolve patch conflicts
-  - Apply patches from files to originals
+  - Resolve patch conflicts automatically
+  - Apply changes from patch files
   - Merge changes from reject files
   - Extract specific branches from patches
   - Apply patches and save compared words

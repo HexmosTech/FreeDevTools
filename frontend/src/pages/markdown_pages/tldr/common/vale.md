@@ -1,27 +1,27 @@
 ---
-title: "Vale Style Checker - Validate Text Style | Online Free DevTools by Hexmos"
+title: "Vale - Validate Style with CLI Tool | Online Free DevTools by Hexmos"
 name: vale
 path: /freedevtools/tldr/common/vale
 canonical: "https://hexmos.com/freedevtools/tldr/common/vale/"
-description: "Validate text style with Vale, a powerful command-line style checker for Markdown and AsciiDoc files. Ensure consistency and quality in your writing. Free online tool, no registration required."
+description: "Validate text style with Vale, a powerful CLI style checker. Ensure consistency and quality across Markdown and AsciiDoc files. Free online tool, no registration required."
 category: common
 keywords:
   - markdown style validation
   - asciidoc style validation
-  - text style checker CLI
+  - text style checker
   - vale style linter
   - command line style guide
   - documentation style guide
-  - vale configuration file
-  - vale alert levels
-  - markdown linting vale
-  - asciidoc linting vale
+  - vale configuration
+  - vale alerts
+  - vale markdown
+  - vale asciidoc
 features:
-  - Check style of Markdown and AsciiDoc files.
-  - Customize style checking with configuration files.
-  - Output style results in JSON format for programmatic use.
-  - Define minimum alert levels (suggestion, warning, error) for style issues.
-  - Check style from standard input with markup format specification.
+  - Check style of files using Vale CLI
+  - Customize style checking with configurations
+  - Output style results in JSON format
+  - Define minimum alert levels for style issues
+  - Check style from stdin with markup format specification
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

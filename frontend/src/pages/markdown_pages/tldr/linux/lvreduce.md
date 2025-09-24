@@ -1,29 +1,29 @@
 ---
-title: "Reduce Logical Volume - LVM Command | Online Free DevTools by Hexmos"
+title: "Reduce Logical Volume Size - LVM Tool | Online Free DevTools by Hexmos"
 name: lvreduce
 path: /freedevtools/tldr/linux/lvreduce
 canonical: "https://hexmos.com/freedevtools/tldr/linux/lvreduce/"
-description: "Reduce Logical Volume size with the lvreduce command. Shrink and manage LVM logical volumes efficiently using this command-line tool. Free online tool, no registration required."
+description: "Reduce Logical Volume Size with LVM tool. Resize and manage logical volumes efficiently. Free online tool, no registration required."
 category: linux
 keywords:
-  - lvreduce command
+  - logical volume manager
   - lvm reduce size
+  - linux lvm
+  - disk management
+  - volume resizing
   - logical volume shrinking
-  - linux lvm command
-  - linux logical volume
-  - lvm size reduction
-  - reduce lvm volume
-  - linux disk management
-  - lvreduce linux
-  - command line lvm
+  - lvreduce command
+  - storage management
+  - lvm administration
+  - command line volume control
 features:
-  - Shrink logical volumes by a specified size.
-  - Resize the filesystem during volume reduction.
-  - Specify reduction amount in gigabytes (GB) or other units.
-  - Manage LVM storage efficiently from the command line.
-  - Control logical volume size using precise command-line parameters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reduce logical volume size
+  - Resize filesystem during volume reduction
+  - Specify reduction amount in GB
+  - Manage LVM storage
+  - Command-line volume manipulation
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # lvreduce

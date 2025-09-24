@@ -1,29 +1,29 @@
 ---
-title: "Libvirt XML Validator - Validate XML Files | Online Free DevTools by Hexmos"
+title: "Validate Libvirt XML - Schema Validation Tool | Online Free DevTools by Hexmos"
 name: virt-xml-validate
 path: /freedevtools/tldr/linux/virt-xml-validate
 canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-xml-validate/"
-description: "Validate Libvirt XML files with virt-xml-validate.  This command-line tool ensures schema compliance for your Libvirt XML configurations, providing detailed error reports. Free online tool, no registration required."
+description: "Validate Libvirt XML files against schemas with virt-xml-validate.  This command-line tool ensures schema compliance for your XML configurations. Free online tool, no registration required."
 category: linux
 keywords:
   - libvirt xml validation
-  - libvirt xml validator
   - xml schema validation libvirt
-  - validate libvirt xml
-  - linux libvirt xml validation
-  - command line libvirt validator
-  - libvirt xml schema checker
-  - virt-xml-validate linux
+  - validate libvirt xml files
+  - libvirt xml validator
+  - linux xml validation
+  - command line xml validation
+  - schema validation tool
+  - virt-xml-validate command
   - libvirt configuration validation
-  - xml file validation linux command
+  - xml file validation linux
 features:
-  - Validates Libvirt XML against specified or inferred schemas.
-  - Infers schemas from the XML root element if none is provided.
-  - Reports detailed errors for schema violations with precise locations.
-  - Supports various Libvirt XML configurations (domains, networks, storage).
-  - Integrates with Libvirt command-line tools for efficient workflow.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validates Libvirt XML files against specified or inferred schemas.
+  - Uses schema inference from the XML root element if no schema is provided.
+  - Provides detailed error reporting for schema violations.
+  - Supports various Libvirt XML configurations (domains, networks, etc.).
+  - Integrates seamlessly with the Libvirt command-line tools.
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # virt-xml-validate

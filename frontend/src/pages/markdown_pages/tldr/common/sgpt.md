@@ -1,27 +1,27 @@
 ---
-title: "Generate Code with sgpt - OpenAI CLI Tool | Online Free DevTools by Hexmos"
+title: "Generate Code with sgpt - OpenAI Command Line Tool | Online Free DevTools by Hexmos"
 name: sgpt
 path: /freedevtools/tldr/common/sgpt
 canonical: "https://hexmos.com/freedevtools/tldr/common/sgpt/"
-description: "Generate code with sgpt, an OpenAI command-line interface (CLI) code generator. Execute shell commands, start chat sessions, and use it as a search engine. Free online tool, no registration required."
+description: "Generate code with sgpt using OpenAI models from your command line interface. Solve problems, execute commands, and start chat sessions. Free online tool, no registration required."
 category: common
 keywords:
-  - OpenAI code generator CLI
-  - GPT command line code generation
-  - AI powered shell commands
-  - Shell GPT code generation
-  - OpenAI CLI code assistant
-  - Command line code generation AI
-  - CLI code generation with OpenAI
-  - OpenAI shell scripting tool
-  - GPT code generation command line
-  - AI command line code snippets
+  - OpenAI command line tool
+  - CLI code generator
+  - Shell GPT tool
+  - GPT command line interface
+  - AI code assistant
+  - Command line AI
+  - OpenAI shell commands
+  - AI powered shell
+  - Code generation tool
+  - Chatbot command line
 features:
-  - Generate code snippets from natural language descriptions
-  - Execute shell commands via OpenAI's powerful models
-  - Initiate interactive chat sessions with custom session names
-  - Utilize it as a command-line search engine for information retrieval
-  - Employ a Read-Eval-Print Loop (REPL) for iterative code execution and testing
+  - Generate code snippets from natural language prompts
+  - Execute shell commands using OpenAI models
+  - Start interactive chat sessions with a session name
+  - Use it as a search engine through command line
+  - Start a Read-Eval-Print Loop (REPL) session
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

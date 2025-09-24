@@ -1,27 +1,27 @@
 ---
-title: "Control Linux Notifications - Dunstify Command | Online Free DevTools by Hexmos"
+title: "Control Notifications - Dunstify Message Tool | Online Free DevTools by Hexmos"
 name: dunstify
 path: "/freedevtools/tldr/common/dunstify"
 canonical: "https://hexmos.com/freedevtools/tldr/common/dunstify/"
-description: "Control Linux desktop notifications easily with the Dunstify command.  Customize urgency, replace messages, and enhance your notification experience. Free online tool, no registration required."
+description: "Control Linux desktop notifications with Dunstify, a powerful message tool. Customize urgency, replace messages, and enhance your notification experience. Free online tool, no registration required."
 category: common
 keywords:
-  - linux desktop notification control
-  - dunstify command line
-  - linux notification urgency
-  - dunstify message replacement
-  - linux terminal notification
-  - command line notification display
-  - dunstify notification options
-  - replace linux notifications
-  - dunst notification control
-  - linux notify-send alternative
+  - linux desktop notification
+  - dunstify message tool
+  - command line notification
+  - notification control linux
+  - dunstify linux
+  - notify-send alternative
+  - linux message display
+  - desktop notification tool
+  - terminal notification linux
+  - urgency control dunstify
 features:
-  - Send customized desktop notifications from the command line.
-  - Set notification urgency levels (low, normal, critical).
-  - Replace existing notifications with updated messages using IDs.
-  - Display help information for available dunstify options.
-  - Manage and control multiple notifications efficiently from the terminal.
+  - Send desktop notifications via command line
+  - Customize notification urgency levels
+  - Replace existing notifications by ID
+  - Display help information for dunstify
+  - Display notifications with custom titles and messages
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

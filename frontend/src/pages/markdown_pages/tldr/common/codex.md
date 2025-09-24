@@ -1,27 +1,27 @@
 ---
-title: "Codex - Generate Code with AI | Online Free DevTools by Hexmos"
+title: "Generate Code with Codex - Natural Language Tool | Online Free DevTools by Hexmos"
 name: codex
 path: /freedevtools/tldr/common/codex
 canonical: "https://hexmos.com/freedevtools/tldr/common/codex/"
-description: "Generate code snippets with Codex, an AI-powered code assistant.  Edit files, run commands, and leverage natural language prompts for efficient coding. Free online tool, no registration required."
+description: "Generate code with Codex, a natural language code assistant. Edit files, run commands, and get help with coding tasks. Free online tool, no registration required."
 category: common
 keywords:
   - natural language code generation
-  - ai code generation terminal
-  - codex command line tool
-  - codex windows command line
-  - codex macos terminal
-  - codex linux terminal
-  - openai codex prompt examples
-  - terminal code generation ai
-  - code generation from natural language
-  - ai powered code assistant
+  - openai codex terminal
+  - code assistant command line
+  - codex linux
+  - codex macos
+  - codex windows
+  - command line code editor
+  - terminal code generator
+  - programming assistant
+  - natural language to code
 features:
-  - Generate code from natural language descriptions.
-  - Directly edit files within the current directory.
-  - Execute commands based on natural language prompts.
-  - Utilize specific OpenAI models for customized code generation.
-  - Load entire repository context for improved code accuracy (experimental).
+  - Generate code snippets from natural language prompts
+  - Edit files directly in the current directory
+  - Run commands automatically based on prompts
+  - Use specific providers and models for code generation
+  - Load entire repository context for more accurate results
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
-title: "Detect GitHub Stars - Astronomer Bot Detection | Online Free DevTools by Hexmos"
+title: "Detect Illegitimate Stars - Astronomer GitHub Tool | Online Free DevTools by Hexmos"
 name: astronomer
 path: /freedevtools/tldr/common/astronomer
 canonical: "https://hexmos.com/freedevtools/tldr/common/astronomer/"
-description: "Detect illegitimate GitHub stars with Astronomer, identifying bot accounts and star inflation. Analyze star patterns and generate comparative reports to assess repository health. Free online tool, no registration required."
+description: "Detect illegitimate GitHub stars with Astronomer, a powerful tool for identifying bot accounts boosting repository popularity. Free online tool, no registration required."
 category: common
 keywords:
-  - GitHub star bot detection
-  - GitHub bot account scanner
-  - GitHub star analysis tool
-  - illegitimate GitHub star identifier
-  - repository star pattern analysis
-  - GitHub repository health check
-  - Astronomer GitHub command
-  - GitHub star inflation detection
-  - GitHub star count verification
-  - automated GitHub star detection
+  - GitHub star detection
+  - GitHub bot detection
+  - Astronomer GitHub
+  - illegitimate star identifier
+  - GitHub analysis tool
+  - star inflation detection
+  - repository health check
+  - bot account scanner
+  - GitHub stars scanner
+  - GitHub reputation analysis
 features:
-  - Scan GitHub repositories for potentially illegitimate stars.
-  - Identify bot accounts artificially inflating star counts.
-  - Analyze star patterns to detect suspicious activity and trends.
-  - Generate comparative reports highlighting potential bot activity across repositories.
-  - Specify the maximum number of stars to scan within a repository for optimized analysis.
+  - Scan GitHub repositories for illegitimate stars
+  - Identify bot accounts contributing to star counts
+  - Analyze star patterns for suspicious activity
+  - Generate comparative reports on repository star data
+  - Determine the maximum number of stars to scan in a repository
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

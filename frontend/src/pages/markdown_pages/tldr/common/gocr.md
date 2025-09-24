@@ -1,27 +1,27 @@
 ---
-title: "Recognize Text with gocr - OCR Command | Online Free DevTools by Hexmos"
+title: "Recognize Text - gocr OCR Tool | Online Free DevTools by Hexmos"
 name: gocr
 path: /freedevtools/tldr/common/gocr
 canonical: "https://hexmos.com/freedevtools/tldr/common/gocr/"
-description: "Recognize text from images with the gocr OCR command-line tool. Convert images to text and extract data effortlessly with this powerful Optical Character Recognition solution. Free online tool, no registration required."
+description: "Recognize text with gocr, a powerful Optical Character Recognition tool. Convert images to text and extract data effortlessly. Free online tool, no registration required."
 category: common
 keywords:
-  - image text recognition
-  - OCR command line
-  - gocr optical character recognition
-  - text extraction from image
-  - image to text converter
-  - command line OCR tool
-  - Linux OCR command
-  - gocr image processing
-  - character recognition software
-  - text from image online
+  - image to text
+  - OCR software
+  - Optical Character Recognition
+  - text extraction
+  - character recognition
+  - image recognition
+  - command line OCR
+  - Linux OCR
+  - gocr command
+  - text from image
 features:
-  - Convert images into editable text
-  - Extract text data from various image formats
-  - Utilize a customizable character database
-  - Output recognized text to a specified file
-  - Enhance accuracy with adjustable certainty levels
+  - Convert images to text
+  - Recognize characters from images
+  - Output text to file
+  - Extend character database
+  - Customize character recognition
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

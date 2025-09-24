@@ -1,27 +1,27 @@
 ---
-title: "Arduino Sketch Compiler - Compile Arduino Sketches | Online Free DevTools by Hexmos"
+title: "Compile Arduino Sketches - Command Line Tool | Online Free DevTools by Hexmos"
 name: arduino-builder
 path: /freedevtools/tldr/common/arduino-builder
 canonical: "https://hexmos.com/freedevtools/tldr/common/arduino-builder/"
-description: "Compile Arduino sketches efficiently with arduino-builder. Customize build options, debug, and streamline your Arduino development workflow using command-line interface. Free online tool, no registration required."
+description: "Compile Arduino sketches efficiently with arduino-builder. Customize build options, debug, and streamline your Arduino development process. Free online tool, no registration required."
 category: common
 keywords:
-  - Arduino sketch compilation
-  - Arduino command-line compiler
-  - Arduino build system
+  - Arduino sketch compiler
+  - Arduino build tool
+  - Command line Arduino compilation
+  - Arduino IDE alternative
+  - Arduino builder flags
+  - Arduino build configuration
+  - Arduino compilation Linux
   - Arduino build options JSON
-  - Arduino CLI compiler
-  - Arduino sketch builder
-  - command line Arduino build
-  - Arduino IDE command line
-  - Arduino build process
-  - Arduino debugging CLI
+  - Arduino command line interface
+  - Arduino sketch debugging
 features:
-  - Compile Arduino sketches from the command line.
-  - Customize build options via configuration files.
-  - Adjust debug level for detailed error reporting.
-  - Specify custom build directories for organization.
-  - Enable verbose output for detailed build tracking.
+  - Compile Arduino sketches from the command line
+  - Customize build options using a configuration file
+  - Specify debug level for detailed error reporting
+  - Define a custom build directory
+  - Enable verbose mode for detailed build output
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

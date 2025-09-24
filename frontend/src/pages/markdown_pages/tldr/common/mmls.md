@@ -1,27 +1,27 @@
 ---
-title: "Display Partition Layout with Mmls - Command Reference | Online Free DevTools by Hexmos"
+title: "Display Partition Layout - Mmls Tool | Online Free DevTools by Hexmos"
 name: mmls
 path: /freedevtools/tldr/common/mmls
 canonical: "https://hexmos.com/freedevtools/tldr/common/mmls/"
-description: "Analyze partition layouts with the mmls command.  View partition tables, sizes, and types from disk images and volume systems. Free online tool, no registration required."
+description: "Display partition layout information with Mmls. Analyze disk images and volume systems, identify partition types, and recover data. Free online tool, no registration required."
 category: common
 keywords:
-  - disk image partition analysis
-  - partition table viewer command
-  - volume system partition analysis
-  - forensic disk image analysis
-  - command line partition table viewer
-  - linux mmls command
-  - macos mmls command
-  - ewf image partition analysis
-  - nested partition table analysis
-  - mmls command reference
+  - disk image analyzer
+  - partition table viewer
+  - volume system analysis
+  - data recovery tool
+  - forensic analysis tool
+  - linux disk utility
+  - macos disk utility
+  - command line partition tool
+  - ewf image analysis
+  - nested partition analysis
 features:
-  - Display partition tables from disk images and volumes.
-  - Show partition sizes and offsets in a detailed view.
-  - Analyze split EWF (Expert Witness Format) disk images.
-  - Display nested partition tables within partitions.
-  - Identify various partition table types (e.g., GPT, MBR).
+  - Display partition tables from disk images
+  - Show partition sizes in a separate column
+  - Analyze split EWF images
+  - Display nested partition tables
+  - Identify different partition table types
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

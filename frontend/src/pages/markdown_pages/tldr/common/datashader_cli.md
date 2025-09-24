@@ -1,27 +1,27 @@
 ---
-title: "Datashader CLI - Create Visualizations from Data | Online Free DevTools by Hexmos"
+title: "Create Datashader Visualizations - CLI Tool | Online Free DevTools by Hexmos"
 name: datashader_cli
 path: /freedevtools/tldr/common/datashader_cli
 canonical: "https://hexmos.com/freedevtools/tldr/common/datashader_cli/"
-description: "Create datashader visualizations with the datashader_cli command-line tool. Generate shaded scatter plots and geospatial data visualizations easily. Free online tool, no registration required."
+description: "Create datashader visualizations with datashader_cli. Generate shaded scatter plots and geospatial data visualizations easily via the command line. Free online tool, no registration required."
 category: common
 keywords:
-  - datashader visualization cli
-  - geospatial data visualization cli
-  - shaded scatter plot creation
-  - parquet data visualization
-  - geojson data visualization
-  - shapefile data visualization
-  - geopackage data visualization
-  - command-line data visualization
-  - matplotlib data visualization
-  - python datashader visualization
+  - datashader visualization
+  - geospatial data visualization
+  - shaded scatter plot
+  - command line visualization
+  - parquet visualization
+  - geojson visualization
+  - shapefile visualization
+  - geopackage visualization
+  - python visualization tool
+  - data visualization cli
 features:
-  - Generate shaded scatter plots from Parquet, CSV, and other data formats.
-  - Visualize geospatial data from GeoParquet, Shapefile, GeoJSON, and GeoPackage files.
-  - Customize visualization appearance with background color options.
-  - Utilize matplotlib for high-quality image rendering.
-  - Create visualizations directly from the command line interface.
+  - Create shaded scatter plots from various data formats
+  - Visualize geospatial data from GeoParquet, Shapefile, GeoJSON, and GeoPackage
+  - Render images using matplotlib
+  - Customize background colors for visualizations
+  - Generate visualizations from command line interface
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

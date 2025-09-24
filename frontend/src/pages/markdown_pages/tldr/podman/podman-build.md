@@ -1,29 +1,29 @@
 ---
-title: "Podman Build - Create Container Images | Online Free DevTools by Hexmos"
+title: "Create Podman Images - Daemonless Build Tool | Online Free DevTools by Hexmos"
 name: podman-build
 path: /freedevtools/tldr/podman/podman-build
 canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-build/"
-description: "Create container images with Podman Build, a daemonless Dockerfile builder.  Build, tag, and manage images efficiently using command-line instructions. Free online tool, no registration required."
-category: podman
+description: "Create container images with Podman Build. A daemonless build tool compatible with Dockerfiles. Free online tool, no registration required."
+category: common
 keywords:
-  - podman build images
-  - podman container image creation
-  - dockerfile podman build
-  - daemonless container image build
-  - linux container image creation
-  - podman build tag
-  - containerfile podman build
-  - podman build cache control
-  - podman build command line
-  - podman build options
+  - container image build
+  - podman build command
+  - dockerfile image creation
+  - daemonless container build
+  - linux container images
+  - podman image tagging
+  - containerfile build tool
+  - podman no cache build
+  - podman quiet build
+  - podman command line
 features:
-  - Build container images from Dockerfiles.
-  - Tag images during the build process.
-  - Build images with or without cached layers.
-  - Control build output verbosity (quiet mode).
-  - Specify alternative Containerfile locations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build images from Dockerfiles/Containerfiles
+  - Tag images during the build process
+  - Build images without using cached layers
+  - Suppress build output for cleaner execution
+  - Build images from alternative Containerfile locations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # podman build

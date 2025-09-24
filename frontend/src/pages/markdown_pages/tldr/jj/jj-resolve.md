@@ -1,29 +1,29 @@
 ---
-title: "JJ Resolve Conflicts - Control JJ Merge Tool | Online Free DevTools by Hexmos"
+title: "Resolve Conflicts - Control JJ Merge Tool | Online Free DevTools by Hexmos"
 name: jj-resolve
 path: /freedevtools/tldr/jj/jj-resolve
 canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-resolve/"
-description: "Resolve merge conflicts efficiently with the JJ merge tool.  Handle file merge issues and manage revision conflicts easily with this command-line tool. Free online tool, no registration required."
-category: jj
+description: "Resolve conflicts efficiently with JJ Merge Tool, handling file merge issues. Manage revision conflicts easily. Free online tool, no registration required."
+category: common
 keywords:
   - jj resolve conflict
-  - jj merge conflicts
-  - jj version control merge
-  - jj conflict resolution command
-  - jj revision conflict resolution
-  - command line jj merge
-  - jj file merge tool
-  - jj resolve command examples
-  - jj resolve specific files
-  - jj resolve specific revision
+  - jj merge tool
+  - jj version control
+  - jj conflict resolution
+  - git conflict resolver
+  - version control merge
+  - command line merge tool
+  - jj revision conflict
+  - code merge tool
+  - diff resolve tool
 features:
-  - Resolve all conflicts in a JJ repository.
-  - List all conflict markers within affected files.
-  - Resolve conflicts in a specific JJ revision.
-  - Resolve conflicts within selected files only.
-  - Choose to accept either incoming or outgoing versions during conflict resolution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resolve all file conflicts in a repository
+  - List all conflict markers within files
+  - Resolve conflicts in a specific revision
+  - Resolve conflicts only within specified files
+  - Accept incoming or outgoing versions during resolution
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # jj resolve

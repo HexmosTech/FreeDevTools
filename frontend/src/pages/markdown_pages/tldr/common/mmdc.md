@@ -1,27 +1,27 @@
 ---
-title: "Generate Mermaid Diagrams - mmdc CLI Tool | Online Free DevTools by Hexmos"
+title: "Generate Diagrams - Mermaid CLI Tool | Online Free DevTools by Hexmos"
 name: mmdc
 path: /freedevtools/tldr/common/mmdc
 canonical: "https://hexmos.com/freedevtools/tldr/common/mmdc/"
-description: "Generate diagrams from Mermaid code with the mmdc CLI tool.  Convert .mmd files to SVG, PNG, or PDF. Free online tool, no registration required."
+description: "Generate diagrams with Mermaid CLI tool. Create SVG, PNG, or PDF diagrams from Mermaid definition files. Free online tool, no registration required."
 category: common
 keywords:
   - mermaid diagram generator
   - mmd to svg converter
+  - diagram generation cli
+  - mermaid command line tool
+  - graphviz alternative
   - mmd to png converter
   - mmd to pdf converter
-  - mermaid cli tool
-  - command line diagram generator
-  - mermaid diagram command
-  - svg diagram generator
-  - png diagram generator
-  - pdf diagram generator
+  - mermaid theme support
+  - mermaid background color
+  - diagram definition language
 features:
-  - Convert Mermaid (.mmd) files to SVG, PNG, and PDF formats.
-  - Support various Mermaid themes (forest, dark, neutral, default).
-  - Customize the background color of the generated diagrams.
-  - Generate diagrams directly from the command line interface.
-  - Handle different output formats automatically based on file extensions.
+  - Convert Mermaid files to SVG, PNG, or PDF format
+  - Specify the diagram theme (forest, dark, neutral, default)
+  - Customize the background color of generated diagrams
+  - Generate diagrams from the command line
+  - Support for a Mermaid definition language
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

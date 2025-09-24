@@ -1,28 +1,29 @@
 ---
-title: "Convert Line Endings with Unix2Mac - Linux Command | Online Free DevTools by Hexmos"
+title: "Convert Line Endings - Unix2Mac Tool | Online Free DevTools by Hexmos"
 name: unix2mac
 path: /freedevtools/tldr/linux/unix2mac
 canonical: "https://hexmos.com/freedevtools/tldr/linux/unix2mac/"
-description: "Convert Unix line endings to macOS format with Unix2Mac.  Change LF to CR line feeds for file compatibility. This free online tool provides a command reference and examples. No registration required."
+description: "Convert line endings with Unix2Mac. Change Unix-style line feeds to macOS carriage returns for file compatibility. Free online tool, no registration required."
 category: linux
 keywords:
-  - unix line ending conversion
-  - unix to mac file conversion
-  - lf to cr conversion linux
-  - linux file line ending converter
-  - unix2mac command line tool
-  - cross-platform line ending converter
-  - text file format conversion linux
-  - linux text file line ending fix
-  - mac line ending converter linux
-  - convert unix text to mac linux
+  - macOS line ending conversion
+  - Unix to Mac file converter
+  - LF to CR conversion
+  - Linux file conversion tool
+  - Unix2Mac command line utility
+  - Cross-platform line ending tool
+  - File format conversion tool
+  - Text file line ending fix
+  - Mac line ending converter
+  - Convert Unix text to Mac
 features:
-  - Convert Unix line endings (LF) to macOS line endings (CR).
-  - Create a new file with converted macOS line endings.
-  - Display detailed file information, including line ending type.
-  - Modify line endings in place, without creating a new file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Unix line endings to macOS format
+  - Create a new file with macOS line endings
+  - Display file information regarding line endings
+  - Keep, add, or remove Byte Order Mark (BOM)
+  - Modify line endings in place
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # unix2mac

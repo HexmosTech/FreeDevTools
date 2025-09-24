@@ -1,27 +1,27 @@
 ---
-title: "Generate Barcodes with Zint - QR Code & Barcode Generator | Online Free DevTools by Hexmos"
+title: "Generate Barcodes - Zint Barcode and QR Code Tool | Online Free DevTools by Hexmos"
 name: zint
 path: /freedevtools/tldr/common/zint
 canonical: "https://hexmos.com/freedevtools/tldr/common/zint/"
-description: "Generate barcodes and QR codes easily with the Zint command-line tool. Create various barcode types for diverse applications, including EAN, UPC, and QR codes. Free online tool, no registration required."
+description: "Generate barcodes and QR codes easily with Zint. Create various barcode types for diverse applications. Free online tool, no registration required."
 category: common
 keywords:
-  - Barcode Generator Zint
-  - QR Code Generator Zint
-  - Zint Barcode Generator Linux
-  - Command Line Barcode Generator
-  - Zint QR Code Generator Linux
-  - Generate EAN Barcodes Zint
-  - Generate UPC Barcodes Zint
-  - Zint Barcode Command Line
-  - Create Barcodes from Data Zint
-  - Encode Data into Barcodes Zint
+  - Barcode generator
+  - QR code generator
+  - Barcode encoder
+  - QR code encoder
+  - Zint barcode
+  - Linux barcode generator
+  - Command line barcode
+  - Barcode CLI
+  - Data encoding
+  - Zint QR code
 features:
-  - Generate various barcode symbologies (e.g., EAN, UPC, QR Code)
-  - Encode data into different barcode formats
-  - Save generated barcodes as image files
-  - Use command-line options for flexible barcode customization
-  - List all supported barcode types for easy reference
+  - Generate various barcode types
+  - Create QR codes
+  - Encode data into barcodes
+  - Save barcode images to files
+  - List available barcode types
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

@@ -1,29 +1,29 @@
 ---
-title: "bc Calculator - Perform Precision Calculations | Online Free DevTools by Hexmos"
+title: "Calculate with bc - Precision Calculation Tool | Online Free DevTools by Hexmos"
 name: bc
 path: /freedevtools/tldr/osx/bc
 canonical: "https://hexmos.com/freedevtools/tldr/osx/bc/"
-description: "Perform arbitrary precision calculations with the bc command-line calculator. Execute bc scripts and utilize math functions for complex computations. Free online tool, no registration required."
+description: "Calculate expressions with bc, an arbitrary precision calculator language. Perform complex math and execute scripts with ease. Free online tool, no registration required."
 category: osx
 keywords:
-  - bc arbitrary precision calculator
-  - bc command line calculator osx
-  - bc math scripting osx
-  - bc scale calculation osx
-  - bc expression evaluator osx
-  - bc mathlib functions osx
-  - osx bc command examples
-  - macos bc calculator
-  - bc shell scripting macos
-  - bc interactive mode osx
+  - arbitrary precision calculation
+  - bc calculator linux
+  - bc math scripting
+  - bc command line calculator
+  - bc expression evaluator
+  - bc scale calculation
+  - bc mathlib functions
+  - bc command examples
+  - bc shell scripting
+  - bc interactive mode
 features:
-  - Perform arbitrary-precision arithmetic calculations.
-  - Execute bc scripts for automated computations.
-  - Utilize the built-in math library for advanced functions.
-  - Control the number of decimal places (scale) in calculations.
-  - Interact with bc in interactive mode or via command-line expressions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform arbitrary precision calculations
+  - Execute bc scripts for complex computations
+  - Utilize the standard math library for advanced functions
+  - Calculate expressions directly from the command line
+  - Control the scale (number of decimal places) of calculations
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # bc

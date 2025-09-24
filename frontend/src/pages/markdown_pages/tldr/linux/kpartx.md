@@ -1,29 +1,29 @@
 ---
-title: "kpartx Partition Tool - Create Device Maps | Online Free DevTools by Hexmos"
+title: "Create Device Maps - kpartx Partition Tool | Online Free DevTools by Hexmos"
 name: kpartx
 path: /freedevtools/tldr/linux/kpartx
 canonical: "https://hexmos.com/freedevtools/tldr/linux/kpartx/"
-description: "Create device maps with the kpartx command-line partition tool for Linux.  Manage disk partitions efficiently using this powerful Linux device mapper. Free online tool, no registration required."
+description: "Create device maps with kpartx, a powerful command-line partition tool for Linux. Manage disk partitions efficiently. Free online tool, no registration required."
 category: linux
 keywords:
-  - kpartx partition mapping
-  - linux kpartx command
-  - linux disk image mapping
-  - kpartx device mapper
-  - partition table mapping linux
-  - linux partition management kpartx
-  - create device maps linux
-  - kpartx add partition mappings
-  - kpartx delete partition mappings
-  - list kpartx mappings
+  - disk partition mapping
+  - linux device mapper
+  - kpartx partition tool
+  - create device maps
+  - partition table reader
+  - device mapper utility
+  - linux disk management
+  - partition mapping tool
+  - image partition mounting
+  - disk image mapping
 features:
-  - Add partition mappings to disk images
-  - Delete existing partition mappings from disk images
-  - List all current partition mappings
-  - Create device maps from partition tables within disk images
-  - Manage disk partitions using command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add partition mappings to a disk image
+  - Delete existing partition mappings
+  - List all available partition mappings
+  - Create device maps from partition tables
+  - Support mounting and unmounting disk images
+ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
 
 # kpartx

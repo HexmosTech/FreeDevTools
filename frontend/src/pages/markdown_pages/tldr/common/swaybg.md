@@ -1,27 +1,27 @@
 ---
-title: "Control Wallpaper with Swaybg - Wayland Manager | Online Free DevTools by Hexmos"
+title: "Control Wallpaper - Swaybg Tool | Online Free DevTools by Hexmos"
 name: swaybg
 path: /freedevtools/tldr/common/swaybg
 canonical: "https://hexmos.com/freedevtools/tldr/common/swaybg/"
-description: "Control Wayland wallpaper effortlessly with Swaybg. Set images, modes (stretch, fit, fill), and colors easily.  Free online tool, no registration required. Command reference and examples included."
+description: "Control Wayland wallpaper with Swaybg. Set images, modes, and colors easily. Free online tool, no registration required."
 category: common
 keywords:
   - Wayland wallpaper manager
   - Swaybg image setter
   - Linux wallpaper control
-  - Wayland background configuration
-  - Sway compositor wallpaper
-  - Set Wayland background image
-  - Linux display customization
-  - Wayland color wallpaper
-  - Configure Swaybg wallpaper
-  - Command-line wallpaper changer
+  - Desktop background manager
+  - Wayland compositor tool
+  - Sway window manager
+  - Image display utility
+  - Color wallpaper setter
+  - Linux display configuration
+  - Wayland display settings
 features:
-  - Set images as wallpaper with ease.
-  - Define wallpaper display modes (stretch, fit, fill, center, tile).
-  - Set a solid color as the background.
-  - Manage wallpaper via simple command-line interface.
-  - Configure wallpaper settings for Wayland compositors.
+  - Set a specific image as wallpaper
+  - Define the wallpaper display mode (stretch, fit, fill, etc.)
+  - Set a solid color as the wallpaper
+  - Control wallpaper via the command line
+  - Configure wallpaper for Wayland compositors
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

@@ -1,27 +1,27 @@
 ---
-title: "Control Git History with tig - Interactive TUI Tool | Online Free DevTools by Hexmos"
+title: "Control Git History with tig - TUI Tool | Online Free DevTools by Hexmos"
 name: tig
 path: /freedevtools/tldr/common/tig
 canonical: "https://hexmos.com/freedevtools/tldr/common/tig/"
-description: "Control Git history interactively with tig, a powerful ncurses-based TUI.  Browse commits, visualize branches, and manage stashes with ease. Free online tool, no registration required."
+description: "Control Git history interactively with tig, an ncurses-based TUI. Browse commits, blame, and stashes with ease. Free online tool, no registration required."
 category: common
 keywords:
-  - git history interactive TUI
-  - tig git command line
-  - git commit visualization tool
-  - interactive git blame viewer
-  - git stash management interface
-  - git log ncurses interface
-  - linux git TUI tools
-  - macos git TUI tools
-  - git branch comparison tool
-  - command line git browser
+  - git history browser
+  - git interactive TUI
+  - tig command line
+  - git commit visualization
+  - git blame viewer
+  - git stash manager
+  - git log alternative
+  - ncurses git interface
+  - linux git tools
+  - macos git tools
 features:
-  - Browse commit history using an interactive text-based user interface.
-  - Visually compare differences between Git branches and tags.
-  - Interactively navigate and inspect Git blame information.
-  - Manage and review saved Git stashes efficiently.
-  - Access and display commits from all branches and stashes simultaneously.
+  - Browse commit history with an interactive TUI
+  - Visualize differences between Git branches
+  - Interactively browse Git blame
+  - Display commits from all branches and stashes
+  - Manage and view Git stashes
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
