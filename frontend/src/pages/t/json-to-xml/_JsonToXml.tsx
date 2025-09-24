@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolHead from "@/components/tool/ToolHead";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
@@ -65,7 +66,7 @@ const JsonToXml: React.FC = () => {
   }
 
   return (
-    <ToolBody>
+    <ToolContainer>
       {!loaded ? (
         <JsonToXmlSkeleton />
       ) : (
@@ -76,7 +77,7 @@ const JsonToXml: React.FC = () => {
           />
           <ToolCardWrapper>
             <Card className="tool-card-bg-grid">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
                 <div>
                   <Label htmlFor="json-input">JSON Input</Label>
                   <Textarea
@@ -96,7 +97,7 @@ const JsonToXml: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-2">
                     <Label htmlFor="xml-output">XML Output</Label>
                     {output && (
                       <CopyButton
@@ -145,7 +146,7 @@ const JsonToXml: React.FC = () => {
           </ToolContentCardWrapper>
         </ToolGridContainer>
       )}
-    </ToolBody>
+    </ToolContainer>
   );
 };
 
