@@ -1,27 +1,27 @@
 ---
-title: "Compress Files - Zstd Compression Tool | Online Free DevTools by Hexmos"
+title: "Zstd Command Syntax & Examples | Online Free DevTools by Hexmos"
 name: zstd
 path: /freedevtools/tldr/common/zstd
 canonical: "https://hexmos.com/freedevtools/tldr/common/zstd/"
-description: "Compress files efficiently with Zstd. Achieve faster data compression and decompression using the Zstandard algorithm. Free online tool, no registration required."
+description: "Learn zstd command syntax and usage examples. Complete reference for Zstandard compression commands with practical examples for Linux, macOS, and Windows."
 category: common
 keywords:
-- zstd compression
-- zstd decompress
-- zstd command line
-- zstandard algorithm
-- file compression
-- data compression
-- linux compression
-- macos compression
-- compress file zst
-- decompress file zst
+  - zstd command
+  - zstd syntax
+  - zstd examples
+  - zstandard commands
+  - compression commands
+  - file compression syntax
+  - linux commands
+  - macos commands
+  - zstd reference
+  - zstd tutorial
 features:
-- Compress files to the .zst format
-- Decompress .zst files to their original form
-- Compress files with specified compression levels
-- Decompress files directly to standard output
-- Utilize ultra mode for higher compression levels
+  - Complete zstd command syntax
+  - Practical usage examples
+  - Compression and decompression commands
+  - Command line reference
+  - Cross-platform examples
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
