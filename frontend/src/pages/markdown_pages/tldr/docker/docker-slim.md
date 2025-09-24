@@ -22,8 +22,8 @@ features:
 - Build optimized Docker images with reduced size
 - Generate a slimmed-down Docker image from an existing one
 - Provide interactive mode for manual image optimization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker-slim

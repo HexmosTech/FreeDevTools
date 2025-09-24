@@ -22,8 +22,8 @@ features:
   - Create new containers from existing images
   - Start and stop LXC containers instantly
   - Execute commands inside existing LXC containers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lxc

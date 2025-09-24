@@ -22,8 +22,8 @@ features:
 - Sign new Flask session cookies
 - Use custom wordlists for brute-forcing
 - Handle legacy Flask session timestamps
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flask-unsign

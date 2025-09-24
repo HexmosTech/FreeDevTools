@@ -22,8 +22,8 @@ features:
   - Set the system date and time.
   - Utilize different time zones (UTC, local).
   - Format dates according to specific standards (ISO 8601, RFC 3339).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # date

@@ -22,8 +22,8 @@ features:
 - Clear the entire NPM cache forcefully.
 - List contents of the current NPM cache.
 - Verify the integrity of the NPM cache.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm cache

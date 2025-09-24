@@ -22,8 +22,8 @@ features:
 - Retrieve translations from a component in various formats (text, csv, json, html).
 - Display project statistics for Weblate localization projects.
 - Manage Weblate localization projects via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wlc

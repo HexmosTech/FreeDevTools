@@ -22,8 +22,8 @@ features:
 - Compile benchmarks without running them.
 - Benchmark specific targets with custom profiles.
 - Benchmark example and binary targets.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo bench

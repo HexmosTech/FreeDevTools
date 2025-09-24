@@ -22,8 +22,8 @@ features:
 - Support for various coding standards (PEAR, PSR1, PSR2, etc.).
 - Integrate with CI/CD pipelines for automated code formatting.
 - Automatically correct coding violations using the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phpcbf

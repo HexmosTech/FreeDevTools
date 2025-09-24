@@ -22,8 +22,8 @@ features:
 - Configure mirror lists for automatic mirror selection
 - Add media from local hard drives
 - Manage package sources in Mageia Linux
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urpmi.addmedia

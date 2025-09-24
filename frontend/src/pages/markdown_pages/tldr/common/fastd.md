@@ -22,8 +22,8 @@ features:
 - Generate new encryption keypairs
 - Display public key from private key
 - Configure Layer 3 VPN with custom MTU
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fastd

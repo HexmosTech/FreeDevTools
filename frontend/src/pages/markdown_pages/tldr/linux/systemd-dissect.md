@@ -22,8 +22,8 @@ features:
   - List files within mounted OS images.
   - Attach and detach OS images to/from loopback devices.
   - Manage discoverable disk images (DDIs).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-dissect

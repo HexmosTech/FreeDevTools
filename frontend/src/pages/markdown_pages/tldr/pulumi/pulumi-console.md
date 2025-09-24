@@ -22,8 +22,8 @@ features:
 - Provides instructions to migrate stacks.
 - Manages cloud infrastructure from the command line.
 - Opens stacks for specific stack names.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi console

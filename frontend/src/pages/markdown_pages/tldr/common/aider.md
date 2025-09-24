@@ -22,8 +22,8 @@ features:
 - Fix bugs in code with AI assistance.
 - Update documentation automatically.
 - Work with various LLMs using API keys.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aider

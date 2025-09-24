@@ -22,8 +22,8 @@ features:
 - Show the PKGBUILD file for AUR packages.
 - Check for available updates for installed AUR packages.
 - Interact with the Arch User Repository.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # auracle

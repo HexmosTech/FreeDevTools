@@ -22,8 +22,8 @@ features:
 - List all current owners of a specified npm package.
 - Manage access rights to published npm packages.
 - Modify npm package permissions via the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm owner

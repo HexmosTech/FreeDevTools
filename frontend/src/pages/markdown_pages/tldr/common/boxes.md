@@ -22,8 +22,8 @@ features:
 - Customize the box design using various styles
 - Specify the box size in columns and lines
 - Align text within the box horizontally and vertically
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # boxes

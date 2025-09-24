@@ -22,8 +22,8 @@ features:
 - Display a summary of a 3D file's contents
 - Convert files using custom parameters
 - Provide help documentation for subcommands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # assimp

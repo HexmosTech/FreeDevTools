@@ -22,8 +22,8 @@ features:
   - Offers fast and efficient web page loading in text mode.
   - Provides a lightweight and resource-friendly browsing experience.
   - Enables batch processing of web page access via scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # links2

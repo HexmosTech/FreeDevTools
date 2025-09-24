@@ -22,8 +22,8 @@ features:
   - Offers efficient command-line file extraction.
   - Simplifies the process of accessing compressed data.
   - Works seamlessly with various archive formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lrzuntar

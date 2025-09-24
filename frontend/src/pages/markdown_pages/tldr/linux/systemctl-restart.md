@@ -22,8 +22,8 @@ features:
 - Stop a unit before restarting it.
 - Manage systemd services on Linux.
 - Use as a replacement for systemctl start on stopped units.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemctl restart

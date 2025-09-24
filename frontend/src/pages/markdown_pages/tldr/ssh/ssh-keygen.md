@@ -22,8 +22,8 @@ features:
 - Retrieve fingerprint of an SSH key
 - Change password of an existing SSH key
 - Convert between different SSH key formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ssh-keygen

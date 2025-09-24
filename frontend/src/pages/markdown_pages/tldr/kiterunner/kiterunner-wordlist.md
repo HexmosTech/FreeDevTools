@@ -22,8 +22,8 @@ features:
 - Save multiple wordlists simultaneously.
 - Suppress output when saving wordlists with quiet mode.
 - Cache and manage wordlists in the ~/.cache/kiterunner directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kiterunner wordlist

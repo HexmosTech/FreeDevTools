@@ -22,8 +22,8 @@ features:
 - Supports standard PGM image file types.
 - Provides command-line interface for image conversion.
 - Facilitates image processing workflows.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmtosbig

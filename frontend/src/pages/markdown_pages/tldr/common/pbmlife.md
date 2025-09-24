@@ -22,8 +22,8 @@ features:
 - Output the resulting generation as a PBM file.
 - Process image data using command-line interface.
 - Display the version of the pbmlife utility.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmlife

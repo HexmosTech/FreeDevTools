@@ -22,8 +22,8 @@ features:
 - Craft custom packets for network testing
 - Specify target MAC addresses for packet injection
 - Control the number of packets injected
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aireplay-ng

@@ -22,8 +22,8 @@ features:
 - Toggle desktop idleness inhibition
 - Control power management behavior
 - Run from the command line on Linux
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # caffeine-indicator

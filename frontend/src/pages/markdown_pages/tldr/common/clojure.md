@@ -22,8 +22,8 @@ features:
 - Interact with the Clojure REPL through the command line.
 - Run Clojure scripts directly without compilation.
 - Utilize all functionalities of the `clj` command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clojure

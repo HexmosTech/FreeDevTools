@@ -22,8 +22,8 @@ features:
 - Restore backed up emails to a Gmail account
 - Filter backup based on email flags like starred or important
 - Archive emails using Gmail's API
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gyb

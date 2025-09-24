@@ -22,8 +22,8 @@ features:
   - Filter open files by process ID (PID) or filename.
   - List open IPv4 or IPv6 sockets.
   - Provides detailed information about open files and their associated processes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lsfd

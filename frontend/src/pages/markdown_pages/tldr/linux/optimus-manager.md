@@ -22,8 +22,8 @@ features:
   - Optimize power consumption based on GPU usage.
   - Improve performance for demanding applications.
   - Seamlessly manage Nvidia Optimus graphics cards.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # optimus-manager

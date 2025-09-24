@@ -22,8 +22,8 @@ features:
 - Manage multiple Rust toolchains concurrently
 - Simplify Rust version management for projects
 - Configure Rust development environment quickly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustup default

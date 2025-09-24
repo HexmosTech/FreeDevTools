@@ -22,8 +22,8 @@ features:
 - Execute a graceful system shutdown and restart
 - Force an immediate reboot bypassing normal procedures
 - Restart the system from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reboot

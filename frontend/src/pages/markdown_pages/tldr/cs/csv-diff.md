@@ -22,8 +22,8 @@ features:
 - Display unchanged values in changed rows
 - Output diff results in JSON format
 - Identify added, removed, and modified rows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csv-diff

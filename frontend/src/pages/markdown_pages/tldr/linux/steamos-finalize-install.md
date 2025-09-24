@@ -22,8 +22,8 @@ features:
 - Skip migration steps during system setup.
 - Set a specific root hash for security.
 - Force system migration regardless of environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-finalize-install

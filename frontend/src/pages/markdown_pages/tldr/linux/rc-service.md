@@ -22,8 +22,8 @@ features:
   - Stop OpenRC services.
   - Restart OpenRC services.
   - Execute custom commands for OpenRC services.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rc-service

@@ -22,8 +22,8 @@ features:
 - Disable specific Qt Creator plugins
 - Execute Qt Creator in presentation mode
 - Display Git commit differences in Qt Creator
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qtcreator

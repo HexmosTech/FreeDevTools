@@ -22,8 +22,8 @@ features:
 - Manage and monitor processes.
 - Perform text processing and data manipulation.
 - Automate tasks via shell scripting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # coreutils

@@ -22,8 +22,8 @@ features:
 - Download objects from Google Cloud Storage buckets
 - Rename or move objects within Google Cloud Storage
 - Create and delete Google Cloud Storage buckets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsutil

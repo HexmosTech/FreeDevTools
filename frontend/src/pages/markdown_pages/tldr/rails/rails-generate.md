@@ -22,8 +22,8 @@ features:
 - Generate database migrations to modify schema
 - Scaffold complete CRUD interfaces for models
 - Automate Rails project setup and code creation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rails generate

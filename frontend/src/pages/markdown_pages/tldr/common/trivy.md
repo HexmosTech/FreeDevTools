@@ -22,8 +22,8 @@ features:
 - Scan IaC configurations for misconfigurations
 - Scan Git repositories for vulnerabilities up to specific commit
 - Generate SARIF reports for detailed vulnerability analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trivy

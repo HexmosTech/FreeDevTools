@@ -22,8 +22,8 @@ features:
 - Inject dependencies into existing virtual environments
 - Manage Python packages and dependencies efficiently
 - Run Python applications with custom pip arguments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pipx

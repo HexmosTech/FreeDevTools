@@ -22,8 +22,8 @@ features:
 - Specify the number of shades per color
 - Define the dimensions of the dithering matrix
 - Convert PPM images with reduced color palettes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmdither

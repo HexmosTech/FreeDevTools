@@ -22,8 +22,8 @@ features:
 - Rewrite the Git commit history.
 - Assign blame to someone else in the Git repository.
 - Alter existing commit metadata.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git blame-someone-else

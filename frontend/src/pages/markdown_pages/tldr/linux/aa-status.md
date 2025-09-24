@@ -22,8 +22,8 @@ features:
   - Show the number of enforced AppArmor policies.
   - Report the number of non-enforcing (complaining) AppArmor policies.
   - Identify the number of enforced AppArmor policies that kill tasks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-status

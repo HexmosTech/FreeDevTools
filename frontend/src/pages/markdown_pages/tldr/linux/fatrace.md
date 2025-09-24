@@ -22,8 +22,8 @@ features:
 - Filter file access events by process.
 - Display timestamps for each file access event.
 - Analyze file I/O patterns for performance tuning.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fatrace

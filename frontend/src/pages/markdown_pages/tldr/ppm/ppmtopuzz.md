@@ -22,8 +22,8 @@ features:
 - Create interactive puzzles from images
 - Output in X11 puzzle file format (.puzz)
 - Utilize command line for image conversion
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtopuzz

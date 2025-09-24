@@ -22,8 +22,8 @@ features:
   - Specify search directory for targeted file location.
   - Sort search results by name, size, type, date, or folder.
   - Initiate searches without user confirmation for automated processes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mate-search-tool

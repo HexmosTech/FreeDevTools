@@ -22,8 +22,8 @@ features:
 - Modify date and time stamps in image metadata.
 - Rename files based on EXIF DateTimeOriginal data.
 - Batch process multiple files or directories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exiftool

@@ -22,8 +22,8 @@ features:
 - List the contents of a GPG archive
 - Use passphrase-based symmetric encryption
 - Specify output filename for encrypted archive
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gpg-zip

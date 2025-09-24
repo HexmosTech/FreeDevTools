@@ -22,8 +22,8 @@ features:
 - Upgrade the PlatformIO core.
 - Manage PlatformIO command-line interface version.
 - Keep PlatformIO up-to-date.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio upgrade

@@ -22,8 +22,8 @@ features:
 - Load configuration options from a file
 - Use file patterns to specify multiple input images
 - Compress images for efficient storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmtofiasco

@@ -22,8 +22,8 @@ features:
 - List all tracked patterns within Git LFS.
 - Push all Git LFS objects to a remote server.
 - Replace pointer files with actual Git LFS objects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git lfs

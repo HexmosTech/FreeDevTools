@@ -22,8 +22,8 @@ features:
 - List Gists owned by the logged-in user.
 - View Gists in a web browser or raw format.
 - Add descriptions to new Gists.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh gist

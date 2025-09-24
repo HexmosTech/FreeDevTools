@@ -22,8 +22,8 @@ features:
 - Control download speed and bandwidth usage
 - Support for HTTP, FTP, and Metalink protocols
 - Manage multiple downloads simultaneously
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aria2

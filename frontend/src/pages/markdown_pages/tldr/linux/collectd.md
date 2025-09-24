@@ -22,8 +22,8 @@ features:
   - Provides real-time monitoring of system performance.
   - Supports various output methods for data visualization and analysis.
   - Enables proactive system maintenance through early identification of performance bottlenecks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # collectd

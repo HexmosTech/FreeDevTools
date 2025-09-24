@@ -22,8 +22,8 @@ features:
 - Discard unstaged changes in the working directory
 - Restore specific files to a previous state
 - Switch to the previously checked out branch
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git checkout

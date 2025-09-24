@@ -22,8 +22,8 @@ features:
 - Create new cryptographic objects, such as certificates and keys.
 - Delete existing cryptographic objects by label and type.
 - Authenticate to security tokens using a PIN.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkcs11-tool

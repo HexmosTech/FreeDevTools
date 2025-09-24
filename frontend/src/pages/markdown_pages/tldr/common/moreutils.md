@@ -22,8 +22,8 @@ features:
 - Control pipelines with advanced stream processing
 - Redirect input and output streams effectively
 - Process data streams in parallel using parallel
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # moreutils

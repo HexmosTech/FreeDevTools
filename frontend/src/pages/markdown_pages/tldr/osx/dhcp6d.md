@@ -22,8 +22,8 @@ features:
 - Manage IPv6 address assignments
 - Configure network parameters
 - Operate in stateless DHCPv6 mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dhcp6d

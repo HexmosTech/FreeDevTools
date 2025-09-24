@@ -22,8 +22,8 @@ features:
   - Exports reports to HTML for easy sharing.
   - Provides a GUI interface for easy navigation.
   - Offers command-line options for flexible usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hardinfo

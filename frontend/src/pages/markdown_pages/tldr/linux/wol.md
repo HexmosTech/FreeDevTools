@@ -22,8 +22,8 @@ features:
   - Specify target port for packet transmission.
   - Read device information from configuration files.
   - Supports verbose output for detailed operation logging.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wol

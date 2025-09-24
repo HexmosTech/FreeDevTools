@@ -22,8 +22,8 @@ features:
 - Print a specific number of lines from the end of logs
 - Append timestamps to each log entry
 - Filter logs based on a time range
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker logs

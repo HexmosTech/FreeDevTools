@@ -22,8 +22,8 @@ features:
   - Adjust debug level for detailed error reporting.
   - Specify custom build directories for organization.
   - Enable verbose output for detailed build tracking.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arduino-builder

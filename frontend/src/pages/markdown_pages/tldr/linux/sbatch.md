@@ -22,8 +22,8 @@ features:
   - Set time limits to manage job execution duration.
   - Request multiple nodes for parallel processing.
   - Control various aspects of job submission through command-line options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sbatch

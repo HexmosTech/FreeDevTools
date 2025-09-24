@@ -22,8 +22,8 @@ features:
 - Optimize images for web performance
 - Support command-line image conversion on Linux
 - Encode animated GIFs into WebP format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gif2webp

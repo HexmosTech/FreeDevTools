@@ -22,8 +22,8 @@ features:
 - Converts a tldr page to stdout
 - Recognizes additional placeholders from a specific configuration file
 - Displays help and version information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # md-to-clip

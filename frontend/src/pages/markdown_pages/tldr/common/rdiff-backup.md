@@ -22,8 +22,8 @@ features:
 - Restore files from the most recent backup
 - Restore files to a specific point in time
 - Perform differential backups for efficiency
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rdiff-backup

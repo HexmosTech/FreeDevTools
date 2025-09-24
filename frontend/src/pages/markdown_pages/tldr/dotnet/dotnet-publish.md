@@ -22,8 +22,8 @@ features:
 - Creates platform-specific single-file executables.
 - Reduces application size by trimming unused libraries.
 - Supports specifying custom output directories for published files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dotnet publish

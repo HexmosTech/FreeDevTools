@@ -22,8 +22,8 @@ features:
 - Specify a custom title for a new SSH key
 - Secure GitHub access through SSH key management
 - Integrate with the GitHub CLI for simplified SSH key handling
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh ssh-key

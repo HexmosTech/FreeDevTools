@@ -22,8 +22,8 @@ features:
 - Authenticate using pass-the-hash method
 - Save the retrieved SPNs to a file
 - Target specific domain controllers for SPN retrieval
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # GetUserSPNs.py

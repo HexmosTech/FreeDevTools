@@ -22,8 +22,8 @@ features:
   - display verbose protocol layer summaries
   - filter network packets by hostname and port
   - display a hexadecimal dump of network packets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snoop

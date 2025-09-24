@@ -22,8 +22,8 @@ features:
 - Close all open tabs within DBeaver.
 - Bring the DBeaver application to the foreground.
 - Stop a running DBeaver instance remotely.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dbeaver

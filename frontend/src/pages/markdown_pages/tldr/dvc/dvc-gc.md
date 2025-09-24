@@ -22,8 +22,8 @@ features:
 - Identifies and deletes stale data references.
 - Supports garbage collection across branches and tags.
 - Integrates with cloud storage for comprehensive cleanup.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc gc

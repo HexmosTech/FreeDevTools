@@ -22,8 +22,8 @@ features:
 - Sort directories by size for easy identification of largest consumers
 - Filter directories to ignore specific files or paths
 - Control depth of directory traversal for detailed or summary views
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dust

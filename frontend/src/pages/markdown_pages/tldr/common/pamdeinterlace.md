@@ -22,8 +22,8 @@ features:
 - Creates an image with selected rows
 - Provides command line image manipulation
 - Supports Netpbm image formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamdeinterlace

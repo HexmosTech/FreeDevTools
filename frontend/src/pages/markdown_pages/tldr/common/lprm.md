@@ -22,8 +22,8 @@ features:
 - Cancel multiple print jobs simultaneously.
 - Cancel all print jobs in a print queue.
 - Remove print jobs from a specific printer or class instance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lprm

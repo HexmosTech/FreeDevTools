@@ -22,8 +22,8 @@ features:
 - Sign files with cryptographic keys
 - Encrypt and decrypt files for secure sharing
 - Revoke devices and deprovision Keybase
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # keybase

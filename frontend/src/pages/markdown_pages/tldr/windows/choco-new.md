@@ -22,8 +22,8 @@ features:
 - Define maintainer name for Chocolatey packages
 - Create packages in custom output directories
 - Set 32-bit and 64-bit installer URLs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # choco new

@@ -22,8 +22,8 @@ features:
 - Check the current installed pyATS version
 - Automate network device testing
 - Interact with network devices using a vendor-agnostic framework
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pyats

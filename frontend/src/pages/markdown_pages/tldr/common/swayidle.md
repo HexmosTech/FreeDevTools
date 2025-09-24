@@ -22,8 +22,8 @@ features:
 - Integrate with swaylock for screen locking
 - Specify different actions for various idle states
 - Monitor user activity and trigger events
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swayidle

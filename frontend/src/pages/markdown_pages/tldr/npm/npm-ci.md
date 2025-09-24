@@ -22,8 +22,8 @@ features:
 - Ignores pre- and post-scripts defined in `package.json`.
 - Ensures consistent builds across different environments.
 - Provides a faster and more reliable installation process.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm ci

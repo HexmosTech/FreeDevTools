@@ -22,8 +22,8 @@ features:
   - Display the current kernel symlink target.
   - Set the kernel symlink to the currently running kernel.
   - Manage multiple Linux kernel versions efficiently.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eselect kernel

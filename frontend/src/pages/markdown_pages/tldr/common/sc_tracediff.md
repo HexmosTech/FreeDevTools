@@ -22,8 +22,8 @@ features:
 - Display all traceroutes, including those with no changes.
 - Show DNS names instead of IP addresses for readability.
 - Analyze network path changes using scamper's sc_tracediff.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sc_tracediff

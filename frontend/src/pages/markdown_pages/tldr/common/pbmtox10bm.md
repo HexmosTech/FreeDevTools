@@ -22,8 +22,8 @@ features:
 - Support Portable Bitmap image format
 - Facilitate X10 Bitmap conversion
 - Enable image format compatibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtox10bm

@@ -22,8 +22,8 @@ features:
   - Define a user-defined bounding box for cropping
   - Adjust cropping resolution for improved performance
   - Apply different bounding boxes to odd and even pages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfcrop

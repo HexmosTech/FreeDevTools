@@ -22,8 +22,8 @@ features:
   - Lists hardware specifications, including CPU and memory.
   - Provides details on installed packages and dependencies.
   - Outputs disk space usage and partition information.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-dump-info

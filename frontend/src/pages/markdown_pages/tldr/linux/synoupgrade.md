@@ -22,8 +22,8 @@ features:
   - Installs DSM updates and patches.
   - Allows for automatic or manual upgrades.
   - Supports applying updates from a patch file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # synoupgrade

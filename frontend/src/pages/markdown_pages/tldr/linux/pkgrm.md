@@ -22,8 +22,8 @@ features:
   - Uninstall software applications via the command line
   - Ensure system integrity after package removal
   - Simplify software management on CRUX systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkgrm

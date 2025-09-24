@@ -22,8 +22,8 @@ features:
 - Tee stdin to stdout and other commands
 - Terminate on SIGPIPE and write errors
 - Execute a series of piped commands from a single input
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pee

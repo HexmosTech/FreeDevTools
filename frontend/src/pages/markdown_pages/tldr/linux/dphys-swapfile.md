@@ -22,8 +22,8 @@ features:
   - Configures swap file size dynamically
   - Optimizes swap usage on Debian systems
   - Manages swap space from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dphys-swapfile

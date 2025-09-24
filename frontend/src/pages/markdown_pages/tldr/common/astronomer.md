@@ -22,8 +22,8 @@ features:
   - Analyze star patterns to detect suspicious activity and trends.
   - Generate comparative reports highlighting potential bot activity across repositories.
   - Specify the maximum number of stars to scan within a repository for optimized analysis.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # astronomer

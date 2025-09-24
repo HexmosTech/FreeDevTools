@@ -22,8 +22,8 @@ features:
 - Streamline the initial Git setup process.
 - Create a Git repository in a specific target directory.
 - Quickly start tracking changes in a project.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git setup

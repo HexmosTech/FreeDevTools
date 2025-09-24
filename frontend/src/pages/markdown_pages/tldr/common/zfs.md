@@ -22,8 +22,8 @@ features:
 - Destroy ZFS filesystems to free up space
 - Create point-in-time snapshots of ZFS filesystems
 - Enable data compression on ZFS filesystems for optimized storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zfs

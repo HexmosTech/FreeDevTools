@@ -22,8 +22,8 @@ features:
 - Set the default namespace for current Kubernetes context
 - Add and manage custom kubeconfig files
 - Delete Kubernetes clusters, contexts, or users
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl config

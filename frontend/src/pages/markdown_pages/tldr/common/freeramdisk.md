@@ -22,8 +22,8 @@ features:
 - Provides a command-line interface for ramdisk control
 - Offers an alternative to umount and losetup
 - Simplifies ramdisk memory management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # freeramdisk

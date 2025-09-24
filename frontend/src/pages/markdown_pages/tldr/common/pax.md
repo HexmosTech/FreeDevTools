@@ -22,8 +22,8 @@ features:
 - Copy directory structures while preserving metadata
 - List the contents of various archive formats (tar, gzip)
 - Utilize output redirection for archive creation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pax

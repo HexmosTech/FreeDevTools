@@ -22,8 +22,8 @@ features:
 - Retrieve caller identity for operation auditing
 - Enable federated user access to AWS resources
 - Secure AWS access using short-term credentials
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws sts

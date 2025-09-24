@@ -22,8 +22,8 @@ features:
 - Display disk usage in human-readable format
 - Limit the depth of directory traversal
 - Calculate the total disk usage for a set of files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # du

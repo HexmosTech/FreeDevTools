@@ -22,8 +22,8 @@ features:
 - List all print jobs queued for specific users
 - Provide detailed status information about the printing system
 - Check if printers are enabled for printing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lpstat

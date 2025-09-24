@@ -22,8 +22,8 @@ features:
 - List and download objects within S3 buckets.
 - Upload objects to S3 buckets.
 - Configure S3 bucket properties programmatically.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3api

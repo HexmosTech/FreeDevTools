@@ -22,8 +22,8 @@ features:
 - Enable hot-reloading during development
 - Prototype Vue components rapidly
 - Utilize the Vue CLI service for development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vue serve

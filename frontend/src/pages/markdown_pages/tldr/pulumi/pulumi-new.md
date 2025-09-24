@@ -22,8 +22,8 @@ features:
 - Initialize projects from local files and directories
 - Clone projects directly from Git repositories
 - Securely manage secrets using specified secrets providers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi new

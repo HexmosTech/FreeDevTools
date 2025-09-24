@@ -22,8 +22,8 @@ features:
 - Display long output without terminal width restriction
 - Search for pages matching multiple keywords
 - Quickly locate command descriptions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apropos

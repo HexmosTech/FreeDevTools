@@ -22,8 +22,8 @@ features:
 - Write old contents to an undo file before overwriting blocks.
 - Display verbose information during the undo operation.
 - Undo failed filesystem operations from e2fsprogs programs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # e2undo

@@ -22,8 +22,8 @@ features:
   - Removes packages and their dependencies, including AUR packages.
   - Searches the package database (including AUR) for specific keywords.
   - Lists installed packages with versions and repositories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yaourt

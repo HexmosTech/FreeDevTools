@@ -22,8 +22,8 @@ features:
   - Access remote sessions over various protocols
   - Facilitate remote management of server environments
   - Enable secure desktop sharing for collaboration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # remote-viewer

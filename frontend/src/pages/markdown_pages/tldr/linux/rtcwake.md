@@ -22,8 +22,8 @@ features:
 - Set wake-up alarms based on relative or absolute times
 - Disable previously set RTC alarms
 - Freeze the system and wake up at a specific date and time
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rtcwake

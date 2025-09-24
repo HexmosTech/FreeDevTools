@@ -22,8 +22,8 @@ features:
 - Create new terminal tabs
 - Run terminal in background mode
 - Bring terminal to front with keyboard shortcut
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # konsole

@@ -22,8 +22,8 @@ features:
   - List available CPU frequency governors.
   - View CPU frequency policies and settings.
   - Display CPU frequency in human-readable format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cpufreq-info

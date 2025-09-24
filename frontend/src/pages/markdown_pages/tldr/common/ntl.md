@@ -22,8 +22,8 @@ features:
 - Trigger automated builds and deployments
 - Preview changes before publishing live
 - Integrate Netlify with CI/CD pipelines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ntl

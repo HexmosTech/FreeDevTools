@@ -22,8 +22,8 @@ features:
 - Skip diagnostics during initialization for faster setup
 - Authenticate using a console-only environment
 - Launch a guided "Getting Started" workflow for new users
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud init

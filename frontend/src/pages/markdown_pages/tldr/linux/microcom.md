@@ -22,8 +22,8 @@ features:
   - Access remote devices from the console
   - Monitor serial communication data streams
   - Connect to devices via serial, CAN, or telnet
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # microcom

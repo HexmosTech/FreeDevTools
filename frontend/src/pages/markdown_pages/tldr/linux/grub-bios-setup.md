@@ -22,8 +22,8 @@ features:
   - Allows specifying a custom installation directory for GRUB.
   - Configures GRUB for BIOS-based systems.
   - Provides a command-line interface for GRUB setup.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grub-bios-setup

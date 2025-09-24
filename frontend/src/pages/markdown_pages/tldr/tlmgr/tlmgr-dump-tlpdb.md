@@ -22,8 +22,8 @@ features:
 - Generate TLPDB in JSON format.
 - Extract detailed package information.
 - Analyze package dependencies and relationships.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr dump-tlpdb

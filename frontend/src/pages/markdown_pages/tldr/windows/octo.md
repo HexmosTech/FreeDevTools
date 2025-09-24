@@ -22,8 +22,8 @@ features:
 - Create new releases within Octopus Deploy projects
 - Deploy existing releases to specified environments
 - Target specific tenants during deployments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # octo

@@ -22,8 +22,8 @@ features:
 - Run a specific specification file
 - Use custom configuration files for specification runs
 - Disable code generation prompts for faster testing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phpspec

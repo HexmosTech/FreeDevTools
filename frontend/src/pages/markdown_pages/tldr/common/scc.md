@@ -22,8 +22,8 @@ features:
 - Filter files by extension for targeted analysis
 - Exclude directories for refined code counting
 - Sort output by files, name, lines, or code metrics
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scc

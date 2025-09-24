@@ -22,8 +22,8 @@ features:
 - Repurpose nodes for different roles
 - List roles assigned to a specific node
 - Show JVM version and diagnostic info
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elasticsearch-node

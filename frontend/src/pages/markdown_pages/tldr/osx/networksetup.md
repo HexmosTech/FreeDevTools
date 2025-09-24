@@ -22,8 +22,8 @@ features:
 - Retrieve the name of the currently connected Wi-Fi network
 - Connect to a specified Wi-Fi network with a password
 - Manage and configure various network settings via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # networksetup

@@ -22,8 +22,8 @@ features:
 - Support conversion using standard input and output
 - Generate GV graph representation from GXL input
 - Simplify graph analysis with format conversion
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gxl2gv

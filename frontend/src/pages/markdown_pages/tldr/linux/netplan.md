@@ -22,8 +22,8 @@ features:
   - Configure network interfaces to use DHCP
   - Test network configurations before permanent application
   - Display the current Netplan configuration status
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # netplan

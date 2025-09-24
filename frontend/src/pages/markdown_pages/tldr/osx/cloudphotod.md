@@ -22,8 +22,8 @@ features:
 - Monitors iCloud Photos synchronization status.
 - Facilitates iCloud Photos library management.
 - Enables photo synchronization with iCloud on macOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cloudphotod

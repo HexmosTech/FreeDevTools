@@ -22,8 +22,8 @@ features:
   - Filter reports based on selected services
   - Analyze logs at different levels of detail
   - Identify security-related events in system logs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # logwatch

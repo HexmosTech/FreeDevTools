@@ -22,8 +22,8 @@ features:
 - Modify the boot order of UEFI devices
 - Delete existing UEFI boot entries
 - Configure bootloader paths and labels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # efibootmgr

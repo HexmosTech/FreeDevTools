@@ -22,8 +22,8 @@ features:
   - Save output to HTML, XML, or JSON
   - Filter specific hardware classes (e.g., network, storage)
   - Sanitize output to remove sensitive information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lshw

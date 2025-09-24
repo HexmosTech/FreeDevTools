@@ -22,8 +22,8 @@ features:
 - Define covered code MSI threshold
 - Use specific test frameworks like PHPUnit or PHPSpec
 - Display the applied mutation code
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # infection

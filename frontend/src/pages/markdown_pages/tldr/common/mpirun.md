@@ -22,8 +22,8 @@ features:
 - Oversubscribe resources to run more processes than available cores
 - Facilitate distributed computing tasks in Open MPI environments
 - Manage and control MPI program execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mpirun

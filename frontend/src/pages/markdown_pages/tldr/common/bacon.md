@@ -22,8 +22,8 @@ features:
 - Enables checking against all targets
 - Executes custom jobs via command-line arguments
 - Initializes a bacon.toml configuration file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bacon

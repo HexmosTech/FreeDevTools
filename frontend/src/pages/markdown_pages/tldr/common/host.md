@@ -22,8 +22,8 @@ features:
 - Perform reverse IP address lookups
 - Specify an alternate DNS server
 - Troubleshoot network connectivity issues
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # host

@@ -22,8 +22,8 @@ features:
 - Read Markdown content from a file path
 - Process Markdown content from a string
 - Format Markdown for command-line readability
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Show-Markdown

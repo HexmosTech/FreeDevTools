@@ -22,8 +22,8 @@ features:
   - Process data from standard input or files.
   - Handle NUL-terminated lines for advanced scenarios.
   - Define custom field and character ranges for precise extraction.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cut

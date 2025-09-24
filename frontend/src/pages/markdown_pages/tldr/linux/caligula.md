@@ -22,8 +22,8 @@ features:
   - Verify image hashes interactively
   - Bypass hash verification with a specific hash
   - Provide a text-based user interface for ease of use
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # caligula

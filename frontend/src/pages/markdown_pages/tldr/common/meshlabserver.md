@@ -22,8 +22,8 @@ features:
 - Generate vertex and face normals for meshes
 - Automate mesh processing tasks via command line
 - Dump a list of available processing filters to a file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # meshlabserver

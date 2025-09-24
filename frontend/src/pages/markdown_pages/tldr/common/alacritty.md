@@ -22,8 +22,8 @@ features:
 - Create new windows within an existing Alacritty process.
 - Specify a working directory for the shell.
 - Execute commands directly in a new Alacritty window.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # alacritty

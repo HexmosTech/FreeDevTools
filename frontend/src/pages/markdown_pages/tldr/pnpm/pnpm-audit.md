@@ -22,8 +22,8 @@ features:
 - Generate security audit reports in JSON format
 - Audit only development or production dependencies
 - Filter advisories by severity level
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnpm audit

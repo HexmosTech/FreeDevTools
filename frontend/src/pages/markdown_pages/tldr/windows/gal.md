@@ -22,8 +22,8 @@ features:
 - Resolve aliases to their original command.
 - Manage command shortcuts efficiently.
 - Simplify PowerShell scripting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gal

@@ -22,8 +22,8 @@ features:
 - Attach volumes to compute instances
 - Detach volumes from compute instances
 - Create snapshots of block storage volumes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exo compute block-storage

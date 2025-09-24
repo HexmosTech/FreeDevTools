@@ -22,8 +22,8 @@ features:
 - Filter changes based on specific event types (e.g., Updated, Removed).
 - Output absolute paths of changed files for easy integration.
 - Monitor file system events in real-time.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fswatch

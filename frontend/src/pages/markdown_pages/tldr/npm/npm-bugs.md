@@ -22,8 +22,8 @@ features:
 - Configure the default browser for opening URLs
 - Control URL opening behavior (browser vs. terminal)
 - Report package issues directly from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm bugs

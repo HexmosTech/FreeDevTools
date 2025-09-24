@@ -22,8 +22,8 @@ features:
 - Render specific frames from an animation
 - Render specific scenes within a Blender file
 - Execute Python expressions for advanced rendering controls
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # blender

@@ -22,8 +22,8 @@ features:
 - Manage and modify TeX Live variables dynamically
 - Restart the tlmgr shell environment as needed
 - Display the current protocol version in use
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr shell

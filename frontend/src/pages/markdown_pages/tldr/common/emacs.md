@@ -22,8 +22,8 @@ features:
 - Start and manage Emacs server instances in the background
 - Open files at specific line numbers for focused editing
 - Run Emacs in console mode without a graphical interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # emacs

@@ -22,8 +22,8 @@ features:
 - Change active windows within the Irssi interface
 - Quit Irssi cleanly, disconnecting from servers
 - Display help information for available commands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # irssi

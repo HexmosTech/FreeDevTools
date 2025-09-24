@@ -22,8 +22,8 @@ features:
 - List the contents of the Global Assembly Cache (GAC)
 - Manage .NET framework assemblies
 - Deploy and manage shared assemblies
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gacutil

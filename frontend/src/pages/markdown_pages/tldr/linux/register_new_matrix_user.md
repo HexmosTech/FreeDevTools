@@ -22,8 +22,8 @@ features:
 - Configure user accounts non-interactively.
 - Automate user registration process.
 - Manage user registration on Matrix homeserver.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # register_new_matrix_user

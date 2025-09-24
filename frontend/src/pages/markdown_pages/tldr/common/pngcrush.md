@@ -22,8 +22,8 @@ features:
 - Outputs compressed PNGs to a specified directory
 - Supports brute-force compression for maximum optimization
 - Reduces PNG file size with lossless compression
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pngcrush

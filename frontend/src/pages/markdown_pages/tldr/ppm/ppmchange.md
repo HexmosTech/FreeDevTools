@@ -22,8 +22,8 @@ features:
 - Replace unspecified pixels with a specified color.
 - Process PPM images using command-line arguments.
 - Batch modify PPM image colors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmchange

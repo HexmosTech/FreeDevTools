@@ -22,8 +22,8 @@ features:
 - Manage autostart by pool name
 - Manage autostart by pool UUID
 - Configure resource availability at system boot
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh pool-autostart

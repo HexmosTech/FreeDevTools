@@ -22,8 +22,8 @@ features:
 - Ensure consistent builds across environments
 - Resolve and lock dependencies in Cargo projects
 - Manage Rust package dependencies effectively
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo generate-lockfile

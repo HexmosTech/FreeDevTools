@@ -22,8 +22,8 @@ features:
 - Remove specific reverse connections
 - Remove all reverse socket connections
 - Forward TCP ports for remote debugging
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # adb reverse

@@ -22,8 +22,8 @@ features:
   - Provides a simple interface for text input.
   - Enables efficient data processing in scripts.
   - Integrates seamlessly with other command-line tools.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # line

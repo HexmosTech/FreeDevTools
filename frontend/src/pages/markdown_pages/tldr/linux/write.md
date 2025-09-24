@@ -22,8 +22,8 @@ features:
   - Communicate with users through their active terminal sessions
   - Allows real-time terminal interaction and messaging
   - Supports both TTY and PTS terminal types
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # write

@@ -22,8 +22,8 @@ features:
 - Include custom headers in web requests.
 - Send data in JSON format with appropriate content-type.
 - Pass username and password for server authentication.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Invoke-WebRequest

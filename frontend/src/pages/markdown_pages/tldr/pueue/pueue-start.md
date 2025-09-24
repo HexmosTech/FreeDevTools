@@ -22,8 +22,8 @@ features:
 - Resume multiple tasks simultaneously.
 - Resume all tasks in a specific group.
 - Start resumed tasks and their children.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue start

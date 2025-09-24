@@ -22,8 +22,8 @@ features:
 - Disable GDM management of local console X servers
 - Preserve environment variables that start with LD_
 - Display help and version information for GDM
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdm

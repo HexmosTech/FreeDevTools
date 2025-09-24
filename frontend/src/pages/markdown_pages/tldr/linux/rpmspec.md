@@ -22,8 +22,8 @@ features:
 - Extract summary information from RPM spec
 - Generate source RPM from RPM spec
 - Parse and display RPM spec file content
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpmspec

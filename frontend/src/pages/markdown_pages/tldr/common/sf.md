@@ -22,8 +22,8 @@ features:
 - Open Salesforce orgs in a web browser
 - Push and pull source metadata between local and org
 - Generate passwords for Salesforce users
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sf

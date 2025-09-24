@@ -22,8 +22,8 @@ features:
 - Build changes from a local commit.
 - Build changes from uncommitted work in progress.
 - Build changes from staged files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nixpkgs-review

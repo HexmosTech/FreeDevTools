@@ -22,8 +22,8 @@ features:
 - Monitor X events of a particular window by ID.
 - Monitor X events from specific categories.
 - Analyze X11 protocol interactions in real-time.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xev

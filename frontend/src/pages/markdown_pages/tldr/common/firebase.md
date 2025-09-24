@@ -22,8 +22,8 @@ features:
 - Create Firebase projects interactively.
 - Start a local server to host Firebase assets.
 - Open Firebase project links in a web browser.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # firebase

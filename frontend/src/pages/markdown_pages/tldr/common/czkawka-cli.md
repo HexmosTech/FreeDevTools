@@ -22,8 +22,8 @@ features:
 - Locate similar images based on visual similarity.
 - Identify and remove empty folders.
 - Operate via command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # czkawka-cli

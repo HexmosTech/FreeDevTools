@@ -22,8 +22,8 @@ features:
 - Perform unattended upgrades with confirmation skipping
 - Manage Azure resources via command line
 - Easily keep Azure CLI up-to-date
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az upgrade

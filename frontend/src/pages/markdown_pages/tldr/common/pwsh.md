@@ -22,8 +22,8 @@ features:
 - Control PowerShell version selection
 - Manage PowerShell input and output formats
 - Prevent shell exit after startup commands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pwsh

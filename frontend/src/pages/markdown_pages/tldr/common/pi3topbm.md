@@ -22,8 +22,8 @@ features:
 - Process images using command-line interface
 - Support bitmap image format conversions
 - Read and convert Atari PI3 graphics files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pi3topbm

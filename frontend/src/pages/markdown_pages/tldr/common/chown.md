@@ -22,8 +22,8 @@ features:
 - Recursively change ownership of entire directories.
 - Update ownership based on a reference file.
 - Change ownership of symbolic links.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chown

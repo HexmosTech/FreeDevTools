@@ -22,8 +22,8 @@ features:
 - Grow filesystems to fill entire devices
 - Resize logical volumes together with filesystems
 - Resize ext2/3/4 filesystems offline
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fsadm

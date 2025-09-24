@@ -22,8 +22,8 @@ features:
 - Manage line settings on Cisco IOS devices
 - Restrict access based on line type
 - Set line-specific timeouts and parameters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # line

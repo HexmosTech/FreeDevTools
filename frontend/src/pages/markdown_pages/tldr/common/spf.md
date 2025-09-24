@@ -22,8 +22,8 @@ features:
 - Fix configuration file by appending missing entries.
 - Use specific configuration and hotkey files.
 - Display internal configuration and data directory paths.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # spf

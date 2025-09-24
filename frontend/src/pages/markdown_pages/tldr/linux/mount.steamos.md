@@ -22,8 +22,8 @@ features:
   - Unmount all partitions mounted under a specified directory.
   - Display help information for the mount.steamos command.
   - Provide options for fine-grained control over partition mounting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mount.steamos

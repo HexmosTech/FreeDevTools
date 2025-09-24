@@ -22,8 +22,8 @@ features:
 - Authenticate using private keys with password passphrase support.
 - Test SSH credentials across a range of target IP addresses.
 - Check for sudo privileges after successful SSH login.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc ssh

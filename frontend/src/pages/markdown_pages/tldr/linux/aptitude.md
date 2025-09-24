@@ -22,8 +22,8 @@ features:
   - Update package lists to the latest versions
   - Upgrade installed packages to their newest versions
   - Search for installed or available packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aptitude

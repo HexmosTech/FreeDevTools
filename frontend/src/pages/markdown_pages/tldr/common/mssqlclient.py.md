@@ -22,8 +22,8 @@ features:
 - Support for pass-the-hash authentication
 - Connect using Kerberos authentication
 - Specify database instance to connect to
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mssqlclient.py

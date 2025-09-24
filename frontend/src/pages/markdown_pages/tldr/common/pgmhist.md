@@ -22,8 +22,8 @@ features:
 - Determine quartile grey values
 - Detect invalid grey values in PGM image
 - Output machine-readable histogram data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmhist

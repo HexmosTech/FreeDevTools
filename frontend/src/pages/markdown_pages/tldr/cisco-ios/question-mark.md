@@ -22,8 +22,8 @@ features:
 - Show available options for specific commands, like `ip show ?`
 - Provide context-sensitive help within the Cisco IOS CLI
 - Explore command syntax and parameters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ?

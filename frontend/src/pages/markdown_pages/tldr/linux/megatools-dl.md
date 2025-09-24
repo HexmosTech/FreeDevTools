@@ -22,8 +22,8 @@ features:
   - Interactively select files for download.
   - Limit download speed for bandwidth management.
   - Supports multiple file downloads simultaneously.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # megatools-dl

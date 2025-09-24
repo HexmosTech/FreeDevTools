@@ -22,8 +22,8 @@ features:
 - Impersonate user tokens for privilege escalation
 - Manage process access tokens on Windows
 - View and modify security descriptors for processes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mimikatz process

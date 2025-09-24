@@ -22,8 +22,8 @@ features:
 - Analyze routes with specific ASNs in the AS path
 - List routes leading to a specific address
 - Filter routes based on BGP communities
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bgpgrep

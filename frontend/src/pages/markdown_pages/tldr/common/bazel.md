@@ -22,8 +22,8 @@ features:
 - Shut down the running Bazel server instance.
 - Display runtime information about the Bazel server.
 - Show available commands and options with help.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bazel

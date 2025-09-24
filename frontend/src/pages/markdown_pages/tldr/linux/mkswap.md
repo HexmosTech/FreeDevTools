@@ -22,8 +22,8 @@ features:
   - Specify a label for the swap partition.
   - Set a specific UUID for the swap partition.
   - Create a swap file of a specified size.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkswap

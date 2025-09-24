@@ -22,8 +22,8 @@ features:
 - Produce bindings for C/C++ code to be used in Go
 - Generate Ruby extension modules from C/C++ code
 - Create cross-language interfaces using SWIG directives
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swig

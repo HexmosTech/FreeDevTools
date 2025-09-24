@@ -22,8 +22,8 @@ features:
 - Authenticate using Personal Access Tokens (PAT)
 - Open Azure DevOps projects directly in a browser
 - Configure default project and organization settings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az devops

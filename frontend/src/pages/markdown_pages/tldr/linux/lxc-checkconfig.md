@@ -22,8 +22,8 @@ features:
   - Detects missing kernel features required for LXC
   - Provides detailed reports on LXC kernel readiness
   - Identifies specific configuration options needed for LXC
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lxc-checkconfig

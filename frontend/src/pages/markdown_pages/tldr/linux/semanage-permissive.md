@@ -22,8 +22,8 @@ features:
 - Delete domains from permissive mode
 - Manage SELinux security contexts
 - Configure SELinux policy persistently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # semanage permissive

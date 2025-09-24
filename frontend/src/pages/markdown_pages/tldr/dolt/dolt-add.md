@@ -22,8 +22,8 @@ features:
 - Prepare data for version control commits
 - Integrate seamlessly with Dolt database workflows
 - Track and manage database changes efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt add

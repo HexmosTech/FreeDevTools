@@ -22,8 +22,8 @@ features:
 - List available routes within a CakePHP application
 - Start a development web server for CakePHP projects
 - Launch a REPL interactive shell for development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cake

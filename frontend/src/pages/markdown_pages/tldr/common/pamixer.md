@@ -22,8 +22,8 @@ features:
 - Increase or decrease volume incrementally
 - Control volume beyond 100% with allow-boost
 - List available audio sinks and sources
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamixer

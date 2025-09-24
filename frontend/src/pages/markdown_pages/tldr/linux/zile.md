@@ -22,8 +22,8 @@ features:
   - Save changes quickly using keyboard shortcuts.
   - Supports opening files at a specific line number.
   - Provides basic undo functionality.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zile

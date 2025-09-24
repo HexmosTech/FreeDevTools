@@ -22,8 +22,8 @@ features:
   - Initiate interactive chat sessions with custom session names
   - Utilize it as a command-line search engine for information retrieval
   - Employ a Read-Eval-Print Loop (REPL) for iterative code execution and testing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sgpt

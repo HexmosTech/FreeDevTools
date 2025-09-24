@@ -22,8 +22,8 @@ features:
 - Retrieve device information such as model, firmware version, and serial number
 - Monitor drive health status, including temperature and usage statistics
 - Diagnose potential issues with NVMe storage devices
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nvme

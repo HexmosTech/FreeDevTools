@@ -22,8 +22,8 @@ features:
 - Enter maintenance mode for environment inspection
 - Customize build processes with custom steps
 - Modify build environments directly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk build-shell

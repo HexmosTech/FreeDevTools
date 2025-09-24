@@ -22,8 +22,8 @@ features:
 - Commit file changes on protected drives to persist across reboots
 - Remove drives from the UWF protection list
 - Manage the UWF configuration settings on Windows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uwfmgr

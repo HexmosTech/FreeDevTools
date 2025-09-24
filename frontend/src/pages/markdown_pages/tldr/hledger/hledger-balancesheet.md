@@ -22,8 +22,8 @@ features:
 - Include accounts with zero balances.
 - Display account hierarchy in a tree format.
 - Generate monthly or quarterly balance reports.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hledger balancesheet

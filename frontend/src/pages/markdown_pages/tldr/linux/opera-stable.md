@@ -22,8 +22,8 @@ features:
   - Automate repetitive browsing tasks using scripts.
   - Access advanced browser features unavailable through GUI.
   - Troubleshoot and debug browser related issues using CLI.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # opera-stable

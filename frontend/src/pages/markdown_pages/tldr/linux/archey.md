@@ -22,8 +22,8 @@ features:
   - Shows detailed kernel and operating system information.
   - Provides a clear representation of disk space usage.
   - Outputs a visually appealing summary of network interfaces.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # archey

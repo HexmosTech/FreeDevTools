@@ -22,8 +22,8 @@ features:
 - Provide command-line access to GitHub documentation
 - View available commands and their usage
 - Access comprehensive GitHub CLI documentation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh reference

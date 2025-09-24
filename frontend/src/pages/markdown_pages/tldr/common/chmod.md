@@ -22,8 +22,8 @@ features:
 - Recursively modify permissions for directories and subdirectories
 - Remove specific permissions from users or groups
 - Set permissions based on octal mode or symbolic representation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chmod

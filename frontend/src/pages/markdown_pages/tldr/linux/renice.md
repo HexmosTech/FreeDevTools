@@ -22,8 +22,8 @@ features:
   - Set absolute priority for specific processes by PID.
   - Manage priority of processes owned by a specific user.
   - Control priority of processes within a process group.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # renice

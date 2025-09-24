@@ -22,8 +22,8 @@ features:
 - Target different output types (exe, winexe, library, module)
 - Generate .NET executables from C# source code
 - Control the compilation process through command-line options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mcs

@@ -22,8 +22,8 @@ features:
 - Compare all subkeys and values for two registry keys
 - Output only the matches between specified keys
 - Output the differences and matches between specified keys
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reg compare

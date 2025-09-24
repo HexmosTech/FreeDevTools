@@ -22,8 +22,8 @@ features:
   - Connect to Wi-Fi networks with SSID
   - Show Wi-Fi password and QR code
   - Display detailed device information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nmcli device

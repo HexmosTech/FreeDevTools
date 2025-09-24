@@ -22,8 +22,8 @@ features:
 - Preview changes before applying them to infrastructure
 - Manage cloud infrastructure using code
 - Automate infrastructure deployment with Pulumi
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi update

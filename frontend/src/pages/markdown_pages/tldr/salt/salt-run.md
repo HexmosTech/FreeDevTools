@@ -22,8 +22,8 @@ features:
 - Identify disconnected minions in a Salt infrastructure
 - Automate system administration tasks across multiple minions
 - Manage and orchestrate Salt states on remote machines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # salt-run

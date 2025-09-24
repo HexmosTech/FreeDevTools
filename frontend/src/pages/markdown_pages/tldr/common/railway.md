@@ -22,8 +22,8 @@ features:
 - Deploy linked project directories with ease.
 - Execute local commands using active environment variables.
 - Open interactive database shells for enhanced control.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # railway

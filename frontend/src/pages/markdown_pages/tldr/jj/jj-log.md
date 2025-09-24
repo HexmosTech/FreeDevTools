@@ -22,8 +22,8 @@ features:
 - Customize log output with templates.
 - Display specific branches or tags in the graph.
 - Inspect commit metadata and changesets.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj log

@@ -22,8 +22,8 @@ features:
 - Scan for available wireless networks
 - Disassociate from the currently connected network
 - Configure various wireless network settings (requires root privileges)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # airport

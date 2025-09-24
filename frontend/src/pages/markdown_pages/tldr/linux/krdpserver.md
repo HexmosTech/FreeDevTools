@@ -22,8 +22,8 @@ features:
   - Enable remote desktop access through command line
   - Configure user credentials for secure RDP sessions
   - Facilitate remote desktop sharing on KDE Plasma
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # krdpserver

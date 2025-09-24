@@ -22,8 +22,8 @@ features:
 - Remove specific Node.js versions
 - Execute files using specific Node.js versions
 - Output binary paths for specific Node.js versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # n

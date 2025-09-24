@@ -22,8 +22,8 @@ features:
 - Show artifacts of a particular cask.
 - Filter lists to show only formulae or only casks.
 - List only pinned formulae.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # brew list

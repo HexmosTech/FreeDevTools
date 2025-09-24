@@ -22,8 +22,8 @@ features:
   - Update repositories based on a keyword search.
   - Update all configured repositories with a single command.
   - Manage Mageia package lists efficiently from the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urpmi.update

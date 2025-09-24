@@ -22,8 +22,8 @@ features:
 - Install applications into Kubernetes clusters using Helm charts.
 - Update dependencies within a Helm chart.
 - Download existing Helm charts for inspection and modification.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # helm

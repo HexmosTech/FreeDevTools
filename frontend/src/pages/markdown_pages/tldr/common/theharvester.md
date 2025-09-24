@@ -22,8 +22,8 @@ features:
 - Save output in XML and HTML formats
 - Target specific domains for information gathering
 - Enumerate subdomains and email addresses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # theHarvester

@@ -22,8 +22,8 @@ features:
 - Execute Mocha tests for smart contracts
 - Start a local Ethereum JSON-RPC node
 - Clean the cache and artifacts directories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hardhat

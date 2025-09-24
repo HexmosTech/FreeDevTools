@@ -22,8 +22,8 @@ features:
 - Assign drive letters to selected volumes
 - Create primary partitions on disks
 - Activate selected volumes for system use
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diskpart

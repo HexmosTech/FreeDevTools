@@ -22,8 +22,8 @@ features:
 - Provides option to pause between creation of each part
 - Enables outputting split archives to a specified directory
 - Supports handling large Zip archives efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zipsplit

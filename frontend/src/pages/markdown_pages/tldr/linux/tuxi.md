@@ -22,8 +22,8 @@ features:
   - Silence greetings and usage information for cleaner output
   - Get instant and concise answers from search results
   - Search Google directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tuxi

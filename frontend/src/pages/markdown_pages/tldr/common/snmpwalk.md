@@ -22,8 +22,8 @@ features:
 - Support for SNMPv1, SNMPv2c, and SNMPv3
 - Authentication and encryption for secure queries
 - Display help and usage instructions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snmpwalk

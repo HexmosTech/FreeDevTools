@@ -22,8 +22,8 @@ features:
 - Print stack traces from a target Go program
 - Display a process tree of Go processes
 - Diagnose Go processes by PID or address
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gops

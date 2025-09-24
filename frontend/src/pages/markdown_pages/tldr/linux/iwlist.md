@@ -22,8 +22,8 @@ features:
   - List supported bit-rates for the wireless interface.
   - Retrieve WPA authentication parameters.
   - Show configured WPA encryption keys and supported key sizes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iwlist

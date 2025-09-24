@@ -22,8 +22,8 @@ features:
 - Gracefully terminate ongoing rollbacks
 - Interrupt failed infrastructure deployments
 - Provide command-line control over Pulumi deployments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi cancel

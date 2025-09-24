@@ -22,8 +22,8 @@ features:
 - Output system data in multiple formats (table, list, csv)
 - Retrieve computer hardware specifications
 - Provide insights for troubleshooting system issues
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systeminfo

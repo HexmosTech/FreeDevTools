@@ -22,8 +22,8 @@ features:
   - Support for multiple optical disc drives.
   - Option to automatically eject the disc after burning.
   - Ability to write across multiple discs if needed.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wodim

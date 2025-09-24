@@ -22,8 +22,8 @@ features:
 - Scan subnets in parallel
 - Merge XML or JSON Nmap results
 - Customize the number of chunks and threads
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vinmap

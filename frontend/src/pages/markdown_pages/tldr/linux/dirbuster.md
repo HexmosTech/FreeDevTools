@@ -22,8 +22,8 @@ features:
   - Provides detailed reports of discovered directories and files.
   - Offers both GUI and headless modes for flexible operation.
   - Allows specifying file extensions to narrow the search scope.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dirbuster

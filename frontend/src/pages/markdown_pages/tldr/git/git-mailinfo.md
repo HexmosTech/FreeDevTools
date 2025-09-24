@@ -22,8 +22,8 @@ features:
 - Filter email body content before a scissors line
 - Analyze authorship data from patches
 - Parse email patches for git repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git mailinfo

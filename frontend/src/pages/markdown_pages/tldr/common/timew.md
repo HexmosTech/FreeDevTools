@@ -22,8 +22,8 @@ features:
 - Generate summary reports of tracked time
 - Track activities retroactively with specific start and end times
 - View activity reports for different timeframes like day, week, month
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # timew

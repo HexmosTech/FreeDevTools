@@ -22,8 +22,8 @@ features:
   - Force an update of the desktop menu system.
   - Manage menu entries with vendor prefix control.
   - Integrate applications seamlessly into the desktop environment's menu.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xdg-desktop-menu

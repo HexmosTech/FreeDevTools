@@ -22,8 +22,8 @@ features:
 - Reads gzip compressed MRT files.
 - Reads bzip2 compressed MRT files.
 - Reads xz compressed MRT files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # peerindex

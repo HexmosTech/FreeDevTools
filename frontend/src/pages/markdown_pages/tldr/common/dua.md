@@ -22,8 +22,8 @@ features:
 - Aggregate disk space consumption across multiple directories
 - Launch a terminal user interface for interactive analysis
 - Customize byte count formatting for improved readability
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dua

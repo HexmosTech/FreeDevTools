@@ -22,8 +22,8 @@ features:
 - Provides MS-DOS version compatibility information
 - Works directly from the command line
 - Offers a quick way to identify the OS version
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ver

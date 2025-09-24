@@ -22,8 +22,8 @@ features:
 - Opens the AUTHORS file in the default editor.
 - Excludes emails from the appended author list.
 - Simplifies contributor identification in Git repositories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git authors

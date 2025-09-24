@@ -22,8 +22,8 @@ features:
   - Download videos from YouTube history
   - Play all music from a YouTube search in a loop
   - Search for videos on PeerTube using the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ytfzf

@@ -22,8 +22,8 @@ features:
 - Apply image effects in batch
 - Adjust image brightness and saturation
 - Optimize GIF image file sizes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # magick mogrify

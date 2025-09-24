@@ -22,8 +22,8 @@ features:
 - Filter TSV rows for empty or non-empty fields
 - Combine multiple filter conditions with AND/OR logic
 - Count the number of matching lines in a TSV file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tsv-filter

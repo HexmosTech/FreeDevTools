@@ -22,8 +22,8 @@ features:
 - Remove devices permanently from a bcachefs filesystem
 - Format devices for use in a bcachefs filesystem
 - Evacuate device data before removal
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bcachefs device

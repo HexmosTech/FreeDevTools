@@ -22,8 +22,8 @@ features:
   - Provides a simple command-line interface for managing SELinux.
   - Enables testing of SELinux rules in permissive mode before enforcing.
   - Offers a crucial tool for system administrators to manage Linux security.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setenforce

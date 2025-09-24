@@ -22,8 +22,8 @@ features:
 - Enable or disable data tracking in Zapier.
 - Configure anonymous data collection.
 - Display debug output for Zapier analytics.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zapier analytics

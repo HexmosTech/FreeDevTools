@@ -22,8 +22,8 @@ features:
   - Allows for customizable update intervals.
   - Shows CPU usage as percentage or absolute time.
   - Filters to display only userspace processes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-cgtop

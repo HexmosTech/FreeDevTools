@@ -22,8 +22,8 @@ features:
 - Generate a list of unused secrets for review
 - Facilitate deletion of unused secrets using kubectl
 - Improve Kubernetes cluster security posture
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # k8s-unused-secret-detector

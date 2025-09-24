@@ -22,8 +22,8 @@ features:
 - Specify number of columns and rows in the grid
 - Scale and rotate pages to fit the layout
 - Output to a new PDF file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfxup

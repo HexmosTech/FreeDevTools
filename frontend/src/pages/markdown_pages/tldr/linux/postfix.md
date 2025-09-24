@@ -22,8 +22,8 @@ features:
   - Start and stop the Postfix mail transfer agent.
   - Manage the mail queue by flushing or processing messages.
   - Reload Postfix configuration files without restarting the service.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # postfix

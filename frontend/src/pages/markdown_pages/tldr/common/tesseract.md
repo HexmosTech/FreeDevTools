@@ -22,8 +22,8 @@ features:
 - Specify page segmentation modes for improved accuracy
 - List available languages for OCR processing
 - Customize language settings for text recognition
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tesseract

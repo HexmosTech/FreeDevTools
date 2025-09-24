@@ -22,8 +22,8 @@ features:
 - Control JPEG image quality with a specified value.
 - Reduce file sizes for faster website loading.
 - Optimize images for efficient web usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # guetzli

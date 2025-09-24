@@ -22,8 +22,8 @@ features:
 - Test Sui Move code with coverage reporting
 - Migrate Sui Move packages to the latest version
 - Analyze Sui Move code coverage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sui move

@@ -22,8 +22,8 @@ features:
 - Support multiple programming languages, including C++, Java, and Python.
 - Generate documentation in various formats, such as HTML, LaTeX, and PDF.
 - Extract class diagrams and call graphs from source code.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doxygen

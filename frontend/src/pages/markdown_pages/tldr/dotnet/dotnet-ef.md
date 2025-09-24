@@ -22,8 +22,8 @@ features:
 - Scaffold DbContext and entity types from existing databases.
 - Add, remove and list available EF Core migrations.
 - Generate SQL scripts from migration ranges.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dotnet ef

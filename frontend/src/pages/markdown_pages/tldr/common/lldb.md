@@ -22,8 +22,8 @@ features:
   - Attach to processes by name after launch.
   - Set breakpoints and step through code.
   - Inspect variables and memory during debugging.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lldb

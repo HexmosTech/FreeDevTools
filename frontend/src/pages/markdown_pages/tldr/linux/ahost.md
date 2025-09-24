@@ -22,8 +22,8 @@ features:
 - Retrieve AAAA records for a hostname
 - Display debugging output for DNS lookups
 - Specify the record type to retrieve (A, AAAA, or U)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ahost

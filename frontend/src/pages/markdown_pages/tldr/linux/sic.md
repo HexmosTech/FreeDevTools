@@ -22,8 +22,8 @@ features:
 - Send and receive messages within IRC channels
 - Set default channel or user for easier messaging
 - Authenticate with IRC servers using nicknames and passwords
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sic

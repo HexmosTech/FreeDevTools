@@ -22,8 +22,8 @@ features:
 - Display link layer packet headers for detailed analysis
 - Save captured packets to a specified directory for later examination
 - Analyze packets against defined rules and save alert-triggering packets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snort

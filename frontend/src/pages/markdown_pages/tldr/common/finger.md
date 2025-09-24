@@ -22,8 +22,8 @@ features:
 - Show login name, terminal, and real name
 - Display extended user information including home directory and mail status
 - Prevent matching against user's names
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # finger

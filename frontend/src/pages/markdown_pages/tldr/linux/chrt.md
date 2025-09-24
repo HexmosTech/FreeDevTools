@@ -22,8 +22,8 @@ features:
   - Set scheduling policy (deadline, idle, batch, rr, fifo, other)
   - Display min/max priority values available
   - Show attributes of all threads belonging to a process
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chrt

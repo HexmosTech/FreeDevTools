@@ -22,8 +22,8 @@ features:
 - Controls the width of the output string to avoid truncation
 - Enables precise string formatting in PowerShell scripts
 - Captures console output as a string for further processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Out-String

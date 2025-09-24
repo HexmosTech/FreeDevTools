@@ -22,8 +22,8 @@ features:
 - Use custom prefixes for check directives
 - Print good directive pattern matches for debugging
 - Integrate with LLVM tools for code validation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # FileCheck

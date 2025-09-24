@@ -22,8 +22,8 @@ features:
   - Manages network access for sandboxed processes.
   - Enforces security policies using Linux capabilities.
   - Allows for custom configuration through profiles.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # firejail

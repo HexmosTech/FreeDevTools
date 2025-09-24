@@ -22,8 +22,8 @@ features:
 - Manage gtalk sessions efficiently.
 - Send and receive text messages in real-time.
 - Communicate directly from the terminal on macOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gtalk

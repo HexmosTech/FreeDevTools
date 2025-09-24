@@ -22,8 +22,8 @@ features:
 - Install apps on connected Android devices
 - Lint F-Droid metadata for formatting errors
 - Rewrite metadata for automatic formatting fixes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fdroid

@@ -22,8 +22,8 @@ features:
 - Update dependencies and lock versions with `poetry.lock`
 - Execute commands within project virtual environments
 - Bump project versions following semantic conventions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # poetry

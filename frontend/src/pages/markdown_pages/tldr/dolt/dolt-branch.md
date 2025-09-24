@@ -22,8 +22,8 @@ features:
 - Rename existing Dolt branches efficiently
 - Delete unwanted Dolt branches quickly
 - Display the current active Dolt branch
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt branch

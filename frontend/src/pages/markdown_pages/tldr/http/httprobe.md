@@ -22,8 +22,8 @@ features:
 - Probe custom ports using specified protocols.
 - Verify server status using command line interface.
 - Determine server accessibility for network troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # httprobe

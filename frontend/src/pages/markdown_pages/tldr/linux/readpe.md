@@ -22,8 +22,8 @@ features:
   - List all sections within a PE file.
   - Display specific headers (DOS, COFF, Optional) on demand.
   - Examine imported and exported functions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # readpe

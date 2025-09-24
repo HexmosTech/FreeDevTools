@@ -22,8 +22,8 @@ features:
 - Monitor individual processor performance
 - Analyze CPU performance metrics on Linux
 - Provide comprehensive system-level CPU information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mpstat

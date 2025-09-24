@@ -22,8 +22,8 @@ features:
 - List and retrieve Keycloak realms
 - Update realm configurations with JSON files
 - Perform administrative tasks on Keycloak servers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kcadm.sh

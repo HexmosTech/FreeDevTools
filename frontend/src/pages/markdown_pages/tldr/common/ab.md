@@ -22,8 +22,8 @@ features:
 - Measure server response times and throughput under different loads.
 - Customize requests with headers, payloads, and request methods.
 - Generate CSV output for detailed performance analysis and reporting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ab

@@ -22,8 +22,8 @@ features:
 - Save disassembled LLVM IR to a specified file.
 - Disassemble bitcode files with the same filename as the IR.
 - Generate human-readable IR from LLVM bytecode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvm-dis

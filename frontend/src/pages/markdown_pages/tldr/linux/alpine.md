@@ -22,8 +22,8 @@ features:
   - Access and participate in Usenet newsgroups.
   - Utilize a simple, intuitive pico/nano-like interface.
   - Supports efficient keyboard shortcuts for navigation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # alpine

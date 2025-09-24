@@ -22,8 +22,8 @@ features:
 - Display context lines around matching patterns.
 - Print file names and line numbers of matched lines.
 - Recursively search files in a bzip2 compressed tar archive.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bzgrep

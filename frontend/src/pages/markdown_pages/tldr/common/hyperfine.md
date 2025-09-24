@@ -22,8 +22,8 @@ features:
 - Specify minimum number of benchmark runs
 - Perform benchmark with warmup iterations
 - Prepare environment before each benchmark run
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hyperfine

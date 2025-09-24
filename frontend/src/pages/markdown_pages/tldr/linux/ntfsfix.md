@@ -22,8 +22,8 @@ features:
 - Attempts to recover data from corrupted NTFS volumes
 - Resets the NTFS journal file
 - Schedules an NTFS consistency check on next boot
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ntfsfix

@@ -22,8 +22,8 @@ features:
 - Search for specific .deb packages by name
 - Upgrade all installed .deb packages to the latest version
 - Remove or purge installed .deb packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # deb-get

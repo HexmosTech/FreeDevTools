@@ -22,8 +22,8 @@ features:
 - Initialize new Typst projects from templates.
 - List available fonts in specified directories.
 - Customize output paths for generated PDFs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # typst

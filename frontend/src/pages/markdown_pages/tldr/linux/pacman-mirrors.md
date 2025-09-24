@@ -22,8 +22,8 @@ features:
 - Switch to a different update branch
 - Generate a mirrorlist using mirrors in your country based on GeoIP
 - Quickly generate mirrorlist with fasttrack setting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman-mirrors

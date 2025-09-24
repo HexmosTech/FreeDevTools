@@ -22,8 +22,8 @@ features:
 - Manage virtual machines within BOSH-managed deployments.
 - Upload stemcells from local files or URLs.
 - Display the current cloud configuration of a BOSH environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bosh

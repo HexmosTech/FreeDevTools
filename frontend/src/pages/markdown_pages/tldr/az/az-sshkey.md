@@ -22,8 +22,8 @@ features:
 - List available SSH public keys
 - Show details of a specific SSH public key
 - Manage SSH keys within Azure resource groups
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az sshkey

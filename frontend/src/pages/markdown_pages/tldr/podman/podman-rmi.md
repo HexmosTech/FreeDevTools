@@ -22,8 +22,8 @@ features:
 - Remove images without deleting untagged parent images
 - Manage disk space by deleting unwanted container images
 - Delete container images using command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # podman rmi

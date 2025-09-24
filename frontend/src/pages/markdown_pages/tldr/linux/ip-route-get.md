@@ -22,8 +22,8 @@ features:
 - Identify the source address used for a specific route
 - Display the Virtual Routing and Forwarding (VRF) instance used by a route
 - Filter routes based on Type of Service (ToS) values
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ip route get

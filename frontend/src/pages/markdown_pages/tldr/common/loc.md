@@ -22,8 +22,8 @@ features:
 - Exclude files based on .gitignore configurations
 - Count hidden files and directories with unrestricted flag
 - Provide summary statistics for code size analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # loc

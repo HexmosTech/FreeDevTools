@@ -22,8 +22,8 @@ features:
 - Search for lines that do not match a specified pattern.
 - Specify individual files inside a Zip archive for searching.
 - Exclude specified files inside a Zip archive from the search.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zipgrep

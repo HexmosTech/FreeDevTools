@@ -22,8 +22,8 @@ features:
 - Modify the URL of existing Git remotes
 - Remove unwanted Git remotes from the configuration
 - Rename existing Git remotes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj git remote

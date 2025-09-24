@@ -22,8 +22,8 @@ features:
 - Output to PNG, SVG, PDF, and other formats
 - Layout graphs using dot, neato, twopi, circo, fdp, sfdp, osage, & patchwork algorithms
 - Process graph data via stdin and stdout
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # neato

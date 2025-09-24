@@ -22,8 +22,8 @@ features:
 - Merge multiple PDF files into a single PDF
 - Query information about PDF content and metadata
 - Extract images, fonts, and resources from PDF files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mutool

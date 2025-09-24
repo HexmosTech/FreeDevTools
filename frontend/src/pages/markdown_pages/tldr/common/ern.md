@@ -22,8 +22,8 @@ features:
 - Create Electrode Native containers for iOS and Android
 - Publish Electrode Native containers to local Maven repositories
 - Transform iOS containers into pre-compiled binary frameworks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ern

@@ -22,8 +22,8 @@ features:
 - Query queue messages with SQL syntax
 - Move messages between AWS SQS queues
 - Pull messages to a local SQLite database
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sqsc

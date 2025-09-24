@@ -22,8 +22,8 @@ features:
 - Resize images with specific horizontal and vertical scaling factors
 - Process PAM images directly from the command line
 - Perform pixel-based image stretching
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamstretch

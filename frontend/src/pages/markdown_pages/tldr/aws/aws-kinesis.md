@@ -22,8 +22,8 @@ features:
 - Encode messages to base64 for Kinesis stream input.
 - List available shards within a Kinesis stream.
 - Read records from a shard using a shard iterator.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws kinesis

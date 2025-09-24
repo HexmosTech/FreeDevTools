@@ -22,8 +22,8 @@ features:
 - Fetch specific tags from a remote repository
 - Prune local references to deleted remote branches
 - Deepen current shallow branch by a specified number of commits
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git fetch

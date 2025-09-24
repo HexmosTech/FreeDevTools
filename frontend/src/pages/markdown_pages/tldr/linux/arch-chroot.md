@@ -22,8 +22,8 @@ features:
 - Specify a user to run commands as
 - Start an interactive shell within the new root
 - Use a custom command instead of the default shell
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arch-chroot

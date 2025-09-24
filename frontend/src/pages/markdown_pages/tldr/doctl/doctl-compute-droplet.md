@@ -22,8 +22,8 @@ features:
 - List all DigitalOcean droplets associated with an account
 - Manage droplet regions, images, and sizes
 - Automate droplet deployments using the doctl CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl compute droplet

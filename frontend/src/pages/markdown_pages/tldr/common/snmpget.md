@@ -22,8 +22,8 @@ features:
 - Support different SNMP versions (v1, v2c, v3)
 - Allow specifying the community string
 - Accept IP addresses as targets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snmpget

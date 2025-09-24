@@ -22,8 +22,8 @@ features:
 - Detect unsigned or tampered Git tags
 - Display verbose details about tag signatures
 - Output raw signature data for further analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git verify-tag

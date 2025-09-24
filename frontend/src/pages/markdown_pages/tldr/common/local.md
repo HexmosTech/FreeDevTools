@@ -22,8 +22,8 @@ features:
 - Declare array variables with assigned items
 - Declare associative array variables with assigned key-value pairs
 - Declare readonly variables to prevent modification
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # local

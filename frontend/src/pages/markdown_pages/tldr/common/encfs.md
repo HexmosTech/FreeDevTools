@@ -22,8 +22,8 @@ features:
 - Manage reverse-encrypted snapshots of directories
 - Operate in foreground for debugging
 - Utilize standard configuration options for encryption
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # encfs

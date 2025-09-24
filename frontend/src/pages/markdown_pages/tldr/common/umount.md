@@ -22,8 +22,8 @@ features:
 - Forcefully unmount a filesystem when necessary
 - Unmount all mounted filesystems excluding specific types
 - Safely detach a filesystem, ensuring data integrity
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # umount

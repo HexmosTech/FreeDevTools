@@ -22,8 +22,8 @@ features:
 - Create hard or soft links to deduplicate files
 - Transform files before comparison (e.g., remove EXIF data)
 - Cache file hashes for faster subsequent searches
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fclones

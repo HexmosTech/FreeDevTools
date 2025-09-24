@@ -22,8 +22,8 @@ features:
 - View logs for individual containers or the entire application
 - Rebuild containers automatically when changes are detected
 - Scale and update applications seamlessly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker compose

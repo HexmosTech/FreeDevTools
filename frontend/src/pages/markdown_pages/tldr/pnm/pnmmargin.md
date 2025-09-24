@@ -22,8 +22,8 @@ features:
 - Adjust image margins through command-line arguments.
 - Modify PNM image appearance with precise border control.
 - Enhance PNM images with visual formatting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmmargin

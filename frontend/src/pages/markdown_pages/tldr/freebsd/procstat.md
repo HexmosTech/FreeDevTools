@@ -22,8 +22,8 @@ features:
   - display command line arguments of freebsd processes
   - show resource limits for freebsd processes
   - analyze detailed process information on freebsd
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # procstat

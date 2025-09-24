@@ -22,8 +22,8 @@ features:
 - Specify a custom game ID for the server.
 - Configure the server to listen on a specific port.
 - Migrate server data between different backends.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # minetestserver

@@ -22,8 +22,8 @@ features:
 - Configure default shells for new users.
 - Add users to multiple groups simultaneously.
 - Create home directories for new user accounts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # useradd

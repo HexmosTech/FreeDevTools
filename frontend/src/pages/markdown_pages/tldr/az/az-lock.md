@@ -22,8 +22,8 @@ features:
 - List all Azure locks in a subscription
 - Show details of a specific Azure lock
 - Prevent accidental resource deletion or modification
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az lock

@@ -22,8 +22,8 @@ features:
 - Rescan shared files for updated content
 - Display help information for command-line options
 - Manage Soulseek peer-to-peer connections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nicotine

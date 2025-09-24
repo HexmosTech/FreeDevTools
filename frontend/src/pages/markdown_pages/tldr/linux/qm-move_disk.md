@@ -22,8 +22,8 @@ features:
 - Move disks while VMs are running (live migration)
 - Manage disk storage within Proxmox virtualization
 - Perform disk relocation via the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm move_disk

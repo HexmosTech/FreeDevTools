@@ -22,8 +22,8 @@ features:
   - Specify package version to access specific version documentation.
   - Read man pages directly from .deb files.
   - Supports command-line interface for easy access.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # debman

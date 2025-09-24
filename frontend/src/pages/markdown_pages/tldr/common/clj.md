@@ -22,8 +22,8 @@ features:
 - Resolve project dependencies defined in deps.edn
 - Launch a ClojureScript REPL with browser integration
 - Start an nREPL server with CIDER middleware for enhanced development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clj

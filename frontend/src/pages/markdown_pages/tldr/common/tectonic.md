@@ -22,8 +22,8 @@ features:
 - Initialize a new Tectonic project
 - Build existing Tectonic projects
 - Watch for changes and automatically rebuild projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tectonic

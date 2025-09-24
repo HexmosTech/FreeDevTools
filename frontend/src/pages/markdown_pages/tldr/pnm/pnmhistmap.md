@@ -22,8 +22,8 @@ features:
 - Specify the minimum and maximum intensity values to analyze.
 - Visualize color distribution in PNM images.
 - Analyze image intensity values using a histogram.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmhistmap

@@ -22,8 +22,8 @@ features:
   - Install a specified DNF group and its associated packages.
   - Remove a DNF group and its associated packages.
   - Upgrade all packages within a DNF group to their latest versions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnf group

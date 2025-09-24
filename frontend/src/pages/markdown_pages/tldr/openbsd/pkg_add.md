@@ -22,8 +22,8 @@ features:
 - Install packages from a local file.
 - Resolve package dependencies automatically.
 - Manage software installations on OpenBSD.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkg_add

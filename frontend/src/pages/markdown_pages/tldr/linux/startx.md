@@ -22,8 +22,8 @@ features:
   - Configure DPI settings for X sessions
   - Override .xinitrc settings to start specific environments
   - Start a graphical environment using a specified window manager
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # startx

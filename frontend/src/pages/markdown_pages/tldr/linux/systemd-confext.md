@@ -22,8 +22,8 @@ features:
 - Utilize systemd-sysext principles for /etc
 - Manage system configurations without modifying base files
 - Integrate seamlessly with existing systemd infrastructure
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-confext

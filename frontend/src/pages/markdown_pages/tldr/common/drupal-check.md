@@ -22,8 +22,8 @@ features:
 - Perform static analysis for coding issues
 - Suppress progress bar output
 - Analyze entire Drupal projects for errors
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # drupal-check

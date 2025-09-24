@@ -22,8 +22,8 @@ features:
   - Provides immediate results in the terminal.
   - Integrates seamlessly with the MATE desktop environment.
   - Supports command-line arguments for direct expression calculation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mate-calc

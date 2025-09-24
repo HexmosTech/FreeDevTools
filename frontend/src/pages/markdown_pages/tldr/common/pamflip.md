@@ -22,8 +22,8 @@ features:
 - Flip images vertically (top to bottom).
 - Transpose images along the main diagonal.
 - Transform Netpbm format images.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamflip

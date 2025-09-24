@@ -22,8 +22,8 @@ features:
 - Evaluate Scheme expressions directly
 - Listen for remote REPL connections on a port
 - Listen for remote REPL connections on a Unix socket
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # guile

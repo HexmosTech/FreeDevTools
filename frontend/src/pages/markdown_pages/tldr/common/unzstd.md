@@ -22,8 +22,8 @@ features:
 - Streamline data compression workflows
 - Extract compressed archives using `unzstd`
 - Decompress files with the same options as `zstd --decompress`
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unzstd

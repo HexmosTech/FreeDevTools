@@ -22,8 +22,8 @@ features:
 - Verify the authenticity of digital signatures
 - Encrypt and decrypt files using GPG keys
 - Manage a local GPG keyring
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gpg2

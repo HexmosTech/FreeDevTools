@@ -22,8 +22,8 @@ features:
 - Execute custom transaction scripts to mimic real-world workloads
 - Generate detailed performance reports with metrics such as transactions per second
 - Configure the number of worker threads to optimize benchmark execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgbench

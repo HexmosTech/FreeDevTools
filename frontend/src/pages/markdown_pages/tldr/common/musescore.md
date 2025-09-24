@@ -22,8 +22,8 @@ features:
 - Configure audio drivers for music playback
 - Generate diffs between different music scores
 - Customize MIDI import operations with specific files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # musescore

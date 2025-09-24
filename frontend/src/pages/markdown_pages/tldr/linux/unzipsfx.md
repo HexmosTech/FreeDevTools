@@ -22,8 +22,8 @@ features:
 - Extract files from self-extracting archives
 - Display file content without extraction
 - Print comments on Zip archives within binaries
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unzipsfx

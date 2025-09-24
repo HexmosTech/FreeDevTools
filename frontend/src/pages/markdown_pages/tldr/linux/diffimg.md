@@ -22,8 +22,8 @@ features:
   - Supports PNG, GIF, JPG, and PS image formats.
   - Provides a visual representation of image discrepancies.
   - Offers a command-line interface for easy integration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diffimg

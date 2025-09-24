@@ -22,8 +22,8 @@ features:
   - Control network interfaces and their access levels.
   - Configure port forwarding for incoming connections.
   - Implement emergency "panic" mode to block all traffic.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # firewall-cmd

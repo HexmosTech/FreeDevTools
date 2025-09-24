@@ -22,8 +22,8 @@ features:
 - Provides a clean slate for new commands.
 - Enhances readability of the PowerShell session.
 - Simplifies command-line workflow in Windows.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Clear-Host

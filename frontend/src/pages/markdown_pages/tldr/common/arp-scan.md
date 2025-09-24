@@ -22,8 +22,8 @@ features:
 - Specify custom IP address ranges for scanning
 - Use custom netmasks for network scanning
 - Discover network devices via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arp-scan

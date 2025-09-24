@@ -22,8 +22,8 @@ features:
 - Disables SysRq mechanism for enhanced security
 - Allows custom messages to be displayed before password prompt
 - Can be forked and detached for background operation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # physlock

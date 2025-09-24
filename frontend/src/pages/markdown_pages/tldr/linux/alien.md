@@ -22,8 +22,8 @@ features:
   - Supports Debian, Red Hat, and Slackware package formats.
   - Offers command-line interface for easy automation.
   - Simplifies cross-distribution software deployment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # alien

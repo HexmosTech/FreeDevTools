@@ -22,8 +22,8 @@ features:
   - Run a command with a specified OOM killer score
   - Adjust the OOM score within the range of -1000 to +1000
   - Target processes by their Process ID (PID)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # choom

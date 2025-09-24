@@ -22,8 +22,8 @@ features:
 - Output plans in JSON format for automation.
 - Destroy resources within a Terraform configuration.
 - Refresh state to reflect current infrastructure.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # terraform plan

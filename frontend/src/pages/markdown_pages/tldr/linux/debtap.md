@@ -22,8 +22,8 @@ features:
   - Offers a quiet mode to automate the conversion process.
   - Allows generating only the PKGBUILD file without full conversion.
   - Provides a simple command-line interface for easy use.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # debtap

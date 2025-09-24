@@ -22,8 +22,8 @@ features:
   - Displays header information of an ISO disk image.
   - Verifies the integrity of ISO image structure (implicitly).
   - Supports various ISO image standards.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # isoinfo

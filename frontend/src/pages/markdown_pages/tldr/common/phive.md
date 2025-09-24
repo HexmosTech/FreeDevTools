@@ -22,8 +22,8 @@ features:
 - Globally install PHP applications via Phar archives.
 - Update existing Phar installations to the latest versions.
 - Remove unused or outdated Phar packages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phive

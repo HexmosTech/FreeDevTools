@@ -22,8 +22,8 @@ features:
 - Customize output file names for rendered videos
 - Render videos with specific resolutions and frame rates
 - List available scenes in a Python file without rendering
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # manim

@@ -22,8 +22,8 @@ features:
 - List available security checks
 - Support for multiple IaC languages (Terraform, CloudFormation, etc.)
 - Omit code blocks from scan output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # checkov

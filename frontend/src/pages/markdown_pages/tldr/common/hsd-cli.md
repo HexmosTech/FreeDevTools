@@ -22,8 +22,8 @@ features:
 - View mempool snapshot details
 - Inspect transactions by address or hash
 - Examine blocks by height or hash
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hsd-cli

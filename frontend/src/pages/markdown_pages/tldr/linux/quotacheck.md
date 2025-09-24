@@ -22,8 +22,8 @@ features:
   - Repairs damaged quota files
   - Allows checking quotas on specific users and groups
   - Offers verbose and debug modes for detailed analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # quotacheck

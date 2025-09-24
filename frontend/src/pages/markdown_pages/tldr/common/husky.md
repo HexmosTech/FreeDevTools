@@ -22,8 +22,8 @@ features:
 - Manage pre-commit and pre-push workflows
 - Automate Git repository tasks
 - Uninstall Git hooks with a single command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # husky

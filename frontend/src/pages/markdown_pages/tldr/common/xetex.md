@@ -22,8 +22,8 @@ features:
 - Halt compilation on error for debugging.
 - Convert LaTeX documents to PDF format.
 - Generate PDF documents from XeTeX source.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xetex

@@ -22,8 +22,8 @@ features:
   - Run commands without a tty (headless mode).
   - Specify custom shells or commands for container entry.
   - Seamless integration with existing Distrobox setups.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # distrobox-enter

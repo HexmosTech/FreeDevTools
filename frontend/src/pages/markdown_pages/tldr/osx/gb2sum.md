@@ -22,8 +22,8 @@ features:
 - Calculate checksums for multiple files.
 - Output checksums in a standardized format.
 - Alias for GNU b2sum command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gb2sum

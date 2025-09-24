@@ -22,8 +22,8 @@ features:
   - Capture screenshots of selected regions
   - Copy screenshots to the clipboard
   - Utilize a configurable save location via config file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # i3-scrot

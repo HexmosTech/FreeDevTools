@@ -22,8 +22,8 @@ features:
   - Supports formatting of block devices.
   - Provides command-line interface for easy integration with scripts.
   - Offers a robust and efficient method for F2FS filesystem creation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.f2fs

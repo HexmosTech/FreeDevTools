@@ -22,8 +22,8 @@ features:
   - Provides human-readable output for easy understanding.
   - Offers real-time monitoring with the -s option.
   - Supports various operating systems including Linux and Unix-like systems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # free

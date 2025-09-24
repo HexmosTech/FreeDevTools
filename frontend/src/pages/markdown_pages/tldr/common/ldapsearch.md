@@ -22,8 +22,8 @@ features:
 - Search for users and groups based on membership.
 - Limit search results based on size and time.
 - Perform complex boolean logic filtering.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ldapsearch

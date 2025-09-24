@@ -22,8 +22,8 @@ features:
   - Manage multiple display outputs (e.g., HDMI, DisplayPort).
   - Enable and disable display outputs.
   - Adjust display brightness levels.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xrandr

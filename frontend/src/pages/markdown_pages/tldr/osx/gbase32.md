@@ -22,8 +22,8 @@ features:
 - Support standard Base32 alphabet
 - Provide command-line interface for Base32 encoding
 - Integrate with shell scripts for automated Base32 conversions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gbase32

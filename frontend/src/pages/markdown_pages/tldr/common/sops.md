@@ -22,8 +22,8 @@ features:
 - Update keys in encrypted SOPS files for enhanced security.
 - Rotate data keys within SOPS files for improved protection.
 - Extract specific keys or array elements from encrypted data.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sops

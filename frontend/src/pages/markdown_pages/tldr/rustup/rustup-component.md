@@ -22,8 +22,8 @@ features:
 - List installed and available components for a toolchain
 - List only installed components for a toolchain
 - Manage the Rust development environment through component modification
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustup component

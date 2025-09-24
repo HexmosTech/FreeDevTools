@@ -22,8 +22,8 @@ features:
   - Refresh build directories before compilation
   - Resume compilation from a specific dependency
   - Run KDE components with specified executable name
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kdesrc-build

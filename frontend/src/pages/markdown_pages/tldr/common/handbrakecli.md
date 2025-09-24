@@ -22,8 +22,8 @@ features:
 - Resize video dimensions
 - Apply HandBrake presets for optimized conversion
 - Extract CSS keys from DVDs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # handbrakecli

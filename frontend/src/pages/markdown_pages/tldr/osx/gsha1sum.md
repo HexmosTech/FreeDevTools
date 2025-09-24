@@ -22,8 +22,8 @@ features:
 - Generate SHA1 hashes on macOS
 - Compare SHA1 checksums for file validation
 - Alias for GNU sha1sum on OSX
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsha1sum

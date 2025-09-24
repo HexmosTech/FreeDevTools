@@ -22,8 +22,8 @@ features:
 - Extract rectangular regions from SPOT images
 - Support for various SPOT image formats
 - Command-line interface for batch processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # spottopgm

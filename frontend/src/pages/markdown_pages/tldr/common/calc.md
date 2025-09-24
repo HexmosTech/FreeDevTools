@@ -22,8 +22,8 @@ features:
 - Suppress output formatting for scripting purposes.
 - Switch to interactive mode after performing a calculation.
 - Set a specific permission mode for calculator operations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # calc

@@ -22,8 +22,8 @@ features:
 - Specify a language for the Anki interface
 - Use a custom directory for Anki data
 - Create and manage flashcards using spaced repetition
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # anki

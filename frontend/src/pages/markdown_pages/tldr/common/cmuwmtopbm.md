@@ -22,8 +22,8 @@ features:
 - Output the converted PBM image to standard output
 - Enable scripting of image conversion workflows
 - Support lossless conversion of bitmap graphics data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cmuwmtopbm

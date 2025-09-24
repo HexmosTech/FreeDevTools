@@ -22,8 +22,8 @@ features:
 - Automatically determine a free server number
 - Pass custom arguments to the Xvfb server
 - Create a virtual frame buffer for headless execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xvfb-run

@@ -22,8 +22,8 @@ features:
 - Generate projects with TypeScript support
 - Utilize templates for rapid project setup
 - Configure projects using npm, yarn, or pnpm
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Vite

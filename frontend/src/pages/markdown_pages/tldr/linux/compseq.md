@@ -22,8 +22,8 @@ features:
 - Analyzes sequences in FASTA format
 - Provides frame-shifted codon frequency analysis
 - Compares sequence composition against background frequencies
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # compseq

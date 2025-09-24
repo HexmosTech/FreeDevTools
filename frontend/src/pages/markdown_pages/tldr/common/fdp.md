@@ -22,8 +22,8 @@ features:
 - Utilize force-directed layout algorithms for graph visualization
 - Support different layout engines like dot, neato, twopi, circo
 - Process graph data via standard input and output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fdp

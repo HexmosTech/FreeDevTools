@@ -22,8 +22,8 @@ features:
 - Save screenshots to specified file paths
 - Capture screenshots of active windows
 - Copy screenshots directly to the clipboard
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # maim

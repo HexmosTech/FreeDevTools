@@ -22,8 +22,8 @@ features:
 - Removes wireless headers from open network capture files.
 - Filters packets based on access point MAC address.
 - Preserves headers while decrypting WPA/WPA2 encrypted capture files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # airdecap-ng

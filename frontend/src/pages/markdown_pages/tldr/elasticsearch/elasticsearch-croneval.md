@@ -22,8 +22,8 @@ features:
 - Identify invalid cron expressions with detailed error reporting
 - Suppress output for silent validation checks
 - Provide verbose output for debugging purposes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elasticsearch-croneval

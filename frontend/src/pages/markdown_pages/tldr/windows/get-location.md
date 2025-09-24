@@ -22,8 +22,8 @@ features:
 - Retrieve the current file system location.
 - Display the name of the current directory.
 - Get the location using the Get-Location cmdlet.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-Location

@@ -22,8 +22,8 @@ features:
   - Display file size and date along with location.
   - Silently check for file existence using exit codes.
   - Search for files using the PATH environment variable.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # where

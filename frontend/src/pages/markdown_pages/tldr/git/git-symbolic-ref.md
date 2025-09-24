@@ -22,8 +22,8 @@ features:
 - Read the value of a git symbolic reference
 - Delete a git symbolic reference
 - Simplify git reference output for scripting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git symbolic-ref

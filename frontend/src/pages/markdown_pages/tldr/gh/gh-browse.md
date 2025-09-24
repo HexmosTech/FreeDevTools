@@ -22,8 +22,8 @@ features:
 - Open issues and pull requests directly
 - Print repository URLs without opening the browser
 - Open repository settings and wiki pages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh browse

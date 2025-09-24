@@ -22,8 +22,8 @@ features:
 - Identify encoding for multiple files simultaneously
 - Specify language for accurate encoding detection
 - Create new encoded copies of existing files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # enca

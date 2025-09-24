@@ -22,8 +22,8 @@ features:
 - Execute commands remotely on target systems
 - Facilitate secure remote system administration
 - Provide a minimalist alternative to netcat
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rc

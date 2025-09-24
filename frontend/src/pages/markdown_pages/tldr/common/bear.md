@@ -22,8 +22,8 @@ features:
   - Specify custom output filenames for the compilation database.
   - Utilize verbose mode for detailed build command output.
   - Force preload method for enhanced command interception.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bear

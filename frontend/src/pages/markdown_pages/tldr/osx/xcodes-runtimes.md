@@ -22,8 +22,8 @@ features:
 - Manage runtimes for iOS, watchOS, tvOS and visionOS.
 - Configure the download directory for runtime archives.
 - Preserve downloaded runtime archives after installation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xcodes runtimes

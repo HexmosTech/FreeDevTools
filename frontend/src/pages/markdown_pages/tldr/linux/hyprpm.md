@@ -22,8 +22,8 @@ features:
 - Update all installed Hyprland plugins
 - List all installed Hyprland plugins
 - Force operations on Hyprland plugins
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hyprpm

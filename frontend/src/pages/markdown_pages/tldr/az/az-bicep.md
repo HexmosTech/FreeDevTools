@@ -22,8 +22,8 @@ features:
 - Upgrade Bicep CLI to the latest version.
 - List available versions of Bicep CLI.
 - Uninstall Bicep CLI from your system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az bicep

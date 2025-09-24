@@ -22,8 +22,8 @@ features:
 - Pass strings to stdin using here strings
 - Redirect command output to a file descriptor
 - Disregard leading tabs in here documents
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # <

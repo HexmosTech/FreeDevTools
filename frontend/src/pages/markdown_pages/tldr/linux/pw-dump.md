@@ -22,8 +22,8 @@ features:
 - Print JSON representation of a specific object
 - Export remote PipeWire instance state to a file
 - Customize color configuration for output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-dump

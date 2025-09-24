@@ -22,8 +22,8 @@ features:
 - Extract specific DNS records from a list of subdomains
 - Display raw DNS response with specified resolvers and retry attempts
 - Output DNS response only, omitting queried domain or subdomain
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnsx

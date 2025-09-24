@@ -22,8 +22,8 @@ features:
 - Uninstall extension packs from VirtualBox installations.
 - Forcefully uninstall extension packs, skipping refusals.
 - Clean up residual files from extension pack installations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage extpack

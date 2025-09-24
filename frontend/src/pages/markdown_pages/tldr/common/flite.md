@@ -22,8 +22,8 @@ features:
 - Specify custom voice files for speech synthesis
 - Output speech to a WAV audio file
 - List available voices for speech synthesis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flite

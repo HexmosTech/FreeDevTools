@@ -22,8 +22,8 @@ features:
 - Apply global configuration settings to multiple repos
 - Automate Git workflows across multiple repositories
 - Simplify batch operations with multiple Git repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git for-each-repo

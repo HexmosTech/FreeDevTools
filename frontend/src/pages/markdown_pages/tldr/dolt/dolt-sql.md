@@ -22,8 +22,8 @@ features:
 - Run multiple SQL statements separated by semicolons
 - Automate database interactions via command line
 - Integrate SQL queries into scripts and workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt sql

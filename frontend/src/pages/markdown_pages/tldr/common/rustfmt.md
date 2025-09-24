@@ -22,8 +22,8 @@ features:
 - Backup modified files before formatting
 - Format code with specific Rust style edition
 - Support for multiple Rust editions (2015, 2018, 2021, 2024)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustfmt

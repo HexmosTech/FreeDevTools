@@ -22,8 +22,8 @@ features:
 - Forcefully disconnect unresponsive devices
 - Quickly disconnect all connected devices
 - Disconnect specific devices by serial number
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # adb disconnect

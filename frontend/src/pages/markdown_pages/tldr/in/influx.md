@@ -22,8 +22,8 @@ features:
 - Format query output in JSON, CSV, or columnar format
 - Authenticate with username and password
 - Specify the database to use for operations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # influx

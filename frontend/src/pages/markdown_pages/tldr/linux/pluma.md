@@ -22,8 +22,8 @@ features:
   - Allows opening multiple files simultaneously.
   - Enables navigating to specific line numbers.
   - Provides a simple and user-friendly interface within the MATE desktop environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pluma

@@ -22,8 +22,8 @@ features:
 - Support input file lists for flexible data selection
 - Define no-data values and background colors for virtual datasets
 - Build multi-band RGB mosaics from single-band inputs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdalbuildvrt

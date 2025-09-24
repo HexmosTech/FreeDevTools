@@ -22,8 +22,8 @@ features:
 - Show available Kubernetes versions for DigitalOcean
 - View cluster configuration options
 - Manage Kubernetes resources using the DigitalOcean CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl kubernetes options

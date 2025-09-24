@@ -22,8 +22,8 @@ features:
 - Perform quiet conformance testing
 - Validate PPD files from standard input
 - Analyze PPD files for printer compatibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cupstestppd

@@ -22,8 +22,8 @@ features:
 - Allow the use of TRIM on encrypted devices
 - Persistently enable TRIM support in LUKS headers
 - Open LUKS volumes in read-only mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cryptsetup open

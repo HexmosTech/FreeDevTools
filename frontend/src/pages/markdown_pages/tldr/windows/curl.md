@@ -22,8 +22,8 @@ features:
   - Interact with REST APIs
   - Check curl installation status
   - Display documentation for both curl and Invoke-WebRequest
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # curl

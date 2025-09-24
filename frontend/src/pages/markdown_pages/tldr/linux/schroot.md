@@ -22,8 +22,8 @@ features:
 - Start interactive shells within a chroot
 - Begin and connect to schroot sessions
 - Execute commands as a specific user within a chroot
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # schroot

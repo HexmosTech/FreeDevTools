@@ -22,8 +22,8 @@ features:
   - Filter sockets by protocol and port on NetBSD
   - Display UNIX domain socket information on NetBSD
   - Show numeric socket output without name resolution on NetBSD
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sockstat

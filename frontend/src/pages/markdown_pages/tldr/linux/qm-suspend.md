@@ -22,8 +22,8 @@ features:
 - Skip storage lock checks during VM suspension
 - Control VM state with command-line interface
 - Safely manage virtual machine suspension in Proxmox
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm suspend

@@ -22,8 +22,8 @@ features:
   - Set backlight brightness to a specific percentage value.
   - Provides simple command-line interface for backlight control.
   - Works seamlessly with Linux systems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # backlight_control

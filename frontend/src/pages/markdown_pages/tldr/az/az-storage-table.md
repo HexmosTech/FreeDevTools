@@ -22,8 +22,8 @@ features:
 - List all tables within a storage account.
 - Delete specific tables and their data.
 - Manage NoSQL key-value storage in Azure.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az storage table

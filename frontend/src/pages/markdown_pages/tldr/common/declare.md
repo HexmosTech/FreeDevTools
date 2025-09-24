@@ -22,8 +22,8 @@ features:
 - Create and initialize array variables
 - Define associative arrays with key-value pairs
 - Create read-only variables to prevent modification
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # declare

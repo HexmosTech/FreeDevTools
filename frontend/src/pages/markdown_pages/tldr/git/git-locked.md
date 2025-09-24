@@ -22,8 +22,8 @@ features:
 - Provide a quick overview of file locking status.
 - Simplify management of shared Git repositories.
 - Help prevent merge conflicts due to locked files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git locked

@@ -22,8 +22,8 @@ features:
 - Convert specific renditions of images within a Palm file
 - Generate a color histogram of a Palm bitmap
 - Output the transparent color setting of a Palm bitmap image
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # palmtopnm

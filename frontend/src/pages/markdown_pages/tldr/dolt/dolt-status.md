@@ -22,8 +22,8 @@ features:
 - View staged and unstaged files.
 - Check the current branch of the Dolt repository.
 - Identify any conflicts in the Dolt database.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt status

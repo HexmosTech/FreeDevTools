@@ -22,8 +22,8 @@ features:
 - Filter captured packets based on BSSID
 - Write captured data to a file for later analysis
 - Monitor network traffic on specific channels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # airodump-ng

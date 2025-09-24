@@ -22,8 +22,8 @@ features:
   - Extract alphanumeric words with minimum length
   - Filter and extract email addresses from web content
   - Authenticate with HTTP Basic or Digest for protected sites
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cewl

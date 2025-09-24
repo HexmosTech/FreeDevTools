@@ -22,8 +22,8 @@ features:
   - Provide command-line control for audio recording.
   - Utilize PipeWire's capabilities for audio capture.
   - Function as an alias for `pw-cat --record`.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-record

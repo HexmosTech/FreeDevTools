@@ -22,8 +22,8 @@ features:
 - Join new nodes to an existing swarm
 - Remove a worker node from the swarm
 - Rotate the CA certificate for secure communication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker swarm

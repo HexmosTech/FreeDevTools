@@ -22,8 +22,8 @@ features:
 - Calculate relative times and durations.
 - Perform datetime arithmetic operations (add/subtract).
 - Parse datetime values from various sources like log files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # biff

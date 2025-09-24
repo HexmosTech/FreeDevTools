@@ -22,8 +22,8 @@ features:
 - Dump the call stack of a running Python process
 - Show a live view of functions taking the most time
 - Profile Python code without modifying the source code
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # py-spy

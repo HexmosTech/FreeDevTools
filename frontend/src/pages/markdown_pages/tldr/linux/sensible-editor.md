@@ -22,8 +22,8 @@ features:
   - Open multiple files simultaneously
   - Launch the editor from the command line
   - Work with file paths directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sensible-editor

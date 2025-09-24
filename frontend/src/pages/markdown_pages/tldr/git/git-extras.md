@@ -22,8 +22,8 @@ features:
 - Display version information for `git-extras`.
 - Extend the functionality of the base git commands.
 - Provide additional tools for working with git repositories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git extras

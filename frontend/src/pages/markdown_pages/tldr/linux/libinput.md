@@ -22,8 +22,8 @@ features:
 - Visualize libinput events using a graphical user interface.
 - Debug tablet axis values for accurate input readings.
 - Display help information for libinput commands.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # libinput

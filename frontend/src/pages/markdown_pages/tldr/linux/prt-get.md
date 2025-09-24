@@ -22,8 +22,8 @@ features:
   - Upgrade existing packages from the local ports tree.
   - Remove installed packages easily.
   - Search the ports tree for available packages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prt-get

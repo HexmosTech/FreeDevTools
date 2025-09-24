@@ -22,8 +22,8 @@ features:
 - Display a histogram of heap usage by type
 - Dump heap contents to a binary file
 - Dump live objects of the heap for analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jmap

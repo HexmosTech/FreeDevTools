@@ -22,8 +22,8 @@ features:
   - Return the VMware hardware version.
   - Provide a way to determine virtualization status from command line.
   - Identify VMware environment details.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vmware-checkvm

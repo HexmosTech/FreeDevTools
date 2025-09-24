@@ -22,8 +22,8 @@ features:
 - Rearrange the order of pages in a PDF
 - Combine page subranges from different PDFs
 - Create new PDFs with custom suffixes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfjoin

@@ -22,8 +22,8 @@ features:
   - Show attributes for all files, including hidden ones.
   - Display attributes for directories only.
   - Inspect file flags on Linux filesystems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lsattr

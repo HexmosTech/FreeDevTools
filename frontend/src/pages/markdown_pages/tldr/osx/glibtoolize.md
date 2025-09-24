@@ -22,8 +22,8 @@ features:
 - Ensures compatibility across different operating systems.
 - Simplifies the creation of `configure` scripts.
 - Provides a consistent build environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glibtoolize

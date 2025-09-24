@@ -22,8 +22,8 @@ features:
   - Move a window to a specific workspace.
   - Toggle fullscreen mode for a selected window.
   - Manage workspaces by switching between them.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wmctrl

@@ -22,8 +22,8 @@ features:
 - Generate fish completion scripts for Pulumi CLI.
 - Improve Pulumi CLI workflow with autocomplete suggestions.
 - Enhance CLI experience and reduce errors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi gen-completion

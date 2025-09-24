@@ -22,8 +22,8 @@ features:
 - Resolve meshnames to IPv6 addresses
 - Support for distributed naming in IPv6 mesh networks
 - Command-line interface for meshname operations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # meshnamed

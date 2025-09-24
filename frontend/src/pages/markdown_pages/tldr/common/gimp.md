@@ -22,8 +22,8 @@ features:
 - Suppress the splash screen during startup
 - Print error and warning messages directly to the console
 - Enable debugging for signal handling
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gimp

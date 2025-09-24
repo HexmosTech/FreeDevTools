@@ -22,8 +22,8 @@ features:
   - Remove unwanted packages, optionally purging configuration files
   - Search for packages by name or description
   - Display detailed information about a specific package
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apt

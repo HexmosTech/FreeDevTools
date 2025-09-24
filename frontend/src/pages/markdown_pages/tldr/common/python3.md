@@ -22,8 +22,8 @@ features:
 - Provides a simple alias for the python command
 - Supports cross-platform Python execution
 - Integrates seamlessly with existing Python environments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # python3

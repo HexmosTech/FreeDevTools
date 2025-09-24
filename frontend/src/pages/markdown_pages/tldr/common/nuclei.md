@@ -22,8 +22,8 @@ features:
 - Run automatic web scans using Wappalyzer technology detection
 - Export results to markdown files
 - Run scans based on specific template conditions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nuclei

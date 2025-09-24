@@ -22,8 +22,8 @@ features:
 - Output the resulting PPM image to a specified output file.
 - Define image dimensions during the conversion process.
 - Enable command-line based image format conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yuvtoppm

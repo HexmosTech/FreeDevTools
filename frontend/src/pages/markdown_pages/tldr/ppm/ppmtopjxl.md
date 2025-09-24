@@ -22,8 +22,8 @@ features:
 - Shift input images with defined offsets
 - Disable TIFF 4.0 compression during conversion
 - Generate PJXL files from PPM images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtopjxl

@@ -22,8 +22,8 @@ features:
   - Integrate host functionality into container workflow
   - Run scripts and utilities on the host from a container
   - Simplify host management from within a Distrobox
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # distrobox-host-exec

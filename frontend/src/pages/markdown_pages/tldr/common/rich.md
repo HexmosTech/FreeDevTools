@@ -22,8 +22,8 @@ features:
 - Export files to HTML with applied formatting
 - Display content from URLs with syntax highlighting and pagination
 - Customize text alignment and line width for precise terminal presentation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rich

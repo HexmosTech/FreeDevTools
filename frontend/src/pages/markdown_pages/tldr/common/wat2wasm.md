@@ -22,8 +22,8 @@ features:
 - Generate optimized WebAssembly binaries.
 - Output verbose representations of the binary format.
 - Specify the output file path for the compiled WebAssembly module.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wat2wasm

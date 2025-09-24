@@ -22,8 +22,8 @@ features:
 - Create symbolic links, hard links, and junctions
 - Create new registry entries
 - Manage multiple file locations with single command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # New-Item

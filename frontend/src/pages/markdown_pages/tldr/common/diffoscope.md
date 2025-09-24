@@ -22,8 +22,8 @@ features:
 - Exclude files based on pattern matching
 - Control directory metadata comparison behavior
 - Display or suppress progress bar during comparison
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diffoscope

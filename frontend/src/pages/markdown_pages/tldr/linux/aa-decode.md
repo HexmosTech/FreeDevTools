@@ -22,8 +22,8 @@ features:
 - Decode hexadecimal strings from AppArmor logs
 - Parse logs from standard input or specified files
 - Display help information for command-line usage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-decode

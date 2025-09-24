@@ -22,8 +22,8 @@ features:
 - Invert the match to find lines that do not match the pattern.
 - Display file name and line number for each match.
 - Print only the matched text from the compressed file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zegrep

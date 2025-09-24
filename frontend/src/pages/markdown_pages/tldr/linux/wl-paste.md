@@ -22,8 +22,8 @@ features:
   - Write clipboard content to a specified file.
   - Pipe clipboard data to another command.
   - Access clipboard via command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wl-paste

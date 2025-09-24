@@ -22,8 +22,8 @@ features:
 - Annotate the graph with branch names
 - Show the commit history of the repository
 - Provide a visual representation of the repository structure
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git show-tree

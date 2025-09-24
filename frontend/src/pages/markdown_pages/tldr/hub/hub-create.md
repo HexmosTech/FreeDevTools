@@ -22,8 +22,8 @@ features:
 - Open the new repository in a web browser
 - Manage GitHub repositories from the command line
 - Simplify GitHub repository initialization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hub create

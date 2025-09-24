@@ -22,8 +22,8 @@ features:
 - Check the validity of branch names
 - Verify the integrity of Git repositories
 - Support refs/heads and other ref types
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git check-ref-format

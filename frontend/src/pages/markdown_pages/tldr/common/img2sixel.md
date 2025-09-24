@@ -22,8 +22,8 @@ features:
 - Display images directly in a compatible terminal emulator
 - Support various image input formats for sixel conversion
 - Provide a command-line interface for image processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # img2sixel

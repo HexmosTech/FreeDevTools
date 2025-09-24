@@ -22,8 +22,8 @@ features:
 - Install scripts directly onto the user's PATH
 - Manage and run Java programs from the command line
 - Edit and debug scripts in various IDEs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jbang

@@ -22,8 +22,8 @@ features:
 - Set and encrypt environment variables.
 - Retrieve environment variable values.
 - Manage environment variables across multiple platforms.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dotenvx

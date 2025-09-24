@@ -22,8 +22,8 @@ features:
 - Locally ignore files by updating the local .gitignore file.
 - Globally ignore files by updating the global .gitignore file.
 - Manage version control exclusion patterns.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git ignore

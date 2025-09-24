@@ -22,8 +22,8 @@ features:
 - Execute CSV files in a Python shell.
 - Analyze CSV data using Python.
 - Manipulate CSV data through Python commands.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csvpy

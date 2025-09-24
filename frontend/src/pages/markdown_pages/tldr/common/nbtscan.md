@@ -22,8 +22,8 @@ features:
 - Display verbose output for detailed scanning
 - Output scan results in /etc/hosts format
 - Read IP addresses to scan from a text file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nbtscan

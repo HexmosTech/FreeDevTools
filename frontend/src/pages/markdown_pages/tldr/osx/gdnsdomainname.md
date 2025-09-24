@@ -22,8 +22,8 @@ features:
 - Functions as an alias for the GNU dnsdomainname command
 - Provides a command-line interface for domain lookup
 - Identifies network domain names
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdnsdomainname

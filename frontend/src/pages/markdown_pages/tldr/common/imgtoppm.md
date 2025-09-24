@@ -22,8 +22,8 @@ features:
 - Output PPM images suitable for Netpbm tools.
 - Execute image conversions from the command line.
 - Display version information of the imgtoppm tool.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # imgtoppm

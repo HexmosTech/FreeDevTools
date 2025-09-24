@@ -22,8 +22,8 @@ features:
 - Display logs for specific processes by PID
 - Filter logs using regular expressions
 - Color-code logs for easy readability
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # adb logcat

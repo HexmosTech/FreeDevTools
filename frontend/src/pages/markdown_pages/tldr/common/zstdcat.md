@@ -22,8 +22,8 @@ features:
 - Act as an alias for zstd --decompress --stdout
 - Quickly extract Zstd archives
 - Stream decompressed data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zstdcat

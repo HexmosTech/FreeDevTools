@@ -22,8 +22,8 @@ features:
   - Displays major/minor numbers of a mountpoint's filesystem.
   - Provides quick and accurate mount point validation.
   - Supports various operating systems with a single command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mountpoint

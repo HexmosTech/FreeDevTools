@@ -22,8 +22,8 @@ features:
 - Switch between Docker contexts easily
 - List all available Docker contexts
 - Use DOCKER_HOST environment variable to create contexts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker context

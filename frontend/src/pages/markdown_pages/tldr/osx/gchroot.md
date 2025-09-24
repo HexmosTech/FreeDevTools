@@ -22,8 +22,8 @@ features:
 - Manage access to system resources from within the chroot
 - Create isolated testing environments for software development
 - Enhance system security by limiting process privileges
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gchroot

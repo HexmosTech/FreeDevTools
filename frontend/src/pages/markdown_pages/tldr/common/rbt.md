@@ -22,8 +22,8 @@ features:
 - Land code changes into a local branch.
 - Patch your local tree with a change from a review request.
 - Set up RBTools to work with a repository.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rbt

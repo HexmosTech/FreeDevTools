@@ -22,8 +22,8 @@ features:
 - Securely retrieve the unique device identifier
 - Provide a method for verifying device authenticity
 - Access the one-time programmable private key
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpi-otp-private-key

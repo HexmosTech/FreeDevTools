@@ -22,8 +22,8 @@ features:
 - Overwrite an existing Yadm repository for a fresh start
 - Track and manage dotfiles across multiple machines
 - Automate dotfile deployment and synchronization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm init

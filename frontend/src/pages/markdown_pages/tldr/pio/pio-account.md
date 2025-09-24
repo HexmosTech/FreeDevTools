@@ -22,8 +22,8 @@ features:
 - Authenticate PlatformIO account logins with username and password.
 - Update PlatformIO account profiles, including email and names.
 - Display detailed information about PlatformIO accounts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio account

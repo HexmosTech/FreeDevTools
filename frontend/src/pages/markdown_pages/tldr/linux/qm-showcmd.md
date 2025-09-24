@@ -22,8 +22,8 @@ features:
   - Provides a human-readable output using the --pretty option.
   - Allows fetching configuration from a specific snapshot.
   - Offers valuable debugging information for Proxmox virtual machines.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm showcmd

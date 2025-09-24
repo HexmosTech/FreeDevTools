@@ -22,8 +22,8 @@ features:
 - Perform a cold reset on a virtual machine.
 - Power off a virtual machine immediately.
 - Save the current state of a virtual machine.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage controlvm

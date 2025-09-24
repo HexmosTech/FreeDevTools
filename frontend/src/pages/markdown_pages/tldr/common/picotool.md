@@ -22,8 +22,8 @@ features:
 - Convert ELF and BIN files to UF2 format for Pico loading.
 - Reboot connected Raspberry Pi Pico boards.
 - List available registers on the Raspberry Pi Pico.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # picotool

@@ -22,8 +22,8 @@ features:
 - Obtain deduplication details using an input object.
 - Analyze storage efficiency and deduplication effectiveness.
 - Manage and optimize disk space utilization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-DedupProperties

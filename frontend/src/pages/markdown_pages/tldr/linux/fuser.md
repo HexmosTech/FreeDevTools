@@ -22,8 +22,8 @@ features:
   - Locate processes using TCP or UDP sockets by port.
   - Forcefully terminate processes using the SIGKILL signal.
   - Detect processes accessing specific mount points.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fuser

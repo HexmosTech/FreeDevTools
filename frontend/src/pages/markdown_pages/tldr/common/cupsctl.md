@@ -22,8 +22,8 @@ features:
 - Enable or disable encryption for CUPS connections
 - Control debug logging for CUPS
 - Manage remote administration settings for CUPS
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cupsctl

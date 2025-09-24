@@ -22,8 +22,8 @@ features:
 - Resume file transfers after network interruptions
 - Include or exclude empty directories in the copy process
 - Preserve Access Control Lists (ACLs) during file copies
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xcopy

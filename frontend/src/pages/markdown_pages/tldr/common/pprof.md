@@ -22,8 +22,8 @@ features:
 - Launch an interactive pprof session for manual analysis
 - Run a web server for a web-based pprof interface
 - Fetch profiles from HTTP servers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pprof

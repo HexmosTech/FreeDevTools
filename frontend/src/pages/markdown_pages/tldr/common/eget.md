@@ -22,8 +22,8 @@ features:
 - Specify the installation directory for downloaded files.
 - Download specific Git tags instead of latest release.
 - Download pre-release versions of binaries.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eget

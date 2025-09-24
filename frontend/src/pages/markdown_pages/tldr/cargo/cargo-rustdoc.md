@@ -22,8 +22,8 @@ features:
 - Control documentation linting.
 - Document specific libraries, binaries, examples, or tests.
 - Generate API documentation for Rust projects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo rustdoc

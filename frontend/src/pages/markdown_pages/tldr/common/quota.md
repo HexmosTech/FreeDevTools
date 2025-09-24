@@ -22,8 +22,8 @@ features:
 - Provide verbose output, including quotas on all file systems
 - Offer quiet output, showing only exceeded quotas
 - Report disk quotas in human-readable format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # quota

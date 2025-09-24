@@ -22,8 +22,8 @@ features:
 - Stop, restart, and manage Node.js processes efficiently
 - Dump and resurrect process states for persistence
 - Manage application logs and configurations centrally
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pm2

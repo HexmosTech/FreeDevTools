@@ -22,8 +22,8 @@ features:
 - Encrypt backups with a user-specified password
 - List files within a completed backup archive
 - Manage backups on devices running iOS 4 or later
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # idevicebackup2

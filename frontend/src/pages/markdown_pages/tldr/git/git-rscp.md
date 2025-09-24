@@ -22,8 +22,8 @@ features:
 - Transfer files using a reverse scp command.
 - Download files directly to the current working tree.
 - Leverage the git-extras toolkit for enhanced file management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rscp

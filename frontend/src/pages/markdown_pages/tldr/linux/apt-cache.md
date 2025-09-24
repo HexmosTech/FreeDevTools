@@ -22,8 +22,8 @@ features:
   - Check package installation status and updates
   - Show package dependencies and reverse dependencies
   - Manage and troubleshoot package installations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apt-cache

@@ -22,8 +22,8 @@ features:
 - Show the network address associated with the hostname.
 - Display the Fully Qualified Domain Name (FQDN).
 - Manage system identification via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hostname

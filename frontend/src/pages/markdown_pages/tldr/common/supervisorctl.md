@@ -22,8 +22,8 @@ features:
 - Control all processes within a defined group
 - View real-time process output (stdout/stderr)
 - Update process configurations dynamically
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # supervisorctl

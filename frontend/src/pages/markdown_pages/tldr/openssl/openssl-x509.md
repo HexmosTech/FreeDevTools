@@ -22,8 +22,8 @@ features:
 - Extract a certificate's public key to a file
 - Display a certificate's expiration date
 - Manage X.509 certificates using OpenSSL
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openssl x509

@@ -22,8 +22,8 @@ features:
 - Formats Packer HCL files for readability and consistency
 - Enables building images from JSON configurations
 - Supports automated image deployment workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # packer

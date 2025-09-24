@@ -22,8 +22,8 @@ features:
 - Delete DigitalOcean apps interactively.
 - Retrieve detailed information about apps.
 - List all available DigitalOcean apps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl apps

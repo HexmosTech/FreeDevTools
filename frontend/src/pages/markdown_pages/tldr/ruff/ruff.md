@@ -22,8 +22,8 @@ features:
 - Check Python code for stylistic inconsistencies
 - Automate code formatting tasks
 - Integrate with existing development workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ruff

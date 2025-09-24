@@ -22,8 +22,8 @@ features:
 - Provides options to disable dependency detection for custom control.
 - Enables debugging output for detailed insights.
 - Streamlines the packaging process for Zapier apps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zapier build

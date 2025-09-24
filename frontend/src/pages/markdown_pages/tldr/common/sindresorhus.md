@@ -22,8 +22,8 @@ features:
   - Streamline repetitive tasks with automated command sequences.
   - Enhance your terminal workflow for increased productivity.
   - Discover and utilize a wide range of useful command-line applications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sindresorhus

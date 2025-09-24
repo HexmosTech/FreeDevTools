@@ -22,8 +22,8 @@ features:
   - Provides IP address information for Avahi services.
   - Uses the Avahi mDNS/DNS-SD protocol for resolution.
   - Simplifies network troubleshooting and configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # avahi-resolve-address

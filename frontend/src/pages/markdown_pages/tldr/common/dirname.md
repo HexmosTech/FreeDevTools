@@ -22,8 +22,8 @@ features:
 - Delimit output with a NUL character for xargs compatibility
 - Simplify path extraction in shell scripts
 - Automate directory manipulation tasks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dirname

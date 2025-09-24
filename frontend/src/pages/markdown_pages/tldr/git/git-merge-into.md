@@ -22,8 +22,8 @@ features:
 - Integrate code changes efficiently using git-extras.
 - Facilitate branch integration via command line.
 - Streamline code collaboration with branch merging.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git merge-into

@@ -22,8 +22,8 @@ features:
 - Output only the statistics of a pack file
 - Detect corrupted pack files
 - Analyze pack file structure for optimization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git verify-pack

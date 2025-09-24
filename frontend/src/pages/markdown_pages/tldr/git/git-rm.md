@@ -22,8 +22,8 @@ features:
 - Remove files from the index while keeping them locally
 - Unstage files from a Git repository
 - Manage file deletion within Git repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rm

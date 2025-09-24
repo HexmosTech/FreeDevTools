@@ -22,8 +22,8 @@ features:
 - Format LaTeX from stdin to stdout
 - Improve LaTeX code readability
 - Maintain consistent LaTeX code style
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tex-fmt

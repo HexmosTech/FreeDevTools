@@ -22,8 +22,8 @@ features:
 - Read and send data directly to SCSI devices.
 - Customize command execution with timeout options.
 - Dump returned data in binary format for detailed analysis.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sg_raw

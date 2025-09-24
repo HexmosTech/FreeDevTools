@@ -22,8 +22,8 @@ features:
 - Specify the resolution for the output image
 - Support for multiple resolutions (75, 100, 150, 300, 600 dpi)
 - Command-line image formatting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtolj

@@ -22,8 +22,8 @@ features:
   - Rename JPEG files based on EXIF creation date.
   - Rotate JPEG images losslessly based on EXIF orientation.
   - Remove all EXIF data from an image.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jhead

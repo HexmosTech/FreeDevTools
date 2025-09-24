@@ -22,8 +22,8 @@ features:
 - Check for identical visual appearance
 - Use command-line interface for GIF comparison
 - Determine if GIFs differ with a brief output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gifdiff

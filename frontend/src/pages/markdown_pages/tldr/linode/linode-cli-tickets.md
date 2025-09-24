@@ -22,8 +22,8 @@ features:
 - View replies to specific Linode tickets
 - Reply directly to Linode tickets via command line
 - Manage Linode ticket summaries and descriptions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linode-cli tickets

@@ -22,8 +22,8 @@ features:
   - Read GRUB scripts from standard input
   - Display verbose output during checking
   - Identify issues in GRUB bootloader scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grub-script-check

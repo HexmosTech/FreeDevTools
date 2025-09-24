@@ -22,8 +22,8 @@ features:
 - Change user PIN, reset code, or admin PIN.
 - Factory reset the OpenPGP application.
 - Manage OpenPGP access settings.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ykman openpgp

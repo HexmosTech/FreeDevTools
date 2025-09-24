@@ -22,8 +22,8 @@ features:
 - Recursively copy directories to and from S3
 - Sync local directories with S3 buckets
 - Manage file transfers with the AWS CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 cp

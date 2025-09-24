@@ -22,8 +22,8 @@ features:
 - Filter routes by URL helper, HTTP verb, or URL path.
 - List routes mapped to a specific controller.
 - Inspect detailed routing information.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rails routes

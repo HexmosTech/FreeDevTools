@@ -22,8 +22,8 @@ features:
 - Terminate running synchronization sessions
 - Start and stop Mutagen projects
 - List running sessions for a Mutagen project
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mutagen

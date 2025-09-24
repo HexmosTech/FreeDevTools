@@ -22,8 +22,8 @@ features:
 - Display current Terraform deployment status from state files
 - Output values defined in Terraform modules
 - Destroy Terraform-managed infrastructure resources
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # terragrunt

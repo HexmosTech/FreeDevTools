@@ -22,8 +22,8 @@ features:
 - List available Logic Apps within a resource group
 - Restart stopped Logic Apps for quick recovery
 - Start and stop Logic Apps for cost optimization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az logicapp

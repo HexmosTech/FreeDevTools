@@ -22,8 +22,8 @@ features:
 - Refine data sets from the command line
 - Perform advanced filtering operations in PowerShell
 - Streamline data processing through object filtering
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pwsh where

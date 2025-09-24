@@ -22,8 +22,8 @@ features:
 - Show hidden gcloud properties
 - Print the contents of the latest gcloud log file
 - Run diagnostics on the gcloud installation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud info

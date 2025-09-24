@@ -22,8 +22,8 @@ features:
   - Utilize a customizable character database
   - Output recognized text to a specified file
   - Enhance accuracy with adjustable certainty levels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gocr

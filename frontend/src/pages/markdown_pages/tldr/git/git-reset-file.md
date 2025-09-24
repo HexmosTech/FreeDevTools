@@ -22,8 +22,8 @@ features:
 - Discard changes made to a file.
 - Restore a file to a previous state.
 - Undo modifications in a Git repository for single files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git reset-file

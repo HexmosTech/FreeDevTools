@@ -22,8 +22,8 @@ features:
 - Send custom requests using various HTTP methods (POST, GET, etc.).
 - Include HTTP response headers in the output for detailed information.
 - Send API requests to a specific GitHub Enterprise Server instance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh api

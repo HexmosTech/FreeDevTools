@@ -22,8 +22,8 @@ features:
 - Convert numbers to IEC units
 - Format numbers with padding and alignment
 - Parse and format numbers from command line output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # numfmt

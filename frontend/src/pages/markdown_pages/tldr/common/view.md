@@ -22,8 +22,8 @@ features:
 - Quickly inspect file contents via command line
 - Utilize Vim's features for navigation and searching
 - Access files from the command line on various platforms
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # view

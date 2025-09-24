@@ -22,8 +22,8 @@ features:
 - Connect through jump hosts to access internal servers.
 - Authenticate with private keys for enhanced security.
 - Execute commands remotely with TTY allocation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ssh

@@ -22,8 +22,8 @@ features:
 - Launch drawing in a new window for isolated editing
 - Supports various image formats for comprehensive editing
 - Easily create new images and graphics using the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # drawing

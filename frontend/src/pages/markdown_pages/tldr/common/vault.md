@@ -22,8 +22,8 @@ features:
 - Write secrets to secure storage with flexible backends
 - Read and extract specific fields from stored secrets
 - Seal the Vault to remove encryption keys from memory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vault

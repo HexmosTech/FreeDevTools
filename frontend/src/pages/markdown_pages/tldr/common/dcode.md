@@ -22,8 +22,8 @@ features:
 - Reverse strings for decoding
 - Decode hex, decimal, and binary encodings
 - Perform MD5, SHA1, and SHA2 hash lookups (optional)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dcode

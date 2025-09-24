@@ -22,8 +22,8 @@ features:
 - Utilize a custom faucet URL for coin requests
 - Automate Sui test coin acquisition
 - Fund Sui development projects quickly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sui client faucet

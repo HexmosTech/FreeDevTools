@@ -22,8 +22,8 @@ features:
 - Leverage npm run command functionality
 - Utilize as a convenient npm alias
 - Manage Node.js application lifecycle
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm stop

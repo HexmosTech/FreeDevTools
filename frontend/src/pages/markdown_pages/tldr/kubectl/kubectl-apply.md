@@ -22,8 +22,8 @@ features:
 - Apply configurations using Kustomize directories
 - Manage Kubernetes resources via standard input
 - Update resources based on last-applied-configuration annotations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl apply

@@ -22,8 +22,8 @@ features:
 - Allows declaration of global variables to avoid linting errors.
 - Supports custom ESLint plugins for extended functionality.
 - Enables custom JavaScript parser usage for different code dialects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # standard

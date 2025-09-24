@@ -22,8 +22,8 @@ features:
 - Compare changes against specific revisions
 - Include or exclude files based on glob patterns
 - Display status for deleted (but tracked) files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg status

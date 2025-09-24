@@ -22,8 +22,8 @@ features:
 - Remove packages without dependencies
 - Backup packages to a specified directory
 - Uninstall the entire TeX Live distribution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr remove

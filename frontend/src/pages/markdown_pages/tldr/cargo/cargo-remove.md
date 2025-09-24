@@ -22,8 +22,8 @@ features:
 - Remove build dependencies using `--build` flag
 - Remove dependencies for specific target platforms with `--target`
 - Update Cargo.toml manifest file automatically
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo remove

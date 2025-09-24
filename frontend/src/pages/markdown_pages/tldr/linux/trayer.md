@@ -22,8 +22,8 @@ features:
   - Configure systray width as pixel or percentage
   - Align systray elements to left, center, or right
   - Define icon spacing within the systray
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trayer

@@ -22,8 +22,8 @@ features:
 - Use a query to match existing documents during import
 - Read field names from a separate CSV file
 - Control import mode (delete, merge, or upsert)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mongoimport

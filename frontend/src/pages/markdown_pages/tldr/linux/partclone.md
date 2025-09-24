@@ -22,8 +22,8 @@ features:
 - Efficiently skip empty blocks during backup
 - Support various filesystems (ext4, btrfs, fat32, xfs)
 - Clone entire partitions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # partclone

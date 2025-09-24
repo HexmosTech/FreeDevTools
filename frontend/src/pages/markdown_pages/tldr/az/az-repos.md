@@ -22,8 +22,8 @@ features:
 - Implement automated build validation triggered by source updates
 - List active pull requests for a repository
 - Manage policies on Azure DevOps repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az repos

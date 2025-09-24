@@ -22,8 +22,8 @@ features:
 - Define horizontal and vertical resolution in DPI
 - Add a formfeed command to the end of the output
 - Control printer output from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtoescp2

@@ -22,8 +22,8 @@ features:
 - Provides a pre-configured blog structure
 - Simplifies Hakyll project setup
 - Scaffolds Hakyll website templates
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hakyll-init

@@ -22,8 +22,8 @@ features:
 - Discover hardware transcoding capabilities
 - Identify GStreamer core elements
 - Enumerate plugins utilizing graphics APIs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gst-inspect-1.0

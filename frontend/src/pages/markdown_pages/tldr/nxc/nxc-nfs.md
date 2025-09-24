@@ -22,8 +22,8 @@ features:
 - Enumerate exposed shares recursively to a specified depth
 - Download specified remote files from an NFS share
 - Upload specified local files to a remote NFS share
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc nfs

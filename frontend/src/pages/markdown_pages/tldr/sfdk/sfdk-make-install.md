@@ -22,8 +22,8 @@ features:
 - Streamlines the packaging process for SailfishOS development.
 - Automates package installation from the command line.
 - Simplifies building RPM packages for SailfishOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk make-install

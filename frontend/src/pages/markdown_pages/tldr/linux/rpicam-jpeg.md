@@ -22,8 +22,8 @@ features:
   - Adjust exposure time using shutter settings.
   - Modify image gain levels for optimal brightness.
   - Save captured images to a specified file path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpicam-jpeg

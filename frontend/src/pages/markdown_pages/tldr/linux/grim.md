@@ -22,8 +22,8 @@ features:
 - Define a custom region to capture a screenshot
 - Integrate with slurp for interactive region selection
 - Save screenshots to custom file paths
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grim

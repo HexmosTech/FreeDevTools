@@ -22,8 +22,8 @@ features:
 - Define and manage Git aliases
 - Revert configuration entries to their default values
 - Edit Git configuration files directly in a text editor
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git config

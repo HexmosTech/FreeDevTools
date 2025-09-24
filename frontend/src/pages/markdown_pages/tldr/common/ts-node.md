@@ -22,8 +22,8 @@ features:
 - Transpile TypeScript files to JavaScript without execution.
 - Skip project configuration files when running TypeScript.
 - Execute TypeScript code in script mode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ts-node

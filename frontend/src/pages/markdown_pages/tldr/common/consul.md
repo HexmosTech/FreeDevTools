@@ -22,8 +22,8 @@ features:
 - Manage key-value pairs in the Consul store
 - Discover services running in the Consul cluster
 - Monitor the health of services in the Consul cluster
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # consul

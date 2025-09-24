@@ -22,8 +22,8 @@ features:
 - Configure artifact storage and retrieval
 - Automate software releases
 - Interact with JFrog Xray for security scanning
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jfrog

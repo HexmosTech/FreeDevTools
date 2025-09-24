@@ -22,8 +22,8 @@ features:
   - Manage appointments and events via command-line interface.
   - Synchronize with CalDAV servers for remote calendar access.
   - Import and export calendar data.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # calcurse

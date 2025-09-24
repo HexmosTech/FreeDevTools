@@ -22,8 +22,8 @@ features:
   - Execute a previously loaded kernel image.
   - Unload a currently loaded kexec target kernel.
   - Directly control system reboots at the kernel level.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kexec

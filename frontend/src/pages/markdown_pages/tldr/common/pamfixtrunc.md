@@ -22,8 +22,8 @@ features:
 - Ensure image files conform to the PAM standard
 - Remove extraneous information from image files
 - Reduce the size of oversized image files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamfixtrunc

@@ -22,8 +22,8 @@ features:
 - Display changes as a table for detailed analysis
 - Summarize the overall impact of changes
 - Parse standard diff format output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diffstat

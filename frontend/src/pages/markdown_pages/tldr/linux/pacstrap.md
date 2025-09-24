@@ -22,8 +22,8 @@ features:
   - Allows for custom configuration file usage.
   - Provides options for managing the pacman keyring and cache.
   - Offers interactive mode for confirmation of installations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacstrap

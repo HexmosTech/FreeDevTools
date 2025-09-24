@@ -22,8 +22,8 @@ features:
 - Modify filenames based on complex patterns
 - Execute rename operations from the command line
 - Easily rename multiple files simultaneously
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # perl-rename

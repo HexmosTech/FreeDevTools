@@ -22,8 +22,8 @@ features:
 - Perform two-way file merges using the IntelliJ IDEA merge dialog
 - Run code inspections on a project from the terminal
 - Launch the IntelliJ IDEA IDE
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # idea

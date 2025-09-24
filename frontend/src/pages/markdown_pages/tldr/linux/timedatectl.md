@@ -22,8 +22,8 @@ features:
 - Enable or disable Network Time Protocol (NTP)
 - Configure the system's timezone
 - Set the hardware clock to localtime
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # timedatectl

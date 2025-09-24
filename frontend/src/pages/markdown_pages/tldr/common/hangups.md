@@ -22,8 +22,8 @@ features:
 - Configure the refresh token path for persistent connections.
 - Manage Google Hangouts conversations from the command line.
 - Provide help and usage instructions for the hangups client.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hangups

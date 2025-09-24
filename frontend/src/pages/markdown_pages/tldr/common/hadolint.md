@@ -22,8 +22,8 @@ features:
 - Output linting results in various formats (TTY, JSON, Checkstyle, CodeClimate, Codacy)
 - Ignore specific linting rules
 - Support trusted registries for secure Dockerfile analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hadolint

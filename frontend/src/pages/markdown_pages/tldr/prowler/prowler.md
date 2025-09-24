@@ -22,8 +22,8 @@ features:
 - Filter findings by status (PASS, FAIL, MANUAL)
 - List available security checks for specific cloud providers
 - Execute audits in verbose mode for detailed output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prowler

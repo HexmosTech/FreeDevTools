@@ -22,8 +22,8 @@ features:
   - Integrate V4L2 applications into the Pipewire ecosystem.
   - Execute custom V4L2 commands via Pipewire.
   - Seamlessly control video devices from the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-v4l2

@@ -22,8 +22,8 @@ features:
 - Reduce commit graph complexity
 - Rewrite history to remove unnecessary branches
 - Handle revision history in JJ VCS
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj simplify-parents

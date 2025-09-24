@@ -22,8 +22,8 @@ features:
 - Execute patterns on YouTube video content.
 - Create and run custom, user-defined AI patterns.
 - Output AI pattern results to a specified file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fabric

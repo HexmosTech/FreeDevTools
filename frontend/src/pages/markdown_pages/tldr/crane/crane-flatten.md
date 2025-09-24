@@ -22,8 +22,8 @@ features:
 - Pushes the digest to the original image repository
 - Reduces container image size and complexity
 - Simplifies container image distribution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # crane flatten

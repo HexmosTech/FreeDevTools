@@ -22,8 +22,8 @@ features:
 - Configure the home directory for the container.
 - Create links for media and mount points.
 - Monitor the host system from within the container.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # toolbox init-container

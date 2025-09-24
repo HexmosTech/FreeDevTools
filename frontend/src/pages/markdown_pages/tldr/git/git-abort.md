@@ -22,8 +22,8 @@ features:
 - Terminate a Git cherry-pick sequence.
 - Reset the Git repository state to pre-abort.
 - Clear the MERGE_HEAD and CHERRY_PICK_HEAD references.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git abort

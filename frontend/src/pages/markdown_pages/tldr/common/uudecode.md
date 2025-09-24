@@ -22,8 +22,8 @@ features:
 - Support multiple uuencoded file formats
 - Handle large uuencoded files efficiently
 - Extract file permissions during decoding
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uudecode

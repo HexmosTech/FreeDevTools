@@ -22,8 +22,8 @@ features:
 - Specify the wait time for response packets
 - Customize the number of queries sent per hop
 - Determine the MTU (Maximum Transmission Unit) to the destination
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # traceroute

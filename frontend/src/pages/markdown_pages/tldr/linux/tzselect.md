@@ -22,8 +22,8 @@ features:
   - Find the nearest timezone using geographic coordinates in ISO 6709 format.
   - Navigate through the timezone selection menu using terminal input.
   - Provide a simple command-line interface for timezone selection.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tzselect

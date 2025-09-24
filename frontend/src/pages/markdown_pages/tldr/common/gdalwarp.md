@@ -22,8 +22,8 @@ features:
 - Clip raster datasets based on vector polygon boundaries
 - Transform images between coordinate systems losslessly
 - Warp images using various resampling methods
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdalwarp

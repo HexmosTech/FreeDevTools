@@ -22,8 +22,8 @@ features:
 - Analyze GCP logs for errors and anomalies
 - Search GCP metrics for performance bottlenecks
 - Authenticate using service account keys for secure access
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcpdiag

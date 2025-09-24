@@ -22,8 +22,8 @@ features:
 - Output LLVM IR for Adscript programs
 - Cross-compile for different CPU architectures
 - Support compiling for various operating systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # adscript

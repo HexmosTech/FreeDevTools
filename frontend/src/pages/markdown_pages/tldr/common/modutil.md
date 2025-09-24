@@ -22,8 +22,8 @@ features:
 - Manage module information in NSS databases
 - Configure security modules for Firefox
 - Interact with PKCS #11 security tokens
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # modutil

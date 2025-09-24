@@ -22,8 +22,8 @@ features:
 - Unpublish extensions from the VS Code Marketplace
 - List extensions by publisher
 - Show metadata associated with an extension
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vsce

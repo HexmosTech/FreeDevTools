@@ -22,8 +22,8 @@ features:
 - Define custom MAC addresses for cloned VMs
 - Automate the creation of new virtual machines
 - Clone VMs from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-clone

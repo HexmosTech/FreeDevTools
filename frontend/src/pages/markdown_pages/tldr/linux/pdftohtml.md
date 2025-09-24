@@ -22,8 +22,8 @@ features:
 - Extract PNG images from PDF documents
 - Ignore embedded images during HTML conversion
 - Create single HTML files containing all PDF pages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdftohtml

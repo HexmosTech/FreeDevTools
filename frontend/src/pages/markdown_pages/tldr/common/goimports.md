@@ -22,8 +22,8 @@ features:
 - Organizes Go import blocks according to standard conventions
 - Writes formatted Go code directly back to the source file
 - Displays diffs of import changes before writing to file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # goimports

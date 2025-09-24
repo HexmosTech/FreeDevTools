@@ -22,8 +22,8 @@ features:
   - Execute commands and redirect output to files.
   - Adjust font size using keyboard shortcuts.
   - Copy and paste text via keyboard shortcuts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # st

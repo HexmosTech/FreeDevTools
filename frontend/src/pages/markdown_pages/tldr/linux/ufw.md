@@ -22,8 +22,8 @@ features:
   - Define rules for allowing or denying specific ports.
   - Delete existing firewall rules by their number.
   - Display firewall status and rule numbering.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ufw

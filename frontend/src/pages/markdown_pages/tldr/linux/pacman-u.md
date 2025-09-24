@@ -22,8 +22,8 @@ features:
   - Forcefully upgrade packages
   - Resolve package dependencies during upgrade
   - Synchronize package databases before upgrading
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman -U

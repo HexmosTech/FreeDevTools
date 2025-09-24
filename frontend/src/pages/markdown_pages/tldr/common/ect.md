@@ -22,8 +22,8 @@ features:
   - Utilize multithreading for significantly faster compression speeds.
   - Recursively compress all files within specified directories.
   - Preserve original file timestamps during compression for data integrity.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ect

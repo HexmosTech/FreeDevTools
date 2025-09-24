@@ -22,8 +22,8 @@ features:
 - Force focus on a particular directory
 - Select multiple files or directories when opening
 - Navigate and manage file systems efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xplr

@@ -22,8 +22,8 @@ features:
 - Display resources within an application bundle
 - Inspect resource configurations for different devices
 - Dump the contents of the bundle configuration file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bundletool dump

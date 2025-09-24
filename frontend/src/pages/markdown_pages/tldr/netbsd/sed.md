@@ -22,8 +22,8 @@ features:
   - delay file opening for optimized text processing
   - use GNU regex extensions for advanced pattern matching on NetBSD
   - modify files in place without temporary copies on NetBSD
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sed

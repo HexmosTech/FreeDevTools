@@ -22,8 +22,8 @@ features:
   - Capture JPEG images from video devices with specified resolution.
   - Capture raw video streams with custom settings.
   - Control individual video device settings.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # v4l2-ctl

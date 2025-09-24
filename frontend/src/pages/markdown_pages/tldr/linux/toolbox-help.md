@@ -22,8 +22,8 @@ features:
   - Offers examples to illustrate the proper syntax of each command.
   - Allows users to quickly access specific subcommand help.
   - Simplifies the process of learning and utilizing the toolbox.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # toolbox help

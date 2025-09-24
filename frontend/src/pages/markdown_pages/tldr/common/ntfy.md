@@ -22,8 +22,8 @@ features:
 - Schedule delayed notifications for future delivery
 - Trigger webhooks for automated actions
 - Subscribe to topics and receive real-time updates
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ntfy

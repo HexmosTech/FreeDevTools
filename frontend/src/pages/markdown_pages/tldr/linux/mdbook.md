@@ -22,8 +22,8 @@ features:
   - Serve an mdbook project locally for testing
   - Watch for changes and automatically rebuild
   - Clean the generated book directory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mdbook

@@ -22,8 +22,8 @@ features:
 - Run logrotate without using a state file
 - Skip state file checks for quicker execution
 - Log verbose output for detailed troubleshooting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # logrotate

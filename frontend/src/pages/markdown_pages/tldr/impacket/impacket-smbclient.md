@@ -22,8 +22,8 @@ features:
 - Download files from SMB shares
 - Execute commands on remote SMB servers
 - Connect to SMB shares with specified credentials
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-smbclient

@@ -22,8 +22,8 @@ features:
 - Restart the Bash shell with a single command
 - Diagnose Bash configuration errors
 - Search and manage Bash-it components
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bash-it

@@ -22,8 +22,8 @@ features:
 - Generate reports in XML, text, or HTML format
 - Exclude specific directories from analysis
 - Specify minimum priority threshold for rules
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phpmd

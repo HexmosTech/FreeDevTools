@@ -22,8 +22,8 @@ features:
 - Merge multiple files into columns for side-by-side printing.
 - Set custom page lengths and widths for precise control.
 - Add line offsets for improved readability.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pr

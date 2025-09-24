@@ -22,8 +22,8 @@ features:
 - Report only if files differ without detailed output
 - Indicate when compressed files are identical
 - Paginate results for large file comparisons
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xzdiff

@@ -22,8 +22,8 @@ features:
 - Link custom CSS stylesheets for HTML output
 - Create embeddable HTML fragments
 - Utilize the asciidoctor-pdf library
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # asciidoctor

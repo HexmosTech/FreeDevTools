@@ -22,8 +22,8 @@ features:
 - Generate random words for customized tests
 - Calculate hypothetical typing scores
 - Practice with an ncurses interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # typeinc

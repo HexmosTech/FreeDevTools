@@ -22,8 +22,8 @@ features:
 - Set public or private status for npm packages.
 - Grant or revoke access to a specific scope or team.
 - Configure two-factor authentication for npm package publishing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm access

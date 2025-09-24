@@ -22,8 +22,8 @@ features:
 - Run spiders to crawl and extract data
 - Fetch webpage content as Scrapy sees it
 - Interact with page source via the Scrapy shell
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scrapy

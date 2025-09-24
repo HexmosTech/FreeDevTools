@@ -22,8 +22,8 @@ features:
 - Add formatted timestamps to captured images
 - Control webcam feed from the command line
 - Save captured images to a specified filename
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fswebcam

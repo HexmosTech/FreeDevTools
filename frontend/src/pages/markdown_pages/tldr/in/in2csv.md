@@ -22,8 +22,8 @@ features:
 - Convert specific sheets from XLSX files to CSV.
 - Accept JSON data via pipe and convert to CSV.
 - Supports multiple tabular data formats for CSV conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # in2csv

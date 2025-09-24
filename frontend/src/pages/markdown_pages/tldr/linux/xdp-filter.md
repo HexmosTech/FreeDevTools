@@ -22,8 +22,8 @@ features:
   - Block traffic based on source IP address
   - Block traffic based on source MAC address
   - Poll and display network packet statistics
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xdp-filter

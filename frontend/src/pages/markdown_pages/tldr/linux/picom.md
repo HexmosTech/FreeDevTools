@@ -22,8 +22,8 @@ features:
   - Offers various window effects and animations.
   - Runs as a background process for seamless integration.
   - Supports command-line arguments for flexible control.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # picom

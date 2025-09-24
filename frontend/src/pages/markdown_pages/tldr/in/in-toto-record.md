@@ -22,8 +22,8 @@ features:
 - Sign link metadata with a key file
 - Specify materials and products for each step
 - Generate evidence for supply chain integrity
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # in-toto-record

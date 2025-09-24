@@ -22,8 +22,8 @@ features:
   - Set keymaps for individual consoles (tty).
   - Load keymaps from specified files.
   - Suppress output during keymap loading.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # loadkeys

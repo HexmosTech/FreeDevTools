@@ -22,8 +22,8 @@ features:
 - Run load tests in a distributed environment
 - Generate real-time reports and statistics
 - Measure system response times and identify bottlenecks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # locust

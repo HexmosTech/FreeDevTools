@@ -22,8 +22,8 @@ features:
 - Display real-time data updates.
 - Configure output formats for efficient data processing.
 - Monitor network performance with precise telemetry.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnmic sub

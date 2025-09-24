@@ -22,8 +22,8 @@ features:
 - Save diagnostic reports to a specified directory path.
 - Submit feedback directly to Cloudflare WARP development team.
 - Diagnose WARP connectivity problems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # warp-diag

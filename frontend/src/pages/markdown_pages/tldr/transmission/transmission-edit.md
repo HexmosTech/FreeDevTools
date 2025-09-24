@@ -22,8 +22,8 @@ features:
 - Replace tracker passcodes in torrent files
 - Modify multiple torrent files at once
 - Update torrent tracker information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transmission-edit

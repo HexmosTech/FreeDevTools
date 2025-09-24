@@ -22,8 +22,8 @@ features:
   - Outputs detailed scan results to a directory
   - Supports TCP and UDP port scanning
   - Allows specifying custom port ranges
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # autorecon

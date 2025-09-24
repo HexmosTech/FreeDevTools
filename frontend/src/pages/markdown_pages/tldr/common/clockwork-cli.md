@@ -22,8 +22,8 @@ features:
 - Monitor logs for multiple projects simultaneously
 - Display Clockwork debugging information
 - Provide a command-line interface for Clockwork
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clockwork-cli

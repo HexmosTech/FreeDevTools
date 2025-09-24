@@ -22,8 +22,8 @@ features:
 - Discover the directory of the x64 MSVC compiler
 - Identify the Clang directory bundled with Visual Studio
 - Determine the path of MSBuild.exe
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vswhere

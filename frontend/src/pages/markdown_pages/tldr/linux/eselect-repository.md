@@ -22,8 +22,8 @@ features:
   - Add new unregistered repositories using various protocols (rsync, git, etc.).
   - Remove repositories, optionally deleting their contents.
   - Create and enable local ebuild repositories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eselect repository

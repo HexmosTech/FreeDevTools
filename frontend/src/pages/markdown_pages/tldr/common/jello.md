@@ -22,8 +22,8 @@ features:
 - Extracts elements from arrays and objects
 - Supports JSON and JSON-Lines formats
 - Integrates Python syntax for transformations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jello

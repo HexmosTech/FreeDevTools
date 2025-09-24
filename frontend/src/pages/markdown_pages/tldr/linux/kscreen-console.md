@@ -22,8 +22,8 @@ features:
 - Show KScreen output information and configuration
 - Monitor KScreen for display changes
 - Display current KScreen configuration as JSON
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kscreen-console

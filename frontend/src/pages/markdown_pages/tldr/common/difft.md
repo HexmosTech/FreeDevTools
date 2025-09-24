@@ -22,8 +22,8 @@ features:
   - Customize output display (side-by-side, inline, JSON).
   - Toggle syntax highlighting for improved readability.
   - Efficiently check for differences without detailed output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # difft

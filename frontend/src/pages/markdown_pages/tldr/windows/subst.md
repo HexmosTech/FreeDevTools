@@ -22,8 +22,8 @@ features:
 - Remove an existing virtual drive association
 - Easily access deep file paths using a drive letter
 - Create shortcuts for frequently used paths
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # subst

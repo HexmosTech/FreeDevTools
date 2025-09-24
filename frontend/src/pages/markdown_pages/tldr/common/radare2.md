@@ -22,8 +22,8 @@ features:
 - Execute custom scripts before interactive CLI starts
 - Display help text for specific commands within radare2
 - Dump raw bytes from the current block to a file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # radare2

@@ -22,8 +22,8 @@ features:
 - Restore the repository to a specific state at a given operation
 - Examine changes made during an operation with diffs
 - Display operation stats, summary, and patches
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj operation

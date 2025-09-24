@@ -22,8 +22,8 @@ features:
 - Automate Git authentication
 - Streamline Git workflows with cached credentials
 - Enhance Git security by managing password storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git credential-cache

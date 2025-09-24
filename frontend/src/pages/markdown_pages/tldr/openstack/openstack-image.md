@@ -22,8 +22,8 @@ features:
 - Create and upload new images to the OpenStack cloud
 - Delete unwanted images from the OpenStack environment
 - Save OpenStack images locally to a file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openstack image

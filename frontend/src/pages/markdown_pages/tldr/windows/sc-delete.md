@@ -22,8 +22,8 @@ features:
 - Execute service deletion via command line.
 - Uninstall services from the Windows registry.
 - Forcefully delete services even if running.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sc delete

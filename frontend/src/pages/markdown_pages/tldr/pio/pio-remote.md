@@ -22,8 +22,8 @@ features:
 - Connect to serial ports of remote devices.
 - Execute builds and tests on remote agents.
 - Update PlatformIO core and libraries on remote agents.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio remote

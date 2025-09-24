@@ -22,8 +22,8 @@ features:
   - Replace existing notifications with updated messages using IDs.
   - Display help information for available dunstify options.
   - Manage and control multiple notifications efficiently from the terminal.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dunstify

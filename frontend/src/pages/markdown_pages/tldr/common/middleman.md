@@ -22,8 +22,8 @@ features:
 - Build projects for deployment to production.
 - Deploy Middleman projects to remote servers.
 - Customize server ports for flexible development environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # middleman

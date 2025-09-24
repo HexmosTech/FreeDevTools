@@ -22,8 +22,8 @@ features:
 - Apply copyright updates to multiple files
 - Specify the primary entity for the copyright notice
 - Update all files in a directory recursively
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mh_copyright

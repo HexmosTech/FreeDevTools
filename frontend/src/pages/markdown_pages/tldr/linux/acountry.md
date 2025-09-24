@@ -22,8 +22,8 @@ features:
 - Provide debugging output for troubleshooting.
 - Offer verbose output for detailed information.
 - Support both IPv4 addresses and hostnames.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # acountry

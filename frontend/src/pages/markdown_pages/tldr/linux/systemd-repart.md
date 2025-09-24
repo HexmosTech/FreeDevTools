@@ -22,8 +22,8 @@ features:
   - Provides a dry-run option to preview changes before applying.
   - Supports growing the root partition to fill available space.
   - Manages partition resizing through the systemd service.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-repart

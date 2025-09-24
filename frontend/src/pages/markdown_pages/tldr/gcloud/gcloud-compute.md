@@ -22,8 +22,8 @@ features:
 - List and describe VM instances in a GCP project
 - Connect to virtual machines using SSH directly from the command line
 - Delete snapshots of persistent disks for cost optimization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud compute

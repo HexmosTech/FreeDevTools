@@ -22,8 +22,8 @@ features:
 - Create new virtual disks from existing images.
 - Import disk images via the command line.
 - Support for various virtual disk formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm importdisk

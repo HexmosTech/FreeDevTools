@@ -22,8 +22,8 @@ features:
 - List the contents of a JAR or WAR file.
 - View JAR/WAR file contents with verbose output.
 - Recursively archive all files in a directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jar

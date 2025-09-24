@@ -22,8 +22,8 @@ features:
 - Show the location of the Pulumi configuration files
 - Present information about the current Pulumi stack
 - Output data in JSON format for easy parsing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi about

@@ -22,8 +22,8 @@ features:
   - Edit VM boot options and metadata.
   - Manage network and disk configurations.
   - Control host device attachment to VMs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-xml

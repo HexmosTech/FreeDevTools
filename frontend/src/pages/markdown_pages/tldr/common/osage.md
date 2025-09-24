@@ -21,8 +21,8 @@ features:
   - Support multiple layout algorithms including dot, neato, and circo.
   - Process Graphviz code from standard input.
   - Generate image files based on the input filename.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # osage

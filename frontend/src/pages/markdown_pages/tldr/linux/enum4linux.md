@@ -22,8 +22,8 @@ features:
   - Discover available shares on a remote system.
   - Retrieve OS information from a remote host.
   - Perform enumeration using provided login credentials.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # enum4linux

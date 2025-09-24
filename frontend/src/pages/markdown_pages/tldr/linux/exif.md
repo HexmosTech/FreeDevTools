@@ -22,8 +22,8 @@ features:
   - Extract image thumbnails to separate files
   - Display raw contents of specific EXIF tags
   - Change the value of EXIF tags and save the changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exif

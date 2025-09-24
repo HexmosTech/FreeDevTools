@@ -22,8 +22,8 @@ features:
 - Uninstall unused formulae.
 - Verify Brewfile dependencies.
 - List all entries in a Brewfile.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # brew bundle

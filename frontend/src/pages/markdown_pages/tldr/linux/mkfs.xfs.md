@@ -22,8 +22,8 @@ features:
   - Supports various XFS filesystem options for advanced configuration.
   - Enables efficient storage management through XFS features.
   - Provides a command-line interface for easy integration into scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.xfs

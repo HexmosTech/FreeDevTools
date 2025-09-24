@@ -22,8 +22,8 @@ features:
 - Integrate Inkscape into build processes
 - Use custom Inkscape binaries as the backend
 - Show detailed information during execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # inkmake

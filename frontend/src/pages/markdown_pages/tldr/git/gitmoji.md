@@ -22,8 +22,8 @@ features:
 - List available emojis with descriptions
 - Search emojis by keyword for easy selection
 - Update emoji list from the main repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gitmoji

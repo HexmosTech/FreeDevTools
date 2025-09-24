@@ -22,8 +22,8 @@ features:
 - Specify an output directory for the report.
 - Customize the report filename with a date suffix.
 - Aid in diagnosing and reporting Git issues.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git bugreport

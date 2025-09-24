@@ -22,8 +22,8 @@ features:
 - Create new tabs in existing terminal sessions
 - Set custom titles for terminal tabs
 - Automate terminal tasks with command line arguments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnome-terminal

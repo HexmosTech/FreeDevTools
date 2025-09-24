@@ -22,8 +22,8 @@ features:
 - Connect to a remote codespace via SSH.
 - Transfer files between your local machine and a codespace.
 - Display logs and manage ports for a codespace.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh codespace

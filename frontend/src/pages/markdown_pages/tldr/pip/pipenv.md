@@ -22,8 +22,8 @@ features:
 - Generates `requirements.txt` files for project portability.
 - Simplifies Python development workflow with unified commands.
 - Activates a shell within the project's virtual environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pipenv

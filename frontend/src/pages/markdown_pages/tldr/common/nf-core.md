@@ -22,8 +22,8 @@ features:
 - Bump software versions in pipeline recipes
 - Launch nf-core pipelines directly
 - Download nf-core pipelines for offline use
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nf-core

@@ -22,8 +22,8 @@ features:
 - Close existing file descriptors
 - Redirect standard input/output using file descriptors
 - Manage file access using file descriptors in shell scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # <>

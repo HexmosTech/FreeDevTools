@@ -22,8 +22,8 @@ features:
   - Deletes orphaned RPMNEW and RPMSAVE files
   - Provides a clean command to automate file cleanup
   - Handles RPM configuration files after updates
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpmconf

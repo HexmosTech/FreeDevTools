@@ -22,8 +22,8 @@ features:
 - Sanitize repositories to remove sensitive information.
 - Permanently delete files to comply with data protection policies.
 - Improve repository size by removing unwanted file history.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git obliterate

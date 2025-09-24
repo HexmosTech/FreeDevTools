@@ -22,8 +22,8 @@ features:
   - Prevents data fragmentation and wear.
   - Supports trimming on multiple partitions.
   - Provides verbose output for monitoring progress.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fstrim

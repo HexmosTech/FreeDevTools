@@ -22,8 +22,8 @@ features:
 - Serve hledger-web JSON API with read-only access
 - Convert amounts to current market value using inferred prices
 - Display hledger manual in Info format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hledger-web

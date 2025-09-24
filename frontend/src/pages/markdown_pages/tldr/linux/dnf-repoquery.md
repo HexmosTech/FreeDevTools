@@ -22,8 +22,8 @@ features:
   - Display package information (version, size, etc.)
   - Check package status (installed, updated, etc.)
   - Manage installed packages using query results
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnf repoquery

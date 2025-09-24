@@ -22,8 +22,8 @@ features:
 - Dump RSA key components (modulus, exponent)
 - Generate a public key from modulus and exponent
 - Execute specific RSA attacks (e.g., Fermat)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # RsaCtfTool.py

@@ -22,8 +22,8 @@ features:
   - Restrict execution to IPv4 or IPv6 only
   - Listen for queries on a specified port
   - Run the server in the foreground, skipping daemonization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # named

@@ -22,8 +22,8 @@ features:
 - Filter by specific SSH key types
 - Update known_hosts file with host fingerprint
 - Automate remote host authentication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ssh-keyscan

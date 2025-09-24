@@ -22,8 +22,8 @@ features:
 - Read IR from standard input for assembly
 - Convert .ll files to optimized .bc files
 - Facilitate LLVM IR compilation workflow
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvm-as

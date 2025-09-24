@@ -22,8 +22,8 @@ features:
 - Perform case-insensitive and whole-word searches
 - Search for files with a specific extension using regex
 - Limit the search depth to specific directories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pt

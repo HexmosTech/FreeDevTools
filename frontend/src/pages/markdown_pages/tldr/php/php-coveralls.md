@@ -22,8 +22,8 @@ features:
 - Allows configuration via a .coveralls.yml file.
 - Provides verbose output for detailed debugging.
 - Excludes source files with no executable statements from coverage reports.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # php-coveralls

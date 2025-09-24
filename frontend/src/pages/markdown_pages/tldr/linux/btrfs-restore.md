@@ -22,8 +22,8 @@ features:
 - Restore files based on a regular expression matching the file path
 - Restore files using a specific root tree bytenr for recovery
 - Restore files along with metadata, extended attributes, and symlinks, with overwrite option
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs restore

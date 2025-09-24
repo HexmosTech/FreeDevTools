@@ -22,8 +22,8 @@ features:
 - Manage and list keys in the keyring to verify package origins.
 - Add and sign keys to establish trust for custom packages.
 - Remove untrusted or compromised keys to maintain system security.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman-key

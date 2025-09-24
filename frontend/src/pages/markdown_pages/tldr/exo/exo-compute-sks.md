@@ -22,8 +22,8 @@ features:
 - Add and remove node pools from existing SKS clusters.
 - Evict specific nodes from a given node pool.
 - Enable CSI drivers on an existing SKS cluster.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exo compute sks

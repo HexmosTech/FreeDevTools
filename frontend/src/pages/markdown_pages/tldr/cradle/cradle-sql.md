@@ -22,8 +22,8 @@ features:
 - Populate database tables for all or specific packages.
 - Execute SQL commands via command line.
 - Manage Cradle PHP database efficiently.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cradle sql

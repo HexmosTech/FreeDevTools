@@ -22,8 +22,8 @@ features:
 - Reset network interface to permanent MAC address
 - Display current and permanent MAC addresses
 - List vendor identifications for MAC addresses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # macchanger

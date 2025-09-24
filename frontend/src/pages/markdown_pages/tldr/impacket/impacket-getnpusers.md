@@ -22,8 +22,8 @@ features:
 - Target specific domains or use the current domain
 - Generate a list of usernames for further attacks
 - Audit Kerberos configuration for security weaknesses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-GetNPUsers

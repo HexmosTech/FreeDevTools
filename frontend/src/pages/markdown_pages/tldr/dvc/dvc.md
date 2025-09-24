@@ -22,8 +22,8 @@ features:
 - Manage data pipelines using command-line interface
 - Collaborate on data projects with team members
 - Integrate seamlessly with Git repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc

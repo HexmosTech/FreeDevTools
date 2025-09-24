@@ -22,8 +22,8 @@ features:
   - Works seamlessly across various terminal emulators.
   - Allows for quick adaptation to different window sizes.
   - Offers the `-s` option to print the current terminal size.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # resize

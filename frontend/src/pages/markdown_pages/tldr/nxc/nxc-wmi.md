@@ -22,8 +22,8 @@ features:
 - Perform WMI queries for data retrieval
 - Authenticate using local accounts without domain credentials
 - Automate exploitation of WMI vulnerabilities
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc wmi

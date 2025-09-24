@@ -22,8 +22,8 @@ features:
 - Integrate with Telegram for instant messaging notifications
 - Track and terminate processes after a specified time
 - Interactively configure notification settings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ntfyme

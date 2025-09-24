@@ -22,8 +22,8 @@ features:
 - Dump symbol tables to identify functions and variables
 - Extract strings embedded within the binary file
 - Output analysis results in JSON format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rabin2

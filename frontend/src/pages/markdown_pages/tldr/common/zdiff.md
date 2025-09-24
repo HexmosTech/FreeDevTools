@@ -22,8 +22,8 @@ features:
 - Compare a file with its gzipped counterpart
 - Detect differences in compressed files
 - Integrate with existing diff tools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zdiff

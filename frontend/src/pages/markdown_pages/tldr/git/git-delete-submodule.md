@@ -22,8 +22,8 @@ features:
 - De-registers the submodule from `.git/config`.
 - Removes the submodule's directory from the working tree.
 - Cleans up submodule-related files and configurations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git delete-submodule

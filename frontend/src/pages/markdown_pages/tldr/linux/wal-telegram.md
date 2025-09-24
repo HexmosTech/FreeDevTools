@@ -22,8 +22,8 @@ features:
 - Create Telegram themes with colored backgrounds based on the palette.
 - Apply gaussian blur to background images for Telegram themes.
 - Automatically restart the Telegram application after theme generation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wal-telegram

@@ -22,8 +22,8 @@ features:
 - Clean database objects prior to restoration
 - Customize the database username, host and port
 - Utilize multiple jobs for faster restoration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pg_restore

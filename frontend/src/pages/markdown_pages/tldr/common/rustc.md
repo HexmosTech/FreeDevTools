@@ -22,8 +22,8 @@ features:
 - Generate debugging information for easier troubleshooting
 - Explain error codes produced by the compiler
 - Compile code for specific target architectures
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustc

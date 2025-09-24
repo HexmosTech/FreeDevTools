@@ -22,8 +22,8 @@ features:
 - Provision instances for testing Ansible roles with `molecule create`
 - Configure and apply Ansible roles to instances using `molecule converge`
 - Access and interact with instances for debugging via `molecule login`
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # molecule

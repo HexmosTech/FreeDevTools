@@ -22,8 +22,8 @@ features:
 - Simplifies accessing documentation via command line.
 - Functions as a direct alias to 'tldr counter strike 2'.
 - Offers quick command reference on Linux systems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cs2

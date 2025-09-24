@@ -22,8 +22,8 @@ features:
 - Generates a JUCE project from a PIP file
 - Removes JUCE-style comments from a specified folder
 - Displays detailed information about a given JUCE project
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Projucer

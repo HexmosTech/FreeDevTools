@@ -22,8 +22,8 @@ features:
 - Provide a visually appealing screen clearing experience.
 - Offer a simple command for immediate terminal clearing.
 - Support various terminal emulators and shells.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wipeclean

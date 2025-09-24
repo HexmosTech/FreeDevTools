@@ -22,8 +22,8 @@ features:
 - Continuously update documents based on source file changes.
 - Force document generation despite errors.
 - Clean up temporary LaTeX files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # latexmk

@@ -22,8 +22,8 @@ features:
 - Stash and apply changes with ease
 - Resolve merge conflicts interactively
 - Navigate and control Git workflow efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lazygit

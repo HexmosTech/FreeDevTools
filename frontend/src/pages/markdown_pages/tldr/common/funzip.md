@@ -22,8 +22,8 @@ features:
 - Decrypt and display password-protected archives.
 - Support both ZIP and GZIP archive formats.
 - Provide a quick preview of archived data.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # funzip

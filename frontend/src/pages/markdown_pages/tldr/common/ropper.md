@@ -22,8 +22,8 @@ features:
 - List gadgets of a specific type (ROP, JOB, SYS, ALL).
 - Exclude gadgets containing bad bytes.
 - Limit the number of instructions to display.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ropper

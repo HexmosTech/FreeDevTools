@@ -22,8 +22,8 @@ features:
 - Inspect NTP system variables values
 - Display network time protocol statistics
 - Debug NTP daemon issues using debug mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ntpq

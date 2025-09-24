@@ -22,8 +22,8 @@ features:
 - Filter files based on regular expressions.
 - Customize output format (JSON, tree diagram).
 - Integrate with shell editor for file access.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tre

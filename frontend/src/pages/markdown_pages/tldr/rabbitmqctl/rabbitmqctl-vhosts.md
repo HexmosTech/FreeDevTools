@@ -22,8 +22,8 @@ features:
 - Delete specified virtual hosts from RabbitMQ
 - Set user permissions for specific virtual hosts
 - Clear user permissions on RabbitMQ virtual hosts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rabbitmqctl-vhosts

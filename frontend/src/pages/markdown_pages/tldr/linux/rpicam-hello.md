@@ -22,8 +22,8 @@ features:
   - Adjust stream timeout duration
   - Control camera sensor configuration
   - View Raspberry Pi camera feed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpicam-hello

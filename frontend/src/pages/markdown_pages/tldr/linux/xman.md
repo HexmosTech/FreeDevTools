@@ -22,8 +22,8 @@ features:
   - Simultaneously shows both the manual page and directory listings using -bothshown.
   - Provides a user-friendly interface for navigating manual page content.
   - Supports standard manual page formatting and navigation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xman

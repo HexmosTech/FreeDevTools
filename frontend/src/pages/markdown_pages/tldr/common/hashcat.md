@@ -22,8 +22,8 @@ features:
 - Crack passwords from various hash types with specific algorithms
 - Combine words from multiple dictionaries for enhanced attacks
 - Display recovered passwords for cracked hashes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hashcat

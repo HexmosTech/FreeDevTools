@@ -22,8 +22,8 @@ features:
 - Simplifies patch integration into Git workflows
 - Reduces manual effort in applying patches
 - Integrates directly with the Git command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rebase-patch

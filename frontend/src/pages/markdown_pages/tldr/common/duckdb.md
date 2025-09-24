@@ -22,8 +22,8 @@ features:
 - Run SQL scripts from the command line
 - Read CSV data from stdin and write CSV data to stdout
 - Launch the DuckDB UI for notebook-style data analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # duckdb

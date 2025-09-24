@@ -22,8 +22,8 @@ features:
 - Configure environment variables for different toolchains
 - Automate build processes for specific Rust versions
 - Run commands using the specified Rust version
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustup run

@@ -22,8 +22,8 @@ features:
 - Extract tar archives directly from URLs
 - Perform fuzzy file ID extraction from URLs
 - Download files silently with the `--quiet` option
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdown

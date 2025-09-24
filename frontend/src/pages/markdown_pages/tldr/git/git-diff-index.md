@@ -22,8 +22,8 @@ features:
 - Check for staged changes against a commit
 - Suppress output to check for differences quietly
 - Compare index with working tree for unstaged changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git diff-index

@@ -22,8 +22,8 @@ features:
 - Create and manage SQLite3 database files.
 - Operate on existing SQLite3 databases.
 - Read database schemas.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sqlite3

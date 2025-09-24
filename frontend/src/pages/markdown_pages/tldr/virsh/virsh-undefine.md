@@ -22,8 +22,8 @@ features:
 - Specify storage volumes to remove by target name
 - Specify storage volumes to remove by source name
 - Completely remove a virtual machine instance
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh undefine

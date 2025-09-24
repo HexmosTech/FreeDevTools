@@ -22,8 +22,8 @@ features:
 - Displays credentials for a configured repository
 - Initializes and decrypts a fresh clone of an encrypted repository
 - Rekey to change the encryption cipher or password
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transcrypt

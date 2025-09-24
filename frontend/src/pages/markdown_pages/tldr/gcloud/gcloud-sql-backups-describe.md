@@ -22,8 +22,8 @@ features:
 - View backup configuration details.
 - Display backup creation and expiry information.
 - Check the status of a SQL backup.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud sql backups describe

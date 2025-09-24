@@ -22,8 +22,8 @@ features:
   - Kill a running VNC server instance on a specific display.
   - Manage multiple VNC server sessions concurrently.
   - Access remote desktops securely via VNC.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vncserver

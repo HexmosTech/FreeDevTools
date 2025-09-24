@@ -22,8 +22,8 @@ features:
   - Disconnect existing VPN sessions by configuration
   - Import OpenVPN configuration files for quick access
   - List all imported OpenVPN configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openvpn3

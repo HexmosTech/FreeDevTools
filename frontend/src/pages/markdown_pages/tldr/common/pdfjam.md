@@ -22,8 +22,8 @@ features:
 - Overlay scanned signatures onto PDF documents
 - Arrange PDF pages into custom grids (e.g., 2x2)
 - Reverse the order of pages within PDF files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfjam

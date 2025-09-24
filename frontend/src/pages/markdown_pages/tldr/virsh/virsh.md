@@ -22,8 +22,8 @@ features:
 - Create a guest from a configuration file
 - Edit a guest's configuration using a text editor
 - Save and restore the state of a virtual machine
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh

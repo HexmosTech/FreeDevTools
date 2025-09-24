@@ -22,8 +22,8 @@ features:
 - Extract LSB steganography from images
 - Identify ZLIB-compressed data in image files
 - Iterate pixels with different ordering methods
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zsteg

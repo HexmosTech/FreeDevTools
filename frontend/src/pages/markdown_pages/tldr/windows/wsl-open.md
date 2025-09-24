@@ -22,8 +22,8 @@ features:
 - Open the current directory in Windows Explorer from WSL.
 - Set wsl-open as the shell's default web browser.
 - Execute from the WSL command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wsl-open

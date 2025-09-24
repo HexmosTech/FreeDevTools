@@ -22,8 +22,8 @@ features:
 - Query specific DNS record types (A, AAAA, NS, SOA, DNSKEY, ANY)
 - Perform DNS lookups using DNS over TLS (DoT)
 - Perform DNS lookups using DNS over HTTPS (DoH)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kdig

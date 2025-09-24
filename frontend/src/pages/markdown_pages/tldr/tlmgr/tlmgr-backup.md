@@ -22,8 +22,8 @@ features:
 - Specify a custom directory for backup storage
 - Remove backups of specific packages
 - Remove all existing package backups
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr backup

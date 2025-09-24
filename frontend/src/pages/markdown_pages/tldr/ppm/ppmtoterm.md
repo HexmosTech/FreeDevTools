@@ -22,8 +22,8 @@ features:
 - Generates text-based art for terminal display
 - Outputs the converted image to a text file
 - Supports various PPM image formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtoterm

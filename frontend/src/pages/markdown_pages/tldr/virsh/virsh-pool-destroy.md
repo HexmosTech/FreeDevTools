@@ -22,8 +22,8 @@ features:
 - Control storage pools by UUID
 - Integrate with Libvirt virtualization
 - Manage KVM virtual machine storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh pool-destroy

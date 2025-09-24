@@ -22,8 +22,8 @@ features:
   - Specify reduction amount in gigabytes (GB) or other units.
   - Manage LVM storage efficiently from the command line.
   - Control logical volume size using precise command-line parameters.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvreduce

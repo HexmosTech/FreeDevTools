@@ -22,8 +22,8 @@ features:
 - Move virtual disks using the command-line interface
 - Supports specifying the destination storage for the virtual disk
 - Allows disk movement within the same Proxmox cluster
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm disk move

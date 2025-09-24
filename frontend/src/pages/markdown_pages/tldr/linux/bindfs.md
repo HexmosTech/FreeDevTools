@@ -22,8 +22,8 @@ features:
 - Control file ownership on mounted directories
 - Dynamically adjust file permissions on the fly
 - Securely share files with restricted access
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bindfs

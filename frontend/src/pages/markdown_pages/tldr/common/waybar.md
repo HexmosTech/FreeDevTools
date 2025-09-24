@@ -22,8 +22,8 @@ features:
 - Set Wayland bar logging level
 - Apply custom stylesheets to Wayland bar
 - Launch Wayland bar with specific configuration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waybar

@@ -22,8 +22,8 @@ features:
   - Integrate with Nginx, Apache, and other web servers.
   - Supports various authentication methods (webroot, nginx, apache).
   - Offers dry-run and test certificate options for safe testing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # certbot

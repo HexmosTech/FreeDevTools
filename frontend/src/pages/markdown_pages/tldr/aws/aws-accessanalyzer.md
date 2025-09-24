@@ -22,8 +22,8 @@ features:
 - Generate and delete archive rules for Access Analyzer findings.
 - List and view details of existing Access Analyzers.
 - Update Access Analyzer settings and apply new tags.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws accessanalyzer

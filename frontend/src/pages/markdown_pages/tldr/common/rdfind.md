@@ -22,8 +22,8 @@ features:
 - Replaces duplicate files with symbolic links
 - Deletes duplicate files while retaining one original
 - Allows ignoring or including empty files in the search
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rdfind

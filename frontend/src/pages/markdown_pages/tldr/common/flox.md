@@ -22,8 +22,8 @@ features:
 - Share environments with others via FloxHub.
 - Search for packages within the FloxHub catalog.
 - Activate and deactivate environments for project isolation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flox

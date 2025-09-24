@@ -22,8 +22,8 @@ features:
 - Check status information about classes, jobs, and printers using the `lpstat` command.
 - Cancel print jobs using the `lprm` command.
 - View documentation for running the CUPS daemon.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # CUPS

@@ -22,8 +22,8 @@ features:
 - Fetch updates from a remote SVN repository.
 - Rebase a local Git clone against a remote SVN repository.
 - Manage bidirectional operation between Subversion and Git.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git svn

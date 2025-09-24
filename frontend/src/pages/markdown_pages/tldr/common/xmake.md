@@ -22,8 +22,8 @@ features:
 - Configure build targets for different platforms and architectures.
 - Install compiled targets to specific directories.
 - Manage dependencies and automate build processes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xmake

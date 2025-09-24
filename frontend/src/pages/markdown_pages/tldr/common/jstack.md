@@ -22,8 +22,8 @@ features:
 - Analyze stack traces from Java core dumps
 - Diagnose thread deadlocks
 - Monitor Java Virtual Machine (JVM) threads
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jstack

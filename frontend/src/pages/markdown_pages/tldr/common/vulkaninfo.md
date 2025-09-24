@@ -22,8 +22,8 @@ features:
 - Print a concise summary of Vulkan details
 - Identify available Vulkan extensions and layers
 - Retrieve GPU and driver-specific Vulkan information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vulkaninfo

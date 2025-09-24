@@ -22,8 +22,8 @@ features:
 - Create device tree overlay files
 - Extract device tree from a running Linux system
 - Convert device tree files between `.dts` and `.dtb` formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dtc

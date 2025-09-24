@@ -22,8 +22,8 @@ features:
 - Select target architecture and operating system
 - Display LDC compiler help information
 - Display complete LDC compiler help, including hidden options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ldc

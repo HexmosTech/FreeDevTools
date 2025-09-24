@@ -22,8 +22,8 @@ features:
 - Manually start or stop agents/daemons based on their label
 - List all loaded agents and daemons with their PID and exit code
 - Manage system-wide and user-specific background processes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # launchctl

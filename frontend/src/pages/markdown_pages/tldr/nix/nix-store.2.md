@@ -22,8 +22,8 @@ features:
 - Delete specific store paths.
 - Display the dependency tree of a store path.
 - Show all store paths that depend on a given store path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nix-store

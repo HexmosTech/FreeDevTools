@@ -22,8 +22,8 @@ features:
 - Linearly spread intermediate pixel values
 - Adjust brightness based on luminosity, color value, or saturation
 - Preserve pixel hues during normalization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmnorm

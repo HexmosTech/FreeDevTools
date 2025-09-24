@@ -22,8 +22,8 @@ features:
 - Open a macOS shell session on a Linux system.
 - Shutdown the Darling service to free up resources.
 - Emulate macOS functionality on Linux without dual-booting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # darling

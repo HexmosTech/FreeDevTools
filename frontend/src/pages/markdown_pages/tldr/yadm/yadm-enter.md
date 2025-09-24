@@ -22,8 +22,8 @@ features:
 - Isolate Git configurations for specific projects
 - Simplify Git interactions with command line tools
 - Exit the sub-shell to return to the original environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm enter

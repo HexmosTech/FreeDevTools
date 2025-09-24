@@ -22,8 +22,8 @@ features:
 - Enables ledger querying for blockchain data retrieval.
 - Allows invocation of chaincode methods with specific arguments.
 - Simplifies application deployment on Fabric networks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # minifab

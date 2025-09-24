@@ -22,8 +22,8 @@ features:
 - Update device state at a specific path using gNMI
 - Subscribe to target state updates at a specific path
 - Manage network device configurations using gNMI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnmic

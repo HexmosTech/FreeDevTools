@@ -22,8 +22,8 @@ features:
   - Unset a dconf key to revert to the schema default.
   - Display all schemas, keys, and values recursively.
   - Display schema-allowed values for a specified key.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsettings

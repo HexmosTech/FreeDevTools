@@ -22,8 +22,8 @@ features:
 - Rotate the directory stack to quickly access different locations
 - Manipulate the order of directories within the stack
 - Navigate the filesystem efficiently with command-line shortcuts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pushd

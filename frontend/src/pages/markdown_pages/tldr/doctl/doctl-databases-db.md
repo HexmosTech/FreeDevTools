@@ -22,8 +22,8 @@ features:
 - List all databases in a specified cluster
 - Retrieve specific database details by name
 - Manage DigitalOcean database clusters using doctl
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl databases db

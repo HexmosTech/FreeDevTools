@@ -22,8 +22,8 @@ features:
   - Remove all existing ACL entries and set a new ACL
   - Specify alternative workgroups or domains
   - Manage Windows file sharing permissions from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbcacls

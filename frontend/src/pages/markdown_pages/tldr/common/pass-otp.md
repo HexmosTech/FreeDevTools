@@ -22,8 +22,8 @@ features:
 - Display OTP tokens as QR codes
 - Import otpauth URI tokens
 - Manage OTP secrets with issuer and account options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pass otp

@@ -22,8 +22,8 @@ features:
   - Adjust the daemon's verbosity level for debugging.
   - Access detailed help information via command-line options.
   - Troubleshoot and resolve PipeWire related issues.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pipewire

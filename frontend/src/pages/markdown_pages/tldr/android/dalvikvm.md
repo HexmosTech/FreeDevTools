@@ -22,8 +22,8 @@ features:
   - Run a specific Java class within the VM
   - Provide a core runtime environment for Android applications
   - Load and execute Java applications on Android devices
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dalvikvm

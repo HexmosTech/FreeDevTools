@@ -22,8 +22,8 @@ features:
 - Sort output by various criteria like size or usage
 - Display all file systems, including inaccessible ones
 - Customize the application theme
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # duf

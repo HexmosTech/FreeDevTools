@@ -22,8 +22,8 @@ features:
 - Generate project files for IDE integration (VSCode, IntelliJ).
 - Start an interactive Scala REPL session.
 - Test Scala scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scala-cli

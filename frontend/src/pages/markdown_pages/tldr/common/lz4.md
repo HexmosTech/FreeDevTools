@@ -22,8 +22,8 @@ features:
 - Decompress LZ4 to standard output
 - Compress directories with tar and LZ4
 - Use best compression level for optimal size
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lz4

@@ -22,8 +22,8 @@ features:
 - Show cluster-wide resource utilization
 - Provide a summary of node capacity
 - Combine resource requests with actual usage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kube-capacity

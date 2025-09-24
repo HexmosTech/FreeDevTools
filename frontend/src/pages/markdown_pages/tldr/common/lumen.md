@@ -22,8 +22,8 @@ features:
 - Streamline micro-framework project setup
 - Simplify dependency management for Lumen
 - Accelerate Lumen API development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lumen

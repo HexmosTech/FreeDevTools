@@ -22,8 +22,8 @@ features:
   - Compare strings for equality or inequality
   - Verify the existence of a specified file path
   - Perform case-insensitive string comparisons
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # if

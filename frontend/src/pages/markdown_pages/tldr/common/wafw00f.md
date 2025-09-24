@@ -22,8 +22,8 @@ features:
 - Test for a wide range of WAFs without stopping at the first match
 - Pass requests through a proxy for advanced analysis
 - Read target URLs from a file for batch processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wafw00f

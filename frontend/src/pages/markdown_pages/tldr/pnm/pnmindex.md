@@ -22,8 +22,8 @@ features:
 - Controls the number of thumbnails per row.
 - Reduces the number of colors in the output image.
 - Creates visual indexes of multiple PNM images.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmindex

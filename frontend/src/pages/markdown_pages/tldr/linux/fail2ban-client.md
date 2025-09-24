@@ -22,8 +22,8 @@ features:
   - Verify the responsiveness of the fail2ban server.
   - Manage multiple fail2ban jails simultaneously.
   - Unban multiple IPs from a jail with a single command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fail2ban-client

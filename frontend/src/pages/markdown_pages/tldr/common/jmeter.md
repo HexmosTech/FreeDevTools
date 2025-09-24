@@ -22,8 +22,8 @@ features:
 - Execute tests using a specified proxy for realistic scenarios
 - Define JMeter properties to customize test behavior
 - Run load tests against web applications or APIs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jmeter

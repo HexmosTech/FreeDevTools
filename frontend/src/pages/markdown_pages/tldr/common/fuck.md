@@ -22,8 +22,8 @@ features:
 - Enable quick confirmation of suggested command corrections
 - Support interactive command correction selection
 - Integrate seamlessly into existing terminal workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fuck

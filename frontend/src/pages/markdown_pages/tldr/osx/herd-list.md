@@ -22,8 +22,8 @@ features:
 - Output commands in raw format for integration.
 - Display commands in txt, xml, json, or md format.
 - List commands without argument descriptions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # herd list

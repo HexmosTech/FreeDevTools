@@ -22,8 +22,8 @@ features:
 - Manages software installations on CRUX systems.
 - Simplifies command-line package deployment.
 - Supports adding software to a linux system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkgadd

@@ -22,8 +22,8 @@ features:
 - Enable UWP application development with x64 architecture
 - Set compiler paths for Visual Studio
 - Define necessary environment variables for Visual Studio tools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vcvarsall

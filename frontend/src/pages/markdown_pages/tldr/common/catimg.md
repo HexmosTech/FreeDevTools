@@ -22,8 +22,8 @@ features:
 - Output GIF images to the console
 - Adjust image resolution for terminal viewing
 - Disable 24-bit color for terminal compatibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # catimg

@@ -22,8 +22,8 @@ features:
   - Control Vivaldi settings from the terminal
   - Automate browser tasks with scripts
   - Debug browser issues using chromium flags
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vivaldi-stable

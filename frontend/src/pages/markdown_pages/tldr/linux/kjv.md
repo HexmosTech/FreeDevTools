@@ -23,8 +23,8 @@ features:
   - Display a range of verses within a chapter
   - Search for verses matching a specific pattern
   - Display verses across multiple chapters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kjv

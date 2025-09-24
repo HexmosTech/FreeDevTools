@@ -22,8 +22,8 @@ features:
 - Validate JSON against a specified schema file
 - Detect JSON formatting errors instantly
 - Test if a string is a valid JSON document
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Test-Json

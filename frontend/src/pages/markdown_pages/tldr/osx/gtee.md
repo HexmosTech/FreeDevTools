@@ -22,8 +22,8 @@ features:
 - Simultaneously write to files and display on screen.
 - Use as a direct replacement for gnu tee.
 - Streamline output redirection in scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gtee

@@ -22,8 +22,8 @@ features:
 - Integrates with the `git lock` command
 - Simplifies Git file locking workflows
 - Provides command-line access to Git file unlocking
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git unlock

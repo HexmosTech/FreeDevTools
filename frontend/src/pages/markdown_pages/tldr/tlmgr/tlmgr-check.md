@@ -22,8 +22,8 @@ features:
 - Ensure all TeX Live executables are present and functional.
 - Check the integrity of files listed in the local TLPDB database.
 - Detect duplicate filenames in the TeX Live runfiles sections.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr check

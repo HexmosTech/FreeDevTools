@@ -22,8 +22,8 @@ features:
 - Include the last commit message in the output
 - Quickly identify recently active branches
 - Facilitate branch maintenance and cleanup
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git brv

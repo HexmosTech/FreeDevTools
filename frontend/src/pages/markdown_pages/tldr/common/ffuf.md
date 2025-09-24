@@ -22,8 +22,8 @@ features:
 - Customize requests with headers, methods, and data
 - Filter results based on HTTP status codes
 - Support multiple wordlists with different fuzzing modes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ffuf

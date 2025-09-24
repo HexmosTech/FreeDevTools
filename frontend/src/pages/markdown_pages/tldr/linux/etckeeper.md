@@ -22,8 +22,8 @@ features:
 - Execute arbitrary Git commands within /etc
 - Check for uncommitted modifications
 - Destroy the Git repository and stop tracking
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # etckeeper

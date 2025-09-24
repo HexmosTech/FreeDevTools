@@ -22,8 +22,8 @@ features:
 - Provide a convenient alias for decompressing LZMA files.
 - Integrate seamlessly into command-line workflows.
 - Offer a simplified way to handle LZMA archives.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unlzma

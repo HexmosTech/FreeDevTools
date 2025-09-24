@@ -22,8 +22,8 @@ features:
 - Synchronize local stack with remote repository.
 - Modify commits within a stack and automatically update dependent branches.
 - Log and track all active git stacks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gt

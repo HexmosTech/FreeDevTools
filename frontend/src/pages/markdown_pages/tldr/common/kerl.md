@@ -22,8 +22,8 @@ features:
 - List available Erlang/OTP releases.
 - List installed Erlang/OTP builds.
 - Manage multiple Erlang environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kerl

@@ -22,8 +22,8 @@ features:
 - Force device enablement without confirmation prompts.
 - Simulate device enablement to preview the outcome.
 - Utilize command-line interface for advanced device control.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Enable-PnpDevice

@@ -22,8 +22,8 @@ features:
   - Monitor system temperatures from various sensors
   - Control multiple fans independently
   - Read fan speeds using sensor data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fancontrol

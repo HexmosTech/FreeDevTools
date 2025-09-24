@@ -22,8 +22,8 @@ features:
 - Open URLs upon notification click
 - Activate applications when a notification is clicked
 - Play custom sounds with notifications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # terminal-notifier

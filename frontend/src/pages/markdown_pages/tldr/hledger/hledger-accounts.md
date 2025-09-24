@@ -22,8 +22,8 @@ features:
 - Show accounts declared with directives
 - Generate account directives for undeclared accounts
 - Filter accounts by name and type
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hledger accounts

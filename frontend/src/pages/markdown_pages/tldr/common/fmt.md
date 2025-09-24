@@ -22,8 +22,8 @@ features:
 - Split lines to enforce maximum line length
 - Uniformly space words and paragraphs
 - Adjust spacing between paragraphs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fmt

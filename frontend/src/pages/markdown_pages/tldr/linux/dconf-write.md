@@ -21,8 +21,8 @@ features:
   - Modify existing key values or create new ones.
   - Supports writing empty array key values.
   - Provides a command-line interface for precise configuration changes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dconf write

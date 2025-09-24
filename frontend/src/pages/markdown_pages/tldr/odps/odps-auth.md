@@ -22,8 +22,8 @@ features:
 - Show authorities granted to a specific user.
 - Create and manage user roles for simplified permission assignment.
 - Describe the permissions associated with a specific role.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # odps auth

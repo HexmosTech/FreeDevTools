@@ -22,8 +22,8 @@ features:
   - Modify existing FAT32 volume labels
   - Interact with FAT32 partitions via the command line
   - Display volume label information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fatlabel

@@ -22,8 +22,8 @@ features:
 - Treat input as a path for path-based escaping
 - Append a custom suffix to the escaped output
 - Use a template to inject the escaped string into a predefined format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-escape

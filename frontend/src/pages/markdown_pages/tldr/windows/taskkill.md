@@ -22,8 +22,8 @@ features:
 - Forcefully terminate processes
 - Terminate a process and its child processes recursively
 - Terminate processes on remote machines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # taskkill

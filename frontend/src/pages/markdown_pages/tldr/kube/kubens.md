@@ -22,8 +22,8 @@ features:
 - Switch back to the previous Kubernetes namespace
 - Simplify Kubernetes cluster context management
 - Improve Kubernetes workflow efficiency
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubens

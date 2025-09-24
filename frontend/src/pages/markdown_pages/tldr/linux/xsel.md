@@ -22,8 +22,8 @@ features:
   - Copy file contents to the X11 clipboard
   - Paste clipboard content to a file
   - Clear the X11 clipboard and primary selection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xsel

@@ -22,8 +22,8 @@ features:
 - Generate realistic terrain maps from the command line
 - Specify the height of the generated terrain
 - Specify the width of the generated terrain
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamcrater

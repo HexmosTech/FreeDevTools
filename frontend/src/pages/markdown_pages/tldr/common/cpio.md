@@ -22,8 +22,8 @@ features:
 - Support various cpio archive formats.
 - Verbose mode for detailed output during archive operations.
 - Create directories automatically when extracting archives.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cpio

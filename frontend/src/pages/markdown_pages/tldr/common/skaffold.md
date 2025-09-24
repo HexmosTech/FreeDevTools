@@ -22,8 +22,8 @@ features:
 - Automatically detect and deploy code changes
 - Manage the entire Kubernetes development lifecycle
 - Diagnose Skaffold setup and configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # skaffold

@@ -22,8 +22,8 @@ features:
   - Skip whitespace and comment preprocessing for faster assembly
   - Include specified directories in the search path for include files
   - Create object files ready for linking with ld
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # as

@@ -22,8 +22,8 @@ features:
 - Enables isolation of foreground elements in PAM images
 - Supports custom background identification for masking
 - Provides command-line access to image masking functionality
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pambackground

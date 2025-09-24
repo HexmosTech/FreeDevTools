@@ -22,8 +22,8 @@ features:
   - Check for bad blocks during filesystem creation
   - Specify the filesystem type using command-line options
   - Build filesystems on block devices using mkfs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs

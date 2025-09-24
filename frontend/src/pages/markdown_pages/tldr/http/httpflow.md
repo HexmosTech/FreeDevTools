@@ -22,8 +22,8 @@ features:
 - Filter HTTP requests based on URL regular expressions
 - Analyze HTTP streams from PCAP files
 - Save captured HTTP streams to a directory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # httpflow

@@ -22,8 +22,8 @@ features:
 - Preview changes before destruction.
 - Integrate with all Pulumi supported cloud providers.
 - Manage and destroy cloud infrastructure consistently.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi down

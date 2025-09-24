@@ -22,8 +22,8 @@ features:
 - Automate SVG editing tasks with scripting
 - Convert text to paths for PDF export
 - Rotate and duplicate objects within SVG files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # inkscape

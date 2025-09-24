@@ -22,8 +22,8 @@ features:
 - Recursively upload entire directories including subdirectories.
 - Create albums based on directory structure.
 - Skip assets using glob pattern matching.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # immich

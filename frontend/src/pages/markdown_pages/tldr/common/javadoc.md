@@ -22,8 +22,8 @@ features:
 - Exclude specific packages from the generated documentation.
 - Specify the output directory for the generated documentation.
 - Create API documentation that conforms to Java standards.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # javadoc

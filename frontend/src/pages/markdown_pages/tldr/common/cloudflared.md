@@ -22,8 +22,8 @@ features:
 - Route traffic from localhost to Cloudflare hosts.
 - Bypass TLS verification for local servers (with caution).
 - Log activity for debugging and auditing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cloudflared

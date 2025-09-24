@@ -22,8 +22,8 @@ features:
 - List accessible AWS accounts
 - List roles for a specified AWS account
 - Retrieve short-term credentials for a specific account
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws sso

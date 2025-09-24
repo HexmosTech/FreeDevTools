@@ -22,8 +22,8 @@ features:
   - Move disk images between different storage pools
   - Simplify disk management tasks in Proxmox
   - Control virtual machine disk placement
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm move-disk

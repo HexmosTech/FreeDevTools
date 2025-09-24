@@ -22,8 +22,8 @@ features:
 - Supports flushing a single file or all disks.
 - Clears file system caches on Linux.
 - Attempts to clear inactive memory and filesystem caches on macOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sync

@@ -22,8 +22,8 @@ features:
 - Build and run apps on Android devices and emulators
 - Build and run apps on iOS simulators
 - Stream logs from Android and iOS devices
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # react-native

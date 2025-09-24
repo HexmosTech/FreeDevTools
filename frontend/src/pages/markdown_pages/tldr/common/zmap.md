@@ -22,8 +22,8 @@ features:
 - Limit the scan rate to control network load
 - Exclude specific subnets from the scan
 - Set a specific source IP address for scan packets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zmap

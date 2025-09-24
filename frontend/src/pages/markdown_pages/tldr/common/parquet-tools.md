@@ -22,8 +22,8 @@ features:
 - Extract Parquet file metadata
 - Merge multiple Parquet files
 - Count rows in a Parquet file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # parquet-tools

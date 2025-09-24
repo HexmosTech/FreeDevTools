@@ -22,8 +22,8 @@ features:
 - Perform automated audits for Azure subscriptions.
 - Identify potential security vulnerabilities in Azure resources.
 - Support authentication using Azure CLI, Service Principal, and Managed Identity.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prowler azure

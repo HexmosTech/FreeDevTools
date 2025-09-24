@@ -22,8 +22,8 @@ features:
 - Export MongoDB data based on query filters.
 - Export MongoDB data to stdout for piping.
 - Export MongoDB data as a JSON array.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mongoexport

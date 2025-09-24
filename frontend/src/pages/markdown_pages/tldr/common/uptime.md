@@ -22,8 +22,8 @@ features:
 - Show system load averages for the past 1, 5, and 15 minutes.
 - Print the date and time when the system was last booted.
 - Provide a simplified uptime output showing only time elapsed since boot.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uptime

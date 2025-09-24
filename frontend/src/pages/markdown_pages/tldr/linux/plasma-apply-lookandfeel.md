@@ -22,8 +22,8 @@ features:
   - Operate without an active display server (offscreen mode).
   - Provides command-line interface for theme management.
   - Simple and efficient theme switching for KDE Plasma.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # plasma-apply-lookandfeel

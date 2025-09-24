@@ -22,8 +22,8 @@ features:
 - Interactively review and edit patch email content
 - Annotate individual patches before sending
 - Send patches from specified commits or revision ranges
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git send-email

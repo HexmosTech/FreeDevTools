@@ -22,8 +22,8 @@ features:
 - Rename files using pattern matching
 - Execute commands in parallel for faster processing
 - Handle input separated by NUL characters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rargs

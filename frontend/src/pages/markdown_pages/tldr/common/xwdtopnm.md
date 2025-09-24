@@ -22,8 +22,8 @@ features:
 - Dump the X11 header of an XWD file
 - Process image files via command line
 - Supports X11 and X10 window dump files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xwdtopnm

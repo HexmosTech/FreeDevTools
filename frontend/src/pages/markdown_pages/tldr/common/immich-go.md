@@ -22,8 +22,8 @@ features:
 - Read server and key configuration from a local file.
 - Remove duplicate images based on server content.
 - Delete albums matching a specified pattern.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # immich-go

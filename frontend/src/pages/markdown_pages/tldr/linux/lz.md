@@ -22,8 +22,8 @@ features:
 - Support for .tar.gz file format.
 - Provide command-line access to archive inspection.
 - Quickly view archive contents without extraction.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lz

@@ -22,8 +22,8 @@ features:
   - Manage disk size using command line
   - Increase disk capacity for virtual machines
   - Modify virtual disk size within Proxmox environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm disk resize

@@ -22,8 +22,8 @@ features:
 - Enable System Integrity Protection on macOS
 - Manage allowed NetBoot sources
 - Reset System Integrity Protection configuration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csrutil

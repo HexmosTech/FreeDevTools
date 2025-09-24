@@ -22,8 +22,8 @@ features:
   - Manage CPU frequencies on individual cores or all cores.
   - Analyze available CPU governors and their characteristics.
   - Display hardware frequency information in human-readable format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cpupower

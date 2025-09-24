@@ -22,8 +22,8 @@ features:
 - Provide passwordless SSH authentication.
 - Enable SSH key forwarding for seamless access.
 - Kill and restart SSH agent processes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ssh-agent

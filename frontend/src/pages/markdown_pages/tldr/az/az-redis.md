@@ -22,8 +22,8 @@ features:
 - Export data stored in Redis caches
 - Delete Redis caches from Azure
 - Manage Redis resources via the Azure CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az redis

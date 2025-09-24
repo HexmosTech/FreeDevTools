@@ -22,8 +22,8 @@ features:
 - Evaluate single-line Elixir expressions
 - Support for interactive Elixir REPL
 - Interpret and execute Elixir programs efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elixir

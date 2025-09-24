@@ -22,8 +22,8 @@ features:
 - Perform reverse DNS lookups on IP addresses
 - Query for ANY available records using TCP
 - Initiate zone transfers from name servers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nslookup

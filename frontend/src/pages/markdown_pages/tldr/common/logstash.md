@@ -22,8 +22,8 @@ features:
   - Simulate data flow to detect pipeline configuration problems.
   - Provide detailed error messages with line numbers for easy debugging.
   - Test Logstash configurations locally before deployment to Elasticsearch.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # logstash

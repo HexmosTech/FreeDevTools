@@ -22,8 +22,8 @@ features:
 - Change or unblock PINs for smart cards.
 - Toggle the forcesig flag for signing operations.
 - Factory reset smart cards to a clean state.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gpg-card

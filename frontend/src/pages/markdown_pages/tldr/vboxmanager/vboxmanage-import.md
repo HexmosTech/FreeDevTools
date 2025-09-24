@@ -22,8 +22,8 @@ features:
 - Register the imported VM in VirtualBox
 - Perform dry runs to check the import process
 - Configure memory, CPUs, and guest OS type for the imported VM
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage import

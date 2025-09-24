@@ -22,8 +22,8 @@ features:
 - Retrieve available slugs for an engine
 - Retrieve available versions for an engine
 - Navigate DigitalOcean database options via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl databases options

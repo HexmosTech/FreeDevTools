@@ -22,8 +22,8 @@ features:
 - Process NUL-terminated ls-tree output
 - Enable batch creation of multiple tree objects
 - Sort and build trees from standard input
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git mktree

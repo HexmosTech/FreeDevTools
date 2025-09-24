@@ -22,8 +22,8 @@ features:
   - Launch headless Terraria servers for background operation.
   - Specify world file for server loading.
   - Control server processes using command-line arguments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Terraria

@@ -22,8 +22,8 @@ features:
 - Roll back to previous working configurations
 - List available configuration generations
 - Integrate with Nix flakes for improved reproducibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # home-manager

@@ -22,8 +22,8 @@ features:
 - Retrieve cached domain credentials
 - Audit Windows local security
 - Extract sensitive information using SYSTEM privileges
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mimikatz lsadump

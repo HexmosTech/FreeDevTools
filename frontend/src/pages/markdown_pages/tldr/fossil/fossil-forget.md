@@ -22,8 +22,8 @@ features:
 - Maintain a clean and organized repository history.
 - Prevent permanently deleting files from disk.
 - Streamline version control workflow.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fossil forget

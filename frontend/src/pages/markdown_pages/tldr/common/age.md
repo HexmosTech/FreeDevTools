@@ -22,8 +22,8 @@ features:
 - Encrypt files with a passphrase for ease of use
 - Encrypt files using a recipients file for multiple users
 - Generate encrypted files suitable for archival or transfer
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # age

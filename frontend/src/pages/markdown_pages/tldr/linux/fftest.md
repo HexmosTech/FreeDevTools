@@ -22,8 +22,8 @@ features:
 - Control intensity and duration of feedback effects.
 - Calibrate force feedback for specific devices.
 - Verify gamepad interactions using force feedback.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fftest

@@ -22,8 +22,8 @@ features:
 - Recover registry data using the command line
 - Utilize .hiv files for registry restoration
 - Implement command-line based registry management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reg restore

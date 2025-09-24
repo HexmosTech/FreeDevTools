@@ -22,8 +22,8 @@ features:
 - Rebuild specific dependencies individually
 - Bootstrap existing dependencies without updating
 - Download and build all dependencies defined in Cartfile
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # carthage

@@ -22,8 +22,8 @@ features:
 - Configure Windows settings via command-line.
 - Manage and control Windows systems remotely.
 - Run PowerShell scripts for batch processing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # powershell

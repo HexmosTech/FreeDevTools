@@ -22,8 +22,8 @@ features:
 - Specify the output file type (PGM or PPM)
 - Process image data from Zeiss confocal files
 - Use command line for image format conversion
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zeisstopnm

@@ -22,8 +22,8 @@ features:
   - Control window placement with simple keyboard shortcuts.
   - Easily switch between different window layouts.
   - Configure bspwm behavior through a simple configuration file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bspwm

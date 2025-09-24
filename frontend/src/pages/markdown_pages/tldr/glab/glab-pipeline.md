@@ -22,8 +22,8 @@ features:
 - List all existing GitLab CI/CD pipelines
 - Run pipelines from the command line using glab
 - Manage CI/CD workflows directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glab pipeline

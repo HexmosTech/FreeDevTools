@@ -22,8 +22,8 @@ features:
   - Identifies connected I2C devices with their addresses.
   - Provides detailed output for troubleshooting I2C connectivity.
   - Offers a quick and efficient way to detect I2C devices without confirmation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # i2cdetect

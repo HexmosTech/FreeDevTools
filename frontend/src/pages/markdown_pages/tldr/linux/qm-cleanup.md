@@ -22,8 +22,8 @@ features:
 - Cleans up resources after a VM crashes
 - Performs cleanup after clean VM shutdown
 - Automates resource management for QEMU/KVM VMs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm cleanup

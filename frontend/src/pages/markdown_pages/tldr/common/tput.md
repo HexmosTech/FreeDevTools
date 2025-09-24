@@ -22,8 +22,8 @@ features:
 - Reverse text and background colors for emphasis.
 - Reset all terminal text attributes to default.
 - Save and restore the terminal screen's content.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tput

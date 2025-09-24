@@ -22,8 +22,8 @@ features:
 - List available SailfishOS emulators.
 - Display installed SailfishOS emulators.
 - Manage emulator installation via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk emulator install

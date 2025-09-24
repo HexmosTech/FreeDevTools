@@ -22,8 +22,8 @@ features:
 - Writes PPM image data to a specified output file.
 - Allows specification of width and height for conversion.
 - Supports command-line image format conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eyuvtoppm

@@ -22,8 +22,8 @@ features:
 - Transform require and module.exports to import/export
 - Allow named exports during conversion
 - Process CoffeeScript using command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # decaffeinate

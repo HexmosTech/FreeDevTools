@@ -22,8 +22,8 @@ features:
 - Transfer data between applications
 - Manipulate primary and secondary selections
 - Integrate with system clipboard for cut and paste
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xclip

@@ -22,8 +22,8 @@ features:
 - Format line numbering justification and width.
 - Specify a custom separator between line numbers and lines.
 - Number only lines matching a specific regular expression.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nl

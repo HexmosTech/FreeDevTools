@@ -22,8 +22,8 @@ features:
 - View details of a specific NodeBalancer
 - Update existing NodeBalancer configurations
 - Delete unwanted NodeBalancers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linode-cli nodebalancers

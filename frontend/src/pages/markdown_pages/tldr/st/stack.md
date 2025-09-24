@@ -22,8 +22,8 @@ features:
 - Run tests within Haskell packages.
 - Automatically re-compile projects on file changes.
 - Execute custom commands after compilation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # stack

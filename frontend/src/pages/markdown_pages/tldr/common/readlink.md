@@ -22,8 +22,8 @@ features:
 - Display the target file pointed to by a symlink
 - Follow multiple levels of symbolic links
 - Determine if a file is a symbolic link
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # readlink

@@ -22,8 +22,8 @@ features:
 - Creates a branch on the upstream repository.
 - Simplifies Git branch creation process.
 - Uses git-extras for extended functionality.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git create-branch

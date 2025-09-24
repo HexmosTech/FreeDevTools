@@ -22,8 +22,8 @@ features:
 - Normalize paths by removing redundant components
 - Handle relative paths by converting them to absolute paths
 - Work with files and directories on macOS systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grealpath

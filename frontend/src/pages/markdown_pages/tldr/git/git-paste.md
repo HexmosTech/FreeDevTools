@@ -22,8 +22,8 @@ features:
 - Shares patches between current branch and its upstream
 - Allows selecting specific commits for pasting
 - Simplifies collaboration and code sharing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git paste

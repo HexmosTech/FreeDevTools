@@ -22,8 +22,8 @@ features:
 - Define zoom levels for tile generation
 - Prepare raster data for web mapping applications
 - Output tiles in a directory structure for easy deployment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdal2tiles.py

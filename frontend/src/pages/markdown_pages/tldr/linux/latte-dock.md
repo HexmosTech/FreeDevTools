@@ -22,8 +22,8 @@ features:
   - Load a specific named layout on startup.
   - Import and load a custom layout from a file.
   - Manage and customize the appearance of the Plasma dock.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # latte-dock

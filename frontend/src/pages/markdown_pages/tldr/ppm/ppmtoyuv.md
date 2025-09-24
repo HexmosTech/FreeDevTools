@@ -22,8 +22,8 @@ features:
 - Read PPM image data from specified input file
 - Output Abekas YUV image data to specified output file
 - Transform images to a video-compatible format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtoyuv

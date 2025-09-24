@@ -22,8 +22,8 @@ features:
   - Searches for packages by name or description.
   - Upgrades the entire system to the latest package versions.
   - Auto removes unused dependencies to keep your system clean.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nala

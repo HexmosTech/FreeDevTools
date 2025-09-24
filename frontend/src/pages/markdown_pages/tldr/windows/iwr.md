@@ -22,8 +22,8 @@ features:
 - Retrieve web content using HTTPS
 - Execute HTTP requests from PowerShell
 - Support for various HTTP methods (GET, POST, etc.)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iwr

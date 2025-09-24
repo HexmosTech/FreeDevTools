@@ -22,8 +22,8 @@ features:
 - Decode protocol buffers into text-format
 - Convert .proto files to Python code
 - Convert .proto files to Java code
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # protoc

@@ -22,8 +22,8 @@ features:
 - Squash commits starting from a specific commit.
 - Combine the `n` latest commits with a new message.
 - Use an automatic message, based on existing commits, when squashing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git squash

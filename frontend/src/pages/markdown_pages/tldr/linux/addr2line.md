@@ -22,8 +22,8 @@ features:
   - Supports demangling of C++ function names.
   - Works with various executable file formats.
   - Facilitates debugging and troubleshooting of binary code.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # addr2line

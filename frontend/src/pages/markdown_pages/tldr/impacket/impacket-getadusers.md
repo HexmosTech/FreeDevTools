@@ -22,8 +22,8 @@ features:
 - Filter users based on various criteria
 - Export user data in multiple formats
 - Connect to Active Directory using different protocols
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-GetADUsers

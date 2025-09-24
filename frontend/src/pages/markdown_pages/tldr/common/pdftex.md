@@ -22,8 +22,8 @@ features:
 - Halt compilation immediately upon encountering an error
 - Convert TeX files to PDF format on Linux
 - Supports command-line PDF creation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdftex

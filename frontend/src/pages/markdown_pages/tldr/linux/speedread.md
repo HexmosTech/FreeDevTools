@@ -22,8 +22,8 @@ features:
   - Display multiple words simultaneously for enhanced reading flow.
   - Dynamically adjust reading speed by 10% increments during a session.
   - Pause reading and display context lines for improved comprehension.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # speedread

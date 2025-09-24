@@ -22,8 +22,8 @@ features:
 - Analyze captured packets for security vulnerabilities
 - Monitor network activity for suspicious behavior
 - Save captured packets to a file for later analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-sniff

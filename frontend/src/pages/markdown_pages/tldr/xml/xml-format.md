@@ -22,8 +22,8 @@ features:
 - Remove DOCTYPE declarations from XML
 - Omit XML declarations during formatting
 - Support for HTML formatting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml format

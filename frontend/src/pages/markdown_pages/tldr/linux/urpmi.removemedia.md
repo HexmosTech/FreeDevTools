@@ -22,8 +22,8 @@ features:
 - Fuzzy search media names before removing
 - Manage Mageia software repositories efficiently
 - Simplify package management tasks in Linux
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urpmi.removemedia

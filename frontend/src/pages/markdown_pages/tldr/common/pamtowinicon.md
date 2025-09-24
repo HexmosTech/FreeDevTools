@@ -22,8 +22,8 @@ features:
 - Enables true transparency for icon creation
 - Creates icons with specified background color
 - Encodes images smaller than threshold in BMP format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamtowinicon

@@ -22,8 +22,8 @@ features:
 - Provide encryption passwords for VMs
 - Support password files for encrypted VMs
 - Register VMs from the command-line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage registervm

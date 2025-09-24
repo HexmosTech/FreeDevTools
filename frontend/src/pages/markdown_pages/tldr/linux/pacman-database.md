@@ -22,8 +22,8 @@ features:
   - Verify database synchronization for downloadable package dependencies
   - Operate in quiet mode for concise error reporting
   - Modify attributes of installed Arch Linux packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman --database

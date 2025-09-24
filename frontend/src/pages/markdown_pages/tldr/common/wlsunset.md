@@ -22,8 +22,8 @@ features:
 - Define custom high and low color temperatures
 - Set animation duration for temperature transitions
 - Adjust the gamma value for color correction
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wlsunset

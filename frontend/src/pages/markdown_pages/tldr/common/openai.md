@@ -22,8 +22,8 @@ features:
 - Generate images via the DALL·E API using text prompts.
 - List available OpenAI API models for selection.
 - Interact with the OpenAI API from the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openai

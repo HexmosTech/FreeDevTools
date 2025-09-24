@@ -22,8 +22,8 @@ features:
   - Can be combined with a shutdown command for automated process.
   - Provides command-line control over VM shutdown.
   - Monitors VM status until shutdown is complete.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm wait

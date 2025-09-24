@@ -22,8 +22,8 @@ features:
 - Host multiple Laravel sites on a single server
 - Retrieve Larasail user and MySQL passwords
 - Set up servers with specific PHP versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # larasail

@@ -22,8 +22,8 @@ features:
 - Converts output values to a raw string
 - Formats outputs as a JSON object
 - Retrieves resource data from OpenTofu
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tofu output

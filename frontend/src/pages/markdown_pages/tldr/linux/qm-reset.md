@@ -22,8 +22,8 @@ features:
   - Manage QEMU/KVM virtual machines
   - Reboot virtual machines remotely
   - Control virtual machine power state
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm reset

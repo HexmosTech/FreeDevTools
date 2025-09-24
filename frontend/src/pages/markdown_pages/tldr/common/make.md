@@ -22,8 +22,8 @@ features:
 - Specify alternative Makefiles for builds
 - Override variables within Makefiles
 - Force target rebuilding regardless of source changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # make

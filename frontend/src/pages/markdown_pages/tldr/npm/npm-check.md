@@ -22,8 +22,8 @@ features:
 - Interactively updates out-of-date packages.
 - Allows skipping unused package checks for faster analysis.
 - Provides a concise report of dependency status.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm-check

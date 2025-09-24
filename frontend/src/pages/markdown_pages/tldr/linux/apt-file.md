@@ -22,8 +22,8 @@ features:
   - Utilize regular expressions for advanced file searches.
   - Update the APT package database for accurate results.
   - Efficiently locate files based on file name or path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apt-file

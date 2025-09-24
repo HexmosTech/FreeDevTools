@@ -22,8 +22,8 @@ features:
 - List contents of cloud storage directories from the command line.
 - Mount remote cloud storage as a local file system.
 - Delete files and directories from remote cloud storage services.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rclone

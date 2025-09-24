@@ -22,8 +22,8 @@ features:
 - Compile TypeScript projects defined in `tsconfig.json`.
 - Enable watch mode for automatic recompilation.
 - Initialize a TypeScript project with default settings.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tsc

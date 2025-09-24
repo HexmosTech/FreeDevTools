@@ -22,8 +22,8 @@ features:
 - Import Docker images directly into k3d clusters
 - Create and manage containerized k3s nodes
 - Establish private registries for k3d deployments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # k3d

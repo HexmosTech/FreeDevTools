@@ -22,8 +22,8 @@ features:
 - Display flags needed to build MPI Java applications.
 - Show flags for compiling MPI Java applications.
 - Output the full Java compiler command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mpijavac

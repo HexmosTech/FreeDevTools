@@ -22,8 +22,8 @@ features:
 - Open specific subpages like wiki, commits, or issues
 - Access GitHub repositories directly from the command line
 - Print the URL of a GitHub repository without opening the browser
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hub browse

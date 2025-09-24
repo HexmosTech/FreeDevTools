@@ -22,8 +22,8 @@ features:
 - Run Julia code in multithreaded mode
 - Pass arguments to Julia programs
 - Evaluate expressions and print the results
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # julia

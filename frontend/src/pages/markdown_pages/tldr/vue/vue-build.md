@@ -22,8 +22,8 @@ features:
 - Quickly prototype Vue.js applications
 - Utilize Vue CLI's build capabilities
 - Supports both .js and .vue files for quick prototyping
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vue build

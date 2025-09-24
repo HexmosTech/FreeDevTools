@@ -22,8 +22,8 @@ features:
 - Transfer multiple files using globbing expressions with `mget` and `mput`.
 - Disable prompting to automate file transfers for efficiency.
 - Rename files on remote servers directly via the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ftp

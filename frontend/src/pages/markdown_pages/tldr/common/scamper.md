@@ -22,8 +22,8 @@ features:
 - Ping multiple hosts using UDP with incremental port numbers
 - Utilize Multipath Discovery Algorithm (MDA) for load-balanced path detection
 - Sniff and record specific ICMP packets based on IP address and ID
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scamper

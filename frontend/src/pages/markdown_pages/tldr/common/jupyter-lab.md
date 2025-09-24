@@ -22,8 +22,8 @@ features:
 - Specify a working directory for JupyterLab sessions.
 - Run JupyterLab in debug mode for troubleshooting.
 - Manage and organize Jupyter notebooks within the lab interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jupyter lab

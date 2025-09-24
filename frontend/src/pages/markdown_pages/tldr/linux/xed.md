@@ -22,8 +22,8 @@ features:
   - Allows opening multiple files simultaneously.
   - Enables direct navigation to specific lines within a file.
   - Provides a simple and efficient text editing experience.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xed

@@ -22,8 +22,8 @@ features:
 - Backup multiple volume groups simultaneously
 - Increase verbosity for detailed backup process
 - Support for custom backup file locations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vgcfgbackup

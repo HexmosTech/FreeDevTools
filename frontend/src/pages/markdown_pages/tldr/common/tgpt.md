@@ -22,8 +22,8 @@ features:
 - Generate images and save them to the current directory
 - Customize AI model parameters like temperature and max length
 - Execute shell commands using AI suggestions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tgpt

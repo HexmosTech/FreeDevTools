@@ -22,8 +22,8 @@ features:
 - Output payloads in multiple formats like ELF, EXE, and raw
 - List available payloads and formats
 - Customize payload options such as LHOST and LPORT
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msfvenom

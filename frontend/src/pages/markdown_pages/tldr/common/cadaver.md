@@ -22,8 +22,8 @@ features:
 - Upload and download files to/from WebDAV servers
 - Support SSL/TLS connections for secure access
 - Manage WebDAV resources on Unix-like systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cadaver

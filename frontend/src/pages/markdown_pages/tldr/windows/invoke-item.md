@@ -22,8 +22,8 @@ features:
 - Open specific file types (e.g., PNG, TXT)
 - Exclude files based on keywords
 - Perform dry runs to preview actions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Invoke-Item

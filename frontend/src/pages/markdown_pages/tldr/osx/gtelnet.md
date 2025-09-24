@@ -22,8 +22,8 @@ features:
 - Troubleshoot network connectivity issues
 - Access Telnet servers on macOS
 - Execute commands on remote systems via Telnet
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gtelnet

@@ -22,8 +22,8 @@ features:
 - Specify a seed for pseudo-random number generation.
 - Create image distortion effects.
 - Manipulate PPM image pixels using the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmspread

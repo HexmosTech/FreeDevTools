@@ -22,8 +22,8 @@ features:
 - Compare files based on content, not just name or size
 - Search multiple directories in a specific order
 - Follow subdirectories selectively
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jdupes

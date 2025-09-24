@@ -22,8 +22,8 @@ features:
 - Execute commands within customized SSH sessions
 - Manage shell configurations across multiple hosts
 - Set environment variables for remote shell processes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xxh

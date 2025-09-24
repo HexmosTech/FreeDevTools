@@ -22,8 +22,8 @@ features:
 - Exclude specific files or file patterns from the filesystem
 - Support for tar archives compressed with gzip, xz, zstd, and lz4
 - Regex-based file exclusion for fine-grained control
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sqfstar

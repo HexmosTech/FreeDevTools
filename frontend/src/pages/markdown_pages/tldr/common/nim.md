@@ -22,8 +22,8 @@ features:
 - Enables release optimizations for smaller binary size
 - Checks Nim code for syntax and semantic errors
 - Compiles and runs Nim source files directly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nim

@@ -22,8 +22,8 @@ features:
 - Display line numbers of matches in compressed files
 - Use extended regular expressions in case-insensitive mode
 - Print context lines around matching lines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xzgrep

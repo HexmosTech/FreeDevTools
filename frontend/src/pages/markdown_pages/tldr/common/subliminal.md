@@ -22,8 +22,8 @@ features:
 - Search and download subtitles using the command line
 - Integrate with various video players and libraries
 - Configure preferred subtitle languages and providers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # subliminal

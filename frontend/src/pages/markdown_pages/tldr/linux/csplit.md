@@ -22,8 +22,8 @@ features:
   - Allows custom prefixes for output files.
   - Handles files with a large number of lines.
   - Provides options to preserve files during splitting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csplit

@@ -22,8 +22,8 @@ features:
 - Provide a standardized way to report issues
 - Facilitate bug tracking and resolution
 - Direct users to the official Go issue tracker
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # go bug

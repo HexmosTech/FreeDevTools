@@ -22,8 +22,8 @@ features:
 - Choose the compression method for the ILBM file
 - Create HAM/24bit/direct color ILBM files
 - Control maximum number of planes written
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtoilbm

@@ -22,8 +22,8 @@ features:
 - Initialize DVC in a subdirectory of a project.
 - Enable data versioning for machine learning projects.
 - Manage data dependencies and track changes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc init

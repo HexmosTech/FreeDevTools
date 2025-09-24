@@ -22,8 +22,8 @@ features:
 - Connect to worker nodes in a Slurm cluster
 - Specify tasks and memory for Slurm jobs
 - Manage Slurm jobs through the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # srun

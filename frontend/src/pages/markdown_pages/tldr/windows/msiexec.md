@@ -22,8 +22,8 @@ features:
 - Uninstall Windows programs using MSI or MSP files.
 - Deploy software from local paths or websites.
 - Perform silent installations via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msiexec

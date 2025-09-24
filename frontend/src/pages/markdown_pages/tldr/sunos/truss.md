@@ -22,8 +22,8 @@ features:
   - display program arguments and environment variables
   - summarize system call statistics for performance analysis
   - filter tracing output by specific system calls
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # truss

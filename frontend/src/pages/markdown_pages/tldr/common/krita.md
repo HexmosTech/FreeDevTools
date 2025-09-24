@@ -22,8 +22,8 @@ features:
 - Disable the splash screen on startup.
 - Start Krita with a specified workspace.
 - Run Krita in fullscreen mode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # krita

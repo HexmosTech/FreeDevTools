@@ -22,8 +22,8 @@ features:
 - Rewrite not-found requests to a specific file (e.g., index.html).
 - Start an HTTPS server using provided SSL certificates.
 - Configure the server using a JSON configuration file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # serve

@@ -22,8 +22,8 @@ features:
 - Update network interface cards with accelerated networking enabled
 - List all virtual networks in a subscription
 - Manage Azure Network resources from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az network

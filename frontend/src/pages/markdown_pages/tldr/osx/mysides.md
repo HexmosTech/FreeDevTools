@@ -22,8 +22,8 @@ features:
 - Remove items from the macOS Finder sidebar by name
 - Add the current directory to the sidebar
 - Automate Finder sidebar management tasks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mysides

@@ -22,8 +22,8 @@ features:
 - Recursively commit all DVC-tracked files in a directory
 - Integrate data versioning into ML pipelines
 - Facilitate collaboration on data science projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc commit

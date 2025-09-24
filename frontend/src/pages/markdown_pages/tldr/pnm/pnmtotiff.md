@@ -22,8 +22,8 @@ features:
 - Generate TIFF files from PNM input.
 - Offers a command-line interface for image conversion.
 - Provides image formatting capabilities.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmtotiff

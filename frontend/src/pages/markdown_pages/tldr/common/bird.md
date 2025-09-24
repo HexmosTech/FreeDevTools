@@ -22,8 +22,8 @@ features:
 - Run BIRD as a specific group
 - Control routing protocols like BGP, OSPF, and Babel
 - Manage network routes using command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bird

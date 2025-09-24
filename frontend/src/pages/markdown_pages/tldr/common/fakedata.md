@@ -22,8 +22,8 @@ features:
   - Specify the number of data items to generate.
   - Employ custom templates for flexible data creation.
   - List and utilize available data generators via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fakedata

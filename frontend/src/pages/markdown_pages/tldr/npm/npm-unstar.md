@@ -22,8 +22,8 @@ features:
 - Support for authentication when unstarring private packages.
 - Utilize OTP for two-factor authentication.
 - Control logging level during the unstarring process.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm unstar

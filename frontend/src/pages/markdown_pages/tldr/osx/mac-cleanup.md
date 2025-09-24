@@ -22,8 +22,8 @@ features:
 - Accept custom directory paths for cleanup
 - Force cleanup by automatically acknowledging warnings
 - Configure modules for tailored cleanup
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mac-cleanup

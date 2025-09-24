@@ -22,8 +22,8 @@ features:
 - Display diffs of formatting changes
 - Suppress output of formatted files
 - Enforce consistent code style across infrastructure projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # terraform fmt

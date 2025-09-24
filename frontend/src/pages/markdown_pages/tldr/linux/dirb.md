@@ -22,8 +22,8 @@ features:
 - Perform non-recursive scans of web servers
 - Customize HTTP requests with user-agent and cookies
 - Identify potential security vulnerabilities on web applications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dirb

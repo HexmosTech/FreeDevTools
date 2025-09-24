@@ -22,8 +22,8 @@ features:
 - Clone entire subreddits for offline access
 - Filter and sort downloads by subreddit, user, or time
 - Skip specified file extensions and avoid duplicates
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bdfr

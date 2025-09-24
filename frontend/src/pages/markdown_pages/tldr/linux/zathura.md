@@ -22,8 +22,8 @@ features:
 - Search for specific text strings.
 - Create and manage bookmarks within documents.
 - Open various document formats (PDF, PostScript, DjVu).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zathura

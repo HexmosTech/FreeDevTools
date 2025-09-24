@@ -22,8 +22,8 @@ features:
 - Analyze multiple files for Git ignore status
 - Read file paths from stdin for ignore checking
 - Exclude index from check for debugging tracked files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git check-ignore

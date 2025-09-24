@@ -22,8 +22,8 @@ features:
   - Display a calendar for a specific month and year
   - Display Julian days starting from January 1
   - Set Monday as the week's starting day
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cal

@@ -22,8 +22,8 @@ features:
 - Specify compression levels for optimal results
 - Stream data compression and decompression
 - Integrate with shell scripts for automation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zlib-flate

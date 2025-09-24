@@ -22,8 +22,8 @@ features:
 - Protect terminal access with Basic Authentication
 - Specify the shell to be used for the session
 - Control remote access to command line tools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gotty

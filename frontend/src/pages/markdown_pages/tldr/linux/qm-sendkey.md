@@ -22,8 +22,8 @@ features:
 - Simulate keyboard input in QEMU virtual machines.
 - Automate guest OS interactions via command line.
 - Control virtual machines without a graphical interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm sendkey

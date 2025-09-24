@@ -22,8 +22,8 @@ features:
 - Apply custom scripts for advanced analysis.
 - Filter traffic based on tcpdump filters.
 - Run Zeek in bare mode to disable script loading.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zeek

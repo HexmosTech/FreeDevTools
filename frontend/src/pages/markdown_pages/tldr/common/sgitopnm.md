@@ -22,8 +22,8 @@ features:
 - Display verbose information about SGI image properties.
 - Support command-line based image manipulation.
 - Enable broader compatibility with various image editors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sgitopnm

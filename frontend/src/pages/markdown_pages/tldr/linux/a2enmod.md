@@ -22,8 +22,8 @@ features:
   - Allows for quick activation of needed modules.
   - Provides a command-line interface for module control.
   - Supports quiet mode to suppress output messages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # a2enmod

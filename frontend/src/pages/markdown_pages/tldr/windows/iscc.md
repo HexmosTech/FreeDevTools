@@ -22,8 +22,8 @@ features:
 - Create signed Inno Setup installers for enhanced security.
 - Automate installer creation using command-line scripting.
 - Generate Windows installer packages from ISS configuration files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iscc

@@ -22,8 +22,8 @@ features:
 - Integrate with Nginx and Apache configurations.
 - Automatically renew certificates with specified commands.
 - Issue certificates for multiple domains in standalone mode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # acme.sh

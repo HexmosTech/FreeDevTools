@@ -22,8 +22,8 @@ features:
   - Shows detailed CPU statistics with compact output option.
   - Displays disk statistics, including LVM volumes.
   - Generates incremental reports of CPU and disk statistics at specified intervals.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iostat

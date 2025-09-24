@@ -22,8 +22,8 @@ features:
   - Update all installed packages to their latest versions.
   - Search for packages using keywords or regular expressions.
   - Manage package dependencies and resolve conflicts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman

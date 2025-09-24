@@ -22,8 +22,8 @@ features:
 - Print documents using a specified printer.
 - Display the content of files directly in the terminal.
 - Automate document processing tasks using command-line arguments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # soffice

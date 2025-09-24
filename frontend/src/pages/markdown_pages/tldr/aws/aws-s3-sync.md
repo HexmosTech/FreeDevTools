@@ -22,8 +22,8 @@ features:
 - Exclude specific files during sync
 - Delete destination files not in source
 - Skip unchanged files based on size and modification time
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 sync

@@ -22,8 +22,8 @@ features:
 - Create certificates for single or multiple domains
 - Generate wildcard certificates for subdomains
 - Uninstall the local CA from the system trust store
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkcert

@@ -22,8 +22,8 @@ features:
 - Generate PPM images from red, green, and blue files
 - Support batch processing of PGM image files
 - Create combined images compatible with Netpbm tools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rgb3toppm

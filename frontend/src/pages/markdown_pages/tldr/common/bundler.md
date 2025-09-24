@@ -22,8 +22,8 @@ features:
 - Create and manage a Gemfile.lock for reproducible builds.
 - Resolve conflicting gem dependencies automatically.
 - Integrate seamlessly with Ruby and Rails projects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bundler

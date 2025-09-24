@@ -22,8 +22,8 @@ features:
 - Analyze PAM and PNM image metadata
 - Provide detailed image depth insights
 - Support various PAM/PNM image formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmdepth

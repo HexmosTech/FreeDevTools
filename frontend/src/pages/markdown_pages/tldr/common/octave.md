@@ -22,8 +22,8 @@ features:
 - Run Octave scripts with custom arguments
 - Launch Octave with a graphical user interface
 - Display Octave version and help information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # octave

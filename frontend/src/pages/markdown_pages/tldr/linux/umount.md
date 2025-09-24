@@ -22,8 +22,8 @@ features:
   - Supports recursive unmounting of directories.
   - Offers a read-only unmount option for resolving issues.
   - Provides a command to unmount all filesystems (excluding proc).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # umount

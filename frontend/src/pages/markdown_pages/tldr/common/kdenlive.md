@@ -22,8 +22,8 @@ features:
 - Adjust the verbosity level for MLT logging
 - Display help information for Kdenlive commands
 - View the Kdenlive version
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kdenlive

@@ -22,8 +22,8 @@ features:
 - Send fuzzed DHCP data packets
 - Scan network for neighboring devices using ARP
 - Release all neighbor IP addresses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dhcpig

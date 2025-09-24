@@ -22,8 +22,8 @@ features:
 - Inspect and display kext collection contents
 - Check consistency of kext collections
 - Load kernel extensions from a specific path
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kmutil

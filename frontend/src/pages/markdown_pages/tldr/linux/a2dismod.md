@@ -22,8 +22,8 @@ features:
 - Modify Apache web server configurations
 - Manage enabled and disabled Apache modules
 - Command-line interface for Apache module control
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # a2dismod

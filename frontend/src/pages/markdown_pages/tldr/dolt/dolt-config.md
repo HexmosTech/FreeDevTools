@@ -22,8 +22,8 @@ features:
 - Modify the value of a local Dolt configuration variable
 - Modify the value of a global Dolt configuration variable
 - Delete a Dolt configuration variable
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt config

@@ -22,8 +22,8 @@ features:
   - Provides detailed logging of policy violations.
   - Enables debugging of AppArmor policies without immediate enforcement.
   - Supports specifying multiple profiles or directories containing profiles.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-complain

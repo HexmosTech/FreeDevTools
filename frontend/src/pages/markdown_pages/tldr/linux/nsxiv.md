@@ -22,8 +22,8 @@ features:
   - Search directories recursively for image files
   - Switch between image and thumbnail modes
   - Quickly navigate forward and backward through image lists
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nsxiv

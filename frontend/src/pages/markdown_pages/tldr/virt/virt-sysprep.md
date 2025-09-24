@@ -22,8 +22,8 @@ features:
 - Dry-run virtual machine changes
 - Customize hostnames within VM images
 - Execute specific virt-sysprep operations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-sysprep

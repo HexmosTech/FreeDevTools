@@ -22,8 +22,8 @@ features:
 - Remove files based on glob patterns.
 - Exclude specific files during undeployment.
 - Manage deployment configurations with command-line options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk undeploy

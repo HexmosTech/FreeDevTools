@@ -22,8 +22,8 @@ features:
 - Build production-ready Meteor applications
 - Run Meteor projects in development mode
 - List installed packages in a Meteor project
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # meteor

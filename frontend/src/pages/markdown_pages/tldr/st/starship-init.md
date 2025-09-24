@@ -22,8 +22,8 @@ features:
 - Integrate Starship with Bash, Zsh, Fish, and other shells
 - Append Starship integration code to shell configuration files
 - Display help information about Starship init
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # starship init

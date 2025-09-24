@@ -22,8 +22,8 @@ features:
 - Verify timestamp request and response with SSL certificate
 - Create timestamp responses using key and signing certificate
 - Verify digital signatures of files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openssl ts

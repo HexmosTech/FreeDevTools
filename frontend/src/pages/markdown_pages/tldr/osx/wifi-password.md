@@ -22,8 +22,8 @@ features:
 - Output only the password, suppressing additional information
 - Access Wi-Fi passwords via command line on macOS
 - Display Wi-Fi password information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wifi-password

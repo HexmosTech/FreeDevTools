@@ -22,8 +22,8 @@ features:
 - Parse KITE files and output JSON/text data
 - Replay specific requests from KITE schemas
 - Replay requests through a proxy for inspection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kiterunner kb

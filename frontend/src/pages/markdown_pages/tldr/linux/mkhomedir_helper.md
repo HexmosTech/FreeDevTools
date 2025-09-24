@@ -22,8 +22,8 @@ features:
 - Set default file permissions (umask)
 - Automate user profile creation on Linux
 - Customize user home directory contents
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkhomedir_helper

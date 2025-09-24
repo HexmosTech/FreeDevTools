@@ -22,8 +22,8 @@ features:
 - List the contents of compressed archives
 - Compress directories using tar and pigz together
 - Control compression level for optimal size and speed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pigz

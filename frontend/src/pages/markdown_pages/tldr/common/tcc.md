@@ -22,8 +22,8 @@ features:
 - Interpret C source files with a shebang
 - Link multiple C source files into a single executable
 - Offer command-line options similar to gcc
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tcc

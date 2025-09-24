@@ -22,8 +22,8 @@ features:
 - Test the integrity of existing LZ archives
 - List the contents and statistics of LZ archives
 - Archive files using different compression levels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lzip

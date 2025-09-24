@@ -22,8 +22,8 @@ features:
 - Specify the full SELinux security context for command execution
 - Override the default security context for specific applications
 - Isolate program execution environments using SELinux policies
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # runcon

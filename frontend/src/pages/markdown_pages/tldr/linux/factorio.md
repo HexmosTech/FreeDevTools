@@ -22,8 +22,8 @@ features:
 - Configure map generation and game settings.
 - Gracefully shut down running Factorio servers.
 - Display help information for all available commands.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Factorio

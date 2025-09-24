@@ -22,8 +22,8 @@ features:
 - Build projects for specific boards using command-line options
 - Specify custom build directories for PlatformIO projects
 - Use custom configuration files with PlatformIO
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio ci

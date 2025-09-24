@@ -22,8 +22,8 @@ features:
 - Filter warts data based on action type
 - Output filtered data to a new warts file
 - Convert filtered warts data to JSON format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sc_wartsfilter

@@ -22,8 +22,8 @@ features:
 - Analyze configuration changes within a Docker container.
 - Debug unexpected behavior by examining filesystem alterations.
 - Inspect container layers for potential vulnerabilities.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker container diff

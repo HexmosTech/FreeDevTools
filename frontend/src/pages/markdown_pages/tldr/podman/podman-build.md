@@ -22,8 +22,8 @@ features:
   - Build images with or without cached layers.
   - Control build output verbosity (quiet mode).
   - Specify alternative Containerfile locations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # podman build

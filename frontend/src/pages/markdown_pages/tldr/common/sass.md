@@ -22,8 +22,8 @@ features:
 - Watch SCSS/Sass files for changes automatically
 - Automatically update CSS file upon changes
 - Support both SCSS and Sass syntax
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sass

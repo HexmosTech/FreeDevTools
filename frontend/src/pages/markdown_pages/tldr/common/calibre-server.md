@@ -22,8 +22,8 @@ features:
 - Set a username and password for server access.
 - Distribute ebooks over a local network.
 - Manage access to your Calibre library.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # calibre-server

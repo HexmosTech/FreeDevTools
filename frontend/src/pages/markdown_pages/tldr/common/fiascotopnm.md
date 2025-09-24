@@ -22,8 +22,8 @@ features:
 - Load configuration options from a specified configuration file.
 - Magnify decompressed images by a specified factor.
 - Smooth decompressed images by a specified amount.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fiascotopnm

@@ -22,8 +22,8 @@ features:
 - Disable or enable interactive prompts for GH commands
 - Customize the pager for displaying command output
 - Set any specific configuration value for the GitHub CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh config

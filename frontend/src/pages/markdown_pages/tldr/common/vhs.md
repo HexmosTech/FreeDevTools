@@ -22,8 +22,8 @@ features:
 - Record terminal inputs to tape files.
 - Publish GIFs to shareable URLs.
 - Customize terminal settings within tape files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vhs

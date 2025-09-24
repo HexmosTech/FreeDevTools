@@ -22,8 +22,8 @@ features:
   - Provides a command-line interface for easy integration.
   - Creates cpio archives compatible with various systems.
   - Offers efficient and reliable package conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpm2cpio

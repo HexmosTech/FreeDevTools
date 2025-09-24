@@ -22,8 +22,8 @@ features:
 - Retrieve software data such as system version and kernel version
 - Customize report detail level (mini, basic, full)
 - Extract the system serial number from hardware information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # system_profiler

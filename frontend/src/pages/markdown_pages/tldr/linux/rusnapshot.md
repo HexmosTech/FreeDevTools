@@ -22,8 +22,8 @@ features:
 - Delete snapshots by ID or name.
 - Clean snapshots based on age and type.
 - Restore filesystems to a previous snapshot state.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rusnapshot

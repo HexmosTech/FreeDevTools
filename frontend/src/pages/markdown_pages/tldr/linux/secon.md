@@ -22,8 +22,8 @@ features:
 - Resolve the SELinux context of a file, including traversing symlinks
 - Show the SELinux context of a symbolic link itself without dereferencing
 - Parse and explain a SELinux context specification string
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # secon

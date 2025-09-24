@@ -22,8 +22,8 @@ features:
 - Fill missing areas with black pixels if rectangle exceeds image boundaries
 - Crop images from left, right, top, and bottom edges
 - Extract rectangular regions from Netpbm images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamcut

@@ -22,8 +22,8 @@ features:
 - Filter and combine translations based on specified criteria
 - Set the output encoding for combined translation files
 - Output only unique messages from multiple .po files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msgcat

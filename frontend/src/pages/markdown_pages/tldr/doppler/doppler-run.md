@@ -22,8 +22,8 @@ features:
 - Specify project and configuration for command execution
 - Execute multiple commands sequentially
 - Run scripts with Doppler secrets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doppler run

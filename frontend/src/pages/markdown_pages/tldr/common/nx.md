@@ -22,8 +22,8 @@ features:
 - Execute custom targets on individual projects
 - Execute a specific target on multiple Nx projects simultaneously
 - Run tasks only on projects that have changed since the last commit
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nx

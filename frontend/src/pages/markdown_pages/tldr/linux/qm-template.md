@@ -22,8 +22,8 @@ features:
   - Streamlines Proxmox server management.
   - Saves time and effort in VM deployment.
   - Improves consistency in VM setups.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm template

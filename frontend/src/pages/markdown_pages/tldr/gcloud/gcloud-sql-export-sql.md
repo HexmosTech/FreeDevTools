@@ -22,8 +22,8 @@ features:
 - Export specific databases or tables from a Cloud SQL instance.
 - Offload exports to temporary instances to reduce source instance load.
 - Compress SQL exports using gzip for smaller file sizes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud sql export sql

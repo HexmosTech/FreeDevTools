@@ -22,8 +22,8 @@ features:
 - Bump project version using semantic versioning
 - Preview version changes without writing to pyproject.toml
 - Update version for a specific package in a workspace
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uv version

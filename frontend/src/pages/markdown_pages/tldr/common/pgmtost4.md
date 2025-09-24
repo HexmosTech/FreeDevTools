@@ -22,8 +22,8 @@ features:
 - Transform images to a specialized ST-4 file.
 - Facilitate image processing workflows.
 - Output the converted image to a specified file path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmtost4

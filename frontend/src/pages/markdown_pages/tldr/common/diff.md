@@ -22,8 +22,8 @@ features:
 - Recursively compare directories to identify changed files.
 - Ignore whitespace when comparing files.
 - Display file differences side-by-side in a readable format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diff

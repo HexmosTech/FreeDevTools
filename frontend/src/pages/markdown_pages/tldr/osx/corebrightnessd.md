@@ -22,8 +22,8 @@ features:
 - Manage display color settings on macOS
 - Control Night Shift from the command line
 - Integrate with system-wide color management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # corebrightnessd

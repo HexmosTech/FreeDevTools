@@ -22,8 +22,8 @@ features:
 - Create GIF animations from image sequences
 - Generate patterned images like checkerboards
 - Combine multiple images into a single PDF file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # magick

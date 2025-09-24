@@ -22,8 +22,8 @@ features:
 - Simplify PNM image creation
 - Offer a fast alternative for format conversion
 - Provide a simplified interface to pamtopnm
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamnoraw

@@ -22,8 +22,8 @@ features:
 - Show sizes in human-readable format.
 - Provide verbose output with detailed information.
 - Analyze Git repository storage consumption.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git count-objects

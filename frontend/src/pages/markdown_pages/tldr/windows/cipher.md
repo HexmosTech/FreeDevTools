@@ -22,8 +22,8 @@ features:
 - Securely delete files and directories to prevent recovery.
 - Display encryption information for files and directories.
 - Recursively encrypt directories and new files added to them.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cipher

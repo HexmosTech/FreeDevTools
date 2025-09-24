@@ -22,8 +22,8 @@ features:
 - Build and serve Angular applications for development and production.
 - Run unit tests to ensure application quality.
 - Display the current Angular CLI version.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ng

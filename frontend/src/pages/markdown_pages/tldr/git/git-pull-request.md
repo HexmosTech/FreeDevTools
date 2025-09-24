@@ -22,8 +22,8 @@ features:
 - Facilitate code review and collaboration on GitHub projects.
 - Integrate with existing Git workflows for seamless development.
 - Specify the target branch for the pull request.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git pull-request

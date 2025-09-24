@@ -22,8 +22,8 @@ features:
 - Converts BAM-formatted files to BED format.
 - Finds the closest genomic feature between two files and reports the distance.
 - Performs left outer joins on genomic intervals based on overlap.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bedtools

@@ -22,8 +22,8 @@ features:
 - Display author emails instead of author names
 - Ignore whitespace changes when calculating blame
 - Analyze blame delta over a specified time range
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git guilt

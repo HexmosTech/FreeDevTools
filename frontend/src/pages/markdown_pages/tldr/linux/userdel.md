@@ -22,8 +22,8 @@ features:
 - Remove user accounts from specific root directories
 - Manage user permissions through command line
 - Securely delete user accounts from the system
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # userdel

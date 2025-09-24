@@ -22,8 +22,8 @@ features:
 - Parse configuration files to check command execution permissions.
 - Request password authentication for enhanced security.
 - Manage user access with granular control.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doas

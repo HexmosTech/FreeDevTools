@@ -22,8 +22,8 @@ features:
   - Create auto-configured dual-stack connections
   - Configure static IPv4 or IPv6 network connections
   - Import OpenVPN configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nmcli connection

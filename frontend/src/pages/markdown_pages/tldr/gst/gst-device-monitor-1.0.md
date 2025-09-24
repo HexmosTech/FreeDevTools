@@ -22,8 +22,8 @@ features:
 - Filter devices by type (audio/video source/sink)
 - Display device properties and capabilities
 - Identify device names and descriptions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gst-device-monitor-1.0

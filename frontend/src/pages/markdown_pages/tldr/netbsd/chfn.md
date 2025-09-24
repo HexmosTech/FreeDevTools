@@ -22,8 +22,8 @@ features:
   - Change user's office phone number via chfn
   - Alter user's home phone number using chfn
   - Utilize chpass command functions through chfn alias
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chfn

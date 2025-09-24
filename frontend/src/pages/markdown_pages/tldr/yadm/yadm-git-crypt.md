@@ -22,8 +22,8 @@ features:
 - Unlock encrypted files in cloned repositories.
 - Export symmetric secret keys for encryption.
 - Manage transparent Git Crypt encryption.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm git-crypt

@@ -22,8 +22,8 @@ features:
   - Customize provision step options for flexible test environments.
   - Run specific plans and tests using name filters for targeted execution.
   - Generate and open interactive reports to visualize test results.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tmt run

@@ -22,8 +22,8 @@ features:
 - Start browsh with a specific URL.
 - Focus the URL bar for quick navigation.
 - Exit browsh using a keyboard shortcut.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # browsh

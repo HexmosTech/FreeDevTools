@@ -22,8 +22,8 @@ features:
 - Read Slurm configuration from a specified file
 - Change user ID before processing requests
 - Display Slurmrestd version information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # slurmrestd

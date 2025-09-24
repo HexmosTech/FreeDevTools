@@ -22,8 +22,8 @@ features:
 - Terminate user sessions remotely.
 - Execute operations on remote hosts.
 - Manage user logins and sessions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # loginctl

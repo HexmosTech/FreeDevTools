@@ -22,8 +22,8 @@ features:
 - Displays file size reduction percentage.
 - Uses the slowest compression method for optimal results.
 - Keeps the original .Z file if it is smaller after conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # znew

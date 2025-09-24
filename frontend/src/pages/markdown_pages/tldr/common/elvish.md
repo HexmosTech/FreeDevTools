@@ -22,8 +22,8 @@ features:
 - Run elvish scripts from a specified file path
 - Provide a versatile and expressive scripting environment
 - Offer an alternative to traditional shell scripting languages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elvish

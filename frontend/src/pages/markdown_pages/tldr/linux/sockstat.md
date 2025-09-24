@@ -22,8 +22,8 @@ features:
   - Allows filtering by specific ports, process IDs (PIDs), user IDs (UIDs), and group IDs (GIDs).
   - Shows details of both internet and UNIX domain sockets.
   - Provides a concise and easily understandable output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sockstat

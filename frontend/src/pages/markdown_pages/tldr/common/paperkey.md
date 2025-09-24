@@ -22,8 +22,8 @@ features:
 - Export a secret key from GPG and archive it to a text file
 - Securely store OpenPGP key data in a human-readable format
 - Backup and recover OpenPGP keys using text-based archives
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # paperkey

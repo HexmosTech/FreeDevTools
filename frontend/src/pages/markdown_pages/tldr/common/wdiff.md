@@ -22,8 +22,8 @@ features:
 - Display statistics about the number of insertions, deletions, and replacements.
 - Analyze changes between text files for content revisions.
 - Identify word-level edits in text documents.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wdiff

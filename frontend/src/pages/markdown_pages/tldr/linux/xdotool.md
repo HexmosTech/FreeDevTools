@@ -22,8 +22,8 @@ features:
   - Automate complex sequences of actions.
   - Interact with applications programmatically.
   - Retrieve window IDs and active window information.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xdotool

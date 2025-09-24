@@ -22,8 +22,8 @@ features:
 - Display DVC diff output as JSON
 - Display DVC diff output as Markdown
 - Show the latest hash of DVC tracked files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc diff

@@ -22,8 +22,8 @@ features:
   - Configurable idle time settings for individual drives.
   - Integrates with systemd for service management.
   - Prevents unnecessary hard drive wear and power consumption.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hd-idle

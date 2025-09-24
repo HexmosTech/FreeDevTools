@@ -22,8 +22,8 @@ features:
 - Display verbose information during VM startup
 - Manage virtual machine lifecycle without libvirtd
 - Execute QEMU VMs from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-qemu-run

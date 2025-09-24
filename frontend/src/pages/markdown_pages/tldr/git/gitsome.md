@@ -22,8 +22,8 @@ features:
 - Filter and browse starred repositories using a search string
 - Configure GitHub authentication for command-line access
 - Enable autocompletion for Git and GitHub commands in the terminal
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gitsome

@@ -22,8 +22,8 @@ features:
 - Simplify branch cleanup and management.
 - Improve Git workflow efficiency.
 - Streamline code repository maintenance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git show-merged-branches

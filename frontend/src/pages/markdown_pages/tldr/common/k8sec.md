@@ -22,8 +22,8 @@ features:
 - Set Kubernetes secret values via the command line.
 - Import and export Kubernetes secrets from/to files.
 - Unset or remove specific Kubernetes secrets.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # k8sec

@@ -22,8 +22,8 @@ features:
 - Excludes optional dependencies from detection
 - Outputs duplicate information in JSON format
 - Limits or excludes searches to/from specific scopes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm find-dupes

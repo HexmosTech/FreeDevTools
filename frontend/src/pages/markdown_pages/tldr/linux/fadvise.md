@@ -22,8 +22,8 @@ features:
   - Optimize application performance by controlling file caching.
   - Improve I/O performance by managing data access patterns.
   - Fine-grained control over file caching behavior in Linux.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fadvise

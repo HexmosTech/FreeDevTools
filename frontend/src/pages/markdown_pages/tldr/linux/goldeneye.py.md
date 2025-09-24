@@ -22,8 +22,8 @@ features:
 - Bypass SSL certificate verification for testing purposes.
 - Enable debug mode for detailed attack analysis.
 - Simulate high-volume requests to stress-test web servers.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # goldeneye.py

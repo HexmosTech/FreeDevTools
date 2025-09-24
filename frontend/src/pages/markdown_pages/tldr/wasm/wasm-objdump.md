@@ -22,8 +22,8 @@ features:
 - Display detailed information about WebAssembly sections
 - Inspect specific WebAssembly sections by name
 - Analyze import and export tables of WebAssembly modules
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wasm-objdump

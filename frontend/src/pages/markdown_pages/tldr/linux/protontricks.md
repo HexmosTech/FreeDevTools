@@ -22,8 +22,8 @@ features:
   - Access a graphical user interface (GUI) for simplified usage.
   - Search for and find App IDs of games.
   - Execute commands directly within a game's installation directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # protontricks

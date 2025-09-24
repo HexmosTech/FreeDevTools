@@ -22,8 +22,8 @@ features:
 - Validates XML documents against XSD schemas
 - Validates XML documents against Relax NG schemas
 - Supports validation from local files and URIs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml validate

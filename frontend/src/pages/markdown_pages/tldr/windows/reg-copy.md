@@ -22,8 +22,8 @@ features:
 - Forcefully copy registry keys without prompting.
 - Transfer registry settings between systems.
 - Backup registry keys for safekeeping.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reg copy

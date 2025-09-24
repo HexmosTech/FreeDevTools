@@ -22,8 +22,8 @@ features:
 - Support exclusive XML canonicalization using XPATH
 - Canonicalize XML documents from URIs
 - Provide help documentation for the command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml canonic

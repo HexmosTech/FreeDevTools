@@ -22,8 +22,8 @@ features:
 - Creates a request suitable for sending to upstream maintainers.
 - Identifies changes between specified versions or branches.
 - Simplifies the process of contributing to Git projects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git request-pull

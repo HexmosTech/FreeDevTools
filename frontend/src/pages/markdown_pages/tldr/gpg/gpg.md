@@ -22,8 +22,8 @@ features:
 - Sign documents for integrity and authenticity
 - Decrypt encrypted files using private keys or passphrases
 - Manage and export public and private keys
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gpg

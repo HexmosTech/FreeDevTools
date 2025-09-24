@@ -22,8 +22,8 @@ features:
 - Uses a custom configuration file for formatting
 - Formats Lua code from standard input to standard output
 - Supports spaces and single quotes for formatting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # stylua

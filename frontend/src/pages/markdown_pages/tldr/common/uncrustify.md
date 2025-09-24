@@ -22,8 +22,8 @@ features:
 - Utilize custom configuration files for flexible formatting
 - Generate new configuration files for personalized settings
 - Backup original files before formatting to prevent data loss
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uncrustify

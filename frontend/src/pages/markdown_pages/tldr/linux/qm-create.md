@@ -22,8 +22,8 @@ features:
   - Allocate memory and CPU cores to VMs
   - Configure the operating system type for VMs
   - Attach ISO install media to virtual machines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm create

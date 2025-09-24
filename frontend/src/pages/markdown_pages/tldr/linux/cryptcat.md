@@ -22,8 +22,8 @@ features:
 - Connect to remote hosts using encryption
 - Perform port scanning with verbose output
 - Act as a proxy to forward encrypted data streams
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cryptcat

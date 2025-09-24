@@ -22,8 +22,8 @@ features:
 - Accept PNM image data from standard input
 - Support AND, NAND, OR, NOR, XOR, and XNOR boolean operations
 - Create composite images through command-line instructions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmpaste

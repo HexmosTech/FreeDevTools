@@ -22,8 +22,8 @@ features:
 - Modify IPv4 route metrics on Linux
 - Optimize network routing through priority settings
 - Configure network interfaces using the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ifmetric

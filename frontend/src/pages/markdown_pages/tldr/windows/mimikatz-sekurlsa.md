@@ -22,8 +22,8 @@ features:
 - Dump LSA secrets and credentials
 - Analyze Windows security protocols
 - Retrieve sensitive information from memory dumps
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mimikatz sekurlsa

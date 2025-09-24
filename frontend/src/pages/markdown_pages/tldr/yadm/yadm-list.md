@@ -22,8 +22,8 @@ features:
 - Show all managed files, including hidden ones
 - Identify files under version control
 - Provide a clear overview of Yadm's file management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm list

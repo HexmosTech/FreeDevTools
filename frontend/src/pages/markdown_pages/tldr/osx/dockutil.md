@@ -22,8 +22,8 @@ features:
 - Manage dock items using command-line interface.
 - Add spacers to organize dock sections.
 - Customize dock item views and display types.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dockutil

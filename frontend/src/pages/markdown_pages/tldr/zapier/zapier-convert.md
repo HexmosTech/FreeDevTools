@@ -22,8 +22,8 @@ features:
 - Debug integration conversion with extra output
 - Automate the integration development workflow
 - Manage and deploy Zapier integrations via the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zapier convert

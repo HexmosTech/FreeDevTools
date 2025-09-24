@@ -22,8 +22,8 @@ features:
 - Show hidden files and directories.
 - Display file sizes in a human-readable format.
 - Filter files and directories using wildcard patterns.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tree

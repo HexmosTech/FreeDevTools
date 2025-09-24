@@ -22,8 +22,8 @@ features:
 - Sets the filesystem to mutable mode for modifications
 - Provides a command-line interface for filesystem control
 - Simplifies the process of managing filesystem read/write status
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-readonly

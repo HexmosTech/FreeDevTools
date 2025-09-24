@@ -22,8 +22,8 @@ features:
 - Automate browser tasks through command-line interface.
 - Configure browser settings via msedge commands.
 - Control browser windows and tabs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msedge

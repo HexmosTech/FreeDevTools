@@ -22,8 +22,8 @@ features:
 - Supports verbose mode for detailed output
 - Watches multiple directories simultaneously
 - Accepts arguments to pass to the application
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gow

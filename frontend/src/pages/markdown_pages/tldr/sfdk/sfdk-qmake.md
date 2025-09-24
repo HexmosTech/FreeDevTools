@@ -22,8 +22,8 @@ features:
 - Pass custom arguments to qmake
 - Build Sailfish OS applications
 - Utilize Sailfish SDK for building
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk qmake

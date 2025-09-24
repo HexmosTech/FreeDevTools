@@ -22,8 +22,8 @@ features:
   - Filter jobs by ID for specific status checks.
   - Provide parsable output for scripting and automation.
   - List available fields for customized output formatting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sstat

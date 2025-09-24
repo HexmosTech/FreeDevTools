@@ -22,8 +22,8 @@ features:
 - Specify the desired resolution for the output file
 - Generate .lj files for printing on HP LaserJet printers
 - Convert PPM images to printer-ready format via the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtolj

@@ -22,8 +22,8 @@ features:
 - Alias for xzgrep --fixed-strings functionality
 - Command line interface for text searching
 - Supports compressed files for searching
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lzfgrep

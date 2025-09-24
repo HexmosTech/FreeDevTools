@@ -22,8 +22,8 @@ features:
   - Retrieve information on packages from remote repositories.
   - List all packages registered in the package database.
   - List explicitly installed packages (excluding dependencies).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xbps-query

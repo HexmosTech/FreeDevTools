@@ -22,8 +22,8 @@ features:
 - Run tasks for specific projects by defining the directory
 - Force tasks to continue execution even after failures
 - Generate Bash scripts from tasks for debugging
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # envoy

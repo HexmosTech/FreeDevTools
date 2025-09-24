@@ -22,8 +22,8 @@ features:
 - Integrate dictionary lookups into scripts and workflows
 - Operate without a graphical user interface using the --no-window option
 - Find word definitions in different languages via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mate-dictionary

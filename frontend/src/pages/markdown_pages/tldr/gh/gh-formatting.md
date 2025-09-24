@@ -22,8 +22,8 @@ features:
 - Display help on formatting with `jq`
 - Transform JSON data from the command line
 - Simplify data extraction from GitHub API
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh formatting

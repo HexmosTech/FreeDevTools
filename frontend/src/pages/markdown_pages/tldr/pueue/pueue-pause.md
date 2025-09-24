@@ -22,8 +22,8 @@ features:
 - Prevent groups from starting new tasks
 - Pause a task and its children processes
 - Pause all Pueue tasks globally
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue pause

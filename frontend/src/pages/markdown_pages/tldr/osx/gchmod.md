@@ -22,8 +22,8 @@ features:
 - Recursively apply permissions to directories and files
 - Set special permissions like SUID, GUID, and sticky bit
 - Manage access control lists (ACLs) on files and directories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gchmod

@@ -22,8 +22,8 @@ features:
 - Insert attributes into XML nodes
 - Update values in XML nodes using XPath
 - Delete XML nodes using XPath
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xmlstarlet

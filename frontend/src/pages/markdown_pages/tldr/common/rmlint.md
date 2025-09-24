@@ -22,8 +22,8 @@ features:
 - Merge duplicate directory trees by data
 - Rank files for preferred deletion based on path depth and length
 - Link identical files to save disk space
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rmlint

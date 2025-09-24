@@ -22,8 +22,8 @@ features:
 - Support for multiple files at once
 - Streamline workflow for adding empty files
 - Integrate seamlessly with existing Git workflow
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git touch

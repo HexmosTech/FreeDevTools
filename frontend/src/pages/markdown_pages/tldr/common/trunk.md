@@ -22,8 +22,8 @@ features:
 - Manage project dependencies and tool versions with Trunk tools.
 - Deploy web apps to specific directories.
 - Review action execution logs for debugging.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trunk

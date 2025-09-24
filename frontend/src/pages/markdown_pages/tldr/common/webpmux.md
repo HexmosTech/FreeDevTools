@@ -22,8 +22,8 @@ features:
 - Define frame duration for WebP animations
 - Combine multiple WebP images into a single animation
 - Specify output file path for WebP animations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # webpmux

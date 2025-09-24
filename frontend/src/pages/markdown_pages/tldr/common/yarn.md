@@ -22,8 +22,8 @@ features:
 - Add packages as dependencies to a project
 - Uninstall packages and remove them from package.json
 - Create and initialize a new package.json file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yarn

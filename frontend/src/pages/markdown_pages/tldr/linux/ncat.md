@@ -22,8 +22,8 @@ features:
   - Encrypt network traffic using SSL
   - Redirect input and output streams across a network
   - Check network connectivity to a remote host
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ncat

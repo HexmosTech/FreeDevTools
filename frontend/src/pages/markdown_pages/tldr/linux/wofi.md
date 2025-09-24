@@ -22,8 +22,8 @@ features:
   - Select applications using keyboard navigation.
   - Pipe a list of items to wofi for selection.
   - Works with wlroots-based Wayland compositors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wofi

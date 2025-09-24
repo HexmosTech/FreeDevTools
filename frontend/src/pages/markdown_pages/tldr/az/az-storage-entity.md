@@ -22,8 +22,8 @@ features:
 - Update existing entity properties by merging changes.
 - Query entities in Azure tables based on specified filters.
 - Retrieve a specific entity from an Azure table using partition and row keys.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az storage entity

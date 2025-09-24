@@ -22,8 +22,8 @@ features:
 - Attach to a process using its name
 - Redirect process output to a new terminal
 - Detach and re-attach processes to different terminals
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reptyr

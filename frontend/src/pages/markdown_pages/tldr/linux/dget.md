@@ -22,8 +22,8 @@ features:
   - Allows downloading Debian source package tarballs without extraction.
   - Provides a command-line interface for easy package management.
   - Simplifies the process of obtaining Debian packages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dget

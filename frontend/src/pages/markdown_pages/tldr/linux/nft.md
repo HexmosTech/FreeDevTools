@@ -22,8 +22,8 @@ features:
 - Create rules based on various criteria like port and IP
 - Implement Network Address Translation (NAT) rules
 - Export and import nftables configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nft

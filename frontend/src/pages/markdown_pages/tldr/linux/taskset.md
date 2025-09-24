@@ -22,8 +22,8 @@ features:
   - Start a new process with a specified CPU affinity.
   - Define CPU affinity for multiple non-sequential CPUs.
   - Define CPU affinity for a range of CPUs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # taskset

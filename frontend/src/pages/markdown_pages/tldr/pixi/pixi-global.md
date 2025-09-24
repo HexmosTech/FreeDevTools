@@ -22,8 +22,8 @@ features:
 - List all packages currently installed globally
 - Upgrade individual global packages
 - Upgrade all globally installed packages to their latest versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pixi global

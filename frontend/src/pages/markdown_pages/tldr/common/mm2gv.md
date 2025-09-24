@@ -22,8 +22,8 @@ features:
 - Support conversion using standard input and output (stdin/stdout)
 - Provide command-line help and usage instructions
 - Facilitate graph data exchange between different formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mm2gv

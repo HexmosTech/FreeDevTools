@@ -22,8 +22,8 @@ features:
 - List and retrieve quantum job outputs
 - Enumerate available provider offerings in a location
 - Set default targets for job submissions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az quantum

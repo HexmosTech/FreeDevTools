@@ -22,8 +22,8 @@ features:
 - Remove packages without saving configuration backups
 - Delete orphan packages not required by other packages
 - Cascade removal to dependent packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman --remove

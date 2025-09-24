@@ -22,8 +22,8 @@ features:
 - Exclude files from staging using exclude patterns
 - Recursively add sub-repositories
 - Perform a dry run to preview actions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg add

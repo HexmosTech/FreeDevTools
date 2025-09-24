@@ -22,8 +22,8 @@ features:
 - Install and uninstall extensions to enhance functionality
 - Manage code files and directories from the command line
 - Display diagnostic information about running code instances
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # code

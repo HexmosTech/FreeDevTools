@@ -22,8 +22,8 @@ features:
 - Exchange the positions of enqueued tasks
 - Change the execution order of stashed tasks
 - Manage command priority within the pueue environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue switch

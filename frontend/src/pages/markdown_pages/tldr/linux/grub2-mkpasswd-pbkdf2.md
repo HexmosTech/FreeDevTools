@@ -22,8 +22,8 @@ features:
   - Defines the salt length for added security.
   - Prints the generated hash to standard output.
   - Protects bootloader access with strong password encryption.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grub2-mkpasswd-pbkdf2

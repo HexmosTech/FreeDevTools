@@ -22,8 +22,8 @@ features:
 - Control the ratio of left and right padding
 - Specify border color using names or hex codes
 - Resize images while maintaining aspect ratio
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmpad

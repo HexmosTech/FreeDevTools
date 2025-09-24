@@ -22,8 +22,8 @@ features:
   - Customize request headers for advanced API interaction
   - Execute HTTP requests from the terminal
   - Simplify API testing and debugging with command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # curlie

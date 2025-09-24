@@ -22,8 +22,8 @@ features:
 - Enable and disable automatic Time Machine backups
 - Start and stop Time Machine backups from the command line
 - Append new destinations to the list of backup destinations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tmutil

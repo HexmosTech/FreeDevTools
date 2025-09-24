@@ -22,8 +22,8 @@ features:
 - Squash merge a feature branch into current branch
 - Send feature branch changes to remote counterpart
 - Manage feature branch workflow using CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git feature

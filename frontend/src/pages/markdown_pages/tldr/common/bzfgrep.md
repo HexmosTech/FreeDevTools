@@ -22,8 +22,8 @@ features:
 - Invert the match to find non-matching lines
 - Print the filename and line number of each match
 - Recursively search bzip2 compressed tar archives
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bzfgrep

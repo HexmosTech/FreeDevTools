@@ -22,8 +22,8 @@ features:
 - Expand the generated mask by one pixel.
 - Create bitmap masks for image manipulation.
 - Convert PBM images to mask bitmaps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmmask

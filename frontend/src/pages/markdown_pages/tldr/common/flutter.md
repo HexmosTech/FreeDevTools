@@ -22,8 +22,8 @@ features:
 - Manage Flutter channels (stable, beta, dev, master)
 - Build release APKs for Android
 - Clean Flutter project directory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flutter

@@ -22,8 +22,8 @@ features:
 - Run a Clojure project's main function with arguments
 - Execute project tests using command line
 - Package Clojure project and dependencies into a single JAR file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lein

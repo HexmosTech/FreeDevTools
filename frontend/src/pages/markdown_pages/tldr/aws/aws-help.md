@@ -22,8 +22,8 @@ features:
 - Provide detailed information on specific AWS CLI topics
 - Allow quick access to command syntax and options
 - Offer examples of command usage for AWS CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws help

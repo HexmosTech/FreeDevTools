@@ -22,8 +22,8 @@ features:
 - Check system health for potential issues.
 - View and analyze Ghost logs for debugging.
 - View and edit Ghost configuration settings.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ghost

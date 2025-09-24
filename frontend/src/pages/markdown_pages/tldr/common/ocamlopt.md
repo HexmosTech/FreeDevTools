@@ -22,8 +22,8 @@ features:
 - Enable debugging information for troubleshooting.
 - Create ELF binaries for Linux platforms.
 - Specify output file path for generated executables.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ocamlopt

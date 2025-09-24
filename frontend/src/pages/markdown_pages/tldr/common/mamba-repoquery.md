@@ -22,8 +22,8 @@ features:
 - Identify packages that require a specific dependency.
 - Display package dependencies in a tree format.
 - Query package metadata for conda and mamba.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mamba repoquery

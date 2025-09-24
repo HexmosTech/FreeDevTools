@@ -22,8 +22,8 @@ features:
 - Quickly assess power source via command line.
 - Integrate into scripts for power management automation.
 - Support for cross-platform power status checking.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # on_ac_power

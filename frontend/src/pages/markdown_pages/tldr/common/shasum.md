@@ -22,8 +22,8 @@ features:
 - Support various SHA algorithms (SHA1, SHA224, SHA256, SHA384, SHA512)
 - Read checksums from stdin
 - Check checksums against a file of SHA checksums
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # shasum

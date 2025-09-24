@@ -22,8 +22,8 @@ features:
 - Print current and maximum brightness values.
 - Manage screen backlight from the command line.
 - Adjust brightness in defined steps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ybacklight

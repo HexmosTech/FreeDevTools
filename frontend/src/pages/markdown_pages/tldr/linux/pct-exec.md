@@ -22,8 +22,8 @@ features:
 - Pass arguments to commands executed in containers.
 - Manage processes inside Linux containers.
 - Provide command-line access to Proxmox container environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pct exec

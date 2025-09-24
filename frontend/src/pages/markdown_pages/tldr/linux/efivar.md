@@ -22,8 +22,8 @@ features:
   - Modify the contents of a UEFI variable (requires further options not shown)
   - Provides a command-line interface for UEFI variable manipulation
   - Enables direct interaction with UEFI firmware settings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # efivar

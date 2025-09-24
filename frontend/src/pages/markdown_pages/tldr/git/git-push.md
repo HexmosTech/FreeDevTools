@@ -22,8 +22,8 @@ features:
 - Delete branches in a remote repository
 - Update all local branches to their remote counterparts
 - Publish tags that are not yet in the remote repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git push

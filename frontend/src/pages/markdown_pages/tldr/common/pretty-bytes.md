@@ -22,8 +22,8 @@ features:
 - Accept bytes as input from stdin
 - Display byte sizes with appropriate units
 - Provide concise and clear output for data sizes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pretty-bytes

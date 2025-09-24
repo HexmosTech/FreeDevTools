@@ -22,8 +22,8 @@ features:
 - Manage network interface parameters via command line.
 - Automate interface configuration tasks on Cisco devices.
 - Control interface status for network troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # interface

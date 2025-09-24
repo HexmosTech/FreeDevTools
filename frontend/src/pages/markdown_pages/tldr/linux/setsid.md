@@ -22,8 +22,8 @@ features:
   - Creates a new process group.
   - Allows waiting for the child process to exit and return its exit code.
   - Optionally sets the controlling terminal for the new session.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setsid

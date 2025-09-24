@@ -22,8 +22,8 @@ features:
 - Control output compression for MACP files
 - Process PBM images using the command line
 - Create MACP files compatible with MacPaint software
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtomacp

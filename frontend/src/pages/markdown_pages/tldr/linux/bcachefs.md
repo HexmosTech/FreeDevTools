@@ -22,8 +22,8 @@ features:
   - Create RAID 0 configurations using SSDs and HDDs for optimized performance and storage.
   - Manage replicas to ensure data redundancy and availability.
   - Create snapshots of directories for easy backup and restoration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bcachefs

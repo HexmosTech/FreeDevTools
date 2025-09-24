@@ -22,8 +22,8 @@ features:
 - Pass stdin to stdout if the command is not executed
 - Control command execution based on stdin
 - Simplify shell scripting with conditional execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ifne

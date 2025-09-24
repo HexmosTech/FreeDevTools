@@ -22,8 +22,8 @@ features:
   - Includes syntax highlighting for improved readability and error detection.
   - Allows for easy session management, resuming previous sessions.
   - Supports custom headers and authentication methods.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # http-prompt

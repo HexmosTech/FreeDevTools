@@ -22,8 +22,8 @@ features:
 - Control timing for shell scripts.
 - Achieve fine-grained control over program execution.
 - Integrate with other commands for delayed execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # usleep

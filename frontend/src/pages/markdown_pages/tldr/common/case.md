@@ -22,8 +22,8 @@ features:
 - Match multiple patterns simultaneously
 - Continue to the next pattern's commands
 - Create fallback patterns for unmatched cases
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # case

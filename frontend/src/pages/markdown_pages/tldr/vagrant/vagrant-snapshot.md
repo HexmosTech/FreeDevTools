@@ -22,8 +22,8 @@ features:
 - Delete unwanted Vagrant snapshots
 - List available snapshots for a Vagrant machine
 - Restore a Vagrant machine to a snapshot without starting it
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vagrant snapshot

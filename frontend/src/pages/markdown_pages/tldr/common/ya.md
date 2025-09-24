@@ -22,8 +22,8 @@ features:
 - Subscribe to messages from remote instances
 - Publish messages with string body to current instance
 - Publish messages with JSON body to current instance
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ya

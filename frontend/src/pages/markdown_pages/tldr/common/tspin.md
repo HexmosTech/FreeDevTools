@@ -22,8 +22,8 @@ features:
 - Pipe logs from other commands for real-time monitoring
 - Read log files from stdin
 - Print highlighted log output to stdout
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tspin

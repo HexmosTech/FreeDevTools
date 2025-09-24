@@ -22,8 +22,8 @@ features:
 - Update all installed Android SDK packages
 - Uninstall specific Android SDK packages
 - Manage Android development environment from command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sdkmanager

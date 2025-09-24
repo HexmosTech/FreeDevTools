@@ -22,8 +22,8 @@ features:
 - Execute projects with custom arguments.
 - Target specific architectures and operating systems.
 - Run a specific project by its project file path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dotnet run

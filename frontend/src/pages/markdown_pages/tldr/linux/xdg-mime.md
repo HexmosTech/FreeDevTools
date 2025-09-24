@@ -22,8 +22,8 @@ features:
   - Set the default application for a specific MIME type.
   - Set default applications for multiple MIME types simultaneously.
   - Manage file associations according to the XDG standard.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xdg-mime

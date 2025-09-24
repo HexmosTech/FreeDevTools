@@ -22,8 +22,8 @@ features:
 - Run commands in containers for specific distribution releases.
 - Manage development environments within containers.
 - Execute system utilities inside toolbox environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # toolbox run

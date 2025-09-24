@@ -22,8 +22,8 @@ features:
 - Open an interactive Python shell within the Flask application context.
 - Execute Flask commands via the command line.
 - Load the Flask application defined in the FLASK_APP environment variable.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flask

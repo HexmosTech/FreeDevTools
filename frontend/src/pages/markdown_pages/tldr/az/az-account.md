@@ -22,8 +22,8 @@ features:
 - List supported regions for the active Azure subscription
 - Print an access token for use with the MS Graph API
 - Display details of the active subscription in various formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az account

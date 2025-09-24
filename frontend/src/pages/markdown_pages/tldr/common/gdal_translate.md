@@ -22,8 +22,8 @@ features:
 - Reduce the size of raster datasets.
 - Convert GeoTIFF to Cloud Optimized GeoTIFF (COG).
 - Change image compression methods.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdal_translate

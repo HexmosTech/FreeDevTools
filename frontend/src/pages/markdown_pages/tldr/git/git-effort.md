@@ -22,8 +22,8 @@ features:
 - Filter results based on a minimum number of commits
 - Filter results based on a specific author
 - Filter results based on a specific time/date
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git effort

@@ -22,8 +22,8 @@ features:
   - Set relative or absolute mode for the pen
   - Rotate input for tablet PCs
   - Configure button functionality based on pen tip contact
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xsetwacom

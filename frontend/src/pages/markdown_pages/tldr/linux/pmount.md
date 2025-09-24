@@ -22,8 +22,8 @@ features:
 - "Force read-write or read-only mounting"
 - "List all mounted removable devices"
 - "Mount devices by label or device path"
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pmount

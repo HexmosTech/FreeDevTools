@@ -22,8 +22,8 @@ features:
 - Customize linting rules with configuration files
 - Integrate with various IDEs and editors
 - Enforce consistent coding standards across projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eslint

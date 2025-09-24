@@ -22,8 +22,8 @@ features:
 - Execute destructive write tests to identify and mark bad blocks
 - Output found bad blocks to a file for later use
 - Customize block size and count for optimized scanning
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # badblocks

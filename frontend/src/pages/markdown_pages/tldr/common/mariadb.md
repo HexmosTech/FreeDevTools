@@ -22,8 +22,8 @@ features:
 - Display warnings for each executed statement
 - Check memory and file usage during debugging
 - Connect to a MariaDB server using a socket file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mariadb

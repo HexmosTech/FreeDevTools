@@ -22,8 +22,8 @@ features:
 - Generate SM2 private and public key pairs for secure communication
 - Encrypt and decrypt files using the ZUC stream cipher
 - Display GmSSL version information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gmssl

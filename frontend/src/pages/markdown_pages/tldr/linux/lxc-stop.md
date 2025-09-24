@@ -22,8 +22,8 @@ features:
   - Offers a simple and efficient way to halt container processes.
   - Integrates seamlessly with the LXC ecosystem.
   - Supports basic help and usage instructions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lxc-stop

@@ -22,8 +22,8 @@ features:
   - Offers detailed descriptions of identified MIME types.
   - Supports MIME type determination from stdin input.
   - Displays debug information for advanced troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mimetype

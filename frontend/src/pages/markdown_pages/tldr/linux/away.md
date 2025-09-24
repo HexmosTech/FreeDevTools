@@ -22,8 +22,8 @@ features:
   - Enables/disables automatic mail checking.
   - Allows pausing background tasks for a specified time.
   - Offers persistent or non-persistent mail checking options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # away

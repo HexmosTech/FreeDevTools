@@ -22,8 +22,8 @@ features:
 - List all storage accounts within a specific Azure resource group.
 - Delete specific Azure storage accounts.
 - Manage storage account properties using the Azure CLI.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az storage account

@@ -22,8 +22,8 @@ features:
 - Extract archive contents to a specified directory.
 - List the contents of a 7z archive.
 - Set the compression level for 7z archives.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # 7zr

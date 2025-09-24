@@ -22,8 +22,8 @@ features:
 - Use a configuration file for advanced customization
 - Automatically recompile on project file changes
 - Manage dependencies and create optimized bundles
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # webpack

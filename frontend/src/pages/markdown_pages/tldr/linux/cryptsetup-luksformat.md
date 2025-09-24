@@ -22,8 +22,8 @@ features:
   - Encrypt partitions with a keyfile.
   - Assign a label to the encrypted volume.
   - Overwrite existing data on the target partition securely.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cryptsetup luksFormat

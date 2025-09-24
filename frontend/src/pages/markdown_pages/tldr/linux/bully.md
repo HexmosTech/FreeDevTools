@@ -22,8 +22,8 @@ features:
   - Requires prior network information gathering with airodump-ng.
   - Provides command-line interface for ease of use.
   - Offers a clear help message with usage instructions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bully

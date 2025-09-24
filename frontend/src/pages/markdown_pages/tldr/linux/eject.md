@@ -22,8 +22,8 @@ features:
   - Toggle tray open/close state.
   - Support for manual eject override.
   - Eject specific device types (CD-ROM, floppy, tape).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eject

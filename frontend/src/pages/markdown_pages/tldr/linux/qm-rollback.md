@@ -22,8 +22,8 @@ features:
   - Uses the Proxmox command-line interface (CLI).
   - Supports specific VM ID and snapshot name targeting.
   - Offers efficient state restoration for troubleshooting and recovery.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm rollback

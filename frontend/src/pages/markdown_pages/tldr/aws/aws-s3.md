@@ -22,8 +22,8 @@ features:
 - Sync S3 buckets to local directories.
 - Exclude files during S3 synchronization.
 - Remove files from S3 buckets.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3

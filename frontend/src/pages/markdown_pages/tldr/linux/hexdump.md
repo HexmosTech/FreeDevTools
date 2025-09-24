@@ -22,8 +22,8 @@ features:
   - Allows specifying the number of bytes to interpret.
   - Supports suppressing duplicate line replacement.
   - Provides options for canonical output format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hexdump

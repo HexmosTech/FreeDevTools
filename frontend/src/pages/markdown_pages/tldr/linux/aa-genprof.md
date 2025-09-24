@@ -22,8 +22,8 @@ features:
 - Specify custom directories for storing profiles.
 - Define custom log files for profiling data.
 - Assist in configuring AppArmor security policies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-genprof

@@ -22,8 +22,8 @@ features:
 - Rename directories using a text editor interface
 - Recursively move all files and directories within a directory
 - Swap source and target filenames in the editor
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qmv

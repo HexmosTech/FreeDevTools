@@ -22,8 +22,8 @@ features:
 - Manage virtual device cameras for realistic scenarios
 - Customize SD card partition image files
 - Display available webcams for emulation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # emulator

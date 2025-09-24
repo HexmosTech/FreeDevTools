@@ -22,8 +22,8 @@ features:
   - Enable or disable command extensions
   - Enable or disable delayed variable expansion
   - Execute commands with unicode encoding
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cmd

@@ -22,8 +22,8 @@ features:
   - Allows discarding a specified length of data.
   - Improves SSD performance by reclaiming space.
   - Enhances data security by removing sensitive information.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # blkdiscard

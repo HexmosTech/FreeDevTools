@@ -22,8 +22,8 @@ features:
 - Manage branches and merge conflicts visually
 - Filter the status widget to focus on specific files
 - Amend the last commit directly from the GUI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git cola

@@ -22,8 +22,8 @@ features:
   - Control PowerShell version for compatibility
   - Prevent the shell from exiting after running startup commands
   - Define input and output formats for data exchange
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # powershell

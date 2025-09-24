@@ -22,8 +22,8 @@ features:
   - Allows specifying memory size and number of test iterations.
   - Supports different test types including memcpy and a "dumb" test.
   - Offers options for outputting only statistics, not averages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mbw

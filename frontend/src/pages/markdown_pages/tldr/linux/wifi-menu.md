@@ -22,8 +22,8 @@ features:
 - Configure Wi-Fi profiles from the command line.
 - Simplify wireless network management in Linux.
 - Display helpful information about wifi-menu usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wifi-menu

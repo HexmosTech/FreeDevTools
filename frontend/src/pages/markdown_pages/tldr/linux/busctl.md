@@ -22,8 +22,8 @@ features:
 - Dump messages exchanged on the bus
 - Show the object tree of a service
 - Retrieve object properties of a D-Bus service
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # busctl

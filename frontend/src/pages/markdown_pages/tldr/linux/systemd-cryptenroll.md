@@ -22,8 +22,8 @@ features:
 - Secure TPM2 chip integration
 - Remove existing LUKS2 encryption keys
 - Unlock LUKS2 devices using various methods
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-cryptenroll

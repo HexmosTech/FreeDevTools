@@ -22,8 +22,8 @@ features:
   - Manage storage space efficiently across multiple devices.
   - Extend existing volume groups with additional physical volumes.
   - Provide a foundation for logical volume creation and management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vgcreate

@@ -22,8 +22,8 @@ features:
 - Run pre-compiled JAR files containing Scala applications.
 - Define classpath dependencies for Scala code.
 - Execute single Scala commands directly in the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scala

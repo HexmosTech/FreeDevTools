@@ -22,8 +22,8 @@ features:
 - Interact with virtual machines through the command line
 - Manage user credentials on Linux virtual machines
 - Integrate with Proxmox Virtual Environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm guest passwd

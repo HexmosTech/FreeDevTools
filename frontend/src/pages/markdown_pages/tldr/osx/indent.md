@@ -22,8 +22,8 @@ features:
   - Insert or delete whitespace in C/C++ code
   - Improve code readability and consistency
   - Enforce specific coding styles via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # indent

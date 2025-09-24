@@ -22,8 +22,8 @@ features:
 - Execute file copy operations from the terminal
 - Leverage GNU rcp functionality on macOS
 - Facilitate command-line based file management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grcp

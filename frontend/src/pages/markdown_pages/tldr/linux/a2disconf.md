@@ -22,8 +22,8 @@ features:
   - Operate silently using quiet mode
   - Manage Apache server configurations on Debian
   - Streamline Apache config deactivation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # a2disconf

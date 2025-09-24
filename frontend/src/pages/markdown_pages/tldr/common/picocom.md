@@ -22,8 +22,8 @@ features:
 - Map special characters like LF to CRLF for accurate data transfer
 - Control serial port communication from the command line
 - Display helpful information and usage instructions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # picocom

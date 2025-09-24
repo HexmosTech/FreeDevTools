@@ -22,8 +22,8 @@ features:
 - Set Node.js version for all users (machine-wide)
 - Specify Node.js version using version ranges (e.g., ^20)
 - Manage Node.js environment with ease
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Set-NodeVersion

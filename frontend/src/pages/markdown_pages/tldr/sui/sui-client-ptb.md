@@ -22,8 +22,8 @@ features:
 - Split Sui gas coins and assign the new coins to a variable
 - Transfer Sui objects to specific addresses
 - Publish Move packages and transfer upgrade capabilities
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sui client ptb

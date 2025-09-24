@@ -22,8 +22,8 @@ features:
   - Preview label changes before applying
   - Utilize multi-threading for faster restoration
   - Display verbose output of changed labels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # restorecon

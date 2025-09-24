@@ -22,8 +22,8 @@ features:
 - Download entire playlists or specific playlist items.
 - Specify preferred video and audio formats for download.
 - Download Udemy courses with chapter separation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yt-dlp

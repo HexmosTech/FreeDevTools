@@ -22,8 +22,8 @@ features:
 - Update existing user passwords in htpasswd files
 - Delete users from htpasswd files
 - Verify user passwords against an htpasswd file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # htpasswd

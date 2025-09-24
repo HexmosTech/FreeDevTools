@@ -22,8 +22,8 @@ features:
 - Write custom strings to the SGI image header.
 - Control image format during conversion.
 - Optimize image size for SGI compatibility.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmtosgi

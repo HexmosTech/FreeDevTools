@@ -22,8 +22,8 @@ features:
 - Save and replay captured HTTP flows
 - Decrypt SSL/TLS traffic for inspection
 - Automate traffic analysis with custom scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mitmproxy

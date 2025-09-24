@@ -22,8 +22,8 @@ features:
 - Re-key existing Ansible Vault files with new passwords
 - Encrypt individual strings for sensitive data protection
 - Manage and view encrypted Ansible data securely
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ansible-vault

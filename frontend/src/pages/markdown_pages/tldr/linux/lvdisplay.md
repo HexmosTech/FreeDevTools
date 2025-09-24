@@ -22,8 +22,8 @@ features:
   - Display volumes belonging to a specific volume group.
   - Show detailed info for a specific logical volume.
   - Provide a quick overview of LVM logical volumes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvdisplay

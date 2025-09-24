@@ -22,8 +22,8 @@ features:
 - Define functions using alternative syntax without the 'function' keyword.
 - Display detailed help information for the function command.
 - Create reusable blocks of shell code.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # function

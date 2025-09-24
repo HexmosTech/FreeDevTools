@@ -22,8 +22,8 @@ features:
 - Adjust gamma values per color component
 - Convert images from BT.709 to linear or sRGB
 - Convert images from linear or sRGB to BT.709
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmgamma

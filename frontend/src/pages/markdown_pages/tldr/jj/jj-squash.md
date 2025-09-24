@@ -22,8 +22,8 @@ features:
 - Combine multiple revisions into a single revision
 - Edit commit history to improve clarity
 - Merge changes and resolve conflicts during squash
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj squash

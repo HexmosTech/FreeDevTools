@@ -22,8 +22,8 @@ features:
 - Remove all saved state files and VM logs
 - Delete XML machine configuration files
 - Completely remove all files associated with a VM
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage unregistervm

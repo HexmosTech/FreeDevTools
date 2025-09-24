@@ -22,8 +22,8 @@ features:
 - Search for data within specific CSV columns
 - Combine multiple csvtool commands for complex filtering
 - Process CSV data directly from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csvtool

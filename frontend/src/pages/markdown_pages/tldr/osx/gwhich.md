@@ -22,8 +22,8 @@ features:
 - Identify the location of shell scripts.
 - Resolve command names to their binaries.
 - Integrate with shell environments for command discovery.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gwhich

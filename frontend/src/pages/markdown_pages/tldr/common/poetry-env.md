@@ -22,8 +22,8 @@ features:
 - List Poetry virtual environments with full paths
 - Remove specific or all Poetry environments
 - Use a specific Python executable for a Poetry environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # poetry-env

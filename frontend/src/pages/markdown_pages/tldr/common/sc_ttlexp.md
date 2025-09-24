@@ -22,8 +22,8 @@ features:
 - Analyze network paths via TTL expiry
 - Identify potential network issues from TTL data
 - Decode network hops from TTL messages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sc_ttlexp

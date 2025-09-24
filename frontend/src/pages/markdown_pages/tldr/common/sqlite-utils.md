@@ -22,8 +22,8 @@ features:
 - Execute SQL queries directly on SQLite databases
 - List tables within a SQLite database
 - Drop existing tables from a SQLite database
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sqlite-utils

@@ -22,8 +22,8 @@ features:
 - Enter and execute commands in the subsystem shell
 - Display and manage VSO configuration settings
 - Run applications installed in the subsystem
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vso

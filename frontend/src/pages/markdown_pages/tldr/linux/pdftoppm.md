@@ -22,8 +22,8 @@ features:
   - Generate grayscale PGM images from PDF
   - Convert PDF pages to PNG image format
   - Extract the first page of a PDF to an image
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdftoppm

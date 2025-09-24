@@ -22,8 +22,8 @@ features:
 - Connect to a remote server via IP address and port
 - Force IPv4 or IPv6 protocol for network connections
 - Test network performance using command-line options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # netperf

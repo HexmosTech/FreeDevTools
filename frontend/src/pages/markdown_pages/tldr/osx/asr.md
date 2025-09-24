@@ -22,8 +22,8 @@ features:
 - Skip verification of the restored volume for faster processing
 - Clone volumes directly without an intermediate image file
 - Copy file systems to new or existing volumes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # asr

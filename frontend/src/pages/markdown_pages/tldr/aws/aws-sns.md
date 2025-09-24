@@ -22,8 +22,8 @@ features:
 - Subscribe email addresses to SNS topics.
 - Manage access control policies for SNS topics.
 - Tag and organize SNS resources.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws sns

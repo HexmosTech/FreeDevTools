@@ -22,8 +22,8 @@ features:
   - Navigate without a physical mouse
   - Use hint mode for precise positioning
   - Execute commands with modal keyboard input
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # warpd

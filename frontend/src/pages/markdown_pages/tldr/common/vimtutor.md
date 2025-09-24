@@ -22,8 +22,8 @@ features:
 - Explains file navigation within Vim
 - Provides hands-on learning experience
 - Supports multiple languages for global accessibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vimtutor

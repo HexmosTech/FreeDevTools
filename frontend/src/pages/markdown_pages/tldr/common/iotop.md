@@ -22,8 +22,8 @@ features:
 - Show accumulated I/O instead of bandwidth
 - Monitor I/O usage for specific PIDs
 - Operate in non-interactive batch mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iotop

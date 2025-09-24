@@ -22,8 +22,8 @@ features:
 - Collect domain data and import it into BloodHound for analysis.
 - Attempt ASREPRoasting attacks by collecting AS_REP messages.
 - Extract passwords for group managed service accounts (GMSA).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc ldap

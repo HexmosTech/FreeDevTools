@@ -22,8 +22,8 @@ features:
 - Automate financial reporting tasks
 - Process financial data from the command line
 - Extract specific financial information programmatically
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnucash-cli

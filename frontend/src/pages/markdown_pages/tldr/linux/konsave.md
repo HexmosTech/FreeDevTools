@@ -22,8 +22,8 @@ features:
   - Manage multiple configuration profiles simultaneously.
   - Export and import profiles for sharing and backup.
   - Force overwrite existing profiles during saving.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # konsave

@@ -22,8 +22,8 @@ features:
 - Decrypt communication using a specified long-term key
 - Analyze PCAP files for recoverable temporary keys
 - Decrypt subsequent communications after TK recovery
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # crackle

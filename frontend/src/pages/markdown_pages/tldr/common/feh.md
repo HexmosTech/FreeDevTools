@@ -22,8 +22,8 @@ features:
 - Set an image as the desktop wallpaper.
 - View images in slideshow mode with custom delays.
 - Customize window appearance with borderless option.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # feh

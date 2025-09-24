@@ -22,8 +22,8 @@ features:
 - Execute shell scripts without terminal dependency
 - Redirect command output to a specified file
 - Prevent process termination due to terminal signals
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nohup

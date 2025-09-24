@@ -22,8 +22,8 @@ features:
   - Display all packages dependent on a specified package.
   - Show packages a given package depends on using a dependency graph.
   - List all files installed by a particular package with a tree view.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # equery

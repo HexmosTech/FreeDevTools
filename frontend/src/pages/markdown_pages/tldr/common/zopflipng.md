@@ -22,8 +22,8 @@ features:
 - Save optimized PNGs with a custom prefix
 - Losslessly reduce PNG file size
 - Prepare images for web deployment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zopflipng

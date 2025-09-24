@@ -22,8 +22,8 @@ features:
 - Specify a particular fingerprint to verify
 - Support multiple fingerprint readers on Linux
 - Fail verification if no match is found
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fprintd-verify

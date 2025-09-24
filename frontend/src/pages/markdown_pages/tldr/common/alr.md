@@ -22,8 +22,8 @@ features:
 - Run compiled Ada binaries directly
 - Compile Ada projects in different modes (release, development, validation)
 - Manage Ada toolchains and libraries
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # alr

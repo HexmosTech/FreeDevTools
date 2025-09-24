@@ -22,8 +22,8 @@ features:
 - Show the source role binding for each permission.
 - Filter results by subject kind (user, group, serviceaccount).
 - View IAM roles associated with RBAC bindings in GKE.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rbac-lookup

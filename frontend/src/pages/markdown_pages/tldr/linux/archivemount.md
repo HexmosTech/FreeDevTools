@@ -22,8 +22,8 @@ features:
 - Support various archive formats (e.g., zip, tar, rar)
 - Allow read and write operations on archive contents
 - Integrate seamlessly with the Linux filesystem
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # archivemount

@@ -22,8 +22,8 @@ features:
 - Apply pending maintenance actions to RDS databases
 - Change RDS instance identifiers
 - Reboot RDS instances securely
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws rds

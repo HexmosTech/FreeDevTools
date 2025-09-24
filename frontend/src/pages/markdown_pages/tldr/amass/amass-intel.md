@@ -22,8 +22,8 @@ features:
 - Identify root domains related to a domain using WHOIS.
 - Save reconnaissance results to a text file.
 - List all available data sources.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # amass intel

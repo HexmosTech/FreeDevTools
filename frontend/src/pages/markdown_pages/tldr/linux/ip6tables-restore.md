@@ -22,8 +22,8 @@ features:
   - Implement complex IPv6 filtering policies.
   - Control IPv6 traffic flow with granular precision.
   - Maintain secure IPv6 network environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ip6tables-restore

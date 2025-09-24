@@ -22,8 +22,8 @@ features:
   - Filter library calls to focus on specific functions or libraries.
   - Redirect output to a file for later analysis.
   - Analyze malloc and free calls separately to detect memory leaks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ltrace

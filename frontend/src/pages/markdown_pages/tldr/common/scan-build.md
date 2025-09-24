@@ -22,8 +22,8 @@ features:
 - Identifies memory leaks and other common errors.
 - Generates detailed reports of detected issues.
 - Supports C, C++, and Objective-C languages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scan-build

@@ -22,8 +22,8 @@ features:
 - Control audio bitrate during encoding
 - Downmix stereo audio to mono during conversion
 - Encode audio with specific quality levels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # opusenc

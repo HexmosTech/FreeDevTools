@@ -22,8 +22,8 @@ features:
 - Copy data from standard input to the clipboard
 - Programmatically copy text to the clipboard on macOS
 - Integrate clipboard functionality into shell scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbcopy

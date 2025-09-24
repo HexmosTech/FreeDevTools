@@ -22,8 +22,8 @@ features:
 - Automatically detect background color from image corners.
 - Add a margin around the cropped image.
 - Control behaviour for images entirely made of background.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmcrop

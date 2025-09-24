@@ -22,8 +22,8 @@ features:
   - Previews changes before performing cleanup.
   - Supports custom cleaner presets.
   - Offers a graphical user interface (GUI).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bleachbit

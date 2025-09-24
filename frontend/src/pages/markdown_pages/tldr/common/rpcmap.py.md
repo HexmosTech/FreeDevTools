@@ -22,8 +22,8 @@ features:
 - Bruteforce operation numbers for discovered UUIDs
 - Bruteforce major versions of found UUIDs
 - Authenticate to RPC interfaces using usernames, passwords, or NTLM hashes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpcmap.py

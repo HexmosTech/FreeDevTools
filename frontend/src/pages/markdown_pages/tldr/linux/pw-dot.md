@@ -22,8 +22,8 @@ features:
   - Specify output file and include all object types.
   - Print detailed .dot graph to stdout.
   - Create graphs from remote PipeWire instances.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-dot

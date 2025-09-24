@@ -22,8 +22,8 @@ features:
 - Print time-critical unit dependency chain
 - Create SVG plots of service startup times
 - Plot dependency graphs and convert to SVG
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-analyze

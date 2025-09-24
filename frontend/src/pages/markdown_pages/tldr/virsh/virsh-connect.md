@@ -22,8 +22,8 @@ features:
 - Establish SSH connections to hypervisors
 - Interact with QEMU/KVM hypervisors
 - Control virtualization environments from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh connect

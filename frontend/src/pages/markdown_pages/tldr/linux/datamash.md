@@ -22,8 +22,8 @@ features:
 - Perform basic statistical analysis on command line
 - Round numeric results to a specified precision
 - Ignore specified values during calculations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # datamash

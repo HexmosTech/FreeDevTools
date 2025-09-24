@@ -22,8 +22,8 @@ features:
   - Manage multiple packages simultaneously.
   - Utilize command-line interface for efficient management.
   - Adjust package configurations without re-installation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dpkg-reconfigure

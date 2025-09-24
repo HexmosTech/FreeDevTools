@@ -22,8 +22,8 @@ features:
 - Analyze disk I/O and file system performance
 - Track network interface bandwidth usage
 - Visualize system metrics in a web browser
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glances

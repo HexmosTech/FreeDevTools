@@ -22,8 +22,8 @@ features:
   - Delete users from the Proxmox system.
   - Manage user accounts via the command line.
   - Simplify Proxmox user administration tasks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pveum

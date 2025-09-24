@@ -22,8 +22,8 @@ features:
 - Specify directory paths for loading Erlang modules
 - Execute sequential Erlang scripts without starting the shell
 - Authenticate using cookie-based security for node connections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # erl

@@ -22,8 +22,8 @@ features:
   - Output customized reports with selected attributes.
   - Analyze job allocation and resource consumption.
   - Retrieve detailed job exit codes and reasons for failure.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sacct

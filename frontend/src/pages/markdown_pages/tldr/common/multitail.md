@@ -22,8 +22,8 @@ features:
 - Merge and display specific columns from multiple files
 - Automatically add new files based on a pattern
 - Filter and highlight specific content within log streams
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # multitail

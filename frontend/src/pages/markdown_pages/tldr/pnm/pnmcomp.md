@@ -22,8 +22,8 @@ features:
 - Adjust image transparency for blending effects.
 - Manage image overlays with precise placement.
 - Support for various PNM file formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmcomp

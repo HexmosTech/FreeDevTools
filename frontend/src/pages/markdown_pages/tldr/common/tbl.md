@@ -22,8 +22,8 @@ features:
 - Generate roff output from table input
 - Prepare tables for PostScript conversion
 - Integrate with groff macro packages for typesetting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tbl

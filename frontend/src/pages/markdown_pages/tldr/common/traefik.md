@@ -22,8 +22,8 @@ features:
 - Enable cluster mode for high availability.
 - Expose the Traefik web UI for management.
 - Configure HTTP routing and load balancing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # traefik

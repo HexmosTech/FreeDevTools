@@ -22,8 +22,8 @@ features:
   - Specify a custom directory for merged AppArmor profiles.
   - Provides a command-line interface for easy profile management.
   - Simplifies the process of combining and updating AppArmor profiles.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-mergeprof

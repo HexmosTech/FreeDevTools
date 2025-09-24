@@ -22,8 +22,8 @@ features:
 - Search for specific terms within zstd files
 - Decompress zstd files for reading on the fly
 - View zstd files without full extraction
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zstdless

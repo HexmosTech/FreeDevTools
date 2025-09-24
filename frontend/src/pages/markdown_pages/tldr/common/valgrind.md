@@ -22,8 +22,8 @@ features:
 - Analyze heap memory and stack usage over time
 - Identify potential race conditions in multithreaded programs
 - Simulate different CPU architectures for cross-platform development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # valgrind

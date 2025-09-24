@@ -22,8 +22,8 @@ features:
 - Filter Node.js versions by a semver range
 - Integrates with PowerShell for Node.js management
 - Display Node.js version information for ps-nvm
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-NodeVersions

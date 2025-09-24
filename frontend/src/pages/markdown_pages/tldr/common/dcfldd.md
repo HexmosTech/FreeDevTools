@@ -22,8 +22,8 @@ features:
 - Hash data in chunks for progress tracking and verification
 - Log cryptographic hashes for audit trails
 - Acquire forensic images via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dcfldd

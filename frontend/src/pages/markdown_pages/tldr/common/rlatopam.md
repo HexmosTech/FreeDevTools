@@ -22,8 +22,8 @@ features:
 - Supports Alias Wavefront images
 - Outputs to Netpbm (PAM/PGM) formats
 - Command-line operation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rlatopam

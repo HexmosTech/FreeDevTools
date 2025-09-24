@@ -22,8 +22,8 @@ features:
 - Load packages from flakes directly.
 - Execute commands within the isolated environment.
 - Manage project-specific dependencies effectively.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nix shell

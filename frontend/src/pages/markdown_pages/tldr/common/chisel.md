@@ -22,8 +22,8 @@ features:
 - Configure reverse tunnels for secure access.
 - Enable SOCKS5 proxy for anonymized connections.
 - Authenticate connections with username and password.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chisel

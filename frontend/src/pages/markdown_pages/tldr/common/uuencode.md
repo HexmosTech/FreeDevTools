@@ -22,8 +22,8 @@ features:
 - Support both uuencode and Base64 encoding methods.
 - Write the encoded output to a specified file.
 - Decode files with uudeview.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uuencode

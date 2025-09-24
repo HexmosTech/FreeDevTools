@@ -22,8 +22,8 @@ features:
   - Calculates molecular orbitals and energies.
   - Supports various Hamiltonians (e.g., PM7).
   - Outputs results to specified files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mopac

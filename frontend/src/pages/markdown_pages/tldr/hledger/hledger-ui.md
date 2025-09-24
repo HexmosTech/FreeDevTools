@@ -22,8 +22,8 @@ features:
 - Monitor specific accounts and cleared transactions in real-time
 - Read and combine multiple journal files for consolidated reporting
 - Display hledger manual in Info format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hledger-ui

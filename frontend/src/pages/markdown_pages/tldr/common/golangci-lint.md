@@ -22,8 +22,8 @@ features:
 - Enable or disable specific linters
 - Integrate with major IDEs
 - Identify code style violations and potential bugs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # golangci-lint

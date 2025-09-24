@@ -22,8 +22,8 @@ features:
 - Calculate grid cell size based on the largest image.
 - Crop and resize images to fill grid cells.
 - Limit the number of rows and columns in the grid.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # magick montage

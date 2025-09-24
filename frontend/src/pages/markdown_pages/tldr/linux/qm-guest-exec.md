@@ -22,8 +22,8 @@ features:
   - Set timeouts for command execution to prevent indefinite hangs.
   - Pass input from stdin to the guest agent for interactive commands.
   - Manage and control guest agents through a simple command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm guest exec

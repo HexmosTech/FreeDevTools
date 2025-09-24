@@ -22,8 +22,8 @@ features:
   - Identify third-party packages installed on the system.
   - Provide a summary of security updates available.
   - Check package security support status.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ubuntu-security-status

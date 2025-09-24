@@ -22,8 +22,8 @@ features:
   - Provides customizable update intervals.
   - Offers a command-line interface for efficient monitoring.
   - Enables quick identification of resource-intensive containers.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lxc-top

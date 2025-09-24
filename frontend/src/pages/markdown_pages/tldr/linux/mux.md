@@ -22,8 +22,8 @@ features:
 - Read input from a specified muxer
 - Write output to multiple named muxers simultaneously
 - Intercept and multiplex input event streams
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mux

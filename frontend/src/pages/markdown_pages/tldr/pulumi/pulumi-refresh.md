@@ -22,8 +22,8 @@ features:
 - Applies infrastructure changes to the current stack.
 - Shows a rich diff of changes to be applied.
 - Prevents unexpected changes during refresh with error handling.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi refresh

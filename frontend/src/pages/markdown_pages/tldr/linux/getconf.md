@@ -22,8 +22,8 @@ features:
   - Check system architecture (32-bit or 64-bit)
   - Determine the maximum number of processes a user can run
   - Search for configuration values using grep
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # getconf

@@ -22,8 +22,8 @@ features:
 - Encrypt and decrypt data using various algorithms
 - Verify certificate validity and chain of trust
 - Configure and troubleshoot secure connections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openssl

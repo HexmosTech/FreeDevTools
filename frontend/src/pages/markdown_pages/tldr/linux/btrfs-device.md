@@ -22,8 +22,8 @@ features:
   - Display detailed error statistics for btrfs devices.
   - Scan all disks for btrfs filesystems and inform the kernel.
   - Show per-disk allocation statistics for improved capacity planning.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs device

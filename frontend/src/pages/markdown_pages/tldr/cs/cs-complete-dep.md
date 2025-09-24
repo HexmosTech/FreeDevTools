@@ -22,8 +22,8 @@ features:
 - Search for artifacts in ivy2local repository.
 - Authenticate against repositories with username and password.
 - Retrieve dependencies from specified repository URL.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cs complete-dep

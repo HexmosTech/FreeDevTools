@@ -22,8 +22,8 @@ features:
 - Optimizes PPM images for size and web use
 - Converts PPM images to smaller color palettes
 - Implements color quantization algorithms
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmquant

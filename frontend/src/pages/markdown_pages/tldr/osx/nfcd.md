@@ -22,8 +22,8 @@ features:
 - Control NFC communication on macOS
 - Configure NFC settings programmatically
 - Enable/Disable NFC functionality
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nfcd

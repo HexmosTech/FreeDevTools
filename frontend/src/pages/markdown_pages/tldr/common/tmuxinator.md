@@ -22,8 +22,8 @@ features:
 - List available tmuxinator projects
 - Start tmux sessions automatically with configured layouts
 - Stop running tmux sessions associated with a project
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tmuxinator

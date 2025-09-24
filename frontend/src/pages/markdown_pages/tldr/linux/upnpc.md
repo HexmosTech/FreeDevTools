@@ -22,8 +22,8 @@ features:
 - Retrieve information about UPnP devices
 - List all current port redirections
 - Configure port forwarding via UPnP protocol
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # upnpc

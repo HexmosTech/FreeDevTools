@@ -22,8 +22,8 @@ features:
 - Encrypt key files with a passphrase
 - Securely manage Tarsnap backup keys
 - Automate key generation with command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tarsnap-keygen

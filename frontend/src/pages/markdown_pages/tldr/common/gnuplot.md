@@ -22,8 +22,8 @@ features:
 - Set the output format and size before plotting.
 - Persist the plot preview window after exiting.
 - Generate graphs in multiple image and data formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnuplot

@@ -22,8 +22,8 @@ features:
 - Read data from standard input for flexible data sources
 - Join data from multiple text files based on common columns
 - Format output with custom delimiters and headers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # textql

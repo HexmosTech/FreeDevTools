@@ -22,8 +22,8 @@ features:
 - Manage Godot projects via the project manager
 - Export Godot projects for release with custom presets
 - Execute standalone GDScript files for testing and automation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # godot

@@ -22,8 +22,8 @@ features:
   - List active global and local USE flags for easy overview.
   - Prune global USE flags to clean up your configuration.
   - Manage Gentoo system packages effectively through command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # euse

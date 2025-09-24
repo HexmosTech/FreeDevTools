@@ -22,8 +22,8 @@ features:
 - Customize mesh size for fractal generation.
 - Control the tilt of planet fractals.
 - Adjust the light angle on planet fractals.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmforge

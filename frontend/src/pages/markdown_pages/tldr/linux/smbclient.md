@@ -22,8 +22,8 @@ features:
   - List available shares anonymously or with credentials.
   - Specify workgroup for connection to domain-joined servers.
   - Execute commands directly on the server via the smbclient interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbclient

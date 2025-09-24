@@ -22,8 +22,8 @@ features:
   - Report CPU power consumption
   - Show CPU utilization
   - Provide CPU information for i3, i5 and i7 processors
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # i7z

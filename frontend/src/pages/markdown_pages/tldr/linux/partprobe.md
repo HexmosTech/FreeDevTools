@@ -22,8 +22,8 @@ features:
 - Perform a dry run to preview changes without applying them
 - Identify newly created or modified partitions
 - Rescan partition tables on block devices
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # partprobe

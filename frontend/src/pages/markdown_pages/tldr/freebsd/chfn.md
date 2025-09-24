@@ -22,8 +22,8 @@ features:
   - Change the user's full name and other contact information.
   - Provides a simple and efficient way to manage user accounts.
   - Acts as an alias for the chpass command, simplifying user management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chfn

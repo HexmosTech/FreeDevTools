@@ -22,8 +22,8 @@ features:
 - Specify the Data Deduplication mode for a volume
 - Change the file system label of a volume by file system label
 - Rename volume labels instantly from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Set-Volume

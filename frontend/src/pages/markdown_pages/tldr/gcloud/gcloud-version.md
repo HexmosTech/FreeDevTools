@@ -22,8 +22,8 @@ features:
 - Provide Google Cloud SDK version details
 - Show dependencies of the gcloud CLI
 - Generate version information for the Cloud SDK
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud-version

@@ -22,8 +22,8 @@ features:
 - Import and export ZFS pools for portability
 - Create mirrored ZFS pools for redundancy
 - Add cache devices to ZFS pools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zpool

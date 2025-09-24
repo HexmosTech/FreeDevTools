@@ -22,8 +22,8 @@ features:
 - Target specific BSSIDs for deauthentication attacks
 - Test WiFi network vulnerability
 - Disrupt WiFi connectivity for security assessments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mdk4

@@ -22,8 +22,8 @@ features:
 - Collect performance samples for detailed analysis
 - Upload profiling data to the Blackfire web service
 - Configure and manage the Blackfire agent
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # blackfire

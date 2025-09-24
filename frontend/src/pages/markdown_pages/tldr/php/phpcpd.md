@@ -22,8 +22,8 @@ features:
 - Customize minimum line and token thresholds for detection
 - Exclude specific directories from the analysis scope
 - Output results in PHP-CPD XML format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phpcpd

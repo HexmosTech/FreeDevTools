@@ -22,8 +22,8 @@ features:
 - Integrate GitHub CLI seamlessly with MinTTY.
 - Simplify command-line terminal setup for GitHub.
 - Offer clear documentation for CLI configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh mintty

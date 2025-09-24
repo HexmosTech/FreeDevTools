@@ -22,8 +22,8 @@ features:
 - Create new OpenStack server instances from images
 - Delete multiple OpenStack server instances
 - Migrate servers to different hosts with live migration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openstack server

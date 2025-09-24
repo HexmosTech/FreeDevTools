@@ -22,8 +22,8 @@ features:
 - Choose to show or hide the mouse pointer.
 - Display the number of failed login attempts.
 - Integrate with i3 window manager for screen locking.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # blurlock

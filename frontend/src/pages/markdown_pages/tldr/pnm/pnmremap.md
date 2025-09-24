@@ -22,8 +22,8 @@ features:
 - Use a default color for missing palette colors
 - Remap colors based on a PPM palette file
 - Convert image colors using Netpbm
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmremap

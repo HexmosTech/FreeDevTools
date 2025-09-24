@@ -22,8 +22,8 @@ features:
 - Encrypt and decrypt PDF files with password protection
 - Split PDF documents into smaller chunks
 - Extract bookmarks and annotations from PDF files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cpdf

@@ -22,8 +22,8 @@ features:
 - Display current, wanted, and latest package versions.
 - Highlight vulnerable packages needing immediate attention.
 - Simplify npm package management with version insights.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm outdated

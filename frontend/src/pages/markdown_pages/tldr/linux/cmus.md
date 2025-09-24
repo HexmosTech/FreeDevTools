@@ -22,8 +22,8 @@ features:
   - Search for songs, albums, and artists
   - Control playback with keyboard shortcuts
   - Update and refresh music metadata
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cmus

@@ -22,8 +22,8 @@ features:
   - Communicates with the Slurm controller to report step status.
   - Handles resource allocation and release for individual job steps.
   - Enables efficient management of complex, multi-step workflows.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # slurmstepd

@@ -22,8 +22,8 @@ features:
 - Execute traceroute operations with TCP scans
 - Analyze network traffic through raw IP packets
 - Flood network with SYN packets for charge testing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hping3

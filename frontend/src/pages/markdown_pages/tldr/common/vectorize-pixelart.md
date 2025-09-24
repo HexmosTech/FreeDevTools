@@ -22,8 +22,8 @@ features:
 - Create scalable vector images
 - Process pixel art through command line
 - Generate vector graphics from bitmap images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vectorize-pixelart

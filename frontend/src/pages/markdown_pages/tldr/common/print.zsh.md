@@ -22,8 +22,8 @@ features:
 - Enable backslash escapes for special characters
 - Print arguments using printf-style formatting
 - Suppress trailing newline in printed output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # print

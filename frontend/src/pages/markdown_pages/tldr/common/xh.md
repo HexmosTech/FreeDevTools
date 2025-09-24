@@ -6,24 +6,24 @@ canonical: "https://hexmos.com/freedevtools/tldr/common/xh/"
 description: "Send HTTP requests with the XH command-line tool.  Easily make GET and POST requests, include JSON data, specify headers, and more. Free online tool, no registration required."
 category: common
 keywords:
-- HTTP request command line tool
-- xh http client command
-- command line HTTP client
-- CLI HTTP request tool
-- REST API client command line
-- JSON HTTP request tool
-- xh GET request example
-- xh POST request example
-- curl command alternative
-- fast HTTP client command
+  - HTTP request command line tool
+  - xh http client command
+  - command line HTTP client
+  - CLI HTTP request tool
+  - REST API client command line
+  - JSON HTTP request tool
+  - xh GET request example
+  - xh POST request example
+  - curl command alternative
+  - fast HTTP client command
 features:
-- Send GET and POST requests with ease.
-- Include JSON data in POST request bodies.
-- Manage HTTP request headers with ease.
-- Save response bodies directly to files.
-- View equivalent curl command for easy transition.
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+  - Send GET and POST requests with ease.
+  - Include JSON data in POST request bodies.
+  - Manage HTTP request headers with ease.
+  - Save response bodies directly to files.
+  - View equivalent curl command for easy transition.
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xh

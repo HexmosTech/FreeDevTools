@@ -22,8 +22,8 @@ features:
 - Retrieves and outputs the content bodies of URLs.
 - Filters results based on specified date ranges.
 - Stores outputs to user-defined files and directories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waymore

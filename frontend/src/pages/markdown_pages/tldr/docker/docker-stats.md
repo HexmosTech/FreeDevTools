@@ -22,8 +22,8 @@ features:
 - Customize output format for specific metrics
 - Show stats for both running and stopped containers
 - Disable streaming and retrieve current stats only
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker stats

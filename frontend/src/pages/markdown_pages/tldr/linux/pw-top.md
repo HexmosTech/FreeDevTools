@@ -22,8 +22,8 @@ features:
   - Allows monitoring of remote PipeWire instances.
   - Offers batch mode for periodic data output.
   - Enables specifying the number of iterations in batch mode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-top

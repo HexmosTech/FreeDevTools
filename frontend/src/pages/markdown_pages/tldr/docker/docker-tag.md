@@ -22,8 +22,8 @@ features:
 - Retag Docker images for version control
 - Manage multiple tags for a single Docker image
 - Simplify Docker image identification and organization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker tag

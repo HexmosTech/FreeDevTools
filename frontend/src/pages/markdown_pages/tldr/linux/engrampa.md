@@ -22,8 +22,8 @@ features:
 - Add files and directories to archives recursively
 - Extract files to a specific directory
 - Support various archive formats like tar, zip, 7z
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # engrampa

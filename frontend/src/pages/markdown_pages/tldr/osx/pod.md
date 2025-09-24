@@ -22,8 +22,8 @@ features:
 - List all available CocoaPods packages.
 - Initialize a new Podfile with default settings.
 - Remove CocoaPods integration from Xcode projects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pod

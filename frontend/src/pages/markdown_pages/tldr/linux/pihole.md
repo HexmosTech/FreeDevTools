@@ -22,8 +22,8 @@ features:
 - Start or stop the Pi-hole daemon process
 - Reload DNS resolver without restarting the server
 - Allow or deny specific domains from accessing the internet
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pihole

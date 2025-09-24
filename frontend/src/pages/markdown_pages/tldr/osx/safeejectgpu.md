@@ -22,8 +22,8 @@ features:
 - Display applications using a specific GPU
 - Check the current status of a GPU
 - Launch an application on a designated GPU
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # SafeEjectGPU

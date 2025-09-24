@@ -22,8 +22,8 @@ features:
 - Describe specific indexes in detail
 - Retrieve search query suggestions for improved search accuracy
 - Describe data sources configuration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws kendra

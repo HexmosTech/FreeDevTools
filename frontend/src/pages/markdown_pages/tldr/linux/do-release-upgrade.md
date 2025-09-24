@@ -22,8 +22,8 @@ features:
 - Upgrade to the latest proposed Ubuntu release
 - Force upgrade to a specific Ubuntu release version
 - Manage software sources during release upgrades
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # do-release-upgrade

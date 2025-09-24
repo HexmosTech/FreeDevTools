@@ -22,8 +22,8 @@ features:
 - Display logical volumes associated with a physical volume
 - Output detailed information in JSON format
 - Cache volume information for faster lookups
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pvscan

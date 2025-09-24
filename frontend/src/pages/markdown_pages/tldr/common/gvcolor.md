@@ -22,8 +22,8 @@ features:
 - Integrate with dot layout engine
 - Output colorized graph in Graphviz format
 - Enhance graph readability through color coding
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gvcolor

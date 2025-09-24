@@ -22,8 +22,8 @@ features:
 - Provide verbose output for detailed information
 - Identify failing CI checks in GitHub
 - Monitor build pipeline statuses directly from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hub ci-status

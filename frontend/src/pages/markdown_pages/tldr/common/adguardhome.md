@@ -22,8 +22,8 @@ features:
 - Manage AdGuardHome as a system service (install, start, stop, restart).
 - Specify a custom work directory for data storage.
 - Reload the configuration without restarting the service.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # AdGuardHome

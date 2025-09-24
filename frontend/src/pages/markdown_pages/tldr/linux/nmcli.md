@@ -22,8 +22,8 @@ features:
   - Control network devices status and properties
   - Establish and manage Wi-Fi connections
   - Monitor NetworkManager activity and events
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nmcli

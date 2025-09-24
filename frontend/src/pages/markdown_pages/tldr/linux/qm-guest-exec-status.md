@@ -22,8 +22,8 @@ features:
 - Retrieve status information for processes started via qm guest exec.
 - Monitor process states within QEMU/KVM virtual machines.
 - Identify running, exited, or terminated processes in a VM.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm guest exec-status

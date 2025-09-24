@@ -22,8 +22,8 @@ features:
 - Connect to remote servers using username and host
 - Specify custom SSH configurations for connections
 - Execute commands remotely via a persistent connection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mosh

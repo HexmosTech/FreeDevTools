@@ -22,8 +22,8 @@ features:
 - Change the root directory in SteamOS
 - Mount a different filesystem as root
 - Access the SteamOS environment from an alternative root filesystem
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-chroot

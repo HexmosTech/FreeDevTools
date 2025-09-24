@@ -22,8 +22,8 @@ features:
 - Flash firmware to an STM32 microcontroller.
 - Specify a custom port for the GDB server.
 - Control ARM Cortex-M devices using GDB.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # st-util

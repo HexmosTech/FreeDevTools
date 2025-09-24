@@ -22,8 +22,8 @@ features:
 - Dismount a volume prior to checking it
 - Change the NTFS log file size
 - Report disk health and identify potential issues
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chkdsk

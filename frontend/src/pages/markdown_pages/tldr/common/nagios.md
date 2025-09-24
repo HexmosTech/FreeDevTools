@@ -22,8 +22,8 @@ features:
 - Schedule service checks and print information to standard output
 - Verify Nagios configuration files for errors
 - Control and monitor host, service, and network status
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nagios

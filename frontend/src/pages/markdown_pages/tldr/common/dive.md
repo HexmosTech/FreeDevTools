@@ -22,8 +22,8 @@ features:
 - Visualize Docker image layers and their respective sizes
 - Explore file system changes in each Docker image layer
 - Build and analyze a Docker image directly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dive

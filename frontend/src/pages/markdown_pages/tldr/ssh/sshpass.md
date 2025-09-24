@@ -22,8 +22,8 @@ features:
 - Read SSH passwords from files
 - Bypass interactive password prompts in SSH scripts
 - Execute commands on remote servers with password-based authentication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sshpass

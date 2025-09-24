@@ -22,8 +22,8 @@ features:
 - Configure SSL certificates for secure connections.
 - Specify a custom port for the server.
 - Upload files to the server via HTTP.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # updog

@@ -22,8 +22,8 @@ features:
   - Supports various soundfont formats (.sf2).
   - Provides command-line interface for easy use.
   - Enables control over audio playback parameters (indirectly through soundfont settings).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fluidsynth

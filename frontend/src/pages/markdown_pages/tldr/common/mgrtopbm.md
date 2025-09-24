@@ -22,8 +22,8 @@ features:
 - Generate PBM image output from MGR input
 - Support batch conversion of MGR images
 - Integrate with Netpbm image processing pipeline
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mgrtopbm

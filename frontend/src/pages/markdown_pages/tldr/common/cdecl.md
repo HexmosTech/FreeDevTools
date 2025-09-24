@@ -22,8 +22,8 @@ features:
 - Cast variables to different C or C++ types
 - Operate in interactive mode for quick testing
 - Generate complete C code with semicolons and braces
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cdecl

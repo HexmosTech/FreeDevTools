@@ -22,8 +22,8 @@ features:
   - Force audit mode application
   - Manage AppArmor profiles from a specified directory
   - Disable reloading during audit mode setup
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aa-audit

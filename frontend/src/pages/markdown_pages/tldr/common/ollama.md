@@ -22,8 +22,8 @@ features:
 - Serve LLMs locally for low-latency inference
 - Create custom models using a Modelfile
 - List and delete models to manage disk space
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ollama

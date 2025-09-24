@@ -22,8 +22,8 @@ features:
   - Efficiently manipulate and manage kitebuilder schemas.
   - Effectively manage both cached and remote wordlists.
   - Discover API endpoints with advanced contextual scanning.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kiterunner

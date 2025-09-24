@@ -22,8 +22,8 @@ features:
 - Specify the container to execute commands in
 - Enable TTY allocation for interactive sessions
 - Stream standard input, output, and error streams
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl exec

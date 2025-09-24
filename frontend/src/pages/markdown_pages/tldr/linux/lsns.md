@@ -22,8 +22,8 @@ features:
 - Identify namespaces associated with a specific process ID
 - Filter namespaces by type (mnt, net, ipc, user, pid, uts, cgroup, time)
 - Customize output to show namespace ID, type, PID, and command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lsns

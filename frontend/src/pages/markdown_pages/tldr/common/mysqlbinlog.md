@@ -22,8 +22,8 @@ features:
 - Show events between specific date and time ranges.
 - Display events between specific positions in the log.
 - Read binary logs directly from a MySQL server.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mysqlbinlog

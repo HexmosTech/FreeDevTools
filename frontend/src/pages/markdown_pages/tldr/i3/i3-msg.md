@@ -22,8 +22,8 @@ features:
 - Retrieve the layout tree of i3 in JSON format
 - Control i3 window behavior programmatically
 - Automate i3 window management tasks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # i3-msg

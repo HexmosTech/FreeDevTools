@@ -22,8 +22,8 @@ features:
 - Upgrade outdated Atom packages and themes
 - Manage Atom editor extensions via command line
 - Search for packages in the Atom repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apm

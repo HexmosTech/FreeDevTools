@@ -22,8 +22,8 @@ features:
 - Start an interactive Racket REPL shell
 - Run Racket modules as scripts
 - Interpret `typed/racket` hashlang
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # racket

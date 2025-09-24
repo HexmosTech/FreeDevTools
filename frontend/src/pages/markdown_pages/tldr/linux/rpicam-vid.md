@@ -22,8 +22,8 @@ features:
   - Define output file name and location.
   - Utilize command-line interface for easy integration.
   - Control video recording parameters via command-line options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpicam-vid

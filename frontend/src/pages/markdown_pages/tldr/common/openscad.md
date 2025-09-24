@@ -22,8 +22,8 @@ features:
 - Render OpenSCAD files to PNG images
 - Customize PNG rendering with color schemes
 - Generate solid 3D CAD objects from scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openscad

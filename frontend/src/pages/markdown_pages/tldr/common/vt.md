@@ -22,8 +22,8 @@ features:
 - Retrieve detailed analysis reports
 - Download files from VirusTotal (premium feature)
 - Initialize VirusTotal API key for authentication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vt

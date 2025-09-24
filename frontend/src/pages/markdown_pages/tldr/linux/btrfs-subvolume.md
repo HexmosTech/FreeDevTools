@@ -22,8 +22,8 @@ features:
   - Delete specified Btrfs subvolumes
   - Create read-only snapshots of subvolumes
   - Display detailed information about a subvolume
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs subvolume

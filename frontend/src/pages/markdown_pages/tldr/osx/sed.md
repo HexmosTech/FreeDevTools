@@ -22,8 +22,8 @@ features:
 - Automate text editing tasks with scripting
 - Filter and manipulate text based on specific patterns
 - Edit files in-place with backup options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sed

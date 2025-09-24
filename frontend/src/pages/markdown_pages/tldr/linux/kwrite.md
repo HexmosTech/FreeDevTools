@@ -22,8 +22,8 @@ features:
   - Specify custom encoding for text files
   - Navigate to specific lines and columns within a text file
   - Integrate with the KDE desktop environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kwrite

@@ -22,8 +22,8 @@ features:
 - Convert Markdown content from strings.
 - Convert Markdown files from URLs to PDF.
 - Support command-line conversion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # markdown2pdf

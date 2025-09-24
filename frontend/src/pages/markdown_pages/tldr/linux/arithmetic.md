@@ -22,8 +22,8 @@ features:
 - Define a number range for controlling problem difficulty
 - Practice addition, subtraction, multiplication, and division
 - Test arithmetic skills on the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arithmetic

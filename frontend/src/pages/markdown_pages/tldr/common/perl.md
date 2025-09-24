@@ -22,8 +22,8 @@ features:
 - Perform in-place file substitutions with backup options.
 - Access Perl's extensive inline documentation.
 - Extract specific capture groups from text using regular expressions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # perl

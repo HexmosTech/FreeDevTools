@@ -22,8 +22,8 @@ features:
   - Allows viewing configuration of specific snapshots.
   - Provides detailed information about container settings.
   - Uses a simple and intuitive command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pct config

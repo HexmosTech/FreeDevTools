@@ -22,8 +22,8 @@ features:
 - Utilize specific initializers like create-react-app to bootstrap projects.
 - Create new npm projects quickly and efficiently.
 - Streamline the setup of Node.js applications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm init

@@ -22,8 +22,8 @@ features:
 - Filter test suites by matching file paths against regular expressions.
 - Execute tests whose names match a provided regular expression.
 - Run test suites related to a specified source file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jest

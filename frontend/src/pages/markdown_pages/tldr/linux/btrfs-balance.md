@@ -22,8 +22,8 @@ features:
   - Balance data blocks based on utilization percentage.
   - Balance metadata chunks based on utilization and device.
   - Convert data and metadata blocks to different RAID levels.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs balance

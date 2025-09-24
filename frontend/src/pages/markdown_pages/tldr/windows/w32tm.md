@@ -22,8 +22,8 @@ features:
 - Display time offset graph against a time server
 - Show NTP reply from a specified time server
 - Enable and write w32time debug logs to a file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # w32tm

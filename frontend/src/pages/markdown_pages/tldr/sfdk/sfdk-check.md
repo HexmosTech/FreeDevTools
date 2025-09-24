@@ -22,8 +22,8 @@ features:
 - Add specific testing levels to the quality check process.
 - Remove unwanted testing levels from the check configuration.
 - Include custom test suites in the quality check execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk check

@@ -22,8 +22,8 @@ features:
 - Convert man pages to HTML for web publishing
 - Typeset documents with tables and pictures to PDF
 - Execute groff commands with automatic preprocessor options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # groff

@@ -22,8 +22,8 @@ features:
 - Display an ASCII diagram of in-progress merge or rebase.
 - Continue an imerge operation after resolving conflicts.
 - Finalize the imerge operation upon completion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git imerge

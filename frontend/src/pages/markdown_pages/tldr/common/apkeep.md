@@ -22,8 +22,8 @@ features:
 - Specify download source (Google Play, F-Droid, etc.)
 - Save APK files to a specified directory
 - Download specific versions of Android applications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apkeep

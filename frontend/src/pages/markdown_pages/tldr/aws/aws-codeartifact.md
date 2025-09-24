@@ -22,8 +22,8 @@ features:
 - Retrieve repository endpoint URLs for different formats
 - Display help information for CodeArtifact commands
 - Manage CodeArtifact packages and package versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws codeartifact

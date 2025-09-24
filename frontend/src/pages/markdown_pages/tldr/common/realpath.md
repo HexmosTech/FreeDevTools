@@ -22,8 +22,8 @@ features:
 - Normalize paths by resolving ".." components.
 - Suppress error messages for non-existent paths.
 - Determine the existence of specified path components.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # realpath

@@ -22,8 +22,8 @@ features:
 - Configures network interfaces for WWAN devices.
 - Facilitates wireless wide area network connectivity.
 - Provides background management of WWAN devices on macOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wwand

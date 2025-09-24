@@ -22,8 +22,8 @@ features:
 - Perform file system I/O read and write tests
 - Simulate database workloads for performance analysis
 - Analyze system resource utilization under stress
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sysbench

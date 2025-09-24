@@ -22,8 +22,8 @@ features:
   - Control port opening with specific sequences.
   - Offers verbose output for detailed connection information.
   - Supports various command-line options for flexible usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # knock

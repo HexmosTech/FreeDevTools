@@ -22,8 +22,8 @@ features:
 - Simulate multi-lens camera effects like Pop9
 - Create distorted image appearances
 - Generate a new PAM image with tiled content
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pampop9

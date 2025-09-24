@@ -22,8 +22,8 @@ features:
 - Print service check scheduling information to stdout.
 - Start Nagios4 with a specific configuration file.
 - Perform on-demand health checks and system diagnostics.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nagios4

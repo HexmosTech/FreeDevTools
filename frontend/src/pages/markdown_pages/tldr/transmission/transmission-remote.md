@@ -22,8 +22,8 @@ features:
 - List all active torrents.
 - Start, stop, or remove torrents individually or in groups.
 - Move torrents to a different directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transmission-remote

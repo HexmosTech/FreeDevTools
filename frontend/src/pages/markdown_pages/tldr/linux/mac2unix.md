@@ -22,8 +22,8 @@ features:
 - Display information about line endings in a file
 - Keep, add, or remove Byte Order Mark from files
 - Supports command-line batch processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mac2unix

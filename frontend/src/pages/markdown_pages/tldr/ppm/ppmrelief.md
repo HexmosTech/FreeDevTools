@@ -22,8 +22,8 @@ features:
 - Output the relief to another PPM file
 - Generate visual representations of depth from images
 - Perform image manipulation using Netpbm tools
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmrelief

@@ -22,8 +22,8 @@ features:
 - Determine PDF page count and page size
 - Show PDF creation and modification dates
 - Bypass PDF security restrictions with password
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfinfo

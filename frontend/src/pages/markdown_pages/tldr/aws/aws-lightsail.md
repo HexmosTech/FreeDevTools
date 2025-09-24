@@ -22,8 +22,8 @@ features:
 - Stop running Lightsail instances
 - Delete existing Lightsail instances
 - Get the status of a specific Lightsail instance
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws lightsail

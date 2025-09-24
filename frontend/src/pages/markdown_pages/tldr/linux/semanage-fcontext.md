@@ -22,8 +22,8 @@ features:
   - Delete user-defined file labeling rules
   - Relabel directories recursively
   - Manage persistent SELinux security contexts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # semanage fcontext

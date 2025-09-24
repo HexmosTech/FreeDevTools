@@ -22,8 +22,8 @@ features:
 - Track changes to data and schema over time.
 - Push and pull database changes to remote repositories.
 - Execute SQL queries on versioned data.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt

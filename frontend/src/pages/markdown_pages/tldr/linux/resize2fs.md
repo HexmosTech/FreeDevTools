@@ -22,8 +22,8 @@ features:
 - Shrink filesystems to minimum size
 - Display progress during filesystem resizing
 - Manage ext2, ext3, and ext4 filesystems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # resize2fs

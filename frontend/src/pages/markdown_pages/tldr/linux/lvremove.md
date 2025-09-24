@@ -22,8 +22,8 @@ features:
   - Manage LVM storage efficiently.
   - Integrate into shell scripts for automation.
   - Provides command-line control over LVM.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvremove

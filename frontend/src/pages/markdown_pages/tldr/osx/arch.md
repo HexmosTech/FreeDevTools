@@ -22,8 +22,8 @@ features:
   - Run commands using a different CPU architecture.
   - Facilitate cross-platform testing and debugging.
   - Isolate command execution to a specific architecture.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arch

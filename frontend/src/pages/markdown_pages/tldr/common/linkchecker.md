@@ -22,8 +22,8 @@ features:
 - Ignores specific URLs based on regular expressions.
 - Outputs results to a CSV file for analysis.
 - Recursively traverses websites to find all links.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linkchecker

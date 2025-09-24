@@ -22,8 +22,8 @@ features:
 - Recursively add directory contents to a changelist
 - Remove an entire SVN changelist at once
 - Commit changes within a specific SVN changelist
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # svn changelist

@@ -22,8 +22,8 @@ features:
 - Compare two files to view differences within PHPStorm
 - Launch PHPStorm from the command line with specified parameters
 - Integrate with terminal-based workflows for efficient coding
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phpstorm

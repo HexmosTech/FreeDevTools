@@ -22,8 +22,8 @@ features:
 - Integrates with PHP-CS-Fixer for advanced styling options
 - Supports custom configuration files for tailored formatting
 - Allows dry runs to preview changes before applying
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pint

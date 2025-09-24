@@ -22,8 +22,8 @@ features:
   - Generate Certificate Signing Requests (CSRs) for certificate authorities.
   - Issue and manage Certificate Authority (CA) certificates.
   - Verify certificates against trusted Certificate Authorities.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # certtool

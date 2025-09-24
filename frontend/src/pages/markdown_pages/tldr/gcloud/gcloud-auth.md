@@ -22,8 +22,8 @@ features:
 - Manage Application Default Credentials (ADC)
 - List authenticated Google Cloud accounts
 - Display the current account's access token
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud auth

@@ -22,8 +22,8 @@ features:
 - Allows limiting GPT3 token usage for cost control
 - Enables customization of GPT result uniqueness
 - Supports specifying a specific GPT model for code review
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rgpt

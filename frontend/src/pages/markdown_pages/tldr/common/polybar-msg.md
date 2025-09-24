@@ -22,8 +22,8 @@ features:
 - Toggle bar visibility on demand
 - Execute module actions with custom data
 - Send commands to specific Polybar instances
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # polybar-msg

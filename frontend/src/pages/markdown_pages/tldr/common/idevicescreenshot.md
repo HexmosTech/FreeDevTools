@@ -22,8 +22,8 @@ features:
 - Specify a custom file name for the screenshot
 - Control device image capture from the command line
 - Grab screenshots directly via USB connection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # idevicescreenshot

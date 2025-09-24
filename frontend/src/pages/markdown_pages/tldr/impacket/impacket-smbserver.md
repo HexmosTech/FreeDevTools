@@ -22,8 +22,8 @@ features:
 - Host a Windows file server alternative on any machine
 - Enable file sharing over a local network
 - Quickly share files using the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-smbserver

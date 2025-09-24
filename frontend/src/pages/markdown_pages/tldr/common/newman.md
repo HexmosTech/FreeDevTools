@@ -22,8 +22,8 @@ features:
 - Execute API tests in a CI/CD pipeline.
 - Automate API testing using the command line.
 - Integrate with Postman environments and global variables.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # newman

@@ -22,8 +22,8 @@ features:
 - Generate hashes compatible with John the Ripper.
 - Specify individual compressed files for hash extraction.
 - Output hashes to a file for password cracking.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zip2john

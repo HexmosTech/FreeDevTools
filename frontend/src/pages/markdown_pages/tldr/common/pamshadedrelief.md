@@ -22,8 +22,8 @@ features:
 - Convert elevation data to visual terrain representation
 - Create realistic 3D-like effects from 2D images
 - Process PAM image files directly from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamshadedrelief

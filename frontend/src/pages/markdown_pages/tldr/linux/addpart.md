@@ -22,8 +22,8 @@ features:
 - Add a partition to a block device by specifying start and length
 - Update partition information dynamically without rebooting
 - Integrate directly with the Linux kernel's partition handling system
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # addpart

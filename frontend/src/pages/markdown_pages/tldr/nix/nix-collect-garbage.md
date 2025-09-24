@@ -22,8 +22,8 @@ features:
 - Simulate garbage collection with dry-run mode
 - Delete store paths older than a specified age
 - Reclaim disk space used by Nix
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nix-collect-garbage

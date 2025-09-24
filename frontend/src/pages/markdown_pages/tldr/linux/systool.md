@@ -22,8 +22,8 @@ features:
   - Displays only device drivers for a given bus.
   - Provides detailed information about system devices.
   - Uses the sysfs interface to access device information.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systool

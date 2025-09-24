@@ -22,8 +22,8 @@ features:
 - Set chain policies for traffic control
 - Append rules based on IP, protocol, and port
 - Delete specific chain rules by line number
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iptables

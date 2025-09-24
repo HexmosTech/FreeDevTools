@@ -22,8 +22,8 @@ features:
 - Customize table of contents for ebooks
 - Set title and author metadata during conversion
 - Batch convert multiple ebook files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ebook-convert

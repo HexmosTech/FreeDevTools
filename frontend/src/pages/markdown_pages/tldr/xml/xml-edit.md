@@ -22,8 +22,8 @@ features:
 - Rename XML attributes using XPATH expressions
 - Update XML attribute values based on XPATH expressions
 - Modify XML structure via command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml edit

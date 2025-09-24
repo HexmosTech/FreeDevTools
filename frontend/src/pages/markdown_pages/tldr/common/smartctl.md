@@ -22,8 +22,8 @@ features:
 - Report self-test logs for diagnostic information
 - Show current and last self-test statuses
 - Output exhaustive SMART data attributes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smartctl

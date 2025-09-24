@@ -22,8 +22,8 @@ features:
 - Generate braille-based ASCII art for detailed representation
 - Dither images for smoother transitions in braille output
 - Create ASCII art with negative color schemes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ascii-image-converter

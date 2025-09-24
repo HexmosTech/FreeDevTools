@@ -22,8 +22,8 @@ features:
 - Exclude specific programs during dotfile addition
 - Run custom setup scripts for individual dotfiles
 - Check dotfile status and identify changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tuckr

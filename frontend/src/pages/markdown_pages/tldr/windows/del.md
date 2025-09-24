@@ -22,8 +22,8 @@ features:
 - Recursively delete files in subdirectories.
 - Prompt for confirmation before deleting each file.
 - Delete files based on specified attributes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # del

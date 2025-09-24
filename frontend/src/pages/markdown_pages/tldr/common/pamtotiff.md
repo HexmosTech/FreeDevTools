@@ -22,8 +22,8 @@ features:
 - Force color output for greyscale PAM images
 - Support for various TIFF compression algorithms (none, packbits, lzw, g3, g4, flate, adobeflate)
 - Command-line image manipulation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamtotiff

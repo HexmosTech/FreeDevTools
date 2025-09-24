@@ -22,8 +22,8 @@ features:
 - Control the expiration time of pre-signed URLs
 - Create temporary access to private S3 resources
 - Generate URLs via the AWS CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 presign

@@ -22,8 +22,8 @@ features:
 - Integrates with syslog for centralized logging
 - Supports different logging formats and destinations
 - Simplifies event tracing and debugging on macOS
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glogger

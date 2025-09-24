@@ -22,8 +22,8 @@ features:
   - Set the image policy for machine ID generation
   - Output results in JSON format
   - Operate on a disk image to set the machine ID
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-machine-id-setup

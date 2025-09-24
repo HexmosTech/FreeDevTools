@@ -22,8 +22,8 @@ features:
 - Allow specific applications to run without sleep
 - Simulate user activity to prevent system idle
 - Run in the background to keep the system awake
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # caffeinate

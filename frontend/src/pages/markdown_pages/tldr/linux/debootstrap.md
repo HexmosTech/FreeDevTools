@@ -22,8 +22,8 @@ features:
   - Use a local mirror for faster bootstrapping.
   - Create chroot environments for easy system administration.
   - Install Debian systems to a specified directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # debootstrap

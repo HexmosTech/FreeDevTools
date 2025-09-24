@@ -22,8 +22,8 @@ features:
 - Cancel all pending jobs for a CUPS destination
 - Control printer availability via command line
 - Manage CUPS print queues and destinations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cupsenable

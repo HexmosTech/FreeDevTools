@@ -22,8 +22,8 @@ features:
 - Update currency exchange rates directly from the terminal
 - Execute calculations from a file
 - List available functions, prefixes, units, and variables
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qalc

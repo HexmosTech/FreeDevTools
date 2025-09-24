@@ -22,8 +22,8 @@ features:
   - Supports non-blocking lock acquisition with conflict handling
   - Sets a timeout for waiting for a lock to become available
   - Provides a simple way to serialize access to shared resources
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flock

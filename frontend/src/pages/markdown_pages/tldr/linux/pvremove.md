@@ -22,8 +22,8 @@ features:
 - Forcefully remove labels to bypass confirmation prompts.
 - Output results in JSON format for easy parsing.
 - Suppress prompts for non-interactive use cases.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pvremove

@@ -22,8 +22,8 @@ features:
   - Identifies conflicting changes
   - Shows all changes with conflict outlining
   - Provides a detailed analysis of file content
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diff3

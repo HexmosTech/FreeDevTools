@@ -22,8 +22,8 @@ features:
 - Determine the operating system's underlying architecture.
 - Show if the system is 32-bit or 64-bit.
 - Provide a concise output of the system architecture.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arch

@@ -22,8 +22,8 @@ features:
 - Uses hash files for efficient duplicate detection and reduced memory usage
 - Limits I/O and CPU threads for optimized performance
 - Identifies and removes redundant data to reclaim disk space
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # duperemove

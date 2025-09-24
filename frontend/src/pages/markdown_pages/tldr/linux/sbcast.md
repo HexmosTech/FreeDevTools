@@ -22,8 +22,8 @@ features:
   - Transfer executables to allocated nodes
   - Distribute configuration files to Slurm nodes
   - Simplify file distribution within a Slurm batch job
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sbcast

@@ -22,8 +22,8 @@ features:
   - Provides command-line control over the filesystem creation process.
   - Enables the preparation of storage devices for Minix-based systems.
   - Offers a simple and efficient way to manage Minix filesystems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.minix

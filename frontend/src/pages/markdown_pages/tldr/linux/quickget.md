@@ -22,8 +22,8 @@ features:
   - Manages ISO files for various operating systems.
   - Supports multiple operating systems and versions.
   - Allows for selective download of images or configurations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # quickget

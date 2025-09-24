@@ -22,8 +22,8 @@ features:
   - Supports TLS encryption for secure connections.
   - Offers easy integration with Cockpit Bridge.
   - Provides a command-line interface for simple management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cockpit-ws

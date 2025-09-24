@@ -22,8 +22,8 @@ features:
 - Create new volumes with specified size, image, or snapshot
 - Delete one or more OpenStack volumes
 - Migrate existing volumes to different hosts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openstack volume

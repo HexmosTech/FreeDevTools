@@ -22,8 +22,8 @@ features:
 - Set the symmetric cipher for encryption
 - Re-encrypt all encrypted files with new credentials
 - Display the repository's current cipher and password
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm transcrypt

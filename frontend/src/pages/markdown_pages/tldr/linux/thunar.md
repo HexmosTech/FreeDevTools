@@ -22,8 +22,8 @@ features:
   - Offers a bulk rename utility for batch file renaming.
   - Allows for opening multiple windows to manage various directories concurrently.
   - Enables closing all open Thunar windows with a single command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # thunar

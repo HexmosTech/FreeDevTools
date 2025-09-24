@@ -22,8 +22,8 @@ features:
 - Debug a specific environment within a PlatformIO project
 - Debug using a custom project configuration file
 - Utilize GDB debugger with specified options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio debug

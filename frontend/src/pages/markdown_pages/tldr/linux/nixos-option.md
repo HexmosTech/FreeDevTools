@@ -22,8 +22,8 @@ features:
   - List authorized keys for a specific user.
   - Display all remote builders.
   - Inspect options on a different NixOS configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nixos-option

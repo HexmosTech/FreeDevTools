@@ -22,8 +22,8 @@ features:
 - Resize by scale factors for width and height independently
 - Perform quick image scaling for efficiency
 - Convert image dimension using command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmscalefixed

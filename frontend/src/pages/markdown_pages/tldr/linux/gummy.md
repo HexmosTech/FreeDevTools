@@ -22,8 +22,8 @@ features:
 - Manage brightness and temperature for multiple screens.
 - Increase or decrease brightness levels incrementally.
 - Set precise brightness and temperature values.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gummy

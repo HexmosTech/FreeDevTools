@@ -22,8 +22,8 @@ features:
 - Specify field and record delimiters for data upload
 - Support multi-threaded uploads for faster data transfer
 - Facilitate data movement in Alibaba Cloud ODPS
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # odps tunnel

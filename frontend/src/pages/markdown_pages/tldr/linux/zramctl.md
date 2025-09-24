@@ -22,8 +22,8 @@ features:
   - Monitor the status and usage of currently initialized zRAM devices.
   - Configure compression algorithms for optimal performance.
   - Format zRAM devices using mkfs or mkswap.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zramctl

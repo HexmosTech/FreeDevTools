@@ -22,8 +22,8 @@ features:
   - Offers options for lossy and lossless compression.
   - Allows for control over compression quality.
   - Enables efficient image optimization for web use.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # img2webp

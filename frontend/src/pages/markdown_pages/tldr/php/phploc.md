@@ -22,8 +22,8 @@ features:
 - Generate CSV or XML reports of code metrics
 - Count PHPUnit test case classes and methods
 - Customize analyzed files using glob patterns
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phploc

@@ -22,8 +22,8 @@ features:
 - Define extra variables via command-line or JSON files.
 - Target specific tasks within a playbook using tags or starting points.
 - Perform dry-run checks to preview changes before execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ansible-playbook

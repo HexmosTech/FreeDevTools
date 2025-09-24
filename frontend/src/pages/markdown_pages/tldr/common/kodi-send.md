@@ -22,8 +22,8 @@ features:
 - Reboot the system running Kodi
 - Trigger specific Kodi functions via command line
 - Quit the Kodi application remotely
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kodi-send

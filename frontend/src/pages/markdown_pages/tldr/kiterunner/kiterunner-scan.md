@@ -22,8 +22,8 @@ features:
 - Customize scan concurrency for optimized performance.
 - Ignore specific content length responses for focused results.
 - Perform full Kitebuilder scans without phase scanning.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kiterunner scan

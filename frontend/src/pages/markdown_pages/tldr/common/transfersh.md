@@ -22,8 +22,8 @@ features:
 - Upload entire directories recursively
 - Use a custom transfer.sh server
 - Upload a directory as an uncompressed tar archive
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transfersh

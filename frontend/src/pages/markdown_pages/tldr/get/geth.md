@@ -22,8 +22,8 @@ features:
 - Create new Ethereum accounts
 - Enable mining on Ethereum network
 - Interact with the Ethereum blockchain
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # geth

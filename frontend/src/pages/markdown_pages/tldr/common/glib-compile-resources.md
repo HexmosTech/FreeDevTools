@@ -22,8 +22,8 @@ features:
 - Generate resource dependencies list
 - Specify target file for compiled resources
 - Integrate resources into GTK applications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glib-compile-resources

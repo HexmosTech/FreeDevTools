@@ -22,8 +22,8 @@ features:
 - Retrieve architecture information via SMB protocol
 - Resolve architecture using Impacket's getArch.py script
 - Analyze system architecture for compatibility testing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-getArch

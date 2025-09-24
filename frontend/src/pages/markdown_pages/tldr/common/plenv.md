@@ -22,8 +22,8 @@ features:
   - Define project-specific Perl versions using local settings.
   - Manage Perl versions for individual shell sessions.
   - List all installed Perl versions for easy reference.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # plenv

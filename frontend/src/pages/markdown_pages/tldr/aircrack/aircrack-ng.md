@@ -22,8 +22,8 @@ features:
 - Use wordlists for password cracking
 - Utilize multiple CPU threads for faster cracking
 - Specify ESSID and BSSID for targeted cracking
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aircrack-ng

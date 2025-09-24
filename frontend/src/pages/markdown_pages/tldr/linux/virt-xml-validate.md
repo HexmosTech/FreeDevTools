@@ -22,8 +22,8 @@ features:
   - Reports detailed errors for schema violations with precise locations.
   - Supports various Libvirt XML configurations (domains, networks, storage).
   - Integrates with Libvirt command-line tools for efficient workflow.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-xml-validate

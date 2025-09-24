@@ -22,8 +22,8 @@ features:
 - Uninstall Node.js versions based on filters
 - Remove all installed Node.js versions
 - Integrate seamlessly with `ps-nvm` for Node.js management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Remove-NodeVersion

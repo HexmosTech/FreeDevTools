@@ -22,8 +22,8 @@ features:
 - Upgrade all installed Haxe libraries at once
 - Install libraries directly from Git repositories
 - List all locally installed Haxe libraries in a tree view
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # haxelib

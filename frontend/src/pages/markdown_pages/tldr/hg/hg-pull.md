@@ -22,8 +22,8 @@ features:
 - Update the local repository to the latest remote head.
 - Force pulling changes from unrelated repositories.
 - Pull changes up to a specific revision changeset.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg pull

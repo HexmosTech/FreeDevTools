@@ -22,8 +22,8 @@ features:
 - Download courses with captions and subtitles.
 - Throttle download speeds to avoid detection.
 - Extract specific paths within a course.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvd

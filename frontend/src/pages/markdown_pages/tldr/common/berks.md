@@ -22,8 +22,8 @@ features:
 - Upload cookbooks to the Chef server seamlessly
 - View and analyze cookbook dependencies effectively
 - Automate cookbook management with command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # berks

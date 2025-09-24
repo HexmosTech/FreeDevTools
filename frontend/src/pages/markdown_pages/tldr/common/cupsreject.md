@@ -22,8 +22,8 @@ features:
 - Control print job rejection on a remote CUPS server
 - Manage printer queues from the command line
 - Disable printing to selected destinations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cupsreject

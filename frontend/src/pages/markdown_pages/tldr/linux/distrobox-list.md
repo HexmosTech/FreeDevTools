@@ -22,8 +22,8 @@ features:
   - Differentiates Distrobox containers from Podman or Docker containers.
   - Simplifies container management within the Distrobox environment.
   - Offers a clear and concise way to inspect container status.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # distrobox-list

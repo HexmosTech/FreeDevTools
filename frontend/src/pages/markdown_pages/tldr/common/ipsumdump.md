@@ -22,8 +22,8 @@ features:
 - Display timestamps and port information of network traffic
 - Anonymize IP addresses in PCAP files
 - Extract packet lengths from PCAP data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipsumdump

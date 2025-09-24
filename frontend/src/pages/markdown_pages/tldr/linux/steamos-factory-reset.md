@@ -22,8 +22,8 @@ features:
   - Reinstalls the operating system.
   - Returns the system to its initial state.
   - Provides a clean installation of SteamOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-factory-reset

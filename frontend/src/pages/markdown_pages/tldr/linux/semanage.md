@@ -22,8 +22,8 @@ features:
   - Configure port labeling rules to specify allowed listening ports.
   - Set or unset permissive mode for specific domains.
   - Export and import SELinux customizations for backup and restoration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # semanage

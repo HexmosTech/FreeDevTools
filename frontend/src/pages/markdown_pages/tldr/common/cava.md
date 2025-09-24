@@ -22,8 +22,8 @@ features:
 - Adjust sensitivity and number of bars dynamically
 - Reload configurations and colors during runtime
 - Cycle foreground and background colors for custom themes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cava

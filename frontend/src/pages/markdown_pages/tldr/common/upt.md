@@ -22,8 +22,8 @@ features:
 - Search for packages in available repositories.
 - Show detailed information about specific packages.
 - Remove or uninstall packages from the system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # upt

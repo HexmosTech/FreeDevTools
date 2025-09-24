@@ -22,8 +22,8 @@ features:
   - Specify user and group access permissions.
   - Mount various filesystem types (e.g., ISO9660).
   - Manage mounts via `/etc/fstab`.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mount

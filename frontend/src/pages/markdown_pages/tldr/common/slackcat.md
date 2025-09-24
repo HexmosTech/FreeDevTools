@@ -22,8 +22,8 @@ features:
 - Send text snippets to Slack from the command line.
 - Customize filenames for uploaded files.
 - Integrate command line tools with Slack notifications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # slackcat

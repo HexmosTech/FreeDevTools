@@ -22,8 +22,8 @@ features:
 - Bind PlatformIO Home to a specific IP address.
 - Prevent automatic browser opening for PlatformIO Home.
 - Automatically shut down the server after a specified timeout.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio home

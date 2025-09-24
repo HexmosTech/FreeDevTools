@@ -22,8 +22,8 @@ features:
 - Make the teddy bear stay on top of all other windows.
 - Use a custom image instead of the default teddy bear.
 - Prevent the teddy bear window from being closed with the 'q' key.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xteddy

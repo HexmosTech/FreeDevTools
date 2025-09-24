@@ -22,8 +22,8 @@ features:
   - Test email attachments for virus scanning.
   - Test email content for spam scanning.
   - Use LMTP protocol via UNIX domain sockets.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swaks

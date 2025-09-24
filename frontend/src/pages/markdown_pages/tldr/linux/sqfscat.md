@@ -22,8 +22,8 @@ features:
   - Outputs the concatenated data to standard output (stdout).
   - Works with a single squashfs filesystem image.
   - Supports multiple file arguments for concatenation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sqfscat

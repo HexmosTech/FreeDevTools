@@ -22,8 +22,8 @@ features:
 - Identify suitable ancestor revisions for change migration
 - Refactor code by distributing changes across revisions
 - Move changes only within specified files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj absorb

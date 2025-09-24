@@ -22,8 +22,8 @@ features:
   - Verify data written to flash memory chips.
   - Erase data from flash memory chips.
   - Support various programmers and interfaces.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flashrom

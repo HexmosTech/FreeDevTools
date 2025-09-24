@@ -22,8 +22,8 @@ features:
   - Control and monitor the filesystem state using fsfreeze
   - Retrieve filesystem information from the guest operating system
   - Check the status of a specific process within the virtual machine
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm guest

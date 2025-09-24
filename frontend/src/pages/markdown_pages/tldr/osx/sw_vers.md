@@ -22,8 +22,8 @@ features:
 - Retrieve the product version of macOS.
 - Access system version information from the command line.
 - Quickly identify the macOS version for compatibility testing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sw_vers

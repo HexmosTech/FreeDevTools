@@ -22,8 +22,8 @@ features:
 - Retrieve specific properties like 'label'.
 - Set the compression property for Btrfs inodes.
 - Manage object type-specific properties.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs property

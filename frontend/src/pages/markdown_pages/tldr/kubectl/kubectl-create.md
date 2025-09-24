@@ -22,8 +22,8 @@ features:
 - Manage resources directly from stdin
 - Define deployment replicas for scalability
 - Automate Kubernetes resource configuration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl create

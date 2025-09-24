@@ -22,8 +22,8 @@ features:
 - Configure Accelerate settings interactively via command line.
 - Test Accelerate configurations for proper functionality.
 - Launch and run PyTorch models using the Accelerate library.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # accelerate

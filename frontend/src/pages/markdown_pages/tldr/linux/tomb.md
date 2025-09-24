@@ -22,8 +22,8 @@ features:
   - Mount encrypted tombs as regular filesystem directories.
   - Forcefully close open tombs, even if in use.
   - List all currently open encrypted tombs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tomb

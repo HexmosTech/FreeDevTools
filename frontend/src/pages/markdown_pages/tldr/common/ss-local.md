@@ -22,8 +22,8 @@ features:
 - Utilize configuration files for easy setup.
 - Support plugin functionality for enhanced obfuscation.
 - Enable TCP fast open for improved performance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ss-local

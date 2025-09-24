@@ -22,8 +22,8 @@ features:
 - Install packages into a local Maven repository
 - Clean build artifacts from the target directory
 - Execute Java classes with a main method
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mvn

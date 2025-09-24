@@ -22,8 +22,8 @@ features:
 - Watch specific file types for changes
 - Integrate with build tools and task runners
 - Create a configuration file for customized settings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # browser-sync

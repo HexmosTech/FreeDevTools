@@ -22,8 +22,8 @@ features:
 - Specify interface for Bluetooth ping
 - Control data package size for Bluetooth pings
 - Flood ping a Bluetooth device
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # l2ping

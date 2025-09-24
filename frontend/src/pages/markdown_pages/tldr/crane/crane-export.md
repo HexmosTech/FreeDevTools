@@ -22,8 +22,8 @@ features:
 - Read the container image from standard input for export.
 - Support OCI image formats for creating archives.
 - Create portable archives of container images for distribution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # crane export

@@ -22,8 +22,8 @@ features:
 - Recursively apply flags to entire directory structures
 - Control file accessibility by changing flags
 - Unset flags to revert attribute modifications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chflags

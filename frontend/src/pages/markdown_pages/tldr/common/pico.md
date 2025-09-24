@@ -22,8 +22,8 @@ features:
 - Define a custom quote string for email-like formatting
 - Enable mouse support for easier navigation in terminals like xterm
 - Enable a read-only mode to prevent accidental modifications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pico

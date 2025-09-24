@@ -22,8 +22,8 @@ features:
   - Uses custom filename templates
   - Supports custom temporary directory paths
   - Prints the name of a temporary file without creating it
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mktemp

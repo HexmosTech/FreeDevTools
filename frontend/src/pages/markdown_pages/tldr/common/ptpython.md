@@ -22,8 +22,8 @@ features:
 - Open menu for configuration and settings
 - Access command history for previous inputs
 - Toggle paste mode to handle multi-line code snippets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ptpython

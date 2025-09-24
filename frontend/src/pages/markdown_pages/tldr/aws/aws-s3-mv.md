@@ -22,8 +22,8 @@ features:
 - Preserve original file names during S3 moves
 - Move multiple S3 objects at once
 - Copy files and delete original after transfer
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 mv

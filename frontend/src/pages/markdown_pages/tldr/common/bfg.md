@@ -22,8 +22,8 @@ features:
 - Clean large files from the repository
 - Rewrite Git history to remove unwanted data
 - Purge sensitive information like passwords from history
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bfg

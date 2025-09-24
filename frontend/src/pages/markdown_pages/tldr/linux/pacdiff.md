@@ -22,8 +22,8 @@ features:
 - Create backups of original configuration files before overwriting.
 - Utilize a specific editor for viewing and merging configurations.
 - Scan for configuration files using locate instead of the pacman database.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacdiff

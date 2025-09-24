@@ -22,8 +22,8 @@ features:
 - Concatenate multiple RTF files into a single output.
 - Control font and font size during conversion.
 - Set HTML title when converting to HTML format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # textutil

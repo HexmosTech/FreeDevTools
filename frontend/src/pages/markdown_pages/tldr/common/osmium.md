@@ -22,8 +22,8 @@ features:
 - Filter OpenStreetMap data based on specific tags.
 - Extract geographic regions using GeoJSON polygons.
 - Display file information and contents of OpenStreetMap files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # osmium

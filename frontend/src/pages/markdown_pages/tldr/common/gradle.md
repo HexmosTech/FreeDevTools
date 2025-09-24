@@ -22,8 +22,8 @@ features:
 - Operate in offline mode to prevent network access during builds
 - Clean the build directory to remove previous build artifacts
 - List available tasks for project management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gradle

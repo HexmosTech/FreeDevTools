@@ -22,8 +22,8 @@ features:
 - Verify file integrity using cryptographic hashes
 - Automate file hash generation in PowerShell scripts
 - Generate checksums for file authentication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-FileHash

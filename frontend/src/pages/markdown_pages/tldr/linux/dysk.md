@@ -22,8 +22,8 @@ features:
   - Filter disks based on type (HDD, SSD).
   - Monitor disk utilization percentage.
   - Check available free space on disks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dysk

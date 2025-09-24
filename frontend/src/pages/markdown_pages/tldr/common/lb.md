@@ -22,8 +22,8 @@ features:
 - Publish drafts to the live blog.
 - Delete drafts and published posts selectively.
 - Revise published posts by reverting to drafts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lb

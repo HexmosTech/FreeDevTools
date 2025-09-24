@@ -22,8 +22,8 @@ features:
 - Resize home directory disk space allocations
 - Lock and unlock user home directories securely
 - Execute commands within a specific user's home directory context
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # homectl

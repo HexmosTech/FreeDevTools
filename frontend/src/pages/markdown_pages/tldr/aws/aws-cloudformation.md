@@ -22,8 +22,8 @@ features:
 - Check status of running CloudFormation stacks
 - Detect drift in CloudFormation stacks
 - Delete CloudFormation stacks when no longer needed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws cloudformation

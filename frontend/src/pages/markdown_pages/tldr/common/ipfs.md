@@ -22,8 +22,8 @@ features:
 - Retrieve files from the IPFS network using their hash
 - Remove pinned files from local IPFS storage
 - Perform garbage collection to remove unpinned files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipfs

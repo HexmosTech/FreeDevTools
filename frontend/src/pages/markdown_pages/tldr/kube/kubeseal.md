@@ -22,8 +22,8 @@ features:
 - Encrypt raw secret values from files with specified names and scopes.
 - Fetch the controller's public certificate for offline sealing.
 - Merge a secret into an existing SealedSecret file in-place.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubeseal

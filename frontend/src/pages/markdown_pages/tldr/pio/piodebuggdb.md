@@ -22,8 +22,8 @@ features:
 - Set breakpoints and inspect variables in real-time
 - Control program execution using GDB interface
 - Debug embedded projects with PlatformIO and GDB
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # piodebuggdb

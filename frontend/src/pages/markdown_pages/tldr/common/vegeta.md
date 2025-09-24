@@ -22,8 +22,8 @@ features:
 - Create detailed reports and plots of load test results
 - Target multiple URLs from a file for load testing
 - Analyze server performance and identify bottlenecks under load
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vegeta

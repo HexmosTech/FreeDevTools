@@ -22,8 +22,8 @@ features:
 - Launch on remote X11 servers.
 - Display eyes that follow cursor in real-time.
 - Monitor user interaction on the Linux desktop.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xeyes

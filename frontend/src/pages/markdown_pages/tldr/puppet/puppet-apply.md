@@ -22,8 +22,8 @@ features:
 - Specify custom module paths for manifest application
 - Utilize custom Hiera configuration files
 - Automate system configuration management locally
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # puppet apply

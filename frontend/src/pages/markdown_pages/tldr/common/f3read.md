@@ -22,8 +22,8 @@ features:
 - Identify discrepancies between reported and actual storage
 - Support multiple platforms including Linux and macOS
 - Provide clear output on storage integrity
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # f3read

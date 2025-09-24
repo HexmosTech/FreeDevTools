@@ -22,8 +22,8 @@ features:
 - Display help information for the `aws s3 mb` command
 - Manage cloud storage efficiently
 - Create S3 buckets in specific AWS regions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 mb

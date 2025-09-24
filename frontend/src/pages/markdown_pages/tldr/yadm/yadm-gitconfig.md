@@ -22,8 +22,8 @@ features:
 - Unset values in YADM's Git config
 - List all values in YADM's Git configuration
 - Manage .gitconfig within YADM repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yadm gitconfig

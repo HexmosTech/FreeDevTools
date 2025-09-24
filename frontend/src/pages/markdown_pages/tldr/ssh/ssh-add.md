@@ -22,8 +22,8 @@ features:
 - Delete specific SSH keys from ssh-agent
 - Remove all loaded SSH keys
 - Add SSH keys to both ssh-agent and keychain
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ssh-add

@@ -22,8 +22,8 @@ features:
 - Check and repair sector mode namespaces
 - List NVDIMM resources (namespaces, regions, buses)
 - Monitor NVDIMM SMART health events
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ndctl

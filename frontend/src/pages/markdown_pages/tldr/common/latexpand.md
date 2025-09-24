@@ -22,8 +22,8 @@ features:
 - Expand LaTeX usepackage directives
 - Inline BBL bibliography files
 - Generate a simplified LaTeX document
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # latexpand

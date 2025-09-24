@@ -22,8 +22,8 @@ features:
 - Restore virtual machines to specific storage locations
 - Perform live restores on Proxmox Backup Server
 - Recover virtual machines from command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qmrestore

@@ -22,8 +22,8 @@ features:
 - Update repository with local dotfile changes
 - Edit source state of tracked dotfiles
 - Synchronize dotfiles with remote repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chezmoi

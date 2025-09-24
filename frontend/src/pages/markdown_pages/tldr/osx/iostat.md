@@ -22,8 +22,8 @@ features:
 - Monitor statistics for specific disks
 - Output total device statistics for transfers and megabytes
 - Display in old-style iostat display with sectors and milliseconds
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iostat

@@ -22,8 +22,8 @@ features:
 - Rename existing Kubernetes contexts for easier management.
 - Delete unnecessary Kubernetes contexts.
 - Display the currently active Kubernetes context.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectx

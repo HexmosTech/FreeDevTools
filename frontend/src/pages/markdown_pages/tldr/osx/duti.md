@@ -22,8 +22,8 @@ features:
 - Display information about default applications for given extensions
 - Query the default handler for a specific Uniform Type Identifier (UTI)
 - List all handlers registered for a given UTI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # duti

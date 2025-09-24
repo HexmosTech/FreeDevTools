@@ -22,8 +22,8 @@ features:
   - Integrate with the system's mail system for result notification
   - Utilize the `atd` daemon for command execution
   - Defer non-critical tasks to optimize system performance
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # batch

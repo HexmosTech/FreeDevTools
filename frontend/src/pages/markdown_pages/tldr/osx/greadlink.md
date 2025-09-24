@@ -22,8 +22,8 @@ features:
 - Works seamlessly on macOS
 - Integrates easily with shell scripts
 - Supports relative and absolute paths
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # greadlink

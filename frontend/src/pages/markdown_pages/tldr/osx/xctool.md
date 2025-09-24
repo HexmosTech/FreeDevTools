@@ -22,8 +22,8 @@ features:
 - Execute tests on Xcode projects and workspaces
 - Automate Xcode build processes
 - Integrate with continuous integration systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xctool

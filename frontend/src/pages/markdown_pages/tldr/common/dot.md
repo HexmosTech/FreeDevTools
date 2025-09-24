@@ -22,8 +22,8 @@ features:
 - Convert DOT files to PNG, SVG, PS, PDF, GIF, JPEG, JSON formats.
 - Render graphs directly from standard input/output.
 - Customize output filename and format via command line arguments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dot

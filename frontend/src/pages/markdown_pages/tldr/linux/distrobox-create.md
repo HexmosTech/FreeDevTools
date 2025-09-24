@@ -22,8 +22,8 @@ features:
   - Seamless integration with the host system for resource sharing.
   - Support for graphical applications (X11/Wayland).
   - Enables sharing of HOME directory, storage, and USB devices.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # distrobox-create

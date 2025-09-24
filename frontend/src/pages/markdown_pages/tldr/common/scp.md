@@ -22,8 +22,8 @@ features:
 - Recursively copy entire directories between hosts
 - Authenticate using SSH keys for secure connections
 - Transfer files between remote hosts via a local host
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scp

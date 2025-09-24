@@ -22,8 +22,8 @@ features:
 - Start Edge in application mode without toolbars
 - Configure a proxy server for browsing sessions
 - Open Edge with a custom user profile directory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # microsoft-edge

@@ -22,8 +22,8 @@ features:
 - Integrates seamlessly with the `hub` command-line tool
 - Provides a convenient way to manage your GitHub repositories
 - Removes remote repository after confirmation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hub delete

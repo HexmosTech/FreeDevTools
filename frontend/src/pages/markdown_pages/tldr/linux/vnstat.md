@@ -22,8 +22,8 @@ features:
 - Graph hourly network traffic for the last 24 hours
 - Measure and show average network traffic for a set period
 - Track network bandwidth usage on Linux systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vnstat

@@ -22,8 +22,8 @@ features:
 - Delete unused EC2 volumes
 - Create snapshots from EC2 volumes for backups
 - Display comprehensive help information for EC2 subcommands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws ec2

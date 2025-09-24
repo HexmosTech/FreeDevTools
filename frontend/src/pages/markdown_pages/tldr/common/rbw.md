@@ -22,8 +22,8 @@ features:
 - Retrieve passwords and usernames from the vault.
 - Copy passwords to the clipboard.
 - Lock and unlock the password vault.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rbw

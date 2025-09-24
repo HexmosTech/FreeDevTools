@@ -22,8 +22,8 @@ features:
   - Enforce password changes after a specified number of days.
   - Configure password expiry warning periods.
   - Manage multiple user accounts' password policies simultaneously.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lchage

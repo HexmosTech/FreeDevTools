@@ -22,8 +22,8 @@ features:
 - List compatible PowerShell script versions
 - Obtain the Git commit ID of the PowerShell build
 - Provide comprehensive PowerShell environment information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # PSVersionTable

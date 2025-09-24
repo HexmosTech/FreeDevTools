@@ -22,8 +22,8 @@ features:
   - Provides both human-readable and raw byte counts.
   - Option to avoid traversing filesystem boundaries.
   - Offers command-line interface for easy integration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # compsize

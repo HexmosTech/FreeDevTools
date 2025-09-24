@@ -22,8 +22,8 @@ features:
 - Perform a dry-run to preview commands without executing.
 - Execute the command in quiet mode to suppress output.
 - Wake up computers on a local network remotely.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wakeonlan

@@ -22,8 +22,8 @@ features:
 - Specify alternate DNS servers to query
 - Perform reverse DNS lookups on IP addresses
 - Trace the path to resolve a domain name
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dig

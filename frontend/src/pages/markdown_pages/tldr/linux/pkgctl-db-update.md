@@ -22,8 +22,8 @@ features:
 - Updates the binary repository for consistent package information.
 - Provides a command-line interface for package database maintenance.
 - Streamlines the package release process for Arch Linux distributions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkgctl db update

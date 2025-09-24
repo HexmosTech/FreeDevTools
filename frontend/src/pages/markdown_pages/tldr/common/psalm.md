@@ -22,8 +22,8 @@ features:
 - Display statistics about code analysis results
 - Customize analysis with specific configuration files
 - Run analysis in parallel with multiple threads
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # psalm

@@ -22,8 +22,8 @@ features:
   - Execute commands based on natural language prompts.
   - Utilize specific OpenAI models for customized code generation.
   - Load entire repository context for improved code accuracy (experimental).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # codex

@@ -22,8 +22,8 @@ features:
 - Utilize DNS over HTTPS for secure lookups
 - Output results in JSON format
 - Perform reverse DNS lookups
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doggo

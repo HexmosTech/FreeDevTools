@@ -22,8 +22,8 @@ features:
 - Filter updates to receive only on-change notifications
 - Specify data encoding formats for responses
 - Retrieve a single data update on demand
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnmic subscribe

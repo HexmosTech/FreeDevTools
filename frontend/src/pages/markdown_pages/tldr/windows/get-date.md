@@ -22,8 +22,8 @@ features:
 - Format date and time output using .NET format specifiers.
 - Display date and time in UTC.
 - Output date and time in ISO 8601 format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-Date

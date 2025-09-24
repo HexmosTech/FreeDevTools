@@ -22,8 +22,8 @@ features:
   - Creates message queues for inter-process communication.
   - Allows setting custom permissions for shared memory segments.
   - Provides a simple command-line interface for IPC resource management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipcmk

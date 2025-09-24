@@ -22,8 +22,8 @@ features:
 - Determine the location of fonts used in PDF rasterization
 - Determine the location of fonts used in PDF to PostScript conversion
 - Display security restrictions and font details
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdffonts

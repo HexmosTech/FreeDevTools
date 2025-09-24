@@ -22,8 +22,8 @@ features:
 - Terminate Telnet sessions gracefully.
 - Use custom escape characters for session control.
 - Access Star Wars ASCII animations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # telnet

@@ -22,8 +22,8 @@ features:
   - Set debug level for detailed logging.
   - Utilize custom configuration settings.
   - Provides helpful usage information via the help command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vgremove

@@ -22,8 +22,8 @@ features:
 - Stream decompressed data directly
 - Support for various XZ compression levels
 - Quickly view the contents of an XZ archive
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xzcat

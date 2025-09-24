@@ -22,8 +22,8 @@ features:
 - Provides a standard true command alternative.
 - Ensures consistent behavior across platforms.
 - Simplifies conditional logic in shell scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gtrue

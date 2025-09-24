@@ -22,8 +22,8 @@ features:
 - Offers multiple write passes for data sanitization
 - Allows for verbose output to monitor progress
 - Provides options to overwrite only free space or inodes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfill

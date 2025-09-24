@@ -22,8 +22,8 @@ features:
 - Set an API key for a specific Chocolatey source
 - Remove an API key from a specific Chocolatey source
 - Automate Chocolatey package deployments securely
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # choco apikey

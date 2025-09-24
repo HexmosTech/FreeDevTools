@@ -22,8 +22,8 @@ features:
 - Enqueue tasks for specific dates and times
 - Utilize various date/time formats for scheduling
 - Manage task execution via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue enqueue

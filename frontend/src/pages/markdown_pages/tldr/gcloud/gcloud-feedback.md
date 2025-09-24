@@ -22,8 +22,8 @@ features:
 - Provide suggestions for gcloud features
 - Report bugs found in the gcloud CLI
 - Offer opinions and insights on the Google Cloud platform
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud feedback

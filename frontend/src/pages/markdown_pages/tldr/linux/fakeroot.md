@@ -22,8 +22,8 @@ features:
   - Saves and loads fakeroot environments for repeated use.
   - Offers options to maintain real file ownership.
   - Provides clear help documentation for usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fakeroot

@@ -22,8 +22,8 @@ features:
 - Redirect both standard output and standard error
 - Suppress error messages by redirecting to /dev/null
 - Create or clear file contents
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # >

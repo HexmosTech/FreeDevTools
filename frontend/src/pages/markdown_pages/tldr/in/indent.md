@@ -22,8 +22,8 @@ features:
   - Customize indentation level and line length for precise control.
   - Save formatted code to new files, preserving the original.
   - Support for command-line usage with various formatting options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # indent

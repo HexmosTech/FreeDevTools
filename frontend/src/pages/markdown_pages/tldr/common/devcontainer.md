@@ -22,8 +22,8 @@ features:
 - Execute commands in running Dev Containers
 - Build Dev Container images from `devcontainer.json`
 - Read Dev Container configuration from `devcontainer.json`
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # devcontainer

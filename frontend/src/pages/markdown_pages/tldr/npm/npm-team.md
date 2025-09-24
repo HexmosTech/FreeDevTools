@@ -22,8 +22,8 @@ features:
 - Create new npm teams for organized collaboration.
 - Delete unused npm teams to maintain clean organization.
 - List all teams or users within specific teams in an organization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm team

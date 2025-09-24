@@ -22,8 +22,8 @@ features:
 - Revoke certificates based on serial number and reason
 - Retrieve certificate details using the ARN
 - Update certificate authority configurations and statuses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws acm-pca

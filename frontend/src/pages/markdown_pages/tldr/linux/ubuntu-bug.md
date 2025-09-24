@@ -22,8 +22,8 @@ features:
   - Includes relevant system information automatically.
   - Submits reports directly to the Ubuntu bug tracking system.
   - Provides clear instructions during the reporting process.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ubuntu-bug

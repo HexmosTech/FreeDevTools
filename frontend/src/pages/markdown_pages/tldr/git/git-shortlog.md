@@ -22,8 +22,8 @@ features:
 - Sort commits by number of contributions
 - Analyze commit activity within a revision range
 - Display user emails and commit counts across branches
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git shortlog

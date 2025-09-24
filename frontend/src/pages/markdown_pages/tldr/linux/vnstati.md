@@ -22,8 +22,8 @@ features:
   - Creates top 10 traffic-intensive days reports.
   - Displays monthly traffic statistics for the past year.
   - Presents hourly traffic statistics for the past 24 hours.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vnstati

@@ -22,8 +22,8 @@ features:
 - Rank directories based on frequency of access.
 - Remove directories from the tracked list.
 - Restrict matches to subdirectories of the current directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # z

@@ -22,8 +22,8 @@ features:
   - Manage package dependencies, including removing orphans.
   - Downgrade packages using the local cache.
   - Remove packages and their dependencies recursively.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aura

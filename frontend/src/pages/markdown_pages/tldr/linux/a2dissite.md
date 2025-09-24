@@ -22,8 +22,8 @@ features:
   - Integrates seamlessly with Debian-based systems.
   - Enables efficient management of multiple websites.
   - Simplifies Apache server configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # a2dissite

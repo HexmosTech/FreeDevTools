@@ -22,8 +22,8 @@ features:
 - Extract specific data items from all nodes in a merged job file
 - Aggregate HDF5 data from multiple nodes
 - Supports job ID and step ID specification
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sh5util

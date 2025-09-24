@@ -22,8 +22,8 @@ features:
 - Search the web from the command line.
 - Run Firefox in safe mode with disabled extensions.
 - Take a screenshot of a web page in headless mode.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # firefox

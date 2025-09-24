@@ -22,8 +22,8 @@ features:
 - Provides a pre-configured SteamOS reset environment
 - Streamlines SteamOS factory reset process
 - Creates required data for `steamos-factory-reset`
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-factory-reset-config

@@ -22,8 +22,8 @@ features:
 - Ensure compliance with security best practices
 - Authenticate using service principals or Azure CLI
 - Run specific M365 security checks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prowler m365

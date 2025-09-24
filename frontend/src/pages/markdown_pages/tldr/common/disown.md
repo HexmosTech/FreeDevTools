@@ -22,8 +22,8 @@ features:
 - Disown all background jobs at once (Bash specific)
 - Allow background processes to continue running after logout
 - Manage background processes independently of the shell
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # disown

@@ -22,8 +22,8 @@ features:
 - Stream torrents to DLNA-compatible devices.
 - Seed files and directories using the command line.
 - Create new .torrent files from existing files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # webtorrent

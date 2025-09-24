@@ -22,8 +22,8 @@ features:
 - Specify the Caddy version to be built
 - Output the compiled Caddy server to a specific file
 - Run Caddy with a development plugin for testing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xcaddy

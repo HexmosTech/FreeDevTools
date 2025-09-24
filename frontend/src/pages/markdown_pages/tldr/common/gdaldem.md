@@ -22,8 +22,8 @@ features:
 - Compute aspect values for directional analysis.
 - Process various DEM formats.
 - Output processed DEMs in raster formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdaldem

@@ -22,8 +22,8 @@ features:
 - Generate Fish completions for Pueue commands
 - Automate shell completion file creation
 - Streamline command-line task scheduling
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue completions

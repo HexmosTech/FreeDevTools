@@ -22,8 +22,8 @@ features:
 - Update tag names in Git repositories
 - Control the naming convention of tags
 - Quickly update the git tags for improved readability
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rename-tag

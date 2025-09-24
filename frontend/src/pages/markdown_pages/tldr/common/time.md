@@ -22,8 +22,8 @@ features:
 - Analyze system resource usage during execution
 - Create a simple stopwatch within Bash
 - Track user, system, and real-time durations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # time

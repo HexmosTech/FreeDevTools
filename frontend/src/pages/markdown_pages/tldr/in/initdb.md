@@ -22,8 +22,8 @@ features:
 - Configure authentication methods for PostgreSQL
 - Create a new PostgreSQL instance
 - Generate initial database files for PostgreSQL
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # initdb

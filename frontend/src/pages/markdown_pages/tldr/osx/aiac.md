@@ -22,8 +22,8 @@ features:
 - Automate GitHub Actions workflows for IaC deployment
 - Generate MongoDB queries for data aggregation
 - Simplify cloud infrastructure management with AI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aiac

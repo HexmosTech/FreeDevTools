@@ -22,8 +22,8 @@ features:
 - Support for batch PI1 to PPM conversion.
 - Enables image manipulation with Netpbm tools.
 - Facilitates retro graphics file format interchange.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pi1toppm

@@ -22,8 +22,8 @@ features:
 - Detach existing Volumes from Linodes
 - Resize Linode Volumes to increase storage capacity
 - Delete unwanted Linode Volumes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linode-cli volumes

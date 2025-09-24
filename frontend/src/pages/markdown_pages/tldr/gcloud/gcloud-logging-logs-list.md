@@ -22,8 +22,8 @@ features:
 - Sort logs by specific fields in ascending or descending order
 - Limit the number of logs listed
 - Display verbose output with additional details
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud logging logs list

@@ -6,24 +6,24 @@ canonical: "https://hexmos.com/freedevtools/tldr/linux/conntrack/"
 description: "Control Linux network connections with the Conntrack command.  Inspect, manage, and troubleshoot network flows efficiently. Free online tool, no registration required."
 category: linux
 keywords:
-- conntrack linux command
-- linux network connection monitoring
-- conntrack connection tracking
-- conntrack connection management
-- linux conntrack troubleshooting
-- netfilter conntrack commands
-- conntrack real-time events
-- conntrack ip filtering
-- conntrack delete connections
-- linux conntrack tutorial
+  - conntrack linux command
+  - linux network connection monitoring
+  - conntrack connection tracking
+  - conntrack connection management
+  - linux conntrack troubleshooting
+  - netfilter conntrack commands
+  - conntrack real-time events
+  - conntrack ip filtering
+  - conntrack delete connections
+  - linux conntrack tutorial
 features:
-- List and inspect active network connections.
-- Monitor real-time connection events with timestamps.
-- Filter connection events by source or destination IP address.
-- Delete specific network connections by IP address.
-- Troubleshoot network connectivity issues using detailed connection information.
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+  - List and inspect active network connections.
+  - Monitor real-time connection events with timestamps.
+  - Filter connection events by source or destination IP address.
+  - Delete specific network connections by IP address.
+  - Troubleshoot network connectivity issues using detailed connection information.
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # conntrack

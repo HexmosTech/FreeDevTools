@@ -22,8 +22,8 @@ features:
 - Switch between existing Avo branches
 - Pull analytics wrappers for your current path
 - Resolve Git conflicts in Avo files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # avo

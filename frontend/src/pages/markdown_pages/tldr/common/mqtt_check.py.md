@@ -22,8 +22,8 @@ features:
 - Enable SSL for secure MQTT communication
 - Specify a custom client ID for authentication
 - Connect to MQTT broker on a custom port
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mqtt_check.py

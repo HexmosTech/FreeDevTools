@@ -22,8 +22,8 @@ features:
 - Manage file access using NSFileCoordinator
 - Facilitate file sharing with NSFilePresenter
 - Monitor file access events for coordination
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # filecoordinationd

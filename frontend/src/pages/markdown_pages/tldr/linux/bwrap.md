@@ -22,8 +22,8 @@ features:
   - Restrict access to devices and network resources.
   - Manage process capabilities and privileges.
   - Use tmpfs for temporary files and enhanced security.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bwrap

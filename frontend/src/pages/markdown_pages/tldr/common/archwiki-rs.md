@@ -22,8 +22,8 @@ features:
 - Download ArchWiki pages in various formats
 - Access a local copy of the ArchWiki
 - Support for plain text, markdown, and HTML formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # archwiki-rs

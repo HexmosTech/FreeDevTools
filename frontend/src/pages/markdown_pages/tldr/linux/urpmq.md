@@ -22,8 +22,8 @@ features:
   - List required packages for an RPM file with sources
   - List all configured media with their URLs
   - Search for packages by keyword and display group/version/release
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urpmq

@@ -22,8 +22,8 @@ features:
 - Integrates with GTK+ library for GUI development.
 - Provides command-line options for customization.
 - Supports multiple platforms for cross-compilation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # valac

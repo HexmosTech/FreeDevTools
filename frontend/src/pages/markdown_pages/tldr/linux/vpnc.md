@@ -22,8 +22,8 @@ features:
 - Terminate existing VPN connections
 - Support for command-line VPN management on Linux
 - Allows VPN access without a graphical interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vpnc

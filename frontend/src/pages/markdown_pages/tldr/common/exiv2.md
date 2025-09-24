@@ -22,8 +22,8 @@ features:
 - Rename files based on embedded date and time
 - Print image metadata in interpreted or raw format
 - Preserve file timestamps when deleting metadata
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exiv2

@@ -22,8 +22,8 @@ features:
 - Inspect kernel image paths and parameters
 - Configure the boot process on Linux systems
 - Integrate with systemd-boot and other bootloaders
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kernel-install

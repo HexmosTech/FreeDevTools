@@ -22,8 +22,8 @@ features:
 - Provides a simple command to clean up a repository
 - Simplifies branch management workflow
 - Leverages git-extras for enhanced functionality
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git delete-merged-branches

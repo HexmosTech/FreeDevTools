@@ -22,8 +22,8 @@ features:
   - Integrates with other audio commands like jackd.
   - Provides a command-line interface for audio control.
   - Enables seamless switching between PulseAudio and ALSA.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pasuspender

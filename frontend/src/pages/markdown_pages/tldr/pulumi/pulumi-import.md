@@ -22,8 +22,8 @@ features:
 - Supports importing from various cloud providers (AWS, Azure, GCP)
 - Bulk import resources from JSON file
 - Output import configuration to a file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi import

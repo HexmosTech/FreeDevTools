@@ -22,8 +22,8 @@ features:
 - Update specific or all gems in a project
 - Check for outdated gems in a Gemfile
 - Create a new gem skeleton using bundler
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bundle

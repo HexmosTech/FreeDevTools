@@ -6,24 +6,24 @@ canonical: "https://hexmos.com/freedevtools/tldr/common/orca-c/"
 description: "Control ORCA sequencer parameters with orca-c, a C-port command-line tool.  Create procedural music sequences easily, set tempo, grid size, and more. Free online tool, no registration required."
 category: common
 keywords:
-- orca sequencer control
-- orca c command line
-- procedural music sequencer
-- live coding orca
-- orca tempo control
-- orca grid size control
-- orca c programming
-- orca command reference
-- c language orca
-- orca music generation
+  - orca sequencer control
+  - orca c command line
+  - procedural music sequencer
+  - live coding orca
+  - orca tempo control
+  - orca grid size control
+  - orca c programming
+  - orca command reference
+  - c language orca
+  - orca music generation
 features:
-- Start ORCA with a blank workspace.
-- Open and load existing ORCA projects.
-- Set custom tempo (BPM) for the sequencer.
-- Define the grid dimensions (columns x rows).
-- Adjust the maximum number of undo operations.
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+  - Start ORCA with a blank workspace.
+  - Open and load existing ORCA projects.
+  - Set custom tempo (BPM) for the sequencer.
+  - Define the grid dimensions (columns x rows).
+  - Adjust the maximum number of undo operations.
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # orca-c

@@ -22,8 +22,8 @@ features:
 - Overwrite conflicting files during package installation
 - Skip dependency version checks during installation
 - Print packages affected by an upgrade
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman --upgrade

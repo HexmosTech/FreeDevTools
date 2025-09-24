@@ -22,8 +22,8 @@ features:
 - Set the default GRUB boot entry by identifier
 - Configure GRUB boot directory
 - Specify an alternative boot directory for GRUB
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grub-set-default

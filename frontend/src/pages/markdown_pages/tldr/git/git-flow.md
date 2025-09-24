@@ -22,8 +22,8 @@ features:
 - Finish and merge a feature branch into the develop branch.
 - Publish a feature branch to a remote server.
 - Pull a feature branch published by another user from the origin.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git flow

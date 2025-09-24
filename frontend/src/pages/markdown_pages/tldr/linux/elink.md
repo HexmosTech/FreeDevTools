@@ -22,8 +22,8 @@ features:
   - Identifies related biosamples from nucleotide query results.
   - Integrates seamlessly with the esearch command for efficient database querying.
   - Simplifies complex database navigation and data retrieval for biological research.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elink

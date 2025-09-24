@@ -22,8 +22,8 @@ features:
 - Open the Pliva Zdravlje pollen measurement page in a web browser
 - Initiate an interactive city search for pollen information
 - Retrieve real-time pollen information from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # peludna-prognoza

@@ -22,8 +22,8 @@ features:
 - Specify custom gamma values for conversion.
 - Perform command-line PPM to PJ conversion.
 - Support for batch image processing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtopj

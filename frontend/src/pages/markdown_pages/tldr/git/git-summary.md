@@ -22,8 +22,8 @@ features:
 - Analyze repository activity since a specific commit
 - Merge committers by email for accurate statistics
 - Provide an overview of the repository's commit history
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git summary

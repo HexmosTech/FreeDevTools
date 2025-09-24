@@ -22,8 +22,8 @@ features:
 - Force usage of IPv4 or IPv6 addresses.
 - Limit the maximum number of hops in a route.
 - Identify network latency and bottlenecks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tracert

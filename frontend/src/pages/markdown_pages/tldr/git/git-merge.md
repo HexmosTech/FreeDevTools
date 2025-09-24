@@ -22,8 +22,8 @@ features:
 - Create a merge commit even when a fast-forward is possible
 - Abort an ongoing merge operation in case of conflicts
 - Merge using specific strategies and options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git merge

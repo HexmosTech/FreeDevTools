@@ -22,8 +22,8 @@ features:
 - Force a shutdown of the graphical login screen.
 - Provide a command-line method to stop GDM.
 - Allow for manual control of the display manager.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdm-stop

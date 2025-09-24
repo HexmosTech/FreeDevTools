@@ -22,8 +22,8 @@ features:
 - Run Netperf server in the foreground or background
 - Force IPv4 or IPv6 protocol usage
 - Analyze network throughput with Netperf
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # netserver

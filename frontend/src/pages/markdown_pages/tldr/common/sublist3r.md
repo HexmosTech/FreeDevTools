@@ -22,8 +22,8 @@ features:
 - Save discovered subdomains to a specified output file.
 - Automate subdomain enumeration for penetration testing.
 - Discover subdomains using multiple search engines.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sublist3r

@@ -22,8 +22,8 @@ features:
 - Allows specifying a custom output directory for the build
 - Enables building for specific runtime environments
 - Can compile without restoring dependencies for faster builds
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dotnet build

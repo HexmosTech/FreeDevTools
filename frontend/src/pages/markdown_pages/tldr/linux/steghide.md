@@ -22,8 +22,8 @@ features:
   - Encrypt data before embedding using various algorithms.
   - Utilize different encryption modes for enhanced security.
   - Display information about embedded files and file formats.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steghide

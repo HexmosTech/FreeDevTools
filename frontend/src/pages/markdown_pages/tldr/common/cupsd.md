@@ -22,8 +22,8 @@ features:
 - Launch CUPS daemon on demand via launchd or systemd
 - Load CUPS daemon configuration from a specific file
 - Test CUPS configuration files for syntax errors
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cupsd

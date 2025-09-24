@@ -22,8 +22,8 @@ features:
 - Target and capture specific elements within a webpage.
 - Hide elements on a webpage before capturing the screenshot.
 - Capture screenshots of local HTML files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pageres

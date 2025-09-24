@@ -22,8 +22,8 @@ features:
 - Display help information for command usage
 - Display version information for debugging
 - Secure access to enterprise-wide Slurm database
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # slurmdbd

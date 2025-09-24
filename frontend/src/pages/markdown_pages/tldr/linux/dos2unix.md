@@ -22,8 +22,8 @@ features:
   - Provides informative output about file line endings.
   - Allows manipulation of Byte Order Marks (BOM).
   - Supports batch processing of multiple files (not explicitly stated, but implied).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dos2unix

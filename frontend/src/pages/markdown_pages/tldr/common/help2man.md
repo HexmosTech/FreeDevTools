@@ -22,8 +22,8 @@ features:
   - Allows customizing the man page's name section.
   - Enables specifying a custom man page section number.
   - Outputs man pages to a file or standard output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # help2man

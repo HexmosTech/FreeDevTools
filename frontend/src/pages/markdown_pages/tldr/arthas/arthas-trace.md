@@ -22,8 +22,8 @@ features:
 - Filter trace output based on execution time thresholds
 - Analyze nested method invocations and their performance impact
 - Identify performance bottlenecks within Java applications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arthas-trace

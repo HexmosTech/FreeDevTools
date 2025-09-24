@@ -22,8 +22,8 @@ features:
 - Remove specific tag versions
 - Support for batch tag deletion
 - Integrate with git-extras for enhanced functionality
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git delete-tag

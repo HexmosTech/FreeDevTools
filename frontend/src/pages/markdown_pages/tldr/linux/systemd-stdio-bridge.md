@@ -22,8 +22,8 @@ features:
   - Connect to a D-Bus within a specific container.
   - Forward STDIO to a custom D-Bus address.
   - Create a proxy between standard input/output and D-Bus.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-stdio-bridge

@@ -22,8 +22,8 @@ features:
 - Show the public key of a signed assembly
 - Extract the public key from a signed assembly
 - Verify the strongname signature of an assembly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sn

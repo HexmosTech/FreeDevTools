@@ -22,8 +22,8 @@ features:
 - Skip storage volume deactivation during shutdown
 - Bypass lock checks for shutdown (root only)
 - Force stop and shutdown a virtual machine
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm shutdown

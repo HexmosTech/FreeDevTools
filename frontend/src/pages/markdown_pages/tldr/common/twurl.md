@@ -22,8 +22,8 @@ features:
 - Make POST requests with endpoint parameters to the Twitter API
 - Upload media files directly to Twitter
 - Create aliases for frequently requested Twitter API resources
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # twurl

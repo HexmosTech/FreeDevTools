@@ -22,8 +22,8 @@ features:
 - Manage persistence tasks for cloud-based CoreData storage
 - Trigger CoreData CloudKit processes
 - Handle background data synchronization on osx
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # coredatad

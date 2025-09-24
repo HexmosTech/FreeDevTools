@@ -22,8 +22,8 @@ features:
   - Configure the operating mode (e.g., Managed, Ad-Hoc, Monitor).
   - Manage multiple wireless interfaces simultaneously.
   - Troubleshoot wireless network connectivity issues.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iwconfig

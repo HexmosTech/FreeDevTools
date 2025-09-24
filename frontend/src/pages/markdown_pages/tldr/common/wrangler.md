@@ -22,8 +22,8 @@ features:
 - Start a local development server for testing
 - Publish your worker script to Cloudflare
 - Aggregate logs from your production worker
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wrangler

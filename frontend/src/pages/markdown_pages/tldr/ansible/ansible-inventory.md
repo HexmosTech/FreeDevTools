@@ -22,8 +22,8 @@ features:
 - Display a custom inventory file.
 - Dump the inventory to a specified file.
 - Inspect hosts and groups within an Ansible project.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ansible-inventory

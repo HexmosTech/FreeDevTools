@@ -22,8 +22,8 @@ features:
 - List available IBM Cloud regions
 - Display help for commands and subcommands
 - Display the ibmcloud CLI version
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ibmcloud

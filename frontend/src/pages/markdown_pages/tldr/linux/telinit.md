@@ -22,8 +22,8 @@ features:
 - Power off the machine using telinit command
 - Reload daemon configurations without restarting
 - Switch to rescue mode for system recovery
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # telinit

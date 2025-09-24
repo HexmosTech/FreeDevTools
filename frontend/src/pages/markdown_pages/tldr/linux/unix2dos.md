@@ -22,8 +22,8 @@ features:
 - "Display file information about line endings"
 - "Manage Byte Order Mark (BOM) presence"
 - "Process multiple files in batch"
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unix2dos

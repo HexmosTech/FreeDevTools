@@ -22,8 +22,8 @@ features:
 - Search text within the terminal using browser integration.
 - Customize keyboard shortcuts for efficient control.
 - Enter fullscreen mode for focused command-line work.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # guake

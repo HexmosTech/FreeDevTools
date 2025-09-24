@@ -22,8 +22,8 @@ features:
 - Scan for both SSH and VNC services simultaneously.
 - Specify a domain for targeted SSH server discovery.
 - Display a graphical interface for server selection.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bssh

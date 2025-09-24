@@ -22,8 +22,8 @@ features:
 - Replay typescript files created with `script --log-in`
 - Limit the maximum delay between commands
 - Simulate interactive terminal sessions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scriptlive

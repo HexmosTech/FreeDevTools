@@ -22,8 +22,8 @@ features:
 - Delete duplicate files without prompting
 - Consider hardlinks as duplicates during search
 - Compare files based on content, not just name
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fdupes

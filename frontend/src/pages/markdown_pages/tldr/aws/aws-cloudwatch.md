@@ -22,8 +22,8 @@ features:
 - List metrics and alarms.
 - Create or update CloudWatch alarms.
 - Delete specified dashboards and alarms.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws cloudwatch

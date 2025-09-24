@@ -22,8 +22,8 @@ features:
 - Help troubleshoot CLI configuration issues.
 - Offer insights into gh authentication methods.
 - Facilitate understanding of command-line tool environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh environment

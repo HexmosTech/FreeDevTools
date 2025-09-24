@@ -22,8 +22,8 @@ features:
 - Display a single Bigtable row with cell revisions
 - Retrieve specific columns from a Bigtable row
 - Search and print rows by a specific regex pattern
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cbt

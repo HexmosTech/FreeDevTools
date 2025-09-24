@@ -22,8 +22,8 @@ features:
   - Reset subsystems to their initial state
   - Force reset subsystems for troubleshooting
   - Remove subsystems from the APX environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apx subsystems

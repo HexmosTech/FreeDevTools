@@ -22,8 +22,8 @@ features:
 - Resume interrupted pipelines and reuse cached results.
 - Integrate with container technologies like Docker and Singularity.
 - Automate scientific workflows for genomics, proteomics, and more.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nextflow

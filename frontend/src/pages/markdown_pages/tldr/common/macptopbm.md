@@ -22,8 +22,8 @@ features:
 - Suppress informational messages during conversion.
 - Display version information for macptopbm.
 - Create PBM images from MacPaint source files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # macptopbm

@@ -22,8 +22,8 @@ features:
   - Deny specific hosts from connecting to the X server.
   - Allow all hosts to connect (disable access control).
   - Deny all hosts except those explicitly allowed (enable access control).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xhost

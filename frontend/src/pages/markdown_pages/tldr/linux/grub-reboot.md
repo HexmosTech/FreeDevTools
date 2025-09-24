@@ -22,8 +22,8 @@ features:
 - Use an entry name to select the desired OS.
 - Define an alternative boot directory for the next boot.
 - Force a one-time boot into a different operating system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # grub-reboot

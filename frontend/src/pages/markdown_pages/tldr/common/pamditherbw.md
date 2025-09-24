@@ -22,8 +22,8 @@ features:
 - Use various quantization methods like Floyd-Steinberg and Atkinson
 - Specify random seed for dithering algorithms
 - Adjust thresholding values for quantization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamditherbw

@@ -22,8 +22,8 @@ features:
 - Support for both text and binary file types.
 - Specify the number of lines or bytes per output file.
 - Create sequential file names automatically.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsplit

@@ -22,8 +22,8 @@ features:
 - Fetch changes from a Git remote.
 - Push tracked bookmarks to a Git remote.
 - Manage Git repositories from the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj git

@@ -22,8 +22,8 @@ features:
 - Filter git log by time range
 - List commits since a relative date (e.g., "yesterday")
 - Support for common time aliases (e.g., "last week", "last month")
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git commits-since

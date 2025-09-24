@@ -22,8 +22,8 @@ features:
 - Adjust MTU size for jumbo frames support
 - Assign aliases to network interfaces
 - Control promiscuous mode on network interfaces
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ip link

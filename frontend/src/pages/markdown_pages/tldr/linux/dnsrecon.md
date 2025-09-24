@@ -22,8 +22,8 @@ features:
   - Execute reverse lookups of IP addresses from SPF records.
   - Perform Google DNS enumeration for comprehensive data gathering.
   - Enable DNS cache snooping for insightful information retrieval.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnsrecon

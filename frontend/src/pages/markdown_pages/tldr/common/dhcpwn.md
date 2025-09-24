@@ -22,8 +22,8 @@ features:
 - Perform DHCP exhaustion attack simulation
 - Sniff DHCP packets from a specified interface
 - Test network resilience against DHCP attacks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dhcpwn

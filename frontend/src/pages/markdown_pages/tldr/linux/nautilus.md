@@ -22,8 +22,8 @@ features:
   - Launch Nautilus as root for administrative tasks.
   - Select specific files or directories upon launch.
   - Open multiple Nautilus windows simultaneously.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nautilus

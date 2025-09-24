@@ -22,8 +22,8 @@ features:
 - Typeset pic input to PDF using groff
 - Create diagrams within groff documents
 - Support for the [me] macro package for PDF output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pic

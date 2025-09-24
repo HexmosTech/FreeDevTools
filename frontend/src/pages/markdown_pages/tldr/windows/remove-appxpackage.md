@@ -22,8 +22,8 @@ features:
 - Preserve application data during removal
 - Uninstall app packages using PowerShell
 - Remove app packages with specific package name
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Remove-AppxPackage

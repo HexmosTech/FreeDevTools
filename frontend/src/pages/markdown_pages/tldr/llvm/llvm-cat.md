@@ -22,8 +22,8 @@ features:
 - Facilitate modular program compilation
 - Enable cross-language linking and optimization
 - Simplify the process of combining LLVM modules
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvm-cat

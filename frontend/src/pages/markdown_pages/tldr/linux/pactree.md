@@ -22,8 +22,8 @@ features:
 - Output dependencies one per line, skipping duplicates.
 - Include optional dependencies in the dependency tree.
 - Colorize the dependency tree output for better readability.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pactree

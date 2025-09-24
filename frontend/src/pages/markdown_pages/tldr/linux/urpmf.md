@@ -22,8 +22,8 @@ features:
 - Filter packages based on keywords in summaries
 - Filter packages based on keywords in descriptions
 - Exclude packages based on keywords using negation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urpmf

@@ -22,8 +22,8 @@ features:
 - Create XML output describing design hierarchy and data types
 - Build executable simulations of hardware designs
 - Compile Verilog/SystemVerilog code into optimized C++ code
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # verilator

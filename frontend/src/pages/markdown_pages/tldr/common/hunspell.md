@@ -22,8 +22,8 @@ features:
 - List all misspelled words in a file.
 - Identify spelling errors from the command line.
 - Correct spelling mistakes using dictionary suggestions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hunspell

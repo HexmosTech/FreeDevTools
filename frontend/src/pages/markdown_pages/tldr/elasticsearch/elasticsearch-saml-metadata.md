@@ -22,8 +22,8 @@ features:
 - Save generated SAML metadata to a file.
 - Support configuring SAML Identity Providers via command line.
 - Display help information about command options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elasticsearch-saml-metadata

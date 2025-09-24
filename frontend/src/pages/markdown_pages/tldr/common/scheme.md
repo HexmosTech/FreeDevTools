@@ -22,8 +22,8 @@ features:
 - Load Scheme programs into the REPL
 - Evaluate Scheme expressions directly
 - Run Scheme programs in quiet mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scheme

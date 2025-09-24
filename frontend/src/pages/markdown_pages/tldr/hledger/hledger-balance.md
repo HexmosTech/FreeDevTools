@@ -22,8 +22,8 @@ features:
 - Display unrealized capital gains or losses based on market prices
 - Summarize account balances in a hierarchical tree structure
 - Sort and filter data based on amount, date, or account type
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hledger balance

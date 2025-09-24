@@ -22,8 +22,8 @@ features:
 - Automatically approve destruction after previewing
 - Exclude protected resources from destruction
 - Continue destruction even if errors occur
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi destroy

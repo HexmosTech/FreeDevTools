@@ -22,8 +22,8 @@ features:
 - Generate Virtual Datasources (VRT) for GeoJSON datasets
 - Concatenate datasets and preserve source information
 - Store source dataset names as attributes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ogrmerge.py

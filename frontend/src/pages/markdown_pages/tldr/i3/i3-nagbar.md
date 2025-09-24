@@ -22,8 +22,8 @@ features:
 - Customize message fonts
 - Create interactive buttons with commands
 - Execute commands in a terminal upon button click
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # i3-nagbar

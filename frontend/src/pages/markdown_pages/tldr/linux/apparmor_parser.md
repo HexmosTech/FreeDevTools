@@ -22,8 +22,8 @@ features:
 - Remove AppArmor profiles from the kernel
 - Preprocess AppArmor profiles for compilation
 - Manage AppArmor profiles in complain mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apparmor_parser

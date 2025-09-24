@@ -22,8 +22,8 @@ features:
 - Supports initializing the current or a specified directory.
 - Streamlines the development workflow for Sailfish OS applications.
 - Creates necessary build files and configurations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk build-init

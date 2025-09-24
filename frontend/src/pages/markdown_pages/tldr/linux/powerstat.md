@@ -22,8 +22,8 @@ features:
   - Utilize Intel's RAPL interface for power analysis
   - Enable comprehensive statistics gathering
   - Analyze battery usage and system power behavior
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # powerstat

@@ -22,8 +22,8 @@ features:
   - Force migration of VMs using local devices (root access required).
   - Perform online/live migration of running virtual machines.
   - Enable live storage migration for local disks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm migrate

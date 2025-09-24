@@ -22,8 +22,8 @@ features:
 - Launch Android apps by package name via command line
 - Manage Waydroid sessions, including start and stop
 - Control Waydroid container status (start, stop, restart, freeze, unfreeze)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waydroid

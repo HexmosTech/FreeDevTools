@@ -22,8 +22,8 @@ features:
 - Delete all untracked files, including those in `.gitignore`.
 - Forcefully clean the working directory.
 - Simulate a fresh clone of the current branch.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git clear

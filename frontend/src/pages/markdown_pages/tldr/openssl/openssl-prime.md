@@ -22,8 +22,8 @@ features:
 - Output prime numbers in hexadecimal format.
 - Utilize command-line interface for prime number operations.
 - Support prime number generation and validation using OpenSSL library.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openssl prime

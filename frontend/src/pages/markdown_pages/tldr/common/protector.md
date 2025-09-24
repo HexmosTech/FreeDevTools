@@ -22,8 +22,8 @@ features:
 - Unprotect branches by deleting protection rules.
 - Target specific GitHub repositories using organization/repository syntax.
 - Automate branch protection workflows via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # protector

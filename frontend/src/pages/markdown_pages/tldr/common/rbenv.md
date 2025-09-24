@@ -22,8 +22,8 @@ features:
 - Set a global Ruby version for the system
 - Uninstall unnecessary Ruby versions
 - List available and installed Ruby versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rbenv

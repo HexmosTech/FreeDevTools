@@ -22,8 +22,8 @@ features:
 - Remove tasks from the list
 - Set priority levels for tasks (A-Z)
 - Replace existing task descriptions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # todo.sh

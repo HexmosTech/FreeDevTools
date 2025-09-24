@@ -22,8 +22,8 @@ features:
   - Provides verbose output showing fragmentation before and after defragmentation.
   - Allows checking fragmentation without performing defragmentation.
   - Supports specifying the target filesystem device.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # e4defrag

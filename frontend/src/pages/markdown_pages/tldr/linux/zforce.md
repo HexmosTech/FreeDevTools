@@ -22,8 +22,8 @@ features:
 - Ignores non-gzip files
 - Simplifies gzip file management on Linux
 - Enhances command-line workflow for gzip files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zforce

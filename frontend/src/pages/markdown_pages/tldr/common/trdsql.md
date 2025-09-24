@@ -6,24 +6,24 @@ canonical: "https://hexmos.com/freedevtools/tldr/common/trdsql/"
 description: "Execute SQL queries on various data formats with trdsql.  Convert CSV, JSON, and YAML files to SQL databases. Free online tool, no registration required."
 category: common
 keywords:
-- CSV SQL query tool
-- JSON SQL query tool
-- YAML SQL query tool
-- LTSV SQL query tool
-- TBLN SQL query tool
-- SQL data conversion tool
-- command line SQL query
-- SQL database query tool
-- data format conversion
-- trdsql command examples
+  - CSV SQL query tool
+  - JSON SQL query tool
+  - YAML SQL query tool
+  - LTSV SQL query tool
+  - TBLN SQL query tool
+  - SQL data conversion tool
+  - command line SQL query
+  - SQL database query tool
+  - data format conversion
+  - trdsql command examples
 features:
-- Execute SQL queries directly on CSV, JSON, YAML, LTSV, and TBLN files.
-- Convert various data formats into SQL-compatible tables.
-- Connect to and query PostgreSQL and MySQL databases using SQL.
-- Merge data from multiple CSV files using SQL UNION commands.
-- Query compressed log files (e.g., .gz) with SQL.
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+  - Execute SQL queries directly on CSV, JSON, YAML, LTSV, and TBLN files.
+  - Convert various data formats into SQL-compatible tables.
+  - Connect to and query PostgreSQL and MySQL databases using SQL.
+  - Merge data from multiple CSV files using SQL UNION commands.
+  - Query compressed log files (e.g., .gz) with SQL.
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trdsql

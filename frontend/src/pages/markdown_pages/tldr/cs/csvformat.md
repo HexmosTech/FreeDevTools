@@ -22,8 +22,8 @@ features:
 - Convert line endings to carriage return + line feed.
 - Minimize or maximize quote usage in CSV output.
 - Customize CSV output format via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csvformat

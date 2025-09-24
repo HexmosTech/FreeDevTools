@@ -22,8 +22,8 @@ features:
 - Ignores provider-specific configuration options
 - Detects syntax errors in Vagrantfiles
 - Ensures Vagrantfile is correctly structured
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vagrant validate

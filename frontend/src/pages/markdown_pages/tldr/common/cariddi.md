@@ -22,8 +22,8 @@ features:
 - Supports custom regular expressions for secret detection
 - Provides various output formats including JSON and HTML
 - Offers proxy support and random user agent capabilities
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cariddi

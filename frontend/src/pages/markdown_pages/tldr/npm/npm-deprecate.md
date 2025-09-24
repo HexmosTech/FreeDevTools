@@ -22,8 +22,8 @@ features:
 - Remove deprecation messages from package versions.
 - Communicate deprecation reasons to users.
 - Manage package lifecycle with deprecation flags.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm deprecate

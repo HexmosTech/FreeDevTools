@@ -22,8 +22,8 @@ features:
 - Delete specific keys and values from the database
 - Reset and pull fresh copy from Charm Cloud
 - Manage multiple databases locally
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # skate

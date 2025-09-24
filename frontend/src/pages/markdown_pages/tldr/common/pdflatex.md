@@ -22,8 +22,8 @@ features:
 - Halt compilation on the first error encountered
 - Customize PDF generation using command-line options
 - Generate PDF from LaTeX using command-line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdflatex

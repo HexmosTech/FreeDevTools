@@ -22,8 +22,8 @@ features:
 - Forcefully end processes in remote desktop sessions
 - Manage processes via command line on Windows
 - Kill unresponsive applications quickly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tskill

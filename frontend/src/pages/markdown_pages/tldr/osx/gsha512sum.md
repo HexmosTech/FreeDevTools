@@ -22,8 +22,8 @@ features:
 - Calculate SHA512 hash on macOS
 - Ensure data security via checksum verification
 - Compare SHA512 checksums for file validation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsha512sum

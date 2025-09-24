@@ -22,8 +22,8 @@ features:
 - Delete specific Tarsnap archives.
 - Restore files from Tarsnap backups.
 - Copy Tarsnap archives.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tarsnap

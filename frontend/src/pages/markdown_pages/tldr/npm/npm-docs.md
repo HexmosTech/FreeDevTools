@@ -22,8 +22,8 @@ features:
 - Provides quick access to official npm documentation.
 - Supports viewing module details directly from the command line.
 - Enables easy dependency exploration and understanding.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm docs

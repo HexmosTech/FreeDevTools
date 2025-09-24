@@ -22,8 +22,8 @@ features:
 - Run commands without globally installing npm packages
 - Utilize pnpm's efficient package management for faster execution
 - Access command help and usage information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnpx

@@ -22,8 +22,8 @@ features:
 - Create parser output with custom prefixes
 - Produce detailed conflict reports
 - Generate constant declarations for values from the grammar
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yacc

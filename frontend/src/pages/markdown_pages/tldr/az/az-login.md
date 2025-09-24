@@ -22,8 +22,8 @@ features:
 - Authenticate with a service principal and a client certificate.
 - Log in using a virtual machine's system assigned identity.
 - Log in with a user-assigned managed identity.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az login

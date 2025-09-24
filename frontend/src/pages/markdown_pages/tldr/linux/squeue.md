@@ -22,8 +22,8 @@ features:
   - Refresh the queue view at a specified interval.
   - Display expected start times for queued jobs.
   - Monitor resource utilization of queued jobs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # squeue

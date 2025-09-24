@@ -22,8 +22,8 @@ features:
 - Remove nodes from a Proxmox VE cluster
 - Display the local view of the cluster nodes
 - Display the local view of the cluster status
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pvecm

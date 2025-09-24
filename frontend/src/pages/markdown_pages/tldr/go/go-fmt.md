@@ -22,8 +22,8 @@ features:
 - Recursively format Go packages in subdirectories
 - Preview formatting changes without applying them
 - Display formatting commands as they are executed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # go fmt

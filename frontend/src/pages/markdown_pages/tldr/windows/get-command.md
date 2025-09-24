@@ -22,8 +22,8 @@ features:
 - Discover commands within specific PowerShell modules.
 - Get detailed information about a specific command.
 - Find commands available on the system's PATH.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-Command

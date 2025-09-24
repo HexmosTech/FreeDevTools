@@ -22,8 +22,8 @@ features:
   - Automatically reconnect to VMs after shutdown and restart
   - Connect to remote VMs over TLS
   - Connect to remote VMs over SSH
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-viewer

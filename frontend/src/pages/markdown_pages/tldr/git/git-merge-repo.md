@@ -22,8 +22,8 @@ features:
 - Combine histories from multiple repositories.
 - Merge branches without preserving full history.
 - Streamline repository integration workflows.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git merge-repo

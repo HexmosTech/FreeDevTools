@@ -22,8 +22,8 @@ features:
 - Customize output format for detailed sequence analysis.
 - Utilize multi-threading for faster sequence alignment.
 - Perform remote BLASTN searches against NCBI databases.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # blastn

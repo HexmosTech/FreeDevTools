@@ -22,8 +22,8 @@ features:
 - Supports various PNM subtypes (PBM, PGM, PPM).
 - Allows for custom output file naming.
 - Facilitates image segmentation and processing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmsplit

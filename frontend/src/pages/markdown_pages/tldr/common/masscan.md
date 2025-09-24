@@ -22,8 +22,8 @@ features:
 - Output scan results in various formats (JSON, XML).
 - Perform version detection using banner grabbing.
 - Read scan results from binary files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # masscan

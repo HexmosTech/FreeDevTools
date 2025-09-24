@@ -22,8 +22,8 @@ features:
 - Output code in various formats including HTML and SVG
 - Customize highlighting styles with predefined themes
 - List available lexers, styles and formatters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chroma

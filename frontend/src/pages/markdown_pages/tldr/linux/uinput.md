@@ -22,8 +22,8 @@ features:
   - Merge YAML device descriptions.
   - Merge device descriptions from existing nodes.
   - Control keyboard input virtually.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uinput

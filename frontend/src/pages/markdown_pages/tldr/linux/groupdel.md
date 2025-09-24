@@ -22,8 +22,8 @@ features:
   - Requires sudo privileges for execution.
   - Integrates seamlessly with other group management commands.
   - Provides a simple and efficient method for group deletion.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # groupdel

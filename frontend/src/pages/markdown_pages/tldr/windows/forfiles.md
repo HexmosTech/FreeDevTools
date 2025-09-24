@@ -22,8 +22,8 @@ features:
 - Search for files recursively in subdirectories
 - Filter files using glob patterns
 - Automate batch processing operations on Windows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # forfiles

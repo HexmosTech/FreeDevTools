@@ -22,8 +22,8 @@ features:
   - Save bug reports to a file using the --output option before sending.
   - Submit bug reports directly via email using the default configuration.
   - Simplify the Debian bug reporting process for improved developer workflow.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reportbug

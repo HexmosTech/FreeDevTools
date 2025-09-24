@@ -22,8 +22,8 @@ features:
 - Supports image overlap for seamless stitching.
 - Accepts a list of filenames for batch processing.
 - Enables image combination using `printf`-style expressions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamundice

@@ -22,8 +22,8 @@ features:
 - Automatically sets library path for uninstalled programs.
 - Installs shared libraries to a specified directory.
 - Deletes installed or uninstalled libraries/executables.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # libtool

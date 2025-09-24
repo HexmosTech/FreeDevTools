@@ -22,8 +22,8 @@ features:
 - Support for multiple output modes (text, json, html, etc.)
 - Analyze code in specified directories
 - Configure parallel processing for faster analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phan

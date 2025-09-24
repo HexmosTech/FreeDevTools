@@ -22,8 +22,8 @@ features:
 - Scan for accessible Amazon S3 buckets.
 - Discover alternative virtual hosts on a server.
 - Fuzz web parameters to identify vulnerabilities.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gobuster

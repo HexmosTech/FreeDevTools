@@ -22,8 +22,8 @@ features:
 - Thin existing binaries to specific architectures.
 - Extract specific architectures from fat binaries.
 - Inspect architectures supported by a binary.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvm-lipo

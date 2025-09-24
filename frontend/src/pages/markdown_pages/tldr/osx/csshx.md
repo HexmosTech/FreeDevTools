@@ -22,8 +22,8 @@ features:
 - Specify custom SSH keys for authentication.
 - Manage server connections through command-line interface.
 - Simplify remote server administration tasks.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csshX

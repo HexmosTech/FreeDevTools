@@ -22,8 +22,8 @@ features:
 - Manage F-Droid repositories (add, remove, enable, disable)
 - Search for applications within the F-Droid repository
 - Download APK files directly from the F-Droid repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fdroidcl

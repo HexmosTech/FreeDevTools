@@ -22,8 +22,8 @@ features:
   - Set the On-Screen Display (OSD) name for devices.
   - Send single commands to control CEC devices.
   - Control device power states (standby and on).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cec-client

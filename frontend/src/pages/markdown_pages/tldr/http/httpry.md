@@ -22,8 +22,8 @@ features:
 - Filter HTTP traffic based on HTTP verbs
 - Capture network packets in PCAP format
 - Run as a daemon process for continuous monitoring
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # httpry

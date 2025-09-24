@@ -22,8 +22,8 @@ features:
 - Track changes in a Dolt table over time
 - Examine data lineage within Dolt databases
 - Pinpoint when a specific row was modified
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt blame

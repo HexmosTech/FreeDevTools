@@ -22,8 +22,8 @@ features:
 - Mark events as read to acknowledge them.
 - Manage your Linode cloud infrastructure events.
 - Monitor your Linode account using the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linode-cli events

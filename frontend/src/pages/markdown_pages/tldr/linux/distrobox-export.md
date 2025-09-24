@@ -22,8 +22,8 @@ features:
   - Export services from containers to the host system.
   - Unexport or delete previously exported applications.
   - Manage exported applications and binaries via command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # distrobox-export

@@ -22,8 +22,8 @@ features:
 - Specify a particular branch to pull from
 - Define a specific playbook to execute
 - Use a custom inventory file for host variables
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ansible-pull

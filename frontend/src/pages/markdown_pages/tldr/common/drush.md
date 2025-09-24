@@ -22,8 +22,8 @@ features:
 - Clear all Drupal caches with a single command
 - Clear CSS and JavaScript caches separately
 - Manage Drupal modules quickly and efficiently
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # drush

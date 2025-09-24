@@ -22,8 +22,8 @@ features:
 - View detailed information about a specific LKE cluster
 - Update the node type of an existing LKE cluster
 - Delete an LKE cluster
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linode-cli lke

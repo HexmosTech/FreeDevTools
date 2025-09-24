@@ -22,8 +22,8 @@ features:
 - Update Git commit messages after code review using 'arc amend'
 - Push code changes to the repository with 'arc land'
 - Manage code review workflows within Phabricator
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arc

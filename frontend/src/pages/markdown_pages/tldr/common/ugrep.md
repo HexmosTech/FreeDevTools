@@ -22,8 +22,8 @@ features:
 - Filter search by file type.
 - Use glob patterns to include or exclude files.
 - Perform fuzzy search with configurable character mismatches.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ugrep

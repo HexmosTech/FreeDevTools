@@ -22,8 +22,8 @@ features:
   - Execute commands on multiple servers at once
   - Connect to predefined server groups using aliases
   - Organize servers in ~/.mssh_clusters for easy access
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mssh

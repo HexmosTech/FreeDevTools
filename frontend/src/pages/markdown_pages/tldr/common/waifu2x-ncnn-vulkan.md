@@ -22,8 +22,8 @@ features:
 - Support multiple image formats (JPG, PNG, WEBP)
 - Process images using NCNN neural network
 - Enhance image resolution with custom scaling factors
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waifu2x-ncnn-vulkan

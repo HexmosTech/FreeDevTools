@@ -22,8 +22,8 @@ features:
 - Create named screen sessions for easy identification and management.
 - Log screen output to a file for later review and analysis.
 - Execute commands in detached sessions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # screen

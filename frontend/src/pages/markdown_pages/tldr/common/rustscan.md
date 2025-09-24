@@ -22,8 +22,8 @@ features:
 - Scans a specific range of ports.
 - Integrates with Nmap for advanced analysis.
 - Supports custom batch size and timeout configurations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustscan

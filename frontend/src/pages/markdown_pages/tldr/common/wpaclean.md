@@ -22,8 +22,8 @@ features:
 - Clean multiple capture files simultaneously
 - Save cleaned capture data to a new file
 - Reduce capture file size for easier analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wpaclean

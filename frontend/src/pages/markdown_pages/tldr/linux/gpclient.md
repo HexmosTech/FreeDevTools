@@ -22,8 +22,8 @@ features:
   - Launch a graphical user interface for managing VPN connections.
   - Bypass legacy OpenSSL renegotiation errors.
   - Ignore TLS errors for problematic connections.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gpclient

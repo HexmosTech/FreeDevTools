@@ -22,8 +22,8 @@ features:
   - Bind USB devices to the usbip daemon.
   - Attach to remote USB devices from a client machine.
   - Detach and unbind USB devices from the usbip system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # usbip

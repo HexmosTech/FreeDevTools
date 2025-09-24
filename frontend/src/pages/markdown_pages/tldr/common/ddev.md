@@ -22,8 +22,8 @@ features:
 - Execute commands within the ddev container.
 - Export databases for backup and migration.
 - Install specific Node.js versions using nvm.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ddev

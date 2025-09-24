@@ -22,8 +22,8 @@ features:
 - Install Python packages using the built-in pip module
 - Debug Python code using the integrated pdb debugger
 - Run specific Python library modules as scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pypy

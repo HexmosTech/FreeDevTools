@@ -22,8 +22,8 @@ features:
   - Supports various CD formats and options.
   - Offers precise control over the CD writing process.
   - Facilitates creation of bootable CDs from image files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cdrdao

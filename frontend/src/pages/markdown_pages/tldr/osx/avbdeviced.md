@@ -22,8 +22,8 @@ features:
 - Monitor AVB device connections and status.
 - Enable seamless audio/video streaming via AVB.
 - Control AVB device daemon on macOS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # avbdeviced

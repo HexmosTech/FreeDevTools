@@ -22,8 +22,8 @@ features:
 - Unfreeze multiple DVC stages simultaneously
 - Facilitate iterative development with DVC
 - Manage DVC pipeline stage dependencies
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc unfreeze

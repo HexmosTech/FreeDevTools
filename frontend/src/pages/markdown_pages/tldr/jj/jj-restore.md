@@ -22,8 +22,8 @@ features:
 - Interactively choose parts of revisions to restore.
 - Restore files into another revision.
 - Revert files to a merge of its parents.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj restore

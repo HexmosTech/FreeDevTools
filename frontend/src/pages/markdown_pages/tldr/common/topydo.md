@@ -22,8 +22,8 @@ features:
 - Create repeating to-do items with flexible intervals
 - Revert the last executed topydo command
 - Organize tasks in the standard todo.txt format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # topydo

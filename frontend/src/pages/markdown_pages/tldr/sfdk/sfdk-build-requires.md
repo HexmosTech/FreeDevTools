@@ -22,8 +22,8 @@ features:
 - Reset dependencies to omit extra ones.
 - Show the difference between current and clean build environments.
 - Install or update build-time dependencies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk build-requires

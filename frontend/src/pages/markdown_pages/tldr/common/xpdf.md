@@ -22,8 +22,8 @@ features:
 - Display PDF in fullscreen mode
 - Specify initial zoom level for PDF viewing
 - Open compressed PDF files directly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xpdf

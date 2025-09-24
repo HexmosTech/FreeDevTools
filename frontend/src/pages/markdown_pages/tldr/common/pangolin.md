@@ -22,8 +22,8 @@ features:
 - Utilize different analysis engines for optimized performance
 - Identify genomic variants within SARS-CoV-2 sequences
 - Assign dynamic lineage classifications to viral samples
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pangolin

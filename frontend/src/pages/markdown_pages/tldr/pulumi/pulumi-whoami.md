@@ -22,8 +22,8 @@ features:
 - Output user information in JSON format for easy parsing
 - Access comprehensive help documentation for the command
 - Quickly check user context within Pulumi CLI
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi whoami

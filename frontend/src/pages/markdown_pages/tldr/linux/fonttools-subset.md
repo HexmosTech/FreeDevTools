@@ -22,8 +22,8 @@ features:
   - Customize OpenType layout features (e.g., kerning, oldstyle figures).
   - Specify output file names for subsets.
   - Optimize font file sizes by removing unused glyphs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fonttools subset

@@ -22,8 +22,8 @@ features:
   - Allows for flexible column selection.
   - Accepts input from stdin for piped data.
   - Provides detailed help and usage instructions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uuidparse

@@ -22,8 +22,8 @@ features:
 - Support multiple platforms (Linux, macOS, Windows)
 - Update local cache of tldr pages
 - List available command examples
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tldr

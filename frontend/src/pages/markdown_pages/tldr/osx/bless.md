@@ -22,8 +22,8 @@ features:
 - Retrieve boot information as a Property List
 - Create BootX and boot.efi files as needed
 - Set a volume containing Mac OS 9 and Mac OS X to be the active volume
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bless

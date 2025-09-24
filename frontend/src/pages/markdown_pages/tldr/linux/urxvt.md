@@ -22,8 +22,8 @@ features:
   - Run commands within a new terminal instance
   - Keep terminal windows open after command execution
   - Integrate commands within a sh shell
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # urxvt

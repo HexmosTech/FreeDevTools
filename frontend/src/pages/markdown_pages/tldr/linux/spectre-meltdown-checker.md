@@ -22,8 +22,8 @@ features:
   - Supports checking specific vulnerability variants.
   - Offers multiple output formats (text, JSON, NRPE, Prometheus, short).
   - Allows checking of non-running kernels using a provided kernel file path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # spectre-meltdown-checker

@@ -22,8 +22,8 @@ features:
 - Manage partitions without rebooting (in most cases)
 - Update partition tables directly from the command line
 - Force the operating system to recognize partition changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # delpart

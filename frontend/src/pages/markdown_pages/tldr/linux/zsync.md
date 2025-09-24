@@ -22,8 +22,8 @@ features:
   - Uses existing files as seeds for faster downloads.
   - Saves downloaded files to a specified location.
   - Offers quiet mode for minimal output during download.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zsync

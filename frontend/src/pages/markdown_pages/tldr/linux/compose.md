@@ -22,8 +22,8 @@ features:
   - Open existing files for email composition.
   - Leverage mime-type handling for email content.
   - Integrate with `run-mailcap` for advanced functionality.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # compose

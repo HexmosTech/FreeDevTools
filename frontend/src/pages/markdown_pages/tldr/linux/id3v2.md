@@ -22,8 +22,8 @@ features:
   - Delete ID3v1 tags from audio files
   - Delete ID3v2 tags from audio files
   - Show the installed id3v2 version
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # id3v2

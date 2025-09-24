@@ -22,8 +22,8 @@ features:
 - Generate X11 bitmaps from PBM
 - Generate X10 bitmaps from PBM
 - Enable explicit specification of X11 or X10 format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtoxbm

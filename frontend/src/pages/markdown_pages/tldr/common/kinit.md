@@ -22,8 +22,8 @@ features:
 - Renew an existing Kerberos ticket
 - Specify a custom lifetime for a ticket
 - Authenticate with a specific keytab file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kinit

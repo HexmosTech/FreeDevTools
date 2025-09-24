@@ -22,8 +22,8 @@ features:
   - Open terminal sessions in fullscreen mode
   - Specify terminal title for easy identification
   - Configure characters per line and number of lines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xterm

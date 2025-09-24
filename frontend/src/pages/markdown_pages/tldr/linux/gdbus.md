@@ -22,8 +22,8 @@ features:
   - Call specific methods on D-Bus objects with arguments
   - Emit signals from D-Bus objects with specified arguments
   - Monitor all messages on a D-Bus bus
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdbus

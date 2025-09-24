@@ -22,8 +22,8 @@ features:
   - Filter records by age (older than a certain number of days)
   - Filter records by recency (more recent than a certain number of days)
   - Analyze user login timestamps
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lastlog

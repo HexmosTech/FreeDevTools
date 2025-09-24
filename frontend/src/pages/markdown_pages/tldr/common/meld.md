@@ -22,8 +22,8 @@ features:
   - Resolve merge conflicts with a user-friendly interface.
   - Open multiple comparisons in separate tabs for efficient workflow.
   - Utilize command-line options for flexible comparison scenarios.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # meld

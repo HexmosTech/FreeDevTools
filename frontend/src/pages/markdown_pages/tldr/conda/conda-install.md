@@ -22,8 +22,8 @@ features:
 - Install packages from specific Conda channels.
 - Update existing packages within an environment.
 - Perform unattended installations by accepting transactions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # conda install

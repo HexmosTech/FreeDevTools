@@ -22,8 +22,8 @@ features:
   - Lists recently used resources per user.
   - Provides detailed information on CPU time spent.
   - Reports I/O rates for processed commands.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sa

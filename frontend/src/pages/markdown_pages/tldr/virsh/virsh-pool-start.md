@@ -22,8 +22,8 @@ features:
 - Manage virtual machine storage
 - Create storage pools by name or UUID
 - Integrate with qemu/kvm virtualization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh pool-start

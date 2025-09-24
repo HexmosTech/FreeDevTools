@@ -22,8 +22,8 @@ features:
 - Double the terminal font size for better visibility
 - Reset the terminal font to the default setting
 - Configure font mapping for different keyboard layouts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setfont

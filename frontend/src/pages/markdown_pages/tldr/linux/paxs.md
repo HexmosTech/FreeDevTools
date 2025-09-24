@@ -22,8 +22,8 @@ features:
   - Remove packages from Yay, Flatpak, and Snap sources
   - Upgrade all installed packages across all sources
   - Check for updates for all installed packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # paxs

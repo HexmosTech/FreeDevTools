@@ -22,8 +22,8 @@ features:
 - Add a GPG key from stdin to TeX Live
 - Remove a specific GPG key by its ID from TeX Live
 - Verify TeX Live database integrity with GPG keys
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr key

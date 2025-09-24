@@ -22,8 +22,8 @@ features:
 - Deploy applications using Unix sockets.
 - Adjust the number of threads for request processing.
 - Call factory methods to return WSGI objects.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waitress-serve

@@ -22,8 +22,8 @@ features:
 - Identify SMB servers in the local network.
 - Find Samba servers and their services.
 - Check network connectivity for SMB shares.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nmblookup

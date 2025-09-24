@@ -22,8 +22,8 @@ features:
 - Clean up outdated Rust environments
 - Uninstall components of a Rust toolchain
 - Free up disk space by removing unused Rust versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustup uninstall

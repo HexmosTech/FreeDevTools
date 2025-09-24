@@ -22,8 +22,8 @@ features:
 - Narrow down a commit range to locate the problematic code.
 - Skip commits during the bisect process to isolate the issue.
 - Log the bisect session to track your progress.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git bisect

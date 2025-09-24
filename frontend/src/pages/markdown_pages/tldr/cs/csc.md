@@ -22,8 +22,8 @@ features:
 - Include external assembly references during compilation.
 - Embed resource files directly into the compiled output.
 - Generate XML documentation from code comments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # csc

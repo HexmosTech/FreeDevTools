@@ -22,8 +22,8 @@ features:
 - Enforce Cargo.lock file consistency during builds
 - Build all packages within a Rust workspace
 - Target specific binaries or test targets for compilation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo build

@@ -22,8 +22,8 @@ features:
 - Opens Yarn package pages
 - Supports specifying package names
 - Allows choosing between npm, Yarn, or GitHub
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm-home

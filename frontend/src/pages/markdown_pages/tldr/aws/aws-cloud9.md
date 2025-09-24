@@ -22,8 +22,8 @@ features:
 - Describe details of specific Cloud9 environments.
 - Manage environment memberships and permissions.
 - Monitor the status of Cloud9 development environments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws cloud9

@@ -24,8 +24,8 @@ features:
 - Create visualizations directly from the command line interface.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/datashader-cli-banner.png" #updated image
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/datashader-cli-banner.png" #updated image
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # datashader_cli

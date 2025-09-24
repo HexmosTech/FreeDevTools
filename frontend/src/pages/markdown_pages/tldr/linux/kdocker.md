@@ -22,8 +22,8 @@ features:
   - Customize the tray icon for docked applications.
   - Minimize applications to the tray upon losing focus.
   - Control application visibility through the system tray.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kdocker

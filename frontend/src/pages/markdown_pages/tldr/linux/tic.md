@@ -22,8 +22,8 @@ features:
 - Install compiled terminfo database for ncurses
 - Customize terminal behavior using terminfo entries
 - Print terminfo database locations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tic

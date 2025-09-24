@@ -22,8 +22,8 @@ features:
 - Utilize dirsearch-style wordlists with extension substitution
 - Filter fail status codes during brute forcing
 - Customize HTTP headers for brute force requests
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kiterunner brute

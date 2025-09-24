@@ -22,8 +22,8 @@ features:
   - Easily switch between different dotfile configurations.
   - Clone dotfile repositories from GitHub.
   - Symlink dotfiles to your home directory for seamless integration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # homeshick

@@ -22,8 +22,8 @@ features:
 - Perform remote backups of Btrfs volumes
 - Display statistics about Btrfs snapshots
 - Simulate backup routines with dry-run mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrbk

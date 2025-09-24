@@ -22,8 +22,8 @@ features:
   - Allocate jobs to specific nodes and cores.
   - Submit scripts to a particular queue.
   - Control resource usage for submitted jobs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qsub

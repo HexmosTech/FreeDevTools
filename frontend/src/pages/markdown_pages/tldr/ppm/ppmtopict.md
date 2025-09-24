@@ -22,8 +22,8 @@ features:
 - Provides a simple PPM to PICT conversion process
 - Outputs in the PICT image format
 - Integrates with Netpbm toolchain
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtopict

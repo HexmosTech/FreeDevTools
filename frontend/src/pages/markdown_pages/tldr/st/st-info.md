@@ -22,8 +22,8 @@ features:
 - Probe and display summarized device information
 - Provide diagnostics for connected ST-Link programmers
 - Offer detailed MCU memory analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # st-info

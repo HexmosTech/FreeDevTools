@@ -22,8 +22,8 @@ features:
 - Monitor real-time SIP traffic on a specific network interface.
 - Capture SIP packets to a file without displaying them on the interface.
 - Analyze RTP packets within SIP communications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sngrep

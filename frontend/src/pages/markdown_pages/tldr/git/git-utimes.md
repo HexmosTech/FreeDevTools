@@ -22,8 +22,8 @@ features:
 - Changes timestamps only for files not in the working tree or index
 - Synchronizes file timestamps with version control history
 - Supports selectively updating timestamps for newer files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git utimes

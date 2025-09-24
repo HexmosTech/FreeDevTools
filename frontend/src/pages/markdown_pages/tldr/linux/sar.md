@@ -22,8 +22,8 @@ features:
   - Monitors CPU utilization across all cores.
   - Tracks memory utilization and paging activity.
   - Displays run queue length and load averages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sar

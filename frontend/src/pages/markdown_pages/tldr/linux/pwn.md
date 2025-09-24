@@ -22,8 +22,8 @@ features:
   - Encode and decode data in hexadecimal format
   - Generate x64 Linux shellcode for executing commands
   - Check security settings of ELF binaries
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pwn

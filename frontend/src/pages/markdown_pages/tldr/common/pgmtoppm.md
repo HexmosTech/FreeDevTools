@@ -22,8 +22,8 @@ features:
 - Apply colormaps to PGM images
 - Generate PPM images from PGM files
 - Manipulate greyscale values in PGM images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmtoppm

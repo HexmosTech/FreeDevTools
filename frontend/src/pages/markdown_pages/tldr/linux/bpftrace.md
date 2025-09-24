@@ -22,8 +22,8 @@ features:
   - Run complex tracing programs from files for in-depth investigation.
   - Trace specific processes by PID for focused monitoring.
   - Perform dry runs to preview eBPF code before execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bpftrace

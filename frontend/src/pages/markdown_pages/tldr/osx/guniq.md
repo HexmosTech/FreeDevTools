@@ -22,8 +22,8 @@ features:
 - Filter duplicate lines based on specific fields
 - Support for case-insensitive comparisons
 - Display only unique or duplicate lines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # guniq

@@ -22,8 +22,8 @@ features:
 - Use a specific configuration file for formatting
 - Enforce maximum line length constraints
 - Display changes without applying them (dry run)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snakefmt

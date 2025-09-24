@@ -22,8 +22,8 @@ features:
   - Halt the system, terminating all processes.
   - Force a reboot without system manager interaction.
   - Log system shutdown without actually rebooting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reboot

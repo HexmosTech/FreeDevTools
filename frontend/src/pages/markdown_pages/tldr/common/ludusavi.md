@@ -22,8 +22,8 @@ features:
 - List available backups for specific games.
 - Wrap game launchers for seamless backup integration.
 - Wrap standalone games for comprehensive save data management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ludusavi

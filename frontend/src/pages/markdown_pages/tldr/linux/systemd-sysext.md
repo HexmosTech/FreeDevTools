@@ -22,8 +22,8 @@ features:
   - Unmerge system extension images from the system.
   - Refresh system extensions by unmerging and remerging.
   - Check the current merge status of system extensions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-sysext

@@ -22,8 +22,8 @@ features:
   - View current IPv6 firewall rules.
   - Manage IPv6 network access control.
   - Configure IPv6 packet filtering.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ip6tables-save

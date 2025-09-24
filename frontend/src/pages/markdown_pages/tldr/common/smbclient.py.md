@@ -22,8 +22,8 @@ features:
 - Connect using Kerberos authentication protocol
 - Specify a domain controller IP for targeted connections
 - Execute commands from an input file within the SMB shell
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbclient.py

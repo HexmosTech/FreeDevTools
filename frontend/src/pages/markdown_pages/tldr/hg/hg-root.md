@@ -22,8 +22,8 @@ features:
 - Specify a different directory to find its Hg root.
 - Quickly identify the base of your version control project.
 - Show the absolute path to the repository's root.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg root

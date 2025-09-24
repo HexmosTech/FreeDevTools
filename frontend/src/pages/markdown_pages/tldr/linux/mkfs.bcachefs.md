@@ -22,8 +22,8 @@ features:
   - Creates bcachefs file system on a specified device
   - Provides command-line interface for disk formatting
   - Enables quick creation of bcachefs file systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.bcachefs

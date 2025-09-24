@@ -22,8 +22,8 @@ features:
 - Analyze data from stdin for vulnerabilities
 - Quarantine or remove infected files
 - Output scan reports to a log file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clamscan

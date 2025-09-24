@@ -22,8 +22,8 @@ features:
 - Search for available CircuitPython libraries
 - Generate a requirements.txt file of installed libraries
 - Save installed libraries to a requirements.txt file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # circup

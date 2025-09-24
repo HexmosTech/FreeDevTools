@@ -22,8 +22,8 @@ features:
 - Control a Linux desktop remotely using VNC.
 - Configure view-only VNC sessions.
 - Specify display and screen for VNC server.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # x11vnc

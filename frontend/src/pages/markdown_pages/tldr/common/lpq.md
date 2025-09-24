@@ -22,8 +22,8 @@ features:
 - Show print queue details in a long format
 - Control print jobs for a specific printer
 - Continuously monitor print queue status at intervals
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lpq

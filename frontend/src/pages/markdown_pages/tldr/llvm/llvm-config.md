@@ -22,8 +22,8 @@ features:
 - List supported LLVM targets
 - Integrate with build systems (Makefiles, configure scripts)
 - Configure compilation of LLVM based programs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # llvm-config

@@ -22,8 +22,8 @@ features:
 - Control screen brightness for day and night modes.
 - Set custom gamma levels for red, green, and blue channels.
 - Purge temperature changes and set constant color temperature.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # redshift

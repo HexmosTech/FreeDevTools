@@ -22,8 +22,8 @@ features:
 - Disable IPython for a basic Python shell environment
 - Load network device configurations from Pickle files
 - Prototype and debug network automation scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pyats shell

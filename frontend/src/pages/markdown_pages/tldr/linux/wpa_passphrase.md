@@ -22,8 +22,8 @@ features:
   - Computes WPA and WPA2 compatible keys.
   - Enhances WiFi network security.
   - Provides a secure method for key generation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wpa_passphrase

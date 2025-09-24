@@ -22,8 +22,8 @@ features:
 - Remove debug symbols from compiled bytecode
 - Generate platform-independent Lua bytecode
 - Reduce Lua file size for faster loading
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # luac

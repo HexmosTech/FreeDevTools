@@ -22,8 +22,8 @@ features:
 - Analyze network I/O statistics and identify bottlenecks
 - Display system configuration details and hardware information
 - Customize data collection intervals and reporting options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nmon

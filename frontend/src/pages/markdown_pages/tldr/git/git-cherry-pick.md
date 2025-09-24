@@ -22,8 +22,8 @@ features:
 - Apply multiple non-sequential commits
 - Integrate commit changes without creating a new commit
 - Selectively merge changes from other branches
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git cherry-pick

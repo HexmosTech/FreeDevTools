@@ -22,8 +22,8 @@ features:
 - Synchronize a specific mail account.
 - Synchronize a specific mail folder.
 - Manage your email offline with local access.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # offlineimap

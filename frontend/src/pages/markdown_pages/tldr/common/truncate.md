@@ -22,8 +22,8 @@ features:
 - Set a file to a specific size.
 - Empty the content of a file.
 - Prevent file creation if it doesn't exist during truncation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # truncate

@@ -22,8 +22,8 @@ features:
 - Sort Git references by committer date or other criteria.
 - Format the output of Git references with custom templates.
 - Limit the number of Git references displayed.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git for-each-ref

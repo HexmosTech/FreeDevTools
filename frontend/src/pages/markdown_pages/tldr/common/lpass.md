@@ -22,8 +22,8 @@ features:
 - Generate secure passwords for new accounts.
 - Show specific password entries from LastPass.
 - Check current login status to LastPass account.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lpass

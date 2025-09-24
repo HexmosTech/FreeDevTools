@@ -22,8 +22,8 @@ features:
 - Search the Rekor index for entries by artifact name
 - Search for specific entries using SHA hashes
 - Verify artifact integrity using public keys
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rekor-cli

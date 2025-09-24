@@ -22,8 +22,8 @@ features:
 - Show current state of a VM pool
 - Report persistence type of a virtual machine pool
 - Present autostart status for a virsh pool
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh pool-info

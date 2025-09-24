@@ -22,8 +22,8 @@ features:
 - Fork hostapd process into the background
 - Define the interface used for wireless communication
 - Control advanced parameters through a configuration file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hostapd

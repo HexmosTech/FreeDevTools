@@ -22,8 +22,8 @@ features:
   - Support dynamic resolution adjustment for optimized viewing.
   - Enable clipboard sharing between local and remote machines.
   - Override certificate checks for easier connection to untrusted servers.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xfreerdp

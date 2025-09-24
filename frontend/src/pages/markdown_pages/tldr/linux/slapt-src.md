@@ -22,8 +22,8 @@ features:
 - List available slackbuilds for installation.
 - Search for specific slackbuilds by name or description.
 - Display detailed information about a slackbuild.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # slapt-src

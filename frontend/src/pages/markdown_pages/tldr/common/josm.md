@@ -22,8 +22,8 @@ features:
 - Set a specific language for the JOSM interface
 - Reset JOSM preferences to default values
 - Download a specific bounding box of OSM data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # josm

@@ -22,8 +22,8 @@ features:
 - Stream data to other applications via pipe
 - Control device gain and output block size
 - Synchronous output for precise data capture
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rtl_sdr

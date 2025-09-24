@@ -22,8 +22,8 @@ features:
 - Assign custom identifiers to logged messages
 - Specify default priority levels for messages
 - Differentiate priority between stdout and stderr
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-cat

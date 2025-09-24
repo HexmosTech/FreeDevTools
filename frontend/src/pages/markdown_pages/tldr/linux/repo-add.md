@@ -22,8 +22,8 @@ features:
 - Remove outdated package files from a repository
 - Suppress command output except for warnings and errors
 - Create package databases with or without color output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # repo-add

@@ -22,8 +22,8 @@ features:
 - Automatically unmount directories after a specified inactivity period
 - Unmount all directories previously mounted by automount
 - Trigger the system's automounting process manually
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # automount

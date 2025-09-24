@@ -22,8 +22,8 @@ features:
 - Cancel a specific job from a specific printer
 - Cancel all jobs of all printers
 - Cancel jobs from a specific server and delete job data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cancel

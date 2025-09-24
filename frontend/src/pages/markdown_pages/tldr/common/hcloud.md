@@ -22,8 +22,8 @@ features:
 - Manage HCloud contexts.
 - Control Hetzner Cloud servers via command line.
 - Simplify cloud infrastructure management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hcloud

@@ -22,8 +22,8 @@ features:
 - Change file extensions in bulk
 - Convert filenames to lowercase or uppercase
 - Replace spaces with underscores in filenames
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rename

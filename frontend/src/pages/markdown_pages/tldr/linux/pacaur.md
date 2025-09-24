@@ -22,8 +22,8 @@ features:
   - Remove packages and their dependencies, including AUR packages.
   - Search the package database for specific keywords.
   - List all currently installed packages, including AUR packages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacaur

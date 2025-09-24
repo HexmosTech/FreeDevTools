@@ -22,8 +22,8 @@ features:
 - List all available Dstat plugins
 - Identify processes consuming the most memory and CPU resources
 - Display battery percentage and remaining battery time
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dstat

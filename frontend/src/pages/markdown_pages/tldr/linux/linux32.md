@@ -22,8 +22,8 @@ features:
   - Simplifies the process of running legacy software.
   - Offers improved compatibility for older applications.
   - Facilitates troubleshooting and testing of 32-bit programs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linux32

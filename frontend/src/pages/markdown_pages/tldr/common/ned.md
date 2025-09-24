@@ -22,8 +22,8 @@ features:
 - Utilize numbered group references in replacements
 - Preview find and replace results without modifying files
 - Exclude specific files during the search process
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ned

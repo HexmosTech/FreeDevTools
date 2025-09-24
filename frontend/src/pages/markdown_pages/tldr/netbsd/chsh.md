@@ -22,8 +22,8 @@ features:
   - act as an alias for chpass on NetBSD
   - leverage NetBSD system authentication
   - update shell configuration on NetBSD
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chsh

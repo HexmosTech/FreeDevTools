@@ -22,8 +22,8 @@ features:
 - Process data while retaining header context
 - Integrate with standard command-line utilities like sort and grep
 - Handle input from stdin while preserving header
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # keep-header

@@ -22,8 +22,8 @@ features:
 - List files with invalid UTF-8 encoding
 - Invert the output to list valid UTF-8 files
 - Run in quiet mode with exit code indicating status
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # isutf8

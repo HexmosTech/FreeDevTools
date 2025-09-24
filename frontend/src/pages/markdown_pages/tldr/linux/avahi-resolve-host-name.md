@@ -22,8 +22,8 @@ features:
   - Query Avahi for specific DNS records
   - Retrieve the IP address of a service on the network
   - Convert mDNS hostnames to IP addresses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # avahi-resolve-host-name

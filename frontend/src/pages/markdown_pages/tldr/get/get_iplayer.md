@@ -22,8 +22,8 @@ features:
 - Download subtitles for iPlayer content
 - Automate recording and subtitle download in one command
 - Display help information for command options
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # get_iplayer

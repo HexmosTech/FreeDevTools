@@ -22,8 +22,8 @@ features:
 - Delete specified users from Mosquitto password files
 - Upgrade plain-text password files to hashed format
 - Manage user credentials for Mosquitto MQTT server
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mosquitto_passwd

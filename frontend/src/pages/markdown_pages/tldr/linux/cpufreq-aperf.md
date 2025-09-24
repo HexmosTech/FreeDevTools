@@ -22,8 +22,8 @@ features:
 - Set custom refresh intervals for monitoring
 - Execute CPU frequency calculations once
 - Optimize CPU performance on Linux systems
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cpufreq-aperf

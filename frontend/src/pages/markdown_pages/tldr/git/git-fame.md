@@ -22,8 +22,8 @@ features:
 - Filter contributions by date range
 - Display results in multiple formats (pipe, YAML, JSON, CSV, TSV)
 - Identify code moved or copied within the repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git fame

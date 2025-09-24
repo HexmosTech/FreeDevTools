@@ -22,8 +22,8 @@ features:
 - Perform I/O operations to test storage
 - Allow specifying verbosity levels for detailed output
 - Identify system instability issues under stress
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # stressapptest

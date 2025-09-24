@@ -22,8 +22,8 @@ features:
 - Inspect Nix package definitions
 - Quickly access Nix configuration files
 - Debug Nix expressions using $EDITOR
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nix edit

@@ -22,8 +22,8 @@ features:
   - Allows read-only checking of the filesystem with the -c option.
   - Forces a filesystem check even if it appears clean using the -f option.
   - Performs an exhaustive bad block test and blacklists bad blocks with the -fccky option.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # e2fsck

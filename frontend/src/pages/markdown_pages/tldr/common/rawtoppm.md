@@ -22,8 +22,8 @@ features:
 - Skip initial bytes from raw image file
 - Skip trailing bytes from each row in raw image file
 - Support bottom-to-top raw image data conversion
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rawtoppm

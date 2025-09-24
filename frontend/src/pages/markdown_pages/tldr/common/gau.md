@@ -22,8 +22,8 @@ features:
 - Discover URLs from Common Crawl datasets
 - Search URLs from specific providers like Wayback or OTX
 - Filter URL results within a specified date range
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gau

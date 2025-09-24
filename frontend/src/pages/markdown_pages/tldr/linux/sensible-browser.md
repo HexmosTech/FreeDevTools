@@ -22,8 +22,8 @@ features:
   - Open a new browser window
   - Integrate browser launch into shell scripts
   - Provide a consistent cross-platform browser interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sensible-browser

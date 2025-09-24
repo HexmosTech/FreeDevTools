@@ -22,8 +22,8 @@ features:
 - Close bugs in the changelog using bug IDs.
 - Support non-maintainer uploads.
 - Easily manage Debian package release notes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # debchange

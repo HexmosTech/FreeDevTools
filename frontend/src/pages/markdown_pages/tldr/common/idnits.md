@@ -22,8 +22,8 @@ features:
 - Counts nits in internet-drafts
 - Provides verbose output with extra information
 - Allows specifying the expected year in boilerplate
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # idnits

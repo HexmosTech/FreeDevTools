@@ -22,8 +22,8 @@ features:
 - Retrieve LSA secrets from target machines
 - Dump NTDS.dit file from domain controllers
 - Authenticate using a variety of protocols
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-secretsdump

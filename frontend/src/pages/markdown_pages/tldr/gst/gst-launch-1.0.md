@@ -22,8 +22,8 @@ features:
 - Re-encode multimedia files
 - Stream media content to an RTSP server
 - Multiplex video and audio streams into a single file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gst-launch-1.0

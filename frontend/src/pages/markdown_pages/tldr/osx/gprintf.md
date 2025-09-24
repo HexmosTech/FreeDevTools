@@ -22,8 +22,8 @@ features:
 - Control the appearance of data in the terminal
 - Produce dynamic reports using shell scripts
 - Manipulate strings for improved readability
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gprintf

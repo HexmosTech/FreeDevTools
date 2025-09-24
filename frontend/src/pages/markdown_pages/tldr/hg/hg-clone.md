@@ -22,8 +22,8 @@ features:
 - Clone a repository without checking out files
 - Clone a repository to a specific revision, tag or branch
 - Clone a repository up to a specific revision
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg clone

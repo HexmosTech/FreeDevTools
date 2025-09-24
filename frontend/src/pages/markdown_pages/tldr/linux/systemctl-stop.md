@@ -22,8 +22,8 @@ features:
   - Suppress warning messages during service shutdown.
   - Control multiple units simultaneously using patterns.
   - Integrate seamlessly with the systemd init system.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemctl stop

@@ -22,8 +22,8 @@ features:
 - Generate incremental timestamps
 - Convert existing timestamps to relative time
 - Control timestamp precision up to microseconds
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ts

@@ -22,8 +22,8 @@ features:
 - Extract specific sub-elements and their values from matched XML elements
 - Output XML content as text with customizable newlines
 - Process multiple XML files and aggregate results
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml select

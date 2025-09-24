@@ -22,8 +22,8 @@ features:
 - Layout graphs using dot, neato, twopi, circo, fdp, sfdp, osage, & patchwork
 - Generate images from stdin/stdout
 - Create squareified treemap network graphs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # patchwork

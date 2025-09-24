@@ -22,8 +22,8 @@ features:
   - Provides output suitable for use with boot loaders.
   - Works with various Linux file systems.
   - Supports command-line interaction for efficient use in scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linux-boot-prober

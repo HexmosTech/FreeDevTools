@@ -22,8 +22,8 @@ features:
 - List dashboards associated with an AWS account
 - Describe a specific dataset, including details
 - Display dataset access permissions and actions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws quicksight

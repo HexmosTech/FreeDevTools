@@ -22,8 +22,8 @@ features:
 - "Exclude specific files and directories from an archive."
 - "Create zip archives with specific compression levels."
 - "Create encrypted zip archives with password protection."
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zip

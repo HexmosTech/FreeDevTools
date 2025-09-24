@@ -22,8 +22,8 @@ features:
 - Audit SEO best practices for improved search engine rankings
 - Evaluate Progressive Web App (PWA) compliance
 - Customize report generation with specific categories and configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lighthouse

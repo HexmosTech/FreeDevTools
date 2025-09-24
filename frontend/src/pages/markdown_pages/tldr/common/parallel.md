@@ -22,8 +22,8 @@ features:
 - Support replacement strings for flexible command customization
 - Distribute tasks across multiple machines via SSH
 - Manage job execution on large datasets with block processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # parallel

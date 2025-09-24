@@ -22,8 +22,8 @@ features:
 - Manage volume group attributes using the command line.
 - Control the availability of logical volumes for access.
 - Enable or disable access to data stored on logical volumes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vgchange

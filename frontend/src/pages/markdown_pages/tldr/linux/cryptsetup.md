@@ -22,8 +22,8 @@ features:
   - Manage LUKS encrypted volume keys.
   - Display status information of mappings.
   - Change LUKS volume passphrases.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cryptsetup

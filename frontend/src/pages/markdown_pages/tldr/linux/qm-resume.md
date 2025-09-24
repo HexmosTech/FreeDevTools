@@ -22,8 +22,8 @@ features:
 - Control virtual machine state via command line
 - Integrate with Proxmox Virtual Environment (PVE)
 - Manage KVM-based virtual machines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm resume

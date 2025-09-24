@@ -22,8 +22,8 @@ features:
 - Specify the serial port for communication
 - Set the baud rate for faster transfers
 - Program ESP8266 and ESP32 chips
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # esptool.py

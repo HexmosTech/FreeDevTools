@@ -22,8 +22,8 @@ features:
 - Manage Windows Update settings using PowerShell
 - Automate Windows Update configuration tasks
 - Access detailed information on Windows Update Agent settings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-WUSettings

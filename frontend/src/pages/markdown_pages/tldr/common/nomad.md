@@ -22,8 +22,8 @@ features:
 - Plan a job execution on a Nomad cluster
 - Display status information about a specific job
 - Follow the logs of a specific allocation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nomad

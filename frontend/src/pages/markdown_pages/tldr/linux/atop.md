@@ -22,8 +22,8 @@ features:
 - Display detailed information about CPU, memory, disk, and network activity
 - Filter and sort processes based on resource usage
 - Analyze historical resource usage data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # atop

@@ -22,8 +22,8 @@ features:
 - Execute Kotlin scripts directly from the command line
 - Start an interactive Kotlin REPL shell
 - Compile multiple Kotlin files simultaneously
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kotlinc

@@ -22,8 +22,8 @@ features:
   - Utilize `run-mailcap` to process files with specific mime types.
   - Open files from the command line.
   - Provide a simplified alias for the `run-mailcap --action=edit` command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # edit

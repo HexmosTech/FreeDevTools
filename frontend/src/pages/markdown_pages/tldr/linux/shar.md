@@ -22,8 +22,8 @@ features:
   - Treat all files as binary using uuencode
   - Treat all files as text and disable uuencode
   - Include a name and cut mark in the archive header
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # shar

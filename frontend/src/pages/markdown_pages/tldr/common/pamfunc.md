@@ -22,8 +22,8 @@ features:
 - Add a constant to PAM image samples
 - Perform bitwise AND, OR, and XOR operations on PAM image samples
 - Shift PAM image sample bits left or right
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamfunc

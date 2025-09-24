@@ -22,8 +22,8 @@ features:
 - Configure SFDK with custom name-value pairs.
 - Display help documentation for various SFDK topics.
 - Check the version of the Sailfish SDK.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk

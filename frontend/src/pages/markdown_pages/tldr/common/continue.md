@@ -22,8 +22,8 @@ features:
 - Control the flow of `for`, `while`, `until`, and `select` loops
 - Skip iterations from within nested loops
 - Continue execution from the top of the loop
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # continue

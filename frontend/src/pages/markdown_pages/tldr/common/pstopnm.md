@@ -22,8 +22,8 @@ features:
 - Control the resolution of the output image
 - Create PNM images from specific pages in PostScript files
 - Batch convert PostScript files to PNM images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pstopnm

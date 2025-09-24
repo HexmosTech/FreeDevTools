@@ -22,8 +22,8 @@ features:
 - Preview files to be deleted with a dry run.
 - Forcefully remove untracked files and directories.
 - Delete untracked files, including excluded files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git clean

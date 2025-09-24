@@ -22,8 +22,8 @@ features:
 - Save the converted text format to a specified file
 - Disassemble WebAssembly binaries for analysis
 - Facilitate WebAssembly debugging by providing readable text output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wasm2wat

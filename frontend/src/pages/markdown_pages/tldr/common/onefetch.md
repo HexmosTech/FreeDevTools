@@ -22,8 +22,8 @@ features:
 - Identifies file churn and code complexity
 - Ignores bot and merge commits for cleaner analysis
 - Customizes output by excluding files and directories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # onefetch

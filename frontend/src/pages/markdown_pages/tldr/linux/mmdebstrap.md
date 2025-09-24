@@ -22,8 +22,8 @@ features:
   - Allows specifying custom mirrors for faster downloads.
   - Enables inclusion of additional packages during chroot creation.
   - Generates tarball chroots for portability and offline use.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mmdebstrap

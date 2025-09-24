@@ -22,8 +22,8 @@ features:
 - Lengthen uptime, shell, and kernel output details
 - Check for system errors and failures
 - List artists of ASCII art used in output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # macchina

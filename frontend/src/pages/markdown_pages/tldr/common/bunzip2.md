@@ -22,8 +22,8 @@ features:
 - Execute BZIP2 decompression via command line
 - Process BZIP2 files on Linux systems
 - Streamline BZIP2 archive management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bunzip2

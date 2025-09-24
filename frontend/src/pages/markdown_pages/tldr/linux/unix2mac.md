@@ -22,8 +22,8 @@ features:
   - Display detailed file information, including line ending type.
   - Manage Byte Order Marks (BOM): keep, add, or remove.
   - Modify line endings in place, without creating a new file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unix2mac

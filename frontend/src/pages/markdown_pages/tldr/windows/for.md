@@ -22,8 +22,8 @@ features:
   - Process a list of files using a wildcard pattern.
   - Operate on a collection of directories.
   - Apply commands to every directory in the current path.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # for

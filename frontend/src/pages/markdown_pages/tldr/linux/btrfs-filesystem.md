@@ -22,8 +22,8 @@ features:
   - Force synchronization of unwritten data blocks.
   - Create swap files with custom size and UUID.
   - Summarize disk usage recursively for directories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs filesystem

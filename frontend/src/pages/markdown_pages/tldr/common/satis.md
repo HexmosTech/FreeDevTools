@@ -22,8 +22,8 @@ features:
 - Build static Composer repositories from a configuration.
 - Update specific repositories during the build process.
 - Remove unnecessary archive files after building.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # satis

@@ -22,8 +22,8 @@ features:
 - Delete all resources defined in a YAML manifest file
 - Remove specific Kubernetes nodes
 - Delete all pods or nodes in a Kubernetes cluster
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl delete

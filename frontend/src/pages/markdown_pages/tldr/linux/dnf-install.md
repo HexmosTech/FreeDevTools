@@ -22,8 +22,8 @@ features:
 - Install packages directly from URLs
 - Add EPEL (Extra Packages for Enterprise Linux) repositories
 - Add Remi's RPM repository for updated software
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnf install

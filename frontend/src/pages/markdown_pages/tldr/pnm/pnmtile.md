@@ -22,8 +22,8 @@ features:
 - Scale the input image to fit the output dimensions when tiling.
 - Generate seamless image tiles by repeating the source image.
 - Output the tiled image in PNM format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmtile

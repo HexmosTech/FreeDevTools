@@ -22,8 +22,8 @@ features:
 - Customize iterations, memory usage, and parallelism parameters
 - Display output hash without additional information
 - Calculate hashes with default parameters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # argon2

@@ -22,8 +22,8 @@ features:
 - Remove unwanted folders from Git history
 - Rename paths within a Git repository
 - Restructure the file system within a Git repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git filter-repo

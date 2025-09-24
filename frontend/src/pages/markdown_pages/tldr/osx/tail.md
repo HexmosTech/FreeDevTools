@@ -22,8 +22,8 @@ features:
   - Print a file from a specific line number
   - Print a specific number of bytes from the end of a file
   - Re-attempt access to a file even if inaccessible
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tail

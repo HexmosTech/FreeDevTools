@@ -22,8 +22,8 @@ features:
 - Reboot into recovery mode for system updates
 - Reboot into fastboot mode for advanced configurations
 - Provide different reboot options through the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # adb reboot

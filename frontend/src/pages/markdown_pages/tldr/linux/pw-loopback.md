@@ -22,8 +22,8 @@ features:
   - Connect loopback devices to microphones
   - Create dummy loopback devices without automatic connections
   - Swap left and right audio channels between sink and source
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pw-loopback

@@ -22,8 +22,8 @@ features:
   - Launch tasks based on specific input device events.
   - Utilize a flexible and customizable configuration system.
   - Monitor input devices for debugging and automation purposes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # udevmon

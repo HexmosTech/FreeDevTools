@@ -22,8 +22,8 @@ features:
 - Copy screenshots to the clipboard for easy sharing.
 - Delay screenshot capture by a specified number of seconds.
 - Launch the interactive GNOME Screenshot graphical interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnome-screenshot

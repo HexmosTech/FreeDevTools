@@ -22,8 +22,8 @@ features:
 - Recursively check Python code within directories
 - Analyze multiple directories simultaneously
 - Identify syntax errors and potential issues
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pyflakes

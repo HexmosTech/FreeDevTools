@@ -22,8 +22,8 @@ features:
 - Reset statistics to zero without clearing the cache
 - Compile C/C++ code using cached outputs
 - Accelerate compilation process for faster builds
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ccache

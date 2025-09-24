@@ -22,8 +22,8 @@ features:
   - Provides a command-line interface for easy access.
   - Offers options for locking specific or all sessions.
   - Includes helpful command-line flags and options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vlock

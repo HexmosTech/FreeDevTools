@@ -22,8 +22,8 @@ features:
   - View statistics of rpcbind operations.
   - Query specific RPC service entries by name and version.
   - Delete RPC service registrations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpcinfo

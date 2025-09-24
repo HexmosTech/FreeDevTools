@@ -22,8 +22,8 @@ features:
   - Provides command-line control over nbd servers.
   - Integrates seamlessly with Proxmox Virtual Environment (PVE).
   - Improves virtual machine management efficiency.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm nbdstop

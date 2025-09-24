@@ -22,8 +22,8 @@ features:
 - Facilitates debugging of Sailfish OS applications
 - Integrates with Qt Creator for IDE support
 - Simplifies project build configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk compiledb

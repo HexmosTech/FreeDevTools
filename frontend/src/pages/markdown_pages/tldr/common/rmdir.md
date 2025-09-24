@@ -22,8 +22,8 @@ features:
 - Clean an entire directory of empty subdirectories
 - Remove multiple directories at once
 - Prevent deletion of non-empty directories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rmdir

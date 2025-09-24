@@ -22,8 +22,8 @@ features:
 - Start virtual machines in fullscreen mode
 - Display command-line debug information
 - Start virtual machines in a paused state
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virtualboxvm

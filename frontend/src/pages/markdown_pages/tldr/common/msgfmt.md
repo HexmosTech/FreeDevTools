@@ -22,8 +22,8 @@ features:
 - Supports custom output file names
 - Provides help information via command-line arguments
 - Optimizes message catalogs for efficient lookup
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msgfmt

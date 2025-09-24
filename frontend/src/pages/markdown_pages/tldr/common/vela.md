@@ -22,8 +22,8 @@ features:
 - Inspect the details of a particular deployment.
 - Manage CI/CD workflows via the command line.
 - Automate deployment processes using Git events.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vela

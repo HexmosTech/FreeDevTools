@@ -22,8 +22,8 @@ features:
 - Create and navigate split terminal views
 - Customize Yakuake appearance and behavior
 - Execute commands quickly from a drop-down interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yakuake

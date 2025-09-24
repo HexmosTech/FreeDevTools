@@ -22,8 +22,8 @@ features:
 - Specify output file for encoded/decoded data
 - Wrap encoded output at a specific width
 - Encode/decode from standard input/output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # base64

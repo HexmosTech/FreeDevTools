@@ -22,8 +22,8 @@ features:
 - Configure OpenTTD using a custom configuration file
 - Start and manage dedicated OpenTTD servers
 - Connect to OpenTTD servers with password support
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openttd

@@ -22,8 +22,8 @@ features:
 - Allows decryption using additional authenticated data (AAD).
 - Can write decrypted plaintext to `stdout`.
 - Provides command-line interface for secure decryption operations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcloud kms decrypt

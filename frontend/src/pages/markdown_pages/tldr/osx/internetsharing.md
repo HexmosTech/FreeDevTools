@@ -22,8 +22,8 @@ features:
 - Enables internet access for connected devices.
 - Manages shared internet connections on macOS.
 - Provides command-line control over internet sharing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # InternetSharing

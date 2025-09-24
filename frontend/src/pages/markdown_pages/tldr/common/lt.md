@@ -22,8 +22,8 @@ features:
 - Print detailed request information for debugging.
 - Open the tunnel URL directly in your browser.
 - Specify the upstream server for forwarding.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lt

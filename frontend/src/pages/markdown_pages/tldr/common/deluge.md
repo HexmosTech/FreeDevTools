@@ -22,8 +22,8 @@ features:
 - Launch with a specific user interface (GTK, web, console)
 - Output logs to a file for debugging and monitoring
 - Manage and control torrent downloads via command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # deluge

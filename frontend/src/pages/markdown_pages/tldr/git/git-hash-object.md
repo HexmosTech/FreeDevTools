@@ -22,8 +22,8 @@ features:
 - Specify object type (blob, commit, tag, tree)
 - Calculate hash from standard input (stdin)
 - Generate SHA1 hash for content
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git hash-object

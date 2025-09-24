@@ -22,8 +22,8 @@ features:
 - Generate ASCII text output from roff files
 - Support me macro package for typesetting
 - Use man macro package for formatting man pages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # troff

@@ -22,8 +22,8 @@ features:
   - Provides command-line access to DDIs
   - Enables manipulation of OS images
   - Supports various image formats (depending on underlying filesystem)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mount.ddi

@@ -22,8 +22,8 @@ features:
 - Utilize GNU unlink functionality on macOS
 - Manage file systems via terminal commands
 - Efficiently remove unwanted files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gunlink

@@ -22,8 +22,8 @@ features:
 - Insert a split revision before or after other revisions.
 - Split a revision into two parallel revisions.
 - Split out specific files from a revision.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj split

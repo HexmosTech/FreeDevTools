@@ -22,8 +22,8 @@ features:
 - Send messages to AWS SQS queues with specified attributes.
 - Delete messages from AWS SQS queues.
 - Manage queue permissions for specific AWS accounts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws sqs

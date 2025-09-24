@@ -22,8 +22,8 @@ features:
 - Exclude specific subnets from SSH tunnel.
 - Use tproxy method for IPv4 and IPv6 tunneling.
 - Establish transparent proxy server connection.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sshuttle

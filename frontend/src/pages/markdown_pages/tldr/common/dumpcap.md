@@ -22,8 +22,8 @@ features:
   - Utilize ring buffer for continuous packet capture.
   - Manage capture file size and number with defined limits.
   - List available network interfaces for targeted capture.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dumpcap

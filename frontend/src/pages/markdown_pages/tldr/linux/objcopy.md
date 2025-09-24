@@ -22,8 +22,8 @@ features:
   - Remove all symbol information from object files.
   - Strip debugging information from object files for smaller sizes.
   - Copy only specific sections from a source object file.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # objcopy

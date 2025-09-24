@@ -22,8 +22,8 @@ features:
 - Set the guest OS type for the virtual machine
 - Register the created virtual machine in VirtualBox
 - Configure VM to belong to specified groups
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # VBoxManage createvm

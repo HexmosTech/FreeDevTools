@@ -22,8 +22,8 @@ features:
 - Test and validate Zapier integrations locally
 - Build and upload integrations to the Zapier platform
 - Automate app connections via Zapier workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # zapier

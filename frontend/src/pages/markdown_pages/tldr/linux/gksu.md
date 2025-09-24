@@ -22,8 +22,8 @@ features:
   - Preserve existing environment variables during execution
   - Force command execution using either 'su' or 'sudo'
   - Output debugging information for command analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gksu

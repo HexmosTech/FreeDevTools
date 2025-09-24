@@ -22,8 +22,8 @@ features:
 - Manipulate security tokens on Windows
 - Elevate user privileges within Mimikatz
 - Manage LSA secrets using Mimikatz
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mimikatz privilege

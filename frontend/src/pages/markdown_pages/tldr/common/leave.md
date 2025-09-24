@@ -22,8 +22,8 @@ features:
 - Display leave reminders in the terminal.
 - Receive notifications when it's time to leave.
 - Easily remove reminders using the `kill` command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # leave

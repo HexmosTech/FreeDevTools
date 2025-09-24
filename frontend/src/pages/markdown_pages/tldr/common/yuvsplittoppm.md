@@ -22,8 +22,8 @@ features:
 - Read Akebas YUV bytes from specified files
 - Generate PPM images from command line
 - Support for specified width and height during conversion
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # yuvsplittoppm

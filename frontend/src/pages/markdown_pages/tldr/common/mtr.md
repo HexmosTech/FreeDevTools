@@ -22,8 +22,8 @@ features:
 - Disable hostname resolution for faster tracing.
 - Customize ping intervals for detailed analysis.
 - Display Autonomous System Numbers (ASN) for each hop.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mtr

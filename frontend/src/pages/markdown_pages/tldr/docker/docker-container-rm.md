@@ -22,8 +22,8 @@ features:
 - Automatically remove anonymous volumes associated with the container.
 - Remove all stopped containers.
 - Prune unused containers to free up disk space.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker container rm

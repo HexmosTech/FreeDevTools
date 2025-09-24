@@ -22,8 +22,8 @@ features:
 - Specify response encoding for data retrieval (e.g., json_ietf)
 - Extract telemetry data using the gNMI protocol
 - Get a snapshot of device configuration information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gnmic get

@@ -22,8 +22,8 @@ features:
   - Utilize wildcards for multiple file deletion
   - Force file removal without confirmation
   - Recursively delete items in subdirectories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rm

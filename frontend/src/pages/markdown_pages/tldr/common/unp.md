@@ -22,8 +22,8 @@ features:
 - Supports zip, tar.gz, rar, and other formats
 - Relies on relevant extractors (unrar, gzip, etc.)
 - Simplifies archive extraction from command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unp

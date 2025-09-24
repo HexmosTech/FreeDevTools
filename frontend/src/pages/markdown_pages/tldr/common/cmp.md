@@ -22,8 +22,8 @@ features:
 - Provides verbose output for all differences found
 - Suppresses standard output and relies only on exit status
 - Compares files byte by byte for accurate analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cmp

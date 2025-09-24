@@ -22,8 +22,8 @@ features:
 - Specify C++ language standards for compilation
 - Include external libraries during compilation
 - Generate debug symbols for debugging C++ applications
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # g++

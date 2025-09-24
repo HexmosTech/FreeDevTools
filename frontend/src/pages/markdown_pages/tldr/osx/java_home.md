@@ -22,8 +22,8 @@ features:
 - Define the task to select JVMs (Applets, WebStart, CommandLine)
 - Output JVM information in XML format
 - Display help information for the java_home command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # java_home

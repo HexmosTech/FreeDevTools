@@ -22,8 +22,8 @@ features:
 - Install Node.js with a specified architecture (x86, x64, arm64)
 - Download Node.js through a specified HTTP proxy
 - Easily manage Node.js versions within PowerShell environment
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Install-NodeVersion

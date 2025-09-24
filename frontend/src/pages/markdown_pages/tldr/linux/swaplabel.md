@@ -22,8 +22,8 @@ features:
   - Set a new UUID for a swap area.
   - Works with both files and partitions.
   - Uses the standard uuidgen utility for UUID generation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swaplabel

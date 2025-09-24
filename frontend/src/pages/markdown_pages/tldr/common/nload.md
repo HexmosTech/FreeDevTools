@@ -22,8 +22,8 @@ features:
 - Display incoming and outgoing network traffic.
 - Show network traffic using a command-line interface.
 - Identify network bottlenecks and optimize network performance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nload

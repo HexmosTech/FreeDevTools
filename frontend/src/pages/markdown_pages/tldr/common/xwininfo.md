@@ -22,8 +22,8 @@ features:
 - Visualize the window tree hierarchy
 - Query window attributes via ID or name
 - Inspect window properties on X server
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xwininfo

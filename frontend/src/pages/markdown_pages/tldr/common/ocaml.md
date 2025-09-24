@@ -22,8 +22,8 @@ features:
 - Load and run OCaml modules alongside scripts
 - Provide an interactive environment for OCaml code development
 - Read and execute user input OCaml expressions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ocaml

@@ -22,8 +22,8 @@ features:
 - View compressed file content without extracting.
 - Support for Linux and macOS platforms.
 - Quickly decompress files using a simple command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lzcat

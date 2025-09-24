@@ -22,8 +22,8 @@ features:
 - Scan for user-defined paths using custom wordlists.
 - Authenticate scans using HTTP cookies.
 - Utilize the HEAD HTTP method for faster scanning.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dirsearch

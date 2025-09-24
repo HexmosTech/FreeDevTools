@@ -22,8 +22,8 @@ features:
 - Utilize command-line arguments for conversion.
 - Create PNM image files from SIR input.
 - Support for Solitaire Image Recorder files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sirtopnm

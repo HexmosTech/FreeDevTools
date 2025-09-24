@@ -22,8 +22,8 @@ features:
 - List all aliases assigned to a particular command
 - Filter aliases based on starting characters
 - Exclude aliases based on ending characters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-Alias

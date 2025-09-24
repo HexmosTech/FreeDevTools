@@ -22,8 +22,8 @@ features:
 - Replay captured HTTP/HTTPS sessions
 - Configure proxy server on custom ports
 - Output captured traffic in JSON or YAML format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # proxify

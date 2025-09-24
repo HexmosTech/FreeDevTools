@@ -22,8 +22,8 @@ features:
 - Start an interactive CoffeeScript REPL session
 - Watch for changes in CoffeeScript files and recompile automatically
 - Specify an output file for compiled JavaScript code
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # coffee

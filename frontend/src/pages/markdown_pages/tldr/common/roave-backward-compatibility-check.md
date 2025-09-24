@@ -22,8 +22,8 @@ features:
 - Generate Markdown reports of compatibility issues
 - Verify backward compatibility of PHP libraries
 - Identify breaking changes across different PHP versions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # roave-backward-compatibility-check

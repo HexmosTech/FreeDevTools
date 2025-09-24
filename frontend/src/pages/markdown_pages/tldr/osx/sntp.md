@@ -22,8 +22,8 @@ features:
   - Enable debug logging for SNTP client operations
   - Display the current time received from SNTP servers
   - Update system time based on SNTP server response
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sntp

@@ -22,8 +22,8 @@ features:
 - Handles deletion of multiple branches at once
 - Automatically deletes remote branch if current branch is checked out
 - Simplifies branch removal process in Git repositories
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git delete-branch

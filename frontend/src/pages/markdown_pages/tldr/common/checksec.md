@@ -22,8 +22,8 @@ features:
 - Inspect security settings of running processes
 - Evaluate the security configuration of the kernel
 - Report on common security vulnerabilities in binaries
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # checksec

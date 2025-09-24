@@ -22,8 +22,8 @@ features:
 - Modify shell variables and functions permanently for the session
 - Streamline workflow by running pre-defined command sequences
 - Evaluate file contents with 'source' or '.' notation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # source

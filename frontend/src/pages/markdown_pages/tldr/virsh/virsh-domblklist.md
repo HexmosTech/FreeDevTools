@@ -22,8 +22,8 @@ features:
 - Show disk type and device values
 - Inspect disk details of a virtual machine
 - Identify storage configuration for virtualized guests
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh domblklist

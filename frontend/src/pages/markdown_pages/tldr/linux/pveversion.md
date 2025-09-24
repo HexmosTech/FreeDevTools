@@ -22,8 +22,8 @@ features:
 - Provide a quick overview of system software versions.
 - Simplify version checking for Proxmox environments.
 - Support both short and long options for detailed output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pveversion

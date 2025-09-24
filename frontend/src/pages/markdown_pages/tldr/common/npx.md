@@ -22,8 +22,8 @@ features:
 - Run a command if it exists in the current path or node_modules/.bin.
 - Suppress any output from NPX itself during command execution.
 - Execute commands without installing the package globally.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npx

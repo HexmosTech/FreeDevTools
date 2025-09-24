@@ -22,8 +22,8 @@ features:
   - Analyze split EWF (Expert Witness Format) disk images.
   - Display nested partition tables within partitions.
   - Identify various partition table types (e.g., GPT, MBR).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mmls

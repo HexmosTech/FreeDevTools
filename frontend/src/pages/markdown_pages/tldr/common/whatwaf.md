@@ -22,8 +22,8 @@ features:
 - Utilize custom payloads and proxies for advanced detection.
 - Bypass WAF rules through tamper scripts.
 - Identify a wide range of WAF technologies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # whatwaf

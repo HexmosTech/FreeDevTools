@@ -22,8 +22,8 @@ features:
   - Set a solid color as the background.
   - Manage wallpaper via simple command-line interface.
   - Configure wallpaper settings for Wayland compositors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swaybg

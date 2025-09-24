@@ -22,8 +22,8 @@ features:
   - Simplify directory navigation tasks.
   - Shorten command syntax for directory changes.
   - Enhance PowerShell efficiency.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sl

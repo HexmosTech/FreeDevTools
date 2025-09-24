@@ -22,8 +22,8 @@ features:
 - Set dependencies to precise versions.
 - Perform dry runs to preview updates.
 - Manage Cargo.lock file dependencies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo update

@@ -22,8 +22,8 @@ features:
   - Move forward specified number of files.
   - Position the tape at the end of valid data.
   - Write End-of-File (EOF) mark to the tape.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mt

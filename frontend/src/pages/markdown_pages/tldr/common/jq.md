@@ -22,8 +22,8 @@ features:
 - Pass arguments to jq scripts
 - Create new JSON objects from multiple files
 - Filter JSON data based on multiple conditions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jq

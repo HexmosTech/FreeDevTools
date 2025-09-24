@@ -22,8 +22,8 @@ features:
 - Access biometric sensor hardware.
 - Handle biometric data processing requests.
 - Control the local authentication framework.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # biometrickitd

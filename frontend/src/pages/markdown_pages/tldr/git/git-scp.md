@@ -22,8 +22,8 @@ features:
 - Copy files from a specific commit to a remote repository
 - Copy specific files to a remote repository
 - Copy entire directories to a remote repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git scp

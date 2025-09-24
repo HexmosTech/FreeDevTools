@@ -22,8 +22,8 @@ features:
 - Set a volume label for the created filesystem
 - Manage and prepare storage devices for Linux
 - Quickly format hard drives and partitions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.ext4

@@ -22,8 +22,8 @@ features:
 - Display the status of the runner service
 - Restart the GitLab runner service
 - Verify runner connectivity to GitLab instances
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gitlab-runner

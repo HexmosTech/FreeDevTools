@@ -22,8 +22,8 @@ features:
 - Interactively choose which changes to stage.
 - Forcefully add ignored files to the index.
 - Stage only already tracked files quickly.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git add

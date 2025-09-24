@@ -22,8 +22,8 @@ features:
   - Supports various icon types for visual customization.
   - Allows specifying a specific battery to monitor.
   - Executes a custom command when critical battery level is reached.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cbatticon

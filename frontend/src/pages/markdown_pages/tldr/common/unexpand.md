@@ -22,8 +22,8 @@ features:
 - Convert all blanks, not just initial ones.
 - Convert only leading sequences of blanks.
 - Customize tab spacing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # unexpand

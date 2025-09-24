@@ -22,8 +22,8 @@ features:
 - Supports scoped NPM packages.
 - Specify a timeout period for unpublishing.
 - Dry run to preview unpublishing changes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm unpublish

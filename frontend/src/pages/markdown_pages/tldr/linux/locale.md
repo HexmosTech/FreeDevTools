@@ -22,8 +22,8 @@ features:
   - Show detailed metadata for each available locale.
   - Display the current date format based on the system's locale.
   - Check and manage your system's locale settings via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # locale

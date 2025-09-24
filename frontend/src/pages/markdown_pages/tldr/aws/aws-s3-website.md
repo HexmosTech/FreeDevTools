@@ -22,8 +22,8 @@ features:
 - Define a custom error page for handling errors.
 - Enable website hosting directly from the command line.
 - Manage website configuration settings via AWS CLI.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 website

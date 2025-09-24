@@ -22,8 +22,8 @@ features:
   - Manage VM backups via snapshots
   - Interact with the Proxmox VE environment
   - Automate snapshot management tasks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm listsnapshot

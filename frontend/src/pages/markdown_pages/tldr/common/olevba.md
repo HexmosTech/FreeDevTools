@@ -22,8 +22,8 @@ features:
 - Recursively analyze files in a directory
 - Provide passwords for encrypted Office files
 - Display only macro source code or analysis results
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # olevba

@@ -22,8 +22,8 @@ features:
 - List and set available Zsh themes
 - Reload the current Zsh session
 - Print the changelog of the latest Oh My Zsh update
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # omz

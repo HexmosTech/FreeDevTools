@@ -22,8 +22,8 @@ features:
 - Process JSON data from URLs or files
 - Filter and display values within JSON assignments
 - Handle streaming JSON data for continuous processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gron

@@ -22,8 +22,8 @@ features:
   - Allows filtering by specific resource types (shared memory, message queues, semaphores).
   - Provides detailed information on resources using specific IDs.
   - Offers various output formats (raw, JSON, list, export).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lsipc

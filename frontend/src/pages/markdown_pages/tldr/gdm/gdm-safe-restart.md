@@ -22,8 +22,8 @@ features:
 - Ensures a clean GDM restart process
 - Safely manages the GNOME display manager service
 - Provides a command-line interface for GDM restart control
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdm-safe-restart

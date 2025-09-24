@@ -22,8 +22,8 @@ features:
   - Offers a sparse output mode for listing only package names.
   - Helps ensure compliance with free software guidelines.
   - Simplifies the identification of potentially problematic packages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # check-dfsg-status

@@ -22,8 +22,8 @@ features:
   - Offers a quick and simple command-line experience.
   - Is a built-in feature of the APT package manager.
   - Demonstrates a hidden, enjoyable aspect of Linux.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # apt moo

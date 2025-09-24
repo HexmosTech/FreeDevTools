@@ -22,8 +22,8 @@ features:
 - Generate SHA384 checksums from standard input.
 - Support batch processing of multiple files.
 - Output checksums in a standardized format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsha384sum

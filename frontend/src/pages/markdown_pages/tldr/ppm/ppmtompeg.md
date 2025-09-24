@@ -22,8 +22,8 @@ features:
 - Encode specific GOP numbers
 - Define the first and last frame for encoding
 - Combine multiple MPEG frames into a single stream
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmtompeg

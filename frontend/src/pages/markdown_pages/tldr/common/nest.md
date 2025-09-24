@@ -22,8 +22,8 @@ features:
 - Start and run NestJS projects with ease
 - Add and manage external libraries in NestJS projects
 - Display NestJS CLI and project version information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nest

@@ -22,8 +22,8 @@ features:
 - Generate ED25519 elliptic curve private keys.
 - Save generated private keys to specific files.
 - Support for multiple key generation algorithms.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # openssl genpkey

@@ -22,8 +22,8 @@ features:
 - Extract archives into the current directory (flat extraction)
 - Automatically determine the appropriate extraction tool
 - Extract a wide variety of archive formats
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dtrx

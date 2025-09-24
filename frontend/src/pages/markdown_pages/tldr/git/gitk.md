@@ -22,8 +22,8 @@ features:
 - Inspect file changes within specific commits
 - Filter commits by date, author, or commit message
 - View the commit graph for multiple branches simultaneously
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gitk

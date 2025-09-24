@@ -22,8 +22,8 @@ features:
 - Ignore files specified in `.gitignore`.
 - Provide a clean working directory state.
 - Simulate a fresh Git clone with current branch.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git clear-soft

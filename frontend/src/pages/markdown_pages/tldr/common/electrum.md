@@ -22,8 +22,8 @@ features:
 - Create signed Bitcoin transactions offline
 - Display wallet receiving addresses comprehensively
 - Sign and verify messages using your Electrum wallet
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # electrum

@@ -22,8 +22,8 @@ features:
   - Evaluate JavaScript code directly as command line arguments.
   - Initialize new JavaScript projects using a project scaffolding tool.
   - Compile JavaScript applications into standalone executables.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # just

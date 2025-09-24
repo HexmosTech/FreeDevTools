@@ -22,8 +22,8 @@ features:
 - Follow links on web pages for recursive scraping
 - Utilize CSS selectors for HTML element targeting
 - Employ pattern matching for flexible data extraction
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xidel

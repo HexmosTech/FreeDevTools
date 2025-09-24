@@ -22,8 +22,8 @@ features:
 - Search shell history for specific commands.
 - Import history from shell default history files.
 - Register and login to a sync server for history synchronization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # atuin

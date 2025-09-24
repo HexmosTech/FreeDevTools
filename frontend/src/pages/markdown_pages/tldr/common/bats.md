@@ -22,8 +22,8 @@ features:
 - Recursively execute tests in directories
 - Customize output format (pretty, tap, junit)
 - Parallel test execution with GNU parallel
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bats

@@ -22,8 +22,8 @@ features:
 - Include Yarn "components" directory during deployment.
 - Include the "upload" directory during deployment.
 - Manage complex deployment configurations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cradle deploy

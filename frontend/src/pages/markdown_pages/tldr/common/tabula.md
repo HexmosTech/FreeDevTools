@@ -22,8 +22,8 @@ features:
 - Extract tables from specific pages of a PDF
 - Detect table boundaries using ruling lines or blank space
 - Automatically guess table portion on a page
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tabula

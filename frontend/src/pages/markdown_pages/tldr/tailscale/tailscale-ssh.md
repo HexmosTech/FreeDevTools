@@ -22,8 +22,8 @@ features:
 - Access machines without public IP addresses
 - Manage SSH connections through Tailscale network
 - Authenticate using Tailscale's built-in security
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tailscale ssh

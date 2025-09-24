@@ -22,8 +22,8 @@ features:
 - Add new entries with auto-generated passwords
 - Copy passwords and TOTP codes to the clipboard
 - Generate secure passphrases and passwords
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # keepassxc-cli

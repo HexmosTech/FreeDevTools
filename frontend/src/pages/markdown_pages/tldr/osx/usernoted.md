@@ -22,8 +22,8 @@ features:
 - Handle system alerts and notifications.
 - Integrate with the macOS notification center.
 - Provide notification services to applications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # usernoted

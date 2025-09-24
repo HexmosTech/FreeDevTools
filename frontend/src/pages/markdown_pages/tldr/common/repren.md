@@ -22,8 +22,8 @@ features:
 - Perform find and replace operations on file contents.
 - Execute both rename and find-and-replace using pattern files.
 - Perform case-insensitive renames.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # repren

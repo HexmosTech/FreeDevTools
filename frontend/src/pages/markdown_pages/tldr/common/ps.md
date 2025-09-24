@@ -22,8 +22,8 @@ features:
   - Display the full command line for each process.
   - View process information in a tree-like structure.
   - Sort processes by memory consumption or other metrics.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ps

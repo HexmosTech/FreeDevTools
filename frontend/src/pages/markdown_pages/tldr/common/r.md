@@ -22,8 +22,8 @@ features:
 - Run R expressions directly from the command line
 - Execute R in vanilla mode, without saving workspace
 - Check R packages from package sources
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # R

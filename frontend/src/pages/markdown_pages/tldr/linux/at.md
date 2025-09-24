@@ -22,8 +22,8 @@ features:
   - Schedule commands interactively using a simple interface.
   - Run commands from a file for complex scripts.
   - Manage and view scheduled jobs using various command options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # at

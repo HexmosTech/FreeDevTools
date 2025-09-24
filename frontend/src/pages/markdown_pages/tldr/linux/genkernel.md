@@ -22,8 +22,8 @@ features:
 - Apply configuration changes before compiling the kernel
 - Generate kernels with custom names
 - Use external kernel source directories for compilation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # genkernel

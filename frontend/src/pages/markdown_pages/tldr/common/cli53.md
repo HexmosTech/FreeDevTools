@@ -22,8 +22,8 @@ features:
 - Export Route53 zone files to stdout
 - Create and manage DNS records (A, CNAME)
 - Delete specific DNS records from Route53
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cli53

@@ -22,8 +22,8 @@ features:
 - Display a diff of the formatting changes
 - Suppress the listing of formatted files
 - Ensure consistent formatting across your Tofu projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tofu fmt

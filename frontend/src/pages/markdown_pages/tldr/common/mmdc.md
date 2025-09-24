@@ -22,8 +22,8 @@ features:
   - Customize the background color of the generated diagrams.
   - Generate diagrams directly from the command line interface.
   - Handle different output formats automatically based on file extensions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mmdc

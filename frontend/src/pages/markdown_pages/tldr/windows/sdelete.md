@@ -22,8 +22,8 @@ features:
 - Clean free space on volumes securely
 - Zero out physical disks for secure deletion
 - Overwrite data to prevent recovery
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sdelete

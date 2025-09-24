@@ -22,8 +22,8 @@ features:
 - Freeze packages in a virtual environment
 - List user-site installed packages
 - Include pip, distribute, setuptools, and wheel in the list
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pip freeze

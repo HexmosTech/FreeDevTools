@@ -22,8 +22,8 @@ features:
 - Remove ACL entries for specified users
 - Remove all ACL entries from a file or directory
 - Manage file permissions using ACLs on Linux
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setfacl

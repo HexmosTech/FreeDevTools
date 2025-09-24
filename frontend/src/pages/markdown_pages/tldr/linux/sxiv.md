@@ -22,8 +22,8 @@ features:
   - Create slideshows of multiple images with custom time delays.
   - Display images in thumbnail mode for quick browsing.
   - Process newline-separated lists of images from stdin.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sxiv

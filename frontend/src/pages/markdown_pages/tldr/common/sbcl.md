@@ -22,8 +22,8 @@ features:
 - Compile Lisp code for optimized performance
 - Customize compilation with command-line options
 - Support for cross-platform Lisp development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sbcl

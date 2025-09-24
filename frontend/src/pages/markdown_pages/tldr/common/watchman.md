@@ -22,8 +22,8 @@ features:
 - List watched directories and associated triggers
 - Delete specific or all directory watches and triggers
 - Temporarily shut down the watchman server
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # watchman

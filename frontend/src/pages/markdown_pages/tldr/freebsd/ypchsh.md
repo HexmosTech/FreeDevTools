@@ -22,8 +22,8 @@ features:
   - Update user login information through command alias.
   - Authenticate user credentials via command-line tool.
   - Integrate with FreeBSD system security policies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ypchsh

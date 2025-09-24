@@ -22,8 +22,8 @@ features:
 - View PDF differences in a graphical user interface.
 - Identify text and image changes within PDF documents.
 - Utilize command-line interface for automated PDF comparison workflows.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # diff-pdf

@@ -22,8 +22,8 @@ features:
 - Customize login screen appearance and behavior.
 - Manage user session settings through a GUI.
 - Configure display manager options on Linux systems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdmsetup

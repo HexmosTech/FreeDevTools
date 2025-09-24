@@ -22,8 +22,8 @@ features:
   - Switch package repositories to specific versions
   - Open package repository websites directly
   - Manage Git repositories for Arch Linux packages
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pkgctl repo

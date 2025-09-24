@@ -22,8 +22,8 @@ features:
   - Support for username and password authentication.
   - Enable encrypted SMB transfers for enhanced security.
   - Simple and intuitive command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbget

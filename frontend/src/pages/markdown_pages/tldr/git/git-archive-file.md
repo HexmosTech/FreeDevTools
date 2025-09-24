@@ -22,8 +22,8 @@ features:
 - Compress Git files for easy distribution
 - Create backups of Git projects as ZIP files
 - Use from the command line to automate archiving
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git archive-file

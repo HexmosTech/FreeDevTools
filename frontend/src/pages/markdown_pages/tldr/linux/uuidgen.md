@@ -22,8 +22,8 @@ features:
   - Generate namespace-based UUIDs (v5)
   - Generate UUIDs using SHA1 hashing
   - Generate UUIDs with custom namespaces and names
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uuidgen

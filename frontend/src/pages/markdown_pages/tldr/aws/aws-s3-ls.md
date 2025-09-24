@@ -22,8 +22,8 @@ features:
 - List contents of a specific directory within a bucket
 - Recursively list all files within a bucket
 - List files with a given prefix in a specified path
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws s3 ls

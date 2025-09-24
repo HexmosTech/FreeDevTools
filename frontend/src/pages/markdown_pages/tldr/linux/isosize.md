@@ -22,8 +22,8 @@ features:
   - Outputs the size of each block within an ISO file.
   - Allows calculating the size divided by a custom divisor.
   - Provides detailed information about an ISO image via command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # isosize

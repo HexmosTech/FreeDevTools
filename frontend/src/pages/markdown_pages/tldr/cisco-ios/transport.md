@@ -22,8 +22,8 @@ features:
 - Configure input transport protocols on Cisco IOS lines
 - Manage secure access to Cisco devices
 - Define authorized protocols for line connections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transport

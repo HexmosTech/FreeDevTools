@@ -22,8 +22,8 @@ features:
   - List installed Debian packages and their details.
   - Search for files belonging to specific packages.
   - Completely purge packages including configuration files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dpkg

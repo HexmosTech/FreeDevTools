@@ -22,8 +22,8 @@ features:
   - Provides a quick way to identify the working directory.
   - Simplifies navigation within the file system.
   - Replicates 'Get-Location' in PowerShell and 'cd' functionality in CMD.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pwd

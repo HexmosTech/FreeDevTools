@@ -22,8 +22,8 @@ features:
 - Watch directories for PRQL file changes and automatically compile.
 - Compile PRQL queries from the command line.
 - Convert PRQL code for data analysis pipelines.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prqlc

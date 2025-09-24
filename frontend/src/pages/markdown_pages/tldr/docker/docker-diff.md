@@ -22,8 +22,8 @@ features:
 - Compare container filesystem state to the original image
 - List added, modified, and deleted files in a container
 - Analyze file differences without stopping the container
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # docker diff

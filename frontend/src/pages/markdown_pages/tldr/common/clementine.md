@@ -22,8 +22,8 @@ features:
 - Toggle between pausing and playing audio
 - Skip to the next or previous track in a playlist
 - Create or load music playlists
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clementine

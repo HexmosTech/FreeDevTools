@@ -22,8 +22,8 @@ features:
   - Allows customization using strftime format strings
   - Supports 12-hour and 24-hour clock modes
   - Offers adjustable update intervals for digital clocks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xclock

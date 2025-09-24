@@ -22,8 +22,8 @@ features:
 - Create executables from a package.json file
 - Supports building for specific platforms and architectures
 - Distribute desktop applications built with Electron
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # electron-packager

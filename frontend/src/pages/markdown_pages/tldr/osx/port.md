@@ -22,8 +22,8 @@ features:
 - List all currently installed packages on the system.
 - Update the MacPorts installation itself to the latest version.
 - Upgrade outdated packages to their newest available releases.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # port

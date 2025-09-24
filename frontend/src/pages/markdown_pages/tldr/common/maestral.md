@@ -22,8 +22,8 @@ features:
 - Pause the Dropbox syncing process
 - Resume the Dropbox syncing process
 - Show the sync status of specific files or folders
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # maestral

@@ -22,8 +22,8 @@ features:
 - Generate PBM images from WBMP input
 - Support command line image conversion
 - Enable simple WBMP image handling
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wbmptopbm

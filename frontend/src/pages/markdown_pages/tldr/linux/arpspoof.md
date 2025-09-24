@@ -22,8 +22,8 @@ features:
   - Target specific hosts for packet interception.
   - Utilize the -r flag for bidirectional ARP poisoning.
   - Requires root privileges for execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arpspoof

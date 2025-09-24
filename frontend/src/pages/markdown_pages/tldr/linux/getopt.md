@@ -22,8 +22,8 @@ features:
   - Handles arguments with optional values.
   - Allows for easy management of complex command-line interfaces.
   - Provides a robust and efficient way to parse arguments.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # getopt

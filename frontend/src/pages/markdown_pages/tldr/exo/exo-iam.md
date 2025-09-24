@@ -22,8 +22,8 @@ features:
 - Create new IAM roles based on JSON policy definitions
 - Show the policy of an existing IAM role in JSON format
 - Update the default Organization IAM policy
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exo iam

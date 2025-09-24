@@ -22,8 +22,8 @@ features:
 - Download Instagram highlights for specific profiles
 - Filter downloads based on geotags and other criteria
 - Update existing Instagram archives quickly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # instaloader

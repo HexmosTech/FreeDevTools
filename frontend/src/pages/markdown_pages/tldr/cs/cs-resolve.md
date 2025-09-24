@@ -22,8 +22,8 @@ features:
 - Display reverse dependency tree
 - Identify libraries that depend on a specific library
 - Detect and report dependency conflicts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cs resolve

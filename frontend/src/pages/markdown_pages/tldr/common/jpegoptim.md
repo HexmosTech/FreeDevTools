@@ -22,8 +22,8 @@ features:
 - Force output images to be progressive
 - Set a fixed maximum file size for output images
 - Batch process multiple JPEG images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jpegoptim

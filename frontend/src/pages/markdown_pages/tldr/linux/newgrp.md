@@ -22,8 +22,8 @@ features:
 - Use with a specific group name.
 - Operate entirely from the command line.
 - Reflect group changes immediately in current shell session.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # newgrp

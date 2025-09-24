@@ -22,8 +22,8 @@ features:
 - Customize output with color and filter response codes
 - Brute force authentication with username and password lists
 - Encode payloads with base64 and md5
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wfuzz

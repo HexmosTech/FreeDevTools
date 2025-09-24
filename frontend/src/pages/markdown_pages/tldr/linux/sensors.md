@@ -22,8 +22,8 @@ features:
 - Show fan speeds in revolutions per minute (RPM)
 - Detect available hardware sensor chips in the system
 - Allow conversion of temperature readings to Fahrenheit
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sensors

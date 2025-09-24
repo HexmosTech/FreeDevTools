@@ -22,8 +22,8 @@ features:
 - Send email notifications on printer changes
 - Issue Internet Printing Protocol requests
 - Analyze printer's responses to IPP requests
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipptool

@@ -22,8 +22,8 @@ features:
 - Capture a specific window using its ID
 - Save captures to PNG, JPEG, or PostScript formats
 - Capture X server display using command-line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # magick import

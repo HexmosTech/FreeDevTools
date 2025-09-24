@@ -22,8 +22,8 @@ features:
   - Open multiple tabs within a single window
   - Set a custom title for the terminal window
   - Specify a working directory for the terminal session
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lxterminal

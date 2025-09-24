@@ -22,8 +22,8 @@ features:
   - Display the current system profile in use.
   - Manage the /etc/portage/make.profile symlink.
   - Control Gentoo's system profile through the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eselect profile

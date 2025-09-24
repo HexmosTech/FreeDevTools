@@ -22,8 +22,8 @@ features:
 - Display content from xz or lzma compressed archives.
 - Respect the PAGER environment variable.
 - Read compressed files directly from the command line.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xzmore

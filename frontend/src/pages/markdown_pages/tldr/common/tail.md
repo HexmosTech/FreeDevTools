@@ -22,8 +22,8 @@ features:
 - Display a specific number of bytes from the end of a file
 - Begin display from a specific line number
 - Re-attempt file access when the file becomes inaccessible
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tail

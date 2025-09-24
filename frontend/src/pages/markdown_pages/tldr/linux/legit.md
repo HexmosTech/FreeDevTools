@@ -22,8 +22,8 @@ features:
 - Publish branches to remote servers efficiently
 - Remove branches from remote servers quickly
 - Undo the last commit from the git history
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # legit

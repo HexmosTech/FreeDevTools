@@ -22,8 +22,8 @@ features:
 - Log captured network data to an SQLite database
 - Enable alerts for specific wireless network events
 - Display detailed information about access point packets
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kismet

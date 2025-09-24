@@ -22,8 +22,8 @@ features:
 - Extract transparency channel data to a PGM file
 - Support command-line image format conversion
 - Display the version of the tgatoppm utility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tgatoppm

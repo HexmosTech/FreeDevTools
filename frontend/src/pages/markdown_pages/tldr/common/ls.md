@@ -22,8 +22,8 @@ features:
 - Sort files by size, modification time, or name
 - Filter files based on type (directories, symbolic links)
 - Display file sizes in human-readable format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ls

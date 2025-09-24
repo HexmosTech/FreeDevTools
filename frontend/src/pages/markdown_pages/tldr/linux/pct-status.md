@@ -22,8 +22,8 @@ features:
   - Monitor container performance metrics
   - Provide an overview of the container's configuration
   - Enable verbose output for in-depth troubleshooting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pct status

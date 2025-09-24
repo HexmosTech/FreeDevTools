@@ -22,8 +22,8 @@ features:
 - Prevents emulator restoration after qmltypes deployment.
 - Forces emulator restoration even on failure.
 - Preserves statements marked with `sdk-make-qmltypes:keep` during generation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk qmltypes

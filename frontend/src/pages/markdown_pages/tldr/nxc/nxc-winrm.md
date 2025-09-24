@@ -22,8 +22,8 @@ features:
 - Execute arbitrary commands on a target Windows host
 - Execute PowerShell commands as administrator leveraging LAPS
 - Perform penetration tests against Windows Remote Management services
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc winrm

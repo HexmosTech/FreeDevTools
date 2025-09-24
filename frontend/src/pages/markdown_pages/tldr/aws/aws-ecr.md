@@ -22,8 +22,8 @@ features:
 - Tag and push container images to ECR repositories.
 - Pull container images from ECR repositories for deployment.
 - Delete images and repositories within AWS ECR.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws ecr

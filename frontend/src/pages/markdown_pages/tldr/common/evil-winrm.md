@@ -22,8 +22,8 @@ features:
 - Upload and download files to remote hosts
 - Utilize pass-the-hash authentication for secure access
 - Manage remote systems using a command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # evil-winrm

@@ -22,8 +22,8 @@ features:
 - Log in and out of your Packtpub account
 - View the current daily offer in the terminal
 - Open the daily offer in a web browser
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # packtpub

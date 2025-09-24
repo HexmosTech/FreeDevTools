@@ -22,8 +22,8 @@ features:
 - Add e-books individually or recursively from directories
 - Remove e-books by their IDs
 - Manage and organize large e-book collections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # calibredb

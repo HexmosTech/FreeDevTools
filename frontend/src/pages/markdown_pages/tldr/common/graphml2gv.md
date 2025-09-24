@@ -22,8 +22,8 @@ features:
 - Integrate with Graphviz tools
 - Command-line interface for automated conversion
 - Simplify graph visualization workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # graphml2gv

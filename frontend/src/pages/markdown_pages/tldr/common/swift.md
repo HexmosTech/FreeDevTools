@@ -22,8 +22,8 @@ features:
 - Initialize a new Swift project with package manager
 - Generate Xcode project files for easy development
 - Compile Swift projects optimized for release
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # swift

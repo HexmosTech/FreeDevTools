@@ -22,8 +22,8 @@ features:
 - Operate as a remote storage daemon on macOS
 - Manage data transfer between CoProcessor and storage
 - Process background tasks for data management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xartstorageremoted

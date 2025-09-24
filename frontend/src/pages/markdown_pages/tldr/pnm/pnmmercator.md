@@ -22,8 +22,8 @@ features:
 - "Transform Netpbm image formats"
 - "Process images directly from the command line"
 - "Support inverse Mercator transformations"
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmmercator

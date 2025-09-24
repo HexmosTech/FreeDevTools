@@ -22,8 +22,8 @@ features:
   - Delete previous copies of moved virtual disks.
   - Import VMDK, qcow2, and raw disk images.
   - Specify storage name during disk import.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm disk

@@ -22,8 +22,8 @@ features:
 - Submit changes to advance to the next stage
 - Practice software development using command-line
 - Improve coding skills through interactive challenges
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # codecrafters

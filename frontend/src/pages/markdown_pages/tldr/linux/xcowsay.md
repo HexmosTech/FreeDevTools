@@ -22,8 +22,8 @@ features:
 - Position the cow at specific X and Y coordinates
 - Choose between small, medium, or large cow sizes
 - Display a thought bubble instead of a speech bubble
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xcowsay

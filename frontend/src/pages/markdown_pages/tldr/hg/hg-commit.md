@@ -22,8 +22,8 @@ features:
 - Add custom commit messages to changes.
 - Include or exclude files based on patterns when committing.
 - Use interactive mode to review and select changes for commit.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hg commit

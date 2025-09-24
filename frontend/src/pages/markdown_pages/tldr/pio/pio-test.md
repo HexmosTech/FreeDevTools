@@ -22,8 +22,8 @@ features:
 - Ignore tests based on a name pattern to exclude specific tests.
 - Specify a custom upload port for firmware uploading.
 - Use a custom configuration file for test execution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio test

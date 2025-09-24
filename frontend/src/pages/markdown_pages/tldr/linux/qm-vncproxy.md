@@ -22,8 +22,8 @@ features:
 - Tunnel VNC traffic to stdin/stdout.
 - Manage and control virtual machine displays.
 - Enable VNC console virtualization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm vncproxy

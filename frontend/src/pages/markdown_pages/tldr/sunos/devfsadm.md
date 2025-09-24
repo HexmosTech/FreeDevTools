@@ -22,8 +22,8 @@ features:
   - Perform dry-run device management operations
   - Manage disk devices within the filesystem
   - Maintain the integrity of the /dev namespace
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # devfsadm

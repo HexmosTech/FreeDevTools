@@ -22,8 +22,8 @@ features:
 - Run the Puppet agent in foreground or background.
 - Simulate configuration changes using dry-run mode.
 - Enable or disable the Puppet agent with custom messages.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # puppet agent

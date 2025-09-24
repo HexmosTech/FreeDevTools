@@ -22,8 +22,8 @@ features:
 - Support for multiple file processing
 - Display SHA224 checksum in hexadecimal format
 - Compatible with GNU coreutils sha224sum
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gsha224sum

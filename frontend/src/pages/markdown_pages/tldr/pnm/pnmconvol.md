@@ -22,8 +22,8 @@ features:
 - Normalize convolution matrix weights for desired effects
 - Convolve images using matrix data from a PNM file
 - Perform image enhancement and blurring tasks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pnmconvol

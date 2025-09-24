@@ -22,8 +22,8 @@ features:
 - Create animated GIFs from multiple image files.
 - Modify GIF frames with cropping, scaling, and rotation.
 - Batch process multiple GIFs simultaneously.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gifsicle

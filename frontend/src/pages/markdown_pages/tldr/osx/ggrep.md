@@ -22,8 +22,8 @@ features:
 - Extract matching lines from multiple files.
 - Recursively search directories for patterns.
 - Display line numbers of matching lines.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ggrep

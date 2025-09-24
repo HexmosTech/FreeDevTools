@@ -22,8 +22,8 @@ features:
 - Handle graded transparency data with AND masks
 - Convert all images within an ICO file
 - Write AND masks to PAM file's fifth channel
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # winicontopam

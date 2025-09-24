@@ -22,8 +22,8 @@ features:
 - Generate output PGM image with extracted features
 - Process grayscale images for texture analysis
 - Utilize command-line interface for image manipulation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmtexture

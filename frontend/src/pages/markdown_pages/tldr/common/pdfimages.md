@@ -22,8 +22,8 @@ features:
 - Include page numbers in extracted image filenames
 - List detailed information about images within a PDF
 - Save extracted images with a specified filename prefix
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfimages

@@ -22,8 +22,8 @@ features:
 - Reveal the absolute path to the repository root directory
 - Resolve symbolic refnames to their object names
 - Show the object type of a specified revision
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rev-parse

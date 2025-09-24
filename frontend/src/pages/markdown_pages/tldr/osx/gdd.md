@@ -22,8 +22,8 @@ features:
   - Create disk images from physical drives on macOS.
   - Perform low-level data manipulation using command-line.
   - Backup and restore data from block devices efficiently.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gdd

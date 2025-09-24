@@ -22,8 +22,8 @@ features:
 - Make the locomotive fly across the terminal.
 - Display a smaller version of the locomotive.
 - Allow the user to exit the animation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sl

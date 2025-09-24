@@ -22,8 +22,8 @@ features:
 - Create new merge changes on top of multiple revisions
 - Insert new changes before specified revisions
 - Insert new changes after specified revisions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj new

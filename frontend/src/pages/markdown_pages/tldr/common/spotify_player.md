@@ -22,8 +22,8 @@ features:
 - Apply custom themes to the Spotify Player
 - Load configuration files from specified directories
 - Like the currently playing track on Spotify
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # spotify_player

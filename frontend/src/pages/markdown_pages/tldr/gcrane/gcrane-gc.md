@@ -22,8 +22,8 @@ features:
 - Offers recursive repository scanning.
 - Can be combined with `gcrane delete` for automated cleanup.
 - Provides command-line help documentation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gcrane gc

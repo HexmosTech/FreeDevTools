@@ -22,8 +22,8 @@ features:
 - Set custom socket timeout for connection.
 - Enable debug mode for detailed output.
 - Determine x86 or x64 architecture remotely.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # getArch.py

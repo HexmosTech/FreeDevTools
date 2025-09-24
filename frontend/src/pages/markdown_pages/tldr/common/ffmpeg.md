@@ -22,8 +22,8 @@ features:
 - Trim video clips by specifying start and end times
 - Combine numbered images into a video or GIF
 - Remux video files without re-encoding
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ffmpeg

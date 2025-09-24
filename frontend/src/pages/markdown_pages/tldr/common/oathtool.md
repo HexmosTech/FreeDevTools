@@ -22,8 +22,8 @@ features:
   - Generate TOTP tokens for specific past or future times.
   - Manage and utilize OATH one-time passwords securely.
   - Utilize command-line interface for efficient OTP management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # oathtool

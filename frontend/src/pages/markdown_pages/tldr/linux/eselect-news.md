@@ -22,8 +22,8 @@ features:
   - Mark Gentoo news items as read or unread.
   - Delete all read Gentoo news items.
   - Count available (new or all) Gentoo news items.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # eselect news

@@ -23,8 +23,8 @@ features:
   - Extract specific pages from a PDF file.
   - Merge multiple PDF files into a single document.
   - Convert PostScript files to PDF format.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gs

@@ -22,8 +22,8 @@ features:
 - Adjust the CPU usage for a process.
 - Prioritize important tasks by increasing their priority.
 - Lower priority of background processes to free up resources.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nice

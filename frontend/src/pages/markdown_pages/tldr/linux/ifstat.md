@@ -22,8 +22,8 @@ features:
   - Reports network errors and error rates.
   - Provides detailed bandwidth usage information.
   - Allows for flexible reporting intervals.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ifstat

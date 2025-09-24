@@ -22,8 +22,8 @@ features:
 - Skips the check section in the RPM SPEC file.
 - Supports automated package building within SFDK.
 - Simplifies the package creation process for Sailfish OS apps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdk package

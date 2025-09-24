@@ -22,8 +22,8 @@ features:
   - Supports btmp, utmp, and wtmp file formats
   - Provides plain text output for easy analysis
   - Uses simple command-line interface for easy execution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # utmpdump

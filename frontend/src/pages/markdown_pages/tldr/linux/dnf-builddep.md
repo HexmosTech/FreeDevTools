@@ -22,8 +22,8 @@ features:
 - Define custom RPM macros for dependency resolution
 - Install dependencies from .spec files
 - Install dependencies from .rpm files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dnf builddep

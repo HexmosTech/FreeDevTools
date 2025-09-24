@@ -22,8 +22,8 @@ features:
   - Customize the output format with --verbose and --noheadings.
   - Append specific fields to the default output.
   - Use a custom separator between fields in the output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvs

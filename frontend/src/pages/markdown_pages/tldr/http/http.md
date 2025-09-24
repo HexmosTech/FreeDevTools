@@ -22,8 +22,8 @@ features:
 - Utilize sessions for persistent custom headers and authentication
 - Follow redirects and specify custom request headers
 - Upload files using form data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # http

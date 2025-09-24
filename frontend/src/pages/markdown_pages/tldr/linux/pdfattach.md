@@ -22,8 +22,8 @@ features:
   - Specify input PDF file and attachment file.
   - Generate output PDF file with attachments.
   - Display help and version information for pdfattach.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pdfattach

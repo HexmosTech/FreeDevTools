@@ -22,8 +22,8 @@ features:
 - Initiate interactive chat sessions with different GPT models.
 - Pipe command output as input for generating contextual responses.
 - Customize chatbot behavior with initial prompts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chatgpt

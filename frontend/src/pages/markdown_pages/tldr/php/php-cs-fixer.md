@@ -22,8 +22,8 @@ features:
 - Lint code without applying changes using dry-run.
 - Output results in various formats (txt, json, xml).
 - List files that require code style fixing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # php-cs-fixer

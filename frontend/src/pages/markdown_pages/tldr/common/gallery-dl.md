@@ -22,8 +22,8 @@ features:
 - Retrieve cookies for authentication on websites.
 - Extract direct URLs of images from authenticated sites.
 - Filter manga chapters by number and language.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gallery-dl

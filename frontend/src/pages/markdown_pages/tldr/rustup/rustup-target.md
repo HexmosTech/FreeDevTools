@@ -22,8 +22,8 @@ features:
 - List available targets for a Rust toolchain
 - List installed targets for a specific Rust toolchain
 - Manage target platforms for Rust development
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rustup target

@@ -22,8 +22,8 @@ features:
   - Control shutter speed for long exposure photography.
   - Specify output file path and name.
   - Utilize legacy Raspberry Pi camera features.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rpicam-still

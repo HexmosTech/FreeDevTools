@@ -22,8 +22,8 @@ features:
   - Display calendar for a specific month and year
   - Generate calendar for an entire year
   - Calculate and display Easter date for a given year
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cal

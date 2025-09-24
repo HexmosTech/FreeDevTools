@@ -22,8 +22,8 @@ features:
 - Customize layouts using dot, neato, twopi, circo, fdp, osage, and patchwork
 - Generate images from standard input and output
 - Visualize data structures and relationships
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sfdp

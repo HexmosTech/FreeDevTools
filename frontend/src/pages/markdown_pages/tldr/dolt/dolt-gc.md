@@ -22,8 +22,8 @@ features:
 - Improve Dolt database performance
 - Perform shallow garbage collection for faster cleanup
 - Streamline Dolt version control operations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt gc

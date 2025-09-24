@@ -22,8 +22,8 @@ features:
 - Scale images by x and y factors
 - Fit images into specified bounding box
 - Fill specified box while preserving aspect ratio
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamscale

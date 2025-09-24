@@ -22,8 +22,8 @@ features:
 - Stop a running PostgreSQL server
 - Restart a PostgreSQL server gracefully
 - Reload server configuration without downtime
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pg_ctl

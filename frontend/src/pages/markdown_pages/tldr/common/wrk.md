@@ -22,8 +22,8 @@ features:
 - Test web server performance under high load
 - Customize request headers for advanced testing
 - Configure threads, connections, and duration of the benchmark
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wrk

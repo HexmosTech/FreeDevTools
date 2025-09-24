@@ -22,8 +22,8 @@ features:
 - Integrate with the libvirt virtualization platform.
 - Clean up and manage KVM storage efficiently.
 - Eliminate unnecessary storage resources.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virsh pool-delete

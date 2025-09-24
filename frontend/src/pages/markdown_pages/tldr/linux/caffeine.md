@@ -22,8 +22,8 @@ features:
   - Simple command-line interface for easy usage
   - Provides options for help and version information
   - Lightweight and efficient resource consumption
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # caffeine

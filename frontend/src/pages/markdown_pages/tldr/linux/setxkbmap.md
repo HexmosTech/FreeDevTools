@@ -22,8 +22,8 @@ features:
   - Define keyboard layout variants (e.g., QWERTY).
   - Customize keyboard switching options (e.g., Alt+Caps Lock toggle).
   - List available layouts, variants, and options.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setxkbmap

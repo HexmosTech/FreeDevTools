@@ -22,8 +22,8 @@ features:
 - Uninstall specific versions of Neovim.
 - Completely remove Neovim and all associated changes.
 - Roll back to a previous nightly build of Neovim.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bob

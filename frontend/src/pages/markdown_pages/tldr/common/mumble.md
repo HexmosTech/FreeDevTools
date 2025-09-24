@@ -22,8 +22,8 @@ features:
 - Deaf or undeaf audio output via command
 - Execute remote procedure calls (RPC) within Mumble
 - Automate voice chat tasks through scripting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mumble

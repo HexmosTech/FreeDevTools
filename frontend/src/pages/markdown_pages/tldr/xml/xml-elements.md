@@ -22,8 +22,8 @@ features:
 - Print sorted unique elements to reveal XML structure.
 - Limit extraction depth for focused XML analysis.
 - Display help information for command usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml elements

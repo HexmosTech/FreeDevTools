@@ -22,8 +22,8 @@ features:
 - Customizes the appearance of the command prompt.
 - Can be used in batch scripts to set titles programmatically.
 - Reflects changes immediately in the console window.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # title

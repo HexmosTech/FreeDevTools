@@ -22,8 +22,8 @@ features:
   - Increase screen brightness by a specified percentage.
   - Decrease screen brightness by a specified percentage.
   - Adjust brightness gradually over a defined time using steps.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xbacklight

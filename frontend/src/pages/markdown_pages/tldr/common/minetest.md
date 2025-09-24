@@ -22,8 +22,8 @@ features:
 - Write Minetest logs to a custom file
 - Suppress console output, displaying only errors
 - Manage Minetest server instances
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # minetest

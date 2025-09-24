@@ -22,8 +22,8 @@ features:
 - Bypass confirmation prompts for enabling dev mode
 - Check the status of SteamOS developer mode
 - Initialize the SteamOS package manager
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # steamos-devmode

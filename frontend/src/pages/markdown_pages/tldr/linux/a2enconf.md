@@ -22,8 +22,8 @@ features:
   - Supports quiet mode for silent operation.
   - Integrates seamlessly with Debian-based systems.
   - Simplifies Apache configuration management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # a2enconf

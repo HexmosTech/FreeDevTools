@@ -22,8 +22,8 @@ features:
 - Select and switch between active stacks for management
 - Remove and delete existing Pulumi stacks
 - Export stack state to a JSON file for backup or analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi stack

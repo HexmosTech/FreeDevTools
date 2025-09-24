@@ -22,8 +22,8 @@ features:
   - Perform silent IP resolution with less output
   - Support reverse DNS lookups
   - Provide quick hostname to IP conversions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # resolveip

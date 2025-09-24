@@ -22,8 +22,8 @@ features:
 - Identify the top-level folder of a Git project.
 - Print the relative path from the current directory to the Git root.
 - Locate Git repositories from subdirectories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git root

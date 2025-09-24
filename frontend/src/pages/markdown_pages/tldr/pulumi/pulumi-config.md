@@ -22,8 +22,8 @@ features:
 - Set configuration values, including secrets, for a Pulumi stack.
 - Remove specific configuration values from a Pulumi stack.
 - Manage configurations for multiple stacks using config files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulumi config

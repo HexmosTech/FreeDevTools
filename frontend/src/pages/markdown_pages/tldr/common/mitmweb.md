@@ -22,8 +22,8 @@ features:
 - Visualize network traffic in a web-based interface.
 - Use scripts to automate traffic processing.
 - Capture and save network traffic for later analysis.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mitmweb

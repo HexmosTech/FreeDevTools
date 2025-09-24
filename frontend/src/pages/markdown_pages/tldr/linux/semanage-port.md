@@ -22,8 +22,8 @@ features:
   - Add user-defined rules for protocol-port ranges.
   - Delete existing user-defined port labeling rules.
   - Manage persistent SELinux port definitions for enhanced network security.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # semanage port

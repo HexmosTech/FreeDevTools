@@ -22,8 +22,8 @@ features:
 - Check the PulseAudio daemon status
 - List all available PulseAudio modules
 - Load specific PulseAudio modules with arguments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pulseaudio

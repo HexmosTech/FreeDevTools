@@ -22,8 +22,8 @@ features:
 - Specify the port to monitor for specific devices.
 - Set custom baud rates for serial communication.
 - Configure end-of-line characters for device monitoring.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pio device

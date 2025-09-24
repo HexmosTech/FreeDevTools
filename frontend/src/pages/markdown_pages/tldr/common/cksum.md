@@ -22,8 +22,8 @@ features:
 - Verify file integrity and identify data corruption
 - Ensure data accuracy after file transfer or storage
 - Integrate checksum calculations into scripts and automation
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cksum

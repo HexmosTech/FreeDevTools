@@ -22,8 +22,8 @@ features:
 - Optimize compiled programs for performance.
 - Generate LLVM Intermediate Representation (IR).
 - Specify language standards during compilation (e.g., c++20).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clang++

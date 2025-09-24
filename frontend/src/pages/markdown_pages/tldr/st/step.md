@@ -22,8 +22,8 @@ features:
 - Verify the validity of certificate chains.
 - Convert certificates between PEM and DER formats.
 - Install and uninstall root certificates in system trust stores.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # step

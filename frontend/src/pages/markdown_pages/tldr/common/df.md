@@ -22,8 +22,8 @@ features:
 - Output disk usage in a portable format
 - Target specific files or directories to view their disk usage
 - Report on total space, used space, and available space
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # df

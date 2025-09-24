@@ -22,8 +22,8 @@ features:
   - Show only inactive logical volumes
   - Output logical volume data in JSON format
   - Provide a comprehensive overview of LVM disk configuration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvscan

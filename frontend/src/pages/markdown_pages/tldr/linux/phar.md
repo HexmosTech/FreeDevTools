@@ -22,8 +22,8 @@ features:
   - Delete files or directories from a PHAR archive.
   - Compress or uncompress files within a PHAR archive.
   - Sign a PHAR archive with a hash algorithm or OpenSSL key.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # phar

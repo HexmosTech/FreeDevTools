@@ -22,8 +22,8 @@ features:
 - Wait and attach to newly launched processes by name
 - Set breakpoints and inspect variables
 - Control program execution step-by-step
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lldb

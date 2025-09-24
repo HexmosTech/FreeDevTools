@@ -22,8 +22,8 @@ features:
 - Set and modify image tags within Kustomization files
 - Autodetect resources for inclusion in Kustomization files
 - Deploy Kustomized manifests directly with kubectl
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kustomize

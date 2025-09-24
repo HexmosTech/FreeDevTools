@@ -22,8 +22,8 @@ features:
 - Verify data checksums within the filesystem
 - Rebuild the checksum tree for data integrity
 - Initialize and rebuild the extent tree
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # btrfs check

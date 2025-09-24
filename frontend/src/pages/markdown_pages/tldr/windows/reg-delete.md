@@ -22,8 +22,8 @@ features:
 - Recursively delete all values under a key
 - Forcefully delete registry keys without prompt
 - Delete all subkeys and values from a specified key
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reg delete

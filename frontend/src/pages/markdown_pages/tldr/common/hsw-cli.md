@@ -22,8 +22,8 @@ features:
 - Send Handshake coins to specified addresses.
 - Display pending Handshake transactions.
 - Show details of a specific Handshake transaction.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hsw-cli

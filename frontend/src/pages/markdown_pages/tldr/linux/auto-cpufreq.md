@@ -22,8 +22,8 @@ features:
   - Optimize power consumption for increased battery life.
   - Remove auto-cpufreq settings and restore default values.
   - Provide system statistics for CPU performance analysis.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # auto-cpufreq

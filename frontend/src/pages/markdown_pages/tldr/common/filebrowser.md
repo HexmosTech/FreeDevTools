@@ -22,8 +22,8 @@ features:
 - Configure server address and port
 - Set up user accounts with custom usernames and passwords
 - Disable thumbnails and command runner for enhanced security
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # filebrowser

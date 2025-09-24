@@ -22,8 +22,8 @@ features:
 - Delete Samba user accounts
 - Manage Samba authentication on Linux
 - Synchronize Samba passwords with Unix accounts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbpasswd

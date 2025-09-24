@@ -22,8 +22,8 @@ features:
 - Execute specific commands inside the bottle environment.
 - Manage systemd processes under WSL.
 - Provide a controlled environment for Linux applications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # genie

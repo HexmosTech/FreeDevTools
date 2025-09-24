@@ -22,8 +22,8 @@ features:
 - Display score statistics grouped by tags
 - Load custom text files for typing practice
 - Enable monochrome colors for improved accessibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wpm

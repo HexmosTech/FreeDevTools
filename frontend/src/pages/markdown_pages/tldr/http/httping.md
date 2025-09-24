@@ -22,8 +22,8 @@ features:
 - Ping a web server on a specified host and port.
 - Test TLS connections using HTTPS.
 - Authenticate with HTTP basic authentication.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # httping

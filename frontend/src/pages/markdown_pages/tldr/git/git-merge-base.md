@@ -22,8 +22,8 @@ features:
 - Verify if a commit is an ancestor of another commit
 - Simplify branch management and conflict resolution
 - Trace commit lineage for effective debugging
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git merge-base

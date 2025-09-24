@@ -22,8 +22,8 @@ features:
 - Filter logs from multiple applications at the same time
 - Output logs in real-time for immediate debugging
 - Simplify Kubernetes log monitoring
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubetail

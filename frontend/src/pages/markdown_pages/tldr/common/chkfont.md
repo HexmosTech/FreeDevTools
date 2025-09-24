@@ -22,8 +22,8 @@ features:
 - Detects common issues in FIGlet font files.
 - Enables verification of .flf files in a directory.
 - Ensures proper font rendering in FIGlet applications.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chkfont

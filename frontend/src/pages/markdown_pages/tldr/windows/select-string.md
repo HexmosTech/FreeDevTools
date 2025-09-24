@@ -22,8 +22,8 @@ features:
 - Search for patterns in multiple files using wildcards
 - Capture lines before and after a matching line
 - Search standard input (stdin) for non-matching lines
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Select-String

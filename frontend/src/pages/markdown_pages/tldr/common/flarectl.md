@@ -22,8 +22,8 @@ features:
 - List Cloudflare's IPv4 and IPv6 ranges
 - Batch create Cloudflare zones from a list
 - List all Cloudflare firewall rules
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flarectl

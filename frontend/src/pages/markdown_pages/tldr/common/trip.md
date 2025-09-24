@@ -22,8 +22,8 @@ features:
 - Support IPv4 and IPv6 protocols
 - Allow unprivileged tracing on supported platforms
 - Customize destination and source ports for TCP and UDP tracing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trip

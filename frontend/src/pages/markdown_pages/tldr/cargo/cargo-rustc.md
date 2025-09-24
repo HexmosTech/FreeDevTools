@@ -22,8 +22,8 @@ features:
 - Compile Rust code with architecture-specific optimizations.
 - Enable size or speed optimizations for Rust projects.
 - Check Rust packages for unsafe code usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo rustc

@@ -22,8 +22,8 @@ features:
 - Interact with the Sui faucet for test coins
 - Execute programmable transaction blocks (PTBs)
 - List and manage gas coins for specific addresses
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sui client

@@ -22,8 +22,8 @@ features:
 - Control animation speed and display parameters
 - Render wireframe or solid polyhedron models
 - Adjust line width and threading for optimal performance
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ico

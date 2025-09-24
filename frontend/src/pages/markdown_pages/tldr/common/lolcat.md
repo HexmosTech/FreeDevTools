@@ -22,8 +22,8 @@ features:
 - Render 24-bit truecolor rainbow effects
 - Pipe output from other commands through rainbow colors
 - Customize rainbow animation speed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lolcat

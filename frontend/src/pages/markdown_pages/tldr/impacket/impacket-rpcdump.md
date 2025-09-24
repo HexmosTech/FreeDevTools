@@ -22,8 +22,8 @@ features:
 - Identify exposed interfaces and their properties
 - Analyze RPC interface definitions
 - Audit Windows systems for RPC-related vulnerabilities
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-rpcdump

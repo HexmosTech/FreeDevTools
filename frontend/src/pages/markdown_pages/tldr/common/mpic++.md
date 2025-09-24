@@ -22,8 +22,8 @@ features:
 - Enables the creation of distributed applications.
 - Supports message passing between processes.
 - Simplifies the compilation process for MPI programs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mpic++

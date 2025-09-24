@@ -22,8 +22,8 @@ features:
 - Conduct SYN scans with root privileges.
 - Output scan results in a concise and readable format.
 - Integrate with Nmap for advanced network analysis.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # naabu

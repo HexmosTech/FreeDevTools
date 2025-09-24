@@ -22,8 +22,8 @@ features:
 - Change ownership to the Administrator group
 - Force ownership transfer with minimal user interaction
 - Grant access permissions to files and folders
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # takeown

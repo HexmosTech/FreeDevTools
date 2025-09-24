@@ -22,8 +22,8 @@ features:
 - Sort packets by timestamp
 - Process multiple warts files into a single PCAP
 - Extract network packets from warts data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sc_warts2pcap

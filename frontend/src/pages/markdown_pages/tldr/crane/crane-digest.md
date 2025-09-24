@@ -22,8 +22,8 @@ features:
 - Specify a path to a tarball containing the image.
 - Get the digest of local or remote images.
 - Verify image integrity through digest comparison.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # crane digest

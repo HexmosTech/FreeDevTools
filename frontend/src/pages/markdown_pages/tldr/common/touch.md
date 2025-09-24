@@ -22,8 +22,8 @@ features:
 - Set timestamps to specific dates and times
 - Use a reference file's timestamp for other files
 - Parse date strings for timestamp setting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # touch

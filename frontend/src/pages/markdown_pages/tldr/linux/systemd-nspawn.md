@@ -22,8 +22,8 @@ features:
 - Execute commands as PID 2 inside the container
 - Specify the machine name and hostname for containers
 - Isolate processes and resources using namespaces
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-nspawn

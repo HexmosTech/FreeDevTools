@@ -22,8 +22,8 @@ features:
 - Exclude specific files or directories from the Squashfs filesystem.
 - Use wildcards to exclude files based on patterns.
 - Utilize regular expressions to exclude files for advanced filtering.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mksquashfs

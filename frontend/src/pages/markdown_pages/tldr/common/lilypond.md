@@ -22,8 +22,8 @@ features:
 - Convert Lilypond files to various output formats.
 - Suppress progress updates during compilation.
 - Specify the output filename for compiled files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lilypond

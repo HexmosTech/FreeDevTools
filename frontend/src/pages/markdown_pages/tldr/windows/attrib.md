@@ -22,8 +22,8 @@ features:
 - Add or remove hidden attribute.
 - Add or remove system attribute.
 - Recursively apply attribute changes to subdirectories.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # attrib

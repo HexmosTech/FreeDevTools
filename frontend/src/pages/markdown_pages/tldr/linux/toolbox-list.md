@@ -22,8 +22,8 @@ features:
   - Display both containers and images simultaneously.
   - Filter the list to show only containers.
   - Filter the list to show only images.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # toolbox list

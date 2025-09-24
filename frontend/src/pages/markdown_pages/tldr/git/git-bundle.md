@@ -22,8 +22,8 @@ features:
 - Extract references from a Git bundle
 - Clone a new repository from a Git bundle file
 - Transfer Git repositories offline without a network connection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git bundle

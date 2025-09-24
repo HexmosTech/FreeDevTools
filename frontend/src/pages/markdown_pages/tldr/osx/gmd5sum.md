@@ -22,8 +22,8 @@ features:
 - Compatible with GNU md5sum syntax.
 - Available on macOS via command line.
 - Generate unique file fingerprints.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gmd5sum

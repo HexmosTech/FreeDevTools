@@ -22,8 +22,8 @@ features:
 - Adjust volume levels for individual sinks
 - Route audio streams to different outputs
 - Toggle mute status for specific audio devices
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pactl

@@ -22,8 +22,8 @@ features:
 - Search the Mac App Store for applications using keywords.
 - List all installed applications and their associated product identifiers.
 - Upgrade specific applications using their numeric ID.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mas

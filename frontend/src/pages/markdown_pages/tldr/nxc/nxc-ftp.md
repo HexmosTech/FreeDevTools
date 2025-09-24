@@ -22,8 +22,8 @@ features:
 - Download files from FTP servers using valid credentials.
 - Upload files to FTP servers using valid credentials.
 - Continue credential searching after a successful login.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nxc ftp

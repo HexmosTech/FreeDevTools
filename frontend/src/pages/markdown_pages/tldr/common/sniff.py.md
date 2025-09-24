@@ -22,8 +22,8 @@ features:
 - Save captured packets to a file
 - Filter packets based on specific criteria (future enhancement)
 - Monitor network traffic for security analysis
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sniff.py

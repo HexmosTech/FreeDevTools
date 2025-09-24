@@ -22,8 +22,8 @@ features:
 - Retrieve all record types for a domain.
 - Specify alternate DNS servers to query.
 - Perform reverse DNS lookups on IP addresses (PTR records).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # drill

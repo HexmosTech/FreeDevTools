@@ -22,8 +22,8 @@ features:
 - Continue an interrupted rebase after resolving conflicts.
 - Skip a conflicted commit during a rebase.
 - Abort a rebase to revert changes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git rebase

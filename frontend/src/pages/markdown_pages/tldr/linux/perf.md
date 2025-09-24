@@ -22,8 +22,8 @@ features:
   - Record command profiles for offline analysis
   - Record profiles of existing processes by PID
   - Report and analyze recorded performance data
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # perf

@@ -22,8 +22,8 @@ features:
 - Specify a custom output file name for the PDF
 - Execute LaTeX commands using Lua scripting
 - Integrate with other TeX-based tools and environments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lualatex

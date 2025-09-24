@@ -22,8 +22,8 @@ features:
 - Append new commits to an existing commit-graph
 - Improve Git performance by using commit-graph files
 - Visualize and analyze Git repository history
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git commit-graph

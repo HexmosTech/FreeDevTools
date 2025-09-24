@@ -22,8 +22,8 @@ features:
 - Control replay speed using various options for accurate simulation.
 - Loop replay traffic multiple times for sustained simulation.
 - List available network interfaces for traffic replay.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tcpreplay

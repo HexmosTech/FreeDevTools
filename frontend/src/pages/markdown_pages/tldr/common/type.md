@@ -22,8 +22,8 @@ features:
 - Display all locations of an executable in Bash/fish/Zsh.
 - Identify built-in commands in various shells.
 - Analyze command definitions in shell scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # type

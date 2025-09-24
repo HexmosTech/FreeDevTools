@@ -22,8 +22,8 @@ features:
   - Create logical volumes using all free space.
   - Assign custom names to logical volumes.
   - Manage logical volumes within existing volume groups.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvcreate

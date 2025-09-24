@@ -22,8 +22,8 @@ features:
   - Allows switching between lesbian and bisexual flags.
   - Modifies background colors of the output.
   - Formats directory listings with pride flag colors.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pridecat

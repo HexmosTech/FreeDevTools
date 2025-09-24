@@ -22,8 +22,8 @@ features:
   - Allows toggling Tor access within a shell session.
   - Enables launching a Tor-enabled shell environment.
   - Supports specifying custom Tor configuration files and SOCKS proxies.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # torify

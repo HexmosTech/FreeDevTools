@@ -22,8 +22,8 @@ features:
   - Supports specifying identifiers (LABEL, UUID, PARTLABEL, PARTUUID).
   - Appends entries to `/etc/fstab` for automatic mounting.
   - Creates fstab-compatible output for various mount points.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # genfstab

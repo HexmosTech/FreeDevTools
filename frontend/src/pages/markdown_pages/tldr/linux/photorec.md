@@ -22,8 +22,8 @@ features:
 - Recovers data from hard drives, memory cards, and other storage media
 - Ignores file system structure for deeper scanning
 - Writes recovered files to a separate location to prevent overwriting
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # photorec

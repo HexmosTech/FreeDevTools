@@ -22,8 +22,8 @@ features:
 - Simplifies parallel program execution using mpiexec
 - Launches applications utilizing Message Passing Interface (MPI)
 - Streamlines execution through command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mpiexec

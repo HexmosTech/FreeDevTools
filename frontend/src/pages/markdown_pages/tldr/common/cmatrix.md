@@ -22,8 +22,8 @@ features:
 - Enable asynchronous or synchronous scrolling modes.
 - Activate rainbow mode for multi-colored characters.
 - Use screensaver mode to automatically exit on keystroke.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cmatrix

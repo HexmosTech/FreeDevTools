@@ -22,8 +22,8 @@ features:
   - Run commands as a specific group
   - Authenticate via polkit for privilege elevation
   - Execute commands using a systemd service
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # run0

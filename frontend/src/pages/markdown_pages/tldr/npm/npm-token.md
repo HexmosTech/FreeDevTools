@@ -22,8 +22,8 @@ features:
 - Delete a specific token using its token ID.
 - Create tokens with read-only or publish access.
 - Configure npm tokens automatically upon login.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm token

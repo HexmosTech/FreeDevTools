@@ -22,8 +22,8 @@ features:
 - Authenticate with Redis servers using passwords.
 - Connect to Redis clusters.
 - Specify connection parameters like host, port, and URI.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # redis-cli

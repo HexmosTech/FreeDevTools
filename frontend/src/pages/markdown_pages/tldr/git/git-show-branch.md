@@ -22,8 +22,8 @@ features:
 - Compare all remote tracking branches.
 - Compare both local and remote tracking branches.
 - Display commit names instead of relative names.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git show-branch

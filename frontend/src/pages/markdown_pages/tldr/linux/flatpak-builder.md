@@ -22,8 +22,8 @@ features:
   - Install Flatpaks locally
   - Sign Flatpaks with GPG keys
   - Run a shell inside a Flatpak sandbox
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # flatpak-builder

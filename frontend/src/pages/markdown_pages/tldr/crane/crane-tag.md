@@ -22,8 +22,8 @@ features:
 - Quickly update image tags in remote registries
 - Streamline container image deployment workflows
 - Skip layer existence checks for faster tagging
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # crane tag

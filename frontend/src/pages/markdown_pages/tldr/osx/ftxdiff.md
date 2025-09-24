@@ -22,8 +22,8 @@ features:
 - Include unicode names in the diff output.
 - Compare two font files to identify variations.
 - Analyze character set changes between fonts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ftxdiff

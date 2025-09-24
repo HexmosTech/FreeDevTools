@@ -22,8 +22,8 @@ features:
   - Provides verbose output for detailed information.
   - Offers the ability to synchronize files before analysis.
   - Displays mapping of extended attributes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # filefrag

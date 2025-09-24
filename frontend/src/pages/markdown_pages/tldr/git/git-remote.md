@@ -22,8 +22,8 @@ features:
 - Add new remote repositories to your local Git configuration.
 - Change the URL of an existing remote repository.
 - Remove remote repositories from your local Git configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git remote

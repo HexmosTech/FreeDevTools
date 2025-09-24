@@ -22,8 +22,8 @@ features:
 - Enforce Kubernetes security best practices
 - Generate detailed Kubernetes security reports
 - Assess Kubernetes compliance against industry standards
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prowler kubernetes

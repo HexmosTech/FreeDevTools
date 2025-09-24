@@ -22,8 +22,8 @@ features:
 - Start an interactive Hive shell for data exploration
 - Configure Hive settings using command-line options
 - Define variables for use in HiveQL scripts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hive

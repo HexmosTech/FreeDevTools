@@ -22,8 +22,8 @@ features:
 - Merge pull requests with specific strategies (merge, squash, rebase)
 - Customize commit messages during merge
 - Squash pull requests into a single commit
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh pr merge

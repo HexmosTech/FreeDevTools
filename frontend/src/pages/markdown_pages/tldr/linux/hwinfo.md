@@ -22,8 +22,8 @@ features:
   - Offers a concise summary mode for quick overview.
   - Allows saving the output to a file for later analysis.
   - Supports various hardware components (CPU, memory, disk, network, etc.).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hwinfo

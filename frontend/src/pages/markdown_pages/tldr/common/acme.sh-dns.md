@@ -22,8 +22,8 @@ features:
 - Integrate with various DNS providers via API
 - Allow manual DNS record verification
 - Customize DNS propagation wait time
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # acme.sh --dns

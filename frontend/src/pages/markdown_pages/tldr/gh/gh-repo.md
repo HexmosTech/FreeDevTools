@@ -22,8 +22,8 @@ features:
 - Fork and clone GitHub repositories in a single command.
 - View GitHub repositories in your default web browser.
 - List GitHub repositories owned by a specific user or organization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh repo

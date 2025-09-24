@@ -6,24 +6,24 @@ canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-init/"
 description: "Create Rust packages instantly with the Cargo init command.  Easily initialize new projects, manage dependencies, and build applications.  Free online tool, no registration required."
 category: cargo
 keywords:
-- rust cargo init
-- create rust project
-- cargo new project
-- rust package manager
-- rust dependency management
-- rust binary creation
-- rust library creation
-- cargo init command examples
-- initialize rust project
-- build rust application
+  - rust cargo init
+  - create rust project
+  - cargo new project
+  - rust package manager
+  - rust dependency management
+  - rust binary creation
+  - rust library creation
+  - cargo init command examples
+  - initialize rust project
+  - build rust application
 features:
-- Initialize new Rust projects with binary or library targets.
-- Specify custom project names and locations.
-- Integrate with Git, Mercurial, Pijul, or Fossil for version control.
-- Create projects with predefined package names.
-- Manage project dependencies using Cargo's built-in features.
-ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+  - Initialize new Rust projects with binary or library targets.
+  - Specify custom project names and locations.
+  - Integrate with Git, Mercurial, Pijul, or Fossil for version control.
+  - Create projects with predefined package names.
+  - Manage project dependencies using Cargo's built-in features.
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # cargo init

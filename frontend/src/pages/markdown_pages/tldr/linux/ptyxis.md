@@ -22,8 +22,8 @@ features:
 - Open new tabs in existing windows
 - Set custom titles for terminal tabs and windows
 - Specify working directories for new terminal sessions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ptyxis

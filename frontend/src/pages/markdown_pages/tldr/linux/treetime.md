@@ -22,8 +22,8 @@ features:
   - Estimate molecular clock parameters and reroot the tree
   - Map discrete characters onto a phylogenetic tree
   - Reconstruct ancestral states for traits of interest
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # treetime

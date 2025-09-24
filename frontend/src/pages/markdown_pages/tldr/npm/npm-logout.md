@@ -22,8 +22,8 @@ features:
 - Clears user credentials from the system.
 - Revokes active NPM session tokens.
 - Provides command-line interface for easy logout.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm logout

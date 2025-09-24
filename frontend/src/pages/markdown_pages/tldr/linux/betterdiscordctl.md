@@ -22,8 +22,8 @@ features:
   - Provides simple, command-line driven installation.
   - Manages BetterDiscord installations on Linux systems.
   - Offers flexibility for different Discord distribution methods.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # betterdiscordctl

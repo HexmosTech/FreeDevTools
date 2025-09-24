@@ -22,8 +22,8 @@ features:
 - Mask services, sockets, and other unit types
 - Disable user services using --user flag
 - Ensure service shutdown during masking with --now option
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemctl mask

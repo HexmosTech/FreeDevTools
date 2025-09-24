@@ -22,8 +22,8 @@ features:
 - Control the weight of the center element in the kernel
 - Output generated kernel in PGM image format
 - Design custom image filters via command-line parameters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pgmkernel

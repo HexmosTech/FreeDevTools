@@ -22,8 +22,8 @@ features:
 - Format Gleam code for consistency
 - Type check Gleam code for errors
 - Run Gleam projects with specific targets and runtimes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gleam

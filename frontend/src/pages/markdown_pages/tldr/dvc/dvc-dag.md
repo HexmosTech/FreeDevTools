@@ -22,8 +22,8 @@ features:
 - Export pipeline diagrams in DOT format
 - Visualize pipeline stages up to a target stage
 - Understand data dependencies within DVC projects
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dvc dag

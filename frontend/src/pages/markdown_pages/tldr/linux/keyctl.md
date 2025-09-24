@@ -22,8 +22,8 @@ features:
 - Set timeouts for key expiration
 - Revoke keys to prevent further access
 - Read key values in raw or hex-dump format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # keyctl

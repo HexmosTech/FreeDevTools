@@ -22,8 +22,8 @@ features:
 - Output repaired file to a specified location.
 - Force treat a file as PcapNG, bypassing auto-detection.
 - Display detailed repair process with verbose output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pcapfix

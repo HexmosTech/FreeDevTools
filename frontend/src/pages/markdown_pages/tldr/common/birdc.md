@@ -22,8 +22,8 @@ features:
 - Display the current status of the BIRD daemon.
 - Show detailed information about configured routing protocols.
 - Filter and display routes based on AS number or prefix.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # birdc

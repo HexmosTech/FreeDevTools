@@ -22,8 +22,8 @@ features:
 - Dump crackable Kerberos hashes
 - Authenticate with specified credentials
 - Support pass-the-hash authentication
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # GetNPUsers.py

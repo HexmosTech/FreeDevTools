@@ -22,8 +22,8 @@ features:
   - Pick colors directly from your screen using your cursor.
   - Generate palettes of visually distinct colors for design projects.
   - List all available X11 and CSS color names.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pastel

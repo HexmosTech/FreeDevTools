@@ -22,8 +22,8 @@ features:
   - Control system power consumption through command-line interface.
   - Utilize D-Bus for efficient power profile management.
   - Integrate with existing Linux power management systems.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # powerprofilesctl

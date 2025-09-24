@@ -22,8 +22,8 @@ features:
 - Create initramfs for specific kernel versions
 - Generate initramfs using alternative configuration files
 - List available mkinitcpio hooks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkinitcpio

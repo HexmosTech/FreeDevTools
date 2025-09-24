@@ -22,8 +22,8 @@ features:
   - Generate multiple UUID version 4 identifiers at once.
   - Specify the output format (BIN, STR, SIV) for generated UUIDs.
   - Decode existing UUIDs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # uuid

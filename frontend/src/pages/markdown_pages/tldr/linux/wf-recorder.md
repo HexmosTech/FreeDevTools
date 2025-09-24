@@ -22,8 +22,8 @@ features:
 - Select and record a specific screen region using slurp
 - Support for specifying output file name and path
 - Command-line screen recording
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wf-recorder

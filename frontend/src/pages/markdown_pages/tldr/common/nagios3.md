@@ -22,8 +22,8 @@ features:
 - Print service check scheduling information to standard output
 - Verify the Nagios3 configuration file for errors
 - Shutdown Nagios3 after printing service check information
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nagios3

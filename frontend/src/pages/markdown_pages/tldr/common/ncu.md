@@ -22,8 +22,8 @@ features:
 - Interactively update npm packages
 - Filter dependencies by keyword or regex
 - Target specific dependency sections (dev, optional, etc.)
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ncu

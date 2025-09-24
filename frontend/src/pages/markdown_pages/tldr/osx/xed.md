@@ -22,8 +22,8 @@ features:
 - Jump to a specific line number in a file
 - Edit code files on macOS using the terminal
 - Quickly launch Xcode with specified files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xed

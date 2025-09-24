@@ -22,8 +22,8 @@ features:
 - Flush the local DNS cache
 - Display DNS resolver statistics
 - Retrieve MX and SRV records
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # resolvectl

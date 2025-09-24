@@ -22,8 +22,8 @@ features:
   - Open file selection dialogs to choose files
   - Create yes/no and warning dialogs for user confirmation
   - Display progress bars and communicate via D-Bus
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kdialog

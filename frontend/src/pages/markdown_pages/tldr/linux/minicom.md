@@ -22,8 +22,8 @@ features:
   - Enter interactive configuration menu before communication
   - Communicate with various serial devices via the command line
   - Exit minicom using a keyboard shortcut
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # minicom

@@ -22,8 +22,8 @@ features:
   - Manage dependencies of kernel modules.
   - Perform a dry run to simulate module loading without actual changes.
   - Display dependencies of a specified kernel module.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # modprobe

@@ -22,8 +22,8 @@ features:
 - Hard delete files from both version control and disk
 - Reset deletion by re-adding previously removed files
 - Manage files in a Fossil repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fossil delete

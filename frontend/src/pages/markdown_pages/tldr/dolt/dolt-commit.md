@@ -22,8 +22,8 @@ features:
 - Commit all unstaged changes in Dolt.
 - Set a specific date for a Dolt commit.
 - Define the author of a Dolt commit.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dolt commit

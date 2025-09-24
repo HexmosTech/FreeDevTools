@@ -22,8 +22,8 @@ features:
   - Disable CORS validation for API testing
   - Open specific URLs in application mode without browser UI
   - Utilize custom user data directories for different profiles
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # chromium

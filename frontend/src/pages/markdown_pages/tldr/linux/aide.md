@@ -22,8 +22,8 @@ features:
 - Compare two AIDE databases based on configuration definitions.
 - Update the AIDE database in a non-interactive mode.
 - Limit AIDE to a specific string using regular expressions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aide

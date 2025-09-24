@@ -22,8 +22,8 @@ features:
   - Rate backtraces based on severity
   - Identify the function causing the crash
   - Save analysis data to a problem directory
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # abrt-action-analyze-backtrace

@@ -22,8 +22,8 @@ features:
 - Update the maintenance window schedule
 - Manage database maintenance via command line
 - Automate database maintenance scheduling
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # doctl databases maintenance-window

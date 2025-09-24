@@ -22,8 +22,8 @@ features:
 - Decompress files from XIP archives
 - Create secure archives signed by Apple (though discouraged)
 - Extract content from Apple-signed XIP files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xip

@@ -22,8 +22,8 @@ features:
 - Append a boilerplate directly to a .gitignore file
 - Search for specific boilerplates based on keywords
 - Update the local list of available boilerplates
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gibo

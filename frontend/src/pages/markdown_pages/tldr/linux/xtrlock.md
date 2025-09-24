@@ -22,8 +22,8 @@ features:
 - Provide option for blank screen display on lock
 - Fork the process for immediate return
 - Secure user sessions from unauthorized access
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xtrlock

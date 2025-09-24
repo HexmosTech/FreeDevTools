@@ -22,8 +22,8 @@ features:
   - Identifies package ownership of files.
   - Allows quick checking of installed files.
   - Facilitates troubleshooting file-related issues.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pacman -F

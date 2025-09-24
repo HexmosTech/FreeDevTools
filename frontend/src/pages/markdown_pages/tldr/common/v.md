@@ -22,8 +22,8 @@ features:
 - Automatically recompile and rerun files on modification
 - Open and interact with the V REPL environment
 - Format V source code files according to standard style
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # v

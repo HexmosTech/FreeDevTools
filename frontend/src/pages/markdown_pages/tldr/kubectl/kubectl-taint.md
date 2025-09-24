@@ -22,8 +22,8 @@ features:
 - Remove all taints from a node with kubectl
 - Manage node scheduling using taints and tolerations
 - Evict pods based on taints and tolerations using kubectl
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kubectl taint

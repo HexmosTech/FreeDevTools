@@ -22,8 +22,8 @@ features:
 - Delete extraneous files at the destination with a final pass.
 - Distribute synchronization jobs across multiple remote workers.
 - Limit the number of files and size transferred per job.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fpsync

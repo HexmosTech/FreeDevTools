@@ -22,8 +22,8 @@ features:
 - Enable and manage Kubernetes clusters easily with Colima.
 - Customize container runtime environments using configuration files.
 - Display runtime status and list running containers.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # colima

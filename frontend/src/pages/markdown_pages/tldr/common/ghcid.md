@@ -22,8 +22,8 @@ features:
 - Executes custom actions on file save
 - Writes GHC compiler output to a file
 - Executes REPL commands on each file save
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ghcid

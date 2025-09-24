@@ -22,8 +22,8 @@ features:
   - Control browser behavior and settings through the CLI
   - Execute debugging commands for web development
   - Integrate Edge with shell scripts and automation workflows
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # microsoft-edge

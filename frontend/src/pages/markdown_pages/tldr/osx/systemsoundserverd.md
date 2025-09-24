@@ -22,8 +22,8 @@ features:
 - Ensure proper audio device operation
 - Debug audio-related issues on macOS
 - Start and stop the systemsoundserverd daemon
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemsoundserverd

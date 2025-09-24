@@ -22,8 +22,8 @@ features:
 - Display detailed information about MP4 file structure
 - Extract specific streams from MP4 files (audio, video)
 - Muxe multiple media streams into a single MP4 file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mp4box

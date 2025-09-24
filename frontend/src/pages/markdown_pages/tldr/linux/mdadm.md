@@ -22,8 +22,8 @@ features:
   - Manage failed disks within a RAID array.
   - Add and remove disks from a RAID array.
   - Inspect detailed information about RAID arrays.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mdadm

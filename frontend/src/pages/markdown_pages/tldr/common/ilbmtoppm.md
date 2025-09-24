@@ -22,8 +22,8 @@ features:
 - Ignore specific chunks within the ILBM file
 - Store transparency information in a PBM mask file
 - Perform batch ILBM to PPM conversions
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ilbmtoppm

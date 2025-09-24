@@ -22,8 +22,8 @@ features:
 - Override default kube configuration file location
 - Simplify kubectl authentication process
 - Enable secure access to Kubernetes clusters
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dexter

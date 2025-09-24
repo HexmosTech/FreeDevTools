@@ -22,8 +22,8 @@ features:
 - Helps troubleshoot environment configuration issues
 - Provides a clear output of environment settings
 - Facilitates script development by showing available variables
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gprintenv

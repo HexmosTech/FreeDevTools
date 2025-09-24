@@ -22,8 +22,8 @@ features:
   - Compress content before transferring for faster speeds
   - Specify a custom port for file transfer
   - Keep the server alive for multiple transfers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qrcp

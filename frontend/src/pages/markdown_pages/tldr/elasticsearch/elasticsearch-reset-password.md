@@ -22,8 +22,8 @@ features:
 - Generate auto-generated passwords.
 - Interactively prompt for new passwords.
 - Reset passwords at a specified Elasticsearch node URL.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elasticsearch-reset-password

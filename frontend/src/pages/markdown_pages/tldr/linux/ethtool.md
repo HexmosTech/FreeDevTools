@@ -22,8 +22,8 @@ features:
   - Monitor network usage statistics.
   - Configure link speed, duplex mode, and auto-negotiation.
   - Control interface LEDs for identification.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ethtool

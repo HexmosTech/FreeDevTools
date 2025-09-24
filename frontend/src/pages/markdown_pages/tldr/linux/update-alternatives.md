@@ -22,8 +22,8 @@ features:
   - Remove unwanted symbolic links easily.
   - Display information about existing symbolic links.
   - Manage multiple versions of the same command.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # update-alternatives

@@ -22,8 +22,8 @@ features:
 - Copy containers between Azure storage accounts
 - Transfer files using command-line interface
 - Delete destination files during synchronization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # azcopy

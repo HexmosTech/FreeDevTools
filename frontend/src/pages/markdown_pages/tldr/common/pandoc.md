@@ -22,8 +22,8 @@ features:
 - Convert Markdown to PDF using specified PDF engine
 - Specify input and output formats manually
 - Create standalone files with appropriate headers/footers
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pandoc

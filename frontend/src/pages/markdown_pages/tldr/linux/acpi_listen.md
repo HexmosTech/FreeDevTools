@@ -22,8 +22,8 @@ features:
   - Run continuously to monitor for events indefinitely.
   - Provide a command-line interface for easy use.
   - Simple and efficient event monitoring solution.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # acpi_listen

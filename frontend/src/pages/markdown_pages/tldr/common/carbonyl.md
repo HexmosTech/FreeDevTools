@@ -22,8 +22,8 @@ features:
 - Support HTML, CSS, and JavaScript content
 - Open specific URLs from the command line
 - Control browser behavior with command-line arguments
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # carbonyl

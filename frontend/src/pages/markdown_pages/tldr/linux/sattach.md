@@ -22,8 +22,8 @@ features:
   - Use console input as stdin for specific tasks
   - Filter stdin/stderr of specific tasks
   - Interact with Slurm jobs in real-time
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sattach

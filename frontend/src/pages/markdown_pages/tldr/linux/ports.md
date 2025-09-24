@@ -22,8 +22,8 @@ features:
   - Check differences between installed packages and ports tree
   - Synchronize installed packages with the ports tree
   - Manage software dependencies using ports
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ports

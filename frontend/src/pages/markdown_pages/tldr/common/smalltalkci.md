@@ -22,8 +22,8 @@ features:
 - Download and prepare pre-configured Smalltalk images for testing.
 - Specify a custom Smalltalk image and VM for testing.
 - Clean up caches and delete builds after testing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smalltalkci

@@ -22,8 +22,8 @@ features:
 - Create templates directly from the command line.
 - Facilitate rapid scaling and replication of container environments.
 - Integrate with Proxmox Virtual Environment.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pct template

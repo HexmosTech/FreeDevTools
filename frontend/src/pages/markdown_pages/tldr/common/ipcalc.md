@@ -22,8 +22,8 @@ features:
   - Calculate host IP address ranges within a subnet.
   - Split networks into custom-sized blocks using CIDR notation.
   - Suppress bitwise output for cleaner results.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipcalc

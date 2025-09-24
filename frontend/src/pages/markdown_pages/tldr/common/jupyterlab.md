@@ -22,8 +22,8 @@ features:
 - Provide a web-based interface for coding
 - Support Python, R, and other kernels
 - Facilitate data analysis and visualization
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jupyterlab

@@ -22,8 +22,8 @@ features:
 - Show arguments passed to JVM processes.
 - Display full package names of JVM processes.
 - Show arguments passed to the JVM itself.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jps

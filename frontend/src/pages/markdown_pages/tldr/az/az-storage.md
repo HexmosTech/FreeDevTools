@@ -22,8 +22,8 @@ features:
 - Retrieve access keys for a storage account
 - Delete storage accounts as needed
 - Update the minimum TLS version for enhanced security
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # az storage

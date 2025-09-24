@@ -22,8 +22,8 @@ features:
 - Show the differences in patch format.
 - Filter changes based on a specific file or directory.
 - Examine content and mode differences between blobs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git diff-tree

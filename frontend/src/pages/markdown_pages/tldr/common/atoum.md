@@ -22,8 +22,8 @@ features:
 - Run tests tagged with specific identifiers.
 - Load custom bootstrap files for test environments.
 - Use configuration files for test parameters.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # atoum

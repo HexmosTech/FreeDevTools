@@ -22,8 +22,8 @@ features:
 - Search and filter files using regular expressions
 - Select and manipulate multiple files efficiently
 - Open files and directories by entry list number
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # clifm

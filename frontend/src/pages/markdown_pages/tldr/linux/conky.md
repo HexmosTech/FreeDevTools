@@ -22,8 +22,8 @@ features:
   - Run as a background daemon for persistent monitoring
   - Control screen alignment for optimal placement
   - Adjustable startup delay for smoother integration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # conky

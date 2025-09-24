@@ -22,8 +22,8 @@ features:
 - Force encryption for peer connections to enhance privacy
 - Create new torrent files from existing files or directories
 - Utilize Bluetack-formatted peer blocklists to filter connections
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # transmission-cli

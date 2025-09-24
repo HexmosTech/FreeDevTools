@@ -22,8 +22,8 @@ features:
   - Locates manual pages for commands.
   - Supports specifying file types (-b, -s, -m).
   - Allows searching within specific directories (-B).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # whereis

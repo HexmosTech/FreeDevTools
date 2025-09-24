@@ -22,8 +22,8 @@ features:
   - List login failures for all users (requires sudo).
   - List login failures for a specific user (requires sudo).
   - Reset login failure records for a specific user (requires sudo).
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # faillock

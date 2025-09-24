@@ -22,8 +22,8 @@ features:
 - Request new certificates from AWS Certificate Manager.
 - Delete unwanted or expired certificates.
 - Update certificate options within AWS ACM.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # aws acm

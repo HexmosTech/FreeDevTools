@@ -22,8 +22,8 @@ features:
 - Schedule tasks with delays using datetime formats
 - Assign tasks to named groups for organized execution
 - Add labels to tasks for better identification and management
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue add

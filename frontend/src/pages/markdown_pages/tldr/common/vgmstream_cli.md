@@ -22,8 +22,8 @@ features:
 - Extract audio with custom looping configurations
 - Print audio metadata without decoding
 - Perform batch audio conversions from command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # vgmstream_cli

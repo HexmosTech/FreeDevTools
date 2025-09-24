@@ -22,8 +22,8 @@ features:
   - Remove paired Bluetooth devices
   - Connect to and disconnect from paired Bluetooth devices
   - Display helpful information about bluetoothctl commands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bluetoothctl

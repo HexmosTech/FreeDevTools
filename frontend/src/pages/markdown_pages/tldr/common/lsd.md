@@ -22,8 +22,8 @@ features:
 - Classify file types by appending a trailing character
 - Output long format with permissions, ownership, and size
 - Recursively list directories in a tree structure
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lsd

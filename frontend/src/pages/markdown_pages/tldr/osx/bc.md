@@ -22,8 +22,8 @@ features:
   - Utilize the built-in math library for advanced functions.
   - Control the number of decimal places (scale) in calculations.
   - Interact with bc in interactive mode or via command-line expressions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bc

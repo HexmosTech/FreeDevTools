@@ -22,8 +22,8 @@ features:
 - Receive files sent via airpaste from another device.
 - Create named channels for targeted communication.
 - Share data directly from the command line using pipes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # airpaste

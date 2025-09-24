@@ -22,8 +22,8 @@ features:
 - Interactively restore files from the trash
 - Empty the trash of all files or files older than a specific number of days
 - Remove specific files or files matching a pattern from the trash
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trash

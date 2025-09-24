@@ -22,8 +22,8 @@ features:
 - Search for registry keys and values matching a pattern.
 - Filter registry queries by data type.
 - Perform case-sensitive, exact-match registry searches.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # reg query

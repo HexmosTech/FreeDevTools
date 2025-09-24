@@ -22,8 +22,8 @@ features:
 - Output topology in various formats (XML, PDF, PNG, etc.)
 - Summarize or show full hardware topology details
 - Represent topology in monochrome or greyscale
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lstopo

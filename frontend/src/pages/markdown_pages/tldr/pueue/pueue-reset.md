@@ -22,8 +22,8 @@ features:
 - Resets the status of the Pueue daemon.
 - Forces reset without user confirmation.
 - Kills child processes of tasks before resetting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pueue reset

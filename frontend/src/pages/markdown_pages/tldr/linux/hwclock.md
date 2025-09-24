@@ -22,8 +22,8 @@ features:
   - Set the system time using the hardware clock.
   - Useful for system setup and time synchronization.
   - Command-line interface for easy access.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hwclock

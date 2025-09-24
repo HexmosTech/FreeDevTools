@@ -22,8 +22,8 @@ features:
 - Provide information on environment variables used by gh.
 - Generate markdown reference of all gh commands.
 - Show formatting information for JSON output from gh.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh help

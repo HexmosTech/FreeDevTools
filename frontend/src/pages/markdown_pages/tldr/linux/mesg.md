@@ -22,8 +22,8 @@ features:
   - Disable message reception from other users
   - Provide verbose output for non-terminal executions
   - Integrate seamlessly with the `write` command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mesg

@@ -22,8 +22,8 @@ features:
 - Identify potential security risks in Google Cloud
 - Automate GCP security best practices checks
 - Generate detailed security assessment reports for GCP
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prowler gcp

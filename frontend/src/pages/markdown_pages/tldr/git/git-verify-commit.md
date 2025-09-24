@@ -22,8 +22,8 @@ features:
 - Displays detailed information about signed commits
 - Prints raw details of verified commits
 - Supports verification of multiple commits at once
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git verify-commit

@@ -22,8 +22,8 @@ features:
 - Explore file systems via console and graphical interfaces
 - Analyze disk usage from the command line
 - Dump database info for detailed file system inspection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # duc

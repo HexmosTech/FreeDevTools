@@ -22,8 +22,8 @@ features:
 - Enables preprocessing of Verilog code
 - Allows explicit compilation and runtime execution using VVP
 - Provides options for displaying all compilation warnings
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # iverilog

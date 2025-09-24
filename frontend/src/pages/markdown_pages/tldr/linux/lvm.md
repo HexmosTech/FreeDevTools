@@ -22,8 +22,8 @@ features:
   - Create logical volumes within volume groups.
   - Display detailed information about physical volumes, volume groups, and logical volumes.
   - Manage and resize existing logical volumes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # lvm

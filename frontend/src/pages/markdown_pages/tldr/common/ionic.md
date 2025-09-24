@@ -22,8 +22,8 @@ features:
 - Generate new app components, pages, and services
 - Run Ionic apps on Android and iOS devices
 - Check app health and dependencies with built-in doctor command
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ionic

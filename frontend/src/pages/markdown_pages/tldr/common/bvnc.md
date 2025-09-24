@@ -22,8 +22,8 @@ features:
 - Identify both VNC and SSH servers simultaneously
 - Specify a domain for server browsing
 - Launch the GUI server browser
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bvnc

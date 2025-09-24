@@ -22,8 +22,8 @@ features:
 - Delete specific ARP filtering rules
 - Flush all existing ARP filtering rules
 - Set default policies for ARP traffic
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # arptables

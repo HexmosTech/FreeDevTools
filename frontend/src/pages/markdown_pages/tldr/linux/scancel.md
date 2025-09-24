@@ -22,8 +22,8 @@ features:
   - Provides immediate cancellation of running jobs.
   - Integrates seamlessly with the Slurm workload manager.
   - Offers a simple and efficient command-line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # scancel

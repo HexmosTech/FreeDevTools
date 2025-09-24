@@ -22,8 +22,8 @@ features:
   - Modify existing extended file attributes.
   - Manage file metadata through command-line interface.
   - Works with various file systems supporting extended attributes.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # setfattr

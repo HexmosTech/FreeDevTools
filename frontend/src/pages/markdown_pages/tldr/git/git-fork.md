@@ -22,8 +22,8 @@ features:
 - Support for forking by repository URL
 - Support for forking by repository slug (owner/repo)
 - Streamline the forking and cloning process
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git fork

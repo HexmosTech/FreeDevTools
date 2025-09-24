@@ -22,8 +22,8 @@ features:
   - List all installed plasmoids (globally or per user).
   - Remove plasmoids by name.
   - List all known installable package types.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # kpackagetool6

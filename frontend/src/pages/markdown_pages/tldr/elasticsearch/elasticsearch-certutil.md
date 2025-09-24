@@ -22,8 +22,8 @@ features:
 - Encrypt keystore passwords for Elasticsearch security.
 - Generate certificate signing requests (CSRs) for external signing.
 - Manage Elasticsearch transport layer security configuration.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # elasticsearch-certutil

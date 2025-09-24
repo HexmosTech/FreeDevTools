@@ -22,8 +22,8 @@ features:
 - Utilize an indexed database for rapid searching
 - Enable database updates with `updatedb`
 - Offer efficient command-line file location
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # plocate

@@ -22,8 +22,8 @@ features:
 - Sort files by name, size, or modification date.
 - Visualize directory structure as a tree.
 - Integrate with Git to display file status.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # exa

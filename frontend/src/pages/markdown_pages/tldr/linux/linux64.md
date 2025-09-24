@@ -22,8 +22,8 @@ features:
 - Force 64-bit execution on Linux
 - Ensure compatibility with 64-bit libraries
 - Control the process environment architecture
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # linux64

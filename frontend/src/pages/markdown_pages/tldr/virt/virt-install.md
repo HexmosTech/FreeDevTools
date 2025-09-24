@@ -22,8 +22,8 @@ features:
 - Create diskless virtual machines for live environments.
 - Automate virtual machine deployments using Kickstart.
 - Define CPU topology and model for optimal performance.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # virt-install

@@ -22,8 +22,8 @@ features:
 - Bypass Vulkan support testing for compatibility.
 - Display remote applications on a local Wayland compositor.
 - Forward graphical displays securely and efficiently.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # waypipe

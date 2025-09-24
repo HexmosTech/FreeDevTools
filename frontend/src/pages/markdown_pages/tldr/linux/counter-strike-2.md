@@ -22,8 +22,8 @@ features:
   - Configure the maximum number of players allowed.
   - Define the server's IP address and port.
   - Shut down the Counter-Strike 2 server gracefully.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Counter Strike 2

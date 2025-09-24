@@ -22,8 +22,8 @@ features:
 - Send output directly to stdout, bypassing the pager.
 - Specify the language code for documentation translation.
 - Access documentation for Perl modules and programs.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # perldoc

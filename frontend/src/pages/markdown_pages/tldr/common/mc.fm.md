@@ -22,8 +22,8 @@ features:
 - Manage files within a terminal user interface
 - Browse file systems in a text-based environment
 - Start in black and white mode for enhanced visibility
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mc

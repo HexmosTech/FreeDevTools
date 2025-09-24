@@ -22,8 +22,8 @@ features:
 - Perform safe renaming with dry-run options.
 - Rename files based on modification date.
 - Integrate with shell scripts for automated renaming.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prename

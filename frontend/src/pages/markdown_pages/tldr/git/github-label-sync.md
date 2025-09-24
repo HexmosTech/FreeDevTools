@@ -22,8 +22,8 @@ features:
 - Allow added labels that aren't in the JSON file
 - Authenticate using an access token or environment variable
 - Manage repository labels automatically
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # github-label-sync

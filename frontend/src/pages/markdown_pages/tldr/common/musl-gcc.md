@@ -22,8 +22,8 @@ features:
 - Builds static binaries for portability
 - Creates lightweight executables for embedded systems
 - Passes options directly to the underlying gcc compiler
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # musl-gcc

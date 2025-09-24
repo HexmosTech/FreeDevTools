@@ -22,8 +22,8 @@ features:
   - Build Lambda function code efficiently
   - Run serverless applications locally for testing
   - Deploy AWS SAM applications to the cloud
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # sam

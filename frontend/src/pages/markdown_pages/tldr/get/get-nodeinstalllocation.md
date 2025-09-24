@@ -22,8 +22,8 @@ features:
 - Retrieve Node.js directory location
 - Provide Node.js install location on Windows
 - Support locating Node.js path
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Get-NodeInstallLocation

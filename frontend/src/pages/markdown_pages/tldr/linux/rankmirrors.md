@@ -22,8 +22,8 @@ features:
 - Test specific mirror URLs
 - Output response times of mirrors
 - Limit the number of top-ranking mirrors in output
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rankmirrors

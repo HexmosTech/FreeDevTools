@@ -22,8 +22,8 @@ features:
   - Use custom images to build toolbox containers.
   - Leverage Fedora images for container creation.
   - Employ default images for streamlined setup.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # toolbox create

@@ -22,8 +22,8 @@ features:
 - Process XML unescaping directly from stdin.
 - Support common XML escape sequences like &lt; &gt; &amp; &quot; &apos;.
 - Display help documentation for usage instructions.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xml unescape

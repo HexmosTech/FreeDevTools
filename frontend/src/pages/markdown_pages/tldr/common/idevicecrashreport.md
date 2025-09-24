@@ -22,8 +22,8 @@ features:
 - Save crash reports to a specified directory
 - Retain crash reports on the device after retrieval
 - Debug iOS applications using crash reports
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # idevicecrashreport

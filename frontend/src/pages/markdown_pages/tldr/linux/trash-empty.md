@@ -22,8 +22,8 @@ features:
 - Clear the trash bin from the command line.
 - Bypass the trash system for immediate file deletion.
 - Automate trash emptying with scripts.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # trash-empty

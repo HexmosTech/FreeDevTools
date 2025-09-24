@@ -22,8 +22,8 @@ features:
 - Display the full Object Identifier (OID) path.
 - Specify the SNMP version and community string.
 - Get the next variable from an SNMP agent.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snmpgetnext

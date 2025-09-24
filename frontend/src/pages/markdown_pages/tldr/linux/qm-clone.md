@@ -22,8 +22,8 @@ features:
   - Specify different storage formats during clone (qcow2, raw, vmdk)
   - Integrate cloned VMs with Proxmox resource pools
   - Create full or linked clones of virtual machine disks
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm clone

@@ -22,8 +22,8 @@ features:
 - Process data from standard input as a sequence of lines.
 - Process data from standard input as a sequence of EDN values.
 - Script Clojure projects without the JVM.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bb

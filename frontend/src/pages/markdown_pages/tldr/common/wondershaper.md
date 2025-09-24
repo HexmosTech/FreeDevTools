@@ -22,8 +22,8 @@ features:
 - Display network adapter status.
 - Clear bandwidth limits from adapters.
 - Configure bandwidth limits for specific network adapters.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wondershaper

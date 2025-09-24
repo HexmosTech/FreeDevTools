@@ -22,8 +22,8 @@ features:
 - Detects and fixes common code smells
 - Simplifies complex code refactoring tasks
 - Provides dry-run mode to preview changes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rector

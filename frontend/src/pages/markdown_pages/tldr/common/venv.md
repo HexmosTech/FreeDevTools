@@ -22,8 +22,8 @@ features:
 - Activate and deactivate virtual environments easily
 - Specify Python interpreter for each environment
 - Ensure reproducible project builds
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # venv

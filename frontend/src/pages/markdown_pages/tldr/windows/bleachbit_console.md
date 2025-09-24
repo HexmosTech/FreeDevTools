@@ -22,8 +22,8 @@ features:
 - List available cleaning options and customize cleanup process
 - Clean specific system areas and applications
 - Automate cleanup tasks with command-line interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bleachbit_console

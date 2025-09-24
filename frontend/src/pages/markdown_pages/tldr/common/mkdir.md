@@ -22,8 +22,8 @@ features:
 - Set specific permissions during creation.
 - Create nested directory structures using brace expansion.
 - Create directories using absolute or relative paths.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkdir

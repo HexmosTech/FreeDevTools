@@ -22,8 +22,8 @@ features:
   - Open an IPMI shell on a remote host
   - Manage server hardware remotely using IPMI
   - Access system information via the IPMI interface
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ipmitool

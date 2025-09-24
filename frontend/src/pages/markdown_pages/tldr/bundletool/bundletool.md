@@ -22,8 +22,8 @@ features:
 - Validate Android App Bundles for errors
 - Create a device specification JSON file
 - Install APKs to an Android device or emulator
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bundletool

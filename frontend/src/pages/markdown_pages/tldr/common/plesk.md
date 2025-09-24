@@ -22,8 +22,8 @@ features:
 - List all domains hosted on the server
 - Monitor Plesk logs for changes in real-time
 - Open and edit the Plesk main configuration file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # plesk

@@ -22,8 +22,8 @@ features:
 - Execute deduplication in strict mode for thorough optimization.
 - Skip optional or peer dependencies during the process.
 - Provide detailed logging for debugging and troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # npm dedupe

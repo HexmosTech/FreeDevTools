@@ -22,8 +22,8 @@ features:
 - Supports updating translation files using the `-U` flag
 - Provides helpful usage information via the `-h` flag
 - Facilitates internationalization (i18n) and localization (l10n) processes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # msgmerge

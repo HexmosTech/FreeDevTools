@@ -22,8 +22,8 @@ features:
 - Identify network interface for scanning
 - Display MAC addresses of discovered hosts
 - Monitor network activity for new hosts
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # netdiscover

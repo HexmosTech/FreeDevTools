@@ -22,8 +22,8 @@ features:
 - Add a new directory storage to Proxmox
 - Set the allowed content types for a storage
 - Delete a file from a Proxmox storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pvesm

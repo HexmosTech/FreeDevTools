@@ -22,8 +22,8 @@ features:
 - Play videos using a specific URL
 - Play videos in an external player (e.g., VLC)
 - Display a search prompt for easy video selection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # youtube-viewer

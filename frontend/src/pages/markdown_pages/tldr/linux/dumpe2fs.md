@@ -22,8 +22,8 @@ features:
 - Force display of filesystem information with unrecognized feature flags
 - Show superblock information without group descriptor details
 - Print detailed group information block numbers in hexadecimal format
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # dumpe2fs

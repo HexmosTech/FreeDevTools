@@ -22,8 +22,8 @@ features:
 - Run external commands from within the Git shell.
 - Utilize tab completion for command suggestions.
 - Exit the Git shell using the 'exit' command or Ctrl+D.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git repl

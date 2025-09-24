@@ -22,8 +22,8 @@ features:
 - Create a black and white image representing the selected color regions.
 - Accept a color specification as a comma-separated red, green, blue value.
 - Output a PBM image representing the masked area.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ppmcolormask

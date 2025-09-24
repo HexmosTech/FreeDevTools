@@ -22,8 +22,8 @@ features:
 - Support multiple signing keys
 - Integrate with GPG for signing
 - Replace existing signatures in metadata files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # in-toto-sign

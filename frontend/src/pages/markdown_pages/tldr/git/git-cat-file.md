@@ -22,8 +22,8 @@ features:
 - Pretty-print the contents of a Git object
 - Retrieve specific revisions of an object
 - Extract data directly from the Git object database
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # git cat-file

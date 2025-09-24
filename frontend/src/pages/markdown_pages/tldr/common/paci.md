@@ -22,8 +22,8 @@ features:
 - Search for available packages in repositories
 - Refresh the package list for up-to-date information
 - Configure Paci behavior to suit your needs
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # paci

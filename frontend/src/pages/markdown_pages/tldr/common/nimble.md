@@ -22,8 +22,8 @@ features:
 - List installed Nim packages in your environment.
 - Initialize a new Nimble package in the current directory.
 - Build an existing Nimble package from source.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nimble

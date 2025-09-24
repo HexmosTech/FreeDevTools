@@ -22,8 +22,8 @@ features:
 - Format files recursively and replace the originals
 - Use configuration files for customized formatting rules
 - Format JavaScript, TypeScript, CSS, JSON, and YAML files
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # prettier

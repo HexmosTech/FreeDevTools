@@ -22,8 +22,8 @@ features:
 - Check the current GitLab authentication status
 - Authenticate to a specific GitLab instance using its hostname
 - Manage multiple GitLab authentication configurations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # glab auth

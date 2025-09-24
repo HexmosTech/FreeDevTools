@@ -22,8 +22,8 @@ features:
 - Support NTLM hash authentication
 - Enable SMB2 support for modern clients
 - Log SMB commands to an output file
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # smbserver.py

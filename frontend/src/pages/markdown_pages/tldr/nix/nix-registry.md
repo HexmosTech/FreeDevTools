@@ -22,8 +22,8 @@ features:
 - Remove outdated registry entries
 - Pin registry entries to specific GitHub repository revisions
 - Manage Nix flake registries from the command line
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # nix registry

@@ -22,8 +22,8 @@ features:
 - Move an existing bookmark to a different revision
 - Track remote bookmarks from specified remotes
 - Delete bookmarks and propagate deletion to remotes
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj bookmark

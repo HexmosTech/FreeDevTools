@@ -22,8 +22,8 @@ features:
   - Fetch detailed information about a remote Bluetooth device
   - Check the link quality to a Bluetooth device
   - Modify Bluetooth transmit power levels
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # hcitool

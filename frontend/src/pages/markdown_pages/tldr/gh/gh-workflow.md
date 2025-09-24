@@ -22,8 +22,8 @@ features:
 - Run manual workflows with specified parameters
 - Enable or disable GitHub Actions workflows
 - List available workflow files in a repository
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gh workflow

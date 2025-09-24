@@ -22,8 +22,8 @@ features:
   - Integrates seamlessly with systemd for user session management.
   - Offers command-line interface for easy configuration.
   - Enables customized audio routing and device control.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wireplumber

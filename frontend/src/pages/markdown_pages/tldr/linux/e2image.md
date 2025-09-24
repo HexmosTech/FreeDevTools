@@ -22,8 +22,8 @@ features:
   - Create a large raw sparse file with metadata at the correct offsets.
   - Generate a QCOW2 image file of the filesystem metadata.
   - Print filesystem metadata to standard output.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # e2image

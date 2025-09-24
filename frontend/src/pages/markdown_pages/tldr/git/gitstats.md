@@ -22,8 +22,8 @@ features:
 - Visualize project history and contributor activity.
 - Calculate code metrics like lines of code and commit frequency.
 - Output statistics to a specified directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gitstats

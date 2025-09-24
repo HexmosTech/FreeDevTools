@@ -22,8 +22,8 @@ features:
 - Capture screenshots with a specified delay
 - Include or exclude the mouse cursor in captures
 - Open screenshots directly in Preview application
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # screencapture

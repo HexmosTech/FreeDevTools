@@ -22,8 +22,8 @@ features:
   - Format partitions as Cramfs for embedded systems
   - Generate read-only file systems from directories
   - Package file systems for ROM storage
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkfs.cramfs

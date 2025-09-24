@@ -22,8 +22,8 @@ features:
 - Dump user data configurations for Proxmox
 - Extract cloudinit configuration from a VM
 - Support for multiple configuration types
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qm cloudinit dump

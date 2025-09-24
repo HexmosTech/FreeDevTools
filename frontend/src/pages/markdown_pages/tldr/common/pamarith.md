@@ -22,8 +22,8 @@ features:
 - Execute multiplication on pixels of two Netpbm images
 - Calculate the difference between pixels of two Netpbm images
 - Determine the minimum or maximum pixel values between two images
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pamarith

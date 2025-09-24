@@ -22,8 +22,8 @@ features:
 - Forces deletion without confirmation prompts.
 - Integrates with PowerShell for scripting and automation.
 - Provides a command-line interface for Recycle Bin management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Clear-RecycleBin

@@ -22,8 +22,8 @@ features:
 - Extend existing Stratis pools with new devices
 - Mount Stratis volumes manually or automatically at boot
 - Delete Stratis volumes when no longer needed
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # stratis

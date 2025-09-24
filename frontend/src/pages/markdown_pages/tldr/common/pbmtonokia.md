@@ -22,8 +22,8 @@ features:
 - Convert PBM images to Nokia Picture Messages.
 - Generate Nokia-compatible hex code from PBM images.
 - Create NOL, NGG, and NPM files from PBM images.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pbmtonokia

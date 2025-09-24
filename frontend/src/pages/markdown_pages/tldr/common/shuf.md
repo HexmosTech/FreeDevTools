@@ -22,8 +22,8 @@ features:
 - Write shuffled output to a file.
 - Generate random numbers within a defined range.
 - Repeat number generation for persistent randomness.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # shuf

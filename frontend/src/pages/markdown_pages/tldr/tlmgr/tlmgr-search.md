@@ -22,8 +22,8 @@ features:
 - Search local or global TeX Live databases.
 - Restrict search to whole words in package names and descriptions.
 - Find specific TeX Live packages for installation or management.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tlmgr search

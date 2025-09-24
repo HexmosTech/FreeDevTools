@@ -22,8 +22,8 @@ features:
   - Decode various network protocols (e.g., HTTP, TCP, UDP).
   - Export captured packets in different formats (e.g., JSON, text).
   - Analyze packet captures from saved `.pcap` files.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tshark

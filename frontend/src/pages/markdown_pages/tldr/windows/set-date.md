@@ -22,8 +22,8 @@ features:
 - Add or subtract days from the current date
 - Increment or decrement the system clock by minutes
 - Change time using PowerShell commands
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Set-Date

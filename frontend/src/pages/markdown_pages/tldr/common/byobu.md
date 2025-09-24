@@ -22,8 +22,8 @@ features:
 - Configure Byobu with backend selection and autostart options.
 - Kill specific Byobu windows within a session.
 - Use keyboard shortcuts for Byobu operations.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # byobu

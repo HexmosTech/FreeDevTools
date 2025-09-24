@@ -22,8 +22,8 @@ features:
   - Supports creating ISOs from directories and files.
   - Enables customization of ISO image settings.
   - Provides a command-line interface for easy automation.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mkisofs

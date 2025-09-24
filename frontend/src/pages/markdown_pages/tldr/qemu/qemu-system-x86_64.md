@@ -22,8 +22,8 @@ features:
 - Boot from live ISO images for OS testing
 - Emulate physical devices like USB drives
 - Run QEMU instances in non-graphical mode
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # qemu-system-x86_64

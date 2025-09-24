@@ -22,8 +22,8 @@ features:
   - Utilize a dry-run mode for previewing changes.
   - Update user directory configurations from the command line.
   - Manage multiple XDG directories simultaneously.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # xdg-user-dirs-update

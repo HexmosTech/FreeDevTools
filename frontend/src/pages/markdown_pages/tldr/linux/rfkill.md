@@ -22,8 +22,8 @@ features:
   - Unblock specific wireless devices by type.
   - View device information with customized output columns.
   - Output device information in JSON format for easy parsing.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rfkill

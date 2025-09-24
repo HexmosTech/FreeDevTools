@@ -22,8 +22,8 @@ features:
 - Display the full Object Identifier (OID) path
 - Support various SNMP versions (e.g., v1, v2c, v3)
 - Efficiently monitor network devices via SNMP
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # snmpbulkget

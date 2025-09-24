@@ -22,8 +22,8 @@ features:
   - Allows breaking lines at the rightmost blank space.
   - Supports file input for batch processing.
   - Provides flexible control over line wrapping behavior.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fold

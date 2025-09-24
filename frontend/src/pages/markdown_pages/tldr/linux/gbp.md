@@ -22,8 +22,8 @@ features:
 - Build packages in a pbuilder environment
 - Specify source-only uploads for Debian packages
 - Import new upstream releases using pristine-tar
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gbp

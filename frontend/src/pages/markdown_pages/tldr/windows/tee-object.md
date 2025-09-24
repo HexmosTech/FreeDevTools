@@ -22,8 +22,8 @@ features:
 - Send output down the PowerShell pipeline
 - View output on the console simultaneously
 - Combine file saving and pipeline redirection
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # Tee-Object

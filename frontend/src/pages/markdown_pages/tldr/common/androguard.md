@@ -22,8 +22,8 @@ features:
 - Extract application metadata like version and ID
 - Perform static analysis of APK files
 - Analyze and understand the structure of Android apps
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # androguard

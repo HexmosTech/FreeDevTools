@@ -22,8 +22,8 @@ features:
 - Unpause and control pipeline execution
 - Sync local fly version with target server
 - Destroy and manage pipeline lifecycles
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # fly

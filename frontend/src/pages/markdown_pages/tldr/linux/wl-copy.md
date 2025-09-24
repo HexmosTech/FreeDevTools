@@ -22,8 +22,8 @@ features:
 - Copy content for single use and then clear the clipboard
 - Transfer image data to the Wayland clipboard
 - Clear the Wayland clipboard contents instantly
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # wl-copy

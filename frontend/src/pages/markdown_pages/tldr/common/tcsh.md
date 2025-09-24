@@ -22,8 +22,8 @@ features:
 - Execute TC Shell scripts.
 - Check scripts for syntax errors before execution.
 - Execute commands directly from standard input.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # tcsh

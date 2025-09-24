@@ -22,8 +22,8 @@ features:
 - Gather group membership information from LDAP.
 - Export data in HTML, JSON, and greppable formats.
 - Resolve computer hostnames using DNS.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ldapdomaindump

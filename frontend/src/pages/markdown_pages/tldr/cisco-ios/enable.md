@@ -22,8 +22,8 @@ features:
   - Enhance network security through privileged commands.
   - Gain full control over device settings and operations.
   - Configure advanced system parameters and security protocols.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # enable

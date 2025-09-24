@@ -22,8 +22,8 @@ features:
 - Customize terminal behavior using flags
 - Set control characters like interrupt and end-of-file
 - Manage terminal line discipline
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # gstty

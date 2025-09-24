@@ -22,8 +22,8 @@ features:
 - Exploit vulnerable Samba configurations
 - Perform remote file share access
 - Automate penetration testing tasks over SMB
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # impacket-sambaPipe

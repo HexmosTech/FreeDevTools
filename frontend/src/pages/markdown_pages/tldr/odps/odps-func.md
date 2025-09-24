@@ -22,8 +22,8 @@ features:
 - List all functions within the current ODPS project
 - Delete existing functions from an ODPS project
 - Manage user-defined functions for data processing
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # odps func

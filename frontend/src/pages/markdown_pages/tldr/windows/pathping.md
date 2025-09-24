@@ -22,8 +22,8 @@ features:
 - Configure the number of pings per hop.
 - Force IPv4 or IPv6 usage for network analysis.
 - Display help information about pathping parameters.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # pathping

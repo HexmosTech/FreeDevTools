@@ -22,8 +22,8 @@ features:
 - Display the IPv4 address and netmask of a network interface.
 - Retrieve the network address, broadcast address, and MTU.
 - Provide help information for Ifdata usage.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ifdata
