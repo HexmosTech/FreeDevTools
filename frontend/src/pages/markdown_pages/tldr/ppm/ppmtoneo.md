@@ -1,27 +1,27 @@
 ---
-title: "Convert PPM to NEO - Image Format Tool | Online Free DevTools by Hexmos"
+title: "PPM to NEO Converter - Convert Images with ppmtoneo | Online Free DevTools by Hexmos"
 name: ppmtoneo
 path: /freedevtools/tldr/ppm/ppmtoneo
 canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoneo/"
-description: "Convert PPM images to Atari Neochrome (NEO) format with ppmtoneo. Free online tool, no registration required. Simplify image format conversion with this utility."
-category: common
+description: "Convert PPM images to NEO format with ppmtoneo.  This free online command-line tool allows for easy image format conversion from PPM to Atari Neochrome (NEO). Free online tool, no registration required."
+category: ppm
 keywords:
-- PPM to NEO converter
-- image format conversion
-- Atari Neochrome conversion
-- ppmtoneo command
-- PPM image processing
-- NEO file creation
-- Netpbm tools
-- image converter
-- graphic file conversion
-- command line image tool
+  - PPM to NEO conversion
+  - PPM image converter
+  - NEO image creation
+  - ppmtoneo command line
+  - Netpbm PPM conversion
+  - Atari Neochrome image format
+  - PPM image processing
+  - command-line image tool
+  - image format transformation
+  - PPM file converter
 features:
-- Converts PPM images to Atari Neochrome format
-- Provides command-line conversion functionality
-- Enables creation of NEO files from PPM input
-- Supports batch image processing
-- Integrates with Netpbm image processing tools
+  - Converts PPM images to Atari Neochrome (NEO) format.
+  - Provides a command-line interface for easy integration.
+  - Enables the creation of NEO files from PPM input files.
+  - Supports single and batch image conversion.
+  - Leverages Netpbm libraries for efficient image processing.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

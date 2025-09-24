@@ -1,27 +1,27 @@
 ---
-title: "Calculate IP Information - ipcalc Network Tool | Online Free DevTools by Hexmos"
+title: "IP Subnet Calculator - Calculate IP Information with ipcalc | Online Free DevTools by Hexmos"
 name: ipcalc
 path: /freedevtools/tldr/common/ipcalc
 canonical: "https://hexmos.com/freedevtools/tldr/common/ipcalc/"
-description: "Calculate IP information with ipcalc. Determine subnet, broadcast address, and host range from an IP address and netmask. Free online tool, no registration required."
+description: "Calculate IP subnet information with the ipcalc command. Determine subnet masks, broadcast addresses, and host ranges from IP addresses and netmasks. Free online tool, no registration required."
 category: common
 keywords:
-- ipcalc subnet calculator
-- ip address calculator
-- network address calculator
-- subnet mask calculator
-- ip network calculator
-- linux ipcalc command
-- calculate subnet
-- ip address range
-- network information tool
-- ipcalc network tool
+  - ipcalc subnet calculator
+  - ip address subnet calculator
+  - network subnet mask calculator
+  - ip network range calculator
+  - calculate ip subnet
+  - linux ipcalc command
+  - ip address calculation
+  - subnet mask calculation
+  - ipcalc network address
+  - CIDR subnet calculator
 features:
-- Calculate subnet mask from CIDR notation
-- Determine broadcast address from IP and netmask
-- Calculate host range within a subnet
-- Split network into specified sized blocks
-- Suppress bitwise output for cleaner results
+  - Calculate subnet masks from IP addresses and netmasks.
+  - Determine broadcast addresses from IP addresses and netmasks.
+  - Calculate host IP address ranges within a subnet.
+  - Split networks into custom-sized blocks using CIDR notation.
+  - Suppress bitwise output for cleaner results.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

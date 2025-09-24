@@ -1,29 +1,29 @@
 ---
-title: "Create Rust Package - Cargo Init Tool | Online Free DevTools by Hexmos"
+title: "Create Rust Packages - Cargo Init Command | Online Free DevTools by Hexmos"
 name: cargo-init
 path: /freedevtools/tldr/cargo/cargo-init
 canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-init/"
-description: "Create Rust package instantly with Cargo Init, a versatile Rust package manager. Easily initialize new projects, manage dependencies, and build applications. Free online tool, no registration required."
-category: common
+description: "Create Rust packages instantly with the Cargo init command.  Easily initialize new projects, manage dependencies, and build applications.  Free online tool, no registration required."
+category: cargo
 keywords:
-- rust package creation
-- cargo init command
-- rust project initialization
+- rust cargo init
+- create rust project
+- cargo new project
+- rust package manager
 - rust dependency management
-- rust binary package
-- rust library package
-- cargo package manager
-- rust development tool
-- rust project structure
-- rust build system
+- rust binary creation
+- rust library creation
+- cargo init command examples
+- initialize rust project
+- build rust application
 features:
-- Initialize Rust projects with binary targets
-- Initialize Rust projects with library targets
-- Specify a directory for the new project
-- Integrate with version control systems (git, hg, pijul, fossil)
-- Set the package name for the project
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+- Initialize new Rust projects with binary or library targets.
+- Specify custom project names and locations.
+- Integrate with Git, Mercurial, Pijul, or Fossil for version control.
+- Create projects with predefined package names.
+- Manage project dependencies using Cargo's built-in features.
+ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
 ---
 
 # cargo init

@@ -1,27 +1,27 @@
 ---
-title: "Validate Logstash Configuration - ETL Tool | Online Free DevTools by Hexmos"
+title: "Logstash Configuration Validator - Validate & Debug ETL Pipelines | Online Free DevTools by Hexmos"
 name: logstash
 path: /freedevtools/tldr/common/logstash
 canonical: "https://hexmos.com/freedevtools/tldr/common/logstash/"
-description: "Validate Logstash configuration files with ease using this online tool. Analyze and test configurations before deployment. Free online tool, no registration required."
+description: "Validate Logstash configuration files with ease.  Debug and test your Elasticsearch Logstash pipelines before deployment. Free online tool, no registration required."
 category: common
 keywords:
-- logstash configuration validation
-- logstash etl pipeline
-- elasticsearch logstash
-- logstash syntax check
-- logstash configuration test
-- logstash configuration debug
-- logstash linux
-- logstash windows
-- logstash data pipeline
-- logstash configuration manager
+  - logstash configuration validation
+  - logstash pipeline validation
+  - logstash syntax checker
+  - logstash etl pipeline debugging
+  - logstash elasticsearch integration
+  - logstash configuration testing
+  - logstash config file validator
+  - logstash error detection
+  - logstash data pipeline analysis
+  - logstash command line validation
 features:
-- Validate Logstash configuration files for errors.
-- Test Logstash configuration without deploying.
-- Check Logstash syntax and semantics.
-- Simulate data flow through Logstash pipelines.
-- Provide detailed error messages for configuration issues.
+  - Validate Logstash configuration files for syntax errors.
+  - Identify semantic issues within your Logstash configuration.
+  - Simulate data flow to detect pipeline configuration problems.
+  - Provide detailed error messages with line numbers for easy debugging.
+  - Test Logstash configurations locally before deployment to Elasticsearch.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

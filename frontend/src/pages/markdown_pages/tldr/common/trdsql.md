@@ -1,29 +1,29 @@
 ---
-title: "Execute SQL on Data - trdsql Query Tool | Online Free DevTools by Hexmos"
+title: "trdsql SQL Query Tool - Execute SQL on Data | Online Free DevTools by Hexmos"
 name: trdsql
 path: "/freedevtools/tldr/common/trdsql"
 canonical: "https://hexmos.com/freedevtools/tldr/common/trdsql/"
-description: "Execute SQL queries on various data formats with trdsql. Convert JSON, CSV, YAML & more to SQL databases. Free online tool, no registration required."
+description: "Execute SQL queries on various data formats with trdsql.  Convert CSV, JSON, and YAML files to SQL databases. Free online tool, no registration required."
 category: common
 keywords:
-- SQL query tool
-- CSV to SQL
-- JSON to SQL
-- YAML to SQL
-- LTSV to SQL
-- TBLN to SQL
-- data query tool
-- database query
-- command line SQL
-- SQL data conversion
+- CSV SQL query tool
+- JSON SQL query tool
+- YAML SQL query tool
+- LTSV SQL query tool
+- TBLN SQL query tool
+- SQL data conversion tool
+- command line SQL query
+- SQL database query tool
+- data format conversion
+- trdsql command examples
 features:
-- Execute SQL queries on CSV, LTSV, JSON, YAML, and TBLN files
-- Convert various data formats into SQL database tables
-- Connect to PostgreSQL and MySQL databases
-- Merge content of multiple CSV files using SQL UNION
-- Query compressed log files directly using SQL
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+- Execute SQL queries directly on CSV, JSON, YAML, LTSV, and TBLN files.
+- Convert various data formats into SQL-compatible tables.
+- Connect to and query PostgreSQL and MySQL databases using SQL.
+- Merge data from multiple CSV files using SQL UNION commands.
+- Query compressed log files (e.g., .gz) with SQL.
+ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
 ---
 
 # trdsql

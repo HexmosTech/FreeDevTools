@@ -1,27 +1,27 @@
 ---
-title: "Compare Files - Meld Graphical Diff Tool | Online Free DevTools by Hexmos"
+title: "Compare Files with Meld - Graphical Diff Tool | Online Free DevTools by Hexmos"
 name: meld
 path: /freedevtools/tldr/common/meld
 canonical: "https://hexmos.com/freedevtools/tldr/common/meld/"
-description: "Compare files with Meld, a graphical diff and merge tool for developers. Visualize differences, resolve conflicts, and track changes. Free online tool, no registration required."
+description: "Compare files visually with Meld, a powerful graphical diff and merge tool.  Resolve conflicts and track changes between files and directories easily. Free online tool, no registration required."
 category: common
 keywords:
-- file comparison tool
-- graphical diff tool
-- merge tool linux
-- code comparison tool
-- directory comparison
-- visual diff tool
-- file merge utility
-- meld linux
-- meld macos
-- three way merge
+  - file comparison tool
+  - graphical diff tool
+  - merge tool linux
+  - code comparison tool
+  - directory comparison tool
+  - visual diff and merge
+  - three-way file merge
+  - meld command line
+  - meld file comparison
+  - meld directory comparison
 features:
-- Visually compare two or three files for differences.
-- Compare directories to identify added, removed, and changed files.
-- Merge changes between files with a graphical interface.
-- Open multiple comparisons in separate tabs.
-- Identify and resolve conflicts within files.
+  - Visually compare and merge two or three files.
+  - Compare and identify changes in directories.
+  - Resolve merge conflicts with a user-friendly interface.
+  - Open multiple comparisons in separate tabs for efficient workflow.
+  - Utilize command-line options for flexible comparison scenarios.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

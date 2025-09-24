@@ -1,27 +1,27 @@
 ---
-title: "Format C/C++ Code - Indent Tool | Online Free DevTools by Hexmos"
+title: "C/C++ Code Formatter - Indent Code Online | Free DevTools by Hexmos"
 name: indent
 path: /freedevtools/tldr/in/indent
 canonical: "https://hexmos.com/freedevtools/tldr/in/indent/"
-description: "Format C/C++ code with Indent Tool. Easily adjust whitespace, adhere to style guides, and improve code readability. Free online tool, no registration required."
-category: common
+description: "Format C/C++ code with the Indent tool. Easily adjust whitespace, adhere to style guides (Linux, GNU, K&R), and improve code readability with automatic code formatting. Free online tool, no registration required."
+category: in
 keywords:
-- C/C++ code formatter
-- code indentation tool
-- Linux code style
-- GNU code style
-- Kernighan & Ritchie style
-- source code indentation
-- automatic code formatting
-- whitespace control
-- command line indent
-- C++ indent
+  - C++ code formatter
+  - C code formatter
+  - indent C++ code
+  - indent C code
+  - Linux C++ code style
+  - GNU C++ code style
+  - K&R C++ code style
+  - source code indentation tool
+  - command line code formatter
+  - automatic code formatting tool
 features:
-- Format C/C++ source code
-- Apply Linux, GNU, or K&R style guidelines
-- Automatically backup original files
-- Save indented code to new files
-- Customize indentation level and line length
+  - Format C/C++ source code according to Linux, GNU, or K&R style guides.
+  - Automatically back up original files before formatting.
+  - Customize indentation level and line length for precise control.
+  - Save formatted code to new files, preserving the original.
+  - Support for command-line usage with various formatting options.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

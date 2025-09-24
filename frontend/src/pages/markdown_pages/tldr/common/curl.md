@@ -1,27 +1,27 @@
 ---
-title: "Transfer Data with Curl - Command-Line Tool | Online Free DevTools by Hexmos"
+title: "Curl Data Transfer - Command-Line Tool | Online Free DevTools by Hexmos"
 name: curl
 path: /freedevtools/tldr/common/curl
 canonical: "https://hexmos.com/freedevtools/tldr/common/curl/"
-description: "Transfer data effortlessly with Curl, a versatile command-line tool for various protocols. Supports HTTP, HTTPS, FTP, SCP, and more. Free online tool, no registration required."
+description: "Transfer data effortlessly with Curl, a versatile command-line tool supporting HTTP, HTTPS, FTP, and more.  Master various protocols with our command reference and examples. Free online tool, no registration required."
 category: common
 keywords:
-- curl data transfer
-- command line curl
-- curl http request
-- curl https request
-- curl ftp transfer
-- curl secure copy
-- curl command linux
-- curl command macos
-- curl command windows
-- curl protocol transfer
+  - curl data transfer
+  - curl command line
+  - curl http requests
+  - curl https requests
+  - curl ftp transfer
+  - curl scp transfer
+  - curl linux command
+  - curl macos command
+  - curl windows command
+  - command line data transfer
 features:
-- Perform HTTP GET requests and output to stdout.
-- Download files directly from URLs.
-- Send form-encoded data via POST requests.
-- Customize requests with headers and proxies.
-- Resolve hostnames to custom IP addresses.
+  - Execute HTTP GET/POST requests.
+  - Download files from URLs with filename preservation.
+  - Send form-encoded and JSON data.
+  - Utilize custom headers, proxies, and HTTP methods.
+  - Manage SSL certificates and custom IP resolution.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

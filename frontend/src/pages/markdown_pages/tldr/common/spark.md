@@ -1,27 +1,27 @@
 ---
-title: "Create Spark Projects - Laravel Spark Tool | Online Free DevTools by Hexmos"
+title: "Create Spark Projects - Laravel Spark Generator | Online Free DevTools by Hexmos"
 name: spark
 path: /freedevtools/tldr/common/spark
 canonical: "https://hexmos.com/freedevtools/tldr/common/spark/"
-description: "Create new Laravel Spark projects with Spark, the official Laravel scaffolding tool. Generate projects with Braintree or team billing. Free online tool, no registration required."
+description: "Create Laravel Spark projects with the Spark generator.  Quickly scaffold new projects with Braintree or team billing options. Free online tool, no registration required."
 category: common
 keywords:
-- laravel spark project
-- spark project generator
-- laravel scaffolding
-- php project creation
-- spark api token
-- laravel spark braintree
-- laravel spark team billing
-- spark command line
-- common command
-- laravel project setup
+  - laravel spark project generator
+  - laravel spark new command
+  - generate laravel spark project
+  - create laravel spark app
+  - laravel spark braintree setup
+  - laravel spark team billing setup
+  - spark command line interface
+  - laravel spark api token management
+  - php spark project creation
+  - scaffold laravel spark application
 features:
-- Generate new Laravel Spark projects
-- Register and display API tokens
-- Create projects with Braintree stubs
-- Create projects with team billing stubs
-- Quickly scaffold new Laravel applications
+  - Generate new Laravel Spark projects from the command line.
+  - Register and manage API tokens for seamless authentication.
+  - Create projects pre-configured with Braintree payment integration.
+  - Set up projects with team billing functionality included.
+  - Quickly scaffold complete Laravel applications with Spark.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

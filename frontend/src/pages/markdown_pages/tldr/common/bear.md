@@ -1,27 +1,27 @@
 ---
-title: "Generate Compilation Database - Bear Tool | Online Free DevTools by Hexmos"
+title: "Compilation Database Generator - Generate with Bear | Online Free DevTools by Hexmos"
 name: bear
 path: /freedevtools/tldr/common/bear
 canonical: "https://hexmos.com/freedevtools/tldr/common/bear/"
-description: "Generate compilation database files with Bear, a tool for clang tooling integration. Simplify development workflows with comprehensive build information. Free online tool, no registration required."
+description: "Generate compilation databases with Bear, simplifying C++ and C build automation workflows with clang tooling integration.  Free online tool, no registration required."
 category: common
 keywords:
-- compilation database generator
-- clang compilation database
-- C++ build automation
-- C build automation
-- bear compilation tool
-- clang tooling
-- code analysis tools
-- static analysis tool
-- software build process
-- compile commands JSON
+  - compilation database generator
+  - clang compilation database generator
+  - C++ compilation database
+  - C compilation database
+  - compile_commands.json generator
+  - bear clang tool
+  - clang build automation
+  - JSON compilation database
+  - build system integration
+  - command-line compilation database
 features:
-- Generate compilation databases from build commands
-- Append to existing compilation database files
-- Control output file naming
-- Execute in verbose mode for detailed output
-- Force preload method for command interception
+  - Generate compile_commands.json from build commands.
+  - Append to existing compile_commands.json files.
+  - Specify custom output filenames for the compilation database.
+  - Utilize verbose mode for detailed build command output.
+  - Force preload method for enhanced command interception.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

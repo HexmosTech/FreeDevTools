@@ -1,29 +1,29 @@
 ---
-title: "Automate Content with FlexGet - Automation Tool | Online Free DevTools by Hexmos"
+title: "FlexGet Automation - Manage Content with CLI | Online Free DevTools by Hexmos"
 name: flexget
 path: /freedevtools/tldr/common/flexget
 canonical: "https://hexmos.com/freedevtools/tldr/common/flexget/"
-description: "Automate content management with FlexGet. Schedule tasks, download torrents, manage podcasts, and organize media files. Free online tool, no registration required."
+description: "Automate content management with FlexGet, a command-line tool for downloading torrents, managing podcasts, and organizing media files.  Schedule tasks, handle series, and more. Free online tool, no registration required."
 category: common
 keywords:
 - FlexGet automation
-- content management system
-- torrent downloader
-- podcast manager
-- media organizer
-- FlexGet CLI
-- FlexGet configuration
-- FlexGet task scheduler
-- FlexGet daemon
-- FlexGet series management
+- FlexGet CLI commands
+- torrent download automation
+- podcast management automation
+- media file organization automation
+- FlexGet series tracking
+- FlexGet task scheduling
+- FlexGet daemon control
+- command-line content management
+- automated content downloading
 features:
-- Automate torrent and NZB downloading based on defined rules
-- Schedule and execute tasks for recurring content management
-- Manage and organize series, movies, and podcasts
-- Run FlexGet as a daemon for continuous background processing
-- List and manage series tracked by FlexGet
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+- Automate downloading of torrents and NZBs based on customizable rules.
+- Schedule recurring tasks for consistent content updates.
+- Manage and organize series, movies, and podcasts efficiently.
+- Run FlexGet as a background daemon for continuous operation.
+- Track and manage multiple series with detailed control.
+ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
 ---
 
 # flexget

@@ -1,27 +1,27 @@
 ---
-title: "Generate Fake Data - Fakedata Tool | Online Free DevTools by Hexmos"
+title: "Generate Fake Data - Fakedata Command | Online Free DevTools by Hexmos"
 name: fakedata
 path: /freedevtools/tldr/common/fakedata
 canonical: "https://hexmos.com/freedevtools/tldr/common/fakedata/"
-description: "Generate fake data effortlessly with Fakedata. Create realistic datasets for testing and development using a variety of generators. Free online tool, no registration required."
+description: "Generate fake data effortlessly with the Fakedata command. Create realistic datasets for testing and development using various generators. Free online tool, no registration required."
 category: common
 keywords:
-- fake data generator
-- data generation tool
-- sample data creation
-- test data generator
-- dummy data generator
-- data seeding tool
-- fakedata command
-- linux data generation
-- macos data generation
-- command line data
+  - fake data generator
+  - data generation command
+  - sample data command line
+  - test data command
+  - dummy data generator command
+  - CSV data generation
+  - SQL data generation
+  - Linux fake data command
+  - MacOS fake data command
+  - command line fake data
 features:
-- Generate data using various built-in generators.
-- Format output in CSV, TAB, or SQL.
-- Limit the number of generated data items.
-- Use custom templates for data generation.
-- List available data generators.
+  - Generate realistic fake data using numerous built-in generators.
+  - Customize output format to CSV, TAB, or SQL.
+  - Specify the number of data items to generate.
+  - Employ custom templates for flexible data creation.
+  - List and utilize available data generators via command line.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

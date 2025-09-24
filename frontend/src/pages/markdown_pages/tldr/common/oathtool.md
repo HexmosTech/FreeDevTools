@@ -1,27 +1,27 @@
 ---
-title: "Generate TOTP Token - OATHTool | Online Free DevTools by Hexmos"
+title: "Generate TOTP Tokens - OATHTool | Online Free DevTools by Hexmos"
 name: oathtool
 path: /freedevtools/tldr/common/oathtool
 canonical: "https://hexmos.com/freedevtools/tldr/common/oathtool/"
-description: "Generate TOTP tokens instantly with OATHTool. Validate tokens and manage two-factor authentication secrets securely. Free online tool, no registration required."
+description: "Generate TOTP tokens instantly with OATHTool.  Validate tokens and manage two-factor authentication secrets securely using command-line commands. Free online tool, no registration required."
 category: common
 keywords:
-- TOTP token generation
-- OATH password generation
-- two-factor authentication
-- token validation
-- secret key management
-- command line OTP
-- linux TOTP
-- macos TOTP
-- oathtool OTP
-- Google Authenticator secret
+  - TOTP token generation
+  - OATH password generation
+  - two-factor authentication command line
+  - TOTP token validation command
+  - secret key management OATHTool
+  - Linux OATHTool TOTP
+  - macOS OATHTool TOTP
+  - base32 encoded secret OATHTool
+  - command line OTP generator
+  - Google Authenticator secret management
 features:
-- Generate TOTP tokens from a secret key.
-- Validate TOTP tokens for authentication.
-- Generate tokens for specific times.
-- Support base32 encoded secrets.
-- Manage OATH one-time passwords.
+  - Generate TOTP tokens from base32 encoded secrets.
+  - Validate TOTP tokens against a secret key.
+  - Generate TOTP tokens for specific past or future times.
+  - Manage and utilize OATH one-time passwords securely.
+  - Utilize command-line interface for efficient OTP management.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

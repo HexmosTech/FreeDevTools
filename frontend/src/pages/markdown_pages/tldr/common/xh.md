@@ -1,29 +1,29 @@
 ---
-title: "Send HTTP Requests with XH - Fast CLI Tool | Online Free DevTools by Hexmos"
+title: "XH HTTP Client - Send HTTP Requests via CLI | Online Free DevTools by Hexmos"
 name: xh
 path: /freedevtools/tldr/common/xh
 canonical: "https://hexmos.com/freedevtools/tldr/common/xh/"
-description: "Send HTTP requests with XH, a fast and friendly command-line tool written in Rust. Simplify API testing and interaction. Free online tool, no registration required."
+description: "Send HTTP requests with the XH command-line tool.  Easily make GET and POST requests, include JSON data, specify headers, and more. Free online tool, no registration required."
 category: common
 keywords:
-- HTTP request command line
-- xh http client
-- command line http tool
-- rust http client
-- api request tool
-- curl alternative
-- command line rest client
-- xh get request
-- xh post request
-- httpie alternative
+- HTTP request command line tool
+- xh http client command
+- command line HTTP client
+- CLI HTTP request tool
+- REST API client command line
+- JSON HTTP request tool
+- xh GET request example
+- xh POST request example
+- curl command alternative
+- fast HTTP client command
 features:
-- Send GET and POST requests with ease
-- Include JSON body data in POST requests
-- Specify custom headers for HTTP requests
-- Save the response body to a file
-- Show equivalent curl command for easy migration
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+- Send GET and POST requests with ease.
+- Include JSON data in POST request bodies.
+- Manage HTTP request headers with ease.
+- Save response bodies directly to files.
+- View equivalent curl command for easy transition.
+ogImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
 ---
 
 # xh

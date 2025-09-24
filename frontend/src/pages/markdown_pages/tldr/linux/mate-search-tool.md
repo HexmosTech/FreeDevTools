@@ -1,27 +1,27 @@
 ---
-title: "Search Files - Find Files with MATE Search Tool | Online Free DevTools by Hexmos"
+title: "MATE Search Tool - Find Files on Linux | Online Free DevTools by Hexmos"
 name: mate-search-tool
 path: /freedevtools/tldr/linux/mate-search-tool
 canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-search-tool/"
-description: "Find files efficiently with MATE Search Tool. Locate documents and directories using name, regex, and other filters. Free online tool, no registration required."
+description: "Find files quickly with MATE Search Tool on Linux.  Locate documents and directories using name, regex, and other filters. Free online tool, no registration required."
 category: linux
 keywords:
-  - mate search files
-  - linux find files
-  - desktop file search
-  - file name search
-  - regex file search
-  - mate desktop environment
-  - search tool linux
-  - file discovery linux
-  - file locator mate
-  - mate file explorer
+  - mate search linux
+  - linux file search mate
+  - mate file finder
+  - regex file search linux
+  - linux file location
+  - desktop file search linux
+  - mate search command
+  - find files mate desktop
+  - linux file discovery tool
+  - advanced file search linux
 features:
-  - Search files by name.
-  - Search files using regular expressions.
-  - Sort search results by name, folder, size, type, or date.
-  - Search files owned by a specific user or group.
-  - Search files in a specified directory.
+  - Search files by name or regular expression.
+  - Filter search results by file type, size, date, and ownership.
+  - Specify search directory for targeted file location.
+  - Sort search results by name, size, type, date, or folder.
+  - Initiate searches without user confirmation for automated processes.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

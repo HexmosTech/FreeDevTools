@@ -3,25 +3,25 @@ title: "Generate Presentations - TPP Command Line Tool | Online Free DevTools by
 name: tpp
 path: /freedevtools/tldr/common/tpp
 canonical: "https://hexmos.com/freedevtools/tldr/common/tpp/"
-description: "Generate presentations with TPP command line tool. Create slide decks from the terminal and output to various formats. Free online tool, no registration required."
+description: "Generate presentations with the TPP command-line tool. Create slide decks from the terminal and output to various formats, such as PDF and HTML. Free online tool, no registration required."
 category: common
 keywords:
-- presentation generator
-- command line presentation
-- terminal presentation
-- tpp presentation tool
-- slide deck generator
-- markdown to presentation
-- text based presentation
-- presentation output
-- linux presentation
-- macos presentation
+  - presentation generator command line
+  - terminal presentation creator
+  - markdown presentation converter
+  - command line slide show maker
+  - text to presentation converter
+  - linux presentation tool
+  - macos presentation tool
+  - tpp presentation software
+  - create presentations from text files
+  - generate presentation from markdown
 features:
-- View presentations directly in the terminal
-- Output presentations to different formats
-- Generate presentations from text files
-- Create command-line slide shows
-- Display presentations on Linux and macOS
+  - Create presentations from simple text files.
+  - Export presentations to multiple formats (PDF, HTML, etc.).
+  - View presentations directly in your terminal.
+  - Use Markdown formatting for enhanced presentations.
+  - Generate presentations quickly and efficiently from the command line.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---

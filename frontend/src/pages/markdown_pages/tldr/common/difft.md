@@ -1,27 +1,27 @@
 ---
-title: "Compare Files - Syntax Aware Diff Tool | Online Free DevTools by Hexmos"
+title: "Syntax Aware Diff - Compare Files with difft | Online Free DevTools by Hexmos"
 name: difft
 path: /freedevtools/tldr/common/difft
 canonical: "https://hexmos.com/freedevtools/tldr/common/difft/"
-description: "Compare files based on syntax with difft, a syntax-aware diff tool. Find differences, ignore comments, and customize display. Free online tool, no registration required."
+description: "Compare files syntactically with difft, a powerful syntax-aware diff tool.  Quickly identify code differences, ignore comments, and customize the display. Free online tool, no registration required."
 category: common
 keywords:
-- syntax aware diff
-- code comparison
-- file difference analyzer
-- syntax highlighting diff
-- semantic diff tool
-- command line diff
-- code review tool
-- difftastic
-- file comparison linux
-- directory comparison
+  - syntax aware diff tool
+  - code comparison tool
+  - file difference analyzer
+  - syntax highlighting diff
+  - semantic diff command
+  - command line file comparison
+  - code review diff tool
+  - difftastic alternative
+  - directory comparison tool
+  - file comparison utility
 features:
-- Compare files or directories syntactically.
-- Ignore comments during file comparison.
-- Customize diff display modes (side-by-side, inline, JSON).
-- Enable or disable syntax highlighting.
-- Detect only presence of differences without detailed output.
+  - Compare files and directories with syntax awareness.
+  - Ignore comments for cleaner comparisons.
+  - Customize output display (side-by-side, inline, JSON).
+  - Toggle syntax highlighting for improved readability.
+  - Efficiently check for differences without detailed output.
 ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
 ---
