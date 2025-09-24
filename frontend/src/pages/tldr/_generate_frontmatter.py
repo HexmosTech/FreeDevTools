@@ -11,8 +11,8 @@ import requests
 API_KEYS = []
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
-OG_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-TWITTER_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+OG_IMAGE = "https://hexmos.com/freedevtools/site-banner.png"
+TWITTER_IMAGE = "https://hexmos.com/freedevtools/site-banner.png"
 
 
 def validate_seo_compliance(yaml_content, platform, command_name):

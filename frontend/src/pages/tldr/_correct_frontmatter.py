@@ -9,8 +9,8 @@ import requests
 API_KEYS = ["AIzaSyADNt8eQc93cR7CmeBhOe-9oqkzbvSm9J8"]
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
-OG_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
-TWITTER_IMAGE = "https://hexmos.com/freedevtools/tool-banners/json-utilities-banner.png"
+OG_IMAGE = "https://hexmos.com/freedevtools/site-banner.png"
+TWITTER_IMAGE = "https://hexmos.com/freedevtools/site-banner.png"
 
 
 def validate_seo_compliance(yaml_content, platform, command_name):
@@ -337,7 +337,7 @@ def update_markdown_file(file_path, frontmatter_yaml):
             if len(parts) >= 3:
                 content = parts[2].lstrip()
 
-        new_content = f'---\n{frontmatter_yaml.strip()}\nogImage: "{OG_IMAGE}"\ntwitterImage: "{TWITTER_IMAGE}"\n---\n\n{content}'
+        new_content = f"---\n{frontmatter_yaml.strip()}\n---\n\n{content}"
 
         with open(file_path, "w") as f:
             f.write(new_content)
