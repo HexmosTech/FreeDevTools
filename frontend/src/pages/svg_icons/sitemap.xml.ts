@@ -23,7 +23,6 @@ export const GET: APIRoute = async ({ site }) => {
         <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
           <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
           <image:title>Free ${name} SVG Icon Download</image:title>
-          <image:caption>Download ${name} SVG icon for free. PNG icon. No registration required. Unlimited Downloads.</image:caption>
         </image:image>
       </url>`;
   });
