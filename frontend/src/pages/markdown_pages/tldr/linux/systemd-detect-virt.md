@@ -22,8 +22,8 @@ features:
   - Provides detailed output listing detected virtualization technologies.
   - Offers quiet mode for silent checking without output.
   - Allows for separate detection of VM or container virtualization.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # systemd-detect-virt

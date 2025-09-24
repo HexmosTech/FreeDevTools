@@ -22,8 +22,8 @@ features:
   - Rename files using a list of new names from a text file
   - Filter files for renaming by type (files only, ignoring directories)
   - Sort files by modification time before applying renaming operations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # rnm

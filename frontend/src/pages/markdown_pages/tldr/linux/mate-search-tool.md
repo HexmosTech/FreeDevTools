@@ -22,8 +22,8 @@ features:
   - Sort search results by name, folder, size, type, or date.
   - Search files owned by a specific user or group.
   - Search files in a specified directory.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # mate-search-tool

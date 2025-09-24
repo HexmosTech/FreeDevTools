@@ -22,8 +22,8 @@ features:
   - Build images without using cached layers
   - Suppress build output for cleaner execution
   - Build images from alternative Containerfile locations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # podman build

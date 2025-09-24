@@ -22,8 +22,8 @@ features:
   - Utilize the standard math library for advanced functions
   - Calculate expressions directly from the command line
   - Control the scale (number of decimal places) of calculations
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # bc

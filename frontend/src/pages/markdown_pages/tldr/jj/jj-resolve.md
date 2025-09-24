@@ -22,8 +22,8 @@ features:
   - Resolve conflicts in a specific revision
   - Resolve conflicts only within specified files
   - Accept incoming or outgoing versions during resolution
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/json-utilities-banner.png"
+ogImage: "https://hexmos.com/freedevtools/site-banner.png"
+twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # jj resolve
