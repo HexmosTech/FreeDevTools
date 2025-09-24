@@ -6,24 +6,22 @@ canonical: "https://hexmos.com/freedevtools/tldr/common/datashader_cli/"
 description: "Create datashader visualizations with the datashader_cli command-line tool. Generate shaded scatter plots and geospatial data visualizations easily. Free online tool, no registration required."
 category: common
 keywords:
-- datashader visualization cli
-- geospatial data visualization cli
-- shaded scatter plot creation
-- parquet data visualization
-- geojson data visualization
-- shapefile data visualization
-- geopackage data visualization
-- command-line data visualization
-- matplotlib data visualization
-- python datashader visualization
+  - datashader visualization cli
+  - geospatial data visualization cli
+  - shaded scatter plot creation
+  - parquet data visualization
+  - geojson data visualization
+  - shapefile data visualization
+  - geopackage data visualization
+  - command-line data visualization
+  - matplotlib data visualization
+  - python datashader visualization
 features:
-- Generate shaded scatter plots from Parquet, CSV, and other data formats.
-- Visualize geospatial data from GeoParquet, Shapefile, GeoJSON, and GeoPackage files.
-- Customize visualization appearance with background color options.
-- Utilize matplotlib for high-quality image rendering.
-- Create visualizations directly from the command line interface.
-ogImage: "https://hexmos.com/freedevtools/t/tool-banners/datashader-cli-banner.png" #updated image
-twitterImage: "https://hexmos.com/freedevtools/t/tool-banners/datashader-cli-banner.png" #updated image
+  - Generate shaded scatter plots from Parquet, CSV, and other data formats.
+  - Visualize geospatial data from GeoParquet, Shapefile, GeoJSON, and GeoPackage files.
+  - Customize visualization appearance with background color options.
+  - Utilize matplotlib for high-quality image rendering.
+  - Create visualizations directly from the command line interface.
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---

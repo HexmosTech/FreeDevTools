@@ -20,7 +20,6 @@ features:
   - Convert Unix line endings (LF) to macOS line endings (CR).
   - Create a new file with converted macOS line endings.
   - Display detailed file information, including line ending type.
-  - Manage Byte Order Marks (BOM): keep, add, or remove.
   - Modify line endings in place, without creating a new file.
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
