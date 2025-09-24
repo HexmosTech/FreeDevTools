@@ -1,5 +1,6 @@
 import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
+import { releaseCapture } from "konva/lib/PointerEvents";
 
 // Check if we're in development mode
 // Astro sets NODE_ENV=production during build, and ASTRO_MODE=dev during dev
@@ -23,6 +24,14 @@ const tldr = defineCollection({
     features: z.array(z.string()).optional(),
     ogImage: z.string().url().optional(),
     twitterImage: z.string().url().optional(),
+    relatedTools: z
+      .array(
+        z.object({
+          name: z.string(),
+          url: z.string().url(),
+        })
+      )
+      .optional(),
     more_information: z.string().url().optional(),
   }),
 });

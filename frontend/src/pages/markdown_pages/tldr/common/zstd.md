@@ -24,6 +24,11 @@ features:
   - Cross-platform examples
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+relatedTools:
+  - name: "Zstd Compressor"
+    url: "https://hexmos.com/freedevtools/t/zstd-compress/"
+  - name: "Zstd Decompressor"
+    url: "https://hexmos.com/freedevtools/t/zstd-decompress/"
 ---
 
 # zstd

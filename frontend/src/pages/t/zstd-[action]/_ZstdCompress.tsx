@@ -24,7 +24,7 @@ const ZstdCompress: React.FC = () => {
   const [mode, setMode] = useState<Mode>("compress");
   const [toolName, setToolName] = useState("Zstd Compressor");
   const [toolDescription, setToolDescription] = useState(
-    "Compress files using the high-performance Zstandard (zstd) algorithm."
+    "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
   );
 
   const [inputFile, setInputFile] = useState<File | null>(null);
