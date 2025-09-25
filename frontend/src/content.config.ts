@@ -29,6 +29,7 @@ const tldr = defineCollection({
         z.object({
           name: z.string(),
           url: z.string().url(),
+          banner: z.string().url().optional(),
         })
       )
       .optional(),

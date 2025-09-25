@@ -27,8 +27,10 @@ twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 relatedTools:
   - name: "Zstd Compressor"
     url: "https://hexmos.com/freedevtools/t/zstd-compress/"
+    banner: https://hexmos.com/freedevtools/tool-banners/zstd-compress-banner.png
   - name: "Zstd Decompressor"
     url: "https://hexmos.com/freedevtools/t/zstd-decompress/"
+    banner: "https://hexmos.com/freedevtools/tool-banners/zstd-decompress-banner.png"
 ---
 
 # zstd
