@@ -17,17 +17,10 @@ keywords:
 - linux network monitoring
 - tcpdump alternative
 features:
-  - Capture network packets from specified interfaces.
-  - Save captured packets to pcapng files for analysis.
-  - Utilize ring buffer for continuous packet capture.
-  - Manage capture file size and number with defined limits.
-  - List available network interfaces for targeted capture.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 - Capture network packets from specified interfaces.
-- Save captured packets to pcapng files.
-- Utilize ring buffer functionality for continuous capture.
-- Limit capture file size and number for efficient management.
+- Save captured packets to pcapng files for analysis.
+- Utilize ring buffer for continuous packet capture.
+- Manage capture file size and number with defined limits.
 - List available network interfaces for targeted capture.
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"

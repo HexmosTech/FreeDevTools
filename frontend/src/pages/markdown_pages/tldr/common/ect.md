@@ -24,13 +24,6 @@ features:
   - Preserve original file timestamps during compression for data integrity.
 ogImage: "https://hexmos.com/freedevtools/site-banner.png"
 twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
-- Compress files using command line interface
-- Optimize PNG, JPEG, gzip, and Zip file formats
-- Specify compression level and enable multithreading
-- Recursively compress all files within a directory
-- Preserve original file modification timestamps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 ---
 
 # ect
