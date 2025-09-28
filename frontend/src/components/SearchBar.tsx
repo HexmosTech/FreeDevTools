@@ -91,7 +91,7 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-    <div className="relative flex-1 max-w-xs mx-4">
+    <div className="relative flex-1 max-w-sm mx-4">
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
           <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
