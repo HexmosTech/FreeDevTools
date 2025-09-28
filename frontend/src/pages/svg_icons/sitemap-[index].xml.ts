@@ -1,19 +1,37 @@
-
 // src/pages/svg_icons/sitemap-[index].xml.ts
 
 import type { APIRoute } from "astro";
+import path from "path";
 
-export const GET: APIRoute = async ({ site, params }) => {
+const MAX_URLS = 50000;
+
+export async function getStaticPaths() {
   const { glob } = await import("glob");
-  const path = await import("path");
-
-  const now = new Date().toISOString();
-  const MAX_URLS = 50000;
 
   // Get all SVG files
   const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
 
-  // Map files to sitemap URLs with image info
+  // Total URLs (+1 for landing page)
+  const totalUrls = svgFiles.length + 1;
+
+  // Number of sitemap pages
+  const totalPages = Math.ceil(totalUrls / MAX_URLS);
+
+  // Return paths for all pages
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { index: String(i + 1) },
+  }));
+}
+
+export const GET: APIRoute = async ({ site, params }) => {
+  const { glob } = await import("glob");
+
+  const now = new Date().toISOString();
+
+  // Get all SVG files
+  const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
+
+  // Map files to sitemap URLs
   const urls = svgFiles.map((file) => {
     const parts = file.split(path.sep);
     const name = parts.pop()!.replace(".svg", "");

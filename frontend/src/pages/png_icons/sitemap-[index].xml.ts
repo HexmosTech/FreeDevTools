@@ -1,23 +1,33 @@
-// src/pages/png_icons/sitemap-[index].xml.ts
+import type { APIRoute } from 'astro';
 
-import type { APIRoute } from "astro";
+const MAX_URLS = 50000;
 
+export async function getStaticPaths() {
+  const { glob } = await import('glob');
+
+  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  const totalUrls = svgFiles.length + 1; // +1 for landing page
+  const totalPages = Math.ceil(totalUrls / MAX_URLS);
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { index: String(i + 1) },
+  }));
+}
+
+// Then your GET() stays the same
 export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import("glob");
-  const path = await import("path");
-
+  const { glob } = await import('glob');
+  const path = await import('path');
   const now = new Date().toISOString();
+
   const MAX_URLS = 50000;
 
-  // Get all SVG files
   const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
 
-  // Map files to sitemap URLs with image info
   const urls = svgFiles.map((file) => {
     const parts = file.split(path.sep);
     const name = parts.pop()!.replace(".svg", "");
     const category = parts.pop() || "general";
-
     return `
       <url>
         <loc>${site}/png_icons/${category}/${name}/</loc>
@@ -31,7 +41,6 @@ export const GET: APIRoute = async ({ site, params }) => {
       </url>`;
   });
 
-  // Include the landing page
   urls.unshift(`
     <url>
       <loc>${site}/png_icons/</loc>
@@ -40,13 +49,11 @@ export const GET: APIRoute = async ({ site, params }) => {
       <priority>0.9</priority>
     </url>`);
 
-  // Split into chunks of MAX_URLS
   const sitemapChunks: string[][] = [];
   for (let i = 0; i < urls.length; i += MAX_URLS) {
     sitemapChunks.push(urls.slice(i, i + MAX_URLS));
   }
 
-  // Get the index from the filename: sitemap-1.xml → index = 0
   const index = parseInt(params.index, 10) - 1;
   const chunk = sitemapChunks[index];
 
@@ -60,9 +67,6 @@ export const GET: APIRoute = async ({ site, params }) => {
 </urlset>`;
 
   return new Response(xml, {
-    headers: {
-      "Content-Type": "application/xml",
-      "Cache-Control": "public, max-age=3600",
-    },
+    headers: { "Content-Type": "application/xml" },
   });
 };
