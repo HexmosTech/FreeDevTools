@@ -44,7 +44,7 @@ async function searchUtilities(query: string) {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Bearer 1374cbe72e7c89abad77939a770ec9279a8585c5f5b3744a20b3e2ae7538c852",
+            "Bearer 3a09f79ab07857a3e6130f45b125ad66f8c562a674d305f3209cd28906ccc30f",
         },
         body: JSON.stringify({ q: query }),
       }
