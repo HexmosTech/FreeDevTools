@@ -1,5 +1,4 @@
 // src/pages/svg_icons/sitemap-[index].xml.ts
-
 import type { APIRoute } from "astro";
 import path from "path";
 
