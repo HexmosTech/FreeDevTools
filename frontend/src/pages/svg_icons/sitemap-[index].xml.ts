@@ -1,5 +1,5 @@
+
 // src/pages/svg_icons/sitemap-[index].xml.ts
-export const prerender = false; // Important: dynamic route, no static prerendering
 
 import type { APIRoute } from "astro";
 

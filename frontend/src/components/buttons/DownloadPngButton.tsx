@@ -10,7 +10,6 @@ interface DownloadPngButtonProps {
 }
 
 const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
-  console.log("DBG: The icon data is",iconData)
   const pngSizeSelectRef = useRef<HTMLSelectElement>(null);
 
   const downloadAsPNG = useCallback(async (size = 512) => {
@@ -24,7 +23,6 @@ const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
       const category = pathParts[pathParts.length - 2] || "";
       const iconName = pathParts[pathParts.length - 1] || "";
 
-      console.log("DBG: The pathparts is", pathParts, category, iconName);
       try {
         const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
         svgData = await response.text();
@@ -32,8 +30,6 @@ const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
         console.error('Failed to load SVG:', error);
         return;
       }
-    } else {
-      console.log("DBG: SVG data there")
     }
 
     try {
