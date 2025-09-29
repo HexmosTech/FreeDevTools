@@ -44,7 +44,7 @@ async function searchUtilities(query: string) {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Bearer 3a09f79ab07857a3e6130f45b125ad66f8c562a674d305f3209cd28906ccc30f",
+            "Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5",
         },
         body: JSON.stringify({ q: query }),
       }
@@ -314,29 +314,33 @@ const SearchPage: React.FC = () => {
       {!loading && filteredResults.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredResults.map((result, index) => (
-            <Card
+            <a 
               key={result.id || index}
-              className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
-              onClick={() => handleSelect(result)}
+              href={result.path ? `https://hexmos.com${result.path}` : '#'}
+              className="block no-underline" // Remove underline from link
             >
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="font-medium text-lg">
-                    {result.name || result.title || "Untitled"}
-                  </h2>
-                  {result.category && (
-                    <Badge variant="outline" className="text-xs">
-                      {result.category}
-                    </Badge>
+              <Card
+                className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+              >
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="font-medium text-lg">
+                      {result.name || result.title || "Untitled"}
+                    </h2>
+                    {result.category && (
+                      <Badge variant="outline" className="text-xs">
+                        {result.category}
+                      </Badge>
+                    )}
+                  </div>
+                  {result.description && (
+                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      {result.description}
+                    </p>
                   )}
                 </div>
-                {result.description && (
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                    {result.description}
-                  </p>
-                )}
-              </div>
-            </Card>
+              </Card>
+            </a>
           ))}
         </div>
       )}

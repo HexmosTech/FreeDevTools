@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,9 @@ interface SearchQueryChangedEvent extends CustomEvent {
 const SearchBar: React.FC = () => {
   const [searchValue, setSearchValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // Load initial search value from global state if it exists
   useEffect(() => {
@@ -27,6 +29,8 @@ const SearchBar: React.FC = () => {
           if (window.searchState) {
             window.searchState.setQuery(searchParam);
           }
+          // Expand search on mobile if there's a query
+          setIsSearchExpanded(true);
         }
       } catch (e) {
         console.error('Error parsing hash params:', e);
@@ -35,6 +39,10 @@ const SearchBar: React.FC = () => {
     // Otherwise use the global state
     else if (window.searchState && window.searchState.getQuery()) {
       setSearchValue(window.searchState.getQuery());
+      // Expand search on mobile if there's a query
+      if (window.searchState.getQuery()) {
+        setIsSearchExpanded(true);
+      }
     }
   }, []);
 
@@ -51,6 +59,25 @@ const SearchBar: React.FC = () => {
       window.removeEventListener('searchQueryChanged', handleSearchQueryChange);
     };
   }, []);
+
+  // Handle clicks outside to collapse mobile search
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isSearchExpanded && 
+        searchContainerRef.current && 
+        !searchContainerRef.current.contains(event.target as Node) &&
+        window.innerWidth < 768 // Only on mobile
+      ) {
+        setIsSearchExpanded(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchExpanded]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -87,37 +114,97 @@ const SearchBar: React.FC = () => {
       }
       // Update URL hash on Enter key
       window.location.hash = `search?q=${encodeURIComponent(searchValue)}`;
+    } else if (e.key === "Escape" && window.innerWidth < 768) {
+      setIsSearchExpanded(false);
     }
   };
 
+  const toggleMobileSearch = () => {
+    setIsSearchExpanded(!isSearchExpanded);
+    // Focus input when expanding
+    if (!isSearchExpanded && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchValue("");
+    if (window.searchState) {
+      window.searchState.setQuery("");
+    }
+    if (window.location.hash.startsWith('#search')) {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
+    // Focus the input after clearing
+    searchInputRef.current?.focus();
+  };
+
   return (
-    <div className="relative flex-1 max-w-sm mx-4">
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-        </div>
-        <Input
-          ref={searchInputRef}
-          type="text"
-          className={cn(
-            "pl-9 pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
-            "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
-            isFocused
-              ? "border-blue-500 dark:border-blue-500 bg-background/50 backdrop-blur-sm"
-              : "border-gray-300 dark:border-gray-600 hover:bg-white/70 dark:hover:bg-gray-800/70"
-          )}
-          placeholder="Search Dev Resources..."
-          value={searchValue}
-          onChange={handleSearchChange}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-          onKeyDown={handleKeyDown}
-        />
-        <kbd className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
-        </kbd>
+    <>
+      {/* Mobile search icon (visible only on mobile) */}
+      <div className="md:hidden">
+        <button 
+          onClick={toggleMobileSearch}
+          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+          aria-label="Search"
+        >
+          <Search className="h-5 w-5" />
+        </button>
       </div>
-    </div>
+
+      {/* Search container - hidden on mobile unless expanded */}
+      <div 
+        ref={searchContainerRef}
+        className={cn(
+          "relative md:flex-1 md:max-w-sm md:mx-4",
+          "transition-all duration-200 ease-in-out",
+          isSearchExpanded 
+            ? "fixed inset-x-0 top-16 z-50 px-4 pb-4 md:static md:p-0 md:z-auto bg-white dark:bg-gray-900 shadow-md md:shadow-none"
+            : "hidden md:block"
+        )}
+      >
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          </div>
+          <Input
+            ref={searchInputRef}
+            type="text"
+            className={cn(
+              "w-full pl-9 pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
+              "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
+              isFocused
+                ? "border-blue-500 dark:border-blue-500 bg-background/50 backdrop-blur-sm"
+                : "border-gray-300 dark:border-gray-600 hover:bg-white/70 dark:hover:bg-gray-800/70"
+            )}
+            placeholder="Search Dev Resources..."
+            value={searchValue}
+            onChange={handleSearchChange}
+            onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}
+            onKeyDown={handleKeyDown}
+          />
+          
+          {/* Clear button (only shown when there's text) */}
+          {searchValue && (
+            <button
+              className="absolute inset-y-0 right-9 flex items-center pr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              onClick={clearSearch}
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+          
+          {/* Keyboard shortcut hint (hidden on mobile) */}
+          <kbd className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </div>
+      </div>
+    </>
   );
 };
 
