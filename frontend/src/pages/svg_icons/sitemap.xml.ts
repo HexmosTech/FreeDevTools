@@ -5,7 +5,7 @@ export const GET: APIRoute = async ({ site, params }) => {
   const path = await import("path");
 
   const now = new Date().toISOString();
-  const MAX_URLS = 50000;
+  const MAX_URLS = 5000;
 
   // Get all SVG files
   const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
