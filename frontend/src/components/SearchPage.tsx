@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { X, Wrench, BookOpen, FileText, Image, PenLine, Smile } from "lucide-react";
+import { X, Wrench, BookOpen, FileText, Image, PenLine, Smile, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Add TypeScript declaration for our global window properties
 declare global {
@@ -31,6 +32,7 @@ interface SearchResult {
   url?: string;
   path?: string;
   slug?: string;
+  code?: string; // For emojis
   [key: string]: any;
 }
 
@@ -67,6 +69,7 @@ const SearchPage: React.FC = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [copiedEmoji, setCopiedEmoji] = useState<string | null>(null);
 
   // Add this function to update the URL hash
   const updateUrlHash = (searchQuery: string) => {
@@ -168,7 +171,12 @@ const SearchPage: React.FC = () => {
   // Filter results by category
   const filteredResults = activeCategory === "all" 
     ? results 
-    : results.filter(result => result.category?.toLowerCase() === activeCategory.toLowerCase());
+    : results.filter(result => {
+        if (activeCategory === "emoji") {
+          return result.category?.toLowerCase() === "emojis";
+        }
+        return result.category?.toLowerCase() === activeCategory.toLowerCase();
+      });
 
   const handleSelect = (result: SearchResult) => {
     if (result.path) {
@@ -177,6 +185,16 @@ const SearchPage: React.FC = () => {
     } else {
       console.warn("No path found for result:", result);
     }
+  };
+
+  // Function to copy emoji to clipboard
+  const copyToClipboard = (emoji: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    navigator.clipboard.writeText(emoji).then(() => {
+      setCopiedEmoji(emoji);
+    });
   };
 
   // When clearing results, ensure we properly update the global search state
@@ -209,7 +227,7 @@ const SearchPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={clearResults} // Use our new clearResults function
+            onClick={clearResults}
           >
             <X className="h-4 w-4 mr-1" />
             Clear results
@@ -312,34 +330,66 @@ const SearchPage: React.FC = () => {
       )}
 
       {!loading && filteredResults.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredResults.map((result, index) => (
             <a 
               key={result.id || index}
               href={result.path ? `https://hexmos.com${result.path}` : '#'}
-              className="block no-underline" // Remove underline from link
+              className="block no-underline h-full" // Add h-full here
             >
-              <Card
-                className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
-              >
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="font-medium text-lg">
-                      {result.name || result.title || "Untitled"}
-                    </h2>
-                    {result.category && (
-                      <Badge variant="outline" className="text-xs">
-                        {result.category}
-                      </Badge>
+              {result.category?.toLowerCase() === "emojis" ? (
+                <TooltipProvider>
+                  <Card 
+                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col"
+                  >
+                    <div className="flex-1 flex flex-col items-center justify-center p-6">
+                      <div className="emoji-preview text-6xl mb-4 relative group">
+                        {result.code}
+                        <div 
+                          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 rounded-md transition-opacity"
+                          onClick={(e) => copyToClipboard(result.code || '', e)}
+                        >
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button className="p-2 rounded-full bg-white text-black hover:bg-gray-200">
+                                {copiedEmoji === result.code ? <Check size={20} /> : <Copy size={20} />}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {copiedEmoji === result.code ? 'Copied!' : 'Copy emoji'}
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </div>
+                      <h3 className="font-medium text-center mt-2">
+                        {result.name || result.title || "Untitled"}
+                      </h3>
+                    </div>
+                  </Card>
+                </TooltipProvider>
+              ) : (
+                <Card
+                  className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
+                >
+                  <div className="p-4 flex flex-col h-full">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="font-medium text-lg">
+                        {result.name || result.title || "Untitled"}
+                      </h2>
+                      {result.category && (
+                        <Badge variant="outline" className="text-xs">
+                          {result.category}
+                        </Badge>
+                      )}
+                    </div>
+                    {result.description && (
+                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2 flex-grow">
+                        {result.description}
+                      </p>
                     )}
                   </div>
-                  {result.description && (
-                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                      {result.description}
-                    </p>
-                  )}
-                </div>
-              </Card>
+                </Card>
+              )}
             </a>
           ))}
         </div>
