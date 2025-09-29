@@ -2108,6 +2108,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "https://hexmos.com/freedevtools/tool-banners/zstd-decompress-banner.png",
     datePublished: "2025-09-23",
   },
+  //Internet Speed Test
 };
 
 // tldr: {
