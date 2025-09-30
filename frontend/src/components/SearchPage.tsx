@@ -1,9 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Search, X, Wrench, BookOpen, FileText, Image, PenLine, Smile } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Wrench, BookOpen, FileText, Image, PenLine, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+// Add TypeScript declaration for our global window properties
+declare global {
+  interface Window {
+    searchState?: {
+      query: string;
+      setQuery: (query: string) => void;
+      getQuery: () => string;
+    };
+  }
+}
+
+// Add type definition for the custom event
+interface SearchQueryChangedEvent extends CustomEvent {
+  detail: {
+    query: string;
+  };
+}
 
 interface SearchResult {
   id?: string;
@@ -27,7 +44,7 @@ async function searchUtilities(query: string) {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Bearer 1374cbe72e7c89abad77939a770ec9279a8585c5f5b3744a20b3e2ae7538c852",
+            "Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5",
         },
         body: JSON.stringify({ q: query }),
       }
@@ -50,41 +67,74 @@ const SearchPage: React.FC = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Get query from URL parameters on component mount
+  // Add this function to update the URL hash
+  const updateUrlHash = (searchQuery: string) => {
+    if (searchQuery.trim()) {
+      // Set hash with search query
+      window.location.hash = `search?q=${encodeURIComponent(searchQuery)}`;
+    } else {
+      // Clear hash if search is empty
+      if (window.location.hash.startsWith('#search')) {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+      }
+    }
+  };
+
+  // Check for search terms in hash on initial load
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryParam = urlParams.get('q');
-    if (queryParam) {
-      setQuery(queryParam);
-    }
-
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-
-    // Listen for Escape key to go back
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        window.history.back();
+    // Parse hash fragment on initial load
+    const checkHashForSearch = () => {
+      if (window.location.hash.startsWith('#search?q=')) {
+        try {
+          const hashParams = new URLSearchParams(window.location.hash.substring(8)); // Remove '#search?'
+          const searchParam = hashParams.get('q');
+          if (searchParam) {
+            // Update both local state and global search state
+            setQuery(searchParam);
+            if (window.searchState) {
+              window.searchState.setQuery(searchParam);
+            }
+          }
+        } catch (e) {
+          console.error('Error parsing hash params:', e);
+        }
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    checkHashForSearch();
+    
+    // Also listen for hash changes
+    window.addEventListener('hashchange', checkHashForSearch);
+    return () => {
+      window.removeEventListener('hashchange', checkHashForSearch);
+    };
   }, []);
 
-  // Update URL when query changes
+  // Listen for changes to the global search state
   useEffect(() => {
-    const url = new URL(window.location.href);
-    if (query) {
-      url.searchParams.set('q', query);
-    } else {
-      url.searchParams.delete('q');
+    const handleSearchQueryChange = (event: CustomEvent) => {
+      const newQuery = event.detail.query;
+      setQuery(newQuery);
+      
+      // Update URL hash when query changes
+      updateUrlHash(newQuery);
+    };
+
+    // Add event listener
+    window.addEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
+    
+    // Initial load from global state if it exists
+    if (window.searchState && window.searchState.getQuery()) {
+      const initialQuery = window.searchState.getQuery();
+      setQuery(initialQuery);
+      updateUrlHash(initialQuery);
     }
-    window.history.replaceState({}, '', url.toString());
-  }, [query]);
+
+    return () => {
+      window.removeEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
+    };
+  }, []);
 
   // Search with debounce
   useEffect(() => {
@@ -109,6 +159,11 @@ const SearchPage: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [query]);
+
+  // Update URL when query changes manually
+  useEffect(() => {
+    updateUrlHash(query);
+  }, [query]);
   
   // Filter results by category
   const filteredResults = activeCategory === "all" 
@@ -124,44 +179,42 @@ const SearchPage: React.FC = () => {
     }
   };
 
-  const handleBack = () => {
-    window.history.back();
+  // When clearing results, ensure we properly update the global search state
+  const clearResults = () => {
+    // Clear the query in this component
+    setQuery('');
+    
+    // Update the global search state to empty string
+    if (window.searchState) {
+      window.searchState.setQuery('');
+    }
+    
+    // Clear URL hash
+    if (window.location.hash.startsWith('#search')) {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
   };
+  
+  // If no search query, don't show the search UI
+  if (!query.trim()) {
+    return null;
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-2 md:px-6 py-8">
-      <div className="mb-4 flex items-center justify-between">
-      </div>
-      
-      <div className="mb-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <Input
-            ref={searchInputRef}
-            className="pl-10 pr-10 py-6 bg-background/50 backdrop-blur-sm"
-            placeholder="Search dev resources..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus
-          />
-          {query && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute inset-y-0 right-0 h-full px-3"
-              onClick={() => setQuery("")}
-            >
-              <X className="h-5 w-5 text-muted-foreground" />
-              <span className="sr-only">Clear search</span>
-            </Button>
-          )}
-        </div>
-      </div>
-      
       {/* Category filter */}
       <div className="mb-8 overflow-x-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-medium">Search Results for "{query}"</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearResults} // Use our new clearResults function
+          >
+            <X className="h-4 w-4 mr-1" />
+            Clear results
+          </Button>
+        </div>
         <div className="flex space-x-2 pb-2">
           <Button
             variant={activeCategory === "all" ? "default" : "outline"}
@@ -235,7 +288,7 @@ const SearchPage: React.FC = () => {
         </div>
       )}
 
-      {!loading && query && results.length === 0 && (
+      {!loading && results.length === 0 && (
         <div className="text-center p-8">
           <p className="text-muted-foreground">
             No results found for "{query}"
@@ -243,7 +296,7 @@ const SearchPage: React.FC = () => {
         </div>
       )}
 
-      {!loading && query && results.length > 0 && filteredResults.length === 0 && (
+      {!loading && results.length > 0 && filteredResults.length === 0 && (
         <div className="text-center p-8">
           <p className="text-muted-foreground">
             No results found in category <strong>{activeCategory}</strong>
@@ -261,38 +314,34 @@ const SearchPage: React.FC = () => {
       {!loading && filteredResults.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredResults.map((result, index) => (
-            <Card
+            <a 
               key={result.id || index}
-              className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
-              onClick={() => handleSelect(result)}
+              href={result.path ? `https://hexmos.com${result.path}` : '#'}
+              className="block no-underline" // Remove underline from link
             >
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="font-medium text-lg">
-                    {result.name || result.title || "Untitled"}
-                  </h2>
-                  {result.category && (
-                    <Badge variant="outline" className="text-xs">
-                      {result.category}
-                    </Badge>
+              <Card
+                className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+              >
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="font-medium text-lg">
+                      {result.name || result.title || "Untitled"}
+                    </h2>
+                    {result.category && (
+                      <Badge variant="outline" className="text-xs">
+                        {result.category}
+                      </Badge>
+                    )}
+                  </div>
+                  {result.description && (
+                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      {result.description}
+                    </p>
                   )}
                 </div>
-                {result.description && (
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                    {result.description}
-                  </p>
-                )}
-              </div>
-            </Card>
+              </Card>
+            </a>
           ))}
-        </div>
-      )}
-
-      {!loading && !query && (
-        <div className="text-center p-8">
-          <p className="text-muted-foreground">
-            Start typing to search in 50,000+ free dev resources...
-          </p>
         </div>
       )}
     </div>

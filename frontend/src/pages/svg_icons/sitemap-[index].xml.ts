@@ -2,69 +2,71 @@
 import type { APIRoute } from "astro";
 import path from "path";
 
-const MAX_URLS = 50000;
+const MAX_URLS = 5000;
 
 export async function getStaticPaths() {
   const { glob } = await import("glob");
 
-  // Get all SVG files
+  // Loader function for sitemap URLs
+  async function loadUrls() {
+    const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
+    const now = new Date().toISOString();
+
+    // Build URLs with placeholder for site
+    const urls = svgFiles.map((file) => {
+      const parts = file.split(path.sep);
+      const name = parts.pop()!.replace(".svg", "");
+      const category = parts.pop() || "general";
+
+      return `
+        <url>
+          <loc>__SITE__/svg_icons/${category}/${name}/</loc>
+          <lastmod>${now}</lastmod>
+          <changefreq>daily</changefreq>
+          <priority>0.8</priority>
+          <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+            <image:loc>__SITE__/svg_icons/${category}/${name}.svg</image:loc>
+            <image:title>Free ${name} SVG Icon Download</image:title>
+          </image:image>
+        </url>`;
+    });
+
+    // Include landing page
+    urls.unshift(`
+      <url>
+        <loc>__SITE__/svg_icons/</loc>
+        <lastmod>${now}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+      </url>`);
+
+    return urls;
+  }
+
+  // Pre-count total pages
   const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
-
-  // Total URLs (+1 for landing page)
   const totalUrls = svgFiles.length + 1;
-
-  // Number of sitemap pages
   const totalPages = Math.ceil(totalUrls / MAX_URLS);
 
-  // Return paths for all pages
   return Array.from({ length: totalPages }, (_, i) => ({
     params: { index: String(i + 1) },
+    props: { loadUrls }, // pass only the function reference
   }));
 }
 
-export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import("glob");
+export const GET: APIRoute = async ({ site, params, props }) => {
+  const loadUrls: () => Promise<string[]> = props.loadUrls;
+  let urls = await loadUrls();
 
-  const now = new Date().toISOString();
+  // Replace placeholder with actual site
+  urls = urls.map((u) => u.replace(/__SITE__/g, site));
 
-  // Get all SVG files
-  const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
-
-  // Map files to sitemap URLs
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace(".svg", "");
-    const category = parts.pop() || "general";
-
-    return `
-      <url>
-        <loc>${site}/svg_icons/${category}/${name}/</loc>
-        <lastmod>${now}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-        <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
-          <image:title>Free ${name} SVG Icon Download</image:title>
-        </image:image>
-      </url>`;
-  });
-
-  // Include the landing page
-  urls.unshift(`
-    <url>
-      <loc>${site}/svg_icons/</loc>
-      <lastmod>${now}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>`);
-
-  // Split into chunks of MAX_URLS
+  // Split into chunks
   const sitemapChunks: string[][] = [];
   for (let i = 0; i < urls.length; i += MAX_URLS) {
     sitemapChunks.push(urls.slice(i, i + MAX_URLS));
   }
 
-  // Get the index from the filename: sitemap-1.xml → index = 0
   const index = parseInt(params.index, 10) - 1;
   const chunk = sitemapChunks[index];
 
