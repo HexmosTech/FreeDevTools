@@ -54,7 +54,7 @@ export async function getAllCheatsheets(): Promise<CheatsheetsByCategory> {
 
     sheetsByCategory[category].push({
       name,
-      url: `/freedevtools/c/${category}/${name}`,
+      url: `/c/${category}/${name}`,
       description,
     });
   }

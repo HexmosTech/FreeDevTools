@@ -3,8 +3,6 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const baseUrl = site ?? "https://hexmos.com/freedevtools"; // fallback if astro.config.mjs.site not set
-
   const cheatsheetsByCategory = await getAllCheatsheets();
 
   const urls: string[] = [];
@@ -12,7 +10,7 @@ export const GET: APIRoute = async ({ site }) => {
   // Root landing
   urls.push(
     `  <url>
-      <loc>${baseUrl}/c/</loc>
+      <loc>${site}/c/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.7</priority>
@@ -23,7 +21,7 @@ export const GET: APIRoute = async ({ site }) => {
   for (const category of Object.keys(cheatsheetsByCategory)) {
     urls.push(
       `  <url>
-        <loc>${baseUrl}/c/${category}/</loc>
+        <loc>${site}/c/${category}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
@@ -36,7 +34,7 @@ export const GET: APIRoute = async ({ site }) => {
     for (const sheet of sheets) {
       urls.push(
         `  <url>
-          <loc>${baseUrl}${sheet.url}</loc>
+          <loc>${site}${sheet.url}</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>
