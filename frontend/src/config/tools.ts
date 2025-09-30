@@ -1003,7 +1003,7 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     category: "Developer Tools",
     icon: "🔒",
     themeColor: "#3b82f6",
-    canonical: "https://hexmos.com/freedevtools/t/base64-encoder/",
+    canonical: "https://hexmos.com/freedevtools/t/base64-utilities/",
     keywords: [
       "base64 utilities",
       "base64 tools",
@@ -1039,13 +1039,13 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     title:
       "Base64 Encoder - Encode Text to Base64 Online | Online Free DevTools by Hexmos",
     name: "Base64 Encoder",
-    path: "/freedevtools/t/base64-encode/",
+    path: "/freedevtools/t/base64-encoder/",
     description:
       "Encode text to Base64 format instantly with our free online Base64 encoder. Perfect for data transmission, storage, and web development with real-time encoding.",
     category: "Developer Tools",
     icon: "📤",
     themeColor: "#10b981",
-    canonical: "https://hexmos.com/freedevtools/t/base64-encode/",
+    canonical: "https://hexmos.com/freedevtools/t/base64-encoder/",
     keywords: [
       "base64 encoder",
       "encode to base64",
@@ -1074,13 +1074,13 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
     title:
       "Base64 Decoder - Decode Base64 to Text Online | Online Free DevTools by Hexmos",
     name: "Base64 Decoder",
-    path: "/freedevtools/t/base64-decode/",
+    path: "/freedevtools/t/base64-decoder/",
     description:
       "Decode Base64 to text format instantly with our free online Base64 decoder. Perfect for data retrieval and web development with real-time decoding and error detection.",
     category: "Developer Tools",
     icon: "📥",
     themeColor: "#f59e0b",
-    canonical: "https://hexmos.com/freedevtools/t/base64-decode/",
+    canonical: "https://hexmos.com/freedevtools/t/base64-decoder/",
     keywords: [
       "base64 decoder",
       "decode base64",
@@ -1099,9 +1099,9 @@ export const TOOLS_CONFIG: Record<string, Tool> = {
       "Browser-based processing - data stays private",
     ],
     ogImage:
-      "https://hexmos.com/freedevtools/tool-banners/base64-decode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-decoder-banner.png",
     twitterImage:
-      "https://hexmos.com/freedevtools/tool-banners/base64-decode-banner.png",
+      "https://hexmos.com/freedevtools/tool-banners/base64-decoder-banner.png",
     variationOf: "base64-utilities",
   },
 
