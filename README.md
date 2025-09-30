@@ -138,12 +138,7 @@ If you find these tools helpful, please consider giving us a ⭐ star on GitHub!
 
 We welcome contributions! Here's how you can help:
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-tool`)
-3. **Make your changes**
-4. **Commit your changes** (`git commit -m 'Add amazing new tool'`)
-5. **Push to the branch** (`git push origin feature/amazing-tool`)
-6. **Open a Pull Request**
+[CONTRIBUTING.md](https://github.com/HexmosTech/FreeDevTools/blob/main/CONTRIBUTING.md)
 
 ---
 
