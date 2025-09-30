@@ -76,7 +76,7 @@ We would like to thank all security researchers who responsibly disclose vulnera
 
 ## Contact
 
-For security-related questions or concerns, please contact us at [security@hexmos.com/freedevtools/t/](mailto:security@hexmos.com/freedevtools/t/).
+For security-related questions or concerns, please contact us at [hexmostech@gmail.com](mailto:hexmostech@gmail.com).
 
 ---
 
