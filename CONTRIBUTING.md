@@ -1,109 +1,134 @@
 # Contributing to FreeDevTools
 
-Thank you for your interest in contributing to FreeDevTools! This document provides guidelines and information for contributors.
+Thanks for your interest in contributing! 🎉 This guide explains how you can help improve FreeDevTools.
 
-## What We're Looking For
+## What You Can Contribute
 
-We welcome contributions in many forms:
+We welcome contributions of all kinds:
 
-- 🛠️ **New Tools**: Add useful developer utilities
-- 🐛 **Bug Fixes**: Fix issues and improve reliability
-- ✨ **Enhancements**: Improve existing tools
-- 📚 **Documentation**: Better guides and examples
-- 🎨 **UI/UX**: Improve the user interface
-- 🧪 **Tests**: Add test coverage
-- 🌐 **Translations**: Make tools accessible worldwide
+- 🛠️ **New Tools** – Add developer utilities
+- 🐛 **Bug Fixes** – Improve reliability
+- ✨ **Enhancements** – Extend features
+- 📚 **Documentation** – Add guides and examples
+- 🎨 **UI/UX** – Improve interface and usability
+- 🌐 **Translations** – Make tools accessible worldwide
 
-## Quick Start
+## Development Setup (for building a new tool)
 
-1. **Fork the repository**
-2. **Clone your fork**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/freedevtools.git
-   cd freedevtools
-   ```
-3. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-new-tool
-   ```
-4. **Make your changes**
-5. **Test your changes**
-6. **Commit and push**
-   ```bash
-   git add .
-   git commit -m "feat: add amazing new tool"
-   git push origin feature/amazing-new-tool
-   ```
-7. **Open a Pull Request**
-
-## Development Setup
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-- Git
-
-### Installation
+### 1. Fork and Clone
 
 ```bash
-# Install dependencies
-cd frontend
-npm install
-
-# Start development server
-make run
-
-# Deploy
-make deploy
+git clone https://github.com/YOUR_USERNAME/freedevtools.git
+cd freedevtools
 ```
 
-## Project Structure
+### 2. Create a Feature Branch
+
+```bash
+git checkout -b feature/amazing-new-tool
+```
+
+### 3. Prerequisites
+
+Check Node version:
+
+```bash
+lovestaco@i3nux-mint:~/hex/FreeDevTools/frontend$ node -v
+v22.17.0
+```
+
+Install **make** if not already installed:
+
+- Debian/Ubuntu: `sudo apt install make`
+- Fedora: `sudo dnf install make`
+- Arch: `sudo pacman -S make`
+- Windows: `choco install make`
+
+Open the **frontend** folder in your editor:
+![image](https://hackmd.io/_uploads/H1UOIEF2lx.png)
+
+Install dependencies:
+
+```bash
+npm i
+```
+
+### 4. Generate Pages for Your Tool
+
+```bash
+make gen tool=gemini-schema-validator
+```
+
+![image](https://hackmd.io/_uploads/BkVEO4F2lx.png)
+
+### 5. Run the Project
+
+```bash
+make run
+```
+
+Open in browser:
+👉 [http://localhost:4321/freedevtools](http://localhost:4321/freedevtools)
+
+![image](https://hackmd.io/_uploads/S1kf04Khll.png)
+
+### 6. Commit and Push
+
+```bash
+git add .
+git commit -m "feat: add amazing new tool"
+git push origin feature/amazing-new-tool
+```
+
+### 7. Open a Pull Request
+
+Request a review. You can also ping us on Discord (invite below).
+
+## Astro Project Structure
 
 ```
 freedevtools/
 ├── frontend/                 # Astro frontend application
 │   ├── src/
 │   │   ├── components/      # React components
-│   │   ├── pages/          # Tool pages
-│   │   ├── config/         # Configuration files
-│   │   └── styles/         # CSS and styling
-│   ├── public/             # Static assets
-│   └── package.json        # Frontend dependencies
+│   │   ├── pages/           # Pages
+│   │       ├── t/           # Tool directory
+│   │           ├── gemini-schema-validator/
+│   │               ├── index.astro
+│   │               ├── _GeminiSchemaValidator.tsx
+│   │               ├── _GeminiSchemaValidatorSkeleton.tsx
+│   ├── config/              # Config files
+│   ├── styles/              # CSS and styling
+│   ├── public/              # Static assets
+│   └── package.json         # Dependencies
 ├── backend/                 # Backend services (coming soon)
-├── .github/                # GitHub templates and workflows
-├── LICENSE                 # MIT License
-└── README.md              # Project documentation
+├── .github/                 # GitHub workflows
+├── LICENSE                  # MIT License
+└── README.md                # Documentation
 ```
-
-## Adding a New Tool
-
-### 1. Create Tool Component
-
-```
-cd frontend
-make gen tool=url-encoder
-```
-
-### 2. Update README
-
-Add your tool to the available tools list in the main README.
 
 ## Code Style Guidelines
 
-### TypeScript/React
+### TypeScript / React
 
-- Use functional components with hooks
+- Use functional components + hooks
 - Prefer TypeScript over JavaScript
-- Use meaningful variable and function names
-- Add JSDoc comments for complex functions
+- Use meaningful names
+- Add JSDoc for complex functions
 
-### CSS/Styling
+### CSS / Styling
 
-- Use Tailwind CSS classes
-- Follow mobile-first responsive design
-- Maintain consistent spacing and typography
-- Use semantic HTML elements
+- Use TailwindCSS
+- Mobile-first design
+- Consistent spacing & typography
+- Semantic HTML
+
+### AI Rules (Cursor, Copilot, etc.)
+
+- AI can be used, but always take suggestions from Admins(discord link below), we prefer quality over quantitiy.
+- Ensure generated code follows project conventions
+- **Include `seo.md` in your workflow** to define and improve **titles, descriptions, and keywords** when starting to build a tool
+- **Always include `design.md` in your workflow** for **consistent styling and shared UI/UX rules**
 
 ### Git Commits
 
@@ -118,60 +143,40 @@ refactor: simplify tool configuration
 test: add unit tests for json prettifier
 ```
 
-## Documentation
-
-### Code Documentation
-
-- Add JSDoc comments for functions and components
-- Include usage examples
-- Document complex logic and algorithms
-
-### User Documentation
-
-- Write clear tool descriptions
-- Include step-by-step usage instructions
-- Add screenshots for complex tools
-- Provide common use cases
-
 ## Review Process
 
-1. **Automated Checks**: CI/CD pipeline runs tests and builds
-2. **Code Review**: Maintainers review your changes
-3. **Feedback**: Address any review comments
-4. **Merge**: Once approved, your changes are merged
-
-## Reporting Issues
-
-Before reporting an issue:
-
-1. **Search existing issues** to avoid duplicates
-2. **Check the documentation** for solutions
-3. **Try to reproduce** the issue consistently
-4. **Provide detailed information** including:
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Environment details
-   - Screenshots if applicable
+1. **Automated Checks** – CI/CD runs builds
+2. **Code Review** – Maintainers review
+3. **Feedback** – Make changes if requested
+4. **Merge** – Approved PRs are merged
 
 ## Getting Help
 
-- **GitHub Issues**: For bugs and feature requests
-- **GitHub Discussions**: For questions and general discussion
-- **Pull Requests**: For code contributions
+- [GitHub Issues](https://github.com/HexmosTech/FreeDevTools/issues) – Bugs & requests
+- [GitHub Discussions](https://github.com/HexmosTech/FreeDevTools/discussions) – Q&A, ideas
+- [Pull Requests](https://github.com/HexmosTech/FreeDevTools/pulls) – Code contributions
+- [Discord](https://discord.gg/pURjdmj5) – Chat and help
+
+## Reporting Issues
+
+Before creating an issue:
+
+1. Search existing issues
+2. Check docs for answers
+3. Try to reproduce consistently
+4. Provide details:
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Environment details
+   - Screenshots (if applicable)
 
 ## Recognition
 
-Contributors are recognized in several ways:
+We appreciate every contribution! 🙌
 
-- **Contributors list** on GitHub
-- **Release notes** for significant contributions
-- **Special thanks** in documentation
-- **Contributor badges** for active participants
+- Listed in **Contributors** on GitHub (please update README.md in the same PR)
+- Special thanks in **docs** (please update README.md in the same PR)
 
-## License
+## Thank You 💜
 
-By contributing to FreeDevTools, you agree that your contributions will be licensed under the MIT License.
-
-## Thank You
-
-Thank you for contributing to FreeDevTools! Every contribution, no matter how small, helps make developer tools more accessible and useful for everyone.
+Your contributions make [FreeDevTools](https://hexmos.com/freedevtools/) better for everyone.

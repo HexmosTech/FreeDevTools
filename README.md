@@ -148,3 +148,11 @@ We welcome contributions! Here's how you can help:
 ---
 
 **Made with ❤️ by the developer community**
+
+## Contributors
+
+1. [lovestaco](https://github.com/lovestaco)
+2. [RijulTP](https://github.com/RijulTP)
+3. [LinceMathew](https://github.com/LinceMathew)
+4. [shrsv](https://github.com/shrsv)
+5. [Amazing-Stardom](https://github.com/Amazing-Stardom)
