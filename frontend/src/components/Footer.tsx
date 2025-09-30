@@ -42,6 +42,19 @@ const LeftColumn: React.FC = () => {
           />
           <p className="hover:text-blue-600 dark:hover:text-blue-400 hover:font-bold transition-all duration-200">Terms of Use</p>
         </a>
+        <a
+          href="https://discord.gg/pURjdmj5"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 "
+        >
+          <img
+            src="/freedevtools/svg_icons/betwixt/discord.svg"
+            alt="Discord Community"
+            className="w-5 h-5"
+          />
+          <p className="hover:text-blue-600 dark:hover:text-blue-400 hover:font-bold transition-all duration-200">Community</p>
+        </a>
       </div>
     </div>
   );
