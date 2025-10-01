@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ExternalLink, Wrench } from "lucide-react";
+import { ExternalLink, Search, Wrench } from "lucide-react";
+import React, { useState } from "react";
 import McpToolsSkeleton from "./_McpToolsSkeleton";
 
 interface Tool {
@@ -37,13 +37,15 @@ interface McpToolsProps {
     servers: Record<string, number>;
   };
   totalPages: number;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
 const McpTools: React.FC<McpToolsProps> = ({
   initialTools,
   pagination,
   filters,
-  totalPages
+  totalPages,
+  breadcrumbItems
 }) => {
   const [tools, setTools] = useState<Tool[]>(initialTools);
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,7 @@ const McpTools: React.FC<McpToolsProps> = ({
         <ToolHead
           name="MCP Tools"
           description="Explore 36,000+ Model Context Protocol tools for AI agents. Find tools for web scraping, code execution, communication, and more."
+          breadcrumbItems={breadcrumbItems}
         />
         <McpToolsSkeleton />
       </ToolContainer>
@@ -97,8 +100,9 @@ const McpTools: React.FC<McpToolsProps> = ({
       <ToolHead
         name="MCP Tools"
         description="Explore 36,000+ Model Context Protocol tools for AI agents. Find tools for web scraping, code execution, communication, and more."
+        breadcrumbItems={breadcrumbItems}
       />
-      
+
       <ToolBody>
         <ToolContentCardWrapper>
           <Card className="p-6">
@@ -116,7 +120,7 @@ const McpTools: React.FC<McpToolsProps> = ({
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Select value={selectedCategory} onValueChange={handleCategoryFilter}>
                     <SelectTrigger className="w-40">
@@ -238,8 +242,8 @@ const McpTools: React.FC<McpToolsProps> = ({
           <Card className="p-6">
             <div className="flex justify-center">
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
@@ -248,8 +252,8 @@ const McpTools: React.FC<McpToolsProps> = ({
                 <span className="flex items-center px-4 text-sm text-gray-600 dark:text-gray-400">
                   Page {currentPage} of {totalPages}
                 </span>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >

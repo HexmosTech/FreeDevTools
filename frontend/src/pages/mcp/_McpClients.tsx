@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ExternalLink, Star, Monitor, Smartphone, Terminal, Globe } from "lucide-react";
+import { ExternalLink, Globe, Monitor, Search, Smartphone, Star, Terminal } from "lucide-react";
+import React, { useState } from "react";
 import McpClientsSkeleton from "./_McpClientsSkeleton";
 
 interface Client {
@@ -41,13 +41,15 @@ interface McpClientsProps {
     programmingLanguages: Record<string, number>;
   };
   totalPages: number;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
 const McpClients: React.FC<McpClientsProps> = ({
   initialClients,
   pagination,
   filters,
-  totalPages
+  totalPages,
+  breadcrumbItems
 }) => {
   const [clients, setClients] = useState<Client[]>(initialClients);
   const [loading, setLoading] = useState(false);
@@ -127,6 +129,7 @@ const McpClients: React.FC<McpClientsProps> = ({
         <ToolHead
           name="MCP Clients"
           description="Discover 36,000+ Model Context Protocol clients for AI agents. Find desktop, web, mobile, and CLI clients."
+          breadcrumbItems={breadcrumbItems}
         />
         <McpClientsSkeleton />
       </ToolContainer>
@@ -138,8 +141,9 @@ const McpClients: React.FC<McpClientsProps> = ({
       <ToolHead
         name="MCP Clients"
         description="Discover 36,000+ Model Context Protocol clients for AI agents. Find desktop, web, mobile, and CLI clients."
+        breadcrumbItems={breadcrumbItems}
       />
-      
+
       <ToolBody>
         <ToolContentCardWrapper>
           <Card className="p-6">
@@ -157,7 +161,7 @@ const McpClients: React.FC<McpClientsProps> = ({
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Select value={selectedPlatform} onValueChange={handlePlatformFilter}>
                     <SelectTrigger className="w-40">
@@ -246,8 +250,8 @@ const McpClients: React.FC<McpClientsProps> = ({
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-white border">
-                        <img 
-                          src={client.logo} 
+                        <img
+                          src={client.logo}
                           alt={client.name}
                           className="w-full h-full object-contain"
                         />
@@ -288,7 +292,7 @@ const McpClients: React.FC<McpClientsProps> = ({
 
                   {/* Price and Language */}
                   <div className="flex justify-between items-center">
-                    <Badge 
+                    <Badge
                       variant={client.price === 'Free' ? 'default' : 'secondary'}
                       className={client.price === 'Free' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}
                     >
@@ -319,8 +323,8 @@ const McpClients: React.FC<McpClientsProps> = ({
           <Card className="p-6">
             <div className="flex justify-center">
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
@@ -329,8 +333,8 @@ const McpClients: React.FC<McpClientsProps> = ({
                 <span className="flex items-center px-4 text-sm text-gray-600 dark:text-gray-400">
                   Page {currentPage} of {totalPages}
                 </span>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >

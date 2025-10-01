@@ -1,18 +1,30 @@
 import React from "react";
 import AdBanner from "../banner/AdBanner";
+import Breadcrumb from "../Breadcrumb";
 
-interface ToolHeadProps {
-  name: string;
-  description: string;
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
 }
 
-const ToolHead: React.FC<ToolHeadProps> = ({ name, description }) => {
+export interface ToolHeadProps {
+  name: string;
+  description: string;
+  breadcrumbItems?: BreadcrumbItem[];
+}
+
+const ToolHead: React.FC<ToolHeadProps> = ({ name, description, breadcrumbItems }) => {
   return (
     <>
       {/* Ad Banner */}
       <div className="mb-10 mt-10">
         <AdBanner />
       </div>
+      {breadcrumbItems && (
+        <div className="mb-10 mt-10">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+      )}
       <div>
         <h1 id="head-title" className="text-2xl font-medium mb-2 text-black dark:text-slate-300">
           {name}

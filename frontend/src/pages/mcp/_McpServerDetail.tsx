@@ -2,11 +2,11 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CopyButton } from "@/components/ui/copy-button";
+import CopyButton from "@/components/ui/copy-button";
 import { Award, Calendar, Download, ExternalLink, Github, Scale, Shield, Star } from "lucide-react";
 import React from "react";
 
@@ -46,9 +46,10 @@ interface Category {
 interface McpServerDetailProps {
   server: Server;
   category?: Category;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-const McpServerDetail: React.FC<McpServerDetailProps> = ({ server, category }) => {
+const McpServerDetail: React.FC<McpServerDetailProps> = ({ server, category, breadcrumbItems }) => {
   const getScoreColor = (score: string) => {
     switch (score) {
       case 'A': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
@@ -74,6 +75,7 @@ const McpServerDetail: React.FC<McpServerDetailProps> = ({ server, category }) =
       <ToolHead
         name={server.name}
         description={`${server.description} Browse tools, check scores, and get installation instructions for this Model Context Protocol server.`}
+        breadcrumbItems={breadcrumbItems}
       />
 
       <ToolBody>

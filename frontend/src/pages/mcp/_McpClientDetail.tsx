@@ -2,7 +2,7 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,9 +25,10 @@ interface Client {
 
 interface McpClientDetailProps {
   client: Client;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-const McpClientDetail: React.FC<McpClientDetailProps> = ({ client }) => {
+const McpClientDetail: React.FC<McpClientDetailProps> = ({ client, breadcrumbItems }) => {
   const getPlatformIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
       case 'desktop': return <Monitor className="h-5 w-5" />;
@@ -64,6 +65,7 @@ const McpClientDetail: React.FC<McpClientDetailProps> = ({ client }) => {
       <ToolHead
         name={client.name}
         description={`${client.description} ${client.platforms.join(', ')} client with ${client.rating}/5 rating.`}
+        breadcrumbItems={breadcrumbItems}
       />
 
       <ToolBody>

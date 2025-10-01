@@ -3,7 +3,7 @@ import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -61,6 +61,7 @@ interface McpServersProps {
     scores: Record<string, Record<string, number>>;
   };
   totalPages: number;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
 const McpServers: React.FC<McpServersProps> = ({
@@ -68,7 +69,8 @@ const McpServers: React.FC<McpServersProps> = ({
   categories,
   pagination,
   filters,
-  totalPages
+  totalPages,
+  breadcrumbItems
 }) => {
   const [servers, setServers] = useState<Server[]>(initialServers);
   const [loading, setLoading] = useState(false);
@@ -133,6 +135,7 @@ const McpServers: React.FC<McpServersProps> = ({
       <ToolHead
         name="MCP Servers"
         description="Browse 36,000+ Model Context Protocol servers for AI agents. Find servers by category, filter by license, and discover the perfect MCP server for your project."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <ToolBody>

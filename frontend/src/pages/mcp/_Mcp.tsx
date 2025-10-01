@@ -9,14 +9,20 @@ import { Filter, Search, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import McpSkeleton from "./_McpSkeleton";
 
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
 interface McpProps {
   serversCount: number;
   toolsCount: number;
   clientsCount: number;
   categoriesCount: number;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categoriesCount }) => {
+const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categoriesCount, breadcrumbItems }) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -39,6 +45,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
         <ToolHead
           name="MCP Directory"
           description="Discover 36,000+ MCP servers, 36,000+ tools, and 36,000+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project."
+          breadcrumbItems={breadcrumbItems}
         />
         <McpSkeleton />
       </ToolContainer>
@@ -50,6 +57,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
       <ToolHead
         name="MCP Directory"
         description="Discover 36,000+ MCP servers, 36,000+ tools, and 36,000+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <ToolBody>

@@ -2,7 +2,7 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
+import ToolHead, { type BreadcrumbItem } from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -47,14 +47,16 @@ interface Server {
 interface McpToolDetailProps {
   tool: Tool;
   server?: Server;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-const McpToolDetail: React.FC<McpToolDetailProps> = ({ tool, server }) => {
+const McpToolDetail: React.FC<McpToolDetailProps> = ({ tool, server, breadcrumbItems }) => {
   return (
     <ToolContainer>
       <ToolHead
         name={tool.name}
         description={`${tool.description} Part of the ${tool.serverName} MCP server.`}
+        breadcrumbItems={breadcrumbItems}
       />
 
       <ToolBody>
