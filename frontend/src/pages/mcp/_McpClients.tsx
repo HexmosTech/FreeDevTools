@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatNumber } from "@/lib/utils";
 import { ExternalLink, Globe, Monitor, Search, Smartphone, Star, Terminal } from "lucide-react";
 import React, { useState } from "react";
 import McpClientsSkeleton from "./_McpClientsSkeleton";
@@ -95,12 +96,6 @@ const McpClients: React.FC<McpClientsProps> = ({
     }
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
 
   const renderStars = (rating: number) => {
     const stars = [];

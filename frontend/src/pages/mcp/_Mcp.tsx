@@ -5,6 +5,7 @@ import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { formatNumber } from "@/lib/utils";
 import { Filter, Search, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import McpSkeleton from "./_McpSkeleton";
@@ -32,19 +33,13 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
     return () => clearTimeout(timer);
   }, []);
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
 
   if (!loaded) {
     return (
       <ToolContainer>
         <ToolHead
           name="MCP Directory"
-          description="Discover 36,000+ MCP servers, 36,000+ tools, and 36,000+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project."
+          description={`Discover ${formatNumber(serversCount)}+ MCP servers, ${formatNumber(toolsCount)}+ tools, and ${formatNumber(clientsCount)}+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project.`}
           breadcrumbItems={breadcrumbItems}
         />
         <McpSkeleton />
@@ -56,7 +51,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
     <ToolContainer>
       <ToolHead
         name="MCP Directory"
-        description="Discover 36,000+ MCP servers, 36,000+ tools, and 36,000+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project."
+        description={`Discover ${formatNumber(serversCount)}+ MCP servers, ${formatNumber(toolsCount)}+ tools, and ${formatNumber(clientsCount)}+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project.`}
         breadcrumbItems={breadcrumbItems}
       />
 
@@ -69,7 +64,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
                 Model Context Protocol Directory
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                The largest collection of MCP servers, tools, and clients for AI agents.
+                The largest collection of {formatNumber(serversCount + toolsCount + clientsCount)}+ MCP servers, tools, and clients for AI agents.
                 Find everything you need to build powerful AI applications with the Model Context Protocol.
               </p>
 

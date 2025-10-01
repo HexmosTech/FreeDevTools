@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatNumber } from "@/lib/utils";
 import { ExternalLink, Search, Wrench } from "lucide-react";
 import React, { useState } from "react";
 import McpToolsSkeleton from "./_McpToolsSkeleton";
@@ -75,12 +76,6 @@ const McpTools: React.FC<McpToolsProps> = ({
     setCurrentPage(1);
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
 
   if (loading) {
     return (

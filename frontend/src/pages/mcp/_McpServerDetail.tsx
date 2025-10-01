@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
+import { formatNumber } from "@/lib/utils";
 import { Award, Calendar, Download, ExternalLink, Github, Scale, Shield, Star } from "lucide-react";
 import React from "react";
 
@@ -61,12 +62,6 @@ const McpServerDetail: React.FC<McpServerDetailProps> = ({ server, category, bre
     }
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
 
   const installationCommand = `npm install @${server.author.toLowerCase()}/${server.id}`;
 

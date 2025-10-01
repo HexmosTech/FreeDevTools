@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatNumber } from "@/lib/utils";
 import { Download, ExternalLink, Github, Search, Star } from "lucide-react";
 import React, { useState } from "react";
 import McpServersSkeleton from "./_McpServersSkeleton";
@@ -111,12 +112,6 @@ const McpServers: React.FC<McpServersProps> = ({
     }
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
 
   if (loading) {
     return (
