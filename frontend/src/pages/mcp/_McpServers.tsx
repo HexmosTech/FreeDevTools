@@ -79,27 +79,53 @@ const McpServers: React.FC<McpServersProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedLicense, setSelectedLicense] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
-    setCurrentPage(1);
   };
 
   const handleLicenseFilter = (license: string) => {
     setSelectedLicense(license);
-    setCurrentPage(1);
   };
 
   const handleSort = (sort: string) => {
     setSortBy(sort);
-    setCurrentPage(1);
   };
+
+  // Filter and sort servers
+  const filteredServers = servers
+    .filter((server) => {
+      const matchesSearch = searchTerm === "" ||
+        server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        server.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        server.author.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory = selectedCategory === "all" ||
+        server.categories.includes(selectedCategory);
+
+      const matchesLicense = selectedLicense === "all" ||
+        server.license === selectedLicense;
+
+      return matchesSearch && matchesCategory && matchesLicense;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "stars":
+          return b.stats.githubStars - a.stats.githubStars;
+        case "downloads":
+          return b.stats.weeklyDownloads - a.stats.weeklyDownloads;
+        case "updated":
+          return new Date(b.stats.lastUpdated).getTime() - new Date(a.stats.lastUpdated).getTime();
+        default:
+          return 0;
+      }
+    });
 
   const getScoreColor = (score: string) => {
     switch (score) {
@@ -219,7 +245,7 @@ const McpServers: React.FC<McpServersProps> = ({
         </ToolContentCardWrapper>
 
         <ToolGridContainer>
-          {servers.map((server) => (
+          {filteredServers.map((server) => (
             <ToolCardWrapper key={server.id}>
               <Card className="tool-card-bg-grid p-6 hover:shadow-lg transition-shadow">
                 <div className="space-y-4">
@@ -328,32 +354,6 @@ const McpServers: React.FC<McpServersProps> = ({
           ))}
         </ToolGridContainer>
 
-        {/* Pagination */}
-        <ToolContentCardWrapper>
-          <Card className="p-6">
-            <div className="flex justify-center">
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  Previous
-                </Button>
-                <span className="flex items-center px-4 text-sm text-gray-600 dark:text-gray-400">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </ToolContentCardWrapper>
       </ToolBody>
     </ToolContainer>
   );

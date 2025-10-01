@@ -59,32 +59,59 @@ const McpClients: React.FC<McpClientsProps> = ({
   const [selectedPrice, setSelectedPrice] = useState<string>("all");
   const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   const handlePlatformFilter = (platform: string) => {
     setSelectedPlatform(platform);
-    setCurrentPage(1);
   };
 
   const handlePriceFilter = (price: string) => {
     setSelectedPrice(price);
-    setCurrentPage(1);
   };
 
   const handleLanguageFilter = (language: string) => {
     setSelectedLanguage(language);
-    setCurrentPage(1);
   };
 
   const handleSort = (sort: string) => {
     setSortBy(sort);
-    setCurrentPage(1);
   };
+
+  // Filter and sort clients
+  const filteredClients = clients
+    .filter((client) => {
+      const matchesSearch = searchTerm === "" ||
+        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesPlatform = selectedPlatform === "all" ||
+        client.platforms.includes(selectedPlatform);
+
+      const matchesPrice = selectedPrice === "all" ||
+        client.price === selectedPrice;
+
+      const matchesLanguage = selectedLanguage === "all" ||
+        client.programmingLanguage === selectedLanguage;
+
+      return matchesSearch && matchesPlatform && matchesPrice && matchesLanguage;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "rating":
+          return b.rating - a.rating;
+        case "platform":
+          return a.platforms[0].localeCompare(b.platforms[0]);
+        case "price":
+          return a.price.localeCompare(b.price);
+        default:
+          return 0;
+      }
+    });
 
   const getPlatformIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
@@ -237,7 +264,7 @@ const McpClients: React.FC<McpClientsProps> = ({
         </ToolContentCardWrapper>
 
         <ToolGridContainer>
-          {clients.map((client) => (
+          {filteredClients.map((client) => (
             <ToolCardWrapper key={client.id}>
               <Card className="tool-card-bg-grid p-6 hover:shadow-lg transition-shadow">
                 <div className="space-y-4">
@@ -313,32 +340,6 @@ const McpClients: React.FC<McpClientsProps> = ({
           ))}
         </ToolGridContainer>
 
-        {/* Pagination */}
-        <ToolContentCardWrapper>
-          <Card className="p-6">
-            <div className="flex justify-center">
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  Previous
-                </Button>
-                <span className="flex items-center px-4 text-sm text-gray-600 dark:text-gray-400">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </ToolContentCardWrapper>
       </ToolBody>
     </ToolContainer>
   );
