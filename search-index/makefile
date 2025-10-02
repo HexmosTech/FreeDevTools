@@ -24,4 +24,12 @@ gen-cheatsheets:
 	go run . category cheatsheets
 
 gen-all:
-	go run . category all
+	go run .
+
+sync-search-index:
+    @echo "🔄 Starting search index sync process..."
+    @echo "📊 Step 1: Generating search index files..."
+    go run .
+    @echo "📤 Step 2: Transferring files to remote server..."
+    ./transfer-index-files.sh
+    @echo "✅ Search index sync completed!"
