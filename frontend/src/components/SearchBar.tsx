@@ -166,14 +166,11 @@ const SearchBar: React.FC = () => {
         )}
       >
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-          </div>
           <Input
             ref={searchInputRef}
             type="text"
             className={cn(
-              "w-full pl-9 pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
+              "w-full  pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
               "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
               isFocused
                 ? "border-blue-500 dark:border-blue-500 bg-background/50 backdrop-blur-sm"
@@ -190,7 +187,7 @@ const SearchBar: React.FC = () => {
           {/* Clear button (only shown when there's text) */}
           {searchValue && (
             <button
-              className="absolute inset-y-0 right-9 flex items-center pr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="md:hidden absolute inset-y-0 right-9 flex items-center pr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               onClick={clearSearch}
               aria-label="Clear search"
             >
