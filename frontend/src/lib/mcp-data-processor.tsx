@@ -22,6 +22,8 @@ export interface ProcessedServer {
   license: string;
   url: string;
   githubUrl: string;
+  npmUrl?: string;
+  readmeContent?: string;
 }
 
 export interface ProcessedTool {
@@ -145,7 +147,7 @@ export async function loadMcpData(): Promise<{
   // Load input.json data
   try {
     // Use static import for Astro compatibility
-    const inputData = await import('../../pages/mcp/data/input.json') as { default: InputData };
+    const inputData = await import('../pages/mcp/data/input.json') as { default: InputData };
     return processInputData(inputData.default);
   } catch (error) {
     console.error(
@@ -216,6 +218,8 @@ export function processInputData(inputData: InputData): {
           license: repo.license,
           url: `/freedevtools/mcp/servers/@${repo.owner}/${repo.name}`,
           githubUrl: repo.url,
+          npmUrl: repo.npm_url || undefined,
+          readmeContent: repo.readme_content || undefined,
         };
         servers.push(server);
       }
@@ -361,6 +365,133 @@ function getMockData(): {
       license: 'MIT License',
       url: '/freedevtools/mcp/servers/@DumplingAI/mcp-server-dumplingai',
       githubUrl: 'https://github.com/DumplingAI/mcp-server-dumplingai',
+      npmUrl: 'https://www.npmjs.com/package/@dumpling-ai/mcp-server',
+      readmeContent: `# Dumpling AI MCP Server
+
+A Model Context Protocol (MCP) server implementation that integrates with [Dumpling AI](https://dumpling.ai/) for advanced data scraping, content processing, knowledge management, and code execution capabilities.
+
+## Features
+
+- **Data Scraping**: Extract data from websites and web applications
+- **Content Processing**: Process and transform content for AI consumption
+- **Knowledge Management**: Store and retrieve knowledge for AI agents
+- **Code Execution**: Execute code in various programming languages
+- **Web Interactions**: Interact with web services and APIs
+- **Document Handling**: Process various document formats
+
+## Installation
+
+### Running with npx
+
+\`\`\`bash
+export DUMPLING_API_KEY=YOUR_API_KEY
+export DUMPLING_WORKSPACE_ID=YOUR_WORKSPACE_ID
+
+npx -y @dumpling-ai/mcp-server@latest
+\`\`\`
+
+### VS Code Installation
+
+For one-click installation, click one of the install buttons below:
+
+[![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-NPM-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=dumpling&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40dumpling-ai%2Fmcp-server%40latest%22%5D%2C%22env%22%3A%7B%22DUMPLING_API_KEY%22%3A%22%24%7Binput%3Aapi_key%7D%22%2C%22DUMPLING_WORKSPACE_ID%22%3A%22%24%7Binput%3Aworkspace_id%7D%22%7D%7D)
+
+## Configuration
+
+### VS Code Settings
+
+Add the following to your VS Code settings:
+
+\`\`\`json
+{
+  "mcp": {
+    "inputs": [
+      {
+        "type": "promptString",
+        "id": "api_key",
+        "description": "Dumpling AI API Key"
+      },
+      {
+        "type": "promptString",
+        "id": "workspace_id",
+        "description": "Dumpling AI Workspace ID"
+      }
+    ],
+    "servers": {
+      "dumpling": {
+        "command": "npx",
+        "args": ["-y", "@dumpling-ai/mcp-server@latest"],
+        "env": {
+          "DUMPLING_API_KEY": "\${input:api_key}",
+          "DUMPLING_WORKSPACE_ID": "\${input:workspace_id}"
+        }
+      }
+    }
+  }
+}
+\`\`\`
+
+## Tools
+
+### Web Scraping
+
+Extract data from websites:
+
+\`\`\`json
+{
+  "name": "scrape_website",
+  "arguments": {
+    "url": "https://example.com",
+    "selectors": ["h1", "p", "a"]
+  }
+}
+\`\`\`
+
+### Content Processing
+
+Process and transform content:
+
+\`\`\`json
+{
+  "name": "process_content",
+  "arguments": {
+    "content": "Raw content to process",
+    "format": "markdown"
+  }
+}
+\`\`\`
+
+### Knowledge Management
+
+Store and retrieve knowledge:
+
+\`\`\`json
+{
+  "name": "store_knowledge",
+  "arguments": {
+    "key": "knowledge_key",
+    "value": "Knowledge content",
+    "metadata": {"source": "document.pdf"}
+  }
+}
+\`\`\`
+
+## Development
+
+\`\`\`bash
+npm install
+npm run dev
+\`\`\`
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.`,
     },
     {
       id: 'openzeppelin-contracts-mcp-server',
@@ -386,6 +517,53 @@ function getMockData(): {
       url: '/freedevtools/mcp/servers/@OpenZeppelin/openzeppelin-contracts-mcp-server',
       githubUrl:
         'https://github.com/OpenZeppelin/openzeppelin-contracts-mcp-server',
+      npmUrl: 'https://www.npmjs.com/package/@openzeppelin/contracts-mcp-server',
+      readmeContent: `# OpenZeppelin Contracts MCP Server
+
+A Model Context Protocol (MCP) server that allows AI agents to generate smart contracts using OpenZeppelin Contracts libraries.
+
+## Features
+
+- **Smart Contract Generation**: Generate secure smart contracts using OpenZeppelin libraries
+- **Security Analysis**: Analyze contract security and best practices
+- **Code Templates**: Pre-built templates for common contract patterns
+- **Integration**: Seamless integration with AI development workflows
+
+## Installation
+
+\`\`\`bash
+npm install @openzeppelin/contracts-mcp-server
+\`\`\`
+
+## Usage
+
+### Basic Contract Generation
+
+\`\`\`json
+{
+  "name": "generate_contract",
+  "arguments": {
+    "contractType": "ERC20",
+    "name": "MyToken",
+    "symbol": "MTK"
+  }
+}
+\`\`\`
+
+### Security Analysis
+
+\`\`\`json
+{
+  "name": "analyze_security",
+  "arguments": {
+    "contractCode": "contract MyToken { ... }"
+  }
+}
+\`\`\`
+
+## License
+
+AGPL 3.0 - see LICENSE file for details.`,
     },
   ];
 
