@@ -8,6 +8,7 @@ export interface ProcessedServer {
   description: string;
   isOfficial: boolean;
   categories: string[];
+  imageUrl?: string;
   scores: {
     security: string;
     license: string;
@@ -204,6 +205,7 @@ export function processInputData(inputData: InputData): {
           description: repo.description,
           isOfficial: categoryData.category === 'official-servers',
           categories: [categoryData.category],
+          imageUrl: repo.imageUrl || undefined,
           scores: {
             security: 'A', // Default score
             license: getLicenseScore(repo.license),
