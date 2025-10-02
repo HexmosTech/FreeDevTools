@@ -31,6 +31,14 @@ const getCategoryEmoji = (icon: string): string => {
   return iconMap[icon] || '🔧';
 };
 
+// Helper function to get category description with fallback
+const getCategoryDescription = (description: string, categoryName: string): string => {
+  if (description && description.trim() !== '') {
+    return description;
+  }
+  return `Explore MCP repositories in the ${categoryName} category`;
+};
+
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -109,42 +117,38 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
                   <div className="text-sm text-gray-600 dark:text-gray-400">MCP Repositories</div>
                 </div>
               </div>
+
+              {/* Categories Grid */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">Browse by Category</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {categories.map((category) => (
+                    <a
+                      key={category.id}
+                      href={category.url}
+                      className="block p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-inherit no-underline transition-all duration-300 ease-in-out hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-1"
+                    >
+                      <div className="text-center space-y-3">
+                        <div className="text-4xl mb-3">{getCategoryEmoji(category.icon)}</div>
+                        <h4 className="font-semibold text-lg text-gray-900 dark:text-gray-100 line-clamp-2">
+                          {category.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                          {getCategoryDescription(category.description, category.name)}
+                        </p>
+                        <Badge variant="outline" className="text-sm">
+                          {category.serverCount} servers
+                        </Badge>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           </Card>
         </ToolContentCardWrapper>
 
 
-        {/* Categories Section */}
-        <ToolContentCardWrapper>
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-              Explore {categoriesCount} categories of MCP repositories
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {categories.map((category) => (
-                <a
-                  key={category.id}
-                  href={category.url}
-                  className="block p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-inherit no-underline transition-all duration-300 ease-in-out hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-1"
-                >
-                  <div className="text-center space-y-2">
-                    <div className="text-3xl mb-2">{getCategoryEmoji(category.icon)}</div>
-                    <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 line-clamp-2">
-                      {category.name}
-                    </h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-                      {category.description}
-                    </p>
-                    <Badge variant="outline" className="text-xs">
-                      {category.serverCount} servers
-                    </Badge>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </Card>
-        </ToolContentCardWrapper>
 
         {/* Features */}
         <ToolContentCardWrapper>

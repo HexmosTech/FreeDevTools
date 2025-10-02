@@ -188,7 +188,7 @@ export function processInputData(inputData: InputData): {
       description: categoryData.description,
       icon: getCategoryIcon(categoryData.category),
       serverCount: processedRepoCount, // Use actual processed count
-      url: `/freedevtools/mcp/servers/categories/${categoryData.category}`,
+      url: `/freedevtools/mcp/${categoryData.category}`,
     };
     categories.push(category);
 
