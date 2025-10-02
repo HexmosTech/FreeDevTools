@@ -278,9 +278,9 @@ const SearchPage: React.FC = () => {
             TLDR
           </Button>
           <Button
-            variant={activeCategory === "cheatsheet" ? "default" : "outline"}
+            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveCategory("cheatsheet")}
+            onClick={() => setActiveCategory("cheatsheets")}
             className="whitespace-nowrap"
           >
             <FileText className="mr-1 h-4 w-4" />
@@ -360,12 +360,12 @@ const SearchPage: React.FC = () => {
                   return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
                 case 'tldr':
                   return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-                case 'cheatsheet':
-                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+                case 'cheatsheets':
+                  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
                 case 'png':
                   return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
                 default:
-                  return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
+                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
               }
             };
 
