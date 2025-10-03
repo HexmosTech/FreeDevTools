@@ -8,7 +8,7 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
   <TooltipProvider>
     <a
       href={`/freedevtools/mcp/${server.id}`}
-      className="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       data-repo-name={server.name}
       data-repo-description={server.description}
       data-repo-license={server.license}
