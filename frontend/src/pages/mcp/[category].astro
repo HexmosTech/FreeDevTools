@@ -2,8 +2,10 @@
 import ToolContainer from '@/components/tool/ToolContainer.tsx';
 import ToolHead from '@/components/tool/ToolHead.tsx';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Pagination from '@/components/Pagination.astro';
+import BottomPagination from '@/components/BottomPagination.astro';
 import { loadMcpData } from '@/lib/mcp-data-processor.tsx';
-import { formatRepositoryName } from '@/lib/utils';
+import { formatRepositoryName, getIconClasses } from '@/lib/utils';
 
 export async function getStaticPaths() {
   // Load data from input.json
@@ -28,6 +30,11 @@ const categoryServers = servers.filter(server =>
 
 // Get category info
 const categoryInfo = allCategories.find(cat => cat.id === category.id);
+
+// Pagination constants
+const ITEMS_PER_PAGE = 20;
+const totalItems = categoryServers.length;
+const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
 // Helper function to get category emoji
 const getCategoryEmoji = (icon: string): string => {
@@ -99,24 +106,137 @@ const breadcrumbItems = [
       client:load
     />
 
-    <!-- Repositories List -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-      {categoryServers.length === 0 ? (
-        <div class="col-span-1 lg:col-span-2 text-center py-12">
-          <div class="text-6xl mb-4">🔍</div>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-            No repositories found
-          </h3>
-          <p class="text-gray-600 dark:text-gray-400">
-            There are no MCP repositories in the {categoryInfo?.name || category.id} category yet.
-          </p>
+    <!-- Search Bar -->
+    <div class="max-w-md mb-6 mt-6">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="repository-search"
+          placeholder="Search repositories by name or description..."
+          class="w-full px-4 py-2 pl-10 pr-4 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
         </div>
-      ) : (
-        categoryServers.map((server) => {
-          const formattedName = formatRepositoryName(server.name);
-          return (
-            <a 
-              href={`/freedevtools/mcp/${server.id}`}
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <Pagination 
+      totalItems={totalItems}
+      itemsPerPage={ITEMS_PER_PAGE}
+      currentPage={1}
+      totalPages={totalPages}
+      itemsLabel="repositories"
+    />
+
+    <!-- Repositories List -->
+    <div id="repositories-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+      <!-- Repositories will be loaded dynamically -->
+    </div>
+    
+    <!-- Bottom Pagination -->
+    <BottomPagination 
+      totalItems={totalItems}
+      currentPage={1}
+      totalPages={totalPages}
+      itemsLabel="repositories"
+    />
+        </div>
+</BaseLayout>
+
+<script define:vars={{ categoryServers, totalItems, totalPages, ITEMS_PER_PAGE }}>
+  // Pagination state
+  let currentPage = 1;
+  let itemsPerPage = ITEMS_PER_PAGE;
+  let searchQuery = '';
+  
+  // Get current page and items per page from URL
+  function getCurrentPageFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = parseInt(urlParams.get('page') || '1', 10);
+    const items = parseInt(urlParams.get('items') || ITEMS_PER_PAGE.toString(), 10);
+    
+    // Update items per page if specified in URL
+    if (items !== itemsPerPage) {
+      itemsPerPage = items;
+      const dropdown = document.getElementById('items-per-page');
+      if (dropdown) {
+        dropdown.value = items.toString();
+      }
+    }
+    
+    return Math.max(1, Math.min(page, Math.ceil(totalItems / itemsPerPage)));
+  }
+  
+  // Update URL without page reload
+  function updateURL(page, items = null) {
+    const url = new URL(window.location);
+    if (page === 1) {
+      url.searchParams.delete('page');
+    } else {
+      url.searchParams.set('page', page.toString());
+    }
+    
+    const currentItems = items || itemsPerPage;
+    if (currentItems !== ITEMS_PER_PAGE) {
+      url.searchParams.set('items', currentItems.toString());
+    } else {
+      url.searchParams.delete('items');
+    }
+    
+    window.history.pushState({}, '', url);
+  }
+  
+  // Generate page numbers for pagination
+  function getPageNumbers(currentPage, totalPages) {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= maxVisible; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+  
+  // Filter repositories based on search query
+  function filterRepositories(repositories, query) {
+    if (!query.trim()) {
+      return repositories;
+    }
+    
+    const searchLower = query.toLowerCase();
+    return repositories.filter(server => 
+      server.name.toLowerCase().includes(searchLower) ||
+      server.description.toLowerCase().includes(searchLower) ||
+      server.license.toLowerCase().includes(searchLower)
+    );
+  }
+  
+  // Render repository card
+  function renderRepositoryCard(server) {
+    const formattedName = server.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    return `
+      <a 
+        href="/freedevtools/mcp/${server.id}"
               class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
             >
               <div class="space-y-3">
@@ -124,13 +244,13 @@ const breadcrumbItems = [
                 <div class="flex items-center space-x-4">
                   <!-- Repository Image -->
                   <div class="flex-shrink-0">
-                    {server.imageUrl ? (
+              ${server.imageUrl ? `
                       <img 
-                        src={server.imageUrl} 
-                        alt={`${formattedName} logo`}
+                  src="${server.imageUrl}" 
+                  alt="${formattedName} logo"
                         class="w-16 h-16 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
                       />
-                    ) : (
+              ` : `
                       <div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
                         <img 
                           src="/freedevtools/svg_icons/automation/mcp-server-stroke-rounded.svg" 
@@ -138,16 +258,16 @@ const breadcrumbItems = [
                           class="w-8 h-8 text-slate-400"
                         />
                       </div>
-                    )}
+              `}
                   </div>
                   
                   <!-- Title and Description -->
                   <div class="flex-1 min-w-0">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      {formattedName}
+                ${formattedName}
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400 line-clamp-2">
-                      {server.description}
+                ${server.description}
                     </p>
                   </div>
                   
@@ -160,27 +280,287 @@ const breadcrumbItems = [
                 <!-- Row 2: Stats and License (Full Width) -->
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                    <div class="flex items-center space-x-1">
-                      <img src="/freedevtools/svg_icons/grooveshark/github.svg" alt="GitHub" class="w-4 h-4 dark:brightness-0 dark:invert" />
-                      <span>⭐ {server.stats.githubStars}</span>
-                    </div>
+              <div class="flex items-center space-x-1">
+                <img src="/freedevtools/svg_icons/star/star_empty.svg" alt="GitHub Stars" class="w-4 h-4 star-icon" />
+                <span>${server.stats.githubStars}</span>
+              </div>
                     <div class="flex items-center space-x-1">
                       <img src="/freedevtools/svg_icons/cmake/npm.svg" alt="NPM" class="w-4 h-4 dark:brightness-0 dark:invert" />
-                      <span>📦 {server.stats.weeklyDownloads}</span>
+                <span>📦 ${server.stats.weeklyDownloads}</span>
                     </div>
-                    <span>🛠️ {server.stats.tools} tools</span>
-                    <span>🕒 {server.stats.lastUpdated}</span>
+              <span>🛠️ ${server.stats.tools} tools</span>
+              <span>🕒 ${server.stats.lastUpdated}</span>
                   </div>
                   <!-- License Badge (Right side) -->
                   <span class="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full flex-shrink-0">
-                    {server.license}
+              ${server.license}
                   </span>
                 </div>
               </div>
             </a>
-          );
-        })
-      )}
+    `;
+  }
+  
+  // Render pagination
+  function renderPagination() {
+    const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+    const totalPages = Math.ceil(filteredRepositories.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedRepositories = filteredRepositories.slice(startIndex, endIndex);
+    
+    // Update pagination info
+    document.getElementById('pagination-info').textContent = 
+      `Showing ${paginatedRepositories.length} of ${filteredRepositories.length} repositories (Page ${currentPage} of ${totalPages})`;
+    
+    document.getElementById('page-info').textContent = `${currentPage} / ${totalPages}`;
+    document.getElementById('bottom-page-info').textContent = 
+      `Page ${currentPage} of ${totalPages} • ${filteredRepositories.length} total repositories`;
+    
+    // Update page input value
+    const pageInput = document.getElementById('page-input');
+    if (pageInput) {
+      pageInput.value = currentPage.toString();
+      pageInput.max = totalPages;
+    }
+    
+    // Update button states
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const bottomPrevBtn = document.getElementById('bottom-prev-btn');
+    const bottomNextBtn = document.getElementById('bottom-next-btn');
+    
+    const hasPrev = currentPage > 1;
+    const hasNext = currentPage < totalPages;
+    
+    [prevBtn, bottomPrevBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = !hasPrev;
+      }
+    });
+    
+    [nextBtn, bottomNextBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = !hasNext;
+      }
+    });
+    
+    // Render repositories
+    const repositoriesGrid = document.getElementById('repositories-grid');
+    if (paginatedRepositories.length === 0) {
+      repositoriesGrid.innerHTML = `
+        <div class="col-span-1 lg:col-span-2 text-center py-12">
+          <div class="text-6xl mb-4">🔍</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            No repositories found
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            ${searchQuery ? 'No repositories match your search criteria.' : 'There are no MCP repositories in this category yet.'}
+          </p>
     </div>
-  </div>
-</BaseLayout>
+      `;
+    } else {
+      repositoriesGrid.innerHTML = paginatedRepositories.map(server => 
+        renderRepositoryCard(server)
+      ).join('');
+    }
+    
+    // Render page numbers
+    const pageNumbers = getPageNumbers(currentPage, totalPages);
+    const pageNumbersContainer = document.getElementById('page-numbers');
+    if (pageNumbersContainer) {
+      pageNumbersContainer.innerHTML = pageNumbers.map(pageNum => {
+        const isCurrentPage = pageNum === currentPage;
+        const buttonClass = isCurrentPage 
+          ? 'bg-blue-600 text-white' 
+          : 'text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600';
+        
+        return `<button data-page="${pageNum}" class="page-number-btn inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${buttonClass}">${pageNum}</button>`;
+      }).join('');
+    }
+    
+    // Show bottom pagination if there are multiple pages
+    const bottomPagination = document.getElementById('bottom-pagination');
+    if (bottomPagination) {
+      bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+    }
+  }
+  
+  // Navigate to page
+  function goToPage(page) {
+    const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+    const totalPages = Math.ceil(filteredRepositories.length / itemsPerPage);
+    
+    if (page < 1 || page > totalPages || page === currentPage) {
+      return;
+    }
+    
+    currentPage = page;
+    updateURL(page);
+    renderPagination();
+    
+    // Scroll to head-title element
+    const headTitle = document.getElementById('head-title');
+    if (headTitle) {
+      headTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // Fallback to top of page if head-title not found
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  
+  // Handle items per page change
+  function handleItemsPerPageChange(newItemsPerPage) {
+    const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+    const newTotalPages = Math.ceil(filteredRepositories.length / newItemsPerPage);
+    const newCurrentPage = Math.min(currentPage, newTotalPages);
+    
+    itemsPerPage = newItemsPerPage;
+    currentPage = newCurrentPage;
+    
+    updateURL(currentPage, itemsPerPage);
+    renderPagination();
+    
+    // Scroll to head-title element
+    const headTitle = document.getElementById('head-title');
+    if (headTitle) {
+      headTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // Fallback to top of page if head-title not found
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  
+  // Handle search
+  function handleSearch(query) {
+    searchQuery = query;
+    currentPage = 1;
+    renderPagination();
+  }
+  
+  // Event listeners - use event delegation to avoid re-attaching listeners
+  function setupEventListeners() {
+    // Use event delegation on the document to handle all clicks
+    document.addEventListener('click', (e) => {
+      // Handle previous buttons
+      if (e.target.id === 'prev-btn' || e.target.id === 'bottom-prev-btn') {
+        e.preventDefault();
+        goToPage(currentPage - 1);
+        return;
+      }
+      
+      // Handle next buttons
+      if (e.target.id === 'next-btn' || e.target.id === 'bottom-next-btn') {
+        e.preventDefault();
+        goToPage(currentPage + 1);
+        return;
+      }
+      
+      // Handle page number buttons
+      if (e.target.classList.contains('page-number-btn')) {
+        e.preventDefault();
+        const page = parseInt(e.target.dataset.page, 10);
+        goToPage(page);
+        return;
+      }
+      
+      // Handle go to page button
+      if (e.target.id === 'go-to-page-btn') {
+        e.preventDefault();
+        const pageInput = document.getElementById('page-input');
+        if (pageInput) {
+          const page = parseInt(pageInput.value, 10);
+          const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+          const totalPages = Math.ceil(filteredRepositories.length / itemsPerPage);
+          if (page >= 1 && page <= totalPages) {
+            goToPage(page);
+          }
+        }
+        return;
+      }
+    });
+    
+    // Handle items per page dropdown change
+    document.addEventListener('change', (e) => {
+      if (e.target.id === 'items-per-page') {
+        const newItemsPerPage = parseInt(e.target.value, 10);
+        handleItemsPerPageChange(newItemsPerPage);
+      }
+    });
+    
+    // Handle page input enter key press
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if (e.target.id === 'page-input') {
+          e.preventDefault();
+          const page = parseInt(e.target.value, 10);
+          const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+          const totalPages = Math.ceil(filteredRepositories.length / itemsPerPage);
+          if (page >= 1 && page <= totalPages) {
+            goToPage(page);
+          }
+        }
+      }
+    });
+    
+    // Handle page input value changes (real-time updates)
+    document.addEventListener('input', (e) => {
+      if (e.target.id === 'page-input') {
+        const page = parseInt(e.target.value, 10);
+        const filteredRepositories = filterRepositories(categoryServers, searchQuery);
+        const totalPages = Math.ceil(filteredRepositories.length / itemsPerPage);
+        
+        // Validate input
+        if (page < 1) {
+          e.target.value = '1';
+        } else if (page > totalPages) {
+          e.target.value = totalPages.toString();
+        }
+      }
+      
+      if (e.target.id === 'repository-search') {
+        handleSearch(e.target.value);
+      }
+    });
+  }
+  
+  // Handle browser back/forward (only add once)
+  if (!window.paginationInitialized) {
+    window.addEventListener('popstate', () => {
+      currentPage = getCurrentPageFromURL();
+      renderPagination();
+    });
+    window.paginationInitialized = true;
+  }
+  
+  // Initialize pagination after Astro hydration is complete
+  function init() {
+    currentPage = getCurrentPageFromURL();
+    renderPagination();
+  }
+  
+  function initializeAfterHydration() {
+    console.log('🔍 DEBUG: Initializing MCP pagination after Astro hydration...');
+    
+    // Wait a bit more to ensure Astro hydration is complete
+    setTimeout(() => {
+      console.log('🔍 DEBUG: Delayed initialization after hydration');
+      init();
+    }, 100);
+  }
+  
+  // Set up event listeners only once
+  if (!window.paginationEventListenersSet) {
+    setupEventListeners();
+    window.paginationEventListenersSet = true;
+  }
+  
+  // Wait for both DOM and window load to ensure Astro hydration is complete
+  if (document.readyState === 'loading') {
+    console.log('🔍 DEBUG: DOM still loading, adding load listener');
+    window.addEventListener('load', initializeAfterHydration);
+  } else {
+    console.log('🔍 DEBUG: DOM already ready, calling delayed initialization');
+    initializeAfterHydration();
+  }
+</script>
