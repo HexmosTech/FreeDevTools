@@ -5,6 +5,7 @@ import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { scrollToHeadTitle } from "@/lib/scroll-utils";
 import { formatNumber } from "@/lib/utils";
 import { Filter, Search, Star } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -139,8 +140,8 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
     setCurrentPage(page);
     updateURL(page);
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }, [currentPage, totalPages, updateURL]);
 
   // Handle items per page change
@@ -152,8 +153,8 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
     setCurrentPage(newCurrentPage);
     updateURL(newCurrentPage, newItemsPerPage);
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to head-title element
+    scrollToHeadTitle();
   }, [currentPage, filteredCategories.length, updateURL]);
 
   // Handle search
