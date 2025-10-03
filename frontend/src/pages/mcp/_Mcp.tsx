@@ -235,7 +235,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
             <a
               key={category.id}
               href={category.url}
-              className="block p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-inherit no-underline transition-all duration-300 ease-in-out hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-1"
+              className="block p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-transparent rounded-lg text-inherit no-underline transition-all duration-300 ease-in-out hover:shadow-md  hover:-translate-y-1"
             >
               <div className="text-center space-y-3">
                 <div className="text-4xl mb-3">{getCategoryEmoji(category.icon)}</div>
