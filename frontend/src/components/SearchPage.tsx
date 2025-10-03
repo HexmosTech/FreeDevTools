@@ -31,11 +31,22 @@ interface SearchResult {
   url?: string;
   path?: string;
   slug?: string;
+  code?: string; // For emojis
+  image?: string; // For SVG icons
   [key: string]: any;
 }
 
+interface SearchResponse {
+  hits: SearchResult[];
+  query: string;
+  processingTimeMs: number;
+  limit: number;
+  offset: number;
+  estimatedTotalHits: number;
+}
+
 // Search function for Meilisearch
-async function searchUtilities(query: string) {
+async function searchUtilities(query: string): Promise<SearchResponse> {
   try {
     const response = await fetch(
       "https://search.apps.hexmos.com/indexes/freedevtools/search",
@@ -55,16 +66,27 @@ async function searchUtilities(query: string) {
     }
 
     const data = await response.json();
-    return data.hits || [];
+    return data;
   } catch (error) {
     console.error("Search error:", error);
-    return [];
+    return {
+      hits: [],
+      query: "",
+      processingTimeMs: 0,
+      limit: 0,
+      offset: 0,
+      estimatedTotalHits: 0
+    };
   }
 }
 
 const SearchPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [searchInfo, setSearchInfo] = useState<{
+    totalHits: number;
+    processingTime: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
@@ -140,18 +162,24 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setSearchInfo(null);
       return;
     }
 
     const timeoutId = setTimeout(async () => {
       setLoading(true);
       try {
-        const searchResults = await searchUtilities(query);
-        console.log("Search results:", searchResults);
-        setResults(searchResults);
+        const searchResponse = await searchUtilities(query);
+        console.log("Search results:", searchResponse);
+        setResults(searchResponse.hits || []);
+        setSearchInfo({
+          totalHits: searchResponse.estimatedTotalHits || 0,
+          processingTime: searchResponse.processingTimeMs || 0
+        });
       } catch (error) {
         console.error("Search error:", error);
         setResults([]);
+        setSearchInfo(null);
       } finally {
         setLoading(false);
       }
@@ -168,7 +196,12 @@ const SearchPage: React.FC = () => {
   // Filter results by category
   const filteredResults = activeCategory === "all" 
     ? results 
-    : results.filter(result => result.category?.toLowerCase() === activeCategory.toLowerCase());
+    : results.filter(result => {
+        if (activeCategory === "emoji") {
+          return result.category?.toLowerCase() === "emojis";
+        }
+        return result.category?.toLowerCase() === activeCategory.toLowerCase();
+      });
 
   const handleSelect = (result: SearchResult) => {
     if (result.path) {
@@ -205,11 +238,13 @@ const SearchPage: React.FC = () => {
       {/* Category filter */}
       <div className="mb-8 overflow-x-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-medium">Search Results for "{query}"</h2>
+          <h2 className="text-xl font-medium">
+            {searchInfo ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"` : `Search Results for "${query}"`}
+          </h2>
           <Button
             variant="ghost"
             size="sm"
-            onClick={clearResults} // Use our new clearResults function
+            onClick={clearResults}
           >
             <X className="h-4 w-4 mr-1" />
             Clear results
@@ -243,9 +278,9 @@ const SearchPage: React.FC = () => {
             TLDR
           </Button>
           <Button
-            variant={activeCategory === "cheatsheet" ? "default" : "outline"}
+            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveCategory("cheatsheet")}
+            onClick={() => setActiveCategory("cheatsheets")}
             className="whitespace-nowrap"
           >
             <FileText className="mr-1 h-4 w-4" />
@@ -261,9 +296,9 @@ const SearchPage: React.FC = () => {
             PNG Icons
           </Button>
           <Button
-            variant={activeCategory === "svg" ? "default" : "outline"}
+            variant={activeCategory === "svg_icons" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveCategory("svg")}
+            onClick={() => setActiveCategory("svg_icons")}
             className="whitespace-nowrap"
           >
             <PenLine className="mr-1 h-4 w-4" />
@@ -312,36 +347,103 @@ const SearchPage: React.FC = () => {
       )}
 
       {!loading && filteredResults.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredResults.map((result, index) => (
-            <a 
-              key={result.id || index}
-              href={result.path ? `https://hexmos.com${result.path}` : '#'}
-              className="block no-underline" // Remove underline from link
-            >
-              <Card
-                className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredResults.map((result, index) => {
+            // Function to get badge color based on category
+            const getBadgeVariant = (category: string) => {
+              switch (category?.toLowerCase()) {
+                case 'emojis':
+                  return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+                case 'svg_icons':
+                  return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+                case 'tools':
+                  return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+                case 'tldr':
+                  return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                case 'cheatsheets':
+                  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+                case 'png':
+                  return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+                default:
+                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+              }
+            };
+
+            return (
+              <a 
+                key={result.id || index}
+                href={result.path ? `https://hexmos.com${result.path}` : '#'}
+                className="block no-underline h-full"
               >
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="font-medium text-lg">
-                      {result.name || result.title || "Untitled"}
-                    </h2>
-                    {result.category && (
-                      <Badge variant="outline" className="text-xs">
-                        {result.category}
-                      </Badge>
-                    )}
-                  </div>
-                  {result.description && (
-                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                      {result.description}
-                    </p>
-                  )}
-                </div>
-              </Card>
-            </a>
-          ))}
+                {result.category?.toLowerCase() === "emojis" ? (
+                  <Card 
+                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col"
+                  >
+                    <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
+                      {result.category && (
+                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                          {result.category}
+                        </div>
+                      )}
+                      <div className="emoji-preview text-6xl mb-4">
+                        {result.code}
+                      </div>
+                      <h3 className="font-medium text-center text-xs">
+                        {result.name || result.title || "Untitled"}
+                      </h3>
+                    </div>
+                  </Card>
+                ) : result.category?.toLowerCase() === "svg_icons" ? (
+                  <Card
+                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
+                  >
+                    <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
+                      {result.category && (
+                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                          SVG Icons
+                        </div>
+                      )}
+                      <div className="w-16 h-16 mb-3 flex items-center justify-center bg-white dark:bg-gray-100 rounded-md p-2">
+                        <img 
+                          src={`https://hexmos.com/freedevtools${result.image}`} 
+                          alt={result.name || result.title || "SVG Icon"} 
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                      <h3 className="text-center text-xs text-gray-700 dark:text-gray-300">
+                        {result.name || result.title || "Untitled"}
+                      </h3>
+                    </div>
+                  </Card>
+                ) : (
+                  <Card
+                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
+                  >
+                    <div className="p-4 flex flex-col h-full relative">
+                      {result.category && (
+                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                          {result.category}
+                        </div>
+                      )}
+                      <div className="pr-16 mb-2">
+                        <h2 className="font-medium text-lg">
+                          {result.name || result.title || "Untitled"}
+                        </h2>
+                      </div>
+                      {result.description && (
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2 flex-grow">
+                          {result.description}
+                        </p>
+                      )}
+                    </div>
+                  </Card>
+                )}
+              </a>
+            );
+          })}
         </div>
       )}
     </div>
