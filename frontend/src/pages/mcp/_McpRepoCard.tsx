@@ -1,5 +1,6 @@
-import { Clock, Package, Star, Wrench } from "lucide-react";
+import { Clock, Download, Scale, Star, Wrench } from "lucide-react";
 import type { ProcessedServer } from "../../lib/mcp-data-processor";
+import { formatNumber } from "../../lib/utils";
 
 // Repository Card Component using Lucide React
 const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, formattedName: string }) => (
@@ -52,26 +53,29 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center space-x-1">
+            <img src="/freedevtools/svg_icons/github/github-svgrepo-com.svg" alt="GitHub" className="w-4 h-4 dark:brightness-0 dark:invert" />
             <Star className="w-4 h-4" />
-            <span>{server.stats.githubStars}</span>
+            <span>{formatNumber(server.stats.githubStars)}</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Package className="w-4 h-4" />
-            <span>{server.stats.weeklyDownloads}</span>
+            <img src="/freedevtools/svg_icons/github/npm-svgrepo-com.svg" alt="NPM" className="w-4 h-4 dark:brightness-0 dark:invert" />
+            <Download className="w-4 h-4" />
+            <span>{formatNumber(server.stats.weeklyDownloads)}</span>
           </div>
           <div className="flex items-center space-x-1">
             <Wrench className="w-4 h-4" />
-            <span>{server.stats.tools} tools</span>
+            <span>{formatNumber(server.stats.tools)} tools</span>
           </div>
           <div className="flex items-center space-x-1">
             <Clock className="w-4 h-4" />
             <span>{server.stats.lastUpdated}</span>
           </div>
         </div>
-        {/* License Badge (Right side) */}
-        <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full flex-shrink-0">
-          {server.license}
-        </span>
+        {/* License (Right side) */}
+        <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
+          <Scale className="w-4 h-4" />
+          <span>{server.license === 'No License' ? 'N/A' : server.license.replace(/license/gi, '').trim()}</span>
+        </div>
       </div>
     </div>
   </a>
