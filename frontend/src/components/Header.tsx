@@ -24,7 +24,7 @@ const Header: React.FC = () => {
 
   return (
     <div id="common-header" className="fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-6xl mx-auto px-2 md:px-6 pt-6">
+      <div className="max-w-6xl mx-auto px-2 md:px-6 sm:pt-6">
         <header className="bg-neon/1 shadow-sm backdrop-blur-lg rounded-b-lg">
           <div className="py-3 px-0 flex items-center justify-between gap-4">
             {/* Logo */}
@@ -42,7 +42,8 @@ const Header: React.FC = () => {
                   Free DevTools
                 </p>
                 <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-tight">
-                  50,000+ Free Dev Resources - No Login Required
+                  <span className="block md:inline">50,000+ Free Dev Resources</span>
+                  <span className="block md:inline md:ml-1">- No Login Required</span>
                 </p>
               </div>
             </a>

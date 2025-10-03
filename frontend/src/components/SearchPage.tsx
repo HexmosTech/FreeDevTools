@@ -236,8 +236,8 @@ const SearchPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-2 md:px-6 py-8">
       {/* Category filter */}
-      <div className="mb-8 overflow-x-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
           <h2 className="text-xl font-medium">
             {searchInfo ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"` : `Search Results for "${query}"`}
           </h2>
@@ -250,12 +250,12 @@ const SearchPage: React.FC = () => {
             Clear results
           </Button>
         </div>
-        <div className="flex space-x-2 pb-2">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
           <Button
             variant={activeCategory === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("all")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
             All
           </Button>
@@ -263,54 +263,54 @@ const SearchPage: React.FC = () => {
             variant={activeCategory === "tools" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("tools")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Wrench className="mr-1 h-4 w-4" />
+            <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Tools
           </Button>
           <Button
             variant={activeCategory === "tldr" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("tldr")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <BookOpen className="mr-1 h-4 w-4" />
+            <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             TLDR
           </Button>
           <Button
             variant={activeCategory === "cheatsheet" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("cheatsheet")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <FileText className="mr-1 h-4 w-4" />
+            <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Cheatsheets
           </Button>
           <Button
             variant={activeCategory === "png" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("png")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Image className="mr-1 h-4 w-4" />
+            <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             PNG Icons
           </Button>
           <Button
             variant={activeCategory === "svg_icons" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("svg_icons")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <PenLine className="mr-1 h-4 w-4" />
+            <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             SVG Icons
           </Button>
           <Button
             variant={activeCategory === "emoji" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("emoji")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Smile className="mr-1 h-4 w-4" />
+            <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Emojis
           </Button>
         </div>
