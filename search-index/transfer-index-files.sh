@@ -36,13 +36,16 @@ echo "✅ All required files found!"
 echo "📁 Creating remote directory..."
 ssh "$REMOTE_HOST" "mkdir -p $REMOTE_DIR"
 
-# Transfer the indexing script first (from search-index directory)
-echo "📤 Transferring index-fdt.sh script..."
-if [ -f "$SCRIPT_DIR/index-fdt.sh" ]; then
-    rsync -avz --progress "$SCRIPT_DIR/index-fdt.sh" "$REMOTE_HOST:$REMOTE_DIR/"
-    ssh "$REMOTE_HOST" "chmod +x $REMOTE_DIR/index-fdt.sh"
+# Copy the indexing script from searchsync repository on remote server
+echo "📤 Copying index-fdt.sh script from searchsync repository..."
+ssh "$REMOTE_HOST" "cp /var/lib/searchsync/searchsync_repo/freedevtools/index-fdt.sh $REMOTE_DIR/"
+ssh "$REMOTE_HOST" "chmod +x $REMOTE_DIR/index-fdt.sh"
+
+# Verify the script was copied successfully
+if ssh "$REMOTE_HOST" "[ -f $REMOTE_DIR/index-fdt.sh ]"; then
+    echo "✅ Successfully copied index-fdt.sh script"
 else
-    echo "❌ index-fdt.sh script not found in $SCRIPT_DIR"
+    echo "❌ Failed to copy index-fdt.sh script from /var/lib/searchsync/searchsync_repo/freedevtools/"
     exit 1
 fi
 
