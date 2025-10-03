@@ -7,7 +7,7 @@ export interface ProcessedServer {
   authorUrl: string;
   description: string;
   isOfficial: boolean;
-  categories: string[];
+  categories: string;
   imageUrl?: string;
   scores: {
     security: string;
@@ -204,7 +204,7 @@ export function processInputData(inputData: InputData): {
           authorUrl: `https://github.com/${repo.owner}`,
           description: repo.description,
           isOfficial: categoryData.category === 'official-servers',
-          categories: [categoryData.category],
+          categories: categoryData.category,
           imageUrl: repo.imageUrl || undefined,
           scores: {
             security: 'A', // Default score
@@ -347,12 +347,7 @@ function getMockData(): {
       description:
         'Integrates with Dumpling AI to provide data scraping, content processing, knowledge management, and code execution capabilities through tools for web interactions, document handling, and AI services.',
       isOfficial: true,
-      categories: [
-        'web-scraping',
-        'code-execution',
-        'knowledge-memory',
-        'remote-capable',
-      ],
+      categories: 'web-scraping',
       scores: {
         security: 'A',
         license: 'A',
@@ -503,7 +498,7 @@ MIT License - see LICENSE file for details.`,
       description:
         'A Model Context Protocol (MCP) server that allows AI agents to generate smart contracts using OpenZeppelin Contracts libraries.',
       isOfficial: true,
-      categories: ['security', 'blockchain', 'code-analysis'],
+      categories: 'security',
       scores: {
         security: 'A',
         license: 'A',
