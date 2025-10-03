@@ -98,15 +98,9 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
         {/* Overview Stats */}
         <ToolContentCardWrapper>
           <Card className="p-6 mt-6">
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 ">
-                Model Context Protocol Directory
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                The largest collection of {formatNumber(serversCount)}+ MCP repositories for AI agents.
-                Find everything you need to build powerful AI applications with the Model Context Protocol.
-              </p>
+            <h3 className="text-lg font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">Browse by Category</h3>
 
+            <div className="text-center space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-orange-600">{categoriesCount}</div>
@@ -120,7 +114,6 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
 
               {/* Categories Grid */}
               <div className="mt-8">
-                <h3 className="text-lg font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">Browse by Category</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {categories.map((category) => (
                     <a
@@ -176,29 +169,6 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
                   See security, license, and quality scores to make informed decisions.
                 </p>
               </div>
-            </div>
-          </Card>
-        </ToolContentCardWrapper>
-
-        {/* About MCP */}
-        <ToolContentCardWrapper>
-          <Card className="p-6 mt-6">
-            <h2 className="text-xl font-semibold mb-4">About Model Context Protocol (MCP)</h2>
-            <div className="space-y-4 text-gray-700 dark:text-gray-300">
-              <p>
-                The Model Context Protocol (MCP) is a standardized protocol for managing context between
-                large language models (LLMs) and external systems. MCP enables AI agents to access tools,
-                resources, and data sources through a unified interface.
-              </p>
-              <p>
-                Our directory contains {formatNumber(serversCount + toolsCount + clientsCount)} MCP resources
-                across {categoriesCount} categories, making it the most comprehensive collection of
-                Model Context Protocol resources available.
-              </p>
-              <p>
-                <strong>Common uses:</strong> AI agent development, workflow automation, data processing,
-                API integration, content generation, and building intelligent applications.
-              </p>
             </div>
           </Card>
         </ToolContentCardWrapper>
