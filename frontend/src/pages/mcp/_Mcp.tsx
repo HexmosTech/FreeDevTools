@@ -78,7 +78,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
       <ToolContainer>
         <ToolHead
           name="MCP Directory"
-          description={`Discover ${formatNumber(serversCount)}+ MCP servers, ${formatNumber(toolsCount)}+ tools, and ${formatNumber(clientsCount)}+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project.`}
+          description={`Browse ${formatNumber(serversCount)}+ MCP repositories instantly with our comprehensive directory. Find Model Context Protocol servers, tools, and clients by category. Free, no registration required.`}
           breadcrumbItems={breadcrumbItems}
         />
         <McpSkeleton />
@@ -90,7 +90,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
     <ToolContainer>
       <ToolHead
         name="MCP Directory"
-        description={`Discover ${formatNumber(serversCount)}+ MCP servers, ${formatNumber(toolsCount)}+ tools, and ${formatNumber(clientsCount)}+ clients for AI agents. Browse by category, filter by license, and find the perfect Model Context Protocol resources for your project.`}
+        description={`Browse ${formatNumber(serversCount)}+ MCP repositories instantly with our comprehensive directory. Find Model Context Protocol servers, tools, and clients by category. Free, no registration required.`}
         breadcrumbItems={breadcrumbItems}
       />
 
