@@ -7,6 +7,8 @@ export interface PaginationProps {
   totalPages: number;
   showBottomPagination?: boolean;
   itemsLabel?: string;
+  onPageChange?: (page: number) => void;
+  onItemsPerPageChange?: (itemsPerPage: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -15,14 +17,46 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   showBottomPagination = false,
-  itemsLabel = "items"
+  itemsLabel = "items",
+  onPageChange,
+  onItemsPerPageChange
 }) => {
+  // Generate page numbers
+  const getPageNumbers = (currentPage: number, totalPages: number) => {
+    const pages: number[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= maxVisible; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers(currentPage, totalPages);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = Math.min(endIndex, totalItems) - startIndex;
   return (
     <>
       {/* Top Pagination */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
-        <div id="pagination-info" className="text-sm text-slate-900 dark:text-slate-400 mb-2 sm:mb-0">
-          Loading...
+        <div className="text-sm text-slate-900 dark:text-slate-400 mb-2 sm:mb-0">
+          Showing {paginatedItems} of {totalItems} {itemsLabel} (Page {currentPage} of {totalPages})
         </div>
 
         {/* Pagination Controls */}
@@ -35,8 +69,11 @@ const Pagination: React.FC<PaginationProps> = ({
             <select
               id="items-per-page"
               className="px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              defaultValue={itemsPerPage.toString()}
+              value={itemsPerPage.toString()}
+              onChange={(e) => onItemsPerPageChange?.(parseInt(e.target.value, 10))}
             >
+              <option value="3">3</option>
+              <option value="6">6</option>
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="30">30</option>
@@ -48,21 +85,21 @@ const Pagination: React.FC<PaginationProps> = ({
           {/* Pagination buttons */}
           <div className="flex items-center space-x-2">
             <button
-              id="prev-btn"
+              onClick={() => onPageChange?.(currentPage - 1)}
               className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled
+              disabled={currentPage <= 1}
             >
               ← Previous
             </button>
 
-            <span id="page-info" className="text-sm text-slate-500 dark:text-slate-400">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {currentPage} / {totalPages}
             </span>
 
             <button
-              id="next-btn"
+              onClick={() => onPageChange?.(currentPage + 1)}
               className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled
+              disabled={currentPage >= totalPages}
             >
               Next →
             </button>
