@@ -278,9 +278,9 @@ const SearchPage: React.FC = () => {
             TLDR
           </Button>
           <Button
-            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
+            variant={activeCategory === "cheatsheet" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveCategory("cheatsheets")}
+            onClick={() => setActiveCategory("cheatsheet")}
             className="whitespace-nowrap"
           >
             <FileText className="mr-1 h-4 w-4" />
@@ -360,12 +360,12 @@ const SearchPage: React.FC = () => {
                   return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
                 case 'tldr':
                   return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-                case 'cheatsheets':
-                  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+                case 'cheatsheet':
+                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
                 case 'png':
                   return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
                 default:
-                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+                  return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
               }
             };
 
@@ -373,7 +373,7 @@ const SearchPage: React.FC = () => {
               <a 
                 key={result.id || index}
                 href={result.path ? `https://hexmos.com${result.path}` : '#'}
-                className="block no-underline h-full"
+                className="block no-underline"
               >
                 {result.category?.toLowerCase() === "emojis" ? (
                   <Card 
@@ -388,9 +388,9 @@ const SearchPage: React.FC = () => {
                       <div className="emoji-preview text-6xl mb-4">
                         {result.code}
                       </div>
-                      <h3 className="font-medium text-center text-xs">
+                      <span className="font-medium text-center text-xs">
                         {result.name || result.title || "Untitled"}
-                      </h3>
+                      </span>
                     </div>
                   </Card>
                 ) : result.category?.toLowerCase() === "svg_icons" ? (
@@ -413,9 +413,9 @@ const SearchPage: React.FC = () => {
                           }}
                         />
                       </div>
-                      <h3 className="text-center text-xs text-gray-700 dark:text-gray-300">
+                      <span className="text-center text-xs text-gray-700 dark:text-gray-300">
                         {result.name || result.title || "Untitled"}
-                      </h3>
+                      </span>
                     </div>
                   </Card>
                 ) : (
@@ -429,12 +429,12 @@ const SearchPage: React.FC = () => {
                         </div>
                       )}
                       <div className="pr-16 mb-2">
-                        <h2 className="font-medium text-lg">
+                        <span className="font-bold text-md">
                           {result.name || result.title || "Untitled"}
-                        </h2>
+                        </span>
                       </div>
                       {result.description && (
-                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2 flex-grow">
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-3 flex-grow">
                           {result.description}
                         </p>
                       )}
