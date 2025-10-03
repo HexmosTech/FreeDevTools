@@ -65,17 +65,20 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
 
           {/* Right side: Other stats */}
           <div className="flex items-center space-x-4">
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                  <Wrench className="w-4 h-4 text-gray-900 dark:text-gray-400" />
-                  <span>{formatNumber(server.stats.tools)}</span>
+                  <img src="/freedevtools/svg_icons/github/github-svgrepo-com.svg" alt="GitHub" className="w-4 h-4 text-gray-900 dark:brightness-0 dark:invert" />
+                  <Star className="w-4 h-4 text-gray-900 dark:text-gray-400" />
+                  <span>{formatNumber(server.stats.githubStars)}</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Number of tools available in this MCP server</p>
+                <p>GitHub stars for this repository</p>
               </TooltipContent>
             </Tooltip>
+
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -89,17 +92,15 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
                 <p>Weekly downloads from NPM</p>
               </TooltipContent>
             </Tooltip>
-
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                  <img src="/freedevtools/svg_icons/github/github-svgrepo-com.svg" alt="GitHub" className="w-4 h-4 text-gray-900 dark:brightness-0 dark:invert" />
-                  <Star className="w-4 h-4 text-gray-900 dark:text-gray-400" />
-                  <span>{formatNumber(server.stats.githubStars)}</span>
+                  <Wrench className="w-4 h-4 text-gray-900 dark:text-gray-400" />
+                  <span>{formatNumber(server.stats.tools)}</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>GitHub stars for this repository</p>
+                <p>Number of tools available in this MCP server</p>
               </TooltipContent>
             </Tooltip>
           </div>
