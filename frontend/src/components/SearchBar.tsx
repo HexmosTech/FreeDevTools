@@ -120,8 +120,15 @@ const SearchBar: React.FC = () => {
       }
       // Update URL hash on Enter key
       window.location.hash = `search?q=${encodeURIComponent(searchValue)}`;
-    } else if (e.key === "Escape" && window.innerWidth < 768) {
-      setIsSearchExpanded(false);
+    } else if (e.key === "Escape") {
+      // On mobile, collapse the search if it's expanded
+      if (window.innerWidth < 768) {
+        setIsSearchExpanded(false);
+      } else {
+        // On desktop, clear the search and blur the input
+        clearSearch();
+        searchInputRef.current?.blur();
+      }
     }
   };
 
