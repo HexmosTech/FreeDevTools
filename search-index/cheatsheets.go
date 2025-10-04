@@ -99,7 +99,7 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 	}
 
 	// Generate path
-	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s", category, name)
+	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s/", category, name)
 
 	// Generate ID
 	id := generateCheatsheetID(fullPath)
@@ -152,6 +152,8 @@ func extractHTMLDescription(content string) string {
 func generateCheatsheetID(path string) string {
 	// Remove the base path
 	cleanPath := strings.Replace(path, "/freedevtools/c/", "", 1)
+	// Remove trailing slash if present
+	cleanPath = strings.TrimSuffix(cleanPath, "/")
 	// Replace slashes with hyphens
 	cleanPath = strings.Replace(cleanPath, "/", "-", -1)
 	// Replace any invalid characters with underscores
