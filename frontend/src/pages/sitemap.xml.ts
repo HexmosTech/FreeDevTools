@@ -1,4 +1,4 @@
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro';
 
 // Root sitemap index that points to category sitemaps
 export const GET: APIRoute = async ({ site }) => {
@@ -34,12 +34,16 @@ export const GET: APIRoute = async ({ site }) => {
     <loc>${site}/cars/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${site}/mcp/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
 </sitemapindex>`;
 
   return new Response(sitemapIndex, {
     headers: {
-      "Content-Type": "application/xml",
-      "Cache-Control": "public, max-age=3600",
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 };
