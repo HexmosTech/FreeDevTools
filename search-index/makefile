@@ -23,6 +23,9 @@ gen-svg-icons:
 gen-cheatsheets:
 	go run . category cheatsheets
 
+gen-mcp:
+	go run . category mcp
+
 gen-all:
 	go run .
 

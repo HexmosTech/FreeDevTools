@@ -1,0 +1,161 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"time"
+)
+
+// MCPInputData represents the structure of the input JSON file
+type MCPInputData struct {
+	TotalCategories   int                    `json:"totalCategories"`
+	TotalRepositories int                    `json:"totalRepositories"`
+	ProcessingStarted string                 `json:"processing_started"`
+	Data              map[string]MCPCategory `json:"data"`
+}
+
+// MCPCategory represents a category of MCP repositories
+type MCPCategory struct {
+	Category           string                       `json:"category"`
+	CategoryDisplay    string                       `json:"categoryDisplay"`
+	Description        string                       `json:"description"`
+	TotalRepositories  int                          `json:"totalRepositories"`
+	Repositories       map[string]MCPRepository     `json:"repositories"`
+}
+
+// MCPRepository represents a single MCP repository
+type MCPRepository struct {
+	Owner               string      `json:"owner"`
+	Name                string      `json:"name"`
+	URL                 string      `json:"url"`
+	ImageURL            string      `json:"imageUrl"`
+	Enhanced            bool        `json:"enhanced"`
+	Processed           bool        `json:"processed"`
+	GotData             bool        `json:"got_data"`
+	ProcessingTimestamp string      `json:"processing_timestamp"`
+	CollectionTimestamp string      `json:"collection_timestamp"`
+	Stars               int         `json:"stars"`
+	Forks               int         `json:"forks"`
+	License             string      `json:"license"`
+	Language            string      `json:"language"`
+	CreatedAt           string      `json:"created_at"`
+	UpdatedAt           string      `json:"updated_at"`
+	OpenIssues          int         `json:"open_issues"`
+	GithubSuccess       bool        `json:"github_success"`
+	GithubError         interface{} `json:"github_error"`
+	NPMURL              string      `json:"npm_url"`
+	NPMDownloads        int         `json:"npm_downloads"`
+	NPMPackageName      interface{} `json:"npm_package_name"`
+	NPMSuccess          bool        `json:"npm_success"`
+	NPMError            interface{} `json:"npm_error"`
+	Description         string      `json:"description"`
+	ReadmeContent       string      `json:"readme_content"`
+}
+
+// generateMCPData processes the MCP input JSON and generates search index data
+func generateMCPData(ctx context.Context) ([]MCPData, error) {
+	// Path to the MCP input JSON file
+	inputPath := filepath.Join("..", "frontend", "src", "pages", "mcp", "data", "input.json")
+	
+	// Check if file exists
+	if _, err := os.Stat(inputPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("MCP input file not found at %s", inputPath)
+	}
+
+	// Read the input JSON file
+	data, err := os.ReadFile(inputPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read MCP input file: %w", err)
+	}
+
+	// Parse the JSON data
+	var inputData MCPInputData
+	if err := json.Unmarshal(data, &inputData); err != nil {
+		return nil, fmt.Errorf("failed to parse MCP input JSON: %w", err)
+	}
+
+	var mcpData []MCPData
+
+	// Process each category
+	for categoryKey, category := range inputData.Data {
+		// Process each repository in the category
+		for repoKey, repo := range category.Repositories {
+			// Skip if repository doesn't have data
+			if !repo.GotData || !repo.Processed {
+				continue
+			}
+
+			// Create a unique ID for the repository
+			id := fmt.Sprintf("mcp-%s-%s", categoryKey, repoKey)
+
+			// Generate a path for the repository
+			path := fmt.Sprintf("/freedevtools/mcp/%s/%s/", categoryKey, repoKey)
+
+			// Use description from repository, fallback to category description
+			description := repo.Description
+			if description == "" {
+				description = category.Description
+			}
+			if description == "" {
+				description = fmt.Sprintf("MCP server: %s", repo.Name)
+			}
+
+			// Create MCPData entry
+			mcpEntry := MCPData{
+				ID:          id,
+				Name:        repo.Name,
+				Description: description,
+				Path:        path,
+				Category:    "mcp",
+				Owner:       repo.Owner,
+				Stars:       repo.Stars,
+				Language:    repo.Language,
+			}
+
+			mcpData = append(mcpData, mcpEntry)
+		}
+	}
+
+	return mcpData, nil
+}
+
+// runMCPOnly runs only the MCP data generation
+func runMCPOnly(ctx context.Context, start time.Time) {
+	fmt.Println("🔧 Generating MCP data only...")
+
+	mcpData, err := generateMCPData(ctx)
+	if err != nil {
+		log.Fatalf("❌ MCP data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("mcp.json", mcpData); err != nil {
+		log.Fatalf("Failed to save MCP data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 MCP data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d MCP repositories\n", len(mcpData))
+
+	// Show sample data
+	fmt.Println("\n📝 Sample MCP repositories:")
+	for i, repo := range mcpData {
+		if i >= 10 { // Show first 10
+			fmt.Printf("  ... and %d more repositories\n", len(mcpData)-10)
+			break
+		}
+		fmt.Printf("  %d. %s (ID: %s)\n", i+1, repo.Name, repo.ID)
+		if repo.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(repo.Description, 80))
+		}
+		fmt.Printf("     Owner: %s | Stars: %d | Language: %s\n", repo.Owner, repo.Stars, repo.Language)
+		fmt.Printf("     Path: %s\n", repo.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/mcp.json\n")
+}

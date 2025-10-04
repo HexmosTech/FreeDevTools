@@ -47,6 +47,18 @@ type CheatsheetData struct {
 	Category    string `json:"category"`
 }
 
+// MCPData represents an MCP repository entry
+type MCPData struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Path        string `json:"path"`
+	Category    string `json:"category"`
+	Owner       string `json:"owner"`
+	Stars       int    `json:"stars"`
+	Language    string `json:"language"`
+}
+
 // FrontMatter represents YAML frontmatter in markdown files
 type FrontMatter struct {
 	Title       string   `yaml:"title"`

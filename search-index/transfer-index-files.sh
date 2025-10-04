@@ -7,7 +7,7 @@ REMOTE_HOST="nats03-do"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOCAL_DIR="$SCRIPT_DIR/output"
 REMOTE_DIR="/tmp/freedevtools-index"
-FILES=("tools.json" "tldr_pages.json" "emojis.json" "svg_icons.json" "cheatsheets.json")
+FILES=("tools.json" "tldr_pages.json" "emojis.json" "svg_icons.json" "cheatsheets.json" "mcp.json")
 
 echo "🚀 Starting transfer to nats03server..."
 echo "📁 Working directory: $SCRIPT_DIR"
