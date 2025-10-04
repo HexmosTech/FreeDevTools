@@ -76,11 +76,17 @@ func processTLDRFile(filePath string) (*TLDRData, error) {
 	// Generate ID from path
 	id := generateIDFromPath(frontmatter.Path)
 
+	// Ensure path ends with trailing slash
+	path := frontmatter.Path
+	if !strings.HasSuffix(path, "/") {
+		path = path + "/"
+	}
+
 	tldrData := &TLDRData{
 		ID:          id,
 		Name:        frontmatter.Name,
 		Description: frontmatter.Description,
-		Path:        frontmatter.Path,
+		Path:        path,
 		Category:    "tldr", // Always set to "tldr" for all TLDR entries
 	}
 
