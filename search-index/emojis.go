@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -40,6 +41,11 @@ func generateEmojisData(ctx context.Context) ([]EmojiData, error) {
 			emojisData = append(emojisData, *data)
 		}
 	}
+
+	// Sort by ID
+	sort.Slice(emojisData, func(i, j int) bool {
+		return emojisData[i].ID < emojisData[j].ID
+	})
 
 	fmt.Printf("😀 Processed %d emoji files\n", len(emojisData))
 	return emojisData, nil

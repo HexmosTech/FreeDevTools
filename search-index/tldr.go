@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -41,6 +42,11 @@ func generateTLDRData(ctx context.Context) ([]TLDRData, error) {
 			tldrData = append(tldrData, *data)
 		}
 	}
+
+	// Sort by ID
+	sort.Slice(tldrData, func(i, j int) bool {
+		return tldrData[i].ID < tldrData[j].ID
+	})
 
 	fmt.Printf("📚 Processed %d TLDR files\n", len(tldrData))
 	return tldrData, nil

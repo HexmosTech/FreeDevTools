@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 )
 
@@ -119,6 +120,11 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 			mcpData = append(mcpData, mcpEntry)
 		}
 	}
+
+	// Sort by ID
+	sort.Slice(mcpData, func(i, j int) bool {
+		return mcpData[i].ID < mcpData[j].ID
+	})
 
 	return mcpData, nil
 }

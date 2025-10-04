@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -51,9 +52,10 @@ func generateCheatsheetsData(ctx context.Context) ([]CheatsheetData, error) {
 		cheatsheetsData = append(cheatsheetsData, categoryData)
 	}
 
-	// Sort by name (like Python script does)
-	// Simple sorting - you could implement a more sophisticated sort if needed
-	// For now, categories will be added after individual cheatsheets
+	// Sort by ID
+	sort.Slice(cheatsheetsData, func(i, j int) bool {
+		return cheatsheetsData[i].ID < cheatsheetsData[j].ID
+	})
 
 	categoriesCount := len(categoriesSet)
 	individualCheatsheets := len(cheatsheetsData) - categoriesCount

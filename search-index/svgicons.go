@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -77,6 +78,11 @@ func generateSVGIconsData(ctx context.Context) ([]SVGIconData, error) {
 			svgIconsData = append(svgIconsData, iconData)
 		}
 	}
+
+	// Sort by ID
+	sort.Slice(svgIconsData, func(i, j int) bool {
+		return svgIconsData[i].ID < svgIconsData[j].ID
+	})
 
 	fmt.Printf("🎨 Processed %d categories with %d icons total\n", categoryCount, iconCount)
 	return svgIconsData, nil
