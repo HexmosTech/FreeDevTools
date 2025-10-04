@@ -42,7 +42,7 @@ const Header: React.FC = () => {
                   Free DevTools
                 </p>
                 <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-tight">
-                  <span className="block md:inline">50,000+ Free Dev Resources</span>
+                  <span className="block md:inline">1,25,000+ Free Dev Resources</span>
                   <span className="block md:inline md:ml-1">- No Login Required</span>
                 </p>
               </div>
