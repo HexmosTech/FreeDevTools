@@ -99,7 +99,7 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 	}
 
 	// Create the path
-	path := fmt.Sprintf("/freedevtools/emoji/%s", slug)
+	path := fmt.Sprintf("/freedevtools/emoji/%s/", slug)
 
 	// Generate ID
 	id := fmt.Sprintf("emojis-%s", slug)
