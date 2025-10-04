@@ -4,10 +4,10 @@ import type { ProcessedServer } from "../../lib/mcp-data-processor";
 import { formatNumber } from "../../lib/utils";
 
 // Repository Card Component using Lucide React
-const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, formattedName: string }) => (
+const RepositoryCard = ({ server, formattedName, category }: { server: ProcessedServer, formattedName: string, category?: string }) => (
   <TooltipProvider>
     <a
-      href={`/freedevtools/mcp/${server.id}/`}
+      href={category ? `/freedevtools/mcp/${category}/${server.id}/` : `/freedevtools/mcp/${server.id}/`}
       className="block bg-white dark:bg-slate-900 border border-slate-200 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       data-repo-id={server.id}
       data-repo-name={server.name}
@@ -40,7 +40,10 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
                 className="w-16 h-16 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (nextElement) {
+                    nextElement.style.display = 'flex';
+                  }
                 }}
               />
             ) : null}
