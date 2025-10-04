@@ -53,7 +53,7 @@ func generateSVGIconsData(ctx context.Context) ([]SVGIconData, error) {
 			displayName := formatIconName(iconName)
 
 			// Create the path (similar to Python logic)
-			iconPath := fmt.Sprintf("/freedevtools/svg_icons/%s/%s", clusterEntry.SourceFolder, iconName)
+			iconPath := fmt.Sprintf("/freedevtools/svg_icons/%s/%s/", clusterEntry.SourceFolder, iconName)
 
 			// Generate ID from path (similar to Python logic)
 			iconID := generateIconIDFromPath(iconPath)
