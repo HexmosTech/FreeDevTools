@@ -7,7 +7,7 @@ import { formatNumber } from "../../lib/utils";
 const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, formattedName: string }) => (
   <TooltipProvider>
     <a
-      href={`/freedevtools/mcp/${server.id}`}
+      href={`/freedevtools/mcp/${server.id}/`}
       className="block bg-white dark:bg-slate-900 border border-slate-200 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       data-repo-id={server.id}
       data-repo-name={server.name}

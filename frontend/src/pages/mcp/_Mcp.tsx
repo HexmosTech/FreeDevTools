@@ -235,7 +235,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
           {paginatedCategories.map((category) => (
             <a
               key={category.id}
-              href={category.url}
+              href={category.url + "/"}
               className="block p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-transparent rounded-lg text-inherit no-underline transition-all duration-300 ease-in-out hover:shadow-md  hover:-translate-y-1"
             >
               <div className="text-center space-y-3">
@@ -308,7 +308,7 @@ const Mcp: React.FC<McpProps> = ({ serversCount, toolsCount, clientsCount, categ
             ←  Back to Free DevTools
           </a>
           <a
-            href="/freedevtools/mcp/credits"
+            href="/freedevtools/mcp/credits/"
             className="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           >
             Credits & Acknowledgments
