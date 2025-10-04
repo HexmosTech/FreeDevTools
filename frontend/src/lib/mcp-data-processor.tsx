@@ -137,7 +137,7 @@ export interface InputData {
   };
 }
 
-// Load and process the input data
+// Load and process the input data using Astro content collections
 export async function loadMcpData(): Promise<{
   servers: ProcessedServer[];
   tools: ProcessedTool[];
@@ -145,10 +145,17 @@ export async function loadMcpData(): Promise<{
   categories: ProcessedCategory[];
   metadata: ProcessedMetadata;
 }> {
-  // Load input.json data
-  // Use static import for Astro compatibility
-  const inputData = await import('../pages/mcp/data/input.json') as { default: InputData };
-  return processInputData(inputData.default);
+  // Load data from Astro content collections
+  const { getCollection } = await import('astro:content');
+  const mcpDataEntries = await getCollection('mcpData');
+
+  // Get the first (and only) entry from the collection
+  const mcpDataEntry = mcpDataEntries[0];
+  if (!mcpDataEntry) {
+    throw new Error('No MCP data found in content collection');
+  }
+
+  return processInputData(mcpDataEntry.data as InputData);
 }
 
 // Process input.json data into the expected format
