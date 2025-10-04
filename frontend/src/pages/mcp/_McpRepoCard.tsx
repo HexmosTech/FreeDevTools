@@ -8,7 +8,8 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
   <TooltipProvider>
     <a
       href={`/freedevtools/mcp/${server.id}`}
-      className="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-transparent rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="block bg-white dark:bg-slate-900 border border-slate-200 rounded-lg p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      data-repo-id={server.id}
       data-repo-name={server.name}
       data-repo-description={server.description}
       data-repo-license={server.license}
@@ -37,16 +38,22 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
                 src={server.imageUrl}
                 alt={`${formattedName} logo`}
                 className="w-16 h-16 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                }}
               />
-            ) : (
-              <div className="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
-                <img
-                  src="/freedevtools/svg_icons/automation/mcp-server-stroke-rounded.svg"
-                  alt="MCP Server"
-                  className="w-10 h-10 text-slate-400"
-                />
-              </div>
-            )}
+            ) : null}
+            <div
+              className="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center"
+              style={{ display: server.imageUrl ? 'none' : 'flex' }}
+            >
+              <img
+                src="/freedevtools/svg_icons/automation/mcp-server-stroke-rounded.svg"
+                alt="MCP Server"
+                className="w-10 h-10 text-slate-400"
+              />
+            </div>
           </div>
           <div className="flex-1">
             <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3">
@@ -65,7 +72,6 @@ const RepositoryCard = ({ server, formattedName }: { server: ProcessedServer, fo
 
           {/* Right side: Other stats */}
           <div className="flex items-center space-x-4">
-
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
