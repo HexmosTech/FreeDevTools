@@ -236,8 +236,8 @@ const SearchPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-2 md:px-6 py-8">
       {/* Category filter */}
-      <div className="mb-8 overflow-x-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
           <h2 className="text-xl font-medium">
             {searchInfo ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"` : `Search Results for "${query}"`}
           </h2>
@@ -250,12 +250,12 @@ const SearchPage: React.FC = () => {
             Clear results
           </Button>
         </div>
-        <div className="flex space-x-2 pb-2">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
           <Button
             variant={activeCategory === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("all")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
             All
           </Button>
@@ -263,54 +263,54 @@ const SearchPage: React.FC = () => {
             variant={activeCategory === "tools" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("tools")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Wrench className="mr-1 h-4 w-4" />
+            <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Tools
           </Button>
           <Button
             variant={activeCategory === "tldr" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("tldr")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <BookOpen className="mr-1 h-4 w-4" />
+            <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             TLDR
           </Button>
           <Button
-            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
+            variant={activeCategory === "cheatsheet" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveCategory("cheatsheets")}
-            className="whitespace-nowrap"
+            onClick={() => setActiveCategory("cheatsheet")}
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <FileText className="mr-1 h-4 w-4" />
+            <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Cheatsheets
           </Button>
           <Button
             variant={activeCategory === "png" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("png")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Image className="mr-1 h-4 w-4" />
+            <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             PNG Icons
           </Button>
           <Button
             variant={activeCategory === "svg_icons" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("svg_icons")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <PenLine className="mr-1 h-4 w-4" />
+            <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             SVG Icons
           </Button>
           <Button
             variant={activeCategory === "emoji" ? "default" : "outline"}
             size="sm"
             onClick={() => setActiveCategory("emoji")}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs lg:text-sm"
           >
-            <Smile className="mr-1 h-4 w-4" />
+            <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Emojis
           </Button>
         </div>
@@ -360,12 +360,12 @@ const SearchPage: React.FC = () => {
                   return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
                 case 'tldr':
                   return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-                case 'cheatsheets':
-                  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+                case 'cheatsheet':
+                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
                 case 'png':
                   return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
                 default:
-                  return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+                  return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
               }
             };
 
@@ -373,7 +373,7 @@ const SearchPage: React.FC = () => {
               <a 
                 key={result.id || index}
                 href={result.path ? `https://hexmos.com${result.path}` : '#'}
-                className="block no-underline h-full"
+                className="block no-underline"
               >
                 {result.category?.toLowerCase() === "emojis" ? (
                   <Card 
@@ -388,9 +388,9 @@ const SearchPage: React.FC = () => {
                       <div className="emoji-preview text-6xl mb-4">
                         {result.code}
                       </div>
-                      <h3 className="font-medium text-center text-xs">
+                      <span className="font-medium text-center text-xs">
                         {result.name || result.title || "Untitled"}
-                      </h3>
+                      </span>
                     </div>
                   </Card>
                 ) : result.category?.toLowerCase() === "svg_icons" ? (
@@ -413,9 +413,9 @@ const SearchPage: React.FC = () => {
                           }}
                         />
                       </div>
-                      <h3 className="text-center text-xs text-gray-700 dark:text-gray-300">
+                      <span className="text-center text-xs text-gray-700 dark:text-gray-300">
                         {result.name || result.title || "Untitled"}
-                      </h3>
+                      </span>
                     </div>
                   </Card>
                 ) : (
@@ -429,12 +429,12 @@ const SearchPage: React.FC = () => {
                         </div>
                       )}
                       <div className="pr-16 mb-2">
-                        <h2 className="font-medium text-lg">
+                        <span className="font-bold text-md">
                           {result.name || result.title || "Untitled"}
-                        </h2>
+                        </span>
                       </div>
                       {result.description && (
-                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2 flex-grow">
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-3 flex-grow">
                           {result.description}
                         </p>
                       )}

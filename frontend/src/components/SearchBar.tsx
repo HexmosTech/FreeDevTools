@@ -120,8 +120,15 @@ const SearchBar: React.FC = () => {
       }
       // Update URL hash on Enter key
       window.location.hash = `search?q=${encodeURIComponent(searchValue)}`;
-    } else if (e.key === "Escape" && window.innerWidth < 768) {
-      setIsSearchExpanded(false);
+    } else if (e.key === "Escape") {
+      // On mobile, collapse the search if it's expanded
+      if (window.innerWidth < 768) {
+        setIsSearchExpanded(false);
+      } else {
+        // On desktop, clear the search and blur the input
+        clearSearch();
+        searchInputRef.current?.blur();
+      }
     }
   };
 
@@ -170,7 +177,7 @@ const SearchBar: React.FC = () => {
           "relative md:flex-1 md:max-w-sm md:mx-4",
           "transition-all duration-200 ease-in-out",
           isSearchExpanded
-            ? "fixed inset-x-0 top-16 z-50 px-4 pb-4 md:static md:p-0 md:z-auto bg-white dark:bg-gray-900 shadow-md md:shadow-none"
+            ? "fixed inset-x-0 top-16 z-50 px-4 pb-4 md:static md:p-0 md:z-auto bg-white dark:bg-background shadow-md md:shadow-none"
             : "hidden md:block"
         )}
       >
@@ -194,7 +201,7 @@ const SearchBar: React.FC = () => {
           />
 
           {/* Clear button (only shown when there's text) */}
-          {searchValue && (
+          {/* {searchValue && (
             <button
               className="md:hidden absolute inset-y-0 right-9 flex items-center pr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               onClick={clearSearch}
@@ -202,7 +209,7 @@ const SearchBar: React.FC = () => {
             >
               <X className="h-4 w-4" />
             </button>
-          )}
+          )} */}
 
           {/* Keyboard shortcut hint (hidden on mobile) */}
           <kbd className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
