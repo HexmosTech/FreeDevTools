@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import inputData from '../data/input.json';
+import { getCollection } from 'astro:content';
 
 export const prerender = false;
 
@@ -8,11 +8,21 @@ export const GET: APIRoute = async ({ site, params }) => {
   const MAX_URLS = 5000;
 
   const category = params.category;
-  if (!category || !inputData.data[category]) {
+  if (!category) {
     return new Response('Category not found', { status: 404 });
   }
 
-  const categoryData = inputData.data[category];
+  // Load the specific category data
+  const categoryEntries = await getCollection('mcpCategoryData' as any);
+  const categoryEntry = categoryEntries.find(
+    (entry: any) => entry.data.category === category
+  );
+
+  if (!categoryEntry) {
+    return new Response('Category not found', { status: 404 });
+  }
+
+  const categoryData = (categoryEntry as any).data;
   const repositories = categoryData.repositories;
 
   // Create URLs for all repositories in this category
