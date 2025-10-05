@@ -11,12 +11,32 @@ import (
 	"time"
 )
 
-// MCPInputData represents the structure of the input JSON file
-type MCPInputData struct {
-	TotalCategories   int                    `json:"totalCategories"`
-	TotalRepositories int                    `json:"totalRepositories"`
-	ProcessingStarted string                 `json:"processing_started"`
-	Data              map[string]MCPCategory `json:"data"`
+// MCPMetadata represents the structure of the metadata JSON file
+type MCPMetadata struct {
+	TotalCategories    int                    `json:"totalCategories"`
+	TotalRepositories  int                    `json:"totalRepositories"`
+	ProcessingStarted  string                 `json:"processing_started"`
+	ProcessingCompleted string                `json:"processing_completed"`
+	Categories         map[string]MCPCategoryMeta `json:"categories"`
+	Summary            MCPSummary             `json:"summary"`
+}
+
+// MCPCategoryMeta represents category metadata
+type MCPCategoryMeta struct {
+	CategoryDisplay   string `json:"categoryDisplay"`
+	TotalRepositories int    `json:"totalRepositories"`
+	TotalStars        int    `json:"totalStars"`
+	TotalForks        int    `json:"totalForks"`
+	NpmPackages       int    `json:"npmPackages"`
+	NpmDownloads      int    `json:"npmDownloads"`
+}
+
+// MCPSummary represents overall summary statistics
+type MCPSummary struct {
+	TotalStars    int `json:"totalStars"`
+	TotalForks    int `json:"totalForks"`
+	NpmPackages   int `json:"npmPackages"`
+	NpmDownloads  int `json:"npmDownloads"`
 }
 
 // MCPCategory represents a category of MCP repositories
@@ -57,32 +77,55 @@ type MCPRepository struct {
 	ReadmeContent       string      `json:"readme_content"`
 }
 
-// generateMCPData processes the MCP input JSON and generates search index data
+// generateMCPData processes the MCP metadata and category JSON files to generate search index data
 func generateMCPData(ctx context.Context) ([]MCPData, error) {
-	// Path to the MCP input JSON file
-	inputPath := filepath.Join("..", "frontend", "src", "pages", "mcp", "data", "input.json")
+	// Path to the MCP metadata file
+	metadataPath := filepath.Join("..", "frontend", "public", "mcp", "meta_data.json")
 	
-	// Check if file exists
-	if _, err := os.Stat(inputPath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("MCP input file not found at %s", inputPath)
+	// Check if metadata file exists
+	if _, err := os.Stat(metadataPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("MCP metadata file not found at %s", metadataPath)
 	}
 
-	// Read the input JSON file
-	data, err := os.ReadFile(inputPath)
+	// Read the metadata JSON file
+	metadataData, err := os.ReadFile(metadataPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read MCP input file: %w", err)
+		return nil, fmt.Errorf("failed to read MCP metadata file: %w", err)
 	}
 
-	// Parse the JSON data
-	var inputData MCPInputData
-	if err := json.Unmarshal(data, &inputData); err != nil {
-		return nil, fmt.Errorf("failed to parse MCP input JSON: %w", err)
+	// Parse the metadata JSON
+	var metadata MCPMetadata
+	if err := json.Unmarshal(metadataData, &metadata); err != nil {
+		return nil, fmt.Errorf("failed to parse MCP metadata JSON: %w", err)
 	}
 
 	var mcpData []MCPData
 
 	// Process each category
-	for categoryKey, category := range inputData.Data {
+	for categoryKey := range metadata.Categories {
+		// Path to the specific category JSON file
+		categoryPath := filepath.Join("..", "frontend", "public", "mcp", "input", categoryKey+".json")
+		
+		// Check if category file exists
+		if _, err := os.Stat(categoryPath); os.IsNotExist(err) {
+			fmt.Printf("Warning: Category file not found: %s\n", categoryPath)
+			continue
+		}
+
+		// Read the category JSON file
+		categoryData, err := os.ReadFile(categoryPath)
+		if err != nil {
+			fmt.Printf("Warning: Failed to read category file %s: %v\n", categoryPath, err)
+			continue
+		}
+
+		// Parse the category JSON
+		var category MCPCategory
+		if err := json.Unmarshal(categoryData, &category); err != nil {
+			fmt.Printf("Warning: Failed to parse category JSON %s: %v\n", categoryPath, err)
+			continue
+		}
+
 		// Process each repository in the category
 		for repoKey, repo := range category.Repositories {
 			// Skip if repository doesn't have data
