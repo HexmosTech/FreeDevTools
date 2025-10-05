@@ -4,35 +4,36 @@ import ToolHead from '@/components/tool/ToolHead.tsx';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Pagination from '@/components/Pagination.astro';
 import BottomPagination from '@/components/BottomPagination.astro';
-import { loadMcpData } from '@/lib/mcp-data-processor.tsx';
+import { loadMcpCategoryData } from '@/lib/mcp-data-processor.tsx';
 import { formatRepositoryName } from '@/lib/utils';
 import RepositoryCard from './_McpRepoCard.tsx';
 
 
 
 export async function getStaticPaths() {
-  // Load data from input.json
-  const { categories } = await loadMcpData();
+  // Load metadata to get all categories
+  const { getCollection } = await import('astro:content');
+  const metadataEntries = await getCollection('mcpMetadata' as any);
+  const metadata = (metadataEntries[0] as any)?.data as any;
+  
+  if (!metadata) {
+    throw new Error('No MCP metadata found');
+  }
   
   // Generate static paths for all categories
-  const paths = categories.map((category) => ({
-    params: { category: category.id },
-    props: { category }
+  const paths = Object.keys(metadata.categories).map((categoryId) => ({
+    params: { category: categoryId },
+    props: { category: { id: categoryId } }
   }));
 
   return paths;
 }
 
 const { category } = Astro.props;
-const { servers, categories: allCategories } = await loadMcpData();
+const { servers: categoryServers, category: categoryInfo } = await loadMcpCategoryData(category.id);
 
-// Filter servers for this category and sort by stars
-const categoryServers = servers
-  .filter(server => server.categories.includes(category.id))
-  .sort((a, b) => b.stats.githubStars - a.stats.githubStars);
-
-// Get category info
-const categoryInfo = allCategories.find(cat => cat.id === category.id);
+// Sort servers by stars
+categoryServers.sort((a, b) => b.stats.githubStars - a.stats.githubStars);
 
 // Pagination constants
 const ITEMS_PER_PAGE = 20;
@@ -41,7 +42,7 @@ const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
  
 
 // SEO Data
-const categoryDisplayName = categoryInfo?.name || category.id;
+const categoryDisplayName = categoryInfo.name;
 const title = `${categoryDisplayName} MCP Repositories - Browse ${categoryServers.length} Model Context Protocol Servers | Free DevTools by Hexmos`;
 const description = `Browse ${categoryServers.length} ${categoryDisplayName} MCP repositories instantly. Find Model Context Protocol servers, tools, and clients in the ${categoryDisplayName} category. Free, no registration required.`;
 const keywords = [
@@ -60,12 +61,12 @@ const keywords = [
 const breadcrumbItems = [
   { label: 'Free DevTools', href: '/freedevtools/' },
   { label: 'MCP Directory', href: '/freedevtools/mcp/' },
-  { label: categoryInfo?.name || category.id }
+  { label: categoryInfo.name }
 ];
 ---
 
 <BaseLayout 
-  name={`${categoryInfo?.name || category.id} MCP Repositories`}
+  name={`${categoryInfo.name} MCP Repositories`}
   title={title}
   path={`/freedevtools/mcp/${category.id}/`}
   description={description}
@@ -77,7 +78,7 @@ const breadcrumbItems = [
   datePublished="2025-01-30"
   softwareVersion="1.0.0"
   features={[
-    `Browse ${categoryServers.length} MCP repositories in ${categoryInfo?.name || category.id}`,
+    `Browse ${categoryServers.length} MCP repositories in ${categoryInfo.name}`,
     'Filter by license and quality scores',
     'Search and sort functionality',
     'Detailed repository information'
@@ -86,8 +87,8 @@ const breadcrumbItems = [
   <ToolContainer>
     
     <ToolHead 
-      name={`${categoryInfo?.name || category.id} MCP Repositories`}
-      description={`${categoryServers.length} repositories in this category. ${categoryInfo?.description || `MCP repositories in the ${category.id} category`}`}
+      name={`${categoryInfo.name} MCP Repositories`}
+      description={`${categoryServers.length} repositories in this category. ${categoryInfo.description}`}
       breadcrumbItems={breadcrumbItems}
       client:load
     />
