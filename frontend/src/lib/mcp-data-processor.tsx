@@ -7,7 +7,7 @@ export interface ProcessedServer {
   authorUrl: string;
   description: string;
   isOfficial: boolean;
-  categories: string;
+  categories: string[];
   imageUrl?: string;
   scores: {
     security: string;
@@ -109,28 +109,16 @@ export interface InputData {
           owner: string;
           name: string;
           url: string;
-          imageUrl: string;
-          description: string;
-          enhanced: boolean;
-          processed: boolean;
-          got_data: boolean;
-          processing_timestamp: string;
-          collection_timestamp: string;
+          imageUrl?: string;
+          description?: string;
           stars: number;
           forks: number;
           license: string;
           language: string;
-          created_at: string;
           updated_at: string;
-          open_issues: number;
-          readme_content: string;
-          github_success: boolean;
-          github_error: string | null;
+          readme_content?: string;
           npm_url: string;
           npm_downloads: number;
-          npm_package_name: string | null;
-          npm_success: boolean;
-          npm_error: string | null;
         };
       };
     };
@@ -173,56 +161,48 @@ export function processInputData(inputData: InputData): {
 
   // Process categories from input data
   Object.entries(inputData.data).forEach(([categoryKey, categoryData]) => {
-    // Count processed repositories for this category
-    let processedRepoCount = 0;
-    Object.values(categoryData.repositories).forEach((repo) => {
-      if (repo.processed && repo.got_data) {
-        processedRepoCount++;
-      }
-    });
+    // Count repositories for this category
+    const repoCount = Object.keys(categoryData.repositories).length;
 
     const category: ProcessedCategory = {
       id: categoryData.category,
       name: categoryData.categoryDisplay,
       description: categoryData.description,
       icon: getCategoryIcon(categoryData.category),
-      serverCount: processedRepoCount, // Use actual processed count
+      serverCount: repoCount,
       url: `/freedevtools/mcp/${categoryData.category}`,
     };
     categories.push(category);
 
     // Process repositories as servers
     Object.entries(categoryData.repositories).forEach(([repoKey, repo]) => {
-      // Only process repositories that have been successfully processed
-      if (repo.processed && repo.got_data) {
-        const server: ProcessedServer = {
-          id: repoKey,
-          name: repo.name,
-          author: repo.owner,
-          authorUrl: `https://github.com/${repo.owner}`,
-          description: repo.description,
-          isOfficial: categoryData.category === 'official-servers',
-          categories: categoryData.category,
-          imageUrl: repo.imageUrl || undefined,
-          scores: {
-            security: 'A', // Default score
-            license: getLicenseScore(repo.license),
-            quality: 'A', // Default score
-          },
-          stats: {
-            tools: Math.floor(Math.random() * 50) + 1, // Mock tool count
-            weeklyDownloads: repo.npm_downloads || 0,
-            githubStars: repo.stars,
-            lastUpdated: formatTimeAgo(repo.updated_at),
-          },
-          license: repo.license,
-          url: `/freedevtools/mcp/servers/@${repo.owner}/${repo.name}`,
-          githubUrl: repo.url,
-          npmUrl: repo.npm_url || undefined,
-          readmeContent: repo.readme_content || undefined,
-        };
-        servers.push(server);
-      }
+      const server: ProcessedServer = {
+        id: repoKey,
+        name: repo.name,
+        author: repo.owner,
+        authorUrl: `https://github.com/${repo.owner}`,
+        description: repo.description || '',
+        isOfficial: categoryData.category === 'official-servers',
+        categories: [categoryData.category],
+        imageUrl: repo.imageUrl || undefined,
+        scores: {
+          security: 'A', // Default score
+          license: getLicenseScore(repo.license),
+          quality: 'A', // Default score
+        },
+        stats: {
+          tools: Math.floor(Math.random() * 50) + 1, // Mock tool count
+          weeklyDownloads: repo.npm_downloads || 0,
+          githubStars: repo.stars,
+          lastUpdated: formatTimeAgo(repo.updated_at),
+        },
+        license: repo.license,
+        url: `/freedevtools/mcp/servers/@${repo.owner}/${repo.name}`,
+        githubUrl: repo.url,
+        npmUrl: repo.npm_url || undefined,
+        readmeContent: repo.readme_content || undefined,
+      };
+      servers.push(server);
     });
   });
 
