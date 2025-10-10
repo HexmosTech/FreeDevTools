@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_tag — mbuf tags manipulating netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_tag — mbuf tags manipulating netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;netgraph/ng_tag.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>tag</b> node type allows mbuf packet tags (see <u><a href="../man9/mbuf_tags.9.html">mbuf_tags</a></u>(9)) to be examined, stripped or applied to data
+       travelling through a Netgraph network.  Mbuf tags are used in many parts of the  FreeBSD  kernel  network
+       subsystem,  including  the  storage  of VLAN tags as described in <u><a href="../man4/vlan.4.html">vlan</a></u>(4), Mandatory Access Control (MAC)
+       labels as described in <u><a href="../man9/mac.9.html">mac</a></u>(9), IPsec policy information as described in <u><a href="../man4/ipsec.4.html">ipsec</a></u>(4), and packet filter  tags
+       used  by  <u><a href="../man4/pf.4.html">pf</a></u>(4).  One should also consider useful setting or checking <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) tags, which are implemented
+       as mbuf tags, too.
+
+       Each node allows an arbitrary number of connections to  arbitrarily  named  hooks.   With  each  hook  is
+       associated  a  tag  which  will be searched in the list of all tags attached to a packet incoming to this
+       hook, a destination hook for matching packets, a destination hook for non-matching packets, a  tag  which
+       will be appended to data leaving node through this hook, and various statistics counters.
+
+       The  list  of  incoming  packet's  tags is traversed to find a tag with specified <u>type</u> and <u>cookie</u> values.
+       Upon match, if specified <u>tag_len</u> is non-zero, <u>tag_data</u>  of  tag  is  checked  to  be  identical  to  that
+       specified in the hook structure.  Packets with matched tags are forwarded to “match” destination hook, or
+       forwarded to “non-match” hook otherwise.  Either or both destination hooks can be an empty string, or may
+       not exist, in which case the packet is dropped.
+
+       Tag  list of packets leaving the node is extended with a new tag specified in outgoing hook structure (it
+       is possible to avoid appending a new tag to pass packet completely unchanged by specifying zero <u>type</u>  and
+       <u>cookie</u>  values in the structure of the corresponding outgoing hook).  Additionally, a tag can be stripped
+       from incoming packet after match if <u>strip</u> flag is set.  This can be used for simple tag  removal  or  tag
+       replacement,  if  combined  with  tag  addition on outgoing matching hook.  Note that new tag is appended
+       unconditionally, without checking if such a tag is already present in the list (it is up to user to check
+       if this is a concern).
+
+       New hooks are initially configured to drop all incoming packets (as all hook  names  are  empty  strings;
+       zero  values  can  be specified to forward all packets to non-matching hook), and to forward all outgoing
+       packets without any tag appending.
+
+       Data payload of packets passing through the node is completely unchanged, all operations can  affect  tag
+       list only.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This  node  type  supports  any  number  of  hooks  having  arbitrary  names.  In order to allow internal
+       optimizations, user should never try to configure a hook with a structure pointing to hooks which do  not
+       exist yet.  The safe way is to create all hooks first, then begin to configure them.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_TAG_SET_HOOKIN (<b>sethookin</b>)
+            This  command  sets tag values which will be searched in the tag list of incoming packets on a hook.
+            The following structure must be supplied as an argument:
+
+                struct ng_tag_hookin {
+                  char            thisHook[NG_HOOKSIZ];     /* name of hook */
+                  char            ifMatch[NG_HOOKSIZ];      /* match dest hook */
+                  char            ifNotMatch[NG_HOOKSIZ];   /* !match dest hook */
+                  uint8_t         strip;                    /* strip tag if found */
+                  uint32_t        tag_cookie;               /* ABI/Module ID */
+                  uint16_t        tag_id;                   /* tag ID */
+                  uint16_t        tag_len;                  /* length of data */
+                  uint8_t         tag_data[0];              /* tag data */
+                };
+
+            The hook to be updated is specified in <u>thisHook</u>.  Data  bytes  of  tag  corresponding  to  specified
+            <u>tag_id</u>  (type)  and  <u>tag_cookie</u>  are  placed  in  the <u>tag_data</u> array; there must be <u>tag_len</u> of them.
+            Matching and non-matching incoming packets are delivered out the hooks named <u>ifMatch</u> and <u>ifNotMatch</u>,
+            respectively.  If <u>strip</u> flag is non-zero, then found tag is deleted from list of packet tags.
+
+       NGM_TAG_GET_HOOKIN (<b>gethookin</b>)
+            This command takes an ASCII string argument, the hook name, and  returns  the  corresponding  <u>struct</u>
+            <u>ng_tag_hookin</u> as shown above.
+
+       NGM_TAG_SET_HOOKOUT (<b>sethookout</b>)
+            This  command  sets  tags values which will be applied to outgoing packets.  The following structure
+            must be supplied as an argument:
+
+                struct ng_tag_hookout {
+                  char            thisHook[NG_HOOKSIZ];     /* name of hook */
+                  uint32_t        tag_cookie;               /* ABI/Module ID */
+                  uint16_t        tag_id;                   /* tag ID */
+                  uint16_t        tag_len;                  /* length of data */
+                  uint8_t         tag_data[0];              /* tag data */
+                };
+
+            The hook to be updated is specified in <u>thisHook</u>.  Other variables mean  basically  the  same  as  in
+            <u>struct</u> <u>ng_tag_hookin</u> shown above, except used for setting values in a new tag.
+
+       NGM_TAG_GET_HOOKOUT (<b>gethookout</b>)
+            This  command  takes  an  ASCII string argument, the hook name, and returns the corresponding <u>struct</u>
+            <u>ng_tag_hookout</u> as shown above.
+
+       NGM_TAG_GET_STATS (<b>getstats</b>)
+            This command takes an ASCII string argument, the hook name, and returns  the  statistics  associated
+            with the hook as a <u>struct</u> <u>ng_tag_hookstat</u>.
+
+       NGM_TAG_CLR_STATS (<b>clrstats</b>)
+            This  command  takes  an  ASCII string argument, the hook name, and clears the statistics associated
+            with the hook.
+
+       NGM_TAG_GETCLR_STATS (<b>getclrstats</b>)
+            This command is identical to NGM_TAG_GET_STATS, except  that  the  statistics  are  also  atomically
+            cleared.
+
+       <u>Note:</u>  statistics counters as well as three statistics messages above work only if code was compiled with
+       the NG_TAG_DEBUG option.  The reason for this is that statistics is rarely used in  practice,  but  still
+       consumes  CPU  cycles  for every packet.  Moreover, it is even not accurate on SMP systems due to lack of
+       synchronization between threads, as this is very expensive.
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This node shuts down upon receipt of a  NGM_SHUTDOWN  control  message,  or  when  all  hooks  have  been
+       disconnected.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       It  is  possible  to do a simple L7 filtering by using <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) tags in conjunction with <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4) traffic
+       analyzer.  Example below explains how to filter DirectConnect P2P network data traffic, which  cannot  be
+       done by usual means as it uses random ports.  It is known that such data connection always contains a TCP
+       packet  with  6-byte  payload  string "$Send|".  So ipfw's <b>netgraph</b> action will be used to divert all TCP
+       packets to an <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4) node which will check for the specified string and return non-matching packets to
+       <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8).  Matching packets are passed to <b>ng_tag</b> node, which  will  set  a  tag  and  pass  them  back  to
+       <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4)  node  on  a  hook  programmed  to  accept all packets and pass them back to <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8).  A script
+       provided in <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4) manual page will be used for programming node.  Note  that  packets  diverted  from
+       <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8)  to  Netgraph  have  no  link-level  header, so offsets in <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1) expressions must be altered
+       accordingly.  Thus, there will be expression “<b>ether[40:2]=0x244c</b> <b>&amp;&amp;</b> <b>ether[42:4]=0x6f636b20</b>”  on  incoming
+       hook and empty expression to match all packets from <b>ng_tag</b>.
+
+       So, this is <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8) script for nodes creating and naming for easier access:
+
+           /usr/sbin/ngctl -f- &lt;&lt;-SEQ
+                   mkpeer ipfw: bpf 41 ipfw
+                   name ipfw:41 dcbpf
+                   mkpeer dcbpf: tag matched th1
+                   name dcbpf:matched ngdc
+           SEQ
+
+       Now  “<b>ngdc</b>”  node  (which is of type <b>ng_tag</b>) must be programmed to echo all packets received on the “<b>th1</b>”
+       hook back, with the <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) tag 412 attached.   MTAG_IPFW  value  for  <u>tag_cookie</u>  was  taken  from  file
+       &lt;<u>netinet/ip_fw.h</u>&gt; and value for <u>tag_id</u> is tag number (412), with zero tag length:
+
+           ngctl msg ngdc: sethookin { thisHook=\"th1\" ifNotMatch=\"th1\" }
+           ngctl msg ngdc: sethookout { thisHook=\"th1\" \
+             tag_cookie=1148380143 \
+             tag_id=412 }
+
+       Do  not forget to program <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4) “<b>ipfw</b>” hook with the above expression (see <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4) for script doing
+       this) and “<b>matched</b>” hook with an empty expression:
+
+           ngctl msg dcbpf: setprogram { thisHook=\"matched\" ifMatch=\"ipfw\" \
+             bpf_prog_len=1 bpf_prog=[ { code=6 k=8192 } ] }
+
+       After finishing with <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4) nodes, <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) rules must be added to enable packet flow:
+
+           ipfw add 100 netgraph 41 tcp from any to any iplen 46
+           ipfw add 110 reset tcp from any to any tagged 412
+
+       Note: one should ensure that packets are returned to ipfw after processing inside <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), by setting
+       appropriate <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) variable:
+
+           sysctl net.inet.ip.fw.one_pass=0
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_bpf.4.html">ng_bpf</a></u>(4), <u><a href="../man4/ng_ipfw.4.html">ng_ipfw</a></u>(4), <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8), <u><a href="../man9/mbuf_tags.9.html">mbuf_tags</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ng_tag</b> node type was implemented in FreeBSD 6.2.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Vadim Goncharov &lt;<u><a href="mailto:vadimnuclight@tpu.ru">vadimnuclight@tpu.ru</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       For manipulating any tags with data payload (that is, all tags with non-zero  <u>tag_len</u>)  one  should  care
+       about  non-portable  machine-dependent  representation  of tags on the low level as byte stream.  Perhaps
+       this should be done by another program rather than manually.
+
+Debian                                            June 10, 2006                                        <u><a href="../man4/NG_TAG.4.html">NG_TAG</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

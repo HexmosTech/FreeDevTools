@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_bpf — Berkeley packet filter netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_bpf — Berkeley packet filter netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;net/bpf.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/ng_bpf.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>bpf</b>  node  type  allows Berkeley Packet Filter (see <u><a href="../man4/bpf.4.html">bpf</a></u>(4)) filters to be applied to data travelling
+       through a Netgraph network.  Each node allows an arbitrary number of  connections  to  arbitrarily  named
+       hooks.   With  each  hook is associated a <u><a href="../man4/bpf.4.html">bpf</a></u>(4) filter program which is applied to incoming data only, a
+       destination hook for  matching  packets,  a  destination  hook  for  non-matching  packets,  and  various
+       statistics counters.
+
+       A  <u><a href="../man4/bpf.4.html">bpf</a></u>(4)  program returns an unsigned integer, which is normally interpreted as the length of the prefix
+       of the packet to return.  In the context of this node type, returning zero is considered a non-match,  in
+       which  case the entire packet is delivered out the non-match destination hook.  Returning a value greater
+       than zero causes the packet to be truncated to that length and delivered out the match destination  hook.
+       Either  or  both destination hooks may be the empty string, or may not exist, in which case the packet is
+       dropped.
+
+       New hooks are initially configured to drop all packets.  A new filter program may be installed using  the
+       NGM_BPF_SET_PROGRAM control message.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This node type supports any number of hooks having arbitrary names.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_BPF_SET_PROGRAM (<b>setprogram</b>)
+            This command sets the filter program that will be applied to incoming data on a hook.  The following
+            structure must be supplied as an argument:
+
+                struct ng_bpf_hookprog {
+                  char            thisHook[NG_HOOKSIZ];     /* name of hook */
+                  char            ifMatch[NG_HOOKSIZ];      /* match dest hook */
+                  char            ifNotMatch[NG_HOOKSIZ];   /* !match dest hook */
+                  int32_t         bpf_prog_len;             /* #insns in program */
+                  struct bpf_insn bpf_prog[];               /* bpf program */
+                };
+
+            The hook to be updated is specified in thisHook.  The BPF program is the sequence of instructions in
+            the  bpf_prog array; there must be bpf_prog_len of them.  Matching and non-matching incoming packets
+            are delivered out the hooks named ifMatch and ifNotMatch, respectively.  The program must be a valid
+            <u><a href="../man4/bpf.4.html">bpf</a></u>(4) program or else EINVAL is returned.
+
+       NGM_BPF_GET_PROGRAM (<b>getprogram</b>)
+            This command takes an ASCII string argument, the hook name, and  returns  the  corresponding  struct
+            ng_bpf_hookprog as shown above.
+
+       NGM_BPF_GET_STATS (<b>getstats</b>)
+            This  command  takes  an ASCII string argument, the hook name, and returns the statistics associated
+            with the hook as a struct ng_bpf_hookstat.
+
+       NGM_BPF_CLR_STATS (<b>clrstats</b>)
+            This command takes an ASCII string argument, the hook name, and  clears  the  statistics  associated
+            with the hook.
+
+       NGM_BPF_GETCLR_STATS (<b>getclrstats</b>)
+            This  command  is  identical  to  NGM_BPF_GET_STATS,  except that the statistics are also atomically
+            cleared.
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This node shuts down upon receipt of a  NGM_SHUTDOWN  control  message,  or  when  all  hooks  have  been
+       disconnected.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       It  is  possible  to  configure  a  node  from  the  command  line,  using <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1) to generate raw BPF
+       instructions which are then fed into an <u><a href="../man1/awk.1.html">awk</a></u>(1) script to create the ASCII form of  a  NGM_BPF_SET_PROGRAM
+       control message, as demonstrated here:
+
+           #!<a href="file:/bin/sh">/bin/sh</a>
+
+           PATTERN="tcp dst port 80"
+           NODEPATH="my_node:"
+           INHOOK="hook1"
+           MATCHHOOK="hook2"
+           NOTMATCHHOOK="hook3"
+
+           BPFPROG=$( tcpdump -s 8192 -p -ddd ${PATTERN} | \
+                      ( read len ; \
+                        echo -n "bpf_prog_len=$len" ; \
+                        echo -n "bpf_prog=[" ; \
+                        while read code jt jf k ; do \
+                            echo -n " { code=$code jt=$jt jf=$jf k=$k }" ; \
+                        done ; \
+                        echo " ]" ) )
+
+           ngctl msg ${NODEPATH} setprogram { thisHook=\"${INHOOK}\" \
+             ifMatch=\"${MATCHHOOK}\" \
+             ifNotMatch=\"${NOTMATCHHOOK}\" \
+             ${BPFPROG} }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/bpf.4.html">bpf</a></u>(4), <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ng_bpf</b> node type was implemented in FreeBSD 4.0.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Archie Cobbs &lt;<u><a href="mailto:archie@FreeBSD.org">archie@FreeBSD.org</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       When built as a loadable kernel module, this module includes the file <u>net/bpf_filter.c</u>.  Although loading
+       the  module  should fail if <u>net/bpf_filter.c</u> already exists in the kernel, currently it does not, and the
+       duplicate copies of the file do not interfere.  However, this may change in the future.
+
+Debian                                          November 13, 2012                                      <u><a href="../man4/NG_BPF.4.html">NG_BPF</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

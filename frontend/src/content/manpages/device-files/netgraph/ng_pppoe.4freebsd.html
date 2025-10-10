@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_pppoe — RFC 2516 PPPoE protocol netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_pppoe — RFC 2516 PPPoE protocol netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/net/ethernet.h">net/ethernet.h</a>&gt;</b>
+       <b>#include</b> <b>&lt;netgraph.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/ng_pppoe.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>pppoe</b>  node  type  performs  the  PPPoE  protocol.   It  is used in conjunction with the <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4)
+       extensions to the Ethernet framework to divert and inject Ethernet packets to and from a PPP agent (which
+       is not specified).
+
+       The NGM_PPPOE_GET_STATUS control message can be used at any time to query the current status of the PPPoE
+       module.  The only statistics presently available are the total packet counts for input and output.   This
+       node does not yet support the NGM_TEXT_STATUS control message.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This node type supports the following hooks:
+
+       <u>ethernet</u>       The  hook  that  should  normally  be  connected  to an <u><a href="../man4/ng_ether.4.html">ng_ether</a></u>(4) node.  Once connected,
+                      <b>ng_pppoe</b> will send a  message  down  this  hook  to  determine  Ethernet  address  of  the
+                      underlying node.  Obtained address will be stored and then used for outgoing datagrams.
+
+       <u>debug</u>          Presently no use.
+
+       <u>[unspecified]</u>  Any  other  name  is  assumed  to be a session hook that will be connected to a PPP client
+                      agent, or a PPP server agent.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_PPPOE_GET_STATUS
+            This command returns status information in a struct ngpppoestat:
+
+                struct ngpppoestat {
+                    u_int   packets_in;     /* packets in from Ethernet */
+                    u_int   packets_out;    /* packets out towards Ethernet */
+                };
+
+       NGM_TEXT_STATUS
+            This generic message returns a human-readable version of the node status.  (not yet)
+
+       NGM_PPPOE_CONNECT (<b>pppoe_connect</b>)
+            Tell a nominated newly created hook that its session should enter the state machine as a client.  It
+            must be newly created and a service name can be given as an argument.  It  is  legal  to  specify  a
+            zero-length service name, this is common on some DSL setups.  It is possible to request a connection
+            to  a  specific  access concentrator, and/or set a specific Host-Uniq tag, required by some Internet
+            providers, using the "<b>[AC-Name][Host-Uniq|]Service-Name</b>" syntax.  To set a binary Host-Uniq, it must
+            be encoded as a hexadecimal lowercase string and prefixed with "<b>0x</b>", for example "<b>0x6d792d746167</b>" is
+            equivalent to "<b>my-tag</b>".  A session request packet will be broadcast on the Ethernet.   This  command
+            uses  the ngpppoe_init_data structure shown below.  For example, this init data argument can be used
+            to connect to "<b>my-isp</b>" service with  "<b>my-host</b>"  uniq  tag,  accepting  only  "<b>remote-ac</b>"  as  access
+            concentrator:
+
+                  "remote-ac\my-host|my-isp"
+
+       NGM_PPPOE_LISTEN (<b>pppoe_listen</b>)
+            Tell  a  nominated  newly  created  hook that its session should enter the state machine as a server
+            listener.  The argument given is the name of the service to listen for.  A zero-length service  name
+            will  match  all  requests for service.  A matching service request packet will be passed unmodified
+            back to the process responsible for starting the service.  It can then examine it and pass it on  to
+            the  session  that  is  started  to  answer  the  request.   This command uses the ngpppoe_init_data
+            structure shown below.
+
+       NGM_PPPOE_OFFER (<b>pppoe_offer</b>)
+            Tell a nominated newly created hook that its session should enter the state  machine  as  a  server.
+            The  argument given is the name of the service to offer.  A zero-length service is legal.  The State
+            machine will progress to a state where it will await a request packet to be forwarded to it from the
+            startup server, which in turn probably received it from a LISTEN mode hook (see above).  This is  so
+            that  information  that is required for the session that is embedded in the original session request
+            packet, is made available to the state machine  that  eventually  answers  the  request.   When  the
+            Session  request  packet  is  received, the session negotiation will proceed.  This command uses the
+            ngpppoe_init_data structure shown below.
+
+       The three commands above use a common data structure:
+
+           struct ngpppoe_init_data {
+               char       hook[NG_HOOKSIZ];       /* hook to monitor on */
+               uint16_t   data_len;               /* length of the service name */
+               char       data[0];                /* init data goes here */
+           };
+
+       NGM_PPPOE_SUCCESS (<b>pppoe_success</b>)
+            This command is sent to the node that started this session with  one  of  the  above  messages,  and
+            reports a state change.  This message reports successful Session negotiation.  It uses the structure
+            shown below, and reports back the hook name corresponding to the successful session.
+
+       NGM_PPPOE_FAIL (<b>pppoe_fail</b>)
+            This  command  is  sent  to  the  node that started this session with one of the above messages, and
+            reports a state change.  This message reports failed Session negotiation.   It  uses  the  structure
+            shown  below,  and  reports  back  the hook name corresponding to the failed session.  The hook will
+            probably have been removed immediately after sending this message.
+
+       NGM_PPPOE_CLOSE (<b>pppoe_close</b>)
+            This command is sent to the node that started this session with  one  of  the  above  messages,  and
+            reports  a  state change.  This message reports a request to close a session.  It uses the structure
+            shown below, and reports back the hook name corresponding to the  closed  session.   The  hook  will
+            probably  have  been removed immediately after sending this message.  At present this message is not
+            yet used and a NGM_PPPOE_FAIL message will be received at closure instead.
+
+       NGM_PPPOE_ACNAME
+            This command is sent to the node that started this session with  one  of  the  above  messages,  and
+            reports the Access Concentrator Name.
+
+       The four commands above use a common data structure:
+
+           struct ngpppoe_sts {
+               char    hook[NG_HOOKSIZ];
+           };
+
+       NGM_PPPOE_GETMODE (<b>pppoe_getmode</b>)
+            This  command  returns  the  current compatibility mode of the node as a string.  ASCII form of this
+            message is "<b>pppoe_getmode</b>".  The following keywords can be returned:
+
+            "standard"
+                 The node operates according to RFC 2516.
+
+            "3Com"
+                 When <b>ng_pppoe</b> is a PPPoE client, it initiates a session encapsulating  packets  into  incorrect
+                 3Com  ethertypes.   This  compatibility  option  does  not  affect server mode.  In server mode
+                 <b>ng_pppoe</b> supports both modes simultaneously, depending on the ethertype, the client  used  when
+                 connecting.
+
+            "D-Link"
+                 When  <b>ng_pppoe</b>  is  a  PPPoE server serving only specific Service-Name(s), it will respond to a
+                 PADI requests with empty Service-Name tag, returning all  available  Service-Name(s)  on  node.
+                 This  option  is  necessary  for  compatibility with D-Link DI-614+ and DI-624+ SOHO routers as
+                 clients, when serving only specific Service-Name.  This compatibility option  does  not  affect
+                 client mode.
+
+       NGM_PPPOE_SETMODE (<b>pppoe_setmode</b>)
+            Configure  node  to  the specified mode.  The string argument is required.  This command understands
+            the same keywords that are returned by the NGM_PPPOE_GETMODE command.  ASCII form of this message is
+            "<b>pppoe_setmode</b>".  For example, the following command will configure the node to  initiate  the  next
+            session in the proprietary 3Com mode:
+
+                  ngctl msg fxp0:orphans pppoe_setmode '"3Com"'
+
+       NGM_PPPOE_SETENADDR (<b>setenaddr</b>)
+            Set  the  node  Ethernet  address for outgoing datagrams.  This message is important when a node has
+            failed to obtain an Ethernet address from its peer on the ethernet  hook,  or  when  user  wants  to
+            override this address with another one.  ASCII form of this message is "<b>setenaddr</b>".
+
+       NGM_PPPOE_SETMAXP (<b>setmaxp</b>)
+            Set  the node PPP-Max-Payload value as described in RFC 4638.  This message applies only to a client
+            configuration.  ASCII form of this message is "<b>setmaxp</b>".
+
+            Data structure returned to client is:
+
+                struct ngpppoe_maxp {
+                    char     hook[NG_HOOKSIZ];
+                    uint16_t data;
+                };
+
+       NGM_PPPOE_SEND_HURL (<b>send_hurl</b>)
+            Tell a nominated hook with an active session to send a PADM message with a HURL tag.   The  argument
+            is the URL to be delivered to the client:
+
+                  ngctl msg fxp0:orphans send_hurl '{ hook="myHook" data="<a href="http://example.net/cpe">http://example.net/cpe</a>" }'
+
+       NGM_PPPOE_SEND_MOTM (<b>send_motm</b>)
+            Tell  a  nominated hook with an active session to send a PADM message with a MOTM tag.  The argument
+            is the message to be delivered to the client:
+
+                  ngctl msg fxp0:orphans send_motm '{ hook="myHook" data="Welcome aboard" }'
+
+       The two commands above use the same ngpppoe_init_data structure described above.
+
+       NGM_PPPOE_HURL
+            This command is sent to the node that started this session when a PADM message with a  HURL  tag  is
+            received, and contains a URL that the host can pass to a web browser for presentation to the user.
+
+       NGM_PPPOE_MOTM
+            This  command  is  sent to the node that started this session when a PADM message with a MOTM tag is
+            received, and contains a Message Of The Minute that the host can display to the user.
+
+       The two commands above use a common data structure:
+
+           struct ngpppoe_padm {
+               char    msg[PPPOE_PADM_VALUE_SIZE];
+           };
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This node shuts down upon receipt  of  a  NGM_SHUTDOWN  control  message,  when  all  session  have  been
+       disconnected or when the ethernet hook is disconnected.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following code uses libnetgraph to set up a <b>ng_pppoe</b> node and connect it to both a socket node and an
+       Ethernet  node.   It can handle the case of when a <b>ng_pppoe</b> node is already attached to the Ethernet.  It
+       then starts a client session.
+
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/ctype.h">ctype.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/sysexits.h">sysexits.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/err.h">err.h</a>&gt;
+
+       #include &lt;sys/types.h&gt;
+       #include &lt;sys/socket.h&gt;
+       #include &lt;sys/select.h&gt;
+       #include &lt;<a href="file:/usr/include/net/ethernet.h">net/ethernet.h</a>&gt;
+
+       #include &lt;netgraph.h&gt;
+       #include &lt;netgraph/ng_ether.h&gt;
+       #include &lt;netgraph/ng_pppoe.h&gt;
+       #include &lt;netgraph/ng_socket.h&gt;
+       static int setup(char *ethername, char *service, char *sessname,
+                                       int *dfd, int *cfd);
+
+       int
+       main()
+       {
+               int  fd1, fd2;
+               setup("xl0", NULL, "fred", &amp;fd1, &amp;fd2);
+               sleep (30);
+       }
+
+       static int
+       setup(char *ethername, char *service, char *sessname,
+                               int *dfd, int *cfd)
+       {
+               struct ngm_connect ngc; /* connect */
+               struct ngm_mkpeer mkp;  /* mkpeer */
+               /******** nodeinfo stuff **********/
+               u_char          rbuf[2 * 1024];
+               struct ng_mesg *const resp = (struct ng_mesg *) rbuf;
+               struct hooklist *const hlist
+                               = (struct hooklist *) resp-&gt;data;
+               struct nodeinfo *const ninfo = &amp;hlist-&gt;nodeinfo;
+               int             ch, no_hooks = 0;
+               struct linkinfo *link;
+               struct nodeinfo *peer;
+               /****message to connect PPPoE session*****/
+               struct {
+                       struct ngpppoe_init_data idata;
+                       char            service[100];
+               }               message;
+               /********tracking our little graph ********/
+               char            path[100];
+               char            source_ID[NG_NODESIZ];
+               char            pppoe_node_name[100];
+               int             k;
+
+               /*
+                * Create the data and control sockets
+                */
+               if (NgMkSockNode(NULL, cfd, dfd) &lt; 0) {
+                       return (errno);
+               }
+               /*
+                * find the ether node of the name requested by asking it for
+                * it's inquiry information.
+                */
+               if (strlen(ethername) &gt; 16)
+                       return (EINVAL);
+               sprintf(path, "%s:", ethername);
+               if (NgSendMsg(*cfd, path, NGM_GENERIC_COOKIE,
+                             NGM_LISTHOOKS, NULL, 0) &lt; 0) {
+                       return (errno);
+               }
+               /*
+                * the command was accepted so it exists. Await the reply (It's
+                * almost certainly already waiting).
+                */
+               if (NgRecvMsg(*cfd, resp, sizeof(rbuf), NULL) &lt; 0) {
+                       return (errno);
+               }
+               /**
+                * The following is available about the node:
+                * ninfo-&gt;name          (string)
+                * ninfo-&gt;type          (string)
+                * ninfo-&gt;id            (uint32_t)
+                * ninfo-&gt;hooks         (uint32_t) (count of hooks)
+                * check it is the correct type. and get it's ID for use
+                * with mkpeer later.
+                */
+               if (strncmp(ninfo-&gt;type, NG_ETHER_NODE_TYPE,
+                           strlen(NG_ETHER_NODE_TYPE)) != 0) {
+                       return (EPROTOTYPE);
+               }
+               sprintf(source_ID, "[%08x]:", ninfo-&gt;id);
+
+               /*
+                * look for a hook already attached.
+                */
+               for (k = 0; k &lt; ninfo-&gt;hooks; k++) {
+                       /**
+                        * The following are available about each hook.
+                        * link-&gt;ourhook        (string)
+                        * link-&gt;peerhook       (string)
+                        * peer-&gt;name           (string)
+                        * peer-&gt;type           (string)
+                        * peer-&gt;id             (uint32_t)
+                        * peer-&gt;hooks          (uint32_t)
+                        */
+                       link = &amp;hlist-&gt;link[k];
+                       peer = &amp;hlist-&gt;link[k].nodeinfo;
+
+                       /* Ignore debug hooks */
+                       if (strcmp("debug", link-&gt;ourhook) == 0)
+                               continue;
+
+                       /* If the orphans hook is attached, use that */
+                       if (strcmp(NG_ETHER_HOOK_ORPHAN,
+                           link-&gt;ourhook) == 0) {
+                               break;
+                       }
+                       /* the other option is the 'divert' hook */
+                       if (strcmp("NG_ETHER_HOOK_DIVERT",
+                           link-&gt;ourhook) == 0) {
+                               break;
+                       }
+               }
+
+               /*
+                * See if we found a hook there.
+                */
+               if (k &lt; ninfo-&gt;hooks) {
+                       if (strcmp(peer-&gt;type, NG_PPPOE_NODE_TYPE) == 0) {
+                               /*
+                                * If it's a type PPPoE, we skip making one
+                                * ourself, but we continue, using
+                                * the existing one.
+                                */
+                               sprintf(pppoe_node_name, "[%08x]:", peer-&gt;id);
+                       } else {
+                               /*
+                                * There is already someone hogging the data,
+                                * return an error. Some day we'll try
+                                * daisy-chaining..
+                                */
+                               return (EBUSY);
+                       }
+               } else {
+
+                       /*
+                        * Try make a node of type PPPoE against node "ID"
+                        * On hook NG_ETHER_HOOK_ORPHAN.
+                        */
+                       snprintf(mkp.type, sizeof(mkp.type),
+                                "%s", NG_PPPOE_NODE_TYPE);
+                       snprintf(mkp.ourhook, sizeof(mkp.ourhook),
+                                "%s", NG_ETHER_HOOK_ORPHAN);
+                       snprintf(mkp.peerhook, sizeof(mkp.peerhook),
+                                "%s", NG_PPPOE_HOOK_ETHERNET);
+                       /* Send message */
+                       if (NgSendMsg(*cfd, source_ID, NGM_GENERIC_COOKIE,
+                                     NGM_MKPEER, &amp;mkp, <a href="../manmkp/sizeof.mkp.html">sizeof</a>(mkp)) &lt; 0) {
+                               return (errno);
+                       }
+                       /*
+                        * Work out a name for the new node.
+                        */
+                       sprintf(pppoe_node_name, "%s:%s",
+                               source_ID, NG_ETHER_HOOK_ORPHAN);
+               }
+               /*
+                * We now have a PPPoE node attached to the Ethernet
+                * card. The Ethernet is addressed as ethername: The PPPoE
+                * node is addressed as pppoe_node_name: attach to it.
+                * Connect socket node to specified node Use the same hook
+                * name on both ends of the link.
+                */
+               snprintf(ngc.path, sizeof(ngc.path), "%s", pppoe_node_name);
+               snprintf(ngc.ourhook, sizeof(ngc.ourhook), "%s", sessname);
+               snprintf(ngc.peerhook, sizeof(ngc.peerhook), "%s", sessname);
+
+               if (NgSendMsg(*cfd, ".:", NGM_GENERIC_COOKIE,
+                             NGM_CONNECT, &amp;ngc, sizeof(ngc)) &lt; 0) {
+                       return (errno);
+               }
+
+       #ifdef  NONSTANDARD
+               /*
+                * In some cases we are speaking to 3Com hardware, so
+                * configure node to non-standard mode.
+                */
+               if (NgSendMsg(*cfd, ngc.path, NGM_PPPOE_COOKIE,
+                               NGM_PPPOE_SETMODE, NG_PPPOE_NONSTANDARD,
+                               strlen(NG_PPPOE_NONSTANDARD) + 1) == -1) {
+                       return (errno);
+               }
+       #endif
+
+               /*
+                * Send it a message telling it to start up.
+                */
+               bzero(&amp;message, <a href="../manmessage/sizeof.message.html">sizeof</a>(message));
+               snprintf(message.idata.hook, sizeof(message.idata.hook),
+                                       "%s", sessname);
+               if (service == NULL) {
+                       message.idata.data_len = 0;
+               } else {
+                       snprintf(message.idata.data,
+                                sizeof(message.idata.data), "%s", service);
+                       message.idata.data_len = strlen(service);
+               }
+               /* Tell session/hook to start up as a client */
+               if (NgSendMsg(*cfd, ngc.path,
+                             NGM_PPPOE_COOKIE, NGM_PPPOE_CONNECT, &amp;message.idata,
+                             sizeof(message.idata) + message.idata.data_len) &lt; 0) {
+                       return (errno);
+               }
+               return (0);
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/netgraph.3.html">netgraph</a></u>(3), <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_ether.4.html">ng_ether</a></u>(4), <u><a href="../man4/ng_ppp.4.html">ng_ppp</a></u>(4), <u><a href="../man4/ng_socket.4.html">ng_socket</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8), <u><a href="../man8/ppp.8.html">ppp</a></u>(8)
+
+       L. Mamakos, K. Lidl, J. Evarts, D. Carrel, D. Simone, and R. Wheeler, <u>A</u> <u>Method</u> <u>for</u> <u>transmitting</u> <u>PPP</u>  <u>over</u>
+       <u>Ethernet</u> <u>(PPPoE)</u>, RFC 2516.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ng_pppoe</b> node type was implemented in FreeBSD 4.0.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Julian Elischer &lt;<u><a href="mailto:julian@FreeBSD.org">julian@FreeBSD.org</a></u>&gt;
+
+Debian                                          February 14, 2018                                    <u><a href="../man4/NG_PPPOE.4.html">NG_PPPOE</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

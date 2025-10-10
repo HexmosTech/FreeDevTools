@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_one2many — packet multiplexing netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_one2many — packet multiplexing netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/ng_one2many.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>one2many</b> provides a simple mechanism for routing packets over several links in a one-to-many (and in
+       the reverse direction, many-to-one) fashion.  There is a single hook named one, and multiple hooks  named
+       many0,  many1,  etc.   Packets received on any of the many hooks are forwarded out the one hook.  Packets
+       received on the one hook are forwarded out one or more of the many hooks; which hook(s) is determined  by
+       the node's configured transmit algorithm.  Packets are not altered in any way.
+
+       Each  of  the connected many links may be considered to be up or down.  Packets are never delivered out a
+       many hook that is down.  How a link is determined to be up or down depends on the node's configured  link
+       failure detection algorithm.
+
+       Before  an  interface or link can be plumbed into a group, its status must be marked as being “up”.  This
+       is normally setup during the initial boot stages by  <u><a href="../man5/rc.conf.5.html">rc.conf</a></u>(5).   It  is  also  possible  to  change  an
+       interface's status to “up” by using the <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8) utility.
+
+</pre><h4><b>TRANSMIT</b> <b>ALGORITHMS</b></h4><pre>
+       NG_ONE2MANY_XMIT_ROUNDROBIN
+            Packets  are  delivered out the many hooks in sequential order.  Each packet goes out on a different
+            many hook.
+
+       NG_ONE2MANY_XMIT_ALL
+            Packets are delivered out all the many hooks.  Each packet goes out each many hook.
+
+       NG_ONE2MANY_XMIT_FAILOVER
+            Packets are delivered out the first active many hook.
+
+       In the future other algorithms may be added as well.
+
+</pre><h4><b>LINK</b> <b>FAILURE</b> <b>DETECTION</b></h4><pre>
+       The node distinguishes between active and failed  links.   Data  is  sent  only  to  active  links.   The
+       following link failure detection algorithms are available:
+
+       NG_ONE2MANY_FAIL_MANUAL
+            The  node  is  explicitly  told  which  of  the links are up via the NGM_ONE2MANY_SET_CONFIG control
+            message (see below).  Newly connected links are down until configured otherwise.
+
+       NG_ONE2MANY_FAIL_NOTIFY
+            The  node  listens  to  flow  control  message  from  <u>many</u>  hooks,  and  considers  link  failed  if
+            NGM_LINK_IS_DOWN  is  received.   If  the  NGM_LINK_IS_UP  message  is received, node considers link
+            active.
+
+       In the future other algorithms may be added as well.
+
+       When all links are considered failed, node sends the NGM_LINK_IS_DOWN message towards the <u>one</u> hook.  When
+       at least one link comes up, node sends the NGM_LINK_IS_UP message towards the <u>one</u> hook.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This node type supports up to NG_ONE2MANY_MAX_LINKS hooks named many0, many1, etc., plus  a  single  hook
+       named one.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_ONE2MANY_SET_CONFIG (<b>setconfig</b>)
+            Sets the node configuration using a struct ng_one2many_link_config as the control message argument:
+
+            /* Node configuration structure */
+            struct ng_one2many_config {
+              uint32_t    xmitAlg;        /* how to distribute packets */
+              uint32_t    failAlg;        /* how to detect link failure */
+              u_char      enabledLinks[NG_ONE2MANY_MAX_LINKS];
+            };
+
+            Currently,  the  valid  settings  for the xmitAlg field are NG_ONE2MANY_XMIT_ROUNDROBIN (default) or
+            NG_ONE2MANY_XMIT_ALL.  The valid settings  for  failAlg  are  NG_ONE2MANY_FAIL_MANUAL  (default)  or
+            NG_ONE2MANY_FAIL_NOTIFY.
+
+       NGM_ONE2MANY_GET_CONFIG (<b>getconfig</b>)
+            Returns the current node configuration in a struct ng_one2many_link_config.
+
+       NGM_ONE2MANY_GET_STATS (<b>getstats</b>)
+            This  command  takes a 32 bit link number as an argument and returns a struct ng_one2many_link_stats
+            containing statistics for the corresponding many link, which may or may not be currently connected:
+
+            /* Statistics structure (one for each link) */
+            struct ng_one2many_link_stats {
+              uint64_t   recvOctets;     /* total octets rec'd on link */
+              uint64_t   recvPackets;    /* total pkts rec'd on link */
+              uint64_t   xmitOctets;     /* total octets xmit'd on link */
+              uint64_t   xmitPackets;    /* total pkts xmit'd on link */
+              uint64_t   memoryFailures; /* times couldn't get mem or mbuf */
+            };
+
+            To access statistics for the one link, use the link number -1.
+
+       NGM_ONE2MANY_CLR_STATS (<b>clrstats</b>)
+            This command takes a 32 bit link number as an argument and clears the statistics for that link.
+
+       NGM_ONE2MANY_GETCLR_STATS (<b>getclrstats</b>)
+            Same as NGM_ONE2MANY_GET_STATS, but also atomically clears the statistics for the link as well.
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This node shuts down upon receipt of a  NGM_SHUTDOWN  control  message,  or  when  all  hooks  have  been
+       disconnected.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following  commands  will  set  up  Ethernet interfaces fxp0 to deliver packets alternating over the
+       physical interfaces corresponding to networking interfaces fxp0 through fxp3:
+
+         # Plumb nodes together
+
+         ngctl mkpeer fxp0: one2many upper one
+         ngctl connect fxp0: fxp0:upper lower many0
+         ngctl connect fxp1: fxp0:upper lower many1
+         ngctl connect fxp2: fxp0:upper lower many2
+         ngctl connect fxp3: fxp0:upper lower many3
+
+         # Allow fxp1 through fxp3 to xmit/recv fxp0 frames
+
+         ngctl msg fxp1: setpromisc 1
+         ngctl msg fxp2: setpromisc 1
+         ngctl msg fxp3: setpromisc 1
+         ngctl msg fxp1: setautosrc 0
+         ngctl msg fxp2: setautosrc 0
+         ngctl msg fxp3: setautosrc 0
+
+         # Configure all four links as up
+
+         ngctl msg fxp0:upper \
+           setconfig "{ xmitAlg=1 failAlg=1 enabledLinks=[ 1 1 1 1 ] }"
+
+         # Bring up interface
+
+         ifconfig fxp0 192.168.1.1 netmask 0xfffffffc
+
+       With a similar setup on a peer  machine  (using  the  address  192.168.1.2),  a  point-to-point  Ethernet
+       connection with four times normal bandwidth is achieved.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_bridge.4.html">ng_bridge</a></u>(4), <u><a href="../man4/ng_ether.4.html">ng_ether</a></u>(4), <u><a href="../man4/ng_hub.4.html">ng_hub</a></u>(4), <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ng_one2many</b> node type was implemented in FreeBSD 4.2.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The <b>one2many</b> netgraph node (with round-robin algorithm) was written by Archie Cobbs &lt;<u><a href="mailto:archie@FreeBSD.org">archie@FreeBSD.org</a></u>&gt;.
+       The all algorithm was added by Rogier R. Mulhuijzen &lt;<u><a href="mailto:drwilco@drwilco.net">drwilco@drwilco.net</a></u>&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       More transmit and link failure algorithms should be supported.  A good candidate is Cisco's Etherchannel.
+
+Debian                                          November 13, 2012                                 <u><a href="../man4/NG_ONE2MANY.4.html">NG_ONE2MANY</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

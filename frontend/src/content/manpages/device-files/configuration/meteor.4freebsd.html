@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>meteor — video capture driver interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       meteor — video capture driver interface
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>meteor</b>  driver  defined  a video capture interface.  The <b>meteor</b> driver is no longer in the tree, but
+       other devices support this interface so the interface portion is documented here.
+
+   <b>Meteor</b> <b>Capture</b> <b>Modes</b>
+       The <b>meteor</b> capture driver has three modes of capture operation.
+
+       1.   Conventional <u><a href="../man2/read.2.html">read</a></u>(2) interface.
+
+            This mode is the easiest and slowest to use.  This mode is great for capturing  a  single  field  at
+            little programming cost.
+
+            In  this mode, the user opens the device, sets the capture mode and size (see: METEORSETGEO <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2)
+            call), and uses the <u><a href="../man2/read.2.html">read</a></u>(2) system call to load the data into a buffer.
+
+            <u>meteor_read.c</u>; read 400x300 RGB24 into a viewable PPM file
+
+            #include &lt;sys/fcntl.h&gt;
+            #include &lt;machine/ioctl_meteor.h&gt;
+
+            extern int errno;
+            #define ROWS 300
+            #define COLS 400
+            #define SIZE (ROWS * COLS * 4)
+            main()
+            {
+                    struct meteor_geomet geo;
+                    char buf[SIZE],b[4],header[16],*p;
+                    int i,o,c;
+
+                    if ((i = open("/dev/meteor0", O_RDONLY)) &lt; 0) {
+                            printf("open failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+                    /* set up the capture type and size */
+                    geo.rows = ROWS;
+                    geo.columns = COLS;
+                    geo.frames = 1;
+                    geo.oformat = METEOR_GEO_RGB24 ;
+
+                    if (ioctl(i, METEORSETGEO, &amp;geo) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_FMT_NTSC;
+
+                    if (ioctl(i, METEORSFMT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_INPUT_DEV0;
+
+                    if (ioctl(i, METEORSINPUT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    if ((c=read(i, &amp;buf[0], SIZE)) &lt; SIZE) {
+                            printf("read failed %d %d %d\n", c, i, errno);
+                            close(i);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+                    close(i);
+
+                    if ((o = open("rgb24.ppm", O_WRONLY | O_CREAT, 0644)) &lt; 0) {
+                            printf("ppm open failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    /* make PPM header and save to file */
+                    strcpy(&amp;header[0], "P6 400 300 255 ");
+                    header[2] = header[6]  = header[10] = header[14] = '\n';
+                    write (o, &amp;header[0], 15);
+                    /* save the RGB data to PPM file */
+                    for (p = &amp;buf[0]; p &lt; &amp;buf[SIZE]; ) {
+                            b[2] = *p++;            /* blue */
+                            b[1] = *p++;            /* green */
+                            b[0] = *p++;            /* red */
+                            *p++;                   /* NULL byte */
+                            write(o,&amp;b[0], 3);      /* not very efficient */
+                    }
+                    close(o);
+                    <a href="../man0/exit.0.html">exit</a>(0);
+            }
+
+       2.   Memory mapped single capture or unsynchronized continuous capture.
+
+            The single capture mode is designed for conferencing tools such as <b>nv</b>.  These tools need to  control
+            the  starting  of  the  image capture and also need several frames a second.  The continuous capture
+            mode is designed for applications that want free-running data.
+
+            In this mode, the user opens the device, sets the capture mode and size (see: METEORSETGEO  <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2)
+            call),  <u><a href="../man2/mmap.2.html">mmap</a></u>(2)s  the frame buffer memory into the user process space, and issues either the single-
+            capture or the continuous capture call (see: METEORCAPTUR <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) call) to load the data  into  the
+            memory mapped buffer.
+
+            As  explained  in the METEORCAPTUR <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) call, the single frame capture <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will block until
+            the capture is complete, the continuous capture will return immediately.
+
+            <u>meteor_mmap_single_continuous.c</u>
+
+            #include &lt;sys/types.h&gt;
+            #include &lt;sys/mman.h&gt;
+            #include &lt;sys/fcntl.h&gt;
+            #include &lt;machine/ioctl_meteor.h&gt;
+
+            extern int errno;
+            #define ROWS 480
+            #define COLS 640
+            #define SIZE (ROWS * COLS * 2)
+            main()
+            {
+                    struct meteor_geomet geo;
+                    char buf[SIZE];
+                    char *mmbuf;
+                    int i,c;
+
+                    if ((i = open("/dev/meteor0", O_RDONLY)) &lt; 0) {
+                            printf("open failed\n");
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    geo.rows = ROWS;
+                    geo.columns = COLS;
+                    geo.frames = 1;
+                    geo.oformat = METEOR_GEO_RGB16 ;
+
+                    if (ioctl(i, METEORSETGEO, &amp;geo) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_FMT_NTSC;
+
+                    if (ioctl(i, METEORSFMT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_INPUT_DEV0;
+
+                    if (ioctl(i, METEORSINPUT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    mmbuf=(char *)mmap((caddr_t)0, SIZE, PROT_READ,
+                            MAP_SHARED, i, (off_t)0);
+
+            #ifdef SINGLE_MODE
+                    /* single frame capture */
+                    c = METEOR_CAP_SINGLE ;
+                    ioctl(i, METEORCAPTUR, &amp;c);     /* wait for the frame */
+
+                    /* directly access the frame buffer array data in mmbuf */
+            #else
+                    /* continuous frame capture */
+                    c = METEOR_CAP_CONTINOUS ;
+                    ioctl(i, METEORCAPTUR, &amp;c);     /* returns immediately */
+
+                    /* directly access the frame buffer array data in mmbuf */
+
+                    c = METEOR_CAP_STOP_CONT ;
+                    ioctl(i, METEORCAPTUR, &amp;c);     /* close will also stop capture */
+            #endif
+
+                    close(i);
+                    <a href="../man0/exit.0.html">exit</a>(0);
+            }
+
+       3.   Memory mapped, multi-frame ring buffer synchronize capture.
+
+            This continuous capture mode is synchronized with the application that processes up  to  32  frames.
+            This gives the advantages of both single and continuous capture modes.
+
+            The  kernel  notifies  the  application of a new data by raising an application defined signal.  The
+            driver also shares a structure with the application that allows them to communicate which frame  has
+            been written by the kernel and which frame has been read by the application.
+
+            The  shared  structure starts on the first page after your data.  The structure address can be found
+            by calculation:
+
+                  <b>(number_rows</b> <b>*</b> <b>number_columns</b> <b>*</b> <b>pixel_depth</b> <b>+</b> <b>4095)</b> <b>&amp;</b> <b>0xfffff000</b>
+            or
+                  <b>((number_rows</b> <b>*</b> <b>number_columns</b> <b>*</b> <b>pixel_depth</b> <b>+</b> <b>4095)/4096)</b> <b>*</b> <b>4096</b>
+
+            The shared structure is of type <u>struct</u> <u>meteor_mem</u>.  The two most important fields are called  <u>active</u>
+            and <u>num_active_buf</u>.  <u>active</u> is a bitmap of frames written by the kernel.  <u>num_active_bufs</u> is a count
+            of  frames  marked  in the <u>active</u> field.  When a frame is read in by the driver, the <u>num_active_bufs</u>
+            count is tested, if this count is  below  the  threshold  of  number  of  active  frames  (value  in
+            <u>meteor_mem</u>'s  <u>hiwat</u>  variable),  the  bit  representing  frame number in the buffer is stored in the
+            <u>active</u> variable, the <u>num_active_bufs</u> is incremented, the kernel then raises the specified signal  to
+            activate  the user application.  The user application's responsibility when getting the signal is to
+            check the active bitmap to determine the lowest active  frame,  use  the  data  as  the  application
+            desires, clear the bitmap entry for that frame, and decrement the <u>num_active_bufs</u>.  If the threshold
+            of  number  of active frames (<u>hiwat</u>) has been exceeded, no new frames or signal from the kernel will
+            occur until the <u>num_active_bufs</u> is less than or equal to <u>lowat</u>.
+
+            The driver loads the frames in a round-robin fashion.  It is expected that the user removes them  in
+            the same order.  The driver does not check to see if the frame is already active.
+
+            The <u>frame_size</u> and number of frames in the buffer are also provided to the <u>meteor_mem</u> structure, but
+            changing these fields in the application will not change the operation of the driver.
+
+            In programming for this mode, the user opens the device, sets the geometry, <u><a href="../man2/mmap.2.html">mmap</a></u>(2)s the data/common
+            control structure, then starts the continuous capture mode.  A special signal catcher is required to
+            process the frames as they are read by the kernel.
+
+            When  specifying  the geometry (see: METEORSETGEO <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) call), it is important that the number of
+            frames is set greater than 1.
+
+            <u>skeleton_capture_n.c</u>
+
+            #include &lt;sys/types.h&gt;
+            #include &lt;sys/mman.h&gt;
+            #include &lt;sys/fcntl.h&gt;
+            #include &lt;sys/signal.h&gt;
+            #include &lt;machine/ioctl_meteor.h&gt;
+
+            int video;  /* made global if you wish to stop capture in signal handler */
+            caddr_t data_frames;
+            struct meteor_mem *common_mem;
+            extern int errno;
+
+            #define FRAME_MAX
+
+            void
+            usr2_catcher()
+            {
+            #ifdef SIGNAL_STOP
+                    struct meteor_capframe capframe;        /* for ioctl */
+            #endif
+                    char *frame;
+
+                    /* find frame */
+                    frame = (char *) (data_frames + sig_cnt * common_mem-&gt;frame_size) ;
+
+                    /* add frame processing here */
+                    /* deactivate frame */
+                    common_mem-&gt;active &amp;= ~(1 &lt;&lt; (sig_cnt % 16));
+                    common_mem-&gt;num_active_bufs--;
+
+                    /* process next frame on next interrupt */
+                    sig_cnt = ((sig_cnt+1) % FRAME_MAX);
+
+            #ifdef SIGNAL_STOP
+                    if (some_condition_requiring_stopping) {
+                            capframe.command=METEOR_CAP_STOP_FRAMES;
+
+                            if (ioctl(i, METEORCAPFRM, &amp;capframe) &lt; 0) {
+                                    printf("METEORCAPFRM failed %d\n", errno);
+                                    <a href="../man1/exit.1.html">exit</a>(1);
+                            }
+                    }
+            #endif
+            }
+
+            main()
+            {
+                    struct meteor_geomet geo;
+                    int height, width, depth, frames, size;
+                    struct meteor_capframe capframe;
+
+                    if ((i = open("/dev/meteor0", O_RDONLY)) &lt; 0) {
+                            printf("open failed\n");
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+                    printf("test %d %d\n", errno, i);
+
+                    height = geo.rows = 120;
+                    width= geo.columns = 320;
+                    frames = geo.frames = FRAME_MAX;
+                    depth = 2;      /* 2 bytes per pixel for RGB*/
+
+                    geo.oformat = METEOR_GEO_RGB16;
+
+                    if (ioctl(i, METEORSETGEO, &amp;geo) &lt; 0) {
+                            printf("METEORSETGEO failed %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_FMT_NTSC;
+
+                    if (ioctl(i, METEORSFMT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    c = METEOR_INPUT_DEV0;
+
+                    if (ioctl(i, METEORSINPUT, &amp;c) &lt; 0) {
+                            printf("ioctl failed: %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    size = ((width*height*depth*frames+4095)/4096)*4096;
+                    /* add one page after data for meteor_mem */
+                    data_frames = mmap((caddr_t)0, size + 4096, PROT_READ | PROT_WRITE,
+                                                            MAP_SHARED, i, (off_t)0);
+
+                    if (data_frames == (caddr_t) MAP_FAILED) return (0);
+
+                    /* common_mem is located at page following data */
+                    common_mem = (struct meteor_mem *) (y + size);
+
+                    signal(SIGUSR2, usr2_catcher);  /* catch new frame message */
+
+                    capframe.command=METEOR_CAP_N_FRAMES;
+                    capframe.signal=SIGUSR2;
+                    capframe.lowat=12;              /* must be &lt; hiwat */
+                    capframe.hiwat=14;              /* must be &lt; FRAME_MAX */
+
+                                                    /* start the sync capture */
+                    if (ioctl(i, METEORCAPFRM, &amp;capframe) &lt; 0) {
+                            printf("METEORCAPFRM failed %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+
+                    /* this is the background working area, or you can sleep */
+
+                    /* to stop capture */
+                    capframe.command=METEOR_CAP_STOP_FRAMES;
+
+                    if (ioctl(i, METEORCAPFRM, &amp;capframe) &lt; 0) {
+                            printf("METEORCAPFRM failed %d\n", errno);
+                            <a href="../man1/exit.1.html">exit</a>(1);
+                    }
+            }
+
+   <b>Meteor</b> <b>IOCTL</b> <b>Call</b> <b>and</b> <b>Parameters</b>
+       The <b>meteor</b> capture driver has <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests for capturing,  reading  card  status,  for  setting  and
+       reading the geometry, and for setting and reading the attributes.
+
+       <b>IT</b>  <b>IS</b>  <b>VERY</b>  <b>IMPORTANT</b> <b>TO</b> <b>CHECK</b> <b>FOR</b> <b>ERRORS</b> <b>ON</b> <b>THESE</b> <b>RETURNING</b> <b>IOCTLs.</b>  Errors indicate that something is
+       very wrong with the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) and the application should not attempt to proceed  further  with  capturing.
+       The  <b>meteor</b>  capture  driver still makes attempts to stop the next capture step if an error occurred in a
+       previous step but was ignored by the application programmer.
+
+       1.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORSETGEO and METEORGETGEO
+
+            METEORSETGEO and METEORGETGEO are used to set and read the input  size,  input  device,  and  output
+            format for frame capture.
+
+            These <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) routines use the <u>meteor_geomet</u> structure that has the following entries:
+
+            <u>rows</u>     number of rows (lines high) in output image
+
+            <u>columns</u>  number of pixels in a row (width) in output image
+
+            <u>frames</u>   number of frames in buffer.  Should be 1, unless using the multi-framed synchronous capture
+                     mode (METEORCAPFRM) which REQUIRES frames to be larger than 1.
+
+                     Note:  if  <u>rows</u>,  <u>columns</u> or <u>frames</u> is not changed, then the existing values are used.  The
+                     system defaults is 640x480x1.
+
+            <u>oformat</u>  you may choose one of the following output format:
+
+                     METEOR_GEO_RGB16       (RGB 16 bits xrrrrrgg gggbbbbb default)
+
+                     METEOR_GEO_RGB24       (RGB 24 bits packed in 32 bits: 00000000 rrrrrrrr gggggggg bbbbbbbb)
+
+                     METEOR_GEO_YUV_PACKED  (4-2-2 YUV 16 bits packed byte format: u0 y0 v0 y1 u1 y2 v1 y3 ...)
+
+                     METEOR_GEO_YUV_PLANER  (4-2-2 YUV 16 bits planer format: rows * columns bytes of y  rows  *
+                                            column  / 4 bytes of even u rows * column / 4 bytes of even v rows *
+                                            column / 4 bytes of odd u rows * column / 4 bytes of odd v)
+
+            The METEORSETGEO <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will fail if more than one entry from  a  category  is  selected.   It  is
+            highly  recommended  that  a METEORSETGEO is done before capturing data because you cannot guarantee
+            the initial mode the card.
+
+            The METEORSETGEO will also attempt to reallocate a new contiguous kernel buffer if the new  geometry
+            exceeds  the  old geometry.  On the other hand, if the new geometry will fit in the existing buffer,
+            the existing buffer is used.
+
+            If METEORSETGEO fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return a value of -1 and the external variable <u>errno</u> will be
+            set to:
+
+            [EINVAL]           invalid <u>meteor_geomet</u> structure pointer, <u>rows</u>, <u>columns</u>, <u>frames</u> were invalid.
+
+            [ENOMEM]           could not allocate the contiguous block.
+
+       2.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORSFMT and METEORGFMT
+
+            METEORSFMT and METEORGFMT are used to set and read the camera input standard format.
+
+            Possible formats are:
+
+            METEOR_FMT_NTSC      NTSC (default mode)
+            METEOR_FMT_PAL       PAL
+            METEOR_FMT_SECAM     SECAM
+            METEOR_FMT_AUTOMODE  Autodetect.
+
+       3.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORSINPUT and METEORGINPUT
+
+            METEORSINPUT and METEORGINPUT are used to set and read the  camera  input  device.   Using  the  DB9
+            connector  on  the Meteor card, 4 input devices can be connected and an input camera can be selected
+            with this <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2).
+
+            Possible formats are:
+
+            METEOR_INPUT_DEV0        (default if none specified)
+            METEOR_INPUT_DEV_RCA     (same as METEOR_INPUT_DEV0)
+            METEOR_INPUT_DEV1
+            METEOR_INPUT_DEV2
+            METEOR_INPUT_DEV_SVIDEO  (same as METEOR_INPUT_DEV2)
+
+       4.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) request METEORSTATUS
+
+            METEORSTATUS is used to read the status of  the  Meteor  capture  card  and  returns  the  following
+            information:
+
+            METEOR_STATUS_ID_MASK    4 bit ID of the SAA7196 scaler chip.
+
+            METEOR_STATUS_DIR        0 = scaler uses internal source.
+                                     1 = scaler uses external data of expansion bus.
+
+            METEOR_STATUS_OEF        0 = even field detected.
+                                     1 = odd field detected.
+
+            METEOR_STATUS_SVP        VRAM Port state:
+                                     0 = inputs HFL and INCADDR inactive.
+                                     1 = inputs HFL and INCADDR active.
+
+            METEOR_STATUS_STTC       0 = TV horizontal time constant (slow).
+                                     1 = VCR horizontal time constant (fast).
+
+            METEOR_STATUS_HCLK       0 = Horizontal Phase Lock Loop locked.
+                                     1 = Horizontal Phase Lock Loop unlocked.
+
+            METEOR_STATUS_FIDT       0 = 50 Hz Field detected.
+                                     1 = 60 Hz Field detected.
+
+            METEOR_STATUS_ALTD       0 = no line alternating color burst detected.
+                                     1 = line alternating color burst detected (PAL/SECAM).
+
+            METEOR_STATUS_CODE       0 = no color information detected.
+                                     1 = color information detected.
+
+       5.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) request METEORCAPTUR
+
+            METEORCAPTUR is used to single frame capture or unsynchronized continuous capture.
+
+            The  single  frame  capture  <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2)  request  will return only after a frame has been captured and
+            transferred to the frame buffer.
+
+            The unsynchronized continuous capture will return immediately and data is  directly  deposited  into
+            the  buffer  when  it  is available.  Since this is unsynchronized, it is possible the data is being
+            written by the kernel while being read by the application.
+
+            These <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) routines use the following settings:
+
+            METEOR_CAP_SINGLE     capture one frame
+            METEOR_CAP_CONTINOUS  unsynchronized continuous capture
+            METEOR_CAP_STOP_CONT  stop the unsynchronized continuous capture
+
+            If METEORCAPTUR fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return a value of -1 and the external variable <u>errno</u> will be
+            set to:
+
+            [EINVAL]           invalid capture command value
+
+            [ENXIO]            there is not internal buffer to hold the frame.  This indicates the previous  set
+                               geometry <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) failed.
+
+            [EIO]              card is already capturing.
+
+       6.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) request METEORCAPFRM
+
+            METEORCAPFRM is used for synchronous capture of multiple frames.
+
+            This <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) routine uses the <u>meteor_capture</u> structure that has the following entries:
+
+            <u>command</u>  possible values for <u>command</u> are:
+
+                     METEOR_CAP_STOP_FRAMES  stop the capture; does not use the other variable in structure.
+
+                     METEOR_CAP_N_FRAMES     start  the  capture  using  the other variables in the structure as
+                                             inputs
+
+            <u>signal</u>   signal to send to application when a new frame has been captured.  This signal will only be
+                     raised if the captured frame is saved.
+
+            <u>lowat</u>    see below
+
+            <u>hiwat</u>    see below
+
+            When a new frame is completed, the driver checks the current unread frame  count  stored  in  shared
+            variable (the shared variable is stored in the <u>meteor_mem</u> structure) <u>num_active_buf</u>; if the count is
+            larger  than <u>hiwat</u>, the driver will not store any new frames and will not send capture signal to the
+            user application until the <u>num_active_buf</u> is lower than <u>lowat</u>.
+
+            If METEORCAPFRM fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return a value of -1 and the external variable <u>errno</u> will be
+            set to:
+
+            [EINVAL]           invalid meteor_geomet structure pointer or bad command.
+
+            [ENXIO]            there is not internal buffer to hold the frame.  This indicates the previous  set
+                               geometry <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) failed.
+
+            [EIO]              card is already capturing.
+
+       7.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORSCHCV and METEORGCHCV
+
+            METEORSCHCV  and METEORGCHCV are used to set and get the chrominance gain control and effects the UV
+            output amplitude.
+
+            If METEORSCHCV or METEORGCHCV fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return a value of -1 and the external variable
+            <u>errno</u> will be set to:
+
+            [EINVAL]           invalid unsigned char pointer.
+
+       8.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORGHUE and METEORSHUE
+
+            METEORGHUE and METEORSHUE are used to get and set the hue.  The signed character  has  legal  values
+            are from +127 which represent +178.6 degrees to -128 which represents -180 degrees.
+
+            If  METEORGHUE  or METEORSHUE fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return a value of -1 and the external variable
+            <u>errno</u> will be set to:
+
+            [EINVAL]           invalid signed char pointer.
+
+       9.   <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) requests METEORSCOUNT and METEORGCOUNT
+
+            METEORGCOUNT is used to get the count of frame errors, DMA errors and count of the number of  frames
+            captured  that  have occurred since the device was opened.  METEORSCOUNT can be used to reinitialize
+            the counters.
+
+            This <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) routines use the <u>meteor_counts</u> structure that has the following entries:
+
+            <u>fifo_errors</u>  number of FIFO errors since device was opened.
+
+            <u>dma_errors</u>   number of DMA errors since device was opened.
+
+            <u>frame_count</u>  number of frames captured since device was opened.
+
+            If METEORSCOUNT or METEORGCOUNT fails the <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) will return  a  value  of  -1  and  the  external
+            variable <u>errno</u> will be set to:
+
+            [EINVAL]           invalid meteor_counts structure pointer.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Jim Lowe &lt;<u><a href="mailto:james@miller.cs.uwm.edu">james@miller.cs.uwm.edu</a></u>&gt;
+       Mark Tinguely &lt;<u><a href="mailto:tinguely@plains.nodak.edu">tinguely@plains.nodak.edu</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The <b>meteor</b> driver no longer works at all.
+
+Debian                                           August 15, 1995                                       <u><a href="../man4/METEOR.4.html">METEOR</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

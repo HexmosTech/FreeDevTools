@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>divert — kernel packet diversion mechanism</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       divert — kernel packet diversion mechanism
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/socket.h&gt;</b>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/netinet/in.h">netinet/in.h</a>&gt;</b>
+
+       <u>int</u>
+       <b>socket</b>(<u>PF_INET</u>, <u>SOCK_RAW</u>, <u>IPPROTO_DIVERT</u>);
+
+       To enable support for divert sockets, place the following lines in the kernel configuration file:
+
+             <b>options</b> <b>IPFIREWALL</b>
+             <b>options</b> <b>IPDIVERT</b>
+
+       Alternatively,  to  load  the  driver  as  a  module  at  boot  time,  add  the  following lines into the
+       <u><a href="../man5/loader.conf.5.html">loader.conf</a></u>(5) file:
+
+             ipfw_load="YES"
+             ipdivert_load="YES"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Divert sockets are similar to raw IP sockets, except that they can be bound to a specific <b>divert</b> port via
+       the <u><a href="../man2/bind.2.html">bind</a></u>(2) system call.  The IP address in the bind is ignored; only the port number is significant.   A
+       divert  socket  bound  to  a  divert  port  will  receive all packets diverted to that port by some (here
+       unspecified) kernel mechanism(s).  Packets may also be written to a divert port, in which case  they  re-
+       enter kernel IP packet processing.
+
+       Divert  sockets  are  normally used in conjunction with FreeBSD's packet filtering implementation and the
+       <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) program.  By reading from and writing to a divert socket, matching packets can be passed  through
+       an arbitrary ``filter'' as they travel through the host machine, special routing tricks can be done, etc.
+
+</pre><h4><b>READING</b> <b>PACKETS</b></h4><pre>
+       Packets  are  diverted  either  as  they are ``incoming'' or ``outgoing.''  Incoming packets are diverted
+       after reception on an IP interface, whereas outgoing packets are diverted before next hop forwarding.
+
+       Diverted packets may be read unaltered via <u><a href="../man2/read.2.html">read</a></u>(2), <u><a href="../man2/recv.2.html">recv</a></u>(2), or <u><a href="../man2/recvfrom.2.html">recvfrom</a></u>(2).  In  the  latter  case,  the
+       address  returned  will  have its port set to some tag supplied by the packet diverter, (usually the ipfw
+       rule number) and the IP address set to the (first) address of the  interface  on  which  the  packet  was
+       received (if the packet was incoming) or INADDR_ANY (if the packet was outgoing).  The interface name (if
+       defined for the packet) will be placed in the 8 bytes following the address, if it fits.
+
+</pre><h4><b>WRITING</b> <b>PACKETS</b></h4><pre>
+       Writing  to  a  divert  socket is similar to writing to a raw IP socket; the packet is injected ``as is''
+       into the normal kernel IP packet processing using <u><a href="../man2/sendto.2.html">sendto</a></u>(2) and minimal error checking is done.   Packets
+       are  distinguished as either incoming or outgoing.  If <u><a href="../man2/sendto.2.html">sendto</a></u>(2) is used with a destination IP address of
+       INADDR_ANY, then the packet is treated as if it were outgoing, i.e., destined for  a  non-local  address.
+       Otherwise, the packet is assumed to be incoming and full packet routing is done.
+
+       In  the  latter  case,  the  IP  address  specified must match the address of some local interface, or an
+       interface name must be found after the IP address.  If an interface name is found, that interface will be
+       used and the value of the IP address will be ignored (other than the fact that  it  is  not  INADDR_ANY).
+       This is to indicate on which interface the packet “arrived”.
+
+       Normally,  packets  read as incoming should be written as incoming; similarly for outgoing packets.  When
+       reading and then writing back packets, passing the same socket address supplied by <u><a href="../man2/recvfrom.2.html">recvfrom</a></u>(2) unmodified
+       to <u><a href="../man2/sendto.2.html">sendto</a></u>(2) simplifies things (see below).
+
+       The port part of the socket address passed to the <u><a href="../man2/sendto.2.html">sendto</a></u>(2) contains a tag that should be  meaningful  to
+       the  diversion module.  In the case of <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) the tag is interpreted as the rule number <u>after</u> <u>which</u> rule
+       processing should restart.
+
+</pre><h4><b>LOOP</b> <b>AVOIDANCE</b></h4><pre>
+       Packets written into a divert socket (using <u><a href="../man2/sendto.2.html">sendto</a></u>(2)) re-enter the packet  filter  at  the  rule  number
+       following  the tag given in the port part of the socket address, which is usually already set at the rule
+       number that caused the diversion (not the next rule if there are several at the  same  number).   If  the
+       'tag'  is  altered  to indicate an alternative re-entry point, care should be taken to avoid loops, where
+       the same packet is diverted more than once at the same rule.
+
+</pre><h4><b>DETAILS</b></h4><pre>
+       If a packet is diverted but no socket is bound to the port, or if IPDIVERT is not enabled  or  loaded  in
+       the kernel, the packet is dropped.
+
+       Incoming  packet fragments which get diverted are fully reassembled before delivery; the diversion of any
+       one fragment causes the entire packet to get diverted.  If different fragments divert to different ports,
+       then which port ultimately gets chosen is unpredictable.
+
+       Note that packets arriving on the divert socket by the <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) <b>tee</b> action are delivered as-is and  packet
+       fragments do not get reassembled in this case.
+
+       Packets  are  received  and  sent  unchanged, except that packets read as outgoing have invalid IP header
+       checksums, and packets written as outgoing have their IP header checksums overwritten  with  the  correct
+       value.   Packets  written  as  incoming  and  having incorrect checksums will be dropped.  Otherwise, all
+       header fields are unchanged (and therefore in network order).
+
+       Binding to port numbers less than 1024 requires super-user access, as does  creating  a  socket  of  type
+       SOCK_RAW.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Writing to a divert socket can return these errors, along with the usual errors possible when writing raw
+       packets:
+
+       [EINVAL]           The  packet  had  an  invalid  header,  or the IP options in the packet and the socket
+                          options set were incompatible.
+
+       [EADDRNOTAVAIL]    The destination address contained an IP address not equal to INADDR_ANY that  was  not
+                          associated with any interface.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man2/bind.2.html">bind</a></u>(2), <u><a href="../man2/recvfrom.2.html">recvfrom</a></u>(2), <u><a href="../man2/sendto.2.html">sendto</a></u>(2), <u><a href="../man2/socket.2.html">socket</a></u>(2), <u><a href="../man4/ipfw.4.html">ipfw</a></u>(4), <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Archie Cobbs &lt;<u><a href="mailto:archie@FreeBSD.org">archie@FreeBSD.org</a></u>&gt;, Whistle Communications Corp.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This  is  an  attempt  to provide a clean way for user mode processes to implement various IP tricks like
+       address translation, but it could be cleaner, and it is too dependent on <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8).
+
+       It is questionable whether incoming fragments should be reassembled before being diverted.  For  example,
+       if  only  some  fragments  of  a  packet destined for another machine do not get routed through the local
+       machine, the packet is lost.  This should probably be a settable socket option in any case.
+
+Debian                                          December 17, 2004                                      <u><a href="../man4/DIVERT.4.html">DIVERT</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>
