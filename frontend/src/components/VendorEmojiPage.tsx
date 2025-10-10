@@ -145,15 +145,20 @@ const VendorEmojiPage: React.FC<{ emoji: EmojiData }> = ({ emoji }) => (
       </div>
     )}
 
-    {/* Link Back to Original Emoji Button */}
-    <div className="mb-12 flex justify-start">
-      <a
-        href={`/freedevtools/emojis/${emoji.slug}`}
-        className="inline-flex items-center px-5 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg hover:from-blue-600 hover:to-blue-800 font-semibold shadow"
-      >
-        See Full Emoji Details &rarr;
-      </a>
-    </div>
+{/* Link Back to Original Emoji Button */}
+<div className="mb-12 flex justify-start">
+  <a
+    href={`/freedevtools/emojis/${emoji.slug}`}
+    className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-blue-700 dark:text-blue-300 
+               bg-blue-100 dark:bg-blue-900/30 rounded-xl shadow-sm 
+               hover:bg-blue-200 dark:hover:bg-blue-900/50 
+               hover:shadow-md transition-all duration-200"
+  >
+    <span>See Full Emoji Details</span>
+    <span className="text-base">→</span>
+  </a>
+</div>
+
   </div>
 );
 
